@@ -37,6 +37,10 @@ export const envSchema = z.object({
   AI_API_URL: z.string().url().default("https://dev.orazaka.com/edge"),
   /** Akinaza's `oz_` service key (Orazaka `dev-deploy.mjs service-account akinaza`), a DO SECRET. */
   AI_API_KEY: z.string().optional(),
+  /** `off` on every dev / preview deployment: noindex everywhere, robots.txt closed, the development notice in the footer. */
+  APP_SEARCH_INDEXING: z.enum(["on", "off"]).default("on"),
+  /** Connections this process's pool may hold (the cluster's budget is shared: dev uses 2 behind a PgBouncer pool). */
+  DATABASE_MAX_CONNECTIONS: z.coerce.number().int().min(1).max(50).default(5),
   /** A direct (non-pooled) PostgreSQL URL for LISTEN — @krizaka/realtime's bus. Defaults to DATABASE_URL. */
   DATABASE_DIRECT_URL: z.string().optional(),
   /** The realtime bus (booking slots): postgres (LISTEN/NOTIFY, default) or memory (one instance, tests). */
@@ -57,7 +61,8 @@ export function productionProblems(env: Env): string[] {
   const problems: string[] = [];
   if (!env.DATABASE_URL) problems.push("DATABASE_URL is not set");
   if (!env.AUTH_SESSION_SECRET || env.AUTH_SESSION_SECRET.length < 32) problems.push("AUTH_SESSION_SECRET must be at least 32 characters");
-  if (!env.AI_API_KEY?.startsWith("oz_")) problems.push("AI_API_KEY must be an Orazaka key (oz_…)");
+  // Without a key the live feed is simply off (the sports feed answers FEED_NOT_CONFIGURED); a key that is set must be Orazaka's.
+  if (env.AI_API_KEY && !env.AI_API_KEY.startsWith("oz_")) problems.push("AI_API_KEY must be an Orazaka key (oz_…)");
   if (env.DATABASE_URL && /sslmode=(require|verify)/.test(env.DATABASE_URL) && !env.DATABASE_CA_CERT) problems.push("DATABASE_CA_CERT is required for a TLS database");
   return problems;
 }

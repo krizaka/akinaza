@@ -35,6 +35,10 @@ const securityHeaders = [
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
 
+// A dev / preview deployment is closed to search engines on every response, the API included (the proxy covers pages).
+const closedToSearch = process.env.APP_SEARCH_INDEXING?.trim().toLowerCase() === "off";
+if (closedToSearch) securityHeaders.push({ key: "X-Robots-Tag", value: "noindex, nofollow" });
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
