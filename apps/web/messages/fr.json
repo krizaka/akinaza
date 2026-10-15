@@ -153,7 +153,11 @@
     "meta": {
       "signIn": "Se connecter",
       "today": "Aujourd'hui",
-      "admin": "Administration"
+      "admin": "Administration",
+      "forgot": "Mot de passe oublié",
+      "reset": "Nouveau mot de passe",
+      "signUp": "Créer un compte",
+      "profile": "Profil"
     },
     "signIn": {
       "promise": "Votre boutique, pour moins cher — Loi 25 dès la conception.",
@@ -167,7 +171,8 @@
       "closed": "Akinaza est en développement ; les comptes sont créés par notre équipe.",
       "contact": "Nous écrire",
       "legalPrefix": "En vous connectant, vous acceptez l'",
-      "privacy": "avis de confidentialité"
+      "privacy": "avis de confidentialité",
+      "forgot": "Mot de passe oublié ?"
     },
     "adminSignIn": {
       "promise": "L'administration d'Akinaza.",
@@ -192,7 +197,8 @@
       "otherLanguage": "English",
       "theme": "Thème",
       "signOut": "Se déconnecter",
-      "today": "Aujourd'hui"
+      "today": "Aujourd'hui",
+      "profile": "Profil"
     },
     "admin": {
       "health": "Santé",
@@ -222,7 +228,11 @@
       "BAD_REQUEST": "La demande n'est pas valide.",
       "INTERNAL": "Une erreur est survenue.",
       "NETWORK": "Le réseau n'a pas répondu.",
-      "UNKNOWN": "Une erreur est survenue."
+      "UNKNOWN": "Une erreur est survenue.",
+      "PASSWORD_TOO_SHORT": "Au moins 12 caractères.",
+      "PASSWORD_TOO_LONG": "Au plus 256 caractères.",
+      "INVALID_TOKEN": "Ce lien n'est pas valide ou a expiré.",
+      "WRONG_PASSWORD": "Le mot de passe actuel n'est pas le bon."
     },
     "today": {
       "day": "{date} · {count} rendez-vous",
@@ -261,6 +271,58 @@
         "gst": "TPS (5 %)",
         "qst": "TVQ (9,975 %)",
         "total": "Total"
+      }
+    },
+    "account": {
+      "forgot": {
+        "title": "Mot de passe oublié ?",
+        "description": "Entrez le courriel de votre compte. S'il existe, nous envoyons un lien pour choisir un nouveau mot de passe.",
+        "email": "Courriel",
+        "submit": "Envoyer le lien",
+        "sent": "Si un compte existe pour cette adresse, un lien est en route. Il est valide 30 minutes.",
+        "back": "Retour à la connexion"
+      },
+      "reset": {
+        "title": "Choisissez un nouveau mot de passe",
+        "description": "Au moins 12 caractères. Toutes les autres sessions de ce compte prennent fin à l'enregistrement.",
+        "password": "Nouveau mot de passe",
+        "submit": "Enregistrer le nouveau mot de passe",
+        "done": "Votre mot de passe est changé. Vous pouvez vous connecter.",
+        "invalid": "Ce lien n'est pas valide ou a expiré. Demandez-en un nouveau.",
+        "missing": "Cette page a besoin du lien reçu par courriel.",
+        "askAgain": "Demander un nouveau lien",
+        "back": "Retour à la connexion"
+      },
+      "signUp": {
+        "title": "Créer un compte",
+        "description": "Les comptes sont ouverts par notre équipe pendant le développement d'Akinaza.",
+        "email": "Courriel",
+        "password": "Mot de passe",
+        "submit": "Créer mon compte",
+        "closedTitle": "L'inscription est fermée.",
+        "closed": "Akinaza est en développement ; les comptes sont créés par notre équipe.",
+        "contact": "Nous joindre",
+        "back": "Retour à la connexion"
+      },
+      "profile": {
+        "title": "Votre profil",
+        "description": "Votre compte, sa langue et son mot de passe.",
+        "avatar": "Photo de profil",
+        "email": "Courriel",
+        "language": "Langue",
+        "role": "Rôle",
+        "roleUser": "Membre",
+        "roleAdmin": "Administrateur",
+        "lastSeen": "Dernière visite",
+        "passwordTitle": "Changer votre mot de passe",
+        "current": "Mot de passe actuel",
+        "next": "Nouveau mot de passe",
+        "submit": "Changer mon mot de passe",
+        "saved": "Votre mot de passe est changé. Vos autres sessions ont pris fin."
+      },
+      "nav": {
+        "profile": "Profil",
+        "change": "Modifier"
       }
     }
   }
