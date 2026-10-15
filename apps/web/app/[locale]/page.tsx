@@ -127,6 +127,15 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               ))}
             </CardGrid>
           </Section>
+          <Section id="account" eyebrow={d.sections.account.eyebrow} title={d.sections.account.title} lead={d.sections.account.lead} divider actions={<Button asChild variant="secondary" size="md" shape="cut"><Link href={`/${locale}/forgot-password`}>{d.sections.account.forgot}</Link></Button>}>
+            <ul className="grid max-w-3xl gap-2 text-fg-secondary">
+              {d.sections.account.points.map((p) => (
+                <li key={p} className="rounded-lg border border-border-default bg-surface-1 p-3 text-sm">
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </Section>
           {(["book", "invoice", "privacy"] as const).map((id) => (
             <Section key={id} id={id} eyebrow={d.sections[id].eyebrow} title={d.sections[id].title} lead={d.sections[id].lead} divider actions={<Button asChild variant="secondary" size="md" shape="cut"><Link href={signIn}>{d.signIn}</Link></Button>}>
               <ul className="grid max-w-3xl gap-2 text-fg-secondary">
