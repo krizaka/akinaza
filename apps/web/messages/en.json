@@ -153,7 +153,11 @@
     "meta": {
       "signIn": "Sign in",
       "today": "Today",
-      "admin": "Administration"
+      "admin": "Administration",
+      "forgot": "Forgot password",
+      "reset": "Choose a new password",
+      "signUp": "Create an account",
+      "profile": "Profile"
     },
     "signIn": {
       "promise": "Your shop, for less — Loi 25 by design.",
@@ -167,7 +171,8 @@
       "closed": "Akinaza is in development; accounts are created by our team.",
       "contact": "Talk to us",
       "legalPrefix": "By signing in you accept the ",
-      "privacy": "privacy notice"
+      "privacy": "privacy notice",
+      "forgot": "Forgot your password?"
     },
     "adminSignIn": {
       "promise": "The administration of Akinaza.",
@@ -192,7 +197,8 @@
       "otherLanguage": "Français",
       "theme": "Theme",
       "signOut": "Sign out",
-      "today": "Today"
+      "today": "Today",
+      "profile": "Profile"
     },
     "admin": {
       "health": "Health",
@@ -222,7 +228,11 @@
       "BAD_REQUEST": "The request is not valid.",
       "INTERNAL": "Something went wrong.",
       "NETWORK": "The network did not answer.",
-      "UNKNOWN": "Something went wrong."
+      "UNKNOWN": "Something went wrong.",
+      "PASSWORD_TOO_SHORT": "At least 12 characters.",
+      "PASSWORD_TOO_LONG": "At most 256 characters.",
+      "INVALID_TOKEN": "This link is not valid or has expired.",
+      "WRONG_PASSWORD": "The current password is not right."
     },
     "today": {
       "day": "{date} · {count} appointments",
@@ -261,6 +271,58 @@
         "gst": "GST (5 %)",
         "qst": "QST (9.975 %)",
         "total": "Total"
+      }
+    },
+    "account": {
+      "forgot": {
+        "title": "Forgot your password?",
+        "description": "Enter the e-mail of your account. If it exists, we send a link to choose a new password.",
+        "email": "E-mail",
+        "submit": "Send the link",
+        "sent": "If an account exists for this address, a link is on its way. It is valid for 30 minutes.",
+        "back": "Back to sign-in"
+      },
+      "reset": {
+        "title": "Choose a new password",
+        "description": "At least 12 characters. Every other session of this account ends when you save.",
+        "password": "New password",
+        "submit": "Save the new password",
+        "done": "Your password is changed. You can sign in now.",
+        "invalid": "This link is not valid or has expired. Ask for a new one.",
+        "missing": "This page needs the link from your e-mail.",
+        "askAgain": "Ask for a new link",
+        "back": "Back to sign-in"
+      },
+      "signUp": {
+        "title": "Create an account",
+        "description": "Accounts are opened by our team while Akinaza is in development.",
+        "email": "E-mail",
+        "password": "Password",
+        "submit": "Create my account",
+        "closedTitle": "Sign-up is closed.",
+        "closed": "Akinaza is in development; accounts are created by our team.",
+        "contact": "Talk to us",
+        "back": "Back to sign-in"
+      },
+      "profile": {
+        "title": "Your profile",
+        "description": "Your account, its language and its password.",
+        "avatar": "Profile picture",
+        "email": "E-mail",
+        "language": "Language",
+        "role": "Role",
+        "roleUser": "Member",
+        "roleAdmin": "Administrator",
+        "lastSeen": "Last seen",
+        "passwordTitle": "Change your password",
+        "current": "Current password",
+        "next": "New password",
+        "submit": "Change my password",
+        "saved": "Your password is changed. Your other sessions have ended."
+      },
+      "nav": {
+        "profile": "Profile",
+        "change": "Change"
       }
     }
   }

@@ -28,6 +28,7 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
   prepares; the merchant files.** Nothing is transmitted to any government.
 - **Bookings** — services, staff, schedules; the database refuses a double booking (`EXCLUDE` on time ranges).
 - **Loi 25** — consent per purpose, append-only; erasure blanks personal data and keeps the invoices tax law requires.
+- **Accounts** — sign-in, "forgot password" with one-use 30-minute links (the answer is the same for every address), a password change that ends the other sessions, a profile with Krizaka's default picture; registration is built and closed by configuration (`AUTH_SIGNUP_ENABLED`).
 - **Not for restaurants and bars** — they must bill through a certified SRM (MEV); the point of sale is a stub behind
   `APP_POS_ENABLED` until that scope and a payment provider are decided. No payment provider is wired.
 

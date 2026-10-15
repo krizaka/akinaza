@@ -42,6 +42,20 @@ export const sessions = pgTable(
   (t) => [index("sessions_account").on(t.accountId)],
 );
 
+/** A password reset link, kept as its hash: one use, 30 minutes. */
+export const passwordResets = pgTable(
+  "password_resets",
+  {
+    id: id(),
+    accountId: uuid("account_id").notNull().references(() => accounts.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull().unique(),
+    createdAt: created(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    usedAt: timestamp("used_at", { withTimezone: true }),
+  },
+  (t) => [index("password_resets_account").on(t.accountId)],
+);
+
 export const auditLog = pgTable(
   "audit_log",
   {

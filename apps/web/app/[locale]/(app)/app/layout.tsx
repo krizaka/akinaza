@@ -15,7 +15,7 @@ export default async function MemberLayout({ children, params }: { children: Rea
   const session = await pageSession();
   if (!session) redirect(`/${locale}/sign-in`);
   return (
-    <AppFrame locale={locale} email={session.account.email} base={`/${locale}/app`} items={["today"]}>
+    <AppFrame locale={locale} email={session.account.email} base={`/${locale}/app`} items={["today", "profile"]}>
       {children}
     </AppFrame>
   );

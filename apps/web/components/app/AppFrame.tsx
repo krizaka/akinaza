@@ -1,6 +1,6 @@
 "use client";
 
-import { ClockIcon, HomeIcon, LogoutIcon } from "@krizaka/icons";
+import { ClockIcon, HomeIcon, LogoutIcon, UserIcon } from "@krizaka/icons";
 import { krizakaFetch, useMutation } from "@krizaka/query";
 import { AkinazaLogo } from "@krizaka/ui";
 import { AppShell } from "@krizaka/ui/app-shell";
@@ -13,7 +13,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSay } from "@/lib/i18n-client";
 
 const VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "";
-const ICONS = { today: <ClockIcon />, overview: <HomeIcon /> } as const;
+const ICONS = { today: <ClockIcon />, overview: <HomeIcon />, profile: <UserIcon /> } as const;
 
 /**
  * The signed-in frame (@krizaka/ui AppShell): the shop's space (`/app`) and the administration (admin.akinaza.com)
@@ -53,11 +53,14 @@ export function AppFrame({ locale, email, base, items, admin = false, children }
           </div>
         }
       >
-        {items.map((key) => (
-          <AppShell.Item key={key} asChild label={say(`shell.${key}`)} icon={ICONS[key]} current={isCurrent(base)}>
-            <Link href={base}>{say(`shell.${key}`)}</Link>
-          </AppShell.Item>
-        ))}
+        {items.map((key) => {
+          const to = key === "profile" ? `${base}/profile` : base;
+          return (
+            <AppShell.Item key={key} asChild label={say(`shell.${key}`)} icon={ICONS[key]} current={isCurrent(to)}>
+              <Link href={to}>{say(`shell.${key}`)}</Link>
+            </AppShell.Item>
+          );
+        })}
       </AppShell.Sidebar>
       <AppShell.Body>
         <AppShell.Header
