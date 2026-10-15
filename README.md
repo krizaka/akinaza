@@ -54,6 +54,10 @@ The database tests run on a real PostgreSQL 16: CI's service, or a Testcontainer
 
 Rules for contributors and agents: [AGENTS.md](AGENTS.md). Security: [SECURITY.md](SECURITY.md).
 
+## License
+
+[Apache-2.0](LICENSE) © Krizaka
+
 ---
 
 A [Krizaka](https://www.krizaka.com) product · Made in Montréal · Apache-2.0
