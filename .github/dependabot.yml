@@ -3,7 +3,8 @@
 # most one open per ecosystem. Security fixes stay on and arrive grouped apart, as soon as an advisory is published.
 # The ignore rules below are decisions, not oversights: Node LTS only (22/24), PostgreSQL 16 (parity with the
 # DigitalOcean databases), TypeScript 7 / ESLint 10 only once @krizaka/config supports them (krizaka/krizaka-ui#141),
-# the Expo SDK pins its own toolchain, and each deferred major names its tracking issue.
+# the Expo SDK pins its own toolchain, and each deferred major names its tracking issue. No Docker ecosystem: nothing is
+# containerised here until hosting is decided.
 # A grouped pull request is merged when CI is green; a major that breaks it gets an ignore rule here and an issue.
 version: 2
 updates:
@@ -43,26 +44,5 @@ updates:
     commit-message:
       prefix: "chore(deps)"
       prefix-development: "chore(deps-dev)"
-    labels: ["area:deps"]
-    open-pull-requests-limit: 1
-
-  - package-ecosystem: docker
-    directory: "/deploy/docker"
-    schedule:
-      interval: monthly
-      time: "06:00"
-      timezone: Europe/Paris
-    groups:
-      all:
-        patterns: ["*"]
-      security:
-        applies-to: security-updates
-        patterns: ["*"]
-    ignore:
-      # Node LTS only; an LTS move is a deliberate PR
-      - dependency-name: "node"
-        update-types: ["version-update:semver-major"]
-    commit-message:
-      prefix: "chore(deps)"
     labels: ["area:deps"]
     open-pull-requests-limit: 1
