@@ -11,7 +11,7 @@ import { readEnv } from "./env";
 export function poolConfig(source: Record<string, string | undefined> = process.env): pg.PoolConfig {
   const env = readEnv(source);
   if (!env.DATABASE_URL) throw new Error("DATABASE_URL is not set");
-  return dbPoolConfig(env.DATABASE_URL, env.DATABASE_CA_CERT);
+  return dbPoolConfig(env.DATABASE_URL, env.DATABASE_CA_CERT, env.DATABASE_MAX_CONNECTIONS);
 }
 
 const holder = globalThis as unknown as { __akinazaPool?: pg.Pool; __akinazaDb?: Db };
@@ -37,6 +37,23 @@ export async function query<T extends pg.QueryResultRow = pg.QueryResultRow>(tex
  * folder (next.config `outputFileTracingIncludes`).
  */
 export const MIGRATIONS_DIR = path.resolve(process.cwd(), "../../packages/db/drizzle");
+
+/**
+ * Migrations need a session (an advisory lock), which a transaction pooler does not keep: they run on their own
+ * one-connection pool, on DATABASE_DIRECT_URL when it is set, and the connection is closed right after.
+ */
+export function migrationPoolConfig(source: Record<string, string | undefined> = process.env): pg.PoolConfig {
+  const env = readEnv(source);
+  const url = env.DATABASE_DIRECT_URL || env.DATABASE_URL;
+  if (!url) throw new Error("DATABASE_URL is not set");
+  return dbPoolConfig(url, env.DATABASE_CA_CERT, 2);
+}
+
 export async function migrate(): Promise<void> {
-  await migrateSchema(pool(), MIGRATIONS_DIR);
+  const migrationPool = new pg.Pool(migrationPoolConfig());
+  try {
+    await migrateSchema(migrationPool, MIGRATIONS_DIR);
+  } finally {
+    await migrationPool.end();
+  }
 }

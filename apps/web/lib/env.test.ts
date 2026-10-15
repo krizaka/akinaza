@@ -40,6 +40,20 @@ describe("env", () => {
     expect(readEnv({ APP_POS_ENABLED: "true" }).APP_POS_ENABLED).toBe(true);
   });
 
+  it("starts without an Orazaka key (the feed is off) but never with a foreign one", () => {
+    const withoutKey: Record<string, string | undefined> = { ...PROD, AI_API_KEY: undefined };
+    expect(() => assertProductionEnv(withoutKey)).not.toThrow();
+    expect(() => assertProductionEnv({ ...PROD, AI_API_KEY: "sk-other" })).toThrow(/AI_API_KEY/);
+  });
+
+  it("bounds the pool and closes search engines only by an exact off", () => {
+    expect(readEnv({}).DATABASE_MAX_CONNECTIONS).toBe(5);
+    expect(readEnv({ DATABASE_MAX_CONNECTIONS: "2" }).DATABASE_MAX_CONNECTIONS).toBe(2);
+    expect(() => readEnv({ DATABASE_MAX_CONNECTIONS: "500" })).toThrow();
+    expect(readEnv({}).APP_SEARCH_INDEXING).toBe("on");
+    expect(readEnv({ APP_SEARCH_INDEXING: "off" }).APP_SEARCH_INDEXING).toBe("off");
+  });
+
   it("lets nobody into the administration in production without an allow-list", () => {
     expect(consoleAllowedIps({ NODE_ENV: "production" })).toEqual([]);
     expect(consoleAllowedIps({ NODE_ENV: "production", AUTH_ALLOWED_IPS: "203.0.113.7, 198.51.100.2" })).toEqual(["203.0.113.7", "198.51.100.2"]);

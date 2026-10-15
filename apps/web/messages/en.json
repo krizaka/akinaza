@@ -17,6 +17,7 @@
     "languageLabel": "Language",
     "otherLanguage": "Français",
     "dev": "DEV · v{version}",
+    "devNotice": "Development environment — access by invitation",
     "footer": "Akinaza is <b>a Krizaka product</b> — made in Montréal, open source (Apache-2.0).",
     "sourceCode": "Source code",
     "contact": "Contact",
