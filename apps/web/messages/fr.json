@@ -210,7 +210,13 @@
       "theme": "Thème",
       "signOut": "Se déconnecter",
       "today": "Aujourd'hui",
-      "profile": "Profil"
+      "profile": "Profil",
+      "users": "Personnes",
+      "shops": "Commerces",
+      "invoices": "Factures",
+      "ledger": "Grand livre",
+      "operations": "Exploitation",
+      "audit": "Journal d'audit"
     },
     "admin": {
       "health": "Santé",
@@ -223,10 +229,111 @@
       "accounts": "Comptes",
       "admins": "administrateurs",
       "suspended": "suspendus",
-      "shops": "Boutiques",
+      "shops": {
+        "caption": "Commerces"
+      },
       "clients": "Dossiers clients",
       "today": "Rendez-vous aujourd'hui",
-      "invoices": "Factures"
+      "invoices": {
+        "caption": "Factures"
+      },
+      "users": {
+        "caption": "Comptes"
+      },
+      "shopsCount": "Boutiques",
+      "invoicesCount": "Factures",
+      "ledger": {
+        "caption": "Vérifications du grand livre des taxes"
+      },
+      "audit": {
+        "caption": "Journal d'audit"
+      },
+      "never": "jamais",
+      "yes": "Oui",
+      "no": "Non",
+      "invoice": "Facture",
+      "creditNote": "Note de crédit",
+      "agrees": "Concorde",
+      "differs": "Diffère",
+      "roles": {
+        "USER": "Marchand",
+        "ADMIN": "Administrateur"
+      },
+      "states": {
+        "ACTIVE": "Actif",
+        "SUSPENDED": "Suspendu"
+      },
+      "kinds": {
+        "salon": "Salon",
+        "bakery": "Boulangerie",
+        "cafe": "Café",
+        "boutique": "Boutique",
+        "services": "Services",
+        "other": "Autre"
+      },
+      "columns": {
+        "email": "Courriel",
+        "role": "Rôle",
+        "status": "État",
+        "shops": "Commerces",
+        "lastSeen": "Dernière visite",
+        "shop": "Commerce",
+        "kind": "Type",
+        "registrant": "Inscrit TPS/TVQ",
+        "owner": "Propriétaire",
+        "clients": "Dossiers clients",
+        "invoices": "Factures",
+        "lastInvoice": "Dernière facture",
+        "number": "Numéro",
+        "issued": "Émise",
+        "subtotal": "Sous-total",
+        "gst": "TPS",
+        "qst": "TVQ",
+        "total": "Total",
+        "ledger": "Grand livre",
+        "period": "Mois",
+        "gstLedger": "TPS au grand livre",
+        "gstInvoices": "TPS des factures",
+        "qstLedger": "TVQ au grand livre",
+        "qstInvoices": "TVQ des factures",
+        "when": "Quand",
+        "actor": "Qui",
+        "action": "Action",
+        "target": "Cible",
+        "ip": "Adresse"
+      },
+      "user": {
+        "back": "Personnes",
+        "role": "Rôle",
+        "status": "État",
+        "shops": "Commerces possédés",
+        "sessions": "Sessions ouvertes",
+        "created": "Créé",
+        "lastSeen": "Dernière visite",
+        "suspend": "Suspendre",
+        "restore": "Rétablir",
+        "self": "C'est votre propre compte : il ne peut pas être modifié d'ici.",
+        "makeAdmin": "Nommer administrateur",
+        "makeUser": "Retirer le rôle d'administrateur",
+        "revokeSessions": "Terminer toutes les sessions",
+        "sessionsRevoked": "Sessions terminées : {count}.",
+        "exportData": "Exporter les données (Loi 25)",
+        "dangerTitle": "Supprimer ce compte",
+        "dangerLead": "Effacement Loi 25 : le compte et ses sessions sont supprimés définitivement. Un compte qui possède un commerce ne peut pas être effacé ici : ses factures et son grand livre des taxes sont conservés six ans par la loi fiscale. Le journal d'audit garde le fait, pas la personne.",
+        "confirmLabel": "Saisissez le courriel du compte pour confirmer",
+        "deleteAccount": "Supprimer le compte"
+      },
+      "operations": {
+        "database": "Budget de la base de données",
+        "pool": "Réserve de cette instance : {busy} occupées sur {max} ({open} ouvertes)",
+        "connections": "Connexions sur la base : {open} sur {limit}",
+        "waiting": "{count} en attente. Une requête en attente signifie que la réserve est le goulot.",
+        "ledger": "Grand livre des taxes",
+        "invoiceMismatches": "Factures dont les écritures au grand livre diffèrent de leurs taxes",
+        "monthMismatches": "Mois où le grand livre diffère des factures",
+        "shopsWithoutTaxNumbers": "Commerces inscrits sans numéro de TPS ou de TVQ",
+        "refusedSignIns": "Connexions refusées, 24 h"
+      }
     },
     "errors": {
       "INVALID_CREDENTIALS": "Courriel ou mot de passe erroné.",
@@ -244,7 +351,13 @@
       "PASSWORD_TOO_SHORT": "Au moins 12 caractères.",
       "PASSWORD_TOO_LONG": "Au plus 256 caractères.",
       "INVALID_TOKEN": "Ce lien n'est pas valide ou a expiré.",
-      "WRONG_PASSWORD": "Le mot de passe actuel n'est pas le bon."
+      "WRONG_PASSWORD": "Le mot de passe actuel n'est pas le bon.",
+      "SELF_SUSPEND": "Vous ne pouvez pas suspendre votre propre compte.",
+      "SELF_ROLE": "Vous ne pouvez pas changer votre propre rôle.",
+      "SELF_DELETE": "Vous ne pouvez pas supprimer votre propre compte.",
+      "LAST_ADMIN": "Le dernier administrateur garde son rôle.",
+      "CONFIRM_MISMATCH": "Le courriel saisi ne correspond pas au compte.",
+      "RETENTION_REQUIRED": "Ce compte possède un commerce dont les factures sont conservées six ans."
     },
     "today": {
       "day": "{date} · {count} rendez-vous",

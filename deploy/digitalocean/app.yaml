@@ -8,6 +8,9 @@ region: tor
 domains:
   - domain: dev.akinaza.com
     type: PRIMARY
+  # The administration console: the same app, host-routed (lib/host.ts); session + ADMIN role + AUTH_ALLOWED_IPS.
+  - domain: admin.akinaza.com
+    type: ALIAS
 services:
   - name: web
     github:
@@ -43,6 +46,10 @@ services:
       - key: AUTH_SIGNUP_ENABLED
         scope: RUN_TIME
         value: "false"
+      # Only these client addresses (do-connecting-ip) reach admin.akinaza.com, its sign-in included; empty = nobody.
+      - key: AUTH_ALLOWED_IPS
+        scope: RUN_TIME
+        value: "142.122.41.109"
       - key: AUTH_SESSION_SECRET
         scope: RUN_TIME
         type: SECRET
