@@ -141,6 +141,17 @@
           "L'effacement vide chaque champ personnel et garde les factures qu'exige la loi fiscale.",
           "Des données au Canada, chiffrées au repos."
         ]
+      },
+      "account": {
+        "eyebrow": "Comptes",
+        "title": "Votre compte, vos données",
+        "lead": "Akinaza est en développement : pour l’instant, notre équipe ouvre les comptes. Une fois un compte ouvert, la boutique peut changer son mot de passe, garder son profil et retrouver l’accès par courriel.",
+        "points": [
+          "Connectez-vous avec votre courriel et votre mot de passe ; oublié ? Un lien à usage unique arrive par courriel et vaut 30 minutes.",
+          "Changer le mot de passe ferme vos autres sessions : un téléphone perdu ne peut pas garder la boutique ouverte.",
+          "L’inscription est fermée pendant le développement d’Akinaza : personne n’ouvre de compte seul pour l’instant."
+        ],
+        "forgot": "Mot de passe oublié ?"
       }
     }
   },

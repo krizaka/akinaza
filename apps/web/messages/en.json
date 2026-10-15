@@ -141,6 +141,17 @@
           "Erasure blanks every personal field and keeps the invoices the tax law requires.",
           "Data in Canada, encrypted at rest."
         ]
+      },
+      "account": {
+        "eyebrow": "Accounts",
+        "title": "Your account, your data",
+        "lead": "Akinaza is in development: accounts are opened by our team for now. Once a shop has an account, it can change its password, keep its profile, and recover access by e-mail.",
+        "points": [
+          "Sign in with your e-mail and password; forgot it? A one-use link arrives by e-mail and lasts 30 minutes.",
+          "Changing your password ends your other sessions, so a lost phone cannot keep the shop open.",
+          "Sign-up is closed while Akinaza is in development: nobody opens an account on their own yet."
+        ],
+        "forgot": "Forgot your password?"
       }
     }
   },
