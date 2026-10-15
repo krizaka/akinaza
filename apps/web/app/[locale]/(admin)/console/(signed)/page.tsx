@@ -40,10 +40,10 @@ export default async function AdminOverview({ params }: { params: Promise<{ loca
         <DescriptionList
           items={[
             { term: t.accounts, details: `${o.accounts} · ${o.admins} ${t.admins} · ${o.suspended} ${t.suspended}` },
-            { term: t.shops, details: String(o.shops) },
+            { term: t.shopsCount, details: String(o.shops) },
             { term: t.clients, details: String(o.clients) },
             { term: t.today, details: String(o.appointmentsToday) },
-            { term: t.invoices, details: String(o.invoices) },
+            { term: t.invoicesCount, details: String(o.invoices) },
           ]}
         />
       </Card.Root>

@@ -210,7 +210,13 @@
       "theme": "Theme",
       "signOut": "Sign out",
       "today": "Today",
-      "profile": "Profile"
+      "profile": "Profile",
+      "users": "People",
+      "shops": "Shops",
+      "invoices": "Invoices",
+      "ledger": "Tax ledger",
+      "operations": "Operations",
+      "audit": "Audit log"
     },
     "admin": {
       "health": "Health",
@@ -223,10 +229,111 @@
       "accounts": "Accounts",
       "admins": "administrators",
       "suspended": "suspended",
-      "shops": "Shops",
+      "shops": {
+        "caption": "Shops"
+      },
       "clients": "Client files",
       "today": "Appointments today",
-      "invoices": "Invoices"
+      "invoices": {
+        "caption": "Invoices"
+      },
+      "users": {
+        "caption": "Accounts"
+      },
+      "shopsCount": "Shops",
+      "invoicesCount": "Invoices",
+      "ledger": {
+        "caption": "Tax ledger checks"
+      },
+      "audit": {
+        "caption": "Audit log"
+      },
+      "never": "never",
+      "yes": "Yes",
+      "no": "No",
+      "invoice": "Invoice",
+      "creditNote": "Credit note",
+      "agrees": "Agrees",
+      "differs": "Differs",
+      "roles": {
+        "USER": "Merchant",
+        "ADMIN": "Administrator"
+      },
+      "states": {
+        "ACTIVE": "Active",
+        "SUSPENDED": "Suspended"
+      },
+      "kinds": {
+        "salon": "Salon",
+        "bakery": "Bakery",
+        "cafe": "Café",
+        "boutique": "Boutique",
+        "services": "Services",
+        "other": "Other"
+      },
+      "columns": {
+        "email": "E-mail",
+        "role": "Role",
+        "status": "State",
+        "shops": "Shops",
+        "lastSeen": "Last seen",
+        "shop": "Shop",
+        "kind": "Kind",
+        "registrant": "GST/QST registrant",
+        "owner": "Owner",
+        "clients": "Client files",
+        "invoices": "Invoices",
+        "lastInvoice": "Last invoice",
+        "number": "Number",
+        "issued": "Issued",
+        "subtotal": "Subtotal",
+        "gst": "GST",
+        "qst": "QST",
+        "total": "Total",
+        "ledger": "Ledger",
+        "period": "Month",
+        "gstLedger": "GST in the ledger",
+        "gstInvoices": "GST on the invoices",
+        "qstLedger": "QST in the ledger",
+        "qstInvoices": "QST on the invoices",
+        "when": "When",
+        "actor": "Who",
+        "action": "Action",
+        "target": "Target",
+        "ip": "Address"
+      },
+      "user": {
+        "back": "People",
+        "role": "Role",
+        "status": "State",
+        "shops": "Shops owned",
+        "sessions": "Open sessions",
+        "created": "Created",
+        "lastSeen": "Last seen",
+        "suspend": "Suspend",
+        "restore": "Restore",
+        "self": "This is your own account: it cannot be changed from here.",
+        "makeAdmin": "Make administrator",
+        "makeUser": "Withdraw administrator role",
+        "revokeSessions": "End all sessions",
+        "sessionsRevoked": "Sessions ended: {count}.",
+        "exportData": "Export data (Law 25)",
+        "dangerTitle": "Delete this account",
+        "dangerLead": "Law 25 erasure: the account and its sessions are deleted for good. An account that owns a shop cannot be erased here: its invoices and tax ledger are kept for six years by tax law. The audit log keeps the fact, not the person.",
+        "confirmLabel": "Type the account's e-mail to confirm",
+        "deleteAccount": "Delete the account"
+      },
+      "operations": {
+        "database": "Database budget",
+        "pool": "This instance's pool: {busy} busy of {max} ({open} open)",
+        "connections": "Connections on the database: {open} of {limit}",
+        "waiting": "{count} waiting. A waiting request means the pool is the bottleneck.",
+        "ledger": "Tax ledger",
+        "invoiceMismatches": "Invoices whose ledger entries differ from their taxes",
+        "monthMismatches": "Months where the ledger differs from the invoices",
+        "shopsWithoutTaxNumbers": "Registered shops missing a GST or QST number",
+        "refusedSignIns": "Refused sign-ins, last 24 h"
+      }
     },
     "errors": {
       "INVALID_CREDENTIALS": "Wrong e-mail or password.",
@@ -244,7 +351,13 @@
       "PASSWORD_TOO_SHORT": "At least 12 characters.",
       "PASSWORD_TOO_LONG": "At most 256 characters.",
       "INVALID_TOKEN": "This link is not valid or has expired.",
-      "WRONG_PASSWORD": "The current password is not right."
+      "WRONG_PASSWORD": "The current password is not right.",
+      "SELF_SUSPEND": "You cannot suspend your own account.",
+      "SELF_ROLE": "You cannot change your own role.",
+      "SELF_DELETE": "You cannot delete your own account.",
+      "LAST_ADMIN": "The last administrator keeps the role.",
+      "CONFIRM_MISMATCH": "The e-mail typed does not match the account.",
+      "RETENTION_REQUIRED": "This account owns a shop whose invoices are kept for six years."
     },
     "today": {
       "day": "{date} · {count} appointments",
