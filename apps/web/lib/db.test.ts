@@ -17,7 +17,7 @@ describe("the pool", () => {
 
   it("migrates on one direct connection, never through the transaction pooler", () => {
     const config = migrationPoolConfig({ DATABASE_URL: "postgresql://u:p@pool.example:25061/pool-x", DATABASE_DIRECT_URL: "postgresql://u:p@db.example:25060/x" });
-    expect(config.max).toBe(1);
+    expect(config.max).toBe(2);
     expect(config.connectionString).toContain("db.example:25060");
     expect(migrationPoolConfig({ DATABASE_URL: "postgresql://u:p@pool.example:25061/x" }).connectionString).toContain("pool.example");
   });

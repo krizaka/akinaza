@@ -46,7 +46,7 @@ export function migrationPoolConfig(source: Record<string, string | undefined> =
   const env = readEnv(source);
   const url = env.DATABASE_DIRECT_URL || env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set");
-  return dbPoolConfig(url, env.DATABASE_CA_CERT, 1);
+  return dbPoolConfig(url, env.DATABASE_CA_CERT, 2);
 }
 
 export async function migrate(): Promise<void> {
