@@ -1,0 +1,46 @@
+{
+  "name": "@akinaza/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Akinaza's web app and BFF: the public page, sign-in, a league with its sealed rules and live standings, and the administration (admin.akinaza.com).",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "qa-accounts": "node scripts/qa-accounts.mjs"
+  },
+  "dependencies": {
+    "@akinaza/core": "workspace:*",
+    "@akinaza/db": "workspace:*",
+    "@krizaka/i18n": "^0.2.1",
+    "@krizaka/icons": "^0.5.1",
+    "@krizaka/query": "^0.2.1",
+    "@krizaka/realtime": "^0.2.1",
+    "@krizaka/tailwind": "^3.15.0",
+    "@krizaka/tokens": "^3.15.0",
+    "@krizaka/ui": "^3.15.0",
+    "drizzle-orm": "^0.45.4",
+    "next": "^16.4.1",
+    "pg": "^8.16.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@krizaka/config": "^0.4.1",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^24.19.2",
+    "@types/pg": "^8.15.6",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}

@@ -1,0 +1,267 @@
+{
+  "meta": {
+    "siteName": "Akinaza",
+    "titleTemplate": "{title} — Akinaza",
+    "description": "Le tout-en-un des boutiques indépendantes du Québec : rendez-vous, dossiers clients avec consentement Loi 25, factures bilingues avec TPS et TVQ, registre des taxes, et votre déclaration TPS/TVQ préparée pour que vous la vérifiiez et la produisiez. Données au Canada."
+  },
+  "chrome": {
+    "brandHome": "Akinaza, accueil",
+    "navLabel": "Akinaza",
+    "nav": {
+      "how": "Comment ça marche",
+      "invoice": "Factures et taxes"
+    },
+    "signIn": "Se connecter",
+    "talk": "Nous écrire",
+    "themeToggle": "Thème",
+    "languageLabel": "Langue",
+    "otherLanguage": "English",
+    "dev": "DEV · v{version}",
+    "footer": "Akinaza est <b>un produit Krizaka</b> — fait à Montréal, open source (Apache-2.0).",
+    "sourceCode": "Code source",
+    "contact": "Contact",
+    "legal": "Confidentialité"
+  },
+  "landing": {
+    "mark": "Akinaza · en développement",
+    "title": "Tenez votre boutique, pour moins cher.",
+    "lead": "Rendez-vous, dossiers clients, factures bilingues avec TPS et TVQ, et votre déclaration de taxes préparée — un seul outil pour une boutique indépendante du Québec, pensé pour la Loi 25, vos données au Canada.",
+    "facts": {
+      "canada": "Données au Canada · Loi 25 dès la conception",
+      "license": "Apache-2.0",
+      "closed": "Dev · inscriptions fermées"
+    },
+    "talk": "Nous écrire",
+    "signIn": "Se connecter",
+    "visualLabel": "Un exemple de facture, calculé par le code de taxes d'Akinaza",
+    "visual": {
+      "title": "Facture F-00001 · Salon Laurier",
+      "subtotal": "Sous-total",
+      "gst": "TPS 5 %",
+      "qst": "TVQ 9,975 %",
+      "total": "Total",
+      "note": "La TPS et la TVQ une seule fois sur le sous-total taxable, arrondies au cent — le même code émet chaque vraie facture."
+    },
+    "reasonsEyebrow": "Pourquoi",
+    "reasonsTitle": "Ce qui coûte trop cher à une petite boutique",
+    "trap": "Le piège",
+    "more": "Voir comment",
+    "reasons": {
+      "book": {
+        "title": "Cinq outils, cinq factures",
+        "trap": "Une appli pour les rendez-vous, une pour la caisse, un tableur pour les taxes — chacun son abonnement et sa copie de vos clients."
+      },
+      "invoice": {
+        "title": "Les taxes à la main",
+        "trap": "Trois soirées par trimestre à additionner la TPS et la TVQ des reçus, en espérant que les totaux concordent."
+      },
+      "privacy": {
+        "title": "Des dossiers clients sans règles",
+        "trap": "Des numéros dans un cahier, du marketing sans consentement, et pas de réponse quand un client demande d'être effacé."
+      }
+    },
+    "decisionsEyebrow": "Décisions",
+    "decisionsTitle": "Ce que nous avons choisi, et ce que ça coûte",
+    "decisionLabels": {
+      "chose": "Nous avons choisi",
+      "refused": "Nous avons refusé",
+      "because": "Parce que",
+      "cost": "Ce que ça coûte"
+    },
+    "decisions": {
+      "prepare": {
+        "chose": "Nous préparons la déclaration TPS/TVQ : les montants, ligne par ligne, avec les pièces justificatives.",
+        "refused": "Produire la déclaration à votre place, ou promettre la transmission électronique.",
+        "because": "Vous restez celle ou celui qui signe ; les montants viennent de votre registre, jamais d'une supposition.",
+        "cost": "Vous la produisez vous-même, vos montants en main."
+      },
+      "canada": {
+        "chose": "Des données au Canada, chiffrées au repos, un consentement par finalité (Loi 25).",
+        "refused": "Les cases précochées, les données hors du pays, les dossiers gardés pour toujours.",
+        "because": "Le dossier d'un client lui appartient ; la loi du Québec le dit depuis 2023.",
+        "cost": "Effacer un client garde les factures (six ans, loi fiscale) mais rien de personnel."
+      },
+      "pos": {
+        "chose": "Les rendez-vous, les factures et les taxes d'abord ; le point de vente plus tard.",
+        "refused": "Les restaurants et les bars, qui doivent facturer avec un MEV certifié.",
+        "because": "Une caisse à moitié juste est pire que pas de caisse.",
+        "cost": "Pas encore de terminal de paiement : les paiements sont notés, pas traités."
+      }
+    },
+    "promiseLabel": "La promesse du castor",
+    "promise": "Je bâtis les livres de votre boutique, ligne par ligne, et je ne produis jamais rien sans vous.",
+    "closingTitle": "Vous tenez une boutique au Québec ?",
+    "closingBody": "Akinaza est en développement et les inscriptions sont fermées. Dites-nous comment vous travaillez aujourd'hui — nous choisissons les premières boutiques.",
+    "sections": {
+      "how": {
+        "eyebrow": "Comment ça marche",
+        "title": "Réserver, facturer, déclarer",
+        "lead": "Trois métiers d'une boutique, au même endroit, chacun tenu par du code que vous pouvez lire.",
+        "steps": {
+          "book": {
+            "title": "Rendez-vous et dossiers clients",
+            "text": "Services, personnel et horaires ; personne n'est jamais réservé deux fois — la base de données le refuse."
+          },
+          "invoice": {
+            "title": "Factures bilingues, TPS et TVQ",
+            "text": "En français par défaut, en anglais sur demande, des taxes au cent près, chaque facture inscrite au registre des taxes."
+          },
+          "privacy": {
+            "title": "Loi 25 dès la conception",
+            "text": "Un consentement par finalité, un effacement qui ne garde que ce qu'exige la loi fiscale, des données au Canada."
+          }
+        }
+      },
+      "book": {
+        "eyebrow": "Rendez-vous",
+        "title": "La journée, sans double réservation",
+        "lead": "Chaque coiffeuse, boulanger ou commis a ses heures ; un créneau pris disparaît en direct de toutes les pages de réservation ouvertes.",
+        "points": [
+          "Deux rendez-vous d'une même personne ne se chevauchent jamais — la base de données le refuse elle-même.",
+          "Un rendez-vous annulé libère son créneau aussitôt.",
+          "Des rappels par courriel, seulement aux clients qui ont dit oui."
+        ]
+      },
+      "invoice": {
+        "eyebrow": "Factures et taxes",
+        "title": "TPS 5 %, TVQ 9,975 %, au cent près",
+        "lead": "Les taxes calculées une fois sur le sous-total taxable, arrondies au cent — le pain détaxé reste à zéro, un petit fournisseur ne perçoit rien.",
+        "points": [
+          "Chaque facture inscrit sa TPS et sa TVQ dans un registre en ajout seul ; la base vérifie que tout concorde.",
+          "Une correction est une note de crédit, jamais une modification.",
+          "« Préparer ma déclaration » présente les montants du FPZ-500 avec leurs sources — avec l'aide d'un Studio Orazaka, vérifiés contre votre registre, produits par vous."
+        ]
+      },
+      "privacy": {
+        "eyebrow": "Loi 25",
+        "title": "Les dossiers de vos clients, encadrés",
+        "lead": "Ce dont la boutique a besoin, rien de plus — et une réponse le jour où un client la demande.",
+        "points": [
+          "Un consentement par finalité (le service, les rappels, le marketing), jamais précoché, chaque décision gardée.",
+          "L'effacement vide chaque champ personnel et garde les factures qu'exige la loi fiscale.",
+          "Des données au Canada, chiffrées au repos."
+        ]
+      }
+    }
+  },
+  "privacy": {
+    "title": "Confidentialité",
+    "updated": "Mis à jour le {date}",
+    "body": "Akinaza est en développement : seuls les comptes créés par notre équipe peuvent se connecter. Les données d'une boutique — ses clients, rendez-vous, factures et registre des taxes — sont gardées dans la base de données d'Akinaza au Canada, chiffrées au repos, visibles de cette boutique seulement. Le consentement des clients est noté par finalité (Loi 25) et peut être retiré ; les renseignements personnels d'un client peuvent être effacés, les factures qu'exige la loi fiscale étant gardées. Quand un commerçant demande de préparer une déclaration, le registre de la période est envoyé à Orazaka, le moteur de Krizaka, par HTTPS ; rien n'est produit ni transmis à un gouvernement. Rien n'est vendu ni partagé. Pour poser une question ou faire supprimer vos données, utilisez le formulaire de contact."
+  },
+  "console": {
+    "meta": {
+      "signIn": "Se connecter",
+      "today": "Aujourd'hui",
+      "admin": "Administration"
+    },
+    "signIn": {
+      "promise": "Votre boutique, pour moins cher — Loi 25 dès la conception.",
+      "asideFooter": "Chaque facture, au cent près.",
+      "title": "Se connecter",
+      "description": "Avec le compte que notre équipe vous a donné.",
+      "email": "Courriel",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "closedTitle": "Les inscriptions sont fermées.",
+      "closed": "Akinaza est en développement ; les comptes sont créés par notre équipe.",
+      "contact": "Nous écrire",
+      "legalPrefix": "En vous connectant, vous acceptez l'",
+      "privacy": "avis de confidentialité"
+    },
+    "adminSignIn": {
+      "promise": "L'administration d'Akinaza.",
+      "asideFooter": "Une session, le rôle d'administrateur et une adresse autorisée.",
+      "title": "Administration",
+      "description": "Réservé aux administrateurs.",
+      "dev": "DEV"
+    },
+    "shell": {
+      "skip": "Aller au contenu",
+      "title": "Votre boutique",
+      "admin": "Administration",
+      "overview": "Vue d'ensemble",
+      "dev": "DEV",
+      "closeMenu": "Fermer le menu",
+      "openMenu": "Ouvrir le menu",
+      "collapse": "Replier le menu",
+      "expand": "Déplier le menu",
+      "signedInAs": "Connecté en tant que {email}",
+      "devBuild": "DEV · v{version}",
+      "language": "Langue",
+      "otherLanguage": "English",
+      "theme": "Thème",
+      "signOut": "Se déconnecter",
+      "today": "Aujourd'hui"
+    },
+    "admin": {
+      "health": "Santé",
+      "version": "Version",
+      "database": "Base de données",
+      "realtime": "Temps réel",
+      "up": "En marche",
+      "down": "En panne",
+      "counts": "Chiffres",
+      "accounts": "Comptes",
+      "admins": "administrateurs",
+      "suspended": "suspendus",
+      "shops": "Boutiques",
+      "clients": "Dossiers clients",
+      "today": "Rendez-vous aujourd'hui",
+      "invoices": "Factures"
+    },
+    "errors": {
+      "INVALID_CREDENTIALS": "Courriel ou mot de passe erroné.",
+      "SUSPENDED": "Ce compte est suspendu.",
+      "SIGNUP_CLOSED": "Les inscriptions sont fermées.",
+      "RATE_LIMITED": "Trop d'essais. Réessayez dans un moment.",
+      "UNAUTHENTICATED": "Votre session a pris fin. Reconnectez-vous.",
+      "FORBIDDEN": "Non autorisé.",
+      "IP_NOT_ALLOWED": "Pas depuis cette adresse.",
+      "NOT_FOUND": "Introuvable.",
+      "BAD_REQUEST": "La demande n'est pas valide.",
+      "INTERNAL": "Une erreur est survenue.",
+      "NETWORK": "Le réseau n'a pas répondu.",
+      "UNKNOWN": "Une erreur est survenue."
+    },
+    "today": {
+      "day": "{date} · {count} rendez-vous",
+      "appointments": "Les rendez-vous du jour",
+      "none": "Aucun rendez-vous aujourd'hui.",
+      "noShopTitle": "Pas encore de boutique",
+      "noShop": "Les boutiques sont configurées par notre équipe pendant le développement d'Akinaza.",
+      "preview": "Prochaine facture (aperçu)",
+      "lastInvoice": "Dernière facture",
+      "notIssued": "Non émise",
+      "issued": "Émise",
+      "noInvoice": "Pas encore de facture.",
+      "table": {
+        "caption": "Les rendez-vous du jour",
+        "time": "Heure",
+        "client": "Client",
+        "service": "Service",
+        "staff": "Avec",
+        "status": "Statut",
+        "walkIn": "Sans rendez-vous"
+      },
+      "statuses": {
+        "booked": "Réservé",
+        "done": "Fait",
+        "cancelled": "Annulé",
+        "noShow": "Absent"
+      },
+      "invoice": {
+        "gstNo": "No de TPS",
+        "qstNo": "No de TVQ",
+        "smallSupplier": "Petit fournisseur — ni TPS ni TVQ perçues.",
+        "number": "Facture",
+        "date": "Date",
+        "lines": "Lignes",
+        "subtotal": "Sous-total",
+        "gst": "TPS (5 %)",
+        "qst": "TVQ (9,975 %)",
+        "total": "Total"
+      }
+    }
+  }
+}

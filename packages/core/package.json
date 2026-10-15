@@ -1,0 +1,23 @@
+{
+  "name": "@akinaza/core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Akinaza's domain, pure: money in integer cents, GST/QST with Québec rounding, the tax ledger and its invariants, the return figures and their working papers, Loi 25 consent, the POS gate — shared by the database, the BFF, the Studio contract and the apps.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}

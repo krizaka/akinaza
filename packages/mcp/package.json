@@ -1,0 +1,24 @@
+{
+  "name": "@akinaza/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The contract of the Orazaka Studio that assists \"Prepare my tax return\": its inputs and outputs (zod), the client over Orazaka's edge, a fake Studio for tests, and the reconciliation that keeps the ledger the authority.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@akinaza/core": "workspace:*",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}

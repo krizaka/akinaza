@@ -1,0 +1,267 @@
+{
+  "meta": {
+    "siteName": "Akinaza",
+    "titleTemplate": "{title} — Akinaza",
+    "description": "The all-in-one for independent Québec shops: bookings, client files with Loi 25 consent, bilingual invoices with GST and QST, a tax ledger, and your GST/QST return prepared for you to review and file. Data in Canada."
+  },
+  "chrome": {
+    "brandHome": "Akinaza, home",
+    "navLabel": "Akinaza",
+    "nav": {
+      "how": "How it works",
+      "invoice": "Invoices & taxes"
+    },
+    "signIn": "Sign in",
+    "talk": "Talk to us",
+    "themeToggle": "Theme",
+    "languageLabel": "Language",
+    "otherLanguage": "Français",
+    "dev": "DEV · v{version}",
+    "footer": "Akinaza is <b>a Krizaka product</b> — made in Montréal, open source (Apache-2.0).",
+    "sourceCode": "Source code",
+    "contact": "Contact",
+    "legal": "Privacy"
+  },
+  "landing": {
+    "mark": "Akinaza · in development",
+    "title": "Run your shop, for less.",
+    "lead": "Bookings, client files, bilingual invoices with GST and QST, and your tax return prepared — one tool for an independent Québec shop, built for Loi 25, with your data in Canada.",
+    "facts": {
+      "canada": "Data in Canada · Loi 25 by design",
+      "license": "Apache-2.0",
+      "closed": "Dev · sign-up closed"
+    },
+    "talk": "Talk to us",
+    "signIn": "Sign in",
+    "visualLabel": "An example invoice, computed by Akinaza's own tax code",
+    "visual": {
+      "title": "Invoice F-00001 · Salon Laurier",
+      "subtotal": "Subtotal",
+      "gst": "GST 5 %",
+      "qst": "QST 9.975 %",
+      "total": "Total",
+      "note": "GST and QST once on the taxable subtotal, rounded to the cent — the same code issues every real invoice."
+    },
+    "reasonsEyebrow": "Why it exists",
+    "reasonsTitle": "What costs a small shop too much",
+    "trap": "The trap",
+    "more": "See how",
+    "reasons": {
+      "book": {
+        "title": "Five tools, five bills",
+        "trap": "An app for bookings, one for the till, a spreadsheet for taxes — each with its subscription and its copy of your clients."
+      },
+      "invoice": {
+        "title": "Tax season by hand",
+        "trap": "Three evenings a quarter adding up GST and QST from receipts, hoping the totals match."
+      },
+      "privacy": {
+        "title": "Client files nobody governs",
+        "trap": "Phone numbers in a notebook, marketing without consent, and no answer when a client asks to be erased."
+      }
+    },
+    "decisionsEyebrow": "Decisions",
+    "decisionsTitle": "What we chose, and what it costs",
+    "decisionLabels": {
+      "chose": "We chose",
+      "refused": "We refused",
+      "because": "Because",
+      "cost": "What it costs"
+    },
+    "decisions": {
+      "prepare": {
+        "chose": "We prepare the GST/QST return: the figures, line by line, with the working papers.",
+        "refused": "Filing in your name, or promising electronic transmission.",
+        "because": "You stay the one who signs; the figures come from your ledger, never from a guess.",
+        "cost": "You file it yourself, with your figures in hand."
+      },
+      "canada": {
+        "chose": "Data in Canada, encrypted at rest, consent per purpose (Loi 25).",
+        "refused": "Pre-ticked consent, data across the border, files kept forever.",
+        "because": "A client's file is theirs; the law of Québec says so since 2023.",
+        "cost": "Erasing a client keeps the invoices (six years, tax law) but nothing personal."
+      },
+      "pos": {
+        "chose": "Bookings, invoices and taxes first; the point of sale later.",
+        "refused": "Restaurants and bars, which must bill through a certified SRM.",
+        "because": "A till done half-right is worse than none.",
+        "cost": "No payment terminal yet: payments are recorded, not processed."
+      }
+    },
+    "promiseLabel": "The beaver's promise",
+    "promise": "I build your shop's books, line by line, and I never file anything without you.",
+    "closingTitle": "You run a shop in Québec?",
+    "closingBody": "Akinaza is in development and sign-up is closed. Tell us how you work today — we are choosing the first shops.",
+    "sections": {
+      "how": {
+        "eyebrow": "How it works",
+        "title": "Book, invoice, declare",
+        "lead": "Three jobs of a shop, in one place, each held by code you can read.",
+        "steps": {
+          "book": {
+            "title": "Bookings and client files",
+            "text": "Services, staff and schedules; nobody is ever booked twice — the database refuses it."
+          },
+          "invoice": {
+            "title": "Bilingual invoices, GST and QST",
+            "text": "French by default, English on request, taxes in whole cents, every invoice posted to the tax ledger."
+          },
+          "privacy": {
+            "title": "Loi 25 by design",
+            "text": "Consent per purpose, an erasure that keeps only what tax law requires, data in Canada."
+          }
+        }
+      },
+      "book": {
+        "eyebrow": "Bookings",
+        "title": "The day, without double bookings",
+        "lead": "Each stylist, baker or clerk has their hours; a slot taken disappears from every open booking page in real time.",
+        "points": [
+          "Two appointments of one person never overlap — the database itself refuses it.",
+          "A cancelled appointment frees its slot at once.",
+          "Reminders by e-mail, only to clients who said yes."
+        ]
+      },
+      "invoice": {
+        "eyebrow": "Invoices and taxes",
+        "title": "GST 5 %, QST 9.975 %, to the cent",
+        "lead": "Taxes computed once on the taxable subtotal, rounded half up — zero-rated bread stays at zero, a small supplier charges nothing.",
+        "points": [
+          "Every invoice posts its GST and QST to an append-only ledger; the database checks they add up.",
+          "A correction is a credit note, never an edit.",
+          "“Prepare my tax return” lays out the FPZ-500 figures with their sources — assisted by an Orazaka Studio, checked against your ledger, filed by you."
+        ]
+      },
+      "privacy": {
+        "eyebrow": "Loi 25",
+        "title": "Your clients' files, governed",
+        "lead": "What the shop needs, nothing more — and an answer the day a client asks.",
+        "points": [
+          "Consent per purpose (the service, reminders, marketing), never pre-ticked, every decision kept.",
+          "Erasure blanks every personal field and keeps the invoices the tax law requires.",
+          "Data in Canada, encrypted at rest."
+        ]
+      }
+    }
+  },
+  "privacy": {
+    "title": "Privacy",
+    "updated": "Updated {date}",
+    "body": "Akinaza is in development: only the accounts our team creates can sign in. A shop's data — its clients, appointments, invoices and tax ledger — is kept in Akinaza's database in Canada, encrypted at rest, visible to that shop only. Client consent is recorded per purpose (Loi 25) and can be withdrawn; a client's personal information can be erased, while the invoices tax law requires are kept. When a merchant asks to prepare a tax return, the period's ledger is sent to Orazaka, Krizaka's engine, over HTTPS; nothing is filed or transmitted to any government. Nothing is sold or shared. To ask a question or have your data removed, use the contact form."
+  },
+  "console": {
+    "meta": {
+      "signIn": "Sign in",
+      "today": "Today",
+      "admin": "Administration"
+    },
+    "signIn": {
+      "promise": "Your shop, for less — Loi 25 by design.",
+      "asideFooter": "Every invoice, to the cent.",
+      "title": "Sign in",
+      "description": "With the account our team gave you.",
+      "email": "E-mail",
+      "password": "Password",
+      "submit": "Sign in",
+      "closedTitle": "Sign-up is closed.",
+      "closed": "Akinaza is in development; accounts are created by our team.",
+      "contact": "Talk to us",
+      "legalPrefix": "By signing in you accept the ",
+      "privacy": "privacy notice"
+    },
+    "adminSignIn": {
+      "promise": "The administration of Akinaza.",
+      "asideFooter": "A session, the administrator role and an allowed address.",
+      "title": "Administration",
+      "description": "Administrators only.",
+      "dev": "DEV"
+    },
+    "shell": {
+      "skip": "Skip to content",
+      "title": "Your shop",
+      "admin": "Administration",
+      "overview": "Overview",
+      "dev": "DEV",
+      "closeMenu": "Close the menu",
+      "openMenu": "Open the menu",
+      "collapse": "Fold the menu",
+      "expand": "Unfold the menu",
+      "signedInAs": "Signed in as {email}",
+      "devBuild": "DEV · v{version}",
+      "language": "Language",
+      "otherLanguage": "Français",
+      "theme": "Theme",
+      "signOut": "Sign out",
+      "today": "Today"
+    },
+    "admin": {
+      "health": "Health",
+      "version": "Version",
+      "database": "Database",
+      "realtime": "Realtime",
+      "up": "Up",
+      "down": "Down",
+      "counts": "Counts",
+      "accounts": "Accounts",
+      "admins": "administrators",
+      "suspended": "suspended",
+      "shops": "Shops",
+      "clients": "Client files",
+      "today": "Appointments today",
+      "invoices": "Invoices"
+    },
+    "errors": {
+      "INVALID_CREDENTIALS": "Wrong e-mail or password.",
+      "SUSPENDED": "This account is suspended.",
+      "SIGNUP_CLOSED": "Sign-up is closed.",
+      "RATE_LIMITED": "Too many attempts. Try again in a moment.",
+      "UNAUTHENTICATED": "Your session has ended. Sign in again.",
+      "FORBIDDEN": "Not allowed.",
+      "IP_NOT_ALLOWED": "Not from this address.",
+      "NOT_FOUND": "Not found.",
+      "BAD_REQUEST": "The request is not valid.",
+      "INTERNAL": "Something went wrong.",
+      "NETWORK": "The network did not answer.",
+      "UNKNOWN": "Something went wrong."
+    },
+    "today": {
+      "day": "{date} · {count} appointments",
+      "appointments": "Today's appointments",
+      "none": "No appointment today.",
+      "noShopTitle": "No shop yet",
+      "noShop": "Shops are set up by our team while Akinaza is in development.",
+      "preview": "Next invoice (preview)",
+      "lastInvoice": "Latest invoice",
+      "notIssued": "Not issued",
+      "issued": "Issued",
+      "noInvoice": "No invoice yet.",
+      "table": {
+        "caption": "Today's appointments",
+        "time": "Time",
+        "client": "Client",
+        "service": "Service",
+        "staff": "With",
+        "status": "Status",
+        "walkIn": "Walk-in"
+      },
+      "statuses": {
+        "booked": "Booked",
+        "done": "Done",
+        "cancelled": "Cancelled",
+        "noShow": "No-show"
+      },
+      "invoice": {
+        "gstNo": "GST No.",
+        "qstNo": "QST No.",
+        "smallSupplier": "Small supplier — no GST or QST charged.",
+        "number": "Invoice",
+        "date": "Date",
+        "lines": "Lines",
+        "subtotal": "Subtotal",
+        "gst": "GST (5 %)",
+        "qst": "QST (9.975 %)",
+        "total": "Total"
+      }
+    }
+  }
+}

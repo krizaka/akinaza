@@ -1,0 +1,6 @@
+Votre rendez-vous : {service} avec {staff}, le {date} à {time}.
+
+{shop}
+{address}
+
+Pour le déplacer ou l'annuler, répondez à ce message ou appelez la boutique.
