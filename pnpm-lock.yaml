@@ -39,14 +39,14 @@ importers:
         specifier: ^0.2.1
         version: 0.2.1(pg@8.23.1)
       '@krizaka/tailwind':
-        specifier: ^3.15.0
-        version: 3.15.0(@krizaka/tokens@3.15.0)(@krizaka/ui@3.15.0)(tailwindcss@4.3.3)
+        specifier: ^3.18.0
+        version: 3.18.0(@krizaka/tokens@3.18.0)(@krizaka/ui@3.18.0)(tailwindcss@4.3.3)
       '@krizaka/tokens':
-        specifier: ^3.15.0
-        version: 3.15.0
+        specifier: ^3.18.0
+        version: 3.18.0
       '@krizaka/ui':
-        specifier: ^3.15.0
-        version: 3.15.0(@krizaka/query@0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.15.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)
+        specifier: ^3.18.0
+        version: 3.18.0(@krizaka/query@0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.18.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)
       drizzle-orm:
         specifier: ^0.45.4
         version: 0.45.4(@types/pg@8.23.1)(pg@8.23.1)
@@ -1080,24 +1080,24 @@ packages:
       pg:
         optional: true
 
-  '@krizaka/tailwind@3.15.0':
-    resolution: {integrity: sha512-Zd6eHP63ZUDa/k844PGyUHWqFGcxy++dFVHXMeNWcFbathKq4siJlAW40kXAfNSE+XH6imFZLVCPzFg8LBXBcQ==}
+  '@krizaka/tailwind@3.18.0':
+    resolution: {integrity: sha512-nMre3GkvnA+w40JjADS+qM32glj4qgLTHH2ijOlFBHkl08ejJzprQwoATFF94+tcavqxVxhATR5lnx2lqOAoEA==}
     engines: {node: '>=22'}
     peerDependencies:
-      '@krizaka/tokens': ^3.15.0
-      '@krizaka/ui': ^3.15.0
+      '@krizaka/tokens': ^3.18.0
+      '@krizaka/ui': ^3.18.0
       tailwindcss: ^4.1
 
-  '@krizaka/tokens@3.15.0':
-    resolution: {integrity: sha512-rU+WIPYWjzMpsKYkdFBNULKOqSSwFi2QGmBmJ6ffpEvszFBX4AFblJvkWcGIT3I5KKDP8v7v+Z3wo5NeXAjODw==}
+  '@krizaka/tokens@3.18.0':
+    resolution: {integrity: sha512-/Ebc4GJwWq54jpZskmZPGtbVD7z5Fsa0n/XxXNHAUS8OTENy6ZDOkzVJoB/CO+ISUPwD7Hu69/gk60meTytpdg==}
     engines: {node: '>=22'}
 
-  '@krizaka/ui@3.15.0':
-    resolution: {integrity: sha512-XIJ395CoX+gdMI1jx0L/s8bzTgsqgMveHAGaU2kfjtNplJcEYzK0iZ2bM/iH0RA3VYvqioRN9OgZTc+Mn9jNyg==}
+  '@krizaka/ui@3.18.0':
+    resolution: {integrity: sha512-vkhhrvdDYwNQVyFvClyfzmJaYYug5BAhW9KJFj6iHVga5dWLrMk8OQYcS+kAn9ckIQu47ltipECkd8T7yU+leg==}
     engines: {node: '>=22'}
     peerDependencies:
       '@krizaka/query': '>=0.2.1'
-      '@krizaka/tailwind': '>=3.15.0'
+      '@krizaka/tailwind': '>=3.18.0'
       '@maplibre/maplibre-react-native': '>=11'
       '@shopify/flash-list': '>=2'
       expo-camera: '>=16'
@@ -1105,6 +1105,7 @@ packages:
       expo-video: '>=2'
       hls.js: '>=1.5'
       maplibre-gl: '>=6'
+      pdfjs-dist: '>=5'
       react: '>=18'
       react-dom: '>=18'
       react-native: '>=0.76'
@@ -1128,6 +1129,8 @@ packages:
       hls.js:
         optional: true
       maplibre-gl:
+        optional: true
+      pdfjs-dist:
         optional: true
       react-dom:
         optional: true
@@ -5566,19 +5569,19 @@ snapshots:
     optionalDependencies:
       pg: 8.23.1
 
-  '@krizaka/tailwind@3.15.0(@krizaka/tokens@3.15.0)(@krizaka/ui@3.15.0)(tailwindcss@4.3.3)':
+  '@krizaka/tailwind@3.18.0(@krizaka/tokens@3.18.0)(@krizaka/ui@3.18.0)(tailwindcss@4.3.3)':
     dependencies:
-      '@krizaka/tokens': 3.15.0
-      '@krizaka/ui': 3.15.0(@krizaka/query@0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.15.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)
+      '@krizaka/tokens': 3.18.0
+      '@krizaka/ui': 3.18.0(@krizaka/query@0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.18.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)
       tailwindcss: 4.3.3
 
-  '@krizaka/tokens@3.15.0': {}
+  '@krizaka/tokens@3.18.0': {}
 
-  '@krizaka/ui@3.15.0(@krizaka/query@0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.15.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)':
+  '@krizaka/ui@3.18.0(@krizaka/query@0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.18.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)':
     dependencies:
       '@krizaka/intl': 0.2.1
       '@krizaka/pacer': 0.1.0(react@19.3.1)
-      '@krizaka/tokens': 3.15.0
+      '@krizaka/tokens': 3.18.0
       '@protomaps/basemaps': 5.7.2
       '@tanstack/highlight': 1.1.0
       '@tanstack/markdown': 1.0.0(react@19.3.1)
@@ -5595,7 +5598,7 @@ snapshots:
       tailwind-variants: 3.3.1(tailwindcss@4.3.3)
     optionalDependencies:
       '@krizaka/query': 0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1)
-      '@krizaka/tailwind': 3.15.0(@krizaka/tokens@3.15.0)(@krizaka/ui@3.15.0)(tailwindcss@4.3.3)
+      '@krizaka/tailwind': 3.18.0(@krizaka/tokens@3.18.0)(@krizaka/ui@3.18.0)(tailwindcss@4.3.3)
       react-dom: 19.3.1(react@19.3.1)
       tailwindcss: 4.3.3
     transitivePeerDependencies:
