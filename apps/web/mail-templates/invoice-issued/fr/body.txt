@@ -1,0 +1,5 @@
+Merci de votre visite.
+
+Facture {number} : {total}, dont TPS {gst} et TVQ {qst}.
+
+Votre facture : {url}

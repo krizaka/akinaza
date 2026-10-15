@@ -1,0 +1,22 @@
+{
+  "name": "@akinaza/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Akinaza for iOS and Android (Expo SDK 57) — a skeleton: the brand, the theme and the first screen. It joins the pnpm workspace in the mobile phase (A5).",
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "ios": "expo run:ios",
+    "android": "expo run:android"
+  },
+  "dependencies": {
+    "@akinaza/core": "workspace:*",
+    "@krizaka/tokens": "^3.15.0",
+    "@krizaka/ui": "^3.15.0",
+    "expo": "~57.0.27",
+    "expo-router": "~57.0.25",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-svg": "15.15.4"
+  }
+}

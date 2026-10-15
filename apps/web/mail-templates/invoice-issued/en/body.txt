@@ -1,0 +1,5 @@
+Thank you for your visit.
+
+Invoice {number}: {total}, of which GST {gst} and QST {qst}.
+
+Your invoice: {url}

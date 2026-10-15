@@ -1,0 +1,6 @@
+Your appointment: {service} with {staff}, {date} at {time}.
+
+{shop}
+{address}
+
+To change or cancel it, reply to this message or call the shop.

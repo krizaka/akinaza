@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Akinaza",
+    "slug": "akinaza",
+    "scheme": "akinaza",
+    "version": "0.1.0",
+    "userInterfaceStyle": "automatic",
+    "ios": { "bundleIdentifier": "com.krizaka.akinaza" },
+    "android": { "package": "com.krizaka.akinaza" },
+    "plugins": ["expo-router"]
+  }
+}

@@ -1,0 +1,1 @@
+Rappel : {service} chez {shop}, le {date} à {time}
