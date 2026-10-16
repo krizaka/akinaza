@@ -18,6 +18,11 @@ describe("money in whole cents", () => {
     expect(parseCents("19.99")).toBe(1999);
     expect(parseCents("19,9")).toBe(1990);
     expect(parseCents("-3")).toBe(-300);
+    expect(parseCents("1 250,50")).toBe(125050);
+    expect(parseCents("10 000 $")).toBe(1000000);
+    expect(parseCents("1 234,50 $")).toBe(123450);
+    expect(parseCents("1\u00A0234,50 $")).toBe(123450);
+    expect(parseCents("1\u202F234,50 $")).toBe(123450);
     expect(() => parseCents("1.999")).toThrow();
     expect(formatCents(-1999)).toBe("-19.99");
   });
@@ -55,6 +60,8 @@ describe("GST 5 % and QST 9.975 % on known invoices", () => {
     expect(invoiceTotals([{ ...standard(5_000), discountCents: 1_000 }], { registrant: true })).toMatchObject({ subtotalCents: 4_000, gstCents: 200, qstCents: 399 });
     expect(() => invoiceTotals([standard(10.5)], { registrant: true })).toThrow();
     expect(() => invoiceTotals([standard(100, 1.5)], { registrant: true })).toThrow();
+    expect(() => invoiceTotals([{ ...standard(5_000), discountCents: -100 }], { registrant: true })).toThrow();
+    expect(() => invoiceTotals([{ ...standard(5_000), discountCents: 6_000 }], { registrant: true })).toThrow();
   });
 
   it("knows the shape of the registration numbers", () => {

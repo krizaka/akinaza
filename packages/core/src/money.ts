@@ -20,7 +20,12 @@ export function applyRate(base: Cents, rate: Rate): Cents {
 
 /** A whole number of cents from a decimal string (`"19.99"` → 1999), refusing anything that is not exactly money. */
 export function parseCents(value: string): Cents {
-  const m = /^(-)?(\d+)(?:[.,](\d{1,2}))?$/.exec(value.trim());
+  const sanitized = value
+    .trim()
+    .replace(/[\s\u00A0\u202F]/g, "")
+    .replace(/^\$/, "")
+    .replace(/\$$/, "");
+  const m = /^(-)?(\d+)(?:[.,](\d{1,2}))?$/.exec(sanitized);
   if (!m) throw new RangeError(`not an amount: ${value}`);
   const cents = Number(m[2]) * 100 + Number((m[3] ?? "").padEnd(2, "0"));
   return m[1] ? -cents : cents;

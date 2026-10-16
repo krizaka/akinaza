@@ -43,7 +43,11 @@ export function invoiceTotals(input: readonly LineInput[], shop: { registrant: b
   const lines = input.map((l) => {
     if (!Number.isInteger(l.quantity) || l.quantity === 0) throw new RangeError(`quantity must be a non-zero whole number: ${l.quantity}`);
     if (!Number.isSafeInteger(l.unitPriceCents) || !Number.isSafeInteger(l.discountCents ?? 0)) throw new RangeError("amounts are whole cents");
-    return { ...l, amountCents: l.quantity * l.unitPriceCents - (l.discountCents ?? 0) };
+    const discount = l.discountCents ?? 0;
+    if (discount < 0) throw new RangeError(`discount cannot be negative: ${discount}`);
+    const gross = l.quantity * l.unitPriceCents;
+    if (gross > 0 && discount > gross) throw new RangeError(`discount cannot exceed line total: ${discount} > ${gross}`);
+    return { ...l, amountCents: gross - discount };
   });
   const sum = (c: TaxCategory) => lines.filter((l) => l.category === c).reduce((s, l) => s + l.amountCents, 0);
   const taxableCents = sum("standard");
