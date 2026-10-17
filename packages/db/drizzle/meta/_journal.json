@@ -36,6 +36,13 @@
       "when": 1792400000000,
       "tag": "0004_storefront",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792500000000,
+      "tag": "0005_social_sync",
+      "breakpoints": true
     }
   ]
 }

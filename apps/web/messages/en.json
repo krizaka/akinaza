@@ -169,7 +169,8 @@
       "shop": "Shop setup",
       "clients": "Clients",
       "book": "Book a walk",
-      "report": "Walk report"
+      "report": "Walk report",
+      "connections": "Connections"
     },
     "signIn": {
       "promise": "Your shop, for less — Loi 25 by design.",
@@ -219,7 +220,8 @@
       "audit": "Audit log",
       "bookings": "My bookings",
       "clients": "Clients",
-      "shop": "My shop page"
+      "shop": "My shop page",
+      "connections": "Connections"
     },
     "admin": {
       "health": "Health",
@@ -390,7 +392,13 @@
       "CLIENT_UNREACHABLE": "The owner has no e-mail on file.",
       "NO_REPORT": "Save the report first.",
       "NO_SHOP": "You do not run a shop on Akinaza.",
-      "CONSENT_REQUIRED": "Tick the first box to continue: without it we cannot keep your file."
+      "CONSENT_REQUIRED": "Tick the first box to continue: without it we cannot keep your file.",
+      "SYNC_NO_CONSENT": "Tick the box to allow the connection.",
+      "SYNC_NOT_CONNECTED": "This account is not connected.",
+      "SYNC_RECONNECT": "The access ended. Reconnect the account.",
+      "SYNC_UNAVAILABLE": "The platform did not answer. Try again in a moment.",
+      "SYNC_INVALID": "The platform refused the request.",
+      "SYNC_PROPOSAL_UNKNOWN": "This review is no longer open."
     },
     "today": {
       "day": "{date} · {count} appointments",
@@ -804,6 +812,123 @@
         "invalidChoice": "Choose one of the options.",
         "invalid": "Check this field.",
         "network": "No connection. Check your network and try again."
+      }
+    },
+    "connections": {
+      "title": "Connections",
+      "intro": "Keep your hours, description, phone and website the same everywhere customers look. Akinaza is your reference: nothing changes on a platform or on your page without your say.",
+      "privacy": "You connect your own account. We store the access securely, read only what is listed on each card, and you can disconnect at any time (we also revoke the access at the platform). Nothing is shared with anyone else.",
+      "off": "Connections are not switched on in this environment.",
+      "status": {
+        "connected": "Connected",
+        "needs_reconnect": "Reconnect needed",
+        "disconnected": "Not connected",
+        "soon": "Coming soon"
+      },
+      "platforms": {
+        "google": {
+          "name": "Google Business Profile",
+          "what": "Your listing on Google Search and Maps."
+        },
+        "facebook": {
+          "name": "Facebook Page",
+          "what": "Your business Page on Facebook."
+        },
+        "instagram": {
+          "name": "Instagram",
+          "what": "Your professional account. We read its profile; photos and posts come later."
+        }
+      },
+      "fields": {
+        "hours": "Opening hours",
+        "description": "Description",
+        "phone": "Phone",
+        "email": "E-mail",
+        "website": "Website"
+      },
+      "syncs": "What syncs: {fields}",
+      "account": "Account: {label}",
+      "lastSync": "Last sync {date}",
+      "neverSynced": "Not synced yet",
+      "actions": {
+        "connect": "Connect",
+        "import": "Import from {platform}",
+        "publish": "Publish to {platform}",
+        "disconnect": "Disconnect",
+        "disconnectConfirm": "Disconnect {platform}? Press again",
+        "reconnect": "Reconnect",
+        "cancel": "Cancel"
+      },
+      "consent": {
+        "title": "Before you connect {platform}",
+        "text": "Akinaza will read and, when you ask, update these facts on {platform}: {fields}. It uses your {platform} login, keeps the access encrypted in Canada, and you can disconnect at any time. Nothing is changed without you.",
+        "checkbox": "I allow Akinaza to read and update these facts on my {platform} account.",
+        "continue": "Continue to {platform}"
+      },
+      "flash": {
+        "connected": "{platform} is connected.",
+        "upToDate": "{platform} already matches Akinaza.",
+        "imported": {
+          "one": "{count} difference to review below.",
+          "other": "{count} differences to review below."
+        },
+        "published": "Published to {platform}: {fields}.",
+        "nothingToPublish": "Nothing to publish: {platform} already has your values.",
+        "held": "Waiting for your decision: {fields}.",
+        "disconnected": "{platform} is disconnected."
+      },
+      "proposal": {
+        "title": "Review what {platform} says",
+        "intro": "Choose, field by field. Nothing changes until you apply.",
+        "akinaza": "Akinaza",
+        "theirs": "{platform}",
+        "empty": "(empty)",
+        "useTheirs": "Use {platform}'s",
+        "keepMine": "Keep Akinaza's",
+        "apply": "Apply my choices",
+        "applied": "Your choices are saved.",
+        "state": {
+          "changed": "Differs",
+          "remote_only": "Only on {platform}",
+          "local_only": "Only in Akinaza"
+        },
+        "choose": "Choice for {field}",
+        "pending": "Decide the rest later."
+      },
+      "log": {
+        "title": "What happened",
+        "empty": "Nothing yet.",
+        "outcome": {
+          "connected": "Connected",
+          "disconnected": "Disconnected",
+          "proposed": "Proposed",
+          "accepted": "Took the platform's value",
+          "kept_local": "Kept Akinaza's value",
+          "pushed": "Published",
+          "skipped": "Skipped",
+          "failed": "Failed"
+        },
+        "line": "{platform} · {field} · {outcome}",
+        "reason": {
+          "too_long": "Too long for {platform}"
+        }
+      },
+      "guidance": {
+        "title": "Other places",
+        "apple": {
+          "name": "Apple Maps",
+          "text": "Apple has no connection open to businesses like yours. Update your place in Apple Business Connect; use the values below."
+        },
+        "bing": {
+          "name": "Bing Places",
+          "text": "Bing can import your Google listing by itself: keep Google right and choose « Import from Google » in Bing Places."
+        },
+        "yelp": {
+          "name": "Yelp",
+          "text": "Yelp does not let other apps edit your page. Update it in Yelp for Business."
+        },
+        "open": "Open the site",
+        "values": "Your values"
       }
     }
   },
