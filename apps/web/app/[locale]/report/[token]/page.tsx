@@ -10,7 +10,7 @@ import { ButtonLink } from "@/components/ButtonLink";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { db } from "@/lib/db";
-import { asLocale, format, getDictionary, otherLocale } from "@/lib/i18n";
+import { asLocale, format, getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 // A private page: its address is the credential. Never indexed, never cached, no referrer to the next site.
@@ -25,7 +25,7 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
   const lang = locale === "fr" ? "fr-CA" : "en-CA";
   return (
     <>
-      <SiteHeader locale={locale} current="home" switchHref={`/${otherLocale(locale)}/report/${token}`} />
+      <SiteHeader locale={locale} current="home" path={`/${locale}/report/${token}`} />
       <main id="content" className="pt-20">
         {report ? (
           <>

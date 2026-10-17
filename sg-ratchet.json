@@ -6,7 +6,7 @@
     "no-env-in-domain": 4,
     "no-get-time-arithmetic": 1,
     "no-get-time-difference": 1,
-    "no-hand-made-language-switch": 3,
+    "no-hand-made-language-switch": 0,
     "no-hand-made-nav": 0,
     "no-hand-ms-days": 0,
     "no-hand-ms-hours": 0,

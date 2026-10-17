@@ -8,7 +8,7 @@ import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";
-import { asLocale, getDictionary, otherLocale } from "@/lib/i18n";
+import { asLocale, getDictionary } from "@/lib/i18n";
 import { buildStorefront, resolveSelection } from "@/lib/storefront";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +39,7 @@ export default async function ShopPage({ params, searchParams }: { params: Promi
   const view = buildStorefront({ page, locale, now, selection, slots });
   return (
     <>
-      <SiteHeader locale={locale} current="home" switchHref={`/${otherLocale(locale)}/s/${slug}`} />
+      <SiteHeader locale={locale} current="home" path={`/${locale}/s/${slug}`} />
       <Storefront view={view} locale={locale} />
       <SiteFooter locale={locale} />
     </>

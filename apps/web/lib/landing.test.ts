@@ -90,3 +90,14 @@ describe("the tour plays the walker journey's recording, stills first", () => {
   });
 });
 
+
+describe("the bar's language switch", () => {
+  it("is the family's (a globe and the current code), in the bar and in the phone panel's preferences — never a pill naming the other language", () => {
+    const bar = read("components/SiteChrome.tsx");
+    expect(bar).toContain("NavBar.Language");
+    expect(bar).toContain("NavBar.MobilePreferences");
+    expect(bar).toContain("languagesFor(");
+    expect(bar).not.toContain("hrefLang");
+    expect(bar).not.toContain("otherLocale");
+  });
+});
