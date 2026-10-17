@@ -66,3 +66,20 @@ Feedback: the pinned Discussion of the repository.
 - **Refused**: showing the notes on the day card; letting the client re-read them.
 - **Cost**: one tap more at the door; a client who mistyped must retype (the export gives them their data).
 - **Wrong if**: walkers photograph the notes — then add a time-limited reveal.
+
+## The landing tells one story in five sections, and its proof is the walker's real day
+
+- **Decision**: the home is five sections: the promise (« Your shop, all in one place ») with the dog walker's real
+  journey on dev.akinaza.com in a phone (StepShowcase: the shop's page, the booking, the walker's day, the report, the
+  client's space; captions in the page), three outcomes (each card a way in, the first to the demo shop's real booking
+  page), how it works in three steps with the beaver's promise from the film, trust (Loi 25 and Canada, « prepared, never
+  filed », open source, not for restaurants and bars, Orazaka named once as planned, the status from dev-preview.json),
+  the closing call. The bar has one « Product » menu and no version chip; the footer is @krizaka/ui's SiteFooter.
+- **Problem**: the old home spoke of « independent shops » in general, in nine blocks; the first real proof (the walker's
+  journey) was nowhere on it.
+- **Principle**: show the product doing one real job before listing what it can do (recognition over recall; progressive
+  disclosure).
+- **Refused**: a hand-made invoice mock-up in the hero, stills with burned-in captions, a claim that the tax assistant
+  runs on Orazaka before it does.
+- **Cost**: stills until the journey's recording lands (then the same steps take its clips); the app is captured in French.
+- **Signal we are wrong**: visitors who are not dog walkers think Akinaza is only for dog walkers.
