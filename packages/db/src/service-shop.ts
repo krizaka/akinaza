@@ -305,6 +305,8 @@ export const mediaInputSchema = z.object({
   wide: z.boolean().default(false),
 });
 export type MediaInput = z.input<typeof mediaInputSchema>;
+/** What the owner sends: a cover (or none) and up to twelve gallery pictures. */
+export const shopMediaInputSchema = z.object({ cover: mediaInputSchema.nullish(), gallery: z.array(mediaInputSchema).max(12).optional() });
 
 /** Replaces the shop's cover and gallery (the files are on the media CDN; only their https addresses are kept). */
 export async function saveShopMedia(db: Db, shopId: string, input: { cover?: MediaInput | null; gallery?: MediaInput[] }): Promise<void> {
@@ -527,4 +529,11 @@ export async function ownClient(db: Db, accountId: string, clientId: string) {
 export async function shopClient(db: Db, shopId: string, clientId: string) {
   const [row] = await db.select().from(clients).where(and(eq(clients.id, clientId), eq(clients.shopId, shopId), isNull(clients.erasedAt)));
   return row ?? null;
+}
+
+/** The shop's cover and gallery as the owner edits them (a draft shop included: the public read needs a published one). */
+export async function shopMediaOf(db: Db, shopId: string): Promise<{ cover: PublicMedia | null; gallery: PublicMedia[] }> {
+  const rows = await db.select().from(shopMedia).where(eq(shopMedia.shopId, shopId)).orderBy(asc(shopMedia.position));
+  const one = (m: typeof shopMedia.$inferSelect): PublicMedia => ({ id: m.id, url: m.url, webmUrl: m.webmUrl, mp4Url: m.mp4Url, altFr: m.altFr, altEn: m.altEn, captionFr: m.captionFr, captionEn: m.captionEn, wide: m.wide });
+  return { cover: rows.filter((m) => m.role === MediaRole.Cover).map(one)[0] ?? null, gallery: rows.filter((m) => m.role === MediaRole.Gallery).map(one) };
 }
