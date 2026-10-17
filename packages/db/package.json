@@ -8,7 +8,8 @@
     ".": "./src/index.ts",
     "./schema": "./src/schema.ts",
     "./seed": "./src/seed.ts",
-    "./seed-walker": "./src/seed-walker.ts"
+    "./seed-walker": "./src/seed-walker.ts",
+    "./qa-reset-walker": "./src/qa-reset-walker.ts"
   },
   "scripts": {
     "lint": "tsc --noEmit -p tsconfig.json",
