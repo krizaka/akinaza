@@ -1,4 +1,4 @@
-import { slugSchema } from "@akinaza/core";
+import { bookingPreselect, slugSchema } from "@akinaza/core";
 import { clientFilesOf, dependantsOf, publicShop } from "@akinaza/db";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
@@ -6,18 +6,22 @@ import { notFound, redirect } from "next/navigation";
 import { AppFrame } from "@/components/app/AppFrame";
 import { BookingFlow } from "@/components/app/BookingFlow";
 import { pageSession } from "@/lib/access";
+import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
+import { backToHere } from "@/lib/next-url";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 /** Booking needs a sign-in; the person comes back here after it. Join the shop → add a dog → pick a walk. */
-export default async function BookPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+export default async function BookPage({ params, searchParams }: { params: Promise<{ locale: string; slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { locale: raw, slug } = await params;
+  const query = await searchParams;
   const locale = asLocale(raw);
   const session = await pageSession();
-  if (!session) redirect(`/${locale}/sign-in?next=${encodeURIComponent(`/${locale}/s/${slug}/book`)}`);
+  const here = backToHere(`/${locale}/s/${slug}/book`, query);
+  if (!session) redirect(`/${locale}/sign-in?next=${encodeURIComponent(here)}`);
   const parsed = slugSchema.safeParse(slug);
   const page = parsed.success ? await publicShop(db(), parsed.data) : null;
   if (!page) notFound();
@@ -35,6 +39,7 @@ export default async function BookPage({ params }: { params: Promise<{ locale: s
             zones: page.zones.map((z) => ({ id: z.id, name: z.name })),
             client: file ? { id: file.id, fullName: file.fullName } : null,
             dogs: dogs.map((d) => ({ id: d.id, name: d.name })),
+            preselect: bookingPreselect({ service: searchValue(query.service), zone: searchValue(query.zone), start: searchValue(query.start) }, page.services, page.zones),
             timeZone: page.shop.timezone,
             bookingsHref: `/${locale}/app`,
           }}

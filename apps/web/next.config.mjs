@@ -17,6 +17,8 @@ const csp = [
   "img-src 'self' data: blob: https://krizaka-assets.b-cdn.net",
   "media-src 'self' https://krizaka-assets.b-cdn.net",
   "font-src 'self' data:",
+  // The map's engine (MapLibre) runs its worker from a blob; its tiles and glyphs come through this origin (/maps/v1).
+  "worker-src 'self' blob:",
   `connect-src 'self'${production ? "" : " ws: http://localhost:* http://127.0.0.1:*"}`,
   "frame-src 'none'",
   "object-src 'none'",
@@ -53,6 +55,10 @@ const nextConfig = {
   outputFileTracingIncludes: { "/*": ["../../packages/db/drizzle/**"] },
   // The pool stays a Node module, required at run time.
   serverExternalPackages: ["pg"],
+  // The basemap of the shop pages: Protomaps tiles on the media CDN, read through this origin (the CDN sends no CORS headers).
+  async rewrites() {
+    return [{ source: "/maps/v1/:path*", destination: "https://krizaka-assets.b-cdn.net/maps/v1/:path*" }];
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
