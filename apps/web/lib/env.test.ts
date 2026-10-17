@@ -24,6 +24,12 @@ describe("env", () => {
     expect(readEnv({}).AI_API_URL).toBe("https://dev.orazaka.com/edge");
   });
 
+  it("keeps the connections off by default, and never fake in production", () => {
+    expect(readEnv({}).APP_SOCIAL_SYNC).toBe("off");
+    expect(() => readEnv({ APP_SOCIAL_SYNC: "on" })).toThrow();
+    expect(productionProblems(readEnv({ ...PROD, APP_SOCIAL_SYNC: "fake" }))).toEqual(["APP_SOCIAL_SYNC=fake is for development and tests, never production"]);
+  });
+
   it("refuses a production start without its secrets, naming them, never showing them", () => {
     expect(() => assertProductionEnv(PROD)).not.toThrow();
     const problems = productionProblems(readEnv({ NODE_ENV: "production", AI_API_KEY: "sk-not-orazaka", DATABASE_URL: PROD.DATABASE_URL }));

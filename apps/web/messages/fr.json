@@ -169,7 +169,8 @@
       "shop": "Ma boutique",
       "clients": "Clients",
       "book": "Réserver une promenade",
-      "report": "Rapport de promenade"
+      "report": "Rapport de promenade",
+      "connections": "Connexions"
     },
     "signIn": {
       "promise": "Votre boutique, pour moins cher — Loi 25 dès la conception.",
@@ -218,7 +219,8 @@
       "audit": "Journal d'audit",
       "bookings": "Mes réservations",
       "clients": "Clients",
-      "shop": "Ma page boutique"
+      "shop": "Ma page boutique",
+      "connections": "Connexions"
     },
     "admin": {
       "health": "Santé",
@@ -389,7 +391,13 @@
       "CLIENT_UNREACHABLE": "Le propriétaire n'a pas de courriel au dossier.",
       "NO_REPORT": "Enregistrez d'abord le rapport.",
       "NO_SHOP": "Vous n'avez pas de boutique sur Akinaza.",
-      "CONSENT_REQUIRED": "Cochez la première case pour continuer : sans cela, nous ne pouvons pas tenir votre dossier."
+      "CONSENT_REQUIRED": "Cochez la première case pour continuer : sans cela, nous ne pouvons pas tenir votre dossier.",
+      "SYNC_NO_CONSENT": "Cochez la case pour autoriser la connexion.",
+      "SYNC_NOT_CONNECTED": "Ce compte n'est pas connecté.",
+      "SYNC_RECONNECT": "L'accès a pris fin. Reconnectez le compte.",
+      "SYNC_UNAVAILABLE": "La plateforme n'a pas répondu. Réessayez dans un instant.",
+      "SYNC_INVALID": "La plateforme a refusé la demande.",
+      "SYNC_PROPOSAL_UNKNOWN": "Cet examen n'est plus ouvert."
     },
     "today": {
       "day": "{date} · {count} rendez-vous",
@@ -803,6 +811,123 @@
         "invalidChoice": "Choisissez l'une des options.",
         "invalid": "Vérifiez ce champ.",
         "network": "Pas de connexion. Vérifiez votre réseau et réessayez."
+      }
+    },
+    "connections": {
+      "title": "Connexions",
+      "intro": "Gardez vos heures, votre description, votre téléphone et votre site identiques partout où vos clients vous cherchent. Akinaza est votre référence : rien ne change sur une plateforme ni sur votre page sans votre accord.",
+      "privacy": "Vous connectez votre propre compte. L'accès est conservé de façon sécurisée, nous lisons seulement ce qui est indiqué sur chaque carte, et vous pouvez vous déconnecter en tout temps (nous révoquons aussi l'accès auprès de la plateforme). Rien n'est partagé avec personne d'autre.",
+      "off": "Les connexions ne sont pas activées dans cet environnement.",
+      "status": {
+        "connected": "Connecté",
+        "needs_reconnect": "Reconnexion requise",
+        "disconnected": "Non connecté",
+        "soon": "Bientôt"
+      },
+      "platforms": {
+        "google": {
+          "name": "Profil d'entreprise Google",
+          "what": "Votre fiche dans la recherche Google et Maps."
+        },
+        "facebook": {
+          "name": "Page Facebook",
+          "what": "La Page de votre entreprise sur Facebook."
+        },
+        "instagram": {
+          "name": "Instagram",
+          "what": "Votre compte professionnel. Nous lisons son profil ; photos et publications viendront plus tard."
+        }
+      },
+      "fields": {
+        "hours": "Heures d'ouverture",
+        "description": "Description",
+        "phone": "Téléphone",
+        "email": "Courriel",
+        "website": "Site web"
+      },
+      "syncs": "Ce qui se synchronise : {fields}",
+      "account": "Compte : {label}",
+      "lastSync": "Dernière synchronisation {date}",
+      "neverSynced": "Pas encore synchronisé",
+      "actions": {
+        "connect": "Connecter",
+        "import": "Importer depuis {platform}",
+        "publish": "Publier sur {platform}",
+        "disconnect": "Déconnecter",
+        "disconnectConfirm": "Déconnecter {platform} ? Appuyez encore",
+        "reconnect": "Reconnecter",
+        "cancel": "Annuler"
+      },
+      "consent": {
+        "title": "Avant de connecter {platform}",
+        "text": "Akinaza lira et, à votre demande, mettra à jour ces informations sur {platform} : {fields}. Elle utilise votre connexion {platform}, garde l'accès chiffré au Canada, et vous pouvez vous déconnecter en tout temps. Rien n'est modifié sans vous.",
+        "checkbox": "J'autorise Akinaza à lire et à mettre à jour ces informations sur mon compte {platform}.",
+        "continue": "Continuer vers {platform}"
+      },
+      "flash": {
+        "connected": "{platform} est connecté.",
+        "upToDate": "{platform} correspond déjà à Akinaza.",
+        "imported": {
+          "one": "{count} différence à examiner ci-dessous.",
+          "other": "{count} différences à examiner ci-dessous."
+        },
+        "published": "Publié sur {platform} : {fields}.",
+        "nothingToPublish": "Rien à publier : {platform} a déjà vos valeurs.",
+        "held": "En attente de votre décision : {fields}.",
+        "disconnected": "{platform} est déconnecté."
+      },
+      "proposal": {
+        "title": "Examinez ce que dit {platform}",
+        "intro": "Choisissez, champ par champ. Rien ne change avant que vous appliquiez.",
+        "akinaza": "Akinaza",
+        "theirs": "{platform}",
+        "empty": "(vide)",
+        "useTheirs": "Prendre celle de {platform}",
+        "keepMine": "Garder celle d'Akinaza",
+        "apply": "Appliquer mes choix",
+        "applied": "Vos choix sont enregistrés.",
+        "state": {
+          "changed": "Différent",
+          "remote_only": "Seulement sur {platform}",
+          "local_only": "Seulement dans Akinaza"
+        },
+        "choose": "Choix pour {field}",
+        "pending": "Décidez le reste plus tard."
+      },
+      "log": {
+        "title": "Ce qui s'est passé",
+        "empty": "Rien pour l'instant.",
+        "outcome": {
+          "connected": "Connecté",
+          "disconnected": "Déconnecté",
+          "proposed": "Proposé",
+          "accepted": "Valeur de la plateforme prise",
+          "kept_local": "Valeur d'Akinaza gardée",
+          "pushed": "Publié",
+          "skipped": "Ignoré",
+          "failed": "Échec"
+        },
+        "line": "{platform} · {field} · {outcome}",
+        "reason": {
+          "too_long": "Trop long pour {platform}"
+        }
+      },
+      "guidance": {
+        "title": "Autres endroits",
+        "apple": {
+          "name": "Plans d'Apple",
+          "text": "Apple n'ouvre aucune connexion aux entreprises comme la vôtre. Mettez votre lieu à jour dans Apple Business Connect ; reprenez les valeurs ci-dessous."
+        },
+        "bing": {
+          "name": "Bing Places",
+          "text": "Bing peut importer votre fiche Google lui-même : gardez Google à jour et choisissez « Importer depuis Google » dans Bing Places."
+        },
+        "yelp": {
+          "name": "Yelp",
+          "text": "Yelp ne laisse pas d'autres applications modifier votre page. Mettez-la à jour dans Yelp pour les entreprises."
+        },
+        "open": "Ouvrir le site",
+        "values": "Vos valeurs"
       }
     }
   },

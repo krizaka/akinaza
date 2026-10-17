@@ -5,3 +5,4 @@ export { book, creditNote, eraseClient, issueInvoice, prepareShopReturn, recordC
 export { DataKeyError, openField, parseDataKey, sealField } from "./crypto";
 export * from "./service-shop";
 export * from "./visits";
+export * from "./social-sync";

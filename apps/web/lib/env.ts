@@ -57,6 +57,11 @@ export const envSchema = z.object({
   DATABASE_DIRECT_URL: z.string().optional(),
   /** The realtime bus (booking slots): postgres (LISTEN/NOTIFY, default) or memory (one instance, tests). */
   REALTIME_BUS: z.enum(["postgres", "memory"]).default("postgres"),
+  /**
+   * Connections to Google / Facebook / Instagram (ADR-002): `off` (default), or `fake` (development and tests: an in-memory
+   * platform, no real account). Never `fake` in production. Real connectors arrive with their own AUTH_<PLATFORM>_* keys.
+   */
+  APP_SOCIAL_SYNC: z.enum(["off", "fake"]).default("off"),
   /** The point of sale: off until the SRM scope and the payment provider are decided — and never for a restaurant or a bar. */
   APP_POS_ENABLED: flag,
 });
@@ -76,6 +81,7 @@ export function productionProblems(env: Env): string[] {
   // Without a key the live feed is simply off (the sports feed answers FEED_NOT_CONFIGURED); a key that is set must be Orazaka's.
   if (env.AI_API_KEY && !env.AI_API_KEY.startsWith("oz_")) problems.push("AI_API_KEY must be an Orazaka key (oz_…)");
   if (!validDataKey(env.APP_DATA_ENCRYPTION_KEY)) problems.push("APP_DATA_ENCRYPTION_KEY must be 32 random bytes, base64-encoded");
+  if (env.APP_SOCIAL_SYNC === "fake") problems.push("APP_SOCIAL_SYNC=fake is for development and tests, never production");
   if (env.MAIL_PROVIDER === "mailgun" && !(env.MAIL_API_KEY && env.MAIL_DOMAIN)) problems.push("MAIL_PROVIDER=mailgun needs MAIL_API_KEY and MAIL_DOMAIN");
   if (env.DATABASE_URL && /sslmode=(require|verify)/.test(env.DATABASE_URL) && !env.DATABASE_CA_CERT) problems.push("DATABASE_CA_CERT is required for a TLS database");
   return problems;
