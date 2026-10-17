@@ -1,6 +1,9 @@
 import { sql } from "drizzle-orm";
 import { bigserial, boolean, check, customType, date, index, integer, jsonb, pgTable, smallint, text, time, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
+/** A PostgreSQL `bytea` — a report photo (a resized image, 1.5 MB at most). */
+const bytea = customType<{ data: Buffer }>({ dataType: () => "bytea" });
+
 /**
  * Akinaza's schema. Money is `integer` cents — never `numeric` read as a float, never `real`. What the database itself
  * guarantees (drizzle/0001_rules.sql): no member of the staff is booked twice at once; an issued invoice never changes;
@@ -87,12 +90,33 @@ export const shops = pgTable(
     timezone: text("timezone").notNull().default("America/Toronto"),
     invoicePrefix: text("invoice_prefix").notNull().default("F"),
     nextInvoiceNumber: integer("next_invoice_number").notNull().default(1),
+    /** The public page address (`/{locale}/s/{slug}`); the page is served only when `published`. */
+    slug: text("slug"),
+    published: boolean("published").notNull().default(false),
+    taglineFr: text("tagline_fr"),
+    taglineEn: text("tagline_en"),
     createdAt: created(),
   },
   (t) => [
+    uniqueIndex("shops_slug").on(t.slug).where(sql`${t.slug} IS NOT NULL`),
+    check("shops_slug_format", sql`${t.slug} IS NULL OR (${t.slug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$' AND length(${t.slug}) BETWEEN 3 AND 40)`),
+    check("shops_published_has_slug", sql`NOT ${t.published} OR ${t.slug} IS NOT NULL`),
     check("shops_kind", sql`${t.kind} IN ('salon','bakery','cafe','boutique','services','other')`),
     check("shops_tax_numbers", sql`NOT ${t.registrant} OR (coalesce(${t.gstNumber}, '') ~ '^[0-9]{9}RT[0-9]{4}$' AND coalesce(${t.qstNumber}, '') ~ '^[0-9]{10}TQ[0-9]{4}$')`),
   ],
+);
+
+/** An area a shop serves (Saint-Henri, Griffintown…). A visit belongs to one. */
+export const shopZones = pgTable(
+  "shop_zones",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    position: integer("position").notNull().default(0),
+    active: boolean("active").notNull().default(true),
+  },
+  (t) => [uniqueIndex("shop_zones_name_per_shop").on(t.shopId, sql`lower(${t.name})`), check("shop_zones_name", sql`length(btrim(${t.name})) BETWEEN 1 AND 80`)],
 );
 
 export const staff = pgTable("staff", {
@@ -112,9 +136,11 @@ export const services = pgTable(
     durationMinutes: integer("duration_minutes").notNull(),
     priceCents: integer("price_cents").notNull(),
     taxCategory: text("tax_category", { enum: ["standard", "zeroRated", "exempt"] }).notNull().default("standard"),
+    /** The most dependants one visit takes: 1 = individual, N = group. */
+    capacity: integer("capacity").notNull().default(1),
     active: boolean("active").notNull().default(true),
   },
-  (t) => [check("services_duration", sql`${t.durationMinutes} BETWEEN 5 AND 600`), check("services_price", sql`${t.priceCents} >= 0`), check("services_tax_category", sql`${t.taxCategory} IN ('standard','zeroRated','exempt')`)],
+  (t) => [check("services_capacity", sql`${t.capacity} BETWEEN 1 AND 50`), check("services_duration", sql`${t.durationMinutes} BETWEEN 5 AND 600`), check("services_price", sql`${t.priceCents} >= 0`), check("services_tax_category", sql`${t.taxCategory} IN ('standard','zeroRated','exempt')`)],
 );
 
 /** A staff member's weekly hours (0 = Sunday … 6 = Saturday), in the shop's time zone. */
@@ -144,10 +170,19 @@ export const clients = pgTable(
     phone: text("phone"),
     notes: text("notes"),
     language: text("language", { enum: ["fr", "en"] }).notNull().default("fr"),
+    /** The sign-in account of this person, once they signed in at the shop. */
+    accountId: uuid("account_id").references(() => accounts.id, { onDelete: "set null" }),
+    /** Keys and door codes: AES-256-GCM ciphertext (`v1.<iv>.<tag>.<data>`), never plain text. */
+    accessNotesEnc: text("access_notes_enc"),
     createdAt: created(),
     erasedAt: timestamp("erased_at", { withTimezone: true }),
   },
-  (t) => [index("clients_shop").on(t.shopId), check("clients_erased", sql`${t.erasedAt} IS NULL OR (${t.email} IS NULL AND ${t.phone} IS NULL AND ${t.notes} IS NULL)`)],
+  (t) => [
+    index("clients_shop").on(t.shopId),
+    uniqueIndex("clients_account_per_shop").on(t.shopId, t.accountId).where(sql`${t.accountId} IS NOT NULL`),
+    check("clients_erased", sql`${t.erasedAt} IS NULL OR (${t.email} IS NULL AND ${t.phone} IS NULL AND ${t.notes} IS NULL AND ${t.accessNotesEnc} IS NULL AND ${t.accountId} IS NULL)`),
+    check("clients_access_notes_sealed", sql`${t.accessNotesEnc} IS NULL OR ${t.accessNotesEnc} ~ '^v[0-9]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$'`),
+  ],
 );
 
 /** Every consent decision, per purpose and text version — append-only (trigger). */
@@ -174,9 +209,12 @@ export const appointments = pgTable(
     serviceId: uuid("service_id").notNull().references(() => services.id),
     during: tstzrange("during").notNull(),
     status: text("status", { enum: ["booked", "done", "cancelled", "noShow"] }).notNull().default("booked"),
+    zoneId: uuid("zone_id").references(() => shopZones.id),
+    checkedInAt: timestamp("checked_in_at", { withTimezone: true }),
+    checkedOutAt: timestamp("checked_out_at", { withTimezone: true }),
     createdAt: created(),
   },
-  (t) => [index("appointments_shop").on(t.shopId), check("appointments_status", sql`${t.status} IN ('booked','done','cancelled','noShow')`), check("appointments_bounded", sql`NOT isempty(${t.during}) AND NOT lower_inf(${t.during}) AND NOT upper_inf(${t.during})`)],
+  (t) => [check("appointments_check_order", sql`${t.checkedOutAt} IS NULL OR (${t.checkedInAt} IS NOT NULL AND ${t.checkedOutAt} >= ${t.checkedInAt})`), index("appointments_shop").on(t.shopId), check("appointments_status", sql`${t.status} IN ('booked','done','cancelled','noShow')`), check("appointments_bounded", sql`NOT isempty(${t.during}) AND NOT lower_inf(${t.during}) AND NOT upper_inf(${t.during})`)],
 );
 
 /** An invoice (or a credit note, `creditOf` set): its totals are the sum of its lines plus the taxes, at issue. */
@@ -270,4 +308,117 @@ export const taxLedger = pgTable(
     check("tax_ledger_direction", sql`${t.direction} IN ('collected','credit')`),
     check("tax_ledger_source_direction", sql`(${t.sourceKind} = 'invoice' AND ${t.direction} = 'collected') OR (${t.sourceKind} = 'expense' AND ${t.direction} = 'credit')`),
   ],
+);
+
+/** A staff member's days off (a date, in the shop's zone). */
+export const daysOff = pgTable(
+  "days_off",
+  {
+    id: id(),
+    staffId: uuid("staff_id").notNull().references(() => staff.id, { onDelete: "cascade" }),
+    onDate: date("on_date").notNull(),
+    reason: text("reason"),
+  },
+  (t) => [uniqueIndex("days_off_staff_day").on(t.staffId, t.onDate)],
+);
+
+/** The shop's own rules — data, not constants (version 1 = the defaults); bounds are CHECKs and repeated by @akinaza/core. */
+export const shopRules = pgTable(
+  "shop_rules",
+  {
+    shopId: uuid("shop_id").primaryKey().references(() => shops.id, { onDelete: "cascade" }),
+    cancellationHours: integer("cancellation_hours").notNull().default(24),
+    bookingHorizonDays: integer("booking_horizon_days").notNull().default(60),
+    slotStepMinutes: integer("slot_step_minutes").notNull().default(30),
+    minNoticeMinutes: integer("min_notice_minutes").notNull().default(120),
+    reportLinkDays: integer("report_link_days").notNull().default(30),
+  },
+  (t) => [
+    check("shop_rules_cancellation", sql`${t.cancellationHours} BETWEEN 0 AND 168`),
+    check("shop_rules_horizon", sql`${t.bookingHorizonDays} BETWEEN 1 AND 180`),
+    check("shop_rules_step", sql`${t.slotStepMinutes} BETWEEN 5 AND 240`),
+    check("shop_rules_notice", sql`${t.minNoticeMinutes} BETWEEN 0 AND 10080`),
+    check("shop_rules_link", sql`${t.reportLinkDays} BETWEEN 1 AND 365`),
+  ],
+);
+
+/** What a client brings to a visit (a dog, a cat…). The vertical's details are a validated JSON profile, erased with the client. */
+export const dependants = pgTable(
+  "dependants",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    clientId: uuid("client_id").notNull().references(() => clients.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: ["dog", "cat", "other"] }).notNull(),
+    name: text("name").notNull(),
+    profile: jsonb("profile").notNull().default({}),
+    createdAt: created(),
+    erasedAt: timestamp("erased_at", { withTimezone: true }),
+  },
+  (t) => [index("dependants_client").on(t.clientId), check("dependants_kind", sql`${t.kind} IN ('dog','cat','other')`), check("dependants_erased", sql`${t.erasedAt} IS NULL OR (${t.name} = '—' AND ${t.profile} = '{}'::jsonb)`)],
+);
+
+/** One dependant's seat on a visit. The database counts the seats against the service's capacity (trigger `bookings_rules`). */
+export const bookings = pgTable(
+  "bookings",
+  {
+    id: id(),
+    appointmentId: uuid("appointment_id").notNull().references(() => appointments.id),
+    clientId: uuid("client_id").notNull().references(() => clients.id),
+    dependantId: uuid("dependant_id").notNull().references(() => dependants.id),
+    status: text("status", { enum: ["booked", "cancelled"] }).notNull().default("booked"),
+    createdAt: created(),
+    cancelledAt: timestamp("cancelled_at", { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("bookings_one_seat").on(t.appointmentId, t.dependantId).where(sql`${t.status} = 'booked'`),
+    index("bookings_client").on(t.clientId),
+    check("bookings_status", sql`${t.status} IN ('booked','cancelled')`),
+    check("bookings_cancelled", sql`(${t.status} = 'cancelled') = (${t.cancelledAt} IS NOT NULL)`),
+  ],
+);
+
+/** The report on a booking's visit: a note, a photo and a private link to read them. */
+export const visitReports = pgTable(
+  "visit_reports",
+  {
+    id: id(),
+    bookingId: uuid("booking_id").notNull().unique().references(() => bookings.id),
+    note: text("note").notNull(),
+    photo: bytea("photo"),
+    photoType: text("photo_type", { enum: ["jpeg", "png", "webp"] }),
+    durationMinutes: integer("duration_minutes").notNull(),
+    viewTokenHash: text("view_token_hash").notNull().unique(),
+    tokenExpiresAt: timestamp("token_expires_at", { withTimezone: true }).notNull(),
+    createdAt: created(),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+  },
+  (t) => [
+    check("visit_reports_note", sql`length(${t.note}) BETWEEN 1 AND 1000`),
+    check("visit_reports_photo_type", sql`(${t.photo} IS NULL) = (${t.photoType} IS NULL) AND (${t.photoType} IS NULL OR ${t.photoType} IN ('jpeg','png','webp'))`),
+    check("visit_reports_photo_size", sql`${t.photo} IS NULL OR octet_length(${t.photo}) <= 1572864`),
+    check("visit_reports_duration", sql`${t.durationMinutes} BETWEEN 1 AND 1440`),
+  ],
+);
+
+/** What Akinaza said to whom, rendered; delivered when a mail provider is configured, otherwise it stays `pending`. */
+export const mailOutbox = pgTable(
+  "mail_outbox",
+  {
+    id: id(),
+    toEmail: text("to_email").notNull(),
+    locale: text("locale", { enum: ["fr", "en"] }).notNull().default("fr"),
+    template: text("template").notNull(),
+    subject: text("subject").notNull(),
+    html: text("html").notNull(),
+    bodyText: text("body_text").notNull(),
+    status: text("status", { enum: ["pending", "sent", "failed"] }).notNull().default("pending"),
+    attempts: integer("attempts").notNull().default(0),
+    lastError: text("last_error"),
+    relatedKind: text("related_kind"),
+    relatedId: uuid("related_id"),
+    createdAt: created(),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+  },
+  (t) => [index("mail_outbox_related").on(t.relatedKind, t.relatedId), check("mail_outbox_status", sql`${t.status} IN ('pending','sent','failed')`), check("mail_outbox_locale", sql`${t.locale} IN ('fr','en')`)],
 );

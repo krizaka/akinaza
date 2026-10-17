@@ -2,7 +2,7 @@
   "name": "@akinaza/db",
   "version": "0.1.0",
   "private": true,
-  "description": "Akinaza's PostgreSQL 16 schema (Drizzle, versioned SQL migrations): shops, staff, services, schedules, clients and their Loi 25 consents, appointments (no double booking, by the database), invoices and payments, expenses, the append-only GST/QST ledger that must balance every invoice \u2014 tested on a real PostgreSQL.",
+  "description": "Akinaza's PostgreSQL 16 schema (Drizzle, versioned SQL migrations): shops, staff, services, schedules, clients and their Loi 25 consents, appointments (no double booking, by the database), invoices and payments, expenses, the append-only GST/QST ledger that must balance every invoice — tested on a real PostgreSQL.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -18,16 +18,19 @@
   },
   "dependencies": {
     "@akinaza/core": "workspace:*",
+    "@date-fns/tz": "^1.5.0",
+    "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.4",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@testcontainers/postgresql": "^12.2.1",
     "@types/node": "^24.19.2",
     "@types/pg": "^8.15.6",
     "drizzle-kit": "^0.31.11",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.11",
-    "tsx": "^4.23.15"
+    "vitest": "^4.1.11"
   }
 }

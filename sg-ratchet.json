@@ -1,6 +1,6 @@
 {
   "counters": {
-    "no-ambient-clock": 6,
+    "no-ambient-clock": 5,
     "no-db-in-service-or-rules": 0,
     "no-enum-string-compare": 6,
     "no-env-in-domain": 4,
