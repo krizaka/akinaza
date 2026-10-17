@@ -36,7 +36,7 @@ describe("the walker persona reset", () => {
     const before = await clientBookings(t.db, camille);
 
     const result = await resetWalkerPersona(t.db, shop.id, NOW);
-    expect(result.cancelled).toBeGreaterThanOrEqual(3); // Luna and Érable's group walk, plus the earlier ones
+    expect(result.cancelled).toBe(2); // the seeded group walk: Luna and Érable
     expect(result.recreated).toBe(5);
 
     const clients = await shopClients(t.db, shop.id);
