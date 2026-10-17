@@ -14,7 +14,7 @@ const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${production ? "" : " 'unsafe-eval'"}`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://krizaka-assets.b-cdn.net",
   "font-src 'self' data:",
   `connect-src 'self'${production ? "" : " ws: http://localhost:* http://127.0.0.1:*"}`,
   "frame-src 'none'",

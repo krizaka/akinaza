@@ -8,6 +8,7 @@
     "brandHome": "Akinaza, accueil",
     "navLabel": "Akinaza",
     "nav": {
+      "product": "Produit",
       "how": "Comment ça marche",
       "invoice": "Factures et taxes"
     },
@@ -16,144 +17,139 @@
     "themeToggle": "Thème",
     "languageLabel": "Langue",
     "otherLanguage": "English",
-    "dev": "DEV · v{version}",
     "devNotice": "Environnement de développement — accès sur invitation",
-    "footer": "Akinaza est <b>un produit Krizaka</b> — fait à Montréal, open source (Apache-2.0).",
     "sourceCode": "Code source",
     "contact": "Contact",
-    "legal": "Confidentialité"
+    "legal": "Confidentialité",
+    "menu": {
+      "label": "Menu",
+      "home": {
+        "title": "Vue d'ensemble",
+        "text": "Ce qu'Akinaza fait pour un commerce de services."
+      },
+      "how": {
+        "title": "Comment ça marche",
+        "text": "Réserver, travailler la journée, tenir les livres."
+      },
+      "shop": {
+        "title": "La boutique de démonstration",
+        "text": "La vraie page de réservation d'un promeneur de chiens, sur dev."
+      }
+    },
+    "footerLabel": "Pied de page"
   },
   "landing": {
-    "mark": "Akinaza · en développement",
-    "title": "Tenez votre boutique, pour moins cher.",
-    "lead": "Rendez-vous, dossiers clients, factures bilingues avec TPS et TVQ, et votre déclaration de taxes préparée — un seul outil pour une boutique indépendante du Québec, pensé pour la Loi 25, vos données au Canada.",
-    "facts": {
-      "canada": "Données au Canada · Loi 25 dès la conception",
-      "license": "Apache-2.0",
-      "closed": "Dev · inscriptions fermées"
+    "eyebrow": "Akinaza · pour les commerces de services indépendants du Québec",
+    "title": "Votre commerce, tout au même endroit.",
+    "lead": "Les réservations, la journée de votre équipe, les rapports aux clients, des factures bilingues avec TPS et TVQ, et votre déclaration de taxes préparée. Première preuve : un promeneur de chiens à Saint-Henri.",
+    "talk": "Parler d'Akinaza avec nous",
+    "seeShop": "Voir la boutique de démo",
+    "status": {
+      "development": "En développement : les inscriptions sont fermées pendant que nous le bâtissons avec les premiers commerces.",
+      "preview": "Aperçu de développement : inscriptions fermées, accès sur invitation."
     },
-    "talk": "Nous écrire",
-    "signIn": "Se connecter",
-    "visualLabel": "Un exemple de facture, calculé par le code de taxes d'Akinaza",
-    "visual": {
-      "title": "Facture F-00001 · Salon Laurier",
-      "subtotal": "Sous-total",
-      "gst": "TPS 5 %",
-      "qst": "TVQ 9,975 %",
-      "total": "Total",
-      "note": "La TPS et la TVQ une seule fois sur le sous-total taxable, arrondies au cent — le même code émet chaque vraie facture."
+    "statusChip": {
+      "development": "En développement",
+      "preview": "Aperçu de développement"
     },
-    "reasonsEyebrow": "Pourquoi",
-    "reasonsTitle": "Ce qui coûte trop cher à une petite boutique",
-    "trap": "Le piège",
-    "more": "Voir comment",
-    "reasons": {
-      "book": {
-        "title": "Cinq outils, cinq factures",
-        "trap": "Une appli pour les rendez-vous, une pour la caisse, un tableur pour les taxes — chacun son abonnement et sa copie de vos clients."
-      },
-      "invoice": {
-        "title": "Les taxes à la main",
-        "trap": "Trois soirées par trimestre à additionner la TPS et la TVQ des reçus, en espérant que les totaux concordent."
-      },
-      "privacy": {
-        "title": "Des dossiers clients sans règles",
-        "trap": "Des numéros dans un cahier, du marketing sans consentement, et pas de réponse quand un client demande d'être effacé."
+    "tour": {
+      "label": "La journée d'un promeneur de chiens sur Akinaza, captée sur la vraie application",
+      "play": "Lire les étapes",
+      "pause": "Mettre les étapes en pause",
+      "step": "Étape {n} sur {total}",
+      "captured": "Capté sur dev.akinaza.com (interface en français) le 17 octobre 2026 · une boutique de démonstration, aucune personne réelle",
+      "steps": {
+        "shop": {
+          "title": "La page de la boutique",
+          "text": "Services, prix, zones et heures libres, en public.",
+          "alt": "La page publique de Pattes de Saint-Henri : ses services et ses prix."
+        },
+        "book": {
+          "title": "La cliente réserve",
+          "text": "Sofia choisit une promenade en groupe et ses deux chiens.",
+          "alt": "Le formulaire de réservation : le service, la zone, les chiens, les heures libres."
+        },
+        "day": {
+          "title": "La journée du promeneur",
+          "text": "Léa ouvre sa journée sur son téléphone : chiens, propriétaires, notes.",
+          "alt": "La journée de la promeneuse : les chiens de la promenade de 14 h et leurs propriétaires."
+        },
+        "report": {
+          "title": "Le rapport",
+          "text": "Une note et une photo pour chaque chien, envoyées d'un geste.",
+          "alt": "Le rapport de visite : une photo ajoutée, une note pour la propriétaire, envoyé à Sofia."
+        },
+        "client": {
+          "title": "La cliente le voit",
+          "text": "Sofia retrouve le rapport dans son espace.",
+          "alt": "Les réservations de Sofia : la promenade passée, son rapport et sa photo."
+        }
       }
     },
-    "decisionsEyebrow": "Décisions",
-    "decisionsTitle": "Ce que nous avons choisi, et ce que ça coûte",
-    "decisionLabels": {
-      "chose": "Nous avons choisi",
-      "refused": "Nous avons refusé",
-      "because": "Parce que",
-      "cost": "Ce que ça coûte"
-    },
-    "decisions": {
-      "prepare": {
-        "chose": "Nous préparons la déclaration TPS/TVQ : les montants, ligne par ligne, avec les pièces justificatives.",
-        "refused": "Produire la déclaration à votre place, ou promettre la transmission électronique.",
-        "because": "Vous restez celle ou celui qui signe ; les montants viennent de votre registre, jamais d'une supposition.",
-        "cost": "Vous la produisez vous-même, vos montants en main."
+    "outcomes": {
+      "eyebrow": "Ce que vous pouvez faire",
+      "title": "Moins d'administration, plus de clients",
+      "bookings": {
+        "title": "Remplir votre journée sans aller-retour",
+        "text": "Les clients réservent eux-mêmes les heures libres ; un groupe complet ou une heure prise disparaît aussitôt.",
+        "cta": "Voir la boutique de démo"
       },
-      "canada": {
-        "chose": "Des données au Canada, chiffrées au repos, un consentement par finalité (Loi 25).",
-        "refused": "Les cases précochées, les données hors du pays, les dossiers gardés pour toujours.",
-        "because": "Le dossier d'un client lui appartient ; la loi du Québec le dit depuis 2023.",
-        "cost": "Effacer un client garde les factures (six ans, loi fiscale) mais rien de personnel."
+      "reports": {
+        "title": "Montrer à chaque client que c'est fait",
+        "text": "Arrivée, départ, une note et une photo : le rapport arrive au client dans la minute.",
+        "cta": "Se connecter (sur invitation)"
       },
-      "pos": {
-        "chose": "Les rendez-vous, les factures et les taxes d'abord ; le point de vente plus tard.",
-        "refused": "Les restaurants et les bars, qui doivent facturer avec un MEV certifié.",
-        "because": "Une caisse à moitié juste est pire que pas de caisse.",
-        "cost": "Pas encore de terminal de paiement : les paiements sont notés, pas traités."
+      "taxes": {
+        "title": "Recevoir votre déclaration de taxes préparée",
+        "text": "Chaque facture inscrit sa TPS et sa TVQ ; Akinaza présente les montants de votre déclaration, avec leurs sources. Vous la produisez.",
+        "cta": "Se connecter (sur invitation)"
       }
     },
-    "promiseLabel": "La promesse du castor",
-    "promise": "Je bâtis les livres de votre boutique, ligne par ligne, et je ne produis jamais rien sans vous.",
-    "closingTitle": "Vous tenez une boutique au Québec ?",
-    "closingBody": "Akinaza est en développement et les inscriptions sont fermées. Dites-nous comment vous travaillez aujourd'hui — nous choisissons les premières boutiques.",
-    "sections": {
-      "how": {
-        "eyebrow": "Comment ça marche",
-        "title": "Réserver, facturer, déclarer",
-        "lead": "Trois métiers d'une boutique, au même endroit, chacun tenu par du code que vous pouvez lire.",
-        "steps": {
-          "book": {
-            "title": "Rendez-vous et dossiers clients",
-            "text": "Services, personnel et horaires ; personne n'est jamais réservé deux fois — la base de données le refuse."
-          },
-          "invoice": {
-            "title": "Factures bilingues, TPS et TVQ",
-            "text": "En français par défaut, en anglais sur demande, des taxes au cent près, chaque facture inscrite au registre des taxes."
-          },
-          "privacy": {
-            "title": "Loi 25 dès la conception",
-            "text": "Un consentement par finalité, un effacement qui ne garde que ce qu'exige la loi fiscale, des données au Canada."
-          }
+    "how": {
+      "eyebrow": "Comment ça marche",
+      "title": "Réserver, travailler, tenir les livres",
+      "lead": "Un seul outil pour le commerce, l'équipe et les clients, de la réservation à la déclaration de taxes.",
+      "steps": {
+        "book": {
+          "title": "Les clients réservent",
+          "text": "Votre page présente vos services, vos prix et vos zones ; une heure prise disparaît partout, et personne n'est réservé deux fois."
+        },
+        "work": {
+          "title": "Votre équipe fait sa journée",
+          "text": "Chacun voit sa journée sur son téléphone, avec les notes d'accès gardées chiffrées, et envoie un rapport après chaque visite."
+        },
+        "books": {
+          "title": "Les livres se tiennent seuls",
+          "text": "Des factures bilingues, TPS 5 % et TVQ 9,975 % au cent près, un registre qu'on ne réécrit pas, et la déclaration préparée à partir de lui."
         }
       },
-      "book": {
-        "eyebrow": "Rendez-vous",
-        "title": "La journée, sans double réservation",
-        "lead": "Chaque coiffeuse, boulanger ou commis a ses heures ; un créneau pris disparaît en direct de toutes les pages de réservation ouvertes.",
-        "points": [
-          "Deux rendez-vous d'une même personne ne se chevauchent jamais — la base de données le refuse elle-même.",
-          "Un rendez-vous annulé libère son créneau aussitôt.",
-          "Des rappels par courriel, seulement aux clients qui ont dit oui."
-        ]
+      "beaverLabel": "La promesse du castor",
+      "beaver": "Le castor construit la boutique."
+    },
+    "trust": {
+      "eyebrow": "Confiance",
+      "title": "Les dossiers de vos clients, bien gardés",
+      "lead": "Fait pour les commerces de services : promeneurs, toiletteurs, salons, réparateurs. Pas pour les restaurants et les bars, qui doivent facturer avec une caisse certifiée.",
+      "canada": {
+        "title": "Loi 25 dès la conception",
+        "text": "Données au Canada, chiffrées au repos ; consentement par finalité, jamais précoché ; l'effacement ne garde que les factures exigées par la loi fiscale.",
+        "cta": "Confidentialité"
       },
-      "invoice": {
-        "eyebrow": "Factures et taxes",
-        "title": "TPS 5 %, TVQ 9,975 %, au cent près",
-        "lead": "Les taxes calculées une fois sur le sous-total taxable, arrondies au cent — le pain détaxé reste à zéro, un petit fournisseur ne perçoit rien.",
-        "points": [
-          "Chaque facture inscrit sa TPS et sa TVQ dans un registre en ajout seul ; la base vérifie que tout concorde.",
-          "Une correction est une note de crédit, jamais une modification.",
-          "« Préparer ma déclaration » présente les montants du FPZ-500 avec leurs sources — avec l'aide d'un Studio Orazaka, vérifiés contre votre registre, produits par vous."
-        ]
+      "prepare": {
+        "title": "Préparée, jamais produite à votre place",
+        "text": "Akinaza prépare vos montants de TPS/TVQ et leurs pièces justificatives. C'est vous qui signez et qui produisez.",
+        "cta": "Se connecter (sur invitation)"
       },
-      "privacy": {
-        "eyebrow": "Loi 25",
-        "title": "Les dossiers de vos clients, encadrés",
-        "lead": "Ce dont la boutique a besoin, rien de plus — et une réponse le jour où un client la demande.",
-        "points": [
-          "Un consentement par finalité (le service, les rappels, le marketing), jamais précoché, chaque décision gardée.",
-          "L'effacement vide chaque champ personnel et garde les factures qu'exige la loi fiscale.",
-          "Des données au Canada, chiffrées au repos."
-        ]
+      "open": {
+        "title": "Open source",
+        "text": "L'application, son code fiscal et les règles de sa base de données sont sur GitHub, sous licence Apache-2.0.",
+        "cta": "Lire le code"
       },
-      "account": {
-        "eyebrow": "Comptes",
-        "title": "Votre compte, vos données",
-        "lead": "Akinaza est en développement : pour l’instant, notre équipe ouvre les comptes. Une fois un compte ouvert, la boutique peut changer son mot de passe, garder son profil et retrouver l’accès par courriel.",
-        "points": [
-          "Connectez-vous avec votre courriel et votre mot de passe ; oublié ? Un lien à usage unique arrive par courriel et vaut 30 minutes.",
-          "Changer le mot de passe ferme vos autres sessions : un téléphone perdu ne peut pas garder la boutique ouverte.",
-          "L’inscription est fermée pendant le développement d’Akinaza : personne n’ouvre de compte seul pour l’instant."
-        ],
-        "forgot": "Mot de passe oublié ?"
-      }
+      "powered": "Son assistant fiscal tournera sur Orazaka (prévu, pas encore branché)."
+    },
+    "closing": {
+      "title": "Vous tenez un commerce de services au Québec ?",
+      "body": "Akinaza est en développement et les inscriptions sont fermées. Dites-nous comment vous travaillez aujourd'hui : nous choisissons les premiers commerces."
     }
   },
   "privacy": {

@@ -1,153 +1,127 @@
-import { invoiceTotals } from "@akinaza/core";
-import { ClockIcon, KeepIcon, ShieldIcon } from "@krizaka/icons";
-import { AkinazaLogo } from "@krizaka/ui";
+import { CalendarIcon, CheckIcon, ClockIcon, GlobeIcon, KeepIcon, LockIcon, PaidIcon } from "@krizaka/icons";
+import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
 import { CardGrid } from "@krizaka/ui/card-grid";
+import { CtaPanel } from "@krizaka/ui/cta-panel";
 import { LinkCard } from "@krizaka/ui/link-card";
-import { Mascot } from "@krizaka/ui/mascots";
+import { MascotQuote } from "@krizaka/ui/mascot-quote";
+import { MetaRow } from "@krizaka/ui/meta-row";
 import { Section } from "@krizaka/ui/page";
-import { ProductPage } from "@krizaka/ui/product-page";
+import { PageHero } from "@krizaka/ui/page-hero";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { JourneyTour } from "@/components/JourneyTour";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
-import { asLocale, getDictionary, type Locale, translator } from "@/lib/i18n";
+import { asLocale, getDictionary } from "@/lib/i18n";
+import { DEMO_SHOP, HOW_STEPS, OUTCOMES, productStatus, TRUST } from "@/lib/landing";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
-import { contactHref } from "@/lib/site";
+import { contactHref, pagePath, REPO_URL } from "@/lib/site";
+import { TOUR, tourStill } from "@/lib/tour";
+
+import preview from "../../../../dev-preview.json";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   return pageMetadata(asLocale((await params).locale), "home");
 }
 
-/** The example invoice on the page, computed by Akinaza's own tax code — never typed by hand. */
-const EXAMPLE = invoiceTotals(
-  [
-    { description: "Coupe / Haircut", quantity: 1, unitPriceCents: 4_500, category: "standard" },
-    { description: "Coloration / Colour", quantity: 1, unitPriceCents: 9_500, category: "standard" },
-  ],
-  { registrant: true },
-);
-const INTL: Record<Locale, string> = { en: "en-CA", fr: "fr-CA" };
+const OUTCOME_ICONS = { bookings: <CalendarIcon />, reports: <CheckIcon />, taxes: <PaidIcon /> } as const;
+const HOW_ICONS = { book: <CalendarIcon />, work: <ClockIcon />, books: <KeepIcon /> } as const;
+const TRUST_ICONS = { canada: <GlobeIcon />, prepare: <LockIcon />, open: <KeepIcon /> } as const;
 
-function Visual({ locale }: { locale: Locale }) {
-  const t = getDictionary(locale).landing.visual;
-  const money = (c: number) => new Intl.NumberFormat(INTL[locale], { style: "currency", currency: "CAD" }).format(c / 100);
-  const rows = [
-    [t.subtotal, EXAMPLE.subtotalCents],
-    [t.gst, EXAMPLE.gstCents],
-    [t.qst, EXAMPLE.qstCents],
-  ] as const;
-  return (
-    <div className="flex flex-col gap-3 p-5 text-sm">
-      <div className="rounded-lg border border-border-default bg-surface-1 p-4">
-        <p className="font-semibold text-fg">{t.title}</p>
-        <ul className="mt-2 flex flex-col gap-1">
-          {EXAMPLE.lines.map((l) => (
-            <li key={l.description} className="flex justify-between gap-2 text-fg-secondary">
-              <span>{l.description}</span>
-              <span className="font-mono">{money(l.amountCents)}</span>
-            </li>
-          ))}
-          {rows.map(([label, cents]) => (
-            <li key={label} className="flex justify-between gap-2 font-mono text-xs text-fg">
-              <span>{label}</span>
-              <span>{money(cents)}</span>
-            </li>
-          ))}
-          <li className="flex justify-between gap-2 border-t border-border-default pt-1 font-mono font-semibold text-fg">
-            <span>{t.total}</span>
-            <span>{money(EXAMPLE.totalCents)}</span>
-          </li>
-        </ul>
-      </div>
-      <p className="text-xs text-fg-muted">{t.note}</p>
-    </div>
-  );
-}
-
-/** dev.akinaza.com: what Akinaza does and how — the product page template of @krizaka/ui, in forest green and copper. */
+/**
+ * dev.akinaza.com — one story in five sections (lib/landing.ts): the promise and the dog walker's real day captured on the
+ * app, what a shop can do, how it works, why it can trust it, the closing call. Every block is @krizaka/ui's.
+ */
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
-  const t = translator(locale);
   const d = getDictionary(locale).landing;
+  const status = productStatus(preview);
   const signIn = `/${locale}/sign-in`;
-  const steps = [
-    { id: "book", href: "#book", icon: <ClockIcon /> },
-    { id: "invoice", href: "#invoice", icon: <KeepIcon /> },
-    { id: "privacy", href: "#privacy", icon: <ShieldIcon /> },
-  ] as const;
+  const shop = `/${locale}/s/${DEMO_SHOP}`;
+  const destination = { shop, "sign-in": signIn } as const;
+  const trustHref = { canada: pagePath(locale, "privacy"), prepare: signIn, open: REPO_URL } as const;
+  const steps = TOUR.steps.map((id) => ({ id, title: d.tour.steps[id].title, description: d.tour.steps[id].text, alt: d.tour.steps[id].alt, poster: tourStill(id), duration: 5000 }));
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="home" />
-      <main id="content" className="pt-20">
-        <ProductPage
-          brand="akinaza"
-          linkAs={Link}
-          mark={
-            <>
-              <AkinazaLogo size={18} animated={false} /> {d.mark}
-            </>
-          }
-          title={d.title}
-          lead={d.lead}
-          facts={[{ label: d.facts.canada, tone: "ok" }, { label: d.facts.license }, { label: d.facts.closed, tone: "wip" }]}
-          actions={
-            <>
-              <Button asChild variant="primary" size="lg" shape="cut" shimmer magnetic>
-                <a href={contactHref("dev-akinaza-hero")}>{d.talk}</a>
-              </Button>
-              <Button asChild variant="secondary" size="lg" shape="cut">
-                <Link href={signIn}>{d.signIn}</Link>
-              </Button>
-            </>
-          }
-          visualLabel={d.visualLabel}
-          visual={<Visual locale={locale} />}
-          reasonsHeading={{ eyebrow: d.reasonsEyebrow, title: d.reasonsTitle }}
-          reasonLabels={{ trap: d.trap, more: d.more }}
-          reasons={(["book", "invoice", "privacy"] as const).map((id) => ({ id, title: d.reasons[id].title, trap: d.reasons[id].trap, mark: <Mascot bird="beaver" size={40} animated={false} />, href: `#${id}` }))}
-          decisions={{ eyebrow: d.decisionsEyebrow, title: d.decisionsTitle, labels: d.decisionLabels, items: (["prepare", "canada", "pos"] as const).map((id) => ({ id, ...d.decisions[id] })) }}
-          promise={{ bird: "beaver", label: d.promiseLabel, text: d.promise }}
-          closing={{
-            title: d.closingTitle,
-            body: d.closingBody,
-            actions: (
-              <Button asChild variant="primary" size="lg" shape="cut">
-                <a href={contactHref("dev-akinaza-closing")}>{d.talk}</a>
-              </Button>
-            ),
-          }}
-        >
-          <Section id="how" eyebrow={d.sections.how.eyebrow} title={d.sections.how.title} lead={d.sections.how.lead} divider>
-            <CardGrid min={240}>
-              {steps.map((s) => (
-                <LinkCard key={s.id} layout="stack" href={s.href} icon={s.icon} title={t(`landing.sections.how.steps.${s.id}.title`)} description={t(`landing.sections.how.steps.${s.id}.text`)} cta={d.more} />
-              ))}
-            </CardGrid>
-          </Section>
-          <Section id="account" eyebrow={d.sections.account.eyebrow} title={d.sections.account.title} lead={d.sections.account.lead} divider actions={<Button asChild variant="secondary" size="md" shape="cut"><Link href={`/${locale}/forgot-password`}>{d.sections.account.forgot}</Link></Button>}>
-            <ul className="grid max-w-3xl gap-2 text-fg-secondary">
-              {d.sections.account.points.map((p) => (
-                <li key={p} className="rounded-lg border border-border-default bg-surface-1 p-3 text-sm">
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </Section>
-          {(["book", "invoice", "privacy"] as const).map((id) => (
-            <Section key={id} id={id} eyebrow={d.sections[id].eyebrow} title={d.sections[id].title} lead={d.sections[id].lead} divider actions={<Button asChild variant="secondary" size="md" shape="cut"><Link href={signIn}>{d.signIn}</Link></Button>}>
-              <ul className="grid max-w-3xl gap-2 text-fg-secondary">
-                {d.sections[id].points.map((p) => (
-                  <li key={p} className="rounded-lg border border-border-default bg-surface-1 p-3 text-sm">
-                    {p}
-                  </li>
-                ))}
-              </ul>
-            </Section>
-          ))}
-        </ProductPage>
+      <main id="content">
+        {/* 1 · The promise, and the walker's real day as its proof — painted at once (LCP), never revealed. */}
+        <PageHero id="hero" eyebrow={d.eyebrow} title={d.title} lead={d.lead}>
+          <Button asChild variant="primary" size="lg" shape="cut" shimmer magnetic>
+            <a href={contactHref("dev-akinaza-hero")}>{d.talk}</a>
+          </Button>
+          <Button asChild variant="secondary" size="lg" shape="cut">
+            <Link href={shop}>{d.seeShop}</Link>
+          </Button>
+          <figure className="m-0 mt-8 flex basis-full flex-col gap-3">
+            <JourneyTour label={d.tour.label} steps={steps} words={{ play: d.tour.play, pause: d.tour.pause, step: d.tour.step }} />
+            <figcaption className="text-center font-mono text-xs text-fg-muted md:text-start">{d.tour.captured}</figcaption>
+          </figure>
+        </PageHero>
+
+        {/* 2 · What a shop can do — outcomes, each card a way in. */}
+        <Section id="outcomes" eyebrow={d.outcomes.eyebrow} title={d.outcomes.title} reveal divider>
+          <CardGrid min={300}>
+            {OUTCOMES.map((o) => (
+              <LinkCard key={o.id} layout="stack" href={destination[o.to]} icon={OUTCOME_ICONS[o.id]} title={d.outcomes[o.id].title} description={d.outcomes[o.id].text} cta={d.outcomes[o.id].cta} linkAs={Link} />
+            ))}
+          </CardGrid>
+        </Section>
+
+        {/* 3 · How it works — three steps; the beaver keeps its promise. */}
+        <Section id="how" eyebrow={d.how.eyebrow} title={d.how.title} lead={d.how.lead} reveal divider>
+          <ol className="grid gap-4 md:grid-cols-3">
+            {HOW_STEPS.map((id, i) => (
+              <li key={id} className="flex flex-col gap-2 rounded-xl border border-border-default bg-surface-1 p-5" data-reveal="">
+                <span className="flex items-center gap-3 text-fg-accent">
+                  <span className="font-mono text-xs">{String(i + 1).padStart(2, "0")}</span>
+                  <span aria-hidden className="[&_svg]:h-5 [&_svg]:w-5">
+                    {HOW_ICONS[id]}
+                  </span>
+                </span>
+                <h3 className="text-base font-semibold text-fg">{d.how.steps[id].title}</h3>
+                <p className="text-sm leading-relaxed text-fg-secondary">{d.how.steps[id].text}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-10">
+            <MascotQuote bird="beaver" label={d.how.beaverLabel} variant="callout">
+              {d.how.beaver}
+            </MascotQuote>
+          </div>
+        </Section>
+
+        {/* 4 · Trust — Loi 25 and Canada, prepared never filed, the code; Orazaka named once, honestly; the status. */}
+        <Section id="trust" eyebrow={d.trust.eyebrow} title={d.trust.title} lead={d.trust.lead} reveal divider>
+          <CardGrid min={300}>
+            {TRUST.map((id) => (
+              <LinkCard key={id} layout="stack" href={trustHref[id]} icon={TRUST_ICONS[id]} title={d.trust[id].title} description={d.trust[id].text} cta={d.trust[id].cta} linkAs={Link} />
+            ))}
+          </CardGrid>
+          <MetaRow
+            className="mt-6"
+            size="md"
+            items={[d.trust.powered, "Apache-2.0"]}
+            chips={[
+              <Badge key="status" tone={status === "preview" ? "accent" : "warning"} title={d.status[status]}>
+                {d.statusChip[status]}
+              </Badge>,
+            ]}
+          />
+          <p className="mt-2 max-w-2xl text-sm text-fg-secondary">{d.status[status]}</p>
+        </Section>
+
+        {/* 5 · The closing call — the one action while sign-up is closed. */}
+        <Section id="closing" spacing="sm">
+          <CtaPanel title={d.closing.title} body={d.closing.body} reveal>
+            <Button asChild variant="primary" size="lg" shape="cut">
+              <a href={contactHref("dev-akinaza-closing")}>{d.talk}</a>
+            </Button>
+          </CtaPanel>
+        </Section>
       </main>
       <SiteFooter locale={locale} />
     </>

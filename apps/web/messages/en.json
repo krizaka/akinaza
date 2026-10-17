@@ -8,6 +8,7 @@
     "brandHome": "Akinaza, home",
     "navLabel": "Akinaza",
     "nav": {
+      "product": "Product",
       "how": "How it works",
       "invoice": "Invoices & taxes"
     },
@@ -16,144 +17,139 @@
     "themeToggle": "Theme",
     "languageLabel": "Language",
     "otherLanguage": "Français",
-    "dev": "DEV · v{version}",
     "devNotice": "Development environment — access by invitation",
-    "footer": "Akinaza is <b>a Krizaka product</b> — made in Montréal, open source (Apache-2.0).",
     "sourceCode": "Source code",
     "contact": "Contact",
-    "legal": "Privacy"
+    "legal": "Privacy",
+    "menu": {
+      "label": "Menu",
+      "home": {
+        "title": "Overview",
+        "text": "What Akinaza does for a service shop."
+      },
+      "how": {
+        "title": "How it works",
+        "text": "Book, work the day, keep the books."
+      },
+      "shop": {
+        "title": "The demo shop",
+        "text": "A dog walker's real booking page, on dev."
+      }
+    },
+    "footerLabel": "Site footer"
   },
   "landing": {
-    "mark": "Akinaza · in development",
-    "title": "Run your shop, for less.",
-    "lead": "Bookings, client files, bilingual invoices with GST and QST, and your tax return prepared — one tool for an independent Québec shop, built for Loi 25, with your data in Canada.",
-    "facts": {
-      "canada": "Data in Canada · Loi 25 by design",
-      "license": "Apache-2.0",
-      "closed": "Dev · sign-up closed"
+    "eyebrow": "Akinaza · for independent Québec service shops",
+    "title": "Your shop, all in one place.",
+    "lead": "Bookings, your team's day, client reports, bilingual invoices with GST and QST, and your tax return prepared. First proof: a dog walker in Saint-Henri.",
+    "talk": "Talk to us about Akinaza",
+    "seeShop": "See the demo shop",
+    "status": {
+      "development": "In development: sign-up is closed while we build it with the first shops.",
+      "preview": "Dev preview: sign-up is closed, access by invitation."
     },
-    "talk": "Talk to us",
-    "signIn": "Sign in",
-    "visualLabel": "An example invoice, computed by Akinaza's own tax code",
-    "visual": {
-      "title": "Invoice F-00001 · Salon Laurier",
-      "subtotal": "Subtotal",
-      "gst": "GST 5 %",
-      "qst": "QST 9.975 %",
-      "total": "Total",
-      "note": "GST and QST once on the taxable subtotal, rounded to the cent — the same code issues every real invoice."
+    "statusChip": {
+      "development": "In development",
+      "preview": "Dev preview"
     },
-    "reasonsEyebrow": "Why it exists",
-    "reasonsTitle": "What costs a small shop too much",
-    "trap": "The trap",
-    "more": "See how",
-    "reasons": {
-      "book": {
-        "title": "Five tools, five bills",
-        "trap": "An app for bookings, one for the till, a spreadsheet for taxes — each with its subscription and its copy of your clients."
-      },
-      "invoice": {
-        "title": "Tax season by hand",
-        "trap": "Three evenings a quarter adding up GST and QST from receipts, hoping the totals match."
-      },
-      "privacy": {
-        "title": "Client files nobody governs",
-        "trap": "Phone numbers in a notebook, marketing without consent, and no answer when a client asks to be erased."
+    "tour": {
+      "label": "A dog walker's day on Akinaza, captured on the real app",
+      "play": "Play the steps",
+      "pause": "Pause the steps",
+      "step": "Step {n} of {total}",
+      "captured": "Captured on dev.akinaza.com (French interface) on October 17, 2026 · a demo shop, no real person",
+      "steps": {
+        "shop": {
+          "title": "The shop's page",
+          "text": "Services, prices, zones and open slots, public.",
+          "alt": "The public page of Pattes de Saint-Henri: its services and prices."
+        },
+        "book": {
+          "title": "The client books",
+          "text": "Sofia picks a group walk and her two dogs.",
+          "alt": "The booking form: the service, the zone, the dogs, the open slots."
+        },
+        "day": {
+          "title": "The walker's day",
+          "text": "Léa opens her day on her phone: dogs, owners, notes.",
+          "alt": "The walker's day: the dogs of the 2 p.m. group walk and their owners."
+        },
+        "report": {
+          "title": "The report",
+          "text": "A note and a photo for each dog, sent in one tap.",
+          "alt": "The visit report: a photo added, a note for the owner, sent to Sofia."
+        },
+        "client": {
+          "title": "The client sees it",
+          "text": "Sofia finds the report in her space.",
+          "alt": "Sofia's bookings: the past walk with its report and photo."
+        }
       }
     },
-    "decisionsEyebrow": "Decisions",
-    "decisionsTitle": "What we chose, and what it costs",
-    "decisionLabels": {
-      "chose": "We chose",
-      "refused": "We refused",
-      "because": "Because",
-      "cost": "What it costs"
-    },
-    "decisions": {
-      "prepare": {
-        "chose": "We prepare the GST/QST return: the figures, line by line, with the working papers.",
-        "refused": "Filing in your name, or promising electronic transmission.",
-        "because": "You stay the one who signs; the figures come from your ledger, never from a guess.",
-        "cost": "You file it yourself, with your figures in hand."
+    "outcomes": {
+      "eyebrow": "What you can do",
+      "title": "Less admin, more clients",
+      "bookings": {
+        "title": "Fill your day without the back-and-forth",
+        "text": "Clients book open slots themselves; a full group or a taken hour disappears at once.",
+        "cta": "See the demo shop"
       },
-      "canada": {
-        "chose": "Data in Canada, encrypted at rest, consent per purpose (Loi 25).",
-        "refused": "Pre-ticked consent, data across the border, files kept forever.",
-        "because": "A client's file is theirs; the law of Québec says so since 2023.",
-        "cost": "Erasing a client keeps the invoices (six years, tax law) but nothing personal."
+      "reports": {
+        "title": "Show every client the job was done",
+        "text": "Check in, check out, a note and a photo: the report reaches the client the same minute.",
+        "cta": "Sign in (by invitation)"
       },
-      "pos": {
-        "chose": "Bookings, invoices and taxes first; the point of sale later.",
-        "refused": "Restaurants and bars, which must bill through a certified SRM.",
-        "because": "A till done half-right is worse than none.",
-        "cost": "No payment terminal yet: payments are recorded, not processed."
+      "taxes": {
+        "title": "Get your tax return prepared",
+        "text": "Every invoice posts its GST and QST; Akinaza lays out your return's figures, with their sources. You file it.",
+        "cta": "Sign in (by invitation)"
       }
     },
-    "promiseLabel": "The beaver's promise",
-    "promise": "I build your shop's books, line by line, and I never file anything without you.",
-    "closingTitle": "You run a shop in Québec?",
-    "closingBody": "Akinaza is in development and sign-up is closed. Tell us how you work today — we are choosing the first shops.",
-    "sections": {
-      "how": {
-        "eyebrow": "How it works",
-        "title": "Book, invoice, declare",
-        "lead": "Three jobs of a shop, in one place, each held by code you can read.",
-        "steps": {
-          "book": {
-            "title": "Bookings and client files",
-            "text": "Services, staff and schedules; nobody is ever booked twice — the database refuses it."
-          },
-          "invoice": {
-            "title": "Bilingual invoices, GST and QST",
-            "text": "French by default, English on request, taxes in whole cents, every invoice posted to the tax ledger."
-          },
-          "privacy": {
-            "title": "Loi 25 by design",
-            "text": "Consent per purpose, an erasure that keeps only what tax law requires, data in Canada."
-          }
+    "how": {
+      "eyebrow": "How it works",
+      "title": "Book, work, keep the books",
+      "lead": "One tool for the shop, the team and the clients, from the booking to the tax return.",
+      "steps": {
+        "book": {
+          "title": "Clients book",
+          "text": "Your page lists your services, prices and zones; a slot taken is gone everywhere, and nobody is booked twice."
+        },
+        "work": {
+          "title": "Your team works the day",
+          "text": "Each person sees their day on their phone, with the access notes kept encrypted, and sends a report after each visit."
+        },
+        "books": {
+          "title": "The books keep themselves",
+          "text": "Bilingual invoices, GST 5 % and QST 9.975 % to the cent, an append-only ledger, and the return prepared from it."
         }
       },
-      "book": {
-        "eyebrow": "Bookings",
-        "title": "The day, without double bookings",
-        "lead": "Each stylist, baker or clerk has their hours; a slot taken disappears from every open booking page in real time.",
-        "points": [
-          "Two appointments of one person never overlap — the database itself refuses it.",
-          "A cancelled appointment frees its slot at once.",
-          "Reminders by e-mail, only to clients who said yes."
-        ]
+      "beaverLabel": "The beaver's promise",
+      "beaver": "The beaver builds the shop."
+    },
+    "trust": {
+      "eyebrow": "Trust",
+      "title": "Your clients' files, governed",
+      "lead": "Made for service shops: walkers, groomers, salons, repairers. Not for restaurants and bars, which must bill through a certified till.",
+      "canada": {
+        "title": "Loi 25 by design",
+        "text": "Data in Canada, encrypted at rest; consent per purpose, never pre-ticked; erasure keeps only the invoices tax law requires.",
+        "cta": "Privacy"
       },
-      "invoice": {
-        "eyebrow": "Invoices and taxes",
-        "title": "GST 5 %, QST 9.975 %, to the cent",
-        "lead": "Taxes computed once on the taxable subtotal, rounded half up — zero-rated bread stays at zero, a small supplier charges nothing.",
-        "points": [
-          "Every invoice posts its GST and QST to an append-only ledger; the database checks they add up.",
-          "A correction is a credit note, never an edit.",
-          "“Prepare my tax return” lays out the FPZ-500 figures with their sources — assisted by an Orazaka Studio, checked against your ledger, filed by you."
-        ]
+      "prepare": {
+        "title": "Prepared, never filed",
+        "text": "Akinaza prepares your GST/QST figures and their working papers. You stay the one who signs and files.",
+        "cta": "Sign in (by invitation)"
       },
-      "privacy": {
-        "eyebrow": "Loi 25",
-        "title": "Your clients' files, governed",
-        "lead": "What the shop needs, nothing more — and an answer the day a client asks.",
-        "points": [
-          "Consent per purpose (the service, reminders, marketing), never pre-ticked, every decision kept.",
-          "Erasure blanks every personal field and keeps the invoices the tax law requires.",
-          "Data in Canada, encrypted at rest."
-        ]
+      "open": {
+        "title": "Open source",
+        "text": "The app, its tax code and its database rules are on GitHub under Apache-2.0.",
+        "cta": "Read the code"
       },
-      "account": {
-        "eyebrow": "Accounts",
-        "title": "Your account, your data",
-        "lead": "Akinaza is in development: accounts are opened by our team for now. Once a shop has an account, it can change its password, keep its profile, and recover access by e-mail.",
-        "points": [
-          "Sign in with your e-mail and password; forgot it? A one-use link arrives by e-mail and lasts 30 minutes.",
-          "Changing your password ends your other sessions, so a lost phone cannot keep the shop open.",
-          "Sign-up is closed while Akinaza is in development: nobody opens an account on their own yet."
-        ],
-        "forgot": "Forgot your password?"
-      }
+      "powered": "Its tax assistant will run on Orazaka (planned, not wired yet)."
+    },
+    "closing": {
+      "title": "You run a service shop in Québec?",
+      "body": "Akinaza is in development and sign-up is closed. Tell us how you work today: we are choosing the first shops."
     }
   },
   "privacy": {
