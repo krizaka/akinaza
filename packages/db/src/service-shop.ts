@@ -190,10 +190,27 @@ export async function loadShop(db: Db, shop: typeof shops.$inferSelect): Promise
   return { shop, staff: { id: member.id, name: member.name }, zones, services: svc, windows, daysOff: off, rules: rules[0] ?? refuse("AK_RULES_UNKNOWN") };
 }
 
-/** The public page of a published shop, by its address; null when there is none (or it is not published). */
-export async function publicShop(db: Db, slug: string): Promise<ShopSetup | null> {
-  const [shop] = await db.select().from(shops).where(and(eq(shops.slug, slug), eq(shops.published, true)));
-  return shop ? loadShop(db, shop) : null;
+/** What a visitor of the public page may know: no owner, legal name, address, tax numbers, staff id or days-off reasons. */
+export interface PublicShop {
+  shop: Pick<typeof shops.$inferSelect, "id" | "name" | "slug" | "timezone" | "taglineFr" | "taglineEn">;
+  zones: Pick<typeof shopZones.$inferSelect, "id" | "name">[];
+  services: Pick<typeof services.$inferSelect, "id" | "nameFr" | "nameEn" | "durationMinutes" | "priceCents" | "capacity">[];
+  windows: Pick<typeof schedules.$inferSelect, "weekday" | "startsAt" | "endsAt">[];
+  rules: Pick<typeof shopRules.$inferSelect, "cancellationHours" | "bookingHorizonDays">;
+}
+
+/** The public page of a published shop, by its address; null when there is none (or it is not published). Projected here, once: a caller cannot leak a column. */
+export async function publicShop(db: Db, slug: string): Promise<PublicShop | null> {
+  const [row] = await db.select().from(shops).where(and(eq(shops.slug, slug), eq(shops.published, true)));
+  if (!row) return null;
+  const full = await loadShop(db, row);
+  return {
+    shop: { id: row.id, name: row.name, slug: row.slug, timezone: row.timezone, taglineFr: row.taglineFr, taglineEn: row.taglineEn },
+    zones: full.zones.map((z) => ({ id: z.id, name: z.name })),
+    services: full.services.map((s) => ({ id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity })),
+    windows: full.windows.map((w) => ({ weekday: w.weekday, startsAt: w.startsAt, endsAt: w.endsAt })),
+    rules: { cancellationHours: full.rules.cancellationHours, bookingHorizonDays: full.rules.bookingHorizonDays },
+  };
 }
 
 type Reader = Db | Tx;

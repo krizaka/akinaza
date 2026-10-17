@@ -47,6 +47,18 @@ describe("the shop page", () => {
     expect(page?.rules.cancellationHours).toBe(24); // the version 1 defaults come from the migration
   });
 
+  it("shows the public only what a visitor needs — no owner, no legal name, no address, no tax numbers, no staff id", async () => {
+    const w = await walkerShop(t.db, "pub");
+    await t.db.execute(sql`UPDATE shops SET gst_number = '123456789RT0001', qst_number = '1234567890TQ0001', address = '12 rue Secrète, Montréal' WHERE id = ${w.shopId}`);
+    const page = await publicShop(t.db, "pattes-pub");
+    expect(page).not.toBeNull();
+    const wire = JSON.stringify(page);
+    for (const secret of ["12 rue Secrète", "123456789RT0001", "1234567890TQ0001", "ownerId", "legalName", "address", "gstNumber", "qstNumber", "invoicePrefix", "staffId"]) {
+      expect(wire, secret).not.toContain(secret);
+    }
+    expect(Object.keys(page!.shop).sort()).toEqual(["id", "name", "slug", "taglineEn", "taglineFr", "timezone"]);
+  });
+
   it("keeps a worker's weekly windows apart and refuses an end before a start", async () => {
     const w = await walkerShop(t.db, "win");
     expect(await code(addWindow(t.db, w.shopId, { weekday: 1, startsAt: "11:00", endsAt: "13:00" }))).toBe("AK_WINDOW_OVERLAP");

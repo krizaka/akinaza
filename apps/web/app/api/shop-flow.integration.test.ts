@@ -226,4 +226,15 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     expect(dog!.name).toBe("—");
     expect(db()).toBeTruthy();
   });
+  it("slows a public caller down (429 with Retry-After) and leaks nothing about the owner on the slots answer", async () => {
+    const some = (await query<{ id: string }>("SELECT id FROM services WHERE shop_id = $1 LIMIT 1", [ids.shop]))[0]!.id;
+    const path = `/api/shops/pattes-${stamp}/slots?serviceId=${some}&zoneId=`;
+    const first = await call(slots, "GET", path, { params: { slug: `pattes-${stamp}` } });
+    expect(first.status).toBe(200);
+    expect(JSON.stringify(first.body)).not.toMatch(/owner|email|phone|address|accessNotes|clientId/i);
+    let last = first;
+    for (let i = 0; i < 125 && last.status !== 429; i += 1) last = await call(slots, "GET", path, { params: { slug: `pattes-${stamp}` } });
+    expect(last.status).toBe(429);
+    expect(last.res.headers.get("retry-after")).toMatch(/^\d+$/);
+  });
 });
