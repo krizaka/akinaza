@@ -11,7 +11,9 @@ describe("the landing's tour", () => {
 
   it("is made of hashed, immutable stills of the Krizaka media CDN under site/products/akinaza/tour/", () => {
     for (const step of TOUR.steps) {
-      expect(tourStill(step)).toMatch(new RegExp(`^${MEDIA_CDN.replace(/\./g, "\\.")}/site/products/akinaza/tour/phone-${step}\\.[0-9a-f]{10}\\.jpg$`));
+      const base = `${MEDIA_CDN}/site/products/akinaza/tour/phone-${step}.`;
+      expect(tourStill(step).startsWith(base)).toBe(true);
+      expect(tourStill(step).slice(base.length)).toMatch(/^[0-9a-f]{10}\.jpg$/);
     }
   });
 
@@ -21,6 +23,6 @@ describe("the landing's tour", () => {
 
   it("is allowed by the page's CSP — the media host, for images", () => {
     const config = readFileSync(new URL("../next.config.mjs", import.meta.url), "utf8");
-    expect(config).toMatch(new RegExp(`img-src[^"]*${MEDIA_CDN.replace(/\./g, "\\.")}`));
+    expect(config).toContain(`"img-src 'self' data: blob: ${MEDIA_CDN}"`);
   });
 });
