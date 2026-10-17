@@ -10,6 +10,7 @@ import { Section } from "@krizaka/ui/page";
 import { PageHero } from "@krizaka/ui/page-hero";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { preconnect } from "react-dom";
 
 import { JourneyTour } from "@/components/JourneyTour";
 import { SiteHeader } from "@/components/SiteChrome";
@@ -18,7 +19,7 @@ import { asLocale, getDictionary } from "@/lib/i18n";
 import { DEMO_SHOP, HOW_STEPS, OUTCOMES, productStatus, TRUST } from "@/lib/landing";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { contactHref, pagePath, REPO_URL } from "@/lib/site";
-import { TOUR, tourStill } from "@/lib/tour";
+import { MEDIA_CDN, TOUR, tourStill } from "@/lib/tour";
 
 import preview from "../../../../dev-preview.json";
 
@@ -43,8 +44,11 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   const destination = { shop, "sign-in": signIn } as const;
   const trustHref = { canada: pagePath(locale, "privacy"), prepare: signIn, open: REPO_URL } as const;
   const steps = TOUR.steps.map((id) => ({ id, title: d.tour.steps[id].title, description: d.tour.steps[id].text, alt: d.tour.steps[id].alt, poster: tourStill(id), duration: 5000 }));
+  // The first still is the page's LCP: open the CDN's connection now and fetch it at once (React hoists the link into <head>).
+  preconnect(MEDIA_CDN);
   return (
     <>
+      <link rel="preload" as="image" href={tourStill("shop")} fetchPriority="high" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="home" />
       <main id="content">

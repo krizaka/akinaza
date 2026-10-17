@@ -63,3 +63,11 @@ describe("the bar", () => {
     expect(bar).toContain("NavBar.Menu");
   });
 });
+
+describe("the first screen loads its proof first", () => {
+  it("preconnects to the media CDN and preloads the tour's first still at high priority", () => {
+    const home = read("app/[locale]/page.tsx");
+    expect(home).toMatch(/preconnect\(MEDIA_CDN/);
+    expect(home).toMatch(/<link rel="preload" as="image" href=\{tourStill\("shop"\)\} fetchPriority="high" \/>/);
+  });
+});
