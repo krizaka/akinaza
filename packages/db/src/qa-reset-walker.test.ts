@@ -58,15 +58,15 @@ describe("the walker persona reset", () => {
 
 describe("the walker persona reset, with a visit already started", () => {
   it("cancels a future visit the walker checked in, so the next recording starts from an open visit", async () => {
-    const seeded = await seedSaintHenri(t.db, randomBytes(32), NOW);
+    await seedSaintHenri(t.db, randomBytes(32), NOW);
     const owner = (await t.db.select().from(accounts).where(eq(accounts.email, SAINT_HENRI_EMAILS[0])))[0]!;
     const shop = (await shopOfOwner(t.db, owner.id))!;
     await resetWalkerPersona(t.db, shop.id, NOW);
     const [service] = await t.db.select({ id: services.id }).from(services).where(and(eq(services.shopId, shop.id), eq(services.nameEn, "Group walk 60 min")));
     const [zone] = await t.db.select({ id: shopZones.id }).from(shopZones).where(and(eq(shopZones.shopId, shop.id), eq(shopZones.name, "Saint-Henri")));
     const later = (await listSlots(t.db, { shopId: shop.id, serviceId: service!.id, zoneId: zone!.id, now: NOW, fromDay: "2026-10-22", days: 1 })).find((s) => s.seatsLeft > 0)!;
-    const camille = seeded.clientIds[SAINT_HENRI.clients[0]!.email]!;
-    const booked = await bookVisit(t.db, { clientId: camille, serviceId: service!.id, zoneId: zone!.id, dependantIds: [(await shopClients(t.db, shop.id)).find((c) => c.id === camille)!.dependants[0]!.id], startsAt: later.startsAt, now: NOW });
+    const client = (await shopClients(t.db, shop.id))[0]!;
+    const booked = await bookVisit(t.db, { clientId: client.id, serviceId: service!.id, zoneId: zone!.id, dependantIds: [client.dependants[0]!.id], startsAt: later.startsAt, now: NOW });
     await checkIn(t.db, shop.id, booked.appointmentId, later.startsAt);
 
     const result = await resetWalkerPersona(t.db, shop.id, NOW);

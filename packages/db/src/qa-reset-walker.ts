@@ -18,11 +18,11 @@ export async function resetWalkerPersona(db: Db, shopId: string, now: Date): Pro
     UPDATE bookings SET status = 'cancelled', cancelled_at = ${now.toISOString()}::timestamptz
       FROM appointments a
      WHERE a.id = bookings.appointment_id AND a.shop_id = ${shopId} AND bookings.status = 'booked'
-       AND a.status = 'booked' AND a.checked_in_at IS NULL AND lower(a.during) > ${now.toISOString()}::timestamptz
+       AND a.status = 'booked' AND a.checked_out_at IS NULL AND lower(a.during) > ${now.toISOString()}::timestamptz
     RETURNING bookings.id`);
   await db.execute(sql`
     UPDATE appointments SET status = 'cancelled'
-     WHERE shop_id = ${shopId} AND status = 'booked' AND checked_in_at IS NULL AND lower(during) > ${now.toISOString()}::timestamptz
+     WHERE shop_id = ${shopId} AND status = 'booked' AND checked_out_at IS NULL AND lower(during) > ${now.toISOString()}::timestamptz
        AND NOT EXISTS (SELECT 1 FROM bookings b WHERE b.appointment_id = appointments.id AND b.status = 'booked')`);
 
   const [group] = await db.select({ id: services.id }).from(services).where(and(eq(services.shopId, shopId), eq(services.nameEn, "Group walk 60 min")));
