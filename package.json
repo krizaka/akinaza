@@ -2,7 +2,7 @@
   "name": "akinaza-monorepo",
   "version": "0.1.0",
   "private": true,
-  "description": "Akinaza \u2014 predictions among friends, points only: sealed scoring rules, every point explained, live match facts through Orazaka's MCP connectors, standings in real time, a league memory across seasons.",
+  "description": "Akinaza — the all-in-one for independent Québec shops: bookings, Loi 25 client files, bilingual invoices with GST/QST, a tax ledger, the GST/QST return prepared for the merchant.",
   "packageManager": "pnpm@10.34.6",
   "scripts": {
     "dev": "turbo run dev --filter=@akinaza/web",

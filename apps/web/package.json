@@ -2,7 +2,7 @@
   "name": "@akinaza/web",
   "version": "0.1.0",
   "private": true,
-  "description": "Akinaza's web app and BFF: the public page, sign-in, a league with its sealed rules and live standings, and the administration (admin.akinaza.com).",
+  "description": "Akinaza's web app and BFF: the public showcase, authentication, core dashboard, and administration.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
