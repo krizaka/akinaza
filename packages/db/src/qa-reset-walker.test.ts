@@ -1,14 +1,14 @@
 import { randomBytes } from "node:crypto";
 
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { accounts } from "./schema";
+import { accounts, services, shopZones } from "./schema";
 import { seedSaintHenri, SAINT_HENRI, SAINT_HENRI_EMAILS } from "./seed-walker";
 import { resetWalkerPersona } from "./qa-reset-walker";
-import { shopOfOwner } from "./service-shop";
+import { bookVisit, listSlots, shopOfOwner } from "./service-shop";
 import { freshDatabase } from "./test/db";
-import { clientBookings, shopClients } from "./visits";
+import { checkIn, clientBookings, shopClients } from "./visits";
 
 let t: Awaited<ReturnType<typeof freshDatabase>>;
 beforeAll(async () => {
@@ -53,5 +53,25 @@ describe("the walker persona reset", () => {
     await resetWalkerPersona(t.db, shop.id, NOW);
     const clients = await shopClients(t.db, shop.id);
     for (const c of clients) expect(await openFuture(c.id, NOW)).toBe(1);
+  });
+});
+
+describe("the walker persona reset, with a visit already started", () => {
+  it("cancels a future visit the walker checked in, so the next recording starts from an open visit", async () => {
+    const seeded = await seedSaintHenri(t.db, randomBytes(32), NOW);
+    const owner = (await t.db.select().from(accounts).where(eq(accounts.email, SAINT_HENRI_EMAILS[0])))[0]!;
+    const shop = (await shopOfOwner(t.db, owner.id))!;
+    await resetWalkerPersona(t.db, shop.id, NOW);
+    const [service] = await t.db.select({ id: services.id }).from(services).where(and(eq(services.shopId, shop.id), eq(services.nameEn, "Group walk 60 min")));
+    const [zone] = await t.db.select({ id: shopZones.id }).from(shopZones).where(and(eq(shopZones.shopId, shop.id), eq(shopZones.name, "Saint-Henri")));
+    const later = (await listSlots(t.db, { shopId: shop.id, serviceId: service!.id, zoneId: zone!.id, now: NOW, fromDay: "2026-10-22", days: 1 })).find((s) => s.seatsLeft > 0)!;
+    const camille = seeded.clientIds[SAINT_HENRI.clients[0]!.email]!;
+    const booked = await bookVisit(t.db, { clientId: camille, serviceId: service!.id, zoneId: zone!.id, dependantIds: [(await shopClients(t.db, shop.id)).find((c) => c.id === camille)!.dependants[0]!.id], startsAt: later.startsAt, now: NOW });
+    await checkIn(t.db, shop.id, booked.appointmentId, later.startsAt);
+
+    const result = await resetWalkerPersona(t.db, shop.id, NOW);
+    expect(result.cancelled).toBeGreaterThanOrEqual(1);
+    const [row] = (await t.db.execute(sql`SELECT status FROM appointments WHERE id = ${booked.appointmentId}`)).rows as { status: string }[];
+    expect(row!.status).toBe("cancelled");
   });
 });
