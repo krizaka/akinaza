@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest";
 import { MEDIA_CDN, TOUR, tourStill } from "./tour";
 
 describe("the landing's tour", () => {
-  it("is the dog walker's real journey on dev.akinaza.com, in five steps: the shop, the booking, the day, the report, the client", () => {
-    expect(TOUR.steps).toEqual(["shop", "book", "day", "report", "client"]);
+  it("is the dog walker's real journey on dev.akinaza.com, in four steps (the hero shows the storefront): the booking, the day, the report, the client", () => {
+    expect(TOUR.steps).toEqual(["book", "day", "report", "client"]);
   });
 
   it("is made of hashed, immutable stills of the Krizaka media CDN under site/products/akinaza/tour/", () => {
