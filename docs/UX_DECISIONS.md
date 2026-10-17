@@ -83,3 +83,25 @@ Feedback: the pinned Discussion of the repository.
   runs on Orazaka before it does.
 - **Cost**: stills until the journey's recording lands (then the same steps take its clips); the app is captured in French.
 - **Signal we are wrong**: visitors who are not dog walkers think Akinaza is only for dog walkers.
+
+## 9. A shop's page sells: cover first, real availability inline, every section from the shop's data
+
+- **Decision**: the public page of a shop (`/{locale}/s/{slug}`) is, in this order, a cover hero (the shop's own photo or muted
+  loop, its name, one line of promise, « Open now · closes at 5 pm » computed from its hours in its own time zone, its areas,
+  and « Book » — held at the bottom of a phone), the services as cards (duration, capacity in the shop's own unit, price —
+  « from » when it varies —, what is included, « Popular » only from real bookings), the next free times as chips (the real
+  availability, each a link that opens the booking with the service, the area and the time chosen), the hours in one
+  « Hours » row that unfolds into the week with today marked, a map of the areas served, who you will meet and the rules as
+  clean rows, a look inside (the shop's photos and clips), the way in. Every section appears only when the shop has what it
+  shows: a salon has no map, a new shop no gallery, no rating is shown because there is no review data.
+- **Problem**: the page was a green block, four dark cards, chips, and a raw monospace table: nothing said « this is a good
+  place », nothing showed when to come, and the way to book started from scratch.
+- **Principle**: recognition over recall (the free times are on the page, not behind a form); the address is the state
+  (`?service=&zone=#reserver`, `/book?service=&zone=&start=`, back-button safe); honest defaults (no invented rating, no
+  fake « popular »).
+- **Refused**: a gallery of stock photos presented as the shop's, a rating without reviews, a map that needs a third-party
+  key (the basemap is Krizaka's Protomaps tiles, read through this origin), page-local components (the blocks —
+  ServiceCard, SlotPicker, OpeningHours, CoverHero, StickyAction, MediaGallery — are in @krizaka/ui).
+- **Cost**: the shop must add its words, places and photos (the owner's setup page does not edit them yet: the seed and the
+  API do); a service chosen on the page needs the visitor to sign in before the booking, and comes back to it with the choice.
+- **Signal we are wrong**: visitors who open a shop page still tap « Book » without looking at the times; owners without photos.

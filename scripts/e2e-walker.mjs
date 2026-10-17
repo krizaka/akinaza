@@ -34,7 +34,7 @@ mkdirSync(OUT, { recursive: true });
 // The words of the interface, in the language of the run (the same strings as messages/<locale>.json).
 const W = {
   fr: {
-    book: "Réserver une promenade",
+    book: "Réserver",
     email: "Courriel",
     password: "Mot de passe",
     signIn: "Se connecter",
@@ -72,7 +72,7 @@ const W = {
     },
   },
   en: {
-    book: "Book a walk",
+    book: "Book",
     email: "E-mail",
     password: "Password",
     signIn: "Sign in",
@@ -178,7 +178,7 @@ try {
   check((await c.page.getByText(/Saint-Henri/).count()) > 0, "the public shop page names its zones");
   await beat(c.page, 1800);
   await c.page.screenshot({ path: path.join(OUT, "01-shop-page.png") });
-  await c.page.getByRole("link", { name: W.book }).first().click();
+  await c.page.getByRole("link", { name: W.book, exact: true }).locator("visible=true").first().click();
   await c.page.getByLabel(W.email).waitFor();
   await caption(c.page, W.captions.signIn);
   await signIn(c.page, client);

@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import { SignInForm } from "@/components/console/SignInForm";
 import { pageSession } from "@/lib/access";
 import { asLocale, getDictionary } from "@/lib/i18n";
+import { safeNext } from "@/lib/next-url";
 import { contactHref } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +23,7 @@ export default async function SignInPage({ params, searchParams }: { params: Pro
   const locale = asLocale((await params).locale);
   // Back to where the person was going — an address of this site only, in this language (never an open redirect).
   const wanted = (await searchParams).next;
-  const next = wanted && new RegExp(`^/${locale}/[A-Za-z0-9/_.-]*$`).test(wanted) && !wanted.includes("//") ? wanted : `/${locale}/app`;
+  const next = safeNext(wanted, locale);
   if (await pageSession().catch(() => null)) redirect(next);
   const t = getDictionary(locale).console.signIn;
   return (

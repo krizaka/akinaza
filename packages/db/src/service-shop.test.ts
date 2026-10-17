@@ -56,7 +56,7 @@ describe("the shop page", () => {
     for (const secret of ["12 rue Secrète", "123456789RT0001", "1234567890TQ0001", "ownerId", "legalName", "address", "gstNumber", "qstNumber", "invoicePrefix", "staffId"]) {
       expect(wire, secret).not.toContain(secret);
     }
-    expect(Object.keys(page!.shop).sort()).toEqual(["id", "name", "slug", "taglineEn", "taglineFr", "timezone"]);
+    expect(Object.keys(page!.shop).sort()).toEqual(["area", "bioEn", "bioFr", "id", "name", "ownerName", "publicEmail", "publicPhone", "seatUnitEn", "seatUnitFr", "slug", "taglineEn", "taglineFr", "timezone"]);
   });
 
   it("keeps a worker's weekly windows apart and refuses an end before a start", async () => {
