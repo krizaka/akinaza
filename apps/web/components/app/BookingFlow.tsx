@@ -35,6 +35,7 @@ export function BookingFlow({ data }: { data: BookingData }) {
       {data.client && data.dogs.length === 0 ? <DogCard clientId={data.client.id} /> : null}
       {data.client && data.dogs.length > 0 ? (
         <>
+          <AnotherDog clientId={data.client.id} />
           <BookCard data={data} clientId={data.client.id} />
           <AccessCard clientId={data.client.id} />
         </>
@@ -93,7 +94,7 @@ const dogForm = createKrizakaForm({
   defaultValues: { name: "", breed: "", size: "", temperament: "", vetName: "", vetPhone: "", emergencyName: "", emergencyPhone: "" },
 });
 
-function DogCard({ clientId }: { clientId: string }) {
+function DogCard({ clientId, onDone }: { clientId: string; onDone?: () => void }) {
   const { say, locale } = useSay();
   const call = useCall();
   const form = dogForm.useForm({
@@ -106,7 +107,7 @@ function DogCard({ clientId }: { clientId: string }) {
         ...(v.vetName && v.vetPhone ? { vet: { name: v.vetName, phone: v.vetPhone } } : {}),
         ...(v.emergencyName && v.emergencyPhone ? { emergency: { name: v.emergencyName, phone: v.emergencyPhone } } : {}),
       };
-      await call.run("/api/me/dependants", { json: { clientId, kind: "dog", name: v.name, profile } });
+      if ((await call.run("/api/me/dependants", { json: { clientId, kind: "dog", name: v.name, profile } })) !== null) onDone?.();
     },
   });
   return (
@@ -129,6 +130,20 @@ function DogCard({ clientId }: { clientId: string }) {
         </div>
       </form.Form>
     </Card.Root>
+  );
+}
+
+/** A second dog on the file, without leaving the page: the button opens the same form as the first. */
+function AnotherDog({ clientId }: { clientId: string }) {
+  const { say } = useSay();
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="flex flex-col gap-3">
+      <Button size="md" variant="outline" shape="cut" className="self-start" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+        {say("book.addAnother")}
+      </Button>
+      {open ? <DogCard key="another" clientId={clientId} onDone={() => setOpen(false)} /> : null}
+    </div>
   );
 }
 
@@ -170,7 +185,7 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
     <Card.Root className="p-4">
       <h2 className="mb-4 font-display text-lg font-bold text-fg">{say("book.pick")}</h2>
       <form.Form aria-label={say("book.pick")} className="flex flex-col gap-4">
-        <form.Select name="serviceId" label={say("book.service")} options={data.services.map((s) => ({ value: s.id, label: `${locale === "fr" ? s.nameFr : s.nameEn} — ${s.durationMinutes} min — ${money(s.priceCents, locale)}` }))} />
+        <form.Select name="serviceId" label={say("book.service")} options={data.services.map((s) => ({ value: s.id, label: `${locale === "fr" ? s.nameFr : s.nameEn} · ${money(s.priceCents, locale)}` }))} />
         {data.zones.length ? <form.Select name="zoneId" label={say("book.zone")} options={data.zones.map((z) => ({ value: z.id, label: z.name }))} /> : null}
         <form.Field name="dogIds">
           {(field) => (
@@ -228,7 +243,7 @@ function SlotPicker({ slug, serviceId, zoneId, timeZone, value, onPick, error }:
       {slots.data && groups.size === 0 ? <p className="text-fg-secondary">{say("book.slotsNone")}</p> : null}
       {[...groups.entries()].slice(0, 7).map(([day, list]) => (
         <div key={day} className="flex flex-col gap-2">
-          <p className="text-sm font-semibold capitalize text-fg">{day}</p>
+          <p className="text-sm font-semibold text-fg first-letter:uppercase">{day}</p>
           <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={day}>
             {list.map((s) => (
               <Button key={s.startsAt} type="button" role="radio" aria-checked={value === s.startsAt} size="md" variant={value === s.startsAt ? "primary" : "secondary"} onClick={() => onPick(s.startsAt)}>

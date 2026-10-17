@@ -2,12 +2,13 @@
   "name": "@akinaza/db",
   "version": "0.1.0",
   "private": true,
-  "description": "Akinaza's PostgreSQL 16 schema (Drizzle, versioned SQL migrations): shops, staff, services, schedules, clients and their Loi 25 consents, appointments (no double booking, by the database), invoices and payments, expenses, the append-only GST/QST ledger that must balance every invoice — tested on a real PostgreSQL.",
+  "description": "Akinaza's PostgreSQL 16 schema (Drizzle, versioned SQL migrations): shops, staff, services, schedules, clients and their Loi 25 consents, appointments (no double booking, by the database), invoices and payments, expenses, the append-only GST/QST ledger that must balance every invoice \u2014 tested on a real PostgreSQL.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
     "./schema": "./src/schema.ts",
-    "./seed": "./src/seed.ts"
+    "./seed": "./src/seed.ts",
+    "./seed-walker": "./src/seed-walker.ts"
   },
   "scripts": {
     "lint": "tsc --noEmit -p tsconfig.json",

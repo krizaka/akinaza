@@ -26,6 +26,14 @@ const SHOP_STATUS: Record<string, number> = {
 
 /** Runs a route handler: an HttpError becomes its JSON answer; anything else is a 500 that leaks nothing. */
 export async function handle(run: () => Promise<Response>): Promise<Response> {
+  const requestId = crypto.randomUUID();
+  const response = await dispatch(run, requestId);
+  // Every answer says which request it was: the run of a journey can be traced (and quoted in a pull request).
+  response.headers.set("x-request-id", requestId);
+  return response;
+}
+
+async function dispatch(run: () => Promise<Response>, requestId: string): Promise<Response> {
   try {
     return await run();
   } catch (error) {
@@ -38,7 +46,7 @@ export async function handle(run: () => Promise<Response>): Promise<Response> {
     if (error instanceof ZodError) {
       return Response.json({ error: "Invalid body", code: "BAD_REQUEST", fields: error.issues.map((i) => i.path.join(".")) }, { status: 400 });
     }
-    console.error("api: unexpected error", error);
+    console.error(`api: unexpected error (request ${requestId})`, error);
     return Response.json({ error: "Something went wrong", code: "INTERNAL" }, { status: 500 });
   }
 }

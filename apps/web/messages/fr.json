@@ -489,7 +489,7 @@
     },
     "walker": {
       "title": "Les promenades du jour",
-      "dayLine": "{date} · {count} promenades",
+      "dayLine": "{date} · promenades : {count}",
       "none": "Aucune promenade ce jour-là.",
       "previous": "Jour précédent",
       "next": "Jour suivant",
@@ -679,7 +679,8 @@
       "accessNotes": "Notes d'accès",
       "accessSave": "Enregistrer les notes",
       "accessSaved": "Notes enregistrées (chiffrées).",
-      "needDog": "Ajoutez d'abord votre chien."
+      "needDog": "Ajoutez d'abord votre chien.",
+      "addAnother": "Ajouter un autre chien"
     },
     "client": {
       "title": "Mes réservations",

@@ -489,7 +489,7 @@
     },
     "walker": {
       "title": "Today's walks",
-      "dayLine": "{date} · {count} walks",
+      "dayLine": "{date} · walks: {count}",
       "none": "No walk this day.",
       "previous": "Previous day",
       "next": "Next day",
@@ -679,7 +679,8 @@
       "accessNotes": "Access notes",
       "accessSave": "Save the notes",
       "accessSaved": "Notes saved (encrypted).",
-      "needDog": "Add your dog first."
+      "needDog": "Add your dog first.",
+      "addAnother": "Add another dog"
     },
     "client": {
       "title": "My bookings",
