@@ -18,9 +18,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /** Sign-in on @krizaka/ui's auth template, Akinaza's mark and its owl. Sign-up is closed — the page says so. */
-export default async function SignInPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function SignInPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ next?: string }> }) {
   const locale = asLocale((await params).locale);
-  if (await pageSession().catch(() => null)) redirect(`/${locale}/app`);
+  // Back to where the person was going — an address of this site only, in this language (never an open redirect).
+  const wanted = (await searchParams).next;
+  const next = wanted && new RegExp(`^/${locale}/[A-Za-z0-9/_.-]*$`).test(wanted) && !wanted.includes("//") ? wanted : `/${locale}/app`;
+  if (await pageSession().catch(() => null)) redirect(next);
   const t = getDictionary(locale).console.signIn;
   return (
     <AuthLayout
@@ -53,7 +56,7 @@ export default async function SignInPage({ params }: { params: Promise<{ locale:
         </>
       }
     >
-      <SignInForm next={`/${locale}/app`} />
+      <SignInForm next={next} />
     </AuthLayout>
   );
 }

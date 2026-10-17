@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { assertProductionEnv, consoleAllowedIps, productionProblems, readEnv } from "./env";
+import { assertProductionEnv, consoleAllowedIps, dataKey, productionProblems, readEnv } from "./env";
 
 const PROD = {
   NODE_ENV: "production",
@@ -8,6 +8,7 @@ const PROD = {
   DATABASE_CA_CERT: "-----BEGIN CERTIFICATE-----",
   AUTH_SESSION_SECRET: "a".repeat(40),
   AI_API_KEY: "oz_live_key",
+  APP_DATA_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString("base64"),
 };
 
 describe("env", () => {
@@ -29,6 +30,7 @@ describe("env", () => {
     expect(problems).toEqual([
       "AUTH_SESSION_SECRET must be at least 32 characters",
       "AI_API_KEY must be an Orazaka key (oz_…)",
+      "APP_DATA_ENCRYPTION_KEY must be 32 random bytes, base64-encoded",
       "DATABASE_CA_CERT is required for a TLS database",
     ]);
     expect(problems.join(" ")).not.toContain("sk-not-orazaka");
@@ -58,5 +60,20 @@ describe("env", () => {
     expect(consoleAllowedIps({ NODE_ENV: "production" })).toEqual([]);
     expect(consoleAllowedIps({ NODE_ENV: "production", AUTH_ALLOWED_IPS: "203.0.113.7, 198.51.100.2" })).toEqual(["203.0.113.7", "198.51.100.2"]);
     expect(consoleAllowedIps({ NODE_ENV: "development" })).toBeNull();
+  });
+
+  it("seals access notes with a key of 32 bytes: required in production, a public one in development", () => {
+    expect(dataKey({ NODE_ENV: "development" })).toHaveLength(32);
+    expect(dataKey(PROD)).toHaveLength(32);
+    expect(() => dataKey({ NODE_ENV: "production" })).toThrow(/not set/);
+    expect(() => dataKey({ NODE_ENV: "production", APP_DATA_ENCRYPTION_KEY: "c2hvcnQ=" })).toThrow(/32 random bytes/);
+    expect(productionProblems(readEnv({ ...PROD, APP_DATA_ENCRYPTION_KEY: undefined }))).toContain("APP_DATA_ENCRYPTION_KEY must be 32 random bytes, base64-encoded");
+  });
+
+  it("delivers mail only through a configured provider: none by default, mailgun needs its key and domain", () => {
+    expect(readEnv({}).MAIL_PROVIDER).toBe("none");
+    expect(() => readEnv({ MAIL_PROVIDER: "sendgrid" })).toThrow();
+    expect(productionProblems(readEnv({ ...PROD, MAIL_PROVIDER: "mailgun" }))).toEqual(["MAIL_PROVIDER=mailgun needs MAIL_API_KEY and MAIL_DOMAIN"]);
+    expect(productionProblems(readEnv({ ...PROD, MAIL_PROVIDER: "mailgun", MAIL_API_KEY: "k", MAIL_DOMAIN: "mg.akinaza.com" }))).toEqual([]);
   });
 });

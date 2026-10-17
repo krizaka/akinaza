@@ -359,9 +359,15 @@ export async function markMailSent(db: Db, id: string, at: Date): Promise<void> 
   await db.execute(sql`UPDATE visit_reports SET sent_at = ${at.toISOString()}::timestamptz WHERE id = (SELECT related_id FROM mail_outbox WHERE id = ${id} AND related_kind = 'visit_report')`);
 }
 
-/** A failed or unconfigured attempt: the mail stays `pending` until `maxAttempts`, then `failed`. */
-export async function markMailAttempt(db: Db, id: string, error: string, maxAttempts: number): Promise<void> {
-  await db.execute(sql`UPDATE mail_outbox SET attempts = attempts + 1, last_error = ${error.slice(0, 300)}, status = CASE WHEN attempts + 1 >= ${maxAttempts} THEN 'failed' ELSE 'pending' END WHERE id = ${id}`);
+export async function mailById(db: Db, id: string) {
+  const [row] = await db.select().from(mailOutbox).where(eq(mailOutbox.id, id));
+  return row ?? null;
+}
+
+/** A failed or unconfigured attempt: the mail stays `pending` until `maxAttempts`, then `failed`. Returns which. */
+export async function markMailAttempt(db: Db, id: string, error: string, maxAttempts: number): Promise<"pending" | "failed"> {
+  const result = await db.execute(sql`UPDATE mail_outbox SET attempts = attempts + 1, last_error = ${error.slice(0, 300)}, status = CASE WHEN attempts + 1 >= ${maxAttempts} THEN 'failed' ELSE 'pending' END WHERE id = ${id} RETURNING status`);
+  return (result.rows[0] as { status: "pending" | "failed" }).status;
 }
 
 /** Everything held about a client, in one object — their right of access (Loi 25). Access notes are opened for them. */

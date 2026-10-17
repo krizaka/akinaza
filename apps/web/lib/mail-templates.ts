@@ -17,6 +17,8 @@ export const MAIL_TEMPLATES = {
   /** The day before an appointment — only to a client who consented to reminders (Loi 25). */
   "appointment-reminder": { shop: "text", service: "text", staff: "text", date: "text", time: "text", address: "text" },
   /** An invoice issued, with its GST and QST — the amounts formatted in the client's language. */
+  /** The report on a visit (a walk): the note, the time spent, a link to the private page with the photo. Part of the service, not a reminder. */
+  "walk-report": { shop: "text", dog: "text", client: "text", service: "text", date: "text", time: "text", duration: "text", note: "text", url: "text", photo: "flag" },
   "invoice-issued": { shop: "text", number: "text", total: "text", gst: "text", qst: "text", url: "text" },
 } as const satisfies Record<string, Record<string, VarKind>>;
 

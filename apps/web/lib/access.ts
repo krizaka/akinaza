@@ -1,6 +1,8 @@
+import { ownClient, shopClient, shopOfOwner } from "@akinaza/db";
 import { cookies, headers } from "next/headers";
 
 import { clientIp } from "./client-ip";
+import { db } from "./db";
 import { consoleAllowedIps } from "./env";
 import { isAdminHost } from "./host";
 import { refuse } from "./http";
@@ -54,4 +56,28 @@ export async function pageAdmin(): Promise<Session | null> {
   const session = await pageSession();
   if (!session || session.account.role !== "ADMIN") return null;
   return ipAllowed(await headers()) ? session : null;
+}
+
+/** The walker: a session that owns a shop (403 otherwise). */
+export async function requireOwner(req: Request) {
+  const session = await requireSession(req);
+  const shop = await shopOfOwner(db(), session.account.id);
+  if (!shop) throw refuse(403, "NO_SHOP", "You do not run a shop");
+  return { session, shop };
+}
+
+/** A client file of the signed-in account (404 for anyone else's: nothing tells it exists). */
+export async function requireOwnClient(req: Request, clientId: string) {
+  const session = await requireSession(req);
+  const client = await ownClient(db(), session.account.id, clientId);
+  if (!client) throw refuse(404, "NOT_FOUND", "Not found");
+  return { session, client };
+}
+
+/** A client file of the walker's shop. */
+export async function requireShopClient(req: Request, clientId: string) {
+  const { session, shop } = await requireOwner(req);
+  const client = await shopClient(db(), shop.id, clientId);
+  if (!client) throw refuse(404, "NOT_FOUND", "Not found");
+  return { session, shop, client };
 }

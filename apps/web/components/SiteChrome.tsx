@@ -13,7 +13,7 @@ import { APP_VERSION, contactHref, type PageId, pagePath, REPO_URL } from "@/lib
  * The bar of a Krizaka product (NAV-SYS, products independent): the animated mark and the DEV badge · this site's
  * sections · the repository, the theme, the language and the one action. No family switcher, no link to another product.
  */
-export function SiteHeader({ locale, current }: { locale: Locale; current: PageId }) {
+export function SiteHeader({ locale, current, switchHref }: { locale: Locale; current: PageId; switchHref?: string }) {
   const t = translator(locale);
   const other = otherLocale(locale);
   const home = pagePath(locale, "home");
@@ -46,7 +46,7 @@ export function SiteHeader({ locale, current }: { locale: Locale; current: PageI
             <ThemeToggle label={t("chrome.themeToggle")} variant="ghost" />
           </span>
           <Button asChild variant="outline" size="sm" className="hidden h-7 w-auto px-2 font-mono text-[11px] font-semibold tracking-wide md:inline-flex">
-            <Link href={pagePath(other, current)} hrefLang={other} lang={other}>
+            <Link href={switchHref ?? pagePath(other, current)} hrefLang={other} lang={other}>
               <span className="sr-only">{t("chrome.languageLabel")} · </span>
               {t("chrome.otherLanguage")}
             </Link>
@@ -68,7 +68,7 @@ export function SiteHeader({ locale, current }: { locale: Locale; current: PageI
               <Link href={`/${locale}/sign-in`}>{t("chrome.signIn")}</Link>
             </NavBar.MobileLink>
             <NavBar.MobileLink asChild>
-              <Link href={pagePath(other, current)} hrefLang={other} lang={other}>
+              <Link href={switchHref ?? pagePath(other, current)} hrefLang={other} lang={other}>
                 {t("chrome.otherLanguage")}
               </Link>
             </NavBar.MobileLink>

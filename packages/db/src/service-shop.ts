@@ -1,4 +1,4 @@
-import { addLocalDays, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, type Slot, slugSchema, type TakenVisit, type WeeklyWindow } from "@akinaza/core";
+import { addLocalDays, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, type WeeklyWindow } from "@akinaza/core";
 import { addDays } from "date-fns";
 import { and, asc, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -387,4 +387,22 @@ export async function cancelBooking(db: Db, clientId: string, bookingId: string,
     const [left] = await tx.select({ n: sql<number>`count(*)::int` }).from(bookings).where(and(eq(bookings.appointmentId, row.appointment_id), eq(bookings.status, "booked")));
     if (left!.n === 0) await tx.update(appointments).set({ status: "cancelled" }).where(eq(appointments.id, row.appointment_id));
   });
+}
+
+/** The shop's own rules (cancellation window, horizon, step, notice, report-link life) — validated against the same bounds the database keeps. */
+export async function saveRules(db: Db, shopId: string, raw: ShopRules): Promise<void> {
+  const rules = shopRulesSchema.parse(raw);
+  await db.update(shopRules).set(rules).where(eq(shopRules.shopId, shopId));
+}
+
+/** A client file, if it belongs to the signed-in account (and is not erased). */
+export async function ownClient(db: Db, accountId: string, clientId: string) {
+  const [row] = await db.select().from(clients).where(and(eq(clients.id, clientId), eq(clients.accountId, accountId), isNull(clients.erasedAt)));
+  return row ?? null;
+}
+
+/** A client file of the shop (the walker's). */
+export async function shopClient(db: Db, shopId: string, clientId: string) {
+  const [row] = await db.select().from(clients).where(and(eq(clients.id, clientId), eq(clients.shopId, shopId), isNull(clients.erasedAt)));
+  return row ?? null;
 }

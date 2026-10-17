@@ -53,6 +53,7 @@ jobs:
           NODE_ENV: production
           AUTH_SESSION_SECRET: ci-only-session-secret-0123456789abcdef
           AI_API_KEY: oz_ci_only_not_a_key
+          APP_DATA_ENCRYPTION_KEY: Y2ktb25seS1kYXRhLWtleS0zMi1ieXRlcy0xMjM0NTY=
           PORT: "3000"
         run: |
           (cd apps/web && npx next start -p 3000 > ../../web.log 2>&1 &)
