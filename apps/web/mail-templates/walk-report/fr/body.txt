@@ -1,0 +1,10 @@
+Bonjour {client},
+
+{dog} a fait sa sortie « {service} » avec {shop} le {date} à {time} : {duration} min.
+
+« {note} »
+{#photo}
+Une photo vous attend dans le rapport.
+{/photo}
+Voir le rapport : {url}
+(Ce lien est privé et expire dans quelques semaines.)

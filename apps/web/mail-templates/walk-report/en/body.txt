@@ -1,0 +1,10 @@
+Hello {client},
+
+{dog} had the "{service}" outing with {shop} on {date} at {time}: {duration} min.
+
+"{note}"
+{#photo}
+A photo is waiting for you in the report.
+{/photo}
+See the report: {url}
+(This link is private and expires in a few weeks.)

@@ -13,7 +13,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useSay } from "@/lib/i18n-client";
 
 const VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "";
-const ICONS = { today: <ClockIcon />, overview: <HomeIcon />, profile: <UserIcon />, users: <UserIcon />, shops: <UsersIcon />, invoices: <BillingIcon />, ledger: <ShieldIcon />, operations: <ServerIcon />, audit: <ClockIcon /> } as const;
+const ICONS = { today: <ClockIcon />, bookings: <ClockIcon />, clients: <UsersIcon />, shop: <HomeIcon />, overview: <HomeIcon />, profile: <UserIcon />, users: <UserIcon />, shops: <UsersIcon />, invoices: <BillingIcon />, ledger: <ShieldIcon />, operations: <ServerIcon />, audit: <ClockIcon /> } as const;
 
 /**
  * The signed-in frame (@krizaka/ui AppShell): the shop's space (`/app`) and the administration (admin.akinaza.com)
@@ -54,7 +54,7 @@ export function AppFrame({ locale, email, base, items, admin = false, children }
         }
       >
         {items.map((key) => {
-          const to = admin ? (key === "overview" ? base : `${base}/${key}`) : key === "profile" ? `${base}/profile` : base;
+          const to = admin ? (key === "overview" ? base : `${base}/${key}`) : key === "profile" || key === "clients" || key === "shop" ? `${base}/${key}` : base;
           return (
             <AppShell.Item key={key} asChild label={say(`shell.${key}`)} icon={ICONS[key]} current={isCurrent(to)}>
               <Link href={to}>{say(`shell.${key}`)}</Link>

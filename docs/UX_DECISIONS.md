@@ -30,3 +30,39 @@ Feedback: the pinned Discussion of the repository.
 - **Refused**: one-click filing; silently adopting the AI's figures.
 - **Cost**: a last step outside Akinaza.
 - **Wrong if**: merchants copy the figures with mistakes — then make the copy safer, still without filing.
+
+## 4. The walker's day: one card per walk, the check-in is the biggest thing on it
+
+- **Decision**: for a service shop the signed-in home is the day's walks, one card each (time, service, zone, the dogs with their owners), with « Start the walk » then « End the walk » as full-width buttons and the report form appearing under the dog once the walk is over.
+- **Problem**: the walker is in the street with a leash in one hand and a phone in the other; they need one decision at a time, with a thumb.
+- **Principle**: Fitts's law (large targets for the most frequent action); progressive disclosure — the report appears when it is relevant (Nielsen Norman Group).
+- **Refused**: a table (the salon-style day) on a phone; a separate « reports » screen to go and find the walk again.
+- **Cost**: a day with 12 walks is a long scroll; no map or route grouping yet.
+- **Wrong if**: walkers check in after the fact (check-in times far from the booked start) — then the button is not where they need it.
+
+## 5. The report is a note and a photo, shrunk on the phone
+
+- **Decision**: one short note (the words the walker already uses: « Rex a bien marché, 45 min, pipi ✓ ») and one optional photo; the photo is redrawn at 1280 px before it is sent; the owner gets a mail with a private link, not an attachment.
+- **Problem**: a 6 MB photo over mobile data in the street fails; a mail with a heavy attachment lands in spam; a report nobody reads is worthless.
+- **Principle**: recognition over recall (the example is the placeholder); the peak-end rule — the report is the moment the owner remembers.
+- **Refused**: a form with ratings, checkboxes for each bodily function; an attachment.
+- **Cost**: the report needs the link to be opened; the link expires (30 days by default, the shop's rule).
+- **Wrong if**: owners ask for the photo inside the mail.
+
+## 6. Booking: sign in, then three small steps shown one at a time
+
+- **Decision**: the shop page is public; booking asks for a sign-in, then shows only the next missing step — the file (name, phone, consents never pre-ticked), the dog, the walk (service, zone, dogs, a time from the list the shop offers).
+- **Problem**: a dog owner arrives from a Facebook link on a phone and abandons a long form.
+- **Principle**: progressive disclosure; error prevention — only times that are really free are offered, and the database still refuses a race.
+- **Refused**: one long page with everything; a free-text date.
+- **Cost**: a returning client with a file and a dog goes straight to the walk — a first-timer sees three screens.
+- **Wrong if**: the funnel drops at the file step (measure once there are real users).
+
+## 7. Door codes are written by the client and opened by the walker, once at a time
+
+- **Decision**: the client writes how to get in (stored encrypted); it cannot be read back by them in the app; the walker opens it for one client at a time, each opening is audited.
+- **Problem**: a list of door codes on a screen is a list of door codes in a screenshot, a shoulder surf, a backup.
+- **Principle**: least privilege, and a deliberate act for a sensitive reveal (OWASP ASVS V8).
+- **Refused**: showing the notes on the day card; letting the client re-read them.
+- **Cost**: one tap more at the door; a client who mistyped must retype (the export gives them their data).
+- **Wrong if**: walkers photograph the notes — then add a time-limited reveal.

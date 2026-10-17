@@ -1,0 +1,334 @@
+"use client";
+
+import { Alert } from "@krizaka/ui/alert";
+import { Badge } from "@krizaka/ui/badge";
+import { Button } from "@krizaka/ui/button";
+import { Card } from "@krizaka/ui/card";
+import { createKrizakaForm } from "@krizaka/ui/form";
+import { useState } from "react";
+import { z } from "zod";
+
+import { useCall } from "@/components/app/useCall";
+import { useSay } from "@/lib/i18n-client";
+
+/** What the setup page needs, plain (the server picks it from the shop). */
+export interface SetupData {
+  page: { name: string; legalName: string; address: string; slug: string; ownerName: string; taglineFr: string; taglineEn: string; published: boolean } | null;
+  publicUrl: string | null;
+  zones: { id: string; name: string }[];
+  services: { id: string; nameFr: string; nameEn: string; durationMinutes: number; priceCents: number; capacity: number }[];
+  windows: { id: string; weekday: number; startsAt: string; endsAt: string }[];
+  daysOff: { id: string; onDate: string; reason: string | null }[];
+  rules: { cancellationHours: number; bookingHorizonDays: number; slotStepMinutes: number; minNoticeMinutes: number; reportLinkDays: number } | null;
+}
+
+const WEEK = [1, 2, 3, 4, 5, 6, 0] as const;
+const money = (cents: number, locale: string) => new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(cents / 100);
+
+export function ShopSetupView({ data }: { data: SetupData }) {
+  const { say } = useSay();
+  return (
+    <div className="flex flex-col gap-6">
+      <header className="flex flex-col gap-2">
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="font-display text-2xl font-bold text-fg">{say("shopSetup.title")}</h1>
+          {data.page ? <Badge tone={data.page.published ? "success" : "neutral"}>{say(data.page.published ? "shopSetup.published" : "shopSetup.notPublished")}</Badge> : null}
+        </div>
+        <p className="text-fg-secondary">{say("shopSetup.intro")}</p>
+        {data.publicUrl && data.page?.published ? (
+          <p className="text-sm">
+            <a className="font-semibold text-fg-accent underline" href={data.publicUrl}>
+              {say("shopSetup.viewPage")}
+            </a>{" "}
+            <span className="font-mono text-xs text-fg-muted">{data.publicUrl}</span>
+          </p>
+        ) : null}
+      </header>
+      <div className="grid gap-4 lg:grid-cols-2">
+        <PageCard page={data.page} />
+        {data.page ? (
+          <>
+            <ZonesCard zones={data.zones} />
+            <ServicesCard services={data.services} />
+            <HoursCard windows={data.windows} daysOff={data.daysOff} />
+            {data.rules ? <RulesCard rules={data.rules} /> : null}
+          </>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+const pageForm = createKrizakaForm({
+  schema: z.object({
+    name: z.string().trim().min(1).max(80),
+    legalName: z.string().trim().min(1).max(120),
+    address: z.string().trim().min(1).max(200),
+    slug: z.string().trim().min(3).max(40),
+    ownerName: z.string().trim().min(1).max(80),
+    taglineFr: z.string().trim().max(160),
+    taglineEn: z.string().trim().max(160),
+    published: z.boolean(),
+  }),
+  defaultValues: { name: "", legalName: "", address: "", slug: "", ownerName: "", taglineFr: "", taglineEn: "", published: false },
+});
+
+function PageCard({ page }: { page: SetupData["page"] }) {
+  const { say, locale } = useSay();
+  const call = useCall();
+  const [saved, setSaved] = useState(false);
+  const form = pageForm.useForm({
+    i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
+    ...(page ? { defaultValues: page } : {}),
+    onSubmit: async (values) => {
+      setSaved(false);
+      setSaved((await call.run("/api/walker/shop", { json: values })) !== null);
+    },
+  });
+  return (
+    <Card.Root className="p-4 lg:col-span-2">
+      <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.page.title")}</h2>
+      <form.Form aria-label={say("shopSetup.page.title")} className="grid gap-4 sm:grid-cols-2">
+        <form.TextField name="name" label={say("shopSetup.page.name")} autoComplete="organization" />
+        <form.TextField name="legalName" label={say("shopSetup.page.legalName")} />
+        <form.TextField name="address" label={say("shopSetup.page.address")} autoComplete="street-address" />
+        <form.TextField name="slug" label={say("shopSetup.page.slug")} hint={say("shopSetup.page.slugHint")} transform={(v) => v.toLowerCase().replace(/[^a-z0-9-]/g, "-")} />
+        <form.TextField name="ownerName" label={say("shopSetup.page.ownerName")} autoComplete="given-name" />
+        <span className="hidden sm:block" />
+        <form.TextField name="taglineFr" label={say("shopSetup.page.taglineFr")} />
+        <form.TextField name="taglineEn" label={say("shopSetup.page.taglineEn")} />
+        <div className="sm:col-span-2">
+          <form.Switch name="published" label={say("shopSetup.page.published")} hint={say("shopSetup.page.publishedHint")} />
+        </div>
+        <div className="flex flex-col gap-3 sm:col-span-2">
+          {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
+          {saved ? <Alert tone="success">{say("shopSetup.page.saved")}</Alert> : null}
+          <form.Submit size="md" shape="cut" className="w-full sm:w-auto sm:self-start">
+            {say("shopSetup.page.submit")}
+          </form.Submit>
+        </div>
+      </form.Form>
+    </Card.Root>
+  );
+}
+
+const zoneForm = createKrizakaForm({ schema: z.object({ name: z.string().trim().min(1).max(80) }), defaultValues: { name: "" } });
+
+function ZonesCard({ zones }: { zones: SetupData["zones"] }) {
+  const { say, locale } = useSay();
+  const call = useCall();
+  const form = zoneForm.useForm({
+    i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
+    onSubmit: async (values) => {
+      if ((await call.run("/api/walker/zones", { json: values })) !== null) form.reset();
+    },
+  });
+  return (
+    <Card.Root className="p-4">
+      <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.zones.title")}</h2>
+      {zones.length ? (
+        <ul className="mb-4 flex flex-wrap gap-2">
+          {zones.map((z) => (
+            <li key={z.id} className="inline-flex items-center gap-1 rounded-full border border-border-default bg-surface-2 py-1 pl-3 pr-1 text-sm text-fg">
+              {z.name}
+              <Button size="sm" variant="ghost" shape="pill" aria-label={say("shopSetup.zones.remove", { name: z.name })} onClick={() => call.run(`/api/walker/zones/${z.id}`, { method: "DELETE" })}>
+                ×
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mb-4 text-fg-secondary">{say("shopSetup.zones.none")}</p>
+      )}
+      <form.Form aria-label={say("shopSetup.zones.title")} className="flex flex-col gap-3">
+        <form.TextField name="name" label={say("shopSetup.zones.name")} placeholder={say("shopSetup.zones.placeholder")} />
+        {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
+        <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
+          {say("shopSetup.zones.add")}
+        </form.Submit>
+      </form.Form>
+    </Card.Root>
+  );
+}
+
+const serviceForm = createKrizakaForm({
+  schema: z.object({
+    nameFr: z.string().trim().min(1).max(80),
+    nameEn: z.string().trim().min(1).max(80),
+    durationMinutes: z.string().regex(/^\d{1,3}$/),
+    priceCents: z.number().int().min(0),
+    capacity: z.string().regex(/^\d{1,2}$/),
+  }),
+  defaultValues: { nameFr: "", nameEn: "", durationMinutes: "60", priceCents: 3000, capacity: "1" },
+});
+
+function ServicesCard({ services }: { services: SetupData["services"] }) {
+  const { say, locale } = useSay();
+  const call = useCall();
+  const form = serviceForm.useForm({
+    i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
+    onSubmit: async (values) => {
+      const done = await call.run("/api/walker/services", { json: { nameFr: values.nameFr, nameEn: values.nameEn, durationMinutes: Number(values.durationMinutes), priceCents: values.priceCents, capacity: Number(values.capacity) } });
+      if (done !== null) form.reset();
+    },
+  });
+  return (
+    <Card.Root className="p-4">
+      <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.services.title")}</h2>
+      {services.length ? (
+        <ul className="mb-4 flex flex-col divide-y divide-border-default">
+          {services.map((s) => (
+            <li key={s.id} className="flex items-start justify-between gap-3 py-2">
+              <div>
+                <p className="font-semibold text-fg">{locale === "fr" ? s.nameFr : s.nameEn}</p>
+                <p className="text-sm text-fg-secondary">
+                  {say("shopSetup.services.line", { minutes: s.durationMinutes, price: money(s.priceCents, locale) })}
+                  {s.capacity > 1 ? ` · ${say("shopSetup.services.group", { count: s.capacity })}` : ""}
+                </p>
+              </div>
+              <Button size="sm" variant="ghost" aria-label={say("shopSetup.services.remove", { name: locale === "fr" ? s.nameFr : s.nameEn })} onClick={() => call.run("/api/walker/services", { json: { id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, active: false } })}>
+                ×
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mb-4 text-fg-secondary">{say("shopSetup.services.none")}</p>
+      )}
+      <form.Form aria-label={say("shopSetup.services.title")} className="grid gap-3 sm:grid-cols-2">
+        <form.TextField name="nameFr" label={say("shopSetup.services.nameFr")} />
+        <form.TextField name="nameEn" label={say("shopSetup.services.nameEn")} />
+        <form.TextField name="durationMinutes" label={say("shopSetup.services.duration")} inputMode="numeric" />
+        <form.Money name="priceCents" label={say("shopSetup.services.price")} currency="CAD" />
+        <form.TextField name="capacity" label={say("shopSetup.services.capacity")} hint={say("shopSetup.services.capacityHint")} inputMode="numeric" />
+        <p className="self-end text-xs text-fg-muted">{say("shopSetup.services.taxes")}</p>
+        <div className="flex flex-col gap-3 sm:col-span-2">
+          {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
+          <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
+            {say("shopSetup.services.add")}
+          </form.Submit>
+        </div>
+      </form.Form>
+    </Card.Root>
+  );
+}
+
+const clock = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
+const hoursForm = createKrizakaForm({ schema: z.object({ weekday: z.string().regex(/^[0-6]$/), startsAt: clock, endsAt: clock }), defaultValues: { weekday: "1", startsAt: "09:00", endsAt: "17:00" } });
+const dayOffForm = createKrizakaForm({ schema: z.object({ day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), reason: z.string().trim().max(120) }), defaultValues: { day: "", reason: "" } });
+
+function HoursCard({ windows, daysOff }: { windows: SetupData["windows"]; daysOff: SetupData["daysOff"] }) {
+  const { say, locale } = useSay();
+  const call = useCall();
+  const i18n = { t: (key: string, vars?: Readonly<Record<string, string | number | boolean | Date | null | undefined>>) => say(key, vars as Record<string, string | number> | undefined), locale };
+  const hours = hoursForm.useForm({
+    i18n,
+    onSubmit: async (values) => {
+      await call.run("/api/walker/hours", { json: { weekday: Number(values.weekday), startsAt: values.startsAt, endsAt: values.endsAt } });
+    },
+  });
+  const off = dayOffForm.useForm({
+    i18n,
+    onSubmit: async (values) => {
+      if ((await call.run("/api/walker/days-off", { json: { day: values.day, reason: values.reason || undefined } })) !== null) off.reset();
+    },
+  });
+  const dayName = (weekday: number) => say(`shopSetup.weekdays.${weekday}`);
+  return (
+    <Card.Root className="p-4">
+      <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.hours.title")}</h2>
+      {windows.length ? (
+        <ul className="mb-4 flex flex-col divide-y divide-border-default">
+          {[...windows].sort((a, b) => WEEK.indexOf(a.weekday as never) - WEEK.indexOf(b.weekday as never) || a.startsAt.localeCompare(b.startsAt)).map((w) => (
+            <li key={w.id} className="flex items-center justify-between gap-3 py-1.5 text-sm">
+              <span className="text-fg">
+                {dayName(w.weekday)} <span className="font-mono text-fg-secondary">{w.startsAt.slice(0, 5)}–{w.endsAt.slice(0, 5)}</span>
+              </span>
+              <Button size="sm" variant="ghost" aria-label={say("shopSetup.hours.remove", { day: dayName(w.weekday), from: w.startsAt.slice(0, 5), to: w.endsAt.slice(0, 5) })} onClick={() => call.run(`/api/walker/hours/${w.id}`, { method: "DELETE" })}>
+                ×
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mb-4 text-fg-secondary">{say("shopSetup.hours.none")}</p>
+      )}
+      <hours.Form aria-label={say("shopSetup.hours.title")} className="grid grid-cols-2 gap-3">
+        <div className="col-span-2">
+          <hours.Select name="weekday" label={say("shopSetup.hours.weekday")} options={WEEK.map((d) => ({ value: String(d), label: dayName(d) }))} />
+        </div>
+        <hours.TextField name="startsAt" label={say("shopSetup.hours.from")} hint={say("shopSetup.hours.timeHint")} inputMode="numeric" />
+        <hours.TextField name="endsAt" label={say("shopSetup.hours.to")} inputMode="numeric" />
+        <div className="col-span-2">
+          <hours.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto">
+            {say("shopSetup.hours.add")}
+          </hours.Submit>
+        </div>
+      </hours.Form>
+      <h3 className="mb-2 mt-6 font-display text-sm font-bold text-fg">{say("shopSetup.hours.dayOff")}</h3>
+      {daysOff.length ? (
+        <ul className="mb-3 flex flex-wrap gap-2">
+          {daysOff.map((d) => (
+            <li key={d.id} className="inline-flex items-center gap-1 rounded-full border border-border-default bg-surface-2 py-1 pl-3 pr-1 text-sm text-fg">
+              <span className="font-mono">{d.onDate}</span>
+              {d.reason ? <span className="text-fg-secondary">· {d.reason}</span> : null}
+              <Button size="sm" variant="ghost" shape="pill" aria-label={say("shopSetup.hours.dayOffRemove", { day: d.onDate })} onClick={() => call.run(`/api/walker/days-off/${d.onDate}`, { method: "DELETE" })}>
+                ×
+              </Button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <off.Form aria-label={say("shopSetup.hours.dayOff")} className="grid grid-cols-2 gap-3">
+        <off.TextField name="day" label={say("shopSetup.hours.dayOff")} placeholder="2026-12-24" inputMode="numeric" />
+        <off.TextField name="reason" label={say("shopSetup.hours.dayOffReason")} />
+        <div className="col-span-2 flex flex-col gap-3">
+          {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
+          <off.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
+            {say("shopSetup.hours.dayOffAdd")}
+          </off.Submit>
+        </div>
+      </off.Form>
+    </Card.Root>
+  );
+}
+
+const num = z.string().regex(/^\d{1,5}$/);
+const rulesForm = createKrizakaForm({
+  schema: z.object({ cancellationHours: num, bookingHorizonDays: num, slotStepMinutes: num, minNoticeMinutes: num, reportLinkDays: num }),
+  defaultValues: { cancellationHours: "24", bookingHorizonDays: "60", slotStepMinutes: "30", minNoticeMinutes: "120", reportLinkDays: "30" },
+});
+
+function RulesCard({ rules }: { rules: NonNullable<SetupData["rules"]> }) {
+  const { say, locale } = useSay();
+  const call = useCall();
+  const [saved, setSaved] = useState(false);
+  const form = rulesForm.useForm({
+    i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
+    defaultValues: Object.fromEntries(Object.entries(rules).map(([k, v]) => [k, String(v)])) as never,
+    onSubmit: async (values) => {
+      setSaved(false);
+      const json = Object.fromEntries(Object.entries(values).map(([k, v]) => [k, Number(v)]));
+      setSaved((await call.run("/api/walker/rules", { json })) !== null);
+    },
+  });
+  return (
+    <Card.Root className="p-4 lg:col-span-2">
+      <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.rules.title")}</h2>
+      <form.Form aria-label={say("shopSetup.rules.title")} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <form.TextField name="cancellationHours" label={say("shopSetup.rules.cancellationHours")} inputMode="numeric" />
+        <form.TextField name="bookingHorizonDays" label={say("shopSetup.rules.bookingHorizonDays")} inputMode="numeric" />
+        <form.TextField name="slotStepMinutes" label={say("shopSetup.rules.slotStepMinutes")} inputMode="numeric" />
+        <form.TextField name="minNoticeMinutes" label={say("shopSetup.rules.minNoticeMinutes")} inputMode="numeric" />
+        <form.TextField name="reportLinkDays" label={say("shopSetup.rules.reportLinkDays")} inputMode="numeric" />
+        <div className="flex flex-col gap-3 sm:col-span-2 lg:col-span-3">
+          {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
+          {saved ? <Alert tone="success">{say("shopSetup.rules.saved")}</Alert> : null}
+          <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
+            {say("shopSetup.rules.submit")}
+          </form.Submit>
+        </div>
+      </form.Form>
+    </Card.Root>
+  );
+}

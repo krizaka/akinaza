@@ -1,23 +1,95 @@
-import { formatCents } from "@akinaza/core";
+import { formatCents, visitMinutes } from "@akinaza/core";
+import { clientBookings, clientFilesOf, dayVisits, dependantsOf, shopDay, shopOfOwner } from "@akinaza/db";
 import { Badge } from "@krizaka/ui/badge";
 import { Card } from "@krizaka/ui/card";
 import { DescriptionList } from "@krizaka/ui/description-list";
 import { EmptyState } from "@krizaka/ui/empty-state";
 import { Mascot } from "@krizaka/ui/mascots";
+import type { Metadata } from "next";
 
+import { ClientHome } from "@/components/app/ClientHome";
 import { TodayTable } from "@/components/app/TodayTable";
+import { WalkerDay } from "@/components/app/WalkerDay";
 import { pageSession } from "@/lib/access";
+import { db } from "@/lib/db";
 import { asLocale, format, getDictionary, type Locale } from "@/lib/i18n";
 import { todayView } from "@/lib/today";
+
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  return { title: getDictionary(asLocale((await params).locale)).console.meta.today };
+}
+
+/**
+ * The signed-in home. The owner of a service shop (a dog walker…) lands on their day: the walks, the dogs, the check-in
+ * and the reports. A client lands on their bookings. A shop of another kind keeps the salon-style day below.
+ */
+export default async function Home({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ day?: string }> }) {
+  const locale = asLocale((await params).locale);
+  const session = (await pageSession())!;
+  const shop = await shopOfOwner(db(), session.account.id);
+  if (shop && shop.kind !== "services") return <SalonToday params={params} />;
+  if (shop) return <ServiceDay locale={locale} shop={shop} day={(await searchParams).day} />;
+  return <ClientSpace locale={locale} accountId={session.account.id} />;
+}
+
+async function ServiceDay({ locale, shop, day: requested }: { locale: "en" | "fr"; shop: NonNullable<Awaited<ReturnType<typeof shopOfOwner>>>; day: string | undefined }) {
+  const t = getDictionary(locale).console;
+  const today = await shopDay(db(), shop.id, new Date());
+  const day = requested && /^\d{4}-\d{2}-\d{2}$/.test(requested) ? requested : today;
+  const visits = await dayVisits(db(), shop.id, day);
+  const step = (n: number) => {
+    const d = new Date(`${day}T12:00:00Z`);
+    d.setUTCDate(d.getUTCDate() + n);
+    return `/${locale}/app?day=${d.toISOString().slice(0, 10)}`;
+  };
+  const lang = locale === "fr" ? "fr-CA" : "en-CA";
+  return (
+    <div className="flex flex-col gap-4">
+      <header className="flex flex-col gap-1">
+        <h1 className="font-display text-2xl font-bold text-fg">{shop.name}</h1>
+        <p className="text-fg-secondary">{format(t.walker.dayLine, { date: new Date(`${day}T12:00:00Z`).toLocaleDateString(lang, { dateStyle: "full", timeZone: "UTC" }), count: visits.length })}</p>
+      </header>
+      <WalkerDay
+        visits={visits.map((v) => ({ ...v, minutes: v.checkedInAt && v.checkedOutAt ? visitMinutes(new Date(v.checkedInAt), new Date(v.checkedOutAt)) : null }))}
+        timeZone={shop.timezone}
+        nav={{ prev: step(-1), next: step(1), today: `/${locale}/app`, isToday: day === today }}
+      />
+    </div>
+  );
+}
+
+async function ClientSpace({ locale, accountId }: { locale: "en" | "fr"; accountId: string }) {
+  const files = await clientFilesOf(db(), accountId);
+  if (files.length === 0) {
+    const t = getDictionary(locale).console.client;
+    return <EmptyState icon={<Mascot bird="beaver" mood="empty" size={72} />} title={t.title} description={t.none} />;
+  }
+  const now = new Date().toISOString();
+  return (
+    <ClientHome
+      files={await Promise.all(
+        files.map(async (f) => ({
+          client: { id: f.id, fullName: f.fullName, shopName: f.shopName, shopSlug: f.shopSlug },
+          dogs: (await dependantsOf(db(), f.id)).map((d) => ({ id: d.id, name: d.name, breed: (d.profile as { breed?: string }).breed ?? null })),
+          bookings: (await clientBookings(db(), f.id)).map((b) => ({ ...b, report: b.report ? { id: b.report.id, note: b.report.note, hasPhoto: b.report.hasPhoto, durationMinutes: b.report.durationMinutes } : null })),
+          now,
+          timeZone: f.timezone,
+        })),
+      )}
+    />
+  );
+}
 
 const INTL: Record<Locale, string> = { en: "en-CA", fr: "fr-CA" };
 
 /**
- * The shop's day: today's appointments, and an invoice with its GST (5 %) and QST (9.975 %) lines — the latest issued one,
+ * The salon-style day (a shop that is not a service shop): today's appointments, and an invoice with its GST (5 %) and QST (9.975 %) lines — the latest issued one,
  * or a preview of the next. Bilingual by design: the invoice is drawn in its own language (French by default, as the
  * Charter of the French language asks), whatever the language of the page.
  */
-export default async function Today({ params }: { params: Promise<{ locale: string }> }) {
+async function SalonToday({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale).console.today;
   const session = (await pageSession())!;

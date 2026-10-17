@@ -54,6 +54,13 @@ services:
         scope: RUN_TIME
         type: SECRET
         value: __AUTH_SESSION_SECRET__
+      # Seals the access notes (keys, door codes) at rest — 32 random bytes, base64. Required: the server refuses to start without it.
+      - key: APP_DATA_ENCRYPTION_KEY
+        scope: RUN_TIME
+        type: SECRET
+        value: __APP_DATA_ENCRYPTION_KEY__
+      # Outgoing mail (the walk report). Not configured on dev yet: every mail stays `pending` in the outbox. To enable, add
+      # MAIL_PROVIDER=mailgun, MAIL_DOMAIN, MAIL_FROM (values) and MAIL_API_KEY (SECRET).
       - key: DATABASE_URL
         scope: RUN_TIME
         type: SECRET
