@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { addDayOff, addZone, bookVisit, listSlots, publicShop, saveService, saveShopMedia, saveShopPage } from "./service-shop";
+import { addDayOff, addZone, bookVisit, listSlots, publicShop, saveService, saveShopMedia, saveShopPage, shopMediaOf, shopMediaInputSchema } from "./service-shop";
 import { freshDatabase, refusal } from "./test/db";
 import { NOW, walkerShop } from "./test/fixtures";
 
@@ -92,5 +92,18 @@ describe("« Popular », from the real bookings", () => {
       await bookVisit(t.db, { clientId: who.clientId, serviceId: w.solo, zoneId: w.zones.stHenri, dependantIds: [who.dogId], startsAt: slots[0]!.startsAt, now: NOW });
     }
     expect((await publicShop(t.db, "pattes-pop"))!.popularServiceId).toBe(w.solo);
+  });
+});
+
+describe("the owner's side of the storefront", () => {
+  it("reads back the media of a shop that is still a draft, and refuses an http cover in the form's schema", async () => {
+    const w = await walkerShop(t.db, "own1");
+    await saveShopMedia(t.db, w.shopId, { cover: { url: "https://cdn.test/c.jpg", altFr: "C", altEn: "C" }, gallery: [{ url: "https://cdn.test/g.jpg" }] });
+    const mine = await shopMediaOf(t.db, w.shopId);
+    expect(mine.cover?.url).toBe("https://cdn.test/c.jpg");
+    expect(mine.gallery).toHaveLength(1);
+    expect(shopMediaInputSchema.safeParse({ cover: { url: "http://cdn.test/c.jpg" } }).success).toBe(false);
+    expect(shopMediaInputSchema.safeParse({ cover: null, gallery: [] }).success).toBe(true);
+    expect(shopMediaInputSchema.safeParse({ gallery: Array.from({ length: 13 }, () => ({ url: "https://cdn.test/x.jpg" })) }).success).toBe(false);
   });
 });

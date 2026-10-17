@@ -564,7 +564,17 @@
         "published": "Publier la page",
         "publishedHint": "Les clients peuvent alors la trouver par son adresse et réserver.",
         "submit": "Enregistrer la page",
-        "saved": "Page enregistrée."
+        "saved": "Page enregistrée.",
+        "area": "Secteur affiché sur la page",
+        "areaHint": "Saint-Henri, Montréal — jamais l'adresse civique.",
+        "bioFr": "Qui vous êtes (français)",
+        "bioEn": "Qui vous êtes (anglais)",
+        "bioHint": "Quelques phrases, 600 caractères au plus.",
+        "publicPhone": "Téléphone montré aux visiteurs",
+        "publicEmail": "Courriel montré aux visiteurs",
+        "seatUnitFr": "Comment s'appelle une place (français)",
+        "seatUnitEn": "Comment s'appelle une place (anglais)",
+        "seatUnitHint": "Pour un service de groupe : « Jusqu'à 5 chiens ». Vide : « places »."
       },
       "zones": {
         "title": "Zones desservies",
@@ -572,7 +582,10 @@
         "placeholder": "Saint-Henri",
         "add": "Ajouter la zone",
         "remove": "Retirer {name}",
-        "none": "Aucune zone pour l'instant."
+        "none": "Aucune zone pour l'instant.",
+        "lat": "Latitude",
+        "lng": "Longitude",
+        "placeHint": "Facultatif : les deux, pour montrer le secteur sur la carte (45,4786 ; -73,5878)."
       },
       "services": {
         "title": "Services et prix",
@@ -587,7 +600,17 @@
         "none": "Aucun service pour l'instant.",
         "line": "{minutes} min · {price}",
         "group": "jusqu'à {count} chiens",
-        "taxes": "La TPS et la TVQ s'ajoutent à la facture si vous êtes inscrit."
+        "taxes": "La TPS et la TVQ s'ajoutent à la facture si vous êtes inscrit.",
+        "descriptionFr": "Phrase (français)",
+        "descriptionEn": "Phrase (anglais)",
+        "includedFr": "Ce qui est inclus (français)",
+        "includedEn": "Ce qui est inclus (anglais)",
+        "includedHint": "Un par ligne, six au plus.",
+        "priceVaries": "Le prix varie (affiche « À partir de »)",
+        "edit": "Modifier {name}",
+        "editing": "Modification d'un service",
+        "save": "Enregistrer le service",
+        "cancel": "Plutôt un nouveau service"
       },
       "hours": {
         "title": "Vos disponibilités",
@@ -621,6 +644,18 @@
         "4": "Jeudi",
         "5": "Vendredi",
         "6": "Samedi"
+      },
+      "media": {
+        "title": "Photos et clips",
+        "intro": "La couverture et la galerie de votre page : les adresses https de vos fichiers.",
+        "cover": "Adresse de la photo de couverture",
+        "coverHint": "Une photo en paysage, 1600 px de large ou plus.",
+        "coverAltFr": "Description de la couverture (français)",
+        "coverAltEn": "Description de la couverture (anglais)",
+        "gallery": "Galerie",
+        "galleryHint": "Une image par ligne : adresse | description (fr) | description (en) | légende (fr) | légende (en). Douze au plus.",
+        "submit": "Enregistrer les photos",
+        "saved": "Photos enregistrées."
       }
     },
     "shopPage": {
