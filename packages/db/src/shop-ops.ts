@@ -1,8 +1,8 @@
 import { expenseEntries, invoiceEntries, invoiceTotals, type LedgerEntry, type LineInput, prepareReturn, type PreparedReturn, type SlotEvent } from "@akinaza/core";
-import { and, eq, gte, isNull, lte, sql } from "drizzle-orm";
+import { and, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 
 import type { Db, Tx } from "./client";
-import { appointments, clientConsents, clients, expenses, invoiceLines, invoices, services, shops, taxLedger } from "./schema";
+import { appointments, bookings, clientConsents, clients, dependants, expenses, invoiceLines, invoices, mailOutbox, services, shops, taxLedger, visitReports } from "./schema";
 
 const post = (tx: Tx, shopId: string, entries: LedgerEntry[]) =>
   entries.length
@@ -73,13 +73,19 @@ export async function recordConsent(db: Db, clientId: string, purpose: "service"
 }
 
 /**
- * Erases a client's personal information (Loi 25): name replaced, contact and notes blanked, every consent withdrawn —
- * the row stays because the invoices that name it are kept (six years, tax law). Returns false if already erased.
+ * Erases a client's personal information (Loi 25): name replaced, contact, notes and access notes blanked, the sign-in
+ * account unlinked, every dependant blanked, the notes and photos of the visit reports removed and their mails deleted,
+ * every consent withdrawn — the row stays because the invoices that name it are kept (six years, tax law), and a visit
+ * that happened stays as an anonymous fact. Returns false if already erased.
  */
 export async function eraseClient(db: Db, clientId: string, textVersion: string): Promise<boolean> {
   return db.transaction(async (tx) => {
-    const [row] = await tx.update(clients).set({ fullName: "—", email: null, phone: null, notes: null, erasedAt: new Date() }).where(and(eq(clients.id, clientId), isNull(clients.erasedAt))).returning({ id: clients.id });
+    const [row] = await tx.update(clients).set({ fullName: "—", email: null, phone: null, notes: null, accessNotesEnc: null, accountId: null, erasedAt: sql`now()` }).where(and(eq(clients.id, clientId), isNull(clients.erasedAt))).returning({ id: clients.id });
     if (!row) return false;
+    await tx.update(dependants).set({ name: "—", profile: {}, erasedAt: sql`now()` }).where(eq(dependants.clientId, clientId));
+    const reports = tx.select({ id: visitReports.id }).from(visitReports).innerJoin(bookings, eq(bookings.id, visitReports.bookingId)).where(eq(bookings.clientId, clientId));
+    await tx.delete(mailOutbox).where(and(eq(mailOutbox.relatedKind, "visit_report"), inArray(mailOutbox.relatedId, reports)));
+    await tx.update(visitReports).set({ note: "—", photo: null, photoType: null, tokenExpiresAt: sql`now()`, viewTokenHash: sql`encode(sha256(gen_random_uuid()::text::bytea), 'hex')`, sentAt: null }).where(inArray(visitReports.bookingId, tx.select({ id: bookings.id }).from(bookings).where(eq(bookings.clientId, clientId))));
     await tx.insert(clientConsents).values((["service", "reminders", "marketing"] as const).map((purpose) => ({ clientId, purpose, granted: false, textVersion })));
     return true;
   });

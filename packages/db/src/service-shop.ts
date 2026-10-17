@@ -1,0 +1,390 @@
+import { addLocalDays, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, type Slot, slugSchema, type TakenVisit, type WeeklyWindow } from "@akinaza/core";
+import { addDays } from "date-fns";
+import { and, asc, eq, isNull, sql } from "drizzle-orm";
+import { z } from "zod";
+
+import type { Db, Tx } from "./client";
+import { openField, sealField } from "./crypto";
+import { appointments, bookings, clients, dependants, daysOff, schedules, services, shopRules, shops, shopZones, staff } from "./schema";
+import { recordConsent } from "./shop-ops";
+
+/**
+ * The service-shop operations (ADR-001): a shop page with its zones, services, weekly hours and rules; the public read of
+ * it; the offered slots; a client joining a shop, adding a dependant, booking and cancelling. Every function takes the
+ * clock as a parameter; every rule that matters is also kept by the database (capacity, no double booking, ownership).
+ */
+
+/** The version of the consent texts shown when a client joins a shop (Loi 25: a decision is tied to the words seen). */
+export const CONSENT_TEXT_VERSION = "2026-10-17";
+
+export class ShopError extends Error {
+  constructor(
+    readonly code: string,
+    message?: string,
+  ) {
+    super(message ?? code);
+    this.name = "ShopError";
+  }
+}
+
+const refuse = (code: string): never => {
+  throw new ShopError(code);
+};
+
+const text = (max: number) => z.string().trim().min(1).max(max);
+
+export const shopPageSchema = z.object({
+  name: text(80),
+  legalName: text(120),
+  address: text(200),
+  slug: slugSchema,
+  taglineFr: z.string().trim().max(160).default(""),
+  taglineEn: z.string().trim().max(160).default(""),
+  published: z.boolean().default(false),
+  /** The name shown for the person who works (the shop's first staff member). */
+  ownerName: text(80),
+});
+export type ShopPageInput = z.input<typeof shopPageSchema>;
+
+export const serviceInputSchema = z.object({
+  id: z.string().uuid().optional(),
+  nameFr: text(80),
+  nameEn: text(80),
+  durationMinutes: z.number().int().min(5).max(600),
+  priceCents: z.number().int().min(0).max(1_000_000),
+  capacity: z.number().int().min(1).max(50),
+  active: z.boolean().default(true),
+});
+export type ServiceInput = z.input<typeof serviceInputSchema>;
+
+export const windowInputSchema = z.object({
+  weekday: z.number().int().min(0).max(6),
+  startsAt: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+  endsAt: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+});
+
+const isUniqueViolation = (error: unknown, constraint: string) => {
+  const e = error as { code?: string; constraint?: string; cause?: { code?: string; constraint?: string } };
+  return (e.code ?? e.cause?.code) === "23505" && (e.constraint ?? e.cause?.constraint) === constraint;
+};
+
+/** Whether a database refusal carries one of our `AK_…` codes (the trigger and constraint messages), and which. */
+export function akCode(error: unknown): string | null {
+  const e = error as { message?: string; cause?: { message?: string } };
+  return /AK_[A-Z_]+/.exec(`${e.message ?? ""} ${e.cause?.message ?? ""}`)?.[0] ?? null;
+}
+
+/** The shop of an owner, or null. */
+export async function shopOfOwner(db: Db, ownerId: string) {
+  const [shop] = await db.select().from(shops).where(eq(shops.ownerId, ownerId)).orderBy(asc(shops.createdAt)).limit(1);
+  return shop ?? null;
+}
+
+/** Creates the owner's shop page (with its first staff member and default rules) or updates it. Publishing needs an active service. */
+export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput): Promise<{ shopId: string; created: boolean }> {
+  const input = shopPageSchema.parse(raw);
+  try {
+    return await db.transaction(async (tx) => {
+      const [existing] = await tx.select().from(shops).where(eq(shops.ownerId, ownerId)).orderBy(asc(shops.createdAt)).limit(1).for("update");
+      if (input.published) {
+        const count = existing ? (await tx.select({ n: sql<number>`count(*)::int` }).from(services).where(and(eq(services.shopId, existing.id), eq(services.active, true))))[0]!.n : 0;
+        if (count === 0) refuse("AK_NOT_PUBLISHABLE");
+      }
+      const values = { name: input.name, legalName: input.legalName, address: input.address, slug: input.slug, taglineFr: input.taglineFr || null, taglineEn: input.taglineEn || null, published: input.published };
+      if (existing) {
+        await tx.update(shops).set(values).where(eq(shops.id, existing.id));
+        await tx.update(staff).set({ name: input.ownerName }).where(and(eq(staff.shopId, existing.id), eq(staff.active, true)));
+        return { shopId: existing.id, created: false };
+      }
+      const [shop] = await tx.insert(shops).values({ ...values, ownerId, kind: "services", registrant: false, timezone: "America/Toronto" }).returning({ id: shops.id });
+      await tx.insert(staff).values({ shopId: shop!.id, name: input.ownerName });
+      await tx.insert(shopRules).values({ shopId: shop!.id });
+      return { shopId: shop!.id, created: true };
+    });
+  } catch (error) {
+    if (isUniqueViolation(error, "shops_slug")) throw new ShopError("AK_SLUG_TAKEN");
+    throw error;
+  }
+}
+
+export async function addZone(db: Db, shopId: string, name: string): Promise<string> {
+  const [position] = await db.select({ n: sql<number>`coalesce(max(${shopZones.position}), 0) + 1` }).from(shopZones).where(eq(shopZones.shopId, shopId));
+  try {
+    const [row] = await db.insert(shopZones).values({ shopId, name: text(80).parse(name), position: position?.n ?? 1 }).returning({ id: shopZones.id });
+    return row!.id;
+  } catch (error) {
+    if (isUniqueViolation(error, "shop_zones_name_per_shop")) throw new ShopError("AK_ZONE_EXISTS");
+    throw error;
+  }
+}
+
+/** A zone leaves the offer (visits that happened keep pointing to it). */
+export async function archiveZone(db: Db, shopId: string, zoneId: string): Promise<void> {
+  await db.update(shopZones).set({ active: false }).where(and(eq(shopZones.id, zoneId), eq(shopZones.shopId, shopId)));
+}
+
+export async function saveService(db: Db, shopId: string, raw: ServiceInput): Promise<string> {
+  const input = serviceInputSchema.parse(raw);
+  const values = { nameFr: input.nameFr, nameEn: input.nameEn, durationMinutes: input.durationMinutes, priceCents: input.priceCents, capacity: input.capacity, active: input.active };
+  if (input.id) {
+    const [row] = await db.update(services).set(values).where(and(eq(services.id, input.id), eq(services.shopId, shopId))).returning({ id: services.id });
+    return row?.id ?? refuse("AK_SERVICE_UNKNOWN");
+  }
+  const [row] = await db.insert(services).values({ shopId, ...values }).returning({ id: services.id });
+  return row!.id;
+}
+
+async function ownStaff(tx: Db | Tx, shopId: string) {
+  const [member] = await tx.select().from(staff).where(and(eq(staff.shopId, shopId), eq(staff.active, true))).orderBy(asc(staff.name)).limit(1);
+  return member ?? refuse("AK_STAFF_UNKNOWN");
+}
+
+const minutes = (clock: string) => Number(clock.slice(0, 2)) * 60 + Number(clock.slice(3, 5));
+
+/** Adds a weekly window of the shop's worker; two windows of one weekday never overlap. */
+export async function addWindow(db: Db, shopId: string, raw: z.input<typeof windowInputSchema>): Promise<string> {
+  const input = windowInputSchema.parse(raw);
+  if (minutes(input.endsAt) <= minutes(input.startsAt)) refuse("AK_WINDOW_ORDER");
+  const member = await ownStaff(db, shopId);
+  const same = await db.select().from(schedules).where(and(eq(schedules.staffId, member.id), eq(schedules.weekday, input.weekday)));
+  if (same.some((w) => minutes(input.startsAt) < minutes(w.endsAt) && minutes(w.startsAt) < minutes(input.endsAt))) refuse("AK_WINDOW_OVERLAP");
+  const [row] = await db.insert(schedules).values({ staffId: member.id, weekday: input.weekday, startsAt: input.startsAt, endsAt: input.endsAt }).returning({ id: schedules.id });
+  return row!.id;
+}
+
+export async function removeWindow(db: Db, shopId: string, windowId: string): Promise<void> {
+  const member = await ownStaff(db, shopId);
+  await db.delete(schedules).where(and(eq(schedules.id, windowId), eq(schedules.staffId, member.id)));
+}
+
+export async function addDayOff(db: Db, shopId: string, day: string, reason?: string): Promise<void> {
+  const member = await ownStaff(db, shopId);
+  await db.insert(daysOff).values({ staffId: member.id, onDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).parse(day), reason: reason?.trim().slice(0, 120) || null }).onConflictDoNothing();
+}
+
+export async function removeDayOff(db: Db, shopId: string, day: string): Promise<void> {
+  const member = await ownStaff(db, shopId);
+  await db.delete(daysOff).where(and(eq(daysOff.staffId, member.id), eq(daysOff.onDate, day)));
+}
+
+export interface ShopSetup {
+  shop: typeof shops.$inferSelect;
+  staff: { id: string; name: string };
+  zones: (typeof shopZones.$inferSelect)[];
+  services: (typeof services.$inferSelect)[];
+  windows: (typeof schedules.$inferSelect)[];
+  daysOff: { id: string; onDate: string; reason: string | null }[];
+  rules: typeof shopRules.$inferSelect;
+}
+
+/** Everything the owner sees on the setup page, and everything the public page is made of. */
+export async function loadShop(db: Db, shop: typeof shops.$inferSelect): Promise<ShopSetup> {
+  const member = await ownStaff(db, shop.id);
+  const [zones, svc, windows, off, rules] = await Promise.all([
+    db.select().from(shopZones).where(and(eq(shopZones.shopId, shop.id), eq(shopZones.active, true))).orderBy(asc(shopZones.position)),
+    db.select().from(services).where(and(eq(services.shopId, shop.id), eq(services.active, true))).orderBy(asc(services.durationMinutes), asc(services.nameEn)),
+    db.select().from(schedules).where(eq(schedules.staffId, member.id)).orderBy(asc(schedules.weekday), asc(schedules.startsAt)),
+    db.select({ id: daysOff.id, onDate: daysOff.onDate, reason: daysOff.reason }).from(daysOff).where(eq(daysOff.staffId, member.id)).orderBy(asc(daysOff.onDate)),
+    db.select().from(shopRules).where(eq(shopRules.shopId, shop.id)),
+  ]);
+  return { shop, staff: { id: member.id, name: member.name }, zones, services: svc, windows, daysOff: off, rules: rules[0] ?? refuse("AK_RULES_UNKNOWN") };
+}
+
+/** The public page of a published shop, by its address; null when there is none (or it is not published). */
+export async function publicShop(db: Db, slug: string): Promise<ShopSetup | null> {
+  const [shop] = await db.select().from(shops).where(and(eq(shops.slug, slug), eq(shops.published, true)));
+  return shop ? loadShop(db, shop) : null;
+}
+
+type Reader = Db | Tx;
+
+/** The visits already on a worker's calendar between two instants, with their seats (a salon-style visit with a client counts one). */
+async function takenVisits(tx: Reader, staffId: string, from: Date, to: Date): Promise<TakenVisit[]> {
+  const result = await tx.execute(sql`
+    SELECT a.service_id, a.zone_id, lower(a.during) AS starts_at, upper(a.during) AS ends_at,
+           greatest((SELECT count(*) FROM bookings b WHERE b.appointment_id = a.id AND b.status = 'booked'), CASE WHEN a.client_id IS NULL THEN 0 ELSE 1 END)::int AS seats
+      FROM appointments a
+     WHERE a.staff_id = ${staffId} AND a.status <> 'cancelled' AND a.during && tstzrange(${from.toISOString()}::timestamptz, ${to.toISOString()}::timestamptz)`);
+  return (result.rows as { service_id: string; zone_id: string | null; starts_at: string; ends_at: string; seats: number }[]).map((r) => ({ serviceId: r.service_id, zoneId: r.zone_id, startsAt: new Date(r.starts_at), endsAt: new Date(r.ends_at), seatsTaken: r.seats }));
+}
+
+export interface SlotQuery {
+  shopId: string;
+  serviceId: string;
+  zoneId: string | null;
+  now: Date;
+  /** Local day to start from (`YYYY-MM-DD`); default today in the shop's zone. */
+  fromDay?: string;
+  days?: number;
+}
+
+/** The start times a client may book for a service in a zone — computed from the weekly hours, days off, rules and visits. */
+export async function listSlots(db: Reader, query: SlotQuery): Promise<Slot[]> {
+  const [shop] = await db.select().from(shops).where(eq(shops.id, query.shopId));
+  if (!shop) return refuse("AK_SHOP_UNKNOWN");
+  const [service] = await db.select().from(services).where(and(eq(services.id, query.serviceId), eq(services.shopId, shop.id), eq(services.active, true)));
+  if (!service) return refuse("AK_SERVICE_UNKNOWN");
+  const member = await ownStaff(db, shop.id);
+  const [rules] = await db.select().from(shopRules).where(eq(shopRules.shopId, shop.id));
+  if (!rules) return refuse("AK_RULES_UNKNOWN");
+  const today = localDay(query.now, shop.timezone);
+  const fromDay = query.fromDay && query.fromDay > today ? query.fromDay : today;
+  const horizonEnd = addLocalDays(today, rules.bookingHorizonDays);
+  const days = Math.max(0, Math.min(query.days ?? rules.bookingHorizonDays, 62, daysBetween(fromDay, horizonEnd)));
+  const [windows, off] = await Promise.all([db.select().from(schedules).where(eq(schedules.staffId, member.id)), db.select({ d: daysOff.onDate }).from(daysOff).where(eq(daysOff.staffId, member.id))]);
+  const rangeStart = addDays(query.now, -1);
+  const rangeEnd = addDays(query.now, daysBetween(today, fromDay) + days + 2);
+  const visits = await takenVisits(db, member.id, rangeStart, rangeEnd);
+  const asWindows: WeeklyWindow[] = windows.map((w) => ({ weekday: w.weekday, startsAt: w.startsAt.slice(0, 5), endsAt: w.endsAt.slice(0, 5) }));
+  return openSlots({
+    timezone: shop.timezone,
+    now: query.now,
+    fromDay,
+    days,
+    windows: asWindows,
+    daysOff: off.map((o) => o.d),
+    serviceId: service.id,
+    zoneId: query.zoneId,
+    durationMinutes: service.durationMinutes,
+    stepMinutes: rules.slotStepMinutes,
+    capacity: service.capacity,
+    minNoticeMinutes: rules.minNoticeMinutes,
+    visits,
+  });
+}
+
+function daysBetween(from: string, to: string): number {
+  let n = 0;
+  for (let d = from; d < to && n < 400; d = addLocalDays(d, 1)) n++;
+  return n;
+}
+
+export const joinInputSchema = z.object({
+  fullName: text(120),
+  phone: z.string().trim().min(7).max(40),
+  language: z.enum(["fr", "en"]).default("fr"),
+  /** The service consent is the file itself: without it there is no file. */
+  consentService: z.literal(true),
+  consentReminders: z.boolean().default(false),
+});
+
+/** A signed-in person opens their file at a shop (once): their name, a phone, the consents they chose. */
+export async function joinShop(db: Db, accountId: string, accountEmail: string, shopId: string, raw: z.input<typeof joinInputSchema>): Promise<{ clientId: string; created: boolean }> {
+  const input = joinInputSchema.parse(raw);
+  const [shop] = await db.select({ id: shops.id }).from(shops).where(and(eq(shops.id, shopId), eq(shops.published, true)));
+  if (!shop) return refuse("AK_SHOP_UNKNOWN");
+  const [existing] = await db.select({ id: clients.id, erasedAt: clients.erasedAt }).from(clients).where(and(eq(clients.shopId, shopId), eq(clients.accountId, accountId)));
+  if (existing) return { clientId: existing.id, created: false };
+  const [row] = await db.insert(clients).values({ shopId, accountId, fullName: input.fullName, email: accountEmail.toLowerCase(), phone: input.phone, language: input.language }).returning({ id: clients.id });
+  await recordConsent(db, row!.id, "service", true, CONSENT_TEXT_VERSION);
+  await recordConsent(db, row!.id, "reminders", input.consentReminders, CONSENT_TEXT_VERSION);
+  return { clientId: row!.id, created: true };
+}
+
+/** The client files of an account (one per shop it joined), erased ones excluded. */
+export async function clientFilesOf(db: Db, accountId: string) {
+  return db
+    .select({ id: clients.id, fullName: clients.fullName, phone: clients.phone, language: clients.language, shopId: shops.id, shopName: shops.name, shopSlug: shops.slug, timezone: shops.timezone })
+    .from(clients)
+    .innerJoin(shops, eq(shops.id, clients.shopId))
+    .where(and(eq(clients.accountId, accountId), isNull(clients.erasedAt)))
+    .orderBy(asc(shops.name));
+}
+
+export async function addDependant(db: Db, clientId: string, raw: z.input<typeof dependantInputSchema>): Promise<string> {
+  const input: DependantInput = dependantInputSchema.parse(raw);
+  const [client] = await db.select({ shopId: clients.shopId }).from(clients).where(and(eq(clients.id, clientId), isNull(clients.erasedAt)));
+  if (!client) return refuse("AK_CLIENT_UNKNOWN");
+  const [row] = await db.insert(dependants).values({ shopId: client.shopId, clientId, kind: input.kind, name: input.name, profile: input.profile }).returning({ id: dependants.id });
+  return row!.id;
+}
+
+export async function dependantsOf(db: Db, clientId: string) {
+  return db.select().from(dependants).where(and(eq(dependants.clientId, clientId), isNull(dependants.erasedAt))).orderBy(asc(dependants.name));
+}
+
+/** Seals a client's access notes (keys, door codes) with the application's key; `null` clears them. */
+export async function setAccessNotes(db: Db, key: Buffer, clientId: string, notes: string | null): Promise<void> {
+  const clean = notes?.trim() ? text(500).parse(notes) : null;
+  const [row] = await db.update(clients).set({ accessNotesEnc: clean === null ? null : sealField(clean, key, clientId) }).where(and(eq(clients.id, clientId), isNull(clients.erasedAt))).returning({ id: clients.id });
+  if (!row) refuse("AK_CLIENT_UNKNOWN");
+}
+
+/** Opens a client's access notes (the caller has checked who may, and writes the audit trail). */
+export async function revealAccessNotes(db: Db, key: Buffer, clientId: string): Promise<string | null> {
+  const [row] = await db.select({ sealed: clients.accessNotesEnc }).from(clients).where(eq(clients.id, clientId));
+  return row?.sealed ? openField(row.sealed, key, clientId) : null;
+}
+
+export interface BookInput {
+  clientId: string;
+  serviceId: string;
+  zoneId: string | null;
+  dependantIds: string[];
+  startsAt: Date;
+  now: Date;
+}
+
+/**
+ * A client books a service for some of their dependants. Inside one transaction, with the worker's row locked so two
+ * bookings queue: the slot must be one the shop offers *now*, then the visit is created (or the group visit joined) and
+ * a seat per dependant is taken — the database refuses a full visit or a double booking whatever happens above.
+ */
+export async function bookVisit(db: Db, input: BookInput): Promise<{ appointmentId: string; bookingIds: string[]; joined: boolean }> {
+  if (input.dependantIds.length === 0 || new Set(input.dependantIds).size !== input.dependantIds.length) refuse("AK_DEPENDANTS_REQUIRED");
+  try {
+    return await db.transaction(async (tx) => {
+      const [client] = await tx.select().from(clients).where(and(eq(clients.id, input.clientId), isNull(clients.erasedAt)));
+      if (!client) return refuse("AK_CLIENT_UNKNOWN");
+      const [shop] = await tx.select().from(shops).where(and(eq(shops.id, client.shopId), eq(shops.published, true)));
+      if (!shop) return refuse("AK_SHOP_UNKNOWN");
+      const [service] = await tx.select().from(services).where(and(eq(services.id, input.serviceId), eq(services.shopId, shop.id), eq(services.active, true)));
+      if (!service) return refuse("AK_SERVICE_UNKNOWN");
+      const zones = await tx.select().from(shopZones).where(and(eq(shopZones.shopId, shop.id), eq(shopZones.active, true)));
+      if (zones.length > 0 && !zones.some((z) => z.id === input.zoneId)) refuse("AK_ZONE_REQUIRED");
+      if (input.dependantIds.length > service.capacity) refuse("AK_CAPACITY_FULL");
+      const member = await ownStaff(tx, shop.id);
+      await tx.execute(sql`SELECT 1 FROM staff WHERE id = ${member.id} FOR UPDATE`);
+      const slots = await listSlots(tx, { shopId: shop.id, serviceId: service.id, zoneId: input.zoneId, now: input.now, fromDay: localDay(input.startsAt, shop.timezone), days: 1 });
+      const slot = slots.find((s) => s.startsAt.getTime() === input.startsAt.getTime());
+      if (!slot) return refuse("AK_SLOT_UNAVAILABLE");
+      if (slot.seatsLeft < input.dependantIds.length) refuse("AK_CAPACITY_FULL");
+      let appointmentId: string;
+      if (slot.joins) {
+        const found = await tx.execute(sql`
+          SELECT id FROM appointments WHERE staff_id = ${member.id} AND service_id = ${service.id} AND status <> 'cancelled'
+             AND zone_id IS NOT DISTINCT FROM ${input.zoneId} AND lower(during) = ${slot.startsAt.toISOString()}::timestamptz`);
+        appointmentId = (found.rows[0] as { id: string } | undefined)?.id ?? refuse("AK_SLOT_UNAVAILABLE");
+      } else {
+        const [row] = await tx
+          .insert(appointments)
+          .values({ shopId: shop.id, staffId: member.id, serviceId: service.id, clientId: service.capacity === 1 ? client.id : null, zoneId: input.zoneId, during: `[${slot.startsAt.toISOString()},${slot.endsAt.toISOString()})` })
+          .returning({ id: appointments.id });
+        appointmentId = row!.id;
+      }
+      const rows = await tx.insert(bookings).values(input.dependantIds.map((dependantId) => ({ appointmentId, clientId: client.id, dependantId }))).returning({ id: bookings.id });
+      return { appointmentId, bookingIds: rows.map((r) => r.id), joined: slot.joins };
+    });
+  } catch (error) {
+    const code = akCode(error);
+    if (code === "AK_CAPACITY_FULL" || code === "AK_BOOKING_OWNERSHIP") throw new ShopError(code);
+    if ((error as { cause?: { constraint?: string } }).cause?.constraint === "appointments_no_double_booking") throw new ShopError("AK_SLOT_UNAVAILABLE");
+    throw error;
+  }
+}
+
+/** A client cancels one of their bookings, until the shop's cancellation window before the visit. The last seat freed frees the visit. */
+export async function cancelBooking(db: Db, clientId: string, bookingId: string, now: Date): Promise<void> {
+  await db.transaction(async (tx) => {
+    const found = await tx.execute(sql`
+      SELECT b.id, b.appointment_id, lower(a.during) AS starts_at, r.cancellation_hours, a.checked_in_at
+        FROM bookings b JOIN appointments a ON a.id = b.appointment_id JOIN shop_rules r ON r.shop_id = a.shop_id
+       WHERE b.id = ${bookingId} AND b.client_id = ${clientId} AND b.status = 'booked' FOR UPDATE OF b, a`);
+    const row = found.rows[0] as { appointment_id: string; starts_at: string; cancellation_hours: number; checked_in_at: string | null } | undefined;
+    if (!row) return refuse("AK_BOOKING_UNKNOWN");
+    if (row.checked_in_at || !canCancel(new Date(row.starts_at), now, row.cancellation_hours)) refuse("AK_CANCEL_TOO_LATE");
+    await tx.update(bookings).set({ status: "cancelled", cancelledAt: now }).where(eq(bookings.id, bookingId));
+    const [left] = await tx.select({ n: sql<number>`count(*)::int` }).from(bookings).where(and(eq(bookings.appointmentId, row.appointment_id), eq(bookings.status, "booked")));
+    if (left!.n === 0) await tx.update(appointments).set({ status: "cancelled" }).where(eq(appointments.id, row.appointment_id));
+  });
+}
