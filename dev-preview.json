@@ -17,9 +17,9 @@
       "checked": "2026-10-16"
     },
     "journey.core": {
-      "evidence": null,
-      "gap": "No recorded run of the core journey on dev: tax-return preparation journey (documents → draft → invoice), never filing.",
-      "issue": "https://github.com/krizaka/akinaza/issues/22"
+      "evidence": "https://krizaka-assets.b-cdn.net/pr-assets/akinaza/walker-journey/journey.json",
+      "checked": "2026-10-17",
+      "note": "Dog walker journey (#52) run on dev.akinaza.com as the fictional Saint-Henri walker and client: booking, check-in/out, report with photo, sent; 14 API calls with request ids; videos beside the journey file."
     },
     "journey.ai-via-orazaka": {
       "evidence": null,
