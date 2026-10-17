@@ -16,7 +16,6 @@
     "talk": "Nous écrire",
     "themeToggle": "Thème",
     "languageLabel": "Langue",
-    "otherLanguage": "English",
     "devNotice": "Environnement de développement — accès sur invitation",
     "sourceCode": "Code source",
     "contact": "Contact",
@@ -36,7 +35,8 @@
         "text": "La vraie page de réservation d'un promeneur de chiens, sur dev."
       }
     },
-    "footerLabel": "Pied de page"
+    "footerLabel": "Pied de page",
+    "preferences": "Préférences"
   },
   "landing": {
     "eyebrow": "Akinaza · pour les commerces de services indépendants du Québec",
@@ -206,7 +206,6 @@
       "signedInAs": "Connecté en tant que {email}",
       "devBuild": "DEV · v{version}",
       "language": "Langue",
-      "otherLanguage": "English",
       "theme": "Thème",
       "signOut": "Se déconnecter",
       "today": "Aujourd'hui",

@@ -16,7 +16,6 @@
     "talk": "Talk to us",
     "themeToggle": "Theme",
     "languageLabel": "Language",
-    "otherLanguage": "Français",
     "devNotice": "Development environment — access by invitation",
     "sourceCode": "Source code",
     "contact": "Contact",
@@ -36,7 +35,8 @@
         "text": "A dog walker's real booking page, on dev."
       }
     },
-    "footerLabel": "Site footer"
+    "footerLabel": "Site footer",
+    "preferences": "Preferences"
   },
   "landing": {
     "eyebrow": "Akinaza · for independent Québec service shops",
@@ -206,7 +206,6 @@
       "signedInAs": "Signed in as {email}",
       "devBuild": "DEV · v{version}",
       "language": "Language",
-      "otherLanguage": "Français",
       "theme": "Theme",
       "signOut": "Sign out",
       "today": "Today",
