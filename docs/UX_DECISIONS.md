@@ -67,7 +67,7 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: one tap more at the door; a client who mistyped must retype (the export gives them their data).
 - **Wrong if**: walkers photograph the notes — then add a time-limited reveal.
 
-## The landing tells one story in five sections, and its proof is the walker's real day
+## 8. The landing tells one story in five sections, and its proof is the walker’s real day
 
 - **Decision**: the home is five sections: the promise (« Your shop, all in one place ») with the dog walker's real
   journey on dev.akinaza.com in a phone (StepShowcase: the shop's page, the booking, the walker's day, the report, the
