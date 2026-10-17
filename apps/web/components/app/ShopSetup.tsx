@@ -10,13 +10,15 @@ import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
 import { useSay } from "@/lib/i18n-client";
+import { type GalleryLine, galleryText, joinLines, keepExtras, parseGallery, splitLines } from "@/lib/storefront-form";
 
 /** What the setup page needs, plain (the server picks it from the shop). */
 export interface SetupData {
-  page: { name: string; legalName: string; address: string; slug: string; ownerName: string; taglineFr: string; taglineEn: string; published: boolean } | null;
+  page: { name: string; legalName: string; address: string; slug: string; ownerName: string; taglineFr: string; taglineEn: string; published: boolean; area: string; bioFr: string; bioEn: string; publicPhone: string; publicEmail: string; seatUnitFr: string; seatUnitEn: string } | null;
   publicUrl: string | null;
   zones: { id: string; name: string }[];
-  services: { id: string; nameFr: string; nameEn: string; durationMinutes: number; priceCents: number; capacity: number }[];
+  services: { id: string; nameFr: string; nameEn: string; durationMinutes: number; priceCents: number; capacity: number; descriptionFr: string; descriptionEn: string; includedFr: string[]; includedEn: string[]; priceVaries: boolean }[];
+  media: { cover: (GalleryLine) | null; gallery: GalleryLine[] };
   windows: { id: string; weekday: number; startsAt: string; endsAt: string }[];
   daysOff: { id: string; onDate: string; reason: string | null }[];
   rules: { cancellationHours: number; bookingHorizonDays: number; slotStepMinutes: number; minNoticeMinutes: number; reportLinkDays: number } | null;
@@ -50,6 +52,7 @@ export function ShopSetupView({ data }: { data: SetupData }) {
           <>
             <ZonesCard zones={data.zones} />
             <ServicesCard services={data.services} />
+            <MediaCard media={data.media} />
             <HoursCard windows={data.windows} daysOff={data.daysOff} />
             {data.rules ? <RulesCard rules={data.rules} /> : null}
           </>
@@ -69,8 +72,15 @@ const pageForm = createKrizakaForm({
     taglineFr: z.string().trim().max(160),
     taglineEn: z.string().trim().max(160),
     published: z.boolean(),
+    area: z.string().trim().max(80),
+    bioFr: z.string().trim().max(600),
+    bioEn: z.string().trim().max(600),
+    publicPhone: z.string().trim().max(40),
+    publicEmail: z.string().trim().max(120),
+    seatUnitFr: z.string().trim().max(30),
+    seatUnitEn: z.string().trim().max(30),
   }),
-  defaultValues: { name: "", legalName: "", address: "", slug: "", ownerName: "", taglineFr: "", taglineEn: "", published: false },
+  defaultValues: { name: "", legalName: "", address: "", slug: "", ownerName: "", taglineFr: "", taglineEn: "", published: false, area: "", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "" },
 });
 
 function PageCard({ page }: { page: SetupData["page"] }) {
@@ -97,6 +107,14 @@ function PageCard({ page }: { page: SetupData["page"] }) {
         <span className="hidden sm:block" />
         <form.TextField name="taglineFr" label={say("shopSetup.page.taglineFr")} />
         <form.TextField name="taglineEn" label={say("shopSetup.page.taglineEn")} />
+        <form.TextField name="area" label={say("shopSetup.page.area")} hint={say("shopSetup.page.areaHint")} />
+        <span className="hidden sm:block" />
+        <form.TextArea name="bioFr" label={say("shopSetup.page.bioFr")} hint={say("shopSetup.page.bioHint")} rows={3} maxLength={600} />
+        <form.TextArea name="bioEn" label={say("shopSetup.page.bioEn")} hint={say("shopSetup.page.bioHint")} rows={3} maxLength={600} />
+        <form.TextField name="publicPhone" label={say("shopSetup.page.publicPhone")} type="tel" autoComplete="tel" />
+        <form.TextField name="publicEmail" label={say("shopSetup.page.publicEmail")} type="email" autoComplete="email" />
+        <form.TextField name="seatUnitFr" label={say("shopSetup.page.seatUnitFr")} hint={say("shopSetup.page.seatUnitHint")} />
+        <form.TextField name="seatUnitEn" label={say("shopSetup.page.seatUnitEn")} />
         <div className="sm:col-span-2">
           <form.Switch name="published" label={say("shopSetup.page.published")} hint={say("shopSetup.page.publishedHint")} />
         </div>
@@ -112,7 +130,8 @@ function PageCard({ page }: { page: SetupData["page"] }) {
   );
 }
 
-const zoneForm = createKrizakaForm({ schema: z.object({ name: z.string().trim().min(1).max(80) }), defaultValues: { name: "" } });
+const coord = z.string().trim().max(14).regex(/^(-?\d+([.,]\d+)?)?$/);
+const zoneForm = createKrizakaForm({ schema: z.object({ name: z.string().trim().min(1).max(80), lat: coord, lng: coord }), defaultValues: { name: "", lat: "", lng: "" } });
 
 function ZonesCard({ zones }: { zones: SetupData["zones"] }) {
   const { say, locale } = useSay();
@@ -120,7 +139,10 @@ function ZonesCard({ zones }: { zones: SetupData["zones"] }) {
   const form = zoneForm.useForm({
     i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
     onSubmit: async (values) => {
-      if ((await call.run("/api/walker/zones", { json: values })) !== null) form.reset();
+      const lat = Number(values.lat.replace(",", "."));
+      const lng = Number(values.lng.replace(",", "."));
+      const place = values.lat && values.lng && Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : undefined;
+      if ((await call.run("/api/walker/zones", { json: { name: values.name, ...(place ? { place } : {}) } })) !== null) form.reset();
     },
   });
   return (
@@ -142,6 +164,10 @@ function ZonesCard({ zones }: { zones: SetupData["zones"] }) {
       )}
       <form.Form aria-label={say("shopSetup.zones.title")} className="flex flex-col gap-3">
         <form.TextField name="name" label={say("shopSetup.zones.name")} placeholder={say("shopSetup.zones.placeholder")} />
+        <div className="grid grid-cols-2 gap-3">
+          <form.TextField name="lat" label={say("shopSetup.zones.lat")} inputMode="decimal" hint={say("shopSetup.zones.placeHint")} />
+          <form.TextField name="lng" label={say("shopSetup.zones.lng")} inputMode="decimal" />
+        </div>
         {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
         <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
           {say("shopSetup.zones.add")}
@@ -158,20 +184,21 @@ const serviceForm = createKrizakaForm({
     durationMinutes: z.string().regex(/^\d{1,3}$/),
     priceCents: z.number().int().min(0),
     capacity: z.string().regex(/^\d{1,2}$/),
+    descriptionFr: z.string().trim().max(300),
+    descriptionEn: z.string().trim().max(300),
+    includedFr: z.string().max(600),
+    includedEn: z.string().max(600),
+    priceVaries: z.boolean(),
   }),
-  defaultValues: { nameFr: "", nameEn: "", durationMinutes: "60", priceCents: 3000, capacity: "1" },
+  defaultValues: { nameFr: "", nameEn: "", durationMinutes: "60", priceCents: 3000, capacity: "1", descriptionFr: "", descriptionEn: "", includedFr: "", includedEn: "", priceVaries: false },
 });
+
+type Service = SetupData["services"][number];
 
 function ServicesCard({ services }: { services: SetupData["services"] }) {
   const { say, locale } = useSay();
   const call = useCall();
-  const form = serviceForm.useForm({
-    i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
-    onSubmit: async (values) => {
-      const done = await call.run("/api/walker/services", { json: { nameFr: values.nameFr, nameEn: values.nameEn, durationMinutes: Number(values.durationMinutes), priceCents: values.priceCents, capacity: Number(values.capacity) } });
-      if (done !== null) form.reset();
-    },
-  });
+  const [editing, setEditing] = useState<Service | null>(null);
   return (
     <Card.Root className="p-4">
       <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.services.title")}</h2>
@@ -186,26 +213,125 @@ function ServicesCard({ services }: { services: SetupData["services"] }) {
                   {s.capacity > 1 ? ` · ${say("shopSetup.services.group", { count: s.capacity })}` : ""}
                 </p>
               </div>
-              <Button size="sm" variant="ghost" aria-label={say("shopSetup.services.remove", { name: locale === "fr" ? s.nameFr : s.nameEn })} onClick={() => call.run("/api/walker/services", { json: { id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, active: false } })}>
-                ×
-              </Button>
+              <div className="flex shrink-0 gap-1">
+                <Button size="sm" variant="ghost" aria-label={say("shopSetup.services.edit", { name: locale === "fr" ? s.nameFr : s.nameEn })} onClick={() => setEditing(s)}>
+                  ✎
+                </Button>
+                <Button size="sm" variant="ghost" aria-label={say("shopSetup.services.remove", { name: locale === "fr" ? s.nameFr : s.nameEn })} onClick={() => call.run("/api/walker/services", { json: { id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, active: false } })}>
+                  ×
+                </Button>
+              </div>
             </li>
           ))}
         </ul>
       ) : (
         <p className="mb-4 text-fg-secondary">{say("shopSetup.services.none")}</p>
       )}
-      <form.Form aria-label={say("shopSetup.services.title")} className="grid gap-3 sm:grid-cols-2">
-        <form.TextField name="nameFr" label={say("shopSetup.services.nameFr")} />
-        <form.TextField name="nameEn" label={say("shopSetup.services.nameEn")} />
-        <form.TextField name="durationMinutes" label={say("shopSetup.services.duration")} inputMode="numeric" />
-        <form.Money name="priceCents" label={say("shopSetup.services.price")} currency="CAD" />
-        <form.TextField name="capacity" label={say("shopSetup.services.capacity")} hint={say("shopSetup.services.capacityHint")} inputMode="numeric" />
-        <p className="self-end text-xs text-fg-muted">{say("shopSetup.services.taxes")}</p>
+      <ServiceForm key={editing?.id ?? "new"} editing={editing} onDone={() => setEditing(null)} />
+    </Card.Root>
+  );
+}
+
+/** A new service, or (with `editing`) the one the owner picked: the same form, its fields filled. */
+function ServiceForm({ editing, onDone }: { editing: Service | null; onDone: () => void }) {
+  const { say, locale } = useSay();
+  const call = useCall();
+  const form = serviceForm.useForm({
+    i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
+    ...(editing
+      ? { defaultValues: { nameFr: editing.nameFr, nameEn: editing.nameEn, durationMinutes: String(editing.durationMinutes), priceCents: editing.priceCents, capacity: String(editing.capacity), descriptionFr: editing.descriptionFr, descriptionEn: editing.descriptionEn, includedFr: joinLines(editing.includedFr), includedEn: joinLines(editing.includedEn), priceVaries: editing.priceVaries } }
+      : {}),
+    onSubmit: async (values) => {
+      const done = await call.run("/api/walker/services", {
+        json: {
+          ...(editing ? { id: editing.id } : {}),
+          nameFr: values.nameFr,
+          nameEn: values.nameEn,
+          durationMinutes: Number(values.durationMinutes),
+          priceCents: values.priceCents,
+          capacity: Number(values.capacity),
+          descriptionFr: values.descriptionFr,
+          descriptionEn: values.descriptionEn,
+          includedFr: splitLines(values.includedFr, 6),
+          includedEn: splitLines(values.includedEn, 6),
+          priceVaries: values.priceVaries,
+        },
+      });
+      if (done !== null) {
+        form.reset();
+        onDone();
+      }
+    },
+  });
+  return (
+    <form.Form aria-label={say(editing ? "shopSetup.services.editing" : "shopSetup.services.title")} className="grid gap-3 sm:grid-cols-2">
+      {editing ? <p className="text-sm font-semibold text-fg-accent sm:col-span-2">{say("shopSetup.services.editing")}</p> : null}
+      <form.TextField name="nameFr" label={say("shopSetup.services.nameFr")} />
+      <form.TextField name="nameEn" label={say("shopSetup.services.nameEn")} />
+      <form.TextField name="durationMinutes" label={say("shopSetup.services.duration")} inputMode="numeric" />
+      <form.Money name="priceCents" label={say("shopSetup.services.price")} currency="CAD" />
+      <form.TextField name="capacity" label={say("shopSetup.services.capacity")} hint={say("shopSetup.services.capacityHint")} inputMode="numeric" />
+      <p className="self-end text-xs text-fg-muted">{say("shopSetup.services.taxes")}</p>
+      <form.TextField name="descriptionFr" label={say("shopSetup.services.descriptionFr")} />
+      <form.TextField name="descriptionEn" label={say("shopSetup.services.descriptionEn")} />
+      <form.TextArea name="includedFr" label={say("shopSetup.services.includedFr")} hint={say("shopSetup.services.includedHint")} rows={3} />
+      <form.TextArea name="includedEn" label={say("shopSetup.services.includedEn")} hint={say("shopSetup.services.includedHint")} rows={3} />
+      <div className="sm:col-span-2">
+        <form.Switch name="priceVaries" label={say("shopSetup.services.priceVaries")} />
+      </div>
+      <div className="flex flex-col gap-3 sm:col-span-2">
+        {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
+        <div className="flex flex-wrap gap-2">
+          <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto">
+            {say(editing ? "shopSetup.services.save" : "shopSetup.services.add")}
+          </form.Submit>
+          {editing ? (
+            <Button type="button" size="md" variant="ghost" onClick={onDone}>
+              {say("shopSetup.services.cancel")}
+            </Button>
+          ) : null}
+        </div>
+      </div>
+    </form.Form>
+  );
+}
+
+const mediaForm = createKrizakaForm({
+  schema: z.object({ coverUrl: z.string().trim().max(500), coverAltFr: z.string().trim().max(200), coverAltEn: z.string().trim().max(200), gallery: z.string().max(5000) }),
+  defaultValues: { coverUrl: "", coverAltFr: "", coverAltEn: "", gallery: "" },
+});
+
+function MediaCard({ media }: { media: SetupData["media"] }) {
+  const { say, locale } = useSay();
+  const call = useCall();
+  const [saved, setSaved] = useState(false);
+  const form = mediaForm.useForm({
+    i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
+    defaultValues: { coverUrl: media.cover?.url ?? "", coverAltFr: media.cover?.altFr ?? "", coverAltEn: media.cover?.altEn ?? "", gallery: galleryText(media.gallery) },
+    onSubmit: async (values) => {
+      setSaved(false);
+      const cover = values.coverUrl ? keepExtras([{ url: values.coverUrl, altFr: values.coverAltFr, altEn: values.coverAltEn }], media.cover ? [media.cover] : [])[0]! : null;
+      setSaved((await call.run("/api/walker/media", { json: { cover, gallery: keepExtras(parseGallery(values.gallery), media.gallery) } })) !== null);
+    },
+  });
+  return (
+    <Card.Root className="p-4 lg:col-span-2">
+      <h2 className="font-display text-base font-bold text-fg">{say("shopSetup.media.title")}</h2>
+      <p className="mb-3 text-sm text-fg-secondary">{say("shopSetup.media.intro")}</p>
+      <form.Form aria-label={say("shopSetup.media.title")} className="grid gap-3 sm:grid-cols-2">
+        <div className="sm:col-span-2">
+          <form.TextField name="coverUrl" label={say("shopSetup.media.cover")} hint={say("shopSetup.media.coverHint")} inputMode="url" />
+        </div>
+        <form.TextField name="coverAltFr" label={say("shopSetup.media.coverAltFr")} />
+        <form.TextField name="coverAltEn" label={say("shopSetup.media.coverAltEn")} />
+        <div className="sm:col-span-2">
+          <form.TextArea name="gallery" label={say("shopSetup.media.gallery")} hint={say("shopSetup.media.galleryHint")} rows={5} />
+        </div>
         <div className="flex flex-col gap-3 sm:col-span-2">
           {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
+          {saved ? <Alert tone="success">{say("shopSetup.media.saved")}</Alert> : null}
           <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
-            {say("shopSetup.services.add")}
+            {say("shopSetup.media.submit")}
           </form.Submit>
         </div>
       </form.Form>

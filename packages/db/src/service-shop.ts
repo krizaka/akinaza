@@ -1,11 +1,11 @@
-import { addLocalDays, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, type WeeklyWindow } from "@akinaza/core";
+import { addLocalDays, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, type WeeklyWindow } from "@akinaza/core";
 import { addDays } from "date-fns";
 import { and, asc, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { Db, Tx } from "./client";
 import { openField, sealField } from "./crypto";
-import { appointments, bookings, clients, dependants, daysOff, schedules, services, shopRules, shops, shopZones, staff } from "./schema";
+import { appointments, bookings, clients, dependants, daysOff, MediaRole, schedules, services, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
 import { recordConsent } from "./shop-ops";
 
 /**
@@ -43,6 +43,15 @@ export const shopPageSchema = z.object({
   published: z.boolean().default(false),
   /** The name shown for the person who works (the shop's first staff member). */
   ownerName: text(80),
+  /** The storefront's words: the locality, the owner's bio and how to reach the shop. Omitted = left as they are. */
+  area: z.string().trim().max(80).optional(),
+  bioFr: z.string().trim().max(600).optional(),
+  bioEn: z.string().trim().max(600).optional(),
+  publicPhone: z.string().trim().max(40).optional(),
+  publicEmail: z.string().trim().max(120).optional(),
+  /** What a seat of a group service is called (« chiens »): « Up to 5 dogs ». */
+  seatUnitFr: z.string().trim().max(30).optional(),
+  seatUnitEn: z.string().trim().max(30).optional(),
 });
 export type ShopPageInput = z.input<typeof shopPageSchema>;
 
@@ -54,6 +63,12 @@ export const serviceInputSchema = z.object({
   priceCents: z.number().int().min(0).max(1_000_000),
   capacity: z.number().int().min(1).max(50),
   active: z.boolean().default(true),
+  /** The card on the public page: a sentence, short inclusions, « from » when the price varies. Omitted = left as they are. */
+  descriptionFr: z.string().trim().max(300).optional(),
+  descriptionEn: z.string().trim().max(300).optional(),
+  includedFr: z.array(text(80)).max(6).optional(),
+  includedEn: z.array(text(80)).max(6).optional(),
+  priceVaries: z.boolean().optional(),
 });
 export type ServiceInput = z.input<typeof serviceInputSchema>;
 
@@ -90,7 +105,22 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput):
         const count = existing ? (await tx.select({ n: sql<number>`count(*)::int` }).from(services).where(and(eq(services.shopId, existing.id), eq(services.active, true))))[0]!.n : 0;
         if (count === 0) refuse("AK_NOT_PUBLISHABLE");
       }
-      const values = { name: input.name, legalName: input.legalName, address: input.address, slug: input.slug, taglineFr: input.taglineFr || null, taglineEn: input.taglineEn || null, published: input.published };
+      const values = {
+        name: input.name,
+        legalName: input.legalName,
+        address: input.address,
+        slug: input.slug,
+        taglineFr: input.taglineFr || null,
+        taglineEn: input.taglineEn || null,
+        published: input.published,
+        ...(input.area === undefined ? {} : { area: input.area || null }),
+        ...(input.bioFr === undefined ? {} : { bioFr: input.bioFr || null }),
+        ...(input.bioEn === undefined ? {} : { bioEn: input.bioEn || null }),
+        ...(input.publicPhone === undefined ? {} : { publicPhone: input.publicPhone || null }),
+        ...(input.publicEmail === undefined ? {} : { publicEmail: input.publicEmail || null }),
+        ...(input.seatUnitFr === undefined ? {} : { seatUnitFr: input.seatUnitFr || null }),
+        ...(input.seatUnitEn === undefined ? {} : { seatUnitEn: input.seatUnitEn || null }),
+      };
       if (existing) {
         await tx.update(shops).set(values).where(eq(shops.id, existing.id));
         await tx.update(staff).set({ name: input.ownerName }).where(and(eq(staff.shopId, existing.id), eq(staff.active, true)));
@@ -107,10 +137,14 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput):
   }
 }
 
-export async function addZone(db: Db, shopId: string, name: string): Promise<string> {
+/** An area of the map: where it is centred (WGS 84). */
+export const zonePlaceSchema = z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) });
+
+export async function addZone(db: Db, shopId: string, name: string, place?: z.input<typeof zonePlaceSchema>): Promise<string> {
   const [position] = await db.select({ n: sql<number>`coalesce(max(${shopZones.position}), 0) + 1` }).from(shopZones).where(eq(shopZones.shopId, shopId));
+  const at = place ? zonePlaceSchema.parse(place) : null;
   try {
-    const [row] = await db.insert(shopZones).values({ shopId, name: text(80).parse(name), position: position?.n ?? 1 }).returning({ id: shopZones.id });
+    const [row] = await db.insert(shopZones).values({ shopId, name: text(80).parse(name), position: position?.n ?? 1, lat: at?.lat ?? null, lng: at?.lng ?? null }).returning({ id: shopZones.id });
     return row!.id;
   } catch (error) {
     if (isUniqueViolation(error, "shop_zones_name_per_shop")) throw new ShopError("AK_ZONE_EXISTS");
@@ -125,7 +159,19 @@ export async function archiveZone(db: Db, shopId: string, zoneId: string): Promi
 
 export async function saveService(db: Db, shopId: string, raw: ServiceInput): Promise<string> {
   const input = serviceInputSchema.parse(raw);
-  const values = { nameFr: input.nameFr, nameEn: input.nameEn, durationMinutes: input.durationMinutes, priceCents: input.priceCents, capacity: input.capacity, active: input.active };
+  const values = {
+    nameFr: input.nameFr,
+    nameEn: input.nameEn,
+    durationMinutes: input.durationMinutes,
+    priceCents: input.priceCents,
+    capacity: input.capacity,
+    active: input.active,
+    ...(input.descriptionFr === undefined ? {} : { descriptionFr: input.descriptionFr || null }),
+    ...(input.descriptionEn === undefined ? {} : { descriptionEn: input.descriptionEn || null }),
+    ...(input.includedFr === undefined ? {} : { includedFr: input.includedFr }),
+    ...(input.includedEn === undefined ? {} : { includedEn: input.includedEn }),
+    ...(input.priceVaries === undefined ? {} : { priceVaries: input.priceVaries }),
+  };
   if (input.id) {
     const [row] = await db.update(services).set(values).where(and(eq(services.id, input.id), eq(services.shopId, shopId))).returning({ id: services.id });
     return row?.id ?? refuse("AK_SERVICE_UNKNOWN");
@@ -190,13 +236,34 @@ export async function loadShop(db: Db, shop: typeof shops.$inferSelect): Promise
   return { shop, staff: { id: member.id, name: member.name }, zones, services: svc, windows, daysOff: off, rules: rules[0] ?? refuse("AK_RULES_UNKNOWN") };
 }
 
-/** What a visitor of the public page may know: no owner, legal name, address, tax numbers, staff id or days-off reasons. */
+/** A photo or a loop of the public page. */
+export interface PublicMedia {
+  id: string;
+  url: string;
+  webmUrl: string | null;
+  mp4Url: string | null;
+  altFr: string;
+  altEn: string;
+  captionFr: string | null;
+  captionEn: string | null;
+  wide: boolean;
+}
+
+/** What a visitor of the public page may know: no owner account, legal name, street address, tax numbers, staff id or days-off reasons. */
 export interface PublicShop {
-  shop: Pick<typeof shops.$inferSelect, "id" | "name" | "slug" | "timezone" | "taglineFr" | "taglineEn">;
-  zones: Pick<typeof shopZones.$inferSelect, "id" | "name">[];
-  services: Pick<typeof services.$inferSelect, "id" | "nameFr" | "nameEn" | "durationMinutes" | "priceCents" | "capacity">[];
+  shop: Pick<typeof shops.$inferSelect, "id" | "name" | "slug" | "timezone" | "taglineFr" | "taglineEn" | "area" | "bioFr" | "bioEn" | "publicPhone" | "publicEmail" | "seatUnitFr" | "seatUnitEn"> & {
+    /** The first name shown for the person who works. */
+    ownerName: string;
+  };
+  zones: Pick<typeof shopZones.$inferSelect, "id" | "name" | "lat" | "lng">[];
+  services: Pick<typeof services.$inferSelect, "id" | "nameFr" | "nameEn" | "durationMinutes" | "priceCents" | "capacity" | "descriptionFr" | "descriptionEn" | "includedFr" | "includedEn" | "priceVaries">[];
   windows: Pick<typeof schedules.$inferSelect, "weekday" | "startsAt" | "endsAt">[];
+  /** The days off, dates only (the reasons stay private). */
+  daysOff: string[];
   rules: Pick<typeof shopRules.$inferSelect, "cancellationHours" | "bookingHorizonDays">;
+  media: { cover: PublicMedia | null; gallery: PublicMedia[] };
+  /** The service to tag « Popular », from real bookings; null when none stands out. */
+  popularServiceId: string | null;
 }
 
 /** The public page of a published shop, by its address; null when there is none (or it is not published). Projected here, once: a caller cannot leak a column. */
@@ -204,13 +271,53 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
   const [row] = await db.select().from(shops).where(and(eq(shops.slug, slug), eq(shops.published, true)));
   if (!row) return null;
   const full = await loadShop(db, row);
+  const [media, counts] = await Promise.all([
+    db.select().from(shopMedia).where(eq(shopMedia.shopId, row.id)).orderBy(asc(shopMedia.position)),
+    db.execute(sql`
+      SELECT a.service_id, count(b.id)::int AS bookings
+        FROM bookings b JOIN appointments a ON a.id = b.appointment_id
+       WHERE a.shop_id = ${row.id} AND b.status = 'booked' AND a.status <> 'cancelled'
+       GROUP BY a.service_id`),
+  ]);
+  const publicMedia = (m: typeof shopMedia.$inferSelect): PublicMedia => ({ id: m.id, url: m.url, webmUrl: m.webmUrl, mp4Url: m.mp4Url, altFr: m.altFr, altEn: m.altEn, captionFr: m.captionFr, captionEn: m.captionEn, wide: m.wide });
+  const bookingCounts = (counts.rows as { service_id: string; bookings: number }[]).map((r) => ({ serviceId: r.service_id, bookings: r.bookings }));
   return {
-    shop: { id: row.id, name: row.name, slug: row.slug, timezone: row.timezone, taglineFr: row.taglineFr, taglineEn: row.taglineEn },
-    zones: full.zones.map((z) => ({ id: z.id, name: z.name })),
-    services: full.services.map((s) => ({ id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity })),
+    shop: { id: row.id, name: row.name, slug: row.slug, timezone: row.timezone, taglineFr: row.taglineFr, taglineEn: row.taglineEn, area: row.area, bioFr: row.bioFr, bioEn: row.bioEn, publicPhone: row.publicPhone, publicEmail: row.publicEmail, seatUnitFr: row.seatUnitFr, seatUnitEn: row.seatUnitEn, ownerName: full.staff.name },
+    zones: full.zones.map((z) => ({ id: z.id, name: z.name, lat: z.lat, lng: z.lng })),
+    services: full.services.map((s) => ({ id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, descriptionFr: s.descriptionFr, descriptionEn: s.descriptionEn, includedFr: s.includedFr, includedEn: s.includedEn, priceVaries: s.priceVaries })),
     windows: full.windows.map((w) => ({ weekday: w.weekday, startsAt: w.startsAt, endsAt: w.endsAt })),
+    daysOff: full.daysOff.map((d) => d.onDate),
     rules: { cancellationHours: full.rules.cancellationHours, bookingHorizonDays: full.rules.bookingHorizonDays },
+    media: { cover: media.filter((m) => m.role === MediaRole.Cover).map(publicMedia)[0] ?? null, gallery: media.filter((m) => m.role === MediaRole.Gallery).map(publicMedia) },
+    popularServiceId: popularServiceId(full.services.map((s) => ({ serviceId: s.id, bookings: bookingCounts.find((c) => c.serviceId === s.id)?.bookings ?? 0 }))),
   };
+}
+
+const httpsUrl = z.string().trim().url().max(500).refine((u) => u.startsWith("https://"), { message: "https only" });
+export const mediaInputSchema = z.object({
+  url: httpsUrl,
+  webmUrl: httpsUrl.optional(),
+  mp4Url: httpsUrl.optional(),
+  altFr: z.string().trim().max(200).default(""),
+  altEn: z.string().trim().max(200).default(""),
+  captionFr: z.string().trim().max(80).optional(),
+  captionEn: z.string().trim().max(80).optional(),
+  wide: z.boolean().default(false),
+});
+export type MediaInput = z.input<typeof mediaInputSchema>;
+/** What the owner sends: a cover (or none) and up to twelve gallery pictures. */
+export const shopMediaInputSchema = z.object({ cover: mediaInputSchema.nullish(), gallery: z.array(mediaInputSchema).max(12).optional() });
+
+/** Replaces the shop's cover and gallery (the files are on the media CDN; only their https addresses are kept). */
+export async function saveShopMedia(db: Db, shopId: string, input: { cover?: MediaInput | null; gallery?: MediaInput[] }): Promise<void> {
+  const cover = input.cover ? mediaInputSchema.parse(input.cover) : null;
+  const gallery = z.array(mediaInputSchema).max(12).parse(input.gallery ?? []);
+  await db.transaction(async (tx) => {
+    await tx.delete(shopMedia).where(eq(shopMedia.shopId, shopId));
+    const rows = [...(cover ? [{ ...cover, role: MediaRole.Cover }] : []), ...gallery.map((g) => ({ ...g, role: MediaRole.Gallery }))];
+    if (rows.length === 0) return;
+    await tx.insert(shopMedia).values(rows.map((m, position) => ({ shopId, role: m.role, url: m.url, webmUrl: m.webmUrl ?? null, mp4Url: m.mp4Url ?? null, altFr: m.altFr, altEn: m.altEn, captionFr: m.captionFr ?? null, captionEn: m.captionEn ?? null, wide: m.wide, position })));
+  });
 }
 
 type Reader = Db | Tx;
@@ -422,4 +529,11 @@ export async function ownClient(db: Db, accountId: string, clientId: string) {
 export async function shopClient(db: Db, shopId: string, clientId: string) {
   const [row] = await db.select().from(clients).where(and(eq(clients.id, clientId), eq(clients.shopId, shopId), isNull(clients.erasedAt)));
   return row ?? null;
+}
+
+/** The shop's cover and gallery as the owner edits them (a draft shop included: the public read needs a published one). */
+export async function shopMediaOf(db: Db, shopId: string): Promise<{ cover: PublicMedia | null; gallery: PublicMedia[] }> {
+  const rows = await db.select().from(shopMedia).where(eq(shopMedia.shopId, shopId)).orderBy(asc(shopMedia.position));
+  const one = (m: typeof shopMedia.$inferSelect): PublicMedia => ({ id: m.id, url: m.url, webmUrl: m.webmUrl, mp4Url: m.mp4Url, altFr: m.altFr, altEn: m.altEn, captionFr: m.captionFr, captionEn: m.captionEn, wide: m.wide });
+  return { cover: rows.filter((m) => m.role === MediaRole.Cover).map(one)[0] ?? null, gallery: rows.filter((m) => m.role === MediaRole.Gallery).map(one) };
 }

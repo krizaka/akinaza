@@ -26,7 +26,14 @@ describe("the Saint-Henri walker persona", () => {
     const page = await publicShop(t.db, "pattes-saint-henri");
     expect(page?.zones.map((z) => z.name)).toEqual(["Saint-Henri", "Griffintown", "Pointe-Saint-Charles"]);
     expect(page?.services.map((s) => s.capacity).sort((a, b) => a - b)).toEqual([1, 1, 1, 5]);
-    expect(page?.shop.taglineEn).toMatch(/fictional/);
+    expect(page?.shop.bioEn).toMatch(/fictional/);
+    expect(page?.shop.area).toBe("Saint-Henri, Montréal");
+    expect(page?.zones.every((z) => z.lat !== null && z.lng !== null)).toBe(true);
+    expect(page?.services.every((s) => s.includedFr.length > 0 && s.descriptionFr)).toBe(true);
+    expect(page?.media.cover?.url).toMatch(/^https:\/\//);
+    expect(page?.media.gallery.length).toBeGreaterThanOrEqual(3);
+    // « Popular » from the walks really booked: the group walk (a past walk and two dogs on the next one).
+    expect(page?.popularServiceId).toBe(page?.services.find((s) => s.capacity === 5)?.id);
     const clients = await shopClients(t.db, first.shopId);
     expect(clients).toHaveLength(5);
     expect(clients.flatMap((c) => c.dependants.map((d) => d.name)).sort((a, b) => a.localeCompare(b))).toEqual(["Biscuit", "Érable", "Luna", "Pixel", "Rex", "Tofu"]);

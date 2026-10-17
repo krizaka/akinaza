@@ -1,5 +1,6 @@
 "use client";
 
+import type { BookingPreselect } from "@akinaza/core";
 import { krizakaFetch, useQuery } from "@krizaka/query";
 import { Alert } from "@krizaka/ui/alert";
 import { Button } from "@krizaka/ui/button";
@@ -7,10 +8,11 @@ import { Card } from "@krizaka/ui/card";
 import { Checkbox } from "@krizaka/ui/checkbox";
 import { createKrizakaForm } from "@krizaka/ui/form";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
+import { bookingDefaults } from "@/lib/booking-defaults";
 import { useSay } from "@/lib/i18n-client";
 
 export interface BookingData {
@@ -19,6 +21,8 @@ export interface BookingData {
   zones: { id: string; name: string }[];
   client: { id: string; fullName: string } | null;
   dogs: { id: string; name: string }[];
+  /** What the visitor chose on the shop page (the address): the service, the area and the time, already checked against the shop. */
+  preselect: BookingPreselect;
   timeZone: string;
   bookingsHref: string;
 }
@@ -166,7 +170,7 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
   const [booked, setBooked] = useState(false);
   const form = bookForm.useForm({
     i18n: i18nOf(say, locale),
-    defaultValues: { serviceId: data.services[0]?.id ?? "", zoneId: data.zones[0]?.id ?? "", dogIds: data.dogs.length === 1 ? [data.dogs[0]!.id] : [], startsAt: "" },
+    defaultValues: bookingDefaults({ services: data.services, zones: data.zones, dogs: data.dogs, preselect: data.preselect }),
     onSubmit: async (v) => {
       const done = await call.run("/api/me/bookings", { json: { clientId, serviceId: v.serviceId, zoneId: v.zoneId || null, dependantIds: v.dogIds, startsAt: v.startsAt } });
       if (done !== null) setBooked(true);
@@ -232,6 +236,11 @@ function SlotPicker({ slug, serviceId, zoneId, timeZone, value, onPick, error }:
     enabled: !!serviceId,
     queryFn: () => krizakaFetch(`/api/shops/${slug}/slots`, { query: { serviceId, zoneId } }) as Promise<{ slots: SlotView[] }>,
   });
+  // A time carried from the shop page that is no longer free (someone booked it meanwhile) is dropped, never submitted.
+  const offered = slots.data?.slots;
+  useEffect(() => {
+    if (offered && value && !offered.some((s) => s.startsAt === value)) onPick("");
+  }, [offered, value, onPick]);
   const lang = locale === "fr" ? "fr-CA" : "en-CA";
   const dayKey = (iso: string) => new Date(iso).toLocaleDateString(lang, { weekday: "long", day: "numeric", month: "long", timeZone });
   const groups = new Map<string, SlotView[]>();

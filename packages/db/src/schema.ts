@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { bigserial, boolean, check, customType, date, index, integer, jsonb, pgTable, smallint, text, time, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { bigserial, boolean, check, customType, date, doublePrecision, index, integer, jsonb, pgTable, smallint, text, time, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 /** A PostgreSQL `bytea` — a report photo (a resized image, 1.5 MB at most). */
 const bytea = customType<{ data: Buffer }>({ dataType: () => "bytea" });
@@ -95,9 +95,21 @@ export const shops = pgTable(
     published: boolean("published").notNull().default(false),
     taglineFr: text("tagline_fr"),
     taglineEn: text("tagline_en"),
+    /** The locality shown on the public page (« Saint-Henri, Montréal »): never the street address. */
+    area: text("area"),
+    /** The owner's short bio, in each language, shown on the public page. */
+    bioFr: text("bio_fr"),
+    bioEn: text("bio_en"),
+    /** How a visitor reaches the shop before booking; both optional, both public. */
+    publicPhone: text("public_phone"),
+    publicEmail: text("public_email"),
+    /** What a seat of a group service is called (« chiens », « dogs »): « Up to 5 dogs ». Empty = « places ». */
+    seatUnitFr: text("seat_unit_fr"),
+    seatUnitEn: text("seat_unit_en"),
     createdAt: created(),
   },
   (t) => [
+    check("shops_public_text", sql`length(coalesce(${t.area}, '')) <= 80 AND length(coalesce(${t.bioFr}, '')) <= 600 AND length(coalesce(${t.bioEn}, '')) <= 600 AND length(coalesce(${t.publicPhone}, '')) <= 40 AND length(coalesce(${t.publicEmail}, '')) <= 120 AND length(coalesce(${t.seatUnitFr}, '')) <= 30 AND length(coalesce(${t.seatUnitEn}, '')) <= 30`),
     uniqueIndex("shops_slug").on(t.slug).where(sql`${t.slug} IS NOT NULL`),
     check("shops_slug_format", sql`${t.slug} IS NULL OR (${t.slug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$' AND length(${t.slug}) BETWEEN 3 AND 40)`),
     check("shops_published_has_slug", sql`NOT ${t.published} OR ${t.slug} IS NOT NULL`),
@@ -115,8 +127,46 @@ export const shopZones = pgTable(
     name: text("name").notNull(),
     position: integer("position").notNull().default(0),
     active: boolean("active").notNull().default(true),
+    /** Where the area is centred (WGS 84), for the map of the public page; both or neither. */
+    lat: doublePrecision("lat"),
+    lng: doublePrecision("lng"),
   },
-  (t) => [uniqueIndex("shop_zones_name_per_shop").on(t.shopId, sql`lower(${t.name})`), check("shop_zones_name", sql`length(btrim(${t.name})) BETWEEN 1 AND 80`)],
+  (t) => [
+    uniqueIndex("shop_zones_name_per_shop").on(t.shopId, sql`lower(${t.name})`),
+    check("shop_zones_name", sql`length(btrim(${t.name})) BETWEEN 1 AND 80`),
+    check("shop_zones_position", sql`(${t.lat} IS NULL) = (${t.lng} IS NULL) AND (${t.lat} IS NULL OR (${t.lat} BETWEEN -90 AND 90 AND ${t.lng} BETWEEN -180 AND 180))`),
+  ],
+);
+
+/** What a photo of the public page is for. */
+export const MediaRole = { Cover: "cover", Gallery: "gallery" } as const;
+export type MediaRole = (typeof MediaRole)[keyof typeof MediaRole];
+
+/** A photo or a loop of the shop's public page: the cover (one) and the gallery. The files live on the media CDN; only their https addresses are kept. */
+export const shopMedia = pgTable(
+  "shop_media",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    role: text("role", { enum: [MediaRole.Cover, MediaRole.Gallery] }).notNull(),
+    /** The still: a photo, or the poster of a loop. */
+    url: text("url").notNull(),
+    webmUrl: text("webm_url"),
+    mp4Url: text("mp4_url"),
+    altFr: text("alt_fr").notNull().default(""),
+    altEn: text("alt_en").notNull().default(""),
+    captionFr: text("caption_fr"),
+    captionEn: text("caption_en"),
+    /** The still is a landscape picture (4:3 tile); the default is a portrait. */
+    wide: boolean("wide").notNull().default(false),
+    position: integer("position").notNull().default(0),
+  },
+  (t) => [
+    index("shop_media_shop").on(t.shopId, t.role, t.position),
+    uniqueIndex("shop_media_one_cover").on(t.shopId).where(sql`${t.role} = 'cover'`),
+    check("shop_media_role", sql`${t.role} IN ('cover','gallery')`),
+    check("shop_media_urls", sql`${t.url} ~ '^https://' AND coalesce(${t.webmUrl}, 'https://') ~ '^https://' AND coalesce(${t.mp4Url}, 'https://') ~ '^https://'`),
+  ],
 );
 
 export const staff = pgTable("staff", {
@@ -139,6 +189,13 @@ export const services = pgTable(
     /** The most dependants one visit takes: 1 = individual, N = group. */
     capacity: integer("capacity").notNull().default(1),
     active: boolean("active").notNull().default(true),
+    /** What the service is, in a sentence or two, and what is included (short lines): the public page's card. */
+    descriptionFr: text("description_fr"),
+    descriptionEn: text("description_en"),
+    includedFr: text("included_fr").array().notNull().default(sql`'{}'::text[]`),
+    includedEn: text("included_en").array().notNull().default(sql`'{}'::text[]`),
+    /** « From » on the card: the price varies with the dog, the size, the zone. */
+    priceVaries: boolean("price_varies").notNull().default(false),
   },
   (t) => [check("services_capacity", sql`${t.capacity} BETWEEN 1 AND 50`), check("services_duration", sql`${t.durationMinutes} BETWEEN 5 AND 600`), check("services_price", sql`${t.priceCents} >= 0`), check("services_tax_category", sql`${t.taxCategory} IN ('standard','zeroRated','exempt')`)],
 );
