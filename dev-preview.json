@@ -19,7 +19,7 @@
     "journey.core": {
       "evidence": null,
       "gap": "No recorded run of the core journey on dev: tax-return preparation journey (documents → draft → invoice), never filing.",
-      "issue": "https://github.com/krizaka/akinaza/issues/23"
+      "issue": "https://github.com/krizaka/akinaza/issues/22"
     },
     "journey.ai-via-orazaka": {
       "evidence": null,
@@ -29,27 +29,27 @@
     "ui.krizaka-ui": {
       "evidence": null,
       "gap": "No CI crawl proves NAV-SYS, one footer, dark/light, phone/desktop.",
-      "issue": "https://github.com/krizaka/akinaza/issues/26"
+      "issue": "https://github.com/krizaka/akinaza/issues/25"
     },
     "ui.themes-devices": {
       "evidence": null,
       "gap": "No CI crawl proves NAV-SYS, one footer, dark/light, phone/desktop.",
-      "issue": "https://github.com/krizaka/akinaza/issues/26"
+      "issue": "https://github.com/krizaka/akinaza/issues/25"
     },
     "ux.ia-review": {
       "evidence": null,
       "gap": "No UX/IA review.",
-      "issue": "https://github.com/krizaka/akinaza/issues/28"
+      "issue": "https://github.com/krizaka/akinaza/issues/27"
     },
     "mobile.build": {
       "evidence": null,
       "gap": "apps/mobile exists; no build recorded against dev.",
-      "issue": "https://github.com/krizaka/akinaza/issues/30"
+      "issue": "https://github.com/krizaka/akinaza/issues/29"
     },
     "mobile.ux-review": {
       "evidence": null,
       "gap": "No UX/IA review of the mobile app.",
-      "issue": "https://github.com/krizaka/akinaza/issues/32"
+      "issue": "https://github.com/krizaka/akinaza/issues/31"
     },
     "quality.ci-green": {
       "evidence": "https://github.com/krizaka/akinaza/actions?query=branch%3Amain",
@@ -66,22 +66,22 @@
     "docs.current": {
       "evidence": null,
       "gap": "README/AGENTS/docs not checked against the dev deployment.",
-      "issue": "https://github.com/krizaka/akinaza/issues/34"
+      "issue": "https://github.com/krizaka/akinaza/issues/33"
     },
     "seo.family": {
       "evidence": null,
       "gap": "node scripts/check-seo-family.mjs --base https://dev.akinaza.com --host https://dev.akinaza.com --index off fails (empty sitemap / no Sitemap: line wh…",
-      "issue": "https://github.com/krizaka/akinaza/issues/36"
+      "issue": "https://github.com/krizaka/akinaza/issues/35"
     },
     "ops.cost": {
       "evidence": null,
       "gap": "The organisation's cloud total is ≈ 106 USD/month (> 100 USD target, INFRA-COST 2026-10-16); ops.cost cannot be evidenced for any product until it is …",
-      "issue": "https://github.com/krizaka/.github/issues/79"
+      "issue": "https://github.com/krizaka/.github/issues/78"
     },
     "admin.gated": {
       "evidence": null,
       "gap": "admin-rules.test.ts covers roles; no test proves the host/IP gate nor the 404 on the public host.",
-      "issue": "https://github.com/krizaka/akinaza/issues/38"
+      "issue": "https://github.com/krizaka/akinaza/issues/37"
     },
     "admin.noindex": {
       "evidence": "https://admin.akinaza.com/robots.txt",
@@ -90,22 +90,22 @@
     "admin.operator-tasks": {
       "evidence": null,
       "gap": "Console pages exist (audit, invoices); tasks not proven end to end.",
-      "issue": "https://github.com/krizaka/akinaza/issues/40"
+      "issue": "https://github.com/krizaka/akinaza/issues/39"
     },
     "admin.audit-log": {
       "evidence": null,
       "gap": "Audit page exists; not proven for every action.",
-      "issue": "https://github.com/krizaka/akinaza/issues/42"
+      "issue": "https://github.com/krizaka/akinaza/issues/41"
     },
     "admin.shell": {
       "evidence": null,
       "gap": "Admin shell/themes unverified.",
-      "issue": "https://github.com/krizaka/akinaza/issues/44"
+      "issue": "https://github.com/krizaka/akinaza/issues/43"
     },
     "admin.ux-review": {
       "evidence": null,
       "gap": "No UX/IA review of the console.",
-      "issue": "https://github.com/krizaka/akinaza/issues/46"
+      "issue": "https://github.com/krizaka/akinaza/issues/45"
     },
     "admin.ci": {
       "evidence": "https://github.com/krizaka/akinaza/actions?query=branch%3Amain",
