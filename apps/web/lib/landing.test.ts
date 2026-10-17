@@ -7,6 +7,7 @@ import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
 import { DEMO_SHOP, HOME_SECTIONS, OUTCOMES, productStatus } from "./landing";
+import { MEDIA_CDN, TOUR, tourClip, tourStill } from "./tour";
 
 const ROOT = join(__dirname, "..");
 const read = (path: string) => readFileSync(join(ROOT, path), "utf8");
@@ -71,3 +72,21 @@ describe("the first screen loads its proof first", () => {
     expect(home).toMatch(/<link rel="preload" as="image" href=\{tourStill\("shop"\)\} fetchPriority="high" \/>/);
   });
 });
+
+describe("the tour plays the walker journey's recording, stills first", () => {
+  it("every step carries its clip (webm + mp4, hashed on the CDN) and keeps its still as the poster", () => {
+    const home = read("app/[locale]/page.tsx");
+    expect(home).toMatch(/poster: tourStill\(id\), video: tourClip\(id\)/);
+    for (const step of TOUR.steps) {
+      const clip = tourClip(step);
+      expect(clip.webm).toMatch(new RegExp(`^${MEDIA_CDN}/site/products/akinaza/tour/${step}\\.[0-9a-f]{10}\\.webm$`));
+      expect(clip.mp4).toMatch(new RegExp(`^${MEDIA_CDN}/site/products/akinaza/tour/${step}\\.[0-9a-f]{10}\\.mp4$`));
+      expect(tourStill(step)).toMatch(/\.jpg$/);
+    }
+  });
+
+  it("the CSP lets the CDN serve media (a video is not an image)", () => {
+    expect(read("next.config.mjs")).toContain("media-src 'self' https://krizaka-assets.b-cdn.net");
+  });
+});
+
