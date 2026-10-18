@@ -13,6 +13,7 @@
     "test": "turbo run test && vitest run",
     "check": "pnpm run lint && pnpm run typecheck && pnpm run test",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
+    "check:overflow": "node scripts/check-overflow.mjs",
     "seo:check": "node scripts/check-seo-family.mjs --base http://localhost:3000 --host https://dev.akinaza.com --types WebSite,SoftwareApplication",
     "e2e:admin": "node scripts/e2e-admin.mjs",
     "lint:sg": "node scripts/sg-ratchet.mjs",
