@@ -149,7 +149,9 @@ describe("the bar's language switch", () => {
 
 describe("the storefront still", () => {
   it("is on the CDN under a hashed name and shows the shop's public page", () => {
-    expect(storefrontStill()).toMatch(new RegExp(`^${MEDIA_CDN}/site/products/akinaza/tour/phone-storefront\\.[0-9a-f]{10}\\.jpg$`));
+    const still = storefrontStill();
+    expect(still.startsWith(`${MEDIA_CDN}/site/products/akinaza/tour/phone-storefront.`)).toBe(true);
+    expect(still.slice(MEDIA_CDN.length)).toMatch(/^\/site\/products\/akinaza\/tour\/phone-storefront\.[0-9a-f]{10}\.jpg$/);
   });
 });
 
