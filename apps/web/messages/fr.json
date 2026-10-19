@@ -16,7 +16,6 @@
     "talk": "Nous écrire",
     "themeToggle": "Thème",
     "languageLabel": "Langue",
-    "otherLanguage": "English",
     "devNotice": "Environnement de développement — accès sur invitation",
     "sourceCode": "Code source",
     "contact": "Contact",
@@ -36,7 +35,8 @@
         "text": "La vraie page de réservation d'un promeneur de chiens, sur dev."
       }
     },
-    "footerLabel": "Pied de page"
+    "footerLabel": "Pied de page",
+    "preferences": "Préférences"
   },
   "landing": {
     "eyebrow": "Akinaza · pour les commerces de services indépendants du Québec",
@@ -59,11 +59,6 @@
       "step": "Étape {n} sur {total}",
       "captured": "Capté sur dev.akinaza.com (interface en français) le 17 octobre 2026 · une boutique de démonstration, aucune personne réelle",
       "steps": {
-        "shop": {
-          "title": "La page de la boutique",
-          "text": "Services, prix, zones et heures libres, en public.",
-          "alt": "La page publique de Pattes de Saint-Henri : ses services et ses prix."
-        },
         "book": {
           "title": "La cliente réserve",
           "text": "Sofia choisit une promenade en groupe et ses deux chiens.",
@@ -150,6 +145,123 @@
     "closing": {
       "title": "Vous tenez un commerce de services au Québec ?",
       "body": "Akinaza est en développement et les inscriptions sont fermées. Dites-nous comment vous travaillez aujourd'hui : nous choisissons les premiers commerces."
+    },
+    "visualLabel": "dev.akinaza.com — la boutique publique",
+    "hero": {
+      "visualAlt": "La boutique publique de Pattes de Saint-Henri sur un téléphone : son titre, ses services, le bouton Réserver.",
+      "caption": "La vraie boutique de démonstration, captée sur un téléphone le 17 octobre 2026. Aucune personne réelle."
+    },
+    "figures": {
+      "gst": "% de TPS, au cent près",
+      "qst": "% de TVQ, au cent près",
+      "languages": "langues pour chaque facture"
+    },
+    "features": {
+      "eyebrow": "Ce que vous pouvez faire",
+      "title": "Moins d'administration, plus de clients",
+      "lead": "Trois résultats, vus sur la vraie application plus bas."
+    },
+    "tourIntro": "Chaque étape est captée sur la vraie application, sur un téléphone.",
+    "books": {
+      "badge": "Vos livres"
+    },
+    "compare": {
+      "eyebrow": "En comparaison",
+      "title": "Akinaza, face à l'agenda, au chiffrier et au comptable",
+      "lead": "La pile habituelle fonctionne ; voici ce qu'Akinaza change, et ce qu'il laisse à votre comptable.",
+      "label": "Akinaza comparé à la pile habituelle",
+      "topic": "Ce qui compte",
+      "columns": {
+        "akinaza": "Akinaza",
+        "stack": "Agenda + chiffrier + comptable"
+      },
+      "rows": {
+        "booking": {
+          "topic": "Les réservations",
+          "akinaza": {
+            "key": "Vos clients réservent seuls.",
+            "detail": "Une heure prise disparaît aussitôt."
+          },
+          "stack": {
+            "key": "Des allers-retours.",
+            "detail": "Messages et appels pour trouver une heure."
+          }
+        },
+        "day": {
+          "topic": "La journée de l'équipe",
+          "akinaza": {
+            "key": "Sur le téléphone de chacun.",
+            "detail": "Chiens, propriétaires et notes d'accès chiffrées."
+          },
+          "stack": {
+            "key": "Un agenda partagé.",
+            "detail": "Les notes sont ailleurs."
+          }
+        },
+        "report": {
+          "topic": "Le rapport au client",
+          "akinaza": {
+            "key": "Une note et une photo, d'un geste.",
+            "detail": "Il arrive au client dans la minute."
+          },
+          "stack": {
+            "key": "Un message à la main.",
+            "detail": "Écrit après chaque visite."
+          }
+        },
+        "taxes": {
+          "topic": "La TPS et la TVQ",
+          "akinaza": {
+            "key": "Inscrites sur chaque facture.",
+            "detail": "Au cent près, dans un registre qu'on ne réécrit pas."
+          },
+          "stack": {
+            "key": "Saisies dans un chiffrier.",
+            "detail": "À reporter, puis à vérifier."
+          }
+        },
+        "filing": {
+          "topic": "La déclaration de taxes",
+          "akinaza": {
+            "key": "Préparée, avec ses sources.",
+            "detail": "Vous la produisez : Akinaza ne la transmet jamais."
+          },
+          "stack": {
+            "key": "Produite par votre comptable.",
+            "detail": "Ou par vous, à partir de vos chiffres."
+          }
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "title": "Ce qu'on nous demande",
+      "items": {
+        "open": {
+          "q": "Je peux m'inscrire ?",
+          "a": "Pas encore : les inscriptions sont fermées pendant que nous bâtissons Akinaza avec les premiers commerces. Dites-nous comment vous travaillez aujourd'hui."
+        },
+        "filing": {
+          "q": "Akinaza produit ma déclaration de taxes ?",
+          "a": "Non. Akinaza prépare vos montants de TPS et de TVQ et leurs pièces justificatives ; c'est vous qui signez et qui produisez. Akinaza ne transmet jamais une déclaration."
+        },
+        "who": {
+          "q": "C'est pour quel commerce ?",
+          "a": "Les commerces de services : promeneurs, toiletteurs, salons, réparateurs. Pas pour les restaurants et les bars, qui doivent facturer avec une caisse certifiée."
+        },
+        "data": {
+          "q": "Où sont les dossiers de mes clients ?",
+          "a": "Au Canada, chiffrés au repos. Le consentement se donne par finalité et n'est jamais précoché ; l'effacement ne garde que les factures exigées par la loi fiscale."
+        },
+        "bilingual": {
+          "q": "Les factures sont bilingues ?",
+          "a": "Oui, en français et en anglais, avec la TPS à 5 % et la TVQ à 9,975 % calculées au cent près."
+        },
+        "engine": {
+          "q": "Il y a de l'IA là-dedans ?",
+          "a": "Son assistant fiscal tournera sur Orazaka, le moteur de Krizaka : c'est prévu, pas encore branché. Les montants de taxes, eux, viennent d'un code déterministe."
+        }
+      }
     }
   },
   "privacy": {
@@ -207,7 +319,6 @@
       "signedInAs": "Connecté en tant que {email}",
       "devBuild": "DEV · v{version}",
       "language": "Langue",
-      "otherLanguage": "English",
       "theme": "Thème",
       "signOut": "Se déconnecter",
       "today": "Aujourd'hui",

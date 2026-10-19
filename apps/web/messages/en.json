@@ -16,7 +16,6 @@
     "talk": "Talk to us",
     "themeToggle": "Theme",
     "languageLabel": "Language",
-    "otherLanguage": "Français",
     "devNotice": "Development environment — access by invitation",
     "sourceCode": "Source code",
     "contact": "Contact",
@@ -36,7 +35,8 @@
         "text": "A dog walker's real booking page, on dev."
       }
     },
-    "footerLabel": "Site footer"
+    "footerLabel": "Site footer",
+    "preferences": "Preferences"
   },
   "landing": {
     "eyebrow": "Akinaza · for independent Québec service shops",
@@ -59,11 +59,6 @@
       "step": "Step {n} of {total}",
       "captured": "Captured on dev.akinaza.com (French interface) on October 17, 2026 · a demo shop, no real person",
       "steps": {
-        "shop": {
-          "title": "The shop's page",
-          "text": "Services, prices, zones and open slots, public.",
-          "alt": "The public page of Pattes de Saint-Henri: its services and prices."
-        },
         "book": {
           "title": "The client books",
           "text": "Sofia picks a group walk and her two dogs.",
@@ -150,6 +145,123 @@
     "closing": {
       "title": "You run a service shop in Québec?",
       "body": "Akinaza is in development and sign-up is closed. Tell us how you work today: we are choosing the first shops."
+    },
+    "visualLabel": "dev.akinaza.com — the public storefront",
+    "hero": {
+      "visualAlt": "The public storefront of Pattes de Saint-Henri on a phone: its title, its services, the Book button.",
+      "caption": "The real demo storefront, captured on a phone on 17 October 2026. No real person."
+    },
+    "figures": {
+      "gst": "% GST, to the cent",
+      "qst": "% QST, to the cent",
+      "languages": "languages on every invoice"
+    },
+    "features": {
+      "eyebrow": "What you can do",
+      "title": "Less admin, more clients",
+      "lead": "Three results, seen on the real app below."
+    },
+    "tourIntro": "Every step is captured on the real app, on a phone.",
+    "books": {
+      "badge": "Your books"
+    },
+    "compare": {
+      "eyebrow": "Side by side",
+      "title": "Akinaza, next to the diary, the spreadsheet and the accountant",
+      "lead": "The usual stack works; here is what Akinaza changes, and what it leaves to your accountant.",
+      "label": "Akinaza compared with the usual stack",
+      "topic": "What matters",
+      "columns": {
+        "akinaza": "Akinaza",
+        "stack": "Diary + spreadsheet + accountant"
+      },
+      "rows": {
+        "booking": {
+          "topic": "Bookings",
+          "akinaza": {
+            "key": "Your clients book themselves.",
+            "detail": "A taken slot disappears at once."
+          },
+          "stack": {
+            "key": "Back and forth.",
+            "detail": "Messages and calls to find a slot."
+          }
+        },
+        "day": {
+          "topic": "The team's day",
+          "akinaza": {
+            "key": "On everyone's phone.",
+            "detail": "Dogs, owners and encrypted access notes."
+          },
+          "stack": {
+            "key": "A shared diary.",
+            "detail": "The notes live elsewhere."
+          }
+        },
+        "report": {
+          "topic": "The report to the client",
+          "akinaza": {
+            "key": "A note and a photo, in one tap.",
+            "detail": "It reaches the client within a minute."
+          },
+          "stack": {
+            "key": "A message by hand.",
+            "detail": "Written after every visit."
+          }
+        },
+        "taxes": {
+          "topic": "GST and QST",
+          "akinaza": {
+            "key": "Written on every invoice.",
+            "detail": "To the cent, in a ledger that is never rewritten."
+          },
+          "stack": {
+            "key": "Typed into a spreadsheet.",
+            "detail": "To copy over, then to check."
+          }
+        },
+        "filing": {
+          "topic": "The tax return",
+          "akinaza": {
+            "key": "Prepared, with its sources.",
+            "detail": "You file it: Akinaza never submits it."
+          },
+          "stack": {
+            "key": "Filed by your accountant.",
+            "detail": "Or by you, from your numbers."
+          }
+        }
+      }
+    },
+    "faq": {
+      "eyebrow": "Questions",
+      "title": "What people ask us",
+      "items": {
+        "open": {
+          "q": "Can I sign up?",
+          "a": "Not yet: registration is closed while we build Akinaza with the first shops. Tell us how you work today."
+        },
+        "filing": {
+          "q": "Does Akinaza file my tax return?",
+          "a": "No. Akinaza prepares your GST and QST amounts and their supporting documents; you sign and you file. Akinaza never submits a return."
+        },
+        "who": {
+          "q": "Which shops is it for?",
+          "a": "Service shops: dog walkers, groomers, salons, repairers. Not for restaurants and bars, which must invoice with a certified cash register."
+        },
+        "data": {
+          "q": "Where are my clients' records?",
+          "a": "In Canada, encrypted at rest. Consent is given per purpose and never pre-ticked; erasure keeps only the invoices the tax law requires."
+        },
+        "bilingual": {
+          "q": "Are the invoices bilingual?",
+          "a": "Yes, in French and in English, with GST at 5 % and QST at 9.975 % computed to the cent."
+        },
+        "engine": {
+          "q": "Is there AI in this?",
+          "a": "Its tax assistant will run on Orazaka, Krizaka's engine: planned, not wired yet. The tax amounts come from deterministic code."
+        }
+      }
     }
   },
   "privacy": {
@@ -207,7 +319,6 @@
       "signedInAs": "Signed in as {email}",
       "devBuild": "DEV · v{version}",
       "language": "Language",
-      "otherLanguage": "Français",
       "theme": "Theme",
       "signOut": "Sign out",
       "today": "Today",

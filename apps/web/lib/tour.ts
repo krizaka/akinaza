@@ -10,11 +10,10 @@
 /** The Krizaka media CDN — the one host the page's CSP lets serve images (next.config.mjs). */
 export const MEDIA_CDN = "https://krizaka-assets.b-cdn.net";
 
-const STEPS = ["shop", "book", "day", "report", "client"] as const;
+const STEPS = ["book", "day", "report", "client"] as const;
 export type TourStep = (typeof STEPS)[number];
 
 const HASHES: Record<TourStep, string> = {
-  shop: "1fcfa364d8",
   book: "c9c055409e",
   day: "6070dba224",
   report: "af3aa7b92b",
@@ -22,7 +21,6 @@ const HASHES: Record<TourStep, string> = {
 };
 
 const CLIPS: Record<TourStep, { mp4: string; webm: string }> = {
-  shop: { mp4: "b5dfb3fe91", webm: "c788837fe4" },
   book: { mp4: "ce210d0850", webm: "6de56d34ed" },
   day: { mp4: "7674c6aee0", webm: "da39288a47" },
   report: { mp4: "b1f25d285f", webm: "47b4fef558" },
@@ -42,3 +40,10 @@ export const tourClip = (step: TourStep) => ({
   webm: `${MEDIA_CDN}/site/products/akinaza/tour/${step}.${CLIPS[step].webm}.webm`,
   mp4: `${MEDIA_CDN}/site/products/akinaza/tour/${step}.${CLIPS[step].mp4}.mp4`,
 });
+
+/**
+ * The hero's phone: the public storefront of the demo shop (dev.akinaza.com/fr/s/pattes-saint-henri), captured on a phone
+ * (390 × 844, 2×, dark) on 2026-10-17 after its redesign. A still on the CDN under a hashed name, like the tour's.
+ */
+export const STOREFRONT = { hash: "09a48b2893", width: 780, height: 1688 } as const;
+export const storefrontStill = () => `${MEDIA_CDN}/site/products/akinaza/tour/phone-storefront.${STOREFRONT.hash}.jpg`;
