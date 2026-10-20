@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Responsive guard: no horizontal overflow, and no tap target under 44 px in a primary action, at every width that matters,
+// Dev-preview crawl (ui.themes-devices): console errors, HTTP errors, empty pages, then the responsive guard: no horizontal overflow, and no tap target under 44 px in a primary action, at every width that matters,
 // in both themes and both languages, on the pages a visitor lands on.
 //
 //   node scripts/check-overflow.mjs --base http://localhost:3000 [--shots <dir>]
@@ -12,7 +12,7 @@ import { chromium } from "playwright-core";
 
 export const WIDTHS = [360, 390, 430, 768, 1024, 1440];
 export const THEMES = ["dark", "light"];
-export const PAGES = ["/en", "/fr", "/en/privacy", "/en/changelog"];
+export const PAGES = ["/en", "/fr", "/en/privacy", "/fr/privacy", "/en/changelog", "/fr/changelog", "/en/sign-in", "/fr/sign-in"];
 
 const arg = (name, fallback) => {
   const i = process.argv.indexOf(`--${name}`);
@@ -30,10 +30,18 @@ export async function check({ base, shots }) {
       } catch {}
     }, theme);
     const page = await context.newPage();
+    // The crawl also refuses a console error, an uncaught exception and a failed first-party request on any page.
+    let current = "";
+    page.on("console", (m) => m.type() === "error" && problems.push(`${current}: console error: ${m.text().slice(0, 160)}`));
+    page.on("pageerror", (e) => problems.push(`${current}: uncaught: ${String(e.message).slice(0, 160)}`));
     for (const path of PAGES) {
       for (const width of WIDTHS) {
         await page.setViewportSize({ width, height: 900 });
-        await page.goto(`${base}${path}`, { waitUntil: "networkidle" });
+        current = `${path} @${width} ${theme}`;
+        const response = await page.goto(`${base}${path}`, { waitUntil: "networkidle" });
+        if (!response || response.status() >= 400) problems.push(`${current}: HTTP ${response?.status() ?? "none"}`);
+        const empty = await page.evaluate(() => document.querySelector("main")?.innerText.trim().length === 0);
+        if (empty) problems.push(`${current}: empty <main>`);
         const result = await page.evaluate(() => {
           const doc = document.documentElement;
           // An element that pokes out only matters when nothing clips it: decorative layers (aria-hidden) and anything inside a

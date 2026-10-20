@@ -18,6 +18,10 @@
   phone redraws them, stored content-hashed under `user/akinaza/shops/<shop>/` of the media storage (`MEDIA_STORAGE_*`,
   `MEDIA_CDN_HOSTNAME`), only the CDN address kept. Off (503, the owner pastes an address) until the storage is configured.
 
+- **No mobile app in the dev preview.** `apps/mobile` is an unbuilt skeleton, outside the workspace until the mobile phase (A5,
+  krizaka/.github#52); the walker's phone is served by the phone-first web app. The Dev preview criteria `mobile.*` are `na` for that
+  reason (`dev-preview.json`); the day a mobile build exists, they become real criteria again.
+
 ## 2. Non-negotiables
 
 - **Akinaza prepares; the merchant files.** "Prepare my tax return" produces the GST/QST figures (FPZ-500) and their
