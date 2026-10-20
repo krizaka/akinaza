@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { prepareShopReturn } from "./shop-ops";
 import { accounts } from "./schema";
 import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri } from "./seed-walker";
 import { listSlots, publicShop, revealAccessNotes, shopOfOwner } from "./service-shop";
@@ -58,5 +59,23 @@ describe("the Saint-Henri walker persona", () => {
     expect(again.created).toBe(false);
     const count = await t.db.execute(sql`SELECT count(*)::int AS n FROM clients`);
     expect((count.rows[0] as { n: number }).n).toBe(5);
+  });
+
+  it("keeps the books of the demo walker: GST/QST registrant, three months of invoices, expenses with their credits, once", async () => {
+    const owner = (await t.db.select().from(accounts).where(eq(accounts.email, SAINT_HENRI_EMAILS[0])))[0]!;
+    const shop = (await shopOfOwner(t.db, owner.id))!;
+    const ret = await prepareShopReturn(t.db, shop.id, "2026-07-01", "2026-09-30");
+    const get = (line: string) => ret.lines.find((l) => l.line === line)!;
+    expect(get("101").amountCents).toBeGreaterThan(0);
+    expect(get("103").amountCents).toBeGreaterThan(0);
+    expect(get("106").sources.length).toBeGreaterThan(0);
+    expect(get("203").sources.every((s) => s.kind === "invoice")).toBe(true);
+    expect(get("206").sources.every((s) => s.kind === "expense")).toBe(true);
+    // The two taxes balance: collected - credits = net, to the cent.
+    expect(get("109").amountCents).toBe(get("103").amountCents - get("106").amountCents);
+    expect(get("209").amountCents).toBe(get("203").amountCents - get("206").amountCents);
+    const n = await t.db.execute(sql`SELECT count(*)::int AS n FROM invoices`);
+    await seedSaintHenri(t.db, randomBytes(32), NOW);
+    expect(((await t.db.execute(sql`SELECT count(*)::int AS n FROM invoices`)).rows[0] as { n: number }).n).toBe((n.rows[0] as { n: number }).n);
   });
 });

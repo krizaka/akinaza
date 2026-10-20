@@ -1,9 +1,10 @@
 import { localDay, localInstant } from "@akinaza/core";
-import { addDays, addMinutes } from "date-fns";
+import { addDays, addMinutes, addMonths } from "date-fns";
 import { and, eq } from "drizzle-orm";
 
 import type { Db } from "./client";
-import { accounts, services, shops, shopZones } from "./schema";
+import { accounts, clients, invoices, services, shops, shopZones } from "./schema";
+import { issueInvoice, recordExpense } from "./shop-ops";
 import { addDependant, addWindow, addZone, bookVisit, joinShop, listSlots, saveShopMedia, saveShopPage, saveService, setAccessNotes, shopOfOwner } from "./service-shop";
 import { checkIn, checkOut, saveReport } from "./visits";
 
@@ -108,12 +109,34 @@ export async function enrichSaintHenri(db: Db, ownerId: string, shopId: string):
   await saveShopMedia(db, shopId, SAINT_HENRI.media);
 }
 
+/**
+ * The demo walker's books: a GST/QST registrant (fictional numbers), an invoice per client for each of the four last
+ * months and the expenses of a walker (the phone used 60 % for the shop, supplies, insurance), all issued through the
+ * real operations so the ledger is the product's own. Once per shop: a shop that already has an invoice is left alone.
+ */
+export async function seedSaintHenriBooks(db: Db, shopId: string, clientIds: Record<string, string>, now: Date): Promise<void> {
+  if ((await db.select({ id: invoices.id }).from(invoices).where(eq(invoices.shopId, shopId)).limit(1)).length > 0) return;
+  await db.update(shops).set({ registrant: true, gstNumber: "123456789RT0001", qstNumber: "1234567890TQ0001" }).where(eq(shops.id, shopId));
+  const day = (monthsBack: number, d: number) => `${localDay(addMonths(now, -monthsBack), "America/Toronto").slice(0, 8)}${String(d).padStart(2, "0")}`;
+  const ids = Object.values(clientIds);
+  for (let back = 4; back >= 1; back--) {
+    for (const [i, clientId] of ids.slice(0, 3).entries()) {
+      const walks = 6 + ((back + i) % 4) * 2;
+      await issueInvoice(db, { shopId, clientId, language: i === 1 ? "en" : "fr", issuedOn: day(back, 26 - i), lines: [{ description: "Promenade en groupe 60 min", quantity: walks, unitPriceCents: 2_200, category: "standard" }] });
+    }
+    await recordExpense(db, { shopId, supplier: "Fizz Mobile (forfait)", paidOn: day(back, 12), subtotalCents: 4_500, gstCents: 225, qstCents: 449, businessSharePct: 60 });
+    await recordExpense(db, { shopId, supplier: "Zoo Montréal Animalerie", paidOn: day(back, 18), subtotalCents: 3_800 + back * 400, gstCents: 190 + back * 20, qstCents: 379 + back * 40 });
+  }
+}
+
 export async function seedSaintHenri(db: Db, key: Buffer, now: Date): Promise<{ shopId: string; created: boolean; clientIds: Record<string, string> }> {
   const [owner] = await db.select().from(accounts).where(eq(accounts.email, SAINT_HENRI_EMAILS[0]));
   if (!owner) throw new Error(`no account ${SAINT_HENRI_EMAILS[0]}: create the accounts first`);
   const existing = await shopOfOwner(db, owner.id);
   if (existing) {
     await enrichSaintHenri(db, owner.id, existing.id);
+    const known = Object.fromEntries((await db.select({ id: clients.id, email: clients.email }).from(clients).where(eq(clients.shopId, existing.id))).filter((c) => c.email).map((c) => [c.email!, c.id]));
+    await seedSaintHenriBooks(db, existing.id, known, now);
     return { shopId: existing.id, created: false, clientIds: {} };
   }
   const page = { ...SAINT_HENRI.shop, taglineFr: SAINT_HENRI.taglineFr, taglineEn: SAINT_HENRI.taglineEn };
@@ -165,6 +188,7 @@ export async function seedSaintHenri(db: Db, key: Buffer, now: Date): Promise<{ 
     break;
   }
   await enrichSaintHenri(db, owner.id, shopId);
+  await seedSaintHenriBooks(db, shopId, clientIds, now);
   return { shopId, created: true, clientIds };
 }
 

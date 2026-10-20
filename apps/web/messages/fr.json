@@ -282,7 +282,8 @@
       "clients": "Clients",
       "book": "Réserver une promenade",
       "report": "Rapport de promenade",
-      "connections": "Connexions"
+      "connections": "Connexions",
+      "books": "Vos livres"
     },
     "signIn": {
       "promise": "Votre boutique, pour moins cher — Loi 25 dès la conception.",
@@ -332,7 +333,8 @@
       "bookings": "Mes réservations",
       "clients": "Clients",
       "shop": "Ma page boutique",
-      "connections": "Connexions"
+      "connections": "Connexions",
+      "books": "Vos livres"
     },
     "admin": {
       "health": "Santé",
@@ -1041,6 +1043,66 @@
         "open": "Ouvrir le site",
         "values": "Vos valeurs"
       }
+    },
+    "books": {
+      "title": "Vos livres",
+      "period": "Déclaration du {from} au {to}",
+      "periodNav": "Période de la déclaration",
+      "notFiled": {
+        "title": "Préparée pour vous, jamais produite",
+        "body": "Akinaza prépare votre déclaration de TPS/TVQ à partir de vos factures et de vos dépenses. Vous la vérifiez et la produisez vous-même auprès de Revenu Québec : rien n'est envoyé d'ici."
+      },
+      "net": {
+        "gst": "TPS (ligne 109)",
+        "qst": "TVQ (ligne 209)"
+      },
+      "outcome": {
+        "remit": "À remettre",
+        "claim": "Un remboursement à demander",
+        "zero": "Rien à remettre"
+      },
+      "sources": "{count} documents derrière ce chiffre",
+      "kinds": {
+        "invoice": "Facture",
+        "expense": "Dépense"
+      },
+      "table": {
+        "caption": "Lignes de la déclaration de TPS/TVQ (FPZ-500)",
+        "line": "Ligne",
+        "label": "De quoi il s'agit",
+        "amount": "Montant"
+      },
+      "lines": {
+        "101": {
+          "label": "Ventes et autres revenus",
+          "how": "Le sous-total des factures émises pendant la période."
+        },
+        "103": {
+          "label": "TPS perçue",
+          "how": "La TPS de vos factures."
+        },
+        "106": {
+          "label": "Crédits de taxe sur les intrants (CTI)",
+          "how": "La TPS payée sur vos dépenses, selon la part utilisée pour l'entreprise."
+        },
+        "109": {
+          "label": "TPS nette",
+          "how": "Ligne 103 moins ligne 106."
+        },
+        "203": {
+          "label": "TVQ perçue",
+          "how": "La TVQ de vos factures."
+        },
+        "206": {
+          "label": "Remboursements de la taxe sur les intrants (RTI)",
+          "how": "La TVQ payée sur vos dépenses, selon la part utilisée pour l'entreprise."
+        },
+        "209": {
+          "label": "TVQ nette",
+          "how": "Ligne 203 moins ligne 206."
+        }
+      },
+      "footnote": "Les numéros de ligne sont ceux de la déclaration combinée de Revenu Québec (FPZ-500). Vérifiez chaque chiffre avec ses documents avant de produire."
     }
   },
   "changelog": {

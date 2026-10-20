@@ -282,7 +282,8 @@
       "clients": "Clients",
       "book": "Book a walk",
       "report": "Walk report",
-      "connections": "Connections"
+      "connections": "Connections",
+      "books": "Your books"
     },
     "signIn": {
       "promise": "Your shop, for less — Loi 25 by design.",
@@ -332,7 +333,8 @@
       "bookings": "My bookings",
       "clients": "Clients",
       "shop": "My shop page",
-      "connections": "Connections"
+      "connections": "Connections",
+      "books": "Your books"
     },
     "admin": {
       "health": "Health",
@@ -1041,6 +1043,66 @@
         "open": "Open the site",
         "values": "Your values"
       }
+    },
+    "books": {
+      "title": "Your books",
+      "period": "Return for {from} to {to}",
+      "periodNav": "Return period",
+      "notFiled": {
+        "title": "Prepared for you, never filed",
+        "body": "Akinaza prepares your GST/QST return from your invoices and expenses. You review it and file it yourself with Revenu Québec: nothing is sent from here."
+      },
+      "net": {
+        "gst": "GST (line 109)",
+        "qst": "QST (line 209)"
+      },
+      "outcome": {
+        "remit": "To remit",
+        "claim": "A refund to claim",
+        "zero": "Nothing to remit"
+      },
+      "sources": "{count} documents behind this figure",
+      "kinds": {
+        "invoice": "Invoice",
+        "expense": "Expense"
+      },
+      "table": {
+        "caption": "Lines of the GST/QST return (FPZ-500)",
+        "line": "Line",
+        "label": "What it is",
+        "amount": "Amount"
+      },
+      "lines": {
+        "101": {
+          "label": "Sales and other revenue",
+          "how": "The subtotal of the invoices issued in the period."
+        },
+        "103": {
+          "label": "GST collected",
+          "how": "The GST on your invoices."
+        },
+        "106": {
+          "label": "Input tax credits (ITC)",
+          "how": "The GST paid on your expenses, times the share used for the business."
+        },
+        "109": {
+          "label": "Net GST",
+          "how": "Line 103 minus line 106."
+        },
+        "203": {
+          "label": "QST collected",
+          "how": "The QST on your invoices."
+        },
+        "206": {
+          "label": "Input tax refunds (ITR)",
+          "how": "The QST paid on your expenses, times the share used for the business."
+        },
+        "209": {
+          "label": "Net QST",
+          "how": "Line 203 minus line 206."
+        }
+      },
+      "footnote": "Line numbers are those of Revenu Québec's combined return (FPZ-500). Check each figure against its documents before you file."
     }
   },
   "changelog": {
