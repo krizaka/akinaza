@@ -18,6 +18,12 @@ describe("env", () => {
     expect(readEnv({ AUTH_SIGNUP_ENABLED: "TRUE" }).AUTH_SIGNUP_ENABLED).toBe(true);
   });
 
+  it("declares the media storage variables, all optional (uploads are off without them)", () => {
+    const e = readEnv({});
+    expect([e.MEDIA_STORAGE_API_KEY, e.MEDIA_STORAGE_ZONE, e.MEDIA_STORAGE_ENDPOINT, e.MEDIA_CDN_HOSTNAME]).toEqual([undefined, undefined, undefined, undefined]);
+    expect(() => assertProductionEnv(PROD)).not.toThrow();
+  });
+
   it("runs the tax assistant on Orazaka only", () => {
     expect(readEnv({}).AI_PROVIDER).toBe("orazaka");
     expect(() => readEnv({ AI_PROVIDER: "openai" })).toThrow();

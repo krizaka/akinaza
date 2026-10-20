@@ -10,6 +10,7 @@ import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
 import { useSay } from "@/lib/i18n-client";
+import { shrinkImage, STOREFRONT_LONG_SIDE } from "@/lib/shrink-image";
 import { type GalleryLine, galleryText, joinLines, keepExtras, parseGallery, splitLines } from "@/lib/storefront-form";
 
 /** What the setup page needs, plain (the server picks it from the shop). */
@@ -296,9 +297,12 @@ function ServiceForm({ editing, onDone }: { editing: Service | null; onDone: () 
   );
 }
 
+// @fixed: the largest photo taken before it is redrawn small on the phone (a phone photo is 3–12 MB) — an input limit.
+const MAX_STOREFRONT_PHOTO = 25 * 1024 * 1024;
+
 const mediaForm = createKrizakaForm({
-  schema: z.object({ coverUrl: z.string().trim().max(500), coverAltFr: z.string().trim().max(200), coverAltEn: z.string().trim().max(200), gallery: z.string().max(5000) }),
-  defaultValues: { coverUrl: "", coverAltFr: "", coverAltEn: "", gallery: "" },
+  schema: z.object({ coverUrl: z.string().trim().max(500), coverAltFr: z.string().trim().max(200), coverAltEn: z.string().trim().max(200), gallery: z.string().max(5000), coverFiles: z.array(z.instanceof(File)).max(1), galleryFiles: z.array(z.instanceof(File)).max(12) }),
+  defaultValues: { coverUrl: "", coverAltFr: "", coverAltEn: "", gallery: "", coverFiles: [] as File[], galleryFiles: [] as File[] },
 });
 
 function MediaCard({ media }: { media: SetupData["media"] }) {
@@ -307,11 +311,27 @@ function MediaCard({ media }: { media: SetupData["media"] }) {
   const [saved, setSaved] = useState(false);
   const form = mediaForm.useForm({
     i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
-    defaultValues: { coverUrl: media.cover?.url ?? "", coverAltFr: media.cover?.altFr ?? "", coverAltEn: media.cover?.altEn ?? "", gallery: galleryText(media.gallery) },
+    defaultValues: { coverUrl: media.cover?.url ?? "", coverAltFr: media.cover?.altFr ?? "", coverAltEn: media.cover?.altEn ?? "", gallery: galleryText(media.gallery), coverFiles: [], galleryFiles: [] },
     onSubmit: async (values) => {
       setSaved(false);
-      const cover = values.coverUrl ? keepExtras([{ url: values.coverUrl, altFr: values.coverAltFr, altEn: values.coverAltEn }], media.cover ? [media.cover] : [])[0]! : null;
-      setSaved((await call.run("/api/walker/media", { json: { cover, gallery: keepExtras(parseGallery(values.gallery), media.gallery) } })) !== null);
+      // The chosen files are redrawn small and sent to the media storage first; their addresses join the form's.
+      const send = async (file: File) => {
+        const body = new FormData();
+        body.set("file", await shrinkImage(file, STOREFRONT_LONG_SIDE), "photo.jpg");
+        return (await call.run<{ url: string }>("/api/walker/media/upload", { body }, { refresh: false }))?.url ?? null;
+      };
+      const coverUrl = values.coverFiles[0] ? await send(values.coverFiles[0]) : values.coverUrl;
+      const uploaded: string[] = [];
+      for (const file of values.galleryFiles) {
+        const url = await send(file);
+        if (url === null) return;
+        uploaded.push(`${url} | | `);
+      }
+      if (coverUrl === null) return;
+      const cover = coverUrl ? keepExtras([{ url: coverUrl, altFr: values.coverAltFr, altEn: values.coverAltEn }], media.cover ? [media.cover] : [])[0]! : null;
+      const gallery = [...keepExtras(parseGallery(values.gallery), media.gallery), ...parseGallery(uploaded.join("\n"))].slice(0, 12);
+      setSaved((await call.run("/api/walker/media", { json: { cover, gallery } })) !== null);
+      form.reset({ ...values, coverUrl, coverFiles: [], galleryFiles: [], gallery: galleryText(gallery) });
     },
   });
   return (
@@ -320,10 +340,16 @@ function MediaCard({ media }: { media: SetupData["media"] }) {
       <p className="mb-3 text-sm text-fg-secondary">{say("shopSetup.media.intro")}</p>
       <form.Form aria-label={say("shopSetup.media.title")} className="grid gap-3 sm:grid-cols-2">
         <div className="sm:col-span-2">
+          <form.FileUpload name="coverFiles" label={say("shopSetup.media.uploadCover")} title={say("shopSetup.media.uploadCoverTitle")} browseLabel={say("shopSetup.media.browse")} hint={say("shopSetup.media.uploadHint")} accept="image/*" maxSize={MAX_STOREFRONT_PHOTO} maxFiles={1} removeLabel={(name) => say("shopSetup.media.remove", { name })} refusalLabel={(r) => say("shopSetup.media.tooBig", { name: r.file.name })} />
+        </div>
+        <div className="sm:col-span-2">
           <form.TextField name="coverUrl" label={say("shopSetup.media.cover")} hint={say("shopSetup.media.coverHint")} inputMode="url" />
         </div>
         <form.TextField name="coverAltFr" label={say("shopSetup.media.coverAltFr")} />
         <form.TextField name="coverAltEn" label={say("shopSetup.media.coverAltEn")} />
+        <div className="sm:col-span-2">
+          <form.FileUpload name="galleryFiles" label={say("shopSetup.media.uploadGallery")} title={say("shopSetup.media.uploadGalleryTitle")} browseLabel={say("shopSetup.media.browse")} hint={say("shopSetup.media.uploadHint")} accept="image/*" maxSize={MAX_STOREFRONT_PHOTO} multiple maxFiles={12} removeLabel={(name) => say("shopSetup.media.remove", { name })} refusalLabel={(r) => say("shopSetup.media.tooBig", { name: r.file.name })} />
+        </div>
         <div className="sm:col-span-2">
           <form.TextArea name="gallery" label={say("shopSetup.media.gallery")} hint={say("shopSetup.media.galleryHint")} rows={5} />
         </div>

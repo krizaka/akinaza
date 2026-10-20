@@ -511,7 +511,10 @@
       "SYNC_RECONNECT": "The access ended. Reconnect the account.",
       "SYNC_UNAVAILABLE": "The platform did not answer. Try again in a moment.",
       "SYNC_INVALID": "The platform refused the request.",
-      "SYNC_PROPOSAL_UNKNOWN": "This review is no longer open."
+      "SYNC_PROPOSAL_UNKNOWN": "This review is no longer open.",
+      "UPLOAD_UNAVAILABLE": "Photo upload is not available yet. Paste the address of a file instead.",
+      "UPLOAD_TOO_LARGE": "This photo is too large.",
+      "UPLOAD_NOT_IMAGE": "Use a JPEG, PNG or WebP photo."
     },
     "today": {
       "day": "{date} · {count} appointments",
@@ -776,7 +779,15 @@
         "gallery": "Gallery",
         "galleryHint": "One picture per line: address | description (fr) | description (en) | caption (fr) | caption (en). Twelve at most.",
         "submit": "Save the photos",
-        "saved": "Photos saved."
+        "saved": "Photos saved.",
+        "uploadCover": "Upload the cover",
+        "uploadGallery": "Add a photo to the gallery",
+        "uploadHint": "A JPEG, PNG or WebP photo; it is resized on your phone before it is sent.",
+        "uploadCoverTitle": "Drop the cover photo here",
+        "uploadGalleryTitle": "Drop the gallery photos here",
+        "browse": "Choose from this device",
+        "remove": "Remove {name}",
+        "tooBig": "{name} is too large"
       }
     },
     "shopPage": {

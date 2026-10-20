@@ -1,0 +1,27 @@
+import { requireOwner } from "@/lib/access";
+import { audit } from "@/lib/audit";
+import { handle, refuse } from "@/lib/http";
+import { detectImage, MAX_UPLOAD_BYTES, mediaSettings, storeImage } from "@/lib/media-upload";
+
+export const dynamic = "force-dynamic";
+
+/**
+ * One photo of the owner's storefront: checked by its bytes, stored on the media storage, answered as its CDN address
+ * (the page then saves the addresses with /api/walker/media). Off — 503 — until the storage is configured.
+ */
+export function POST(req: Request) {
+  return handle(async () => {
+    const { session, shop } = await requireOwner(req);
+    const settings = mediaSettings();
+    if (!settings) throw refuse(503, "UPLOAD_UNAVAILABLE", "media storage is not configured");
+    if (Number(req.headers.get("content-length") ?? 0) > MAX_UPLOAD_BYTES + 4096) throw refuse(413, "UPLOAD_TOO_LARGE", "file too large");
+    const file = (await req.formData().catch(() => null))?.get("file");
+    if (!(file instanceof File)) throw refuse(400, "BAD_REQUEST", "no file");
+    if (file.size > MAX_UPLOAD_BYTES) throw refuse(413, "UPLOAD_TOO_LARGE", "file too large");
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (!detectImage(bytes)) throw refuse(400, "UPLOAD_NOT_IMAGE", "not a JPEG, PNG or WebP image");
+    const url = await storeImage(settings, shop.id, bytes);
+    await audit({ action: "shop.media_uploaded", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { bytes: bytes.length }, headers: req.headers });
+    return Response.json({ url });
+  });
+}
