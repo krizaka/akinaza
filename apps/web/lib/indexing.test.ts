@@ -12,7 +12,8 @@ describe("APP_SEARCH_INDEXING", () => {
 
   it("closes robots.txt to everyone", () => {
     expect(CLOSED_ROBOTS).toContain("Disallow: /");
-    expect(CLOSED_ROBOTS).not.toContain("Sitemap");
+    // The family contract (AGENTS.md of krizaka-com §2.4): a closed site still serves correct files for the day it opens.
+    expect(CLOSED_ROBOTS).toContain("Sitemap: https://dev.akinaza.com/sitemap.xml");
     expect(NOINDEX).toBe("noindex, nofollow");
   });
 });

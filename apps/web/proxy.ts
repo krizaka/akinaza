@@ -14,9 +14,8 @@ export function proxy(request: NextRequest) {
   const route = routeFor(host, request.nextUrl.pathname, chosen);
   const admin = isAdminHost(host);
   const closed = !indexable();
-  // A deployment closed to search engines (APP_SEARCH_INDEXING=off): robots.txt disallows everything, no sitemap.
+  // A deployment closed to search engines (APP_SEARCH_INDEXING=off): robots.txt disallows everything (the sitemap is still served, noindexed).
   if (closed && request.nextUrl.pathname === "/robots.txt") return new NextResponse(CLOSED_ROBOTS, { headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });
-  if (closed && request.nextUrl.pathname === "/sitemap.xml") return new NextResponse("Not found", { status: 404, headers: { "x-robots-tag": NOINDEX } });
   let response: NextResponse;
   switch (route.kind) {
     case "robotsClosed":
