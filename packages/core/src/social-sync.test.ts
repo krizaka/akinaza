@@ -124,3 +124,14 @@ describe("what a platform tells us is not trusted", () => {
     expect(sanitizeProfile({ website: "https://ok.test/a" }).website).toBe("https://ok.test/a");
   });
 });
+
+describe("hostile input stays linear (CodeQL polynomial regex)", () => {
+  it("normalizes a very long run of slashes and rejects an oversized e-mail in bounded time", () => {
+    const t0 = Date.now();
+    expect(normalizeWebsite(`a${"/".repeat(200_000)}x${"/".repeat(200_000)}`)).toBe(`a${"/".repeat(200_000)}x`);
+    expect(sanitizeProfile({ email: `${"!@".repeat(100_000)}.` }).email).toBe("");
+    expect(sanitizeProfile({ email: " a@b.co " }).email).toBe("a@b.co");
+    // @fixed: generous wall-clock bound; the quadratic version takes tens of seconds on this input.
+    expect(Date.now() - t0).toBeLessThan(1000);
+  });
+});

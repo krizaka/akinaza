@@ -90,7 +90,12 @@ export const normalizePhone = (value: string): string => {
   const digits = value.replace(/\D/g, "");
   return digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
 };
-export const normalizeWebsite = (value: string): string => value.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/+$/, "");
+const stripTrailingSlashes = (value: string): string => {
+  let end = value.length;
+  while (end > 0 && value.charCodeAt(end - 1) === 47) end -= 1;
+  return value.slice(0, end);
+};
+export const normalizeWebsite = (value: string): string => stripTrailingSlashes(value.trim().toLowerCase().replace(/^https?:\/\//, ""));
 const normalizeText = (value: string): string => value.replace(/\s+/g, " ").trim();
 
 const present = (field: SyncField, value: unknown): boolean => (field === "hours" ? Object.keys((value as Hours | undefined) ?? {}).length > 0 : typeof value === "string" && value.trim() !== "");
@@ -350,7 +355,10 @@ export function sanitizeProfile(remote: Profile): Profile {
   if (remote.hours !== undefined) out.hours = canonicalHours(hoursToWindows(remote.hours).filter((w) => /^\d{2}:\d{2}/.test(w.startsAt) && /^\d{2}:\d{2}/.test(w.endsAt) && minutes(w.endsAt) > minutes(w.startsAt) && w.weekday >= 0 && w.weekday <= 6));
   if (remote.description !== undefined) out.description = normalizeText(remote.description).slice(0, LIMITS.description);
   if (remote.phone !== undefined) out.phone = remote.phone.trim().slice(0, LIMITS.phone);
-  if (remote.email !== undefined) out.email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(remote.email.trim()) && remote.email.trim().length <= LIMITS.email ? remote.email.trim() : "";
+  if (remote.email !== undefined) {
+    const email = remote.email.trim();
+    out.email = email.length <= LIMITS.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : "";
+  }
   if (remote.website !== undefined) out.website = /^https?:\/\/\S+$/i.test(remote.website.trim()) && remote.website.trim().length <= LIMITS.website ? remote.website.trim() : "";
   return out;
 }
