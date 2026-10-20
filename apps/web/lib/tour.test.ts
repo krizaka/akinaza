@@ -6,14 +6,16 @@ import { MEDIA_CDN, TOUR, tourStill } from "./tour";
 
 describe("the landing's tour", () => {
   it("is the dog walker's real journey on dev.akinaza.com, in four steps (the hero shows the storefront): the booking, the day, the report, the client", () => {
-    expect(TOUR.steps).toEqual(["book", "day", "report", "client"]);
+    expect(TOUR.steps).toEqual(["book", "day", "report", "client", "books"]);
   });
 
-  it("is made of hashed, immutable stills of the Krizaka media CDN under site/products/akinaza/tour/", () => {
-    for (const step of TOUR.steps) {
-      const base = `${MEDIA_CDN}/site/products/akinaza/tour/phone-${step}.`;
-      expect(tourStill(step).startsWith(base)).toBe(true);
-      expect(tourStill(step).slice(base.length)).toMatch(/^[0-9a-f]{10}\.jpg$/);
+  it("is made of hashed, immutable stills of the Krizaka media CDN under site/products/akinaza/tour/, one per language", () => {
+    for (const locale of ["en", "fr"] as const) {
+      for (const step of TOUR.steps) {
+        const base = `${MEDIA_CDN}/site/products/akinaza/tour/phone-${step}-${locale}.`;
+        expect(tourStill(step, locale).startsWith(base)).toBe(true);
+        expect(tourStill(step, locale).slice(base.length)).toMatch(/^[0-9a-f]{10}\.jpg$/);
+      }
     }
   });
 

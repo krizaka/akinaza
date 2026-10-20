@@ -7,7 +7,7 @@ import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
 import { COMPARE_ROWS, DEMO_SHOP, FAQ_IDS, FIGURES, HOME_SECTIONS, OUTCOMES, productStatus } from "./landing";
-import { MEDIA_CDN, storefrontStill, TOUR, tourClip, tourStill } from "./tour";
+import { heroTake, MEDIA_CDN, TOUR, tourClip, tourStill } from "./tour";
 
 const ROOT = join(__dirname, "..");
 const read = (path: string) => readFileSync(join(ROOT, path), "utf8");
@@ -22,7 +22,7 @@ describe("the landing is the product landing template of @krizaka/ui, at the Yom
     for (const prop of ["eyebrow=", "visual={", "visualLabel=", "proofs={[", "features={", "closing={{"]) expect(home).toContain(prop);
     expect(home).toContain("<HeroPhone");
     expect(read("components/home/HeroPhone.tsx")).toContain('kind="phone"');
-    expect(read("components/home/HeroPhone.tsx")).toContain("storefrontStill()");
+    expect(read("components/home/HeroPhone.tsx")).toContain("heroTake(locale)");
   });
 
   it("tells its story in this order", () => {
@@ -113,26 +113,47 @@ describe("the bar", () => {
 });
 
 describe("the first screen loads its proof first", () => {
-  it("preconnects to the media CDN and preloads the storefront still (the LCP) at high priority", () => {
+  it("preconnects to the media CDN and preloads the hero take's poster (the LCP) at high priority", () => {
     const home = read("app/[locale]/page.tsx");
     expect(home).toMatch(/preconnect\(MEDIA_CDN/);
-    expect(home).toMatch(/<link rel="preload" as="image" href=\{storefrontStill\(\)\} fetchPriority="high" \/>/);
+    expect(home).toMatch(/<link rel="preload" as="image" href=\{heroTake\(locale\)\.poster\} fetchPriority="high" \/>/);
   });
 });
 
 describe("the tour plays the walker journey's recording, stills first", () => {
   it("every step carries its clip (webm + mp4, hashed on the CDN) and keeps its still as the poster", () => {
     const home = read("app/[locale]/page.tsx");
-    expect(home).toMatch(/poster: tourStill\(id\), video: tourClip\(id\)/);
-    for (const step of TOUR.steps) {
-      const clip = tourClip(step);
-      expect(clip.webm.startsWith(`${MEDIA_CDN}/site/products/akinaza/tour/${step}.`)).toBe(true);
-      expect(clip.webm.slice(`${MEDIA_CDN}/site/products/akinaza/tour/${step}.`.length)).toMatch(/^[0-9a-f]{10}\.webm$/);
-      expect(clip.mp4.startsWith(`${MEDIA_CDN}/site/products/akinaza/tour/${step}.`)).toBe(true);
-      expect(clip.mp4.slice(`${MEDIA_CDN}/site/products/akinaza/tour/${step}.`.length)).toMatch(/^[0-9a-f]{10}\.mp4$/);
-      expect(tourStill(step)).toMatch(/\.jpg$/);
-      expect(en.landing.tour.steps[step].title && fr.landing.tour.steps[step].title).toBeTruthy();
+    expect(home).toMatch(/poster: tourStill\(id, locale\), video: tourClip\(id, locale\)/);
+    for (const locale of ["en", "fr"] as const) {
+      for (const step of TOUR.steps) {
+        const dir = `${MEDIA_CDN}/site/products/akinaza/tour/`;
+        const clip = tourClip(step, locale);
+        expect(clip.webm.startsWith(`${dir}${step}-${locale}.`)).toBe(true);
+        expect(clip.webm.slice(`${dir}${step}-${locale}.`.length)).toMatch(/^[0-9a-f]{10}\.webm$/);
+        expect(clip.mp4.startsWith(`${dir}${step}-${locale}.`)).toBe(true);
+        expect(clip.mp4.slice(`${dir}${step}-${locale}.`.length)).toMatch(/^[0-9a-f]{10}\.mp4$/);
+        expect(tourStill(step, locale)).toMatch(/\.jpg$/);
+        expect(en.landing.tour.steps[step].title && fr.landing.tour.steps[step].title).toBeTruthy();
+      }
     }
+  });
+
+  it("ends on Your books: the tax screen is the last beat, prepared and never filed", () => {
+    expect(TOUR.steps.at(-1)).toBe("books");
+    expect(en.landing.tour.steps.books.text).toMatch(/never filed/);
+    expect(fr.landing.tour.steps.books.text).toMatch(/jamais produite/);
+  });
+
+  it("the hero is the whole take: a muted looping video over its poster, still under reduced motion", () => {
+    for (const locale of ["en", "fr"] as const) {
+      const take = heroTake(locale);
+      expect(take.poster).toMatch(/\/phone-hero-\w\w\.[0-9a-f]{10}\.jpg$/);
+      expect(take.webm).toMatch(/\/hero-\w\w\.[0-9a-f]{10}\.webm$/);
+      expect(take.mp4).toMatch(/\/hero-\w\w\.[0-9a-f]{10}\.mp4$/);
+    }
+    const video = read("components/home/HeroTake.tsx");
+    for (const needle of ["muted", "loop", "playsInline", "poster={poster}", "prefers-reduced-motion", "saveData"]) expect(video).toContain(needle);
+    expect(video).not.toContain("autoPlay");
   });
 
   it("the CSP lets the CDN serve media (a video is not an image)", () => {
@@ -149,14 +170,6 @@ describe("the bar's language switch", () => {
     expect(bar).toContain("languagesFor(");
     expect(bar).not.toContain("hrefLang");
     expect(bar).not.toContain("otherLocale");
-  });
-});
-
-describe("the storefront still", () => {
-  it("is on the CDN under a hashed name and shows the shop's public page", () => {
-    const still = storefrontStill();
-    expect(still.startsWith(`${MEDIA_CDN}/site/products/akinaza/tour/phone-storefront.`)).toBe(true);
-    expect(still.slice(MEDIA_CDN.length)).toMatch(/^\/site\/products\/akinaza\/tour\/phone-storefront\.[0-9a-f]{10}\.jpg$/);
   });
 });
 
