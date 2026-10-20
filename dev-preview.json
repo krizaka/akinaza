@@ -79,9 +79,9 @@
       "issue": "https://github.com/krizaka/.github/issues/78"
     },
     "admin.gated": {
-      "evidence": null,
-      "gap": "admin-rules.test.ts covers roles; no test proves the host/IP gate nor the 404 on the public host.",
-      "issue": "https://github.com/krizaka/akinaza/issues/37"
+      "evidence": "https://github.com/krizaka/akinaza/blob/main/apps/web/lib/admin-gate.test.ts",
+      "checked": "2026-10-19",
+      "note": "Every admin API route calls requireAdmin, every console page sits behind the signed layout (pageAdmin: session, ADMIN role, AUTH_ALLOWED_IPS, 404 otherwise); the console is a 404 on dev.akinaza.com (live: 404)."
     },
     "admin.noindex": {
       "evidence": "https://admin.akinaza.com/robots.txt",
