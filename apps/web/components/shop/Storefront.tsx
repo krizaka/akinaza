@@ -27,11 +27,11 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
   const t = translator(locale);
   const book = (
     <>
-      <ButtonLink href={view.bookHref} size="lg" shape="cut" variant="primary" shimmer magnetic className="hidden md:inline-flex">
+      <ButtonLink href={view.bookHref} size="lg" variant="primary" className="hidden md:inline-flex">
         {t("console.shopPage.book")}
       </ButtonLink>
       {view.services.length ? (
-        <ButtonLink href="#reserver" size="lg" shape="cut" variant="secondary" className="hidden md:inline-flex">
+        <ButtonLink href="#reserver" size="lg" variant="secondary" className="hidden md:inline-flex">
           {t("console.shopPage.seeTimes")}
         </ButtonLink>
       ) : null}
@@ -159,7 +159,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
               {view.contact ? (
                 <div className="flex flex-wrap gap-2">
                   {view.contact.phone && view.contact.phoneHref ? (
-                    <ButtonLink href={view.contact.phoneHref} variant="secondary" size="md" shape="cut">
+                    <ButtonLink href={view.contact.phoneHref} variant="secondary" size="md">
                       {t("console.shopPage.call")} · {view.contact.phone}
                     </ButtonLink>
                   ) : null}
@@ -186,14 +186,14 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
 
       <Section spacing="lg">
         <CtaPanel title={t("console.shopPage.closingTitle")} body={t("console.shopPage.closingBody")} reveal>
-          <ButtonLink href={view.bookHref} size="lg" shape="cut" variant="primary">
+          <ButtonLink href={view.bookHref} size="lg" variant="primary">
             {t("console.shopPage.book")}
           </ButtonLink>
         </CtaPanel>
       </Section>
 
       <StickyAction>
-        <ButtonLink href={view.bookHref} size="lg" shape="cut" variant="primary">
+        <ButtonLink href={view.bookHref} size="lg" variant="primary">
           {t("console.shopPage.book")}
         </ButtonLink>
       </StickyAction>

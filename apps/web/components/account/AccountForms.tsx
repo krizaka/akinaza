@@ -37,7 +37,7 @@ export function ForgotForm() {
     <form.Form aria-label={say("account.forgot.title")} className="flex flex-col gap-4">
       <form.TextField name="email" label={say("account.forgot.email")} type="email" autoComplete="username" />
       {problem ? <Alert tone="danger">{problem}</Alert> : null}
-      <form.Submit size="lg" shape="cut" className="w-full">
+      <form.Submit size="lg" className="w-full">
         {say("account.forgot.submit")}
       </form.Submit>
     </form.Form>
@@ -75,7 +75,7 @@ export function ResetForm({ token, signInHref }: { token: string; signInHref: st
           {problem} <Link className="underline" href={signInHref}>{say("account.reset.askAgain")}</Link>
         </Alert>
       ) : null}
-      <form.Submit size="lg" shape="cut" className="w-full">
+      <form.Submit size="lg" className="w-full">
         {say("account.reset.submit")}
       </form.Submit>
     </form.Form>
@@ -111,7 +111,7 @@ export function ChangePasswordForm() {
       <form.TextField name="password" label={say("account.profile.next")} type="password" autoComplete="new-password" />
       {problem ? <Alert tone="danger">{problem}</Alert> : null}
       {saved ? <Alert tone="success">{say("account.profile.saved")}</Alert> : null}
-      <form.Submit size="md" shape="cut">
+      <form.Submit size="md">
         {say("account.profile.submit")}
       </form.Submit>
     </form.Form>

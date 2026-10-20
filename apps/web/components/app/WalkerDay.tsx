@@ -120,12 +120,12 @@ function VisitCard({ visit, timeZone }: { visit: DayVisitView; timeZone: string 
         {visit.checkedInAt ? <p className="text-sm text-fg-secondary">{say("walker.startedAt", { time: time(visit.checkedInAt) })}</p> : null}
         {done ? <p className="text-sm text-fg-secondary">{say("walker.endedAt", { time: time(visit.checkedOutAt!), minutes: visit.minutes ?? 0 })}</p> : null}
         {!visit.checkedInAt ? (
-          <Button size="lg" shape="cut" variant="primary" className="w-full" loading={call.pending} onClick={() => call.run(`/api/walker/visits/${visit.appointmentId}/check-in`)}>
+          <Button size="lg" variant="primary" className="w-full" loading={call.pending} onClick={() => call.run(`/api/walker/visits/${visit.appointmentId}/check-in`)}>
             {say("walker.checkIn")}
           </Button>
         ) : null}
         {live ? (
-          <Button size="lg" shape="cut" variant="primary" className="w-full" loading={call.pending} onClick={() => call.run(`/api/walker/visits/${visit.appointmentId}/check-out`)}>
+          <Button size="lg" variant="primary" className="w-full" loading={call.pending} onClick={() => call.run(`/api/walker/visits/${visit.appointmentId}/check-out`)}>
             {say("walker.checkOut")}
           </Button>
         ) : null}
@@ -182,11 +182,11 @@ function ReportBox({ booking }: { booking: DayVisitView["bookings"][number] }) {
         {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
         {notice ? <Alert tone={notice.tone}>{notice.text}</Alert> : null}
         <div className="flex flex-wrap items-center gap-2">
-          <form.Submit size="md" shape="cut" variant="secondary">
+          <form.Submit size="md" variant="secondary">
             {say("walker.save")}
           </form.Submit>
           {report ? (
-            <Button size="md" shape="cut" variant="primary" loading={call.pending} onClick={send}>
+            <Button size="md" variant="primary" loading={call.pending} onClick={send}>
               {report.sentAt ? say("walker.sendAgain") : say("walker.send", { owner })}
             </Button>
           ) : null}

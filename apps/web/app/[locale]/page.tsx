@@ -64,12 +64,12 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           visual={<HeroPhone locale={locale} />}
           actions={
             <>
-              <Button asChild variant="primary" size="lg" shape="cut" shimmer magnetic className="w-full sm:w-auto">
+              <Button asChild variant="primary" size="lg" className="w-full sm:w-auto">
                 <a href={contactHref("dev-akinaza-hero")}>
                   {d.talk} <ForwardIcon size={16} strokeWidth={2.25} />
                 </a>
               </Button>
-              <Button asChild variant="secondary" size="lg" shape="cut" className="w-full sm:w-auto">
+              <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
                 <Link href={shop}>{d.seeShop}</Link>
               </Button>
             </>
@@ -85,7 +85,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             title: d.closing.title,
             body: d.closing.body,
             actions: (
-              <Button asChild variant="primary" size="lg" shape="cut">
+              <Button asChild variant="primary" size="lg">
                 <a href={contactHref("dev-akinaza-closing")}>{d.talk}</a>
               </Button>
             ),

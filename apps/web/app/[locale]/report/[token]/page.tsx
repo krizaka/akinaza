@@ -41,7 +41,7 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
           </>
         ) : (
           <PageHero title={t.expired} lead={t.expiredHelp} linkAs={Link}>
-            <ButtonLink href={`/${locale}/sign-in`} variant="primary" shape="cut">
+            <ButtonLink href={`/${locale}/sign-in`} variant="primary">
               {t.signIn}
             </ButtonLink>
           </PageHero>

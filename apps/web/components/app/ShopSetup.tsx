@@ -122,7 +122,7 @@ function PageCard({ page }: { page: SetupData["page"] }) {
         <div className="flex flex-col gap-3 sm:col-span-2">
           {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
           {saved ? <Alert tone="success">{say("shopSetup.page.saved")}</Alert> : null}
-          <form.Submit size="md" shape="cut" className="w-full sm:w-auto sm:self-start">
+          <form.Submit size="md" className="w-full sm:w-auto sm:self-start">
             {say("shopSetup.page.submit")}
           </form.Submit>
         </div>
@@ -170,7 +170,7 @@ function ZonesCard({ zones }: { zones: SetupData["zones"] }) {
           <form.TextField name="lng" label={say("shopSetup.zones.lng")} inputMode="decimal" />
         </div>
         {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
-        <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
+        <form.Submit size="md" variant="secondary" className="w-full sm:w-auto sm:self-start">
           {say("shopSetup.zones.add")}
         </form.Submit>
       </form.Form>
@@ -283,7 +283,7 @@ function ServiceForm({ editing, onDone }: { editing: Service | null; onDone: () 
       <div className="flex flex-col gap-3 sm:col-span-2">
         {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
         <div className="flex flex-wrap gap-2">
-          <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto">
+          <form.Submit size="md" variant="secondary" className="w-full sm:w-auto">
             {say(editing ? "shopSetup.services.save" : "shopSetup.services.add")}
           </form.Submit>
           {editing ? (
@@ -356,7 +356,7 @@ function MediaCard({ media }: { media: SetupData["media"] }) {
         <div className="flex flex-col gap-3 sm:col-span-2">
           {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
           {saved ? <Alert tone="success">{say("shopSetup.media.saved")}</Alert> : null}
-          <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
+          <form.Submit size="md" variant="secondary" className="w-full sm:w-auto sm:self-start">
             {say("shopSetup.media.submit")}
           </form.Submit>
         </div>
@@ -412,7 +412,7 @@ function HoursCard({ windows, daysOff }: { windows: SetupData["windows"]; daysOf
         <hours.TextField name="startsAt" label={say("shopSetup.hours.from")} hint={say("shopSetup.hours.timeHint")} inputMode="numeric" />
         <hours.TextField name="endsAt" label={say("shopSetup.hours.to")} inputMode="numeric" />
         <div className="col-span-2">
-          <hours.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto">
+          <hours.Submit size="md" variant="secondary" className="w-full sm:w-auto">
             {say("shopSetup.hours.add")}
           </hours.Submit>
         </div>
@@ -436,7 +436,7 @@ function HoursCard({ windows, daysOff }: { windows: SetupData["windows"]; daysOf
         <off.TextField name="reason" label={say("shopSetup.hours.dayOffReason")} />
         <div className="col-span-2 flex flex-col gap-3">
           {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
-          <off.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
+          <off.Submit size="md" variant="secondary" className="w-full sm:w-auto sm:self-start">
             {say("shopSetup.hours.dayOffAdd")}
           </off.Submit>
         </div>
@@ -476,7 +476,7 @@ function RulesCard({ rules }: { rules: NonNullable<SetupData["rules"]> }) {
         <div className="flex flex-col gap-3 sm:col-span-2 lg:col-span-3">
           {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
           {saved ? <Alert tone="success">{say("shopSetup.rules.saved")}</Alert> : null}
-          <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
+          <form.Submit size="md" variant="secondary" className="w-full sm:w-auto sm:self-start">
             {say("shopSetup.rules.submit")}
           </form.Submit>
         </div>
