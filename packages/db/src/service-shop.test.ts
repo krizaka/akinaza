@@ -116,6 +116,13 @@ describe("slots and booking", () => {
     expect(other.joined).toBe(false);
   });
 
+  it("refuses, with a stable code and not a server error, a dog that already has a seat on that walk", async () => {
+    const w = await walkerShop(t.db, "twice");
+    const book = () => bookVisit(t.db, { clientId: w.camille.clientId, serviceId: w.group, zoneId: w.zones.stHenri, dependantIds: [w.camille.dogId], startsAt: tuesday9, now: NOW });
+    await book();
+    expect(await code(book())).toBe("AK_ALREADY_BOOKED");
+  });
+
   it("serialises two clients racing for the same solo slot: one wins, the other is refused", async () => {
     const w = await walkerShop(t.db, "race");
     const go = (clientId: string, dogId: string) => bookVisit(t.db, { clientId, serviceId: w.solo, zoneId: w.zones.stHenri, dependantIds: [dogId], startsAt: tuesday9, now: NOW });

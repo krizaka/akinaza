@@ -495,6 +495,7 @@ export async function bookVisit(db: Db, input: BookInput): Promise<{ appointment
     const code = akCode(error);
     if (code === "AK_CAPACITY_FULL" || code === "AK_BOOKING_OWNERSHIP") throw new ShopError(code);
     if ((error as { cause?: { constraint?: string } }).cause?.constraint === "appointments_no_double_booking") throw new ShopError("AK_SLOT_UNAVAILABLE");
+    if ((error as { cause?: { constraint?: string } }).cause?.constraint === "bookings_one_seat") throw new ShopError("AK_ALREADY_BOOKED");
     throw error;
   }
 }
