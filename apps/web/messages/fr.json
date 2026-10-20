@@ -57,27 +57,32 @@
       "play": "Lire les étapes",
       "pause": "Mettre les étapes en pause",
       "step": "Étape {n} sur {total}",
-      "captured": "Capté sur dev.akinaza.com (interface en français) le 17 octobre 2026 · une boutique de démonstration, aucune personne réelle",
+      "captured": "Enregistré sur dev.akinaza.com le 19 octobre 2026, en une seule prise · une boutique de démonstration, aucune personne réelle",
       "steps": {
         "book": {
           "title": "La cliente réserve",
-          "text": "Sofia choisit une promenade en groupe et ses deux chiens.",
-          "alt": "Le formulaire de réservation : le service, la zone, les chiens, les heures libres."
+          "text": "Une cliente choisit une promenade en groupe, un créneau et son chien.",
+          "alt": "Le formulaire de réservation : le service, la zone, le chien, les créneaux libres, la confirmation."
         },
         "day": {
-          "title": "La journée du promeneur",
-          "text": "Léa ouvre sa journée sur son téléphone : chiens, propriétaires, notes.",
-          "alt": "La journée de la promeneuse : les chiens de la promenade de 14 h et leurs propriétaires."
+          "title": "La journée de la promeneuse",
+          "text": "Léa ouvre sa journée sur son téléphone et lance la promenade d'un toucher.",
+          "alt": "La journée de la promeneuse : les chiens de la promenade en groupe, leurs propriétaires et le bouton de départ."
         },
         "report": {
           "title": "Le rapport",
-          "text": "Une note et une photo pour chaque chien, envoyées d'un geste.",
-          "alt": "Le rapport de visite : une photo ajoutée, une note pour la propriétaire, envoyé à Sofia."
+          "text": "Une note et une photo pour le chien, envoyées en un toucher.",
+          "alt": "Le rapport de visite : une note, une photo ajoutée, prêt à envoyer à la propriétaire."
         },
         "client": {
           "title": "La cliente le voit",
-          "text": "Sofia retrouve le rapport dans son espace.",
-          "alt": "Les réservations de Sofia : la promenade passée, son rapport et sa photo."
+          "text": "La propriétaire retrouve le rapport dans son espace.",
+          "alt": "L'espace de la cliente : la promenade et son rapport avec la photo."
+        },
+        "books": {
+          "title": "Vos livres",
+          "text": "La TPS et la TVQ du trimestre, préparées à partir de vos factures et de vos dépenses : chaque chiffre avec ses documents, jamais produite à votre place.",
+          "alt": "Vos livres : la TPS et la TVQ du trimestre, les lignes de la déclaration et les documents derrière."
         }
       }
     },
@@ -148,8 +153,8 @@
     },
     "visualLabel": "dev.akinaza.com — la boutique publique",
     "hero": {
-      "visualAlt": "La boutique publique de Pattes de Saint-Henri sur un téléphone : son titre, ses services, le bouton Réserver.",
-      "caption": "La vraie boutique de démonstration, captée sur un téléphone le 17 octobre 2026. Aucune personne réelle."
+      "visualAlt": "La boutique de démonstration Pattes de Saint-Henri sur un téléphone : sa vitrine, une réservation, la journée de la promeneuse, le rapport de visite et « Vos livres » — une seule prise.",
+      "caption": "La vraie application, une seule prise, le 19 octobre 2026. Aucune personne réelle."
     },
     "figures": {
       "gst": "% de TPS, au cent près",

@@ -22,7 +22,7 @@ import { asLocale, getDictionary } from "@/lib/i18n";
 import { DEMO_SHOP, FIGURES, OUTCOMES, productStatus, TRUST } from "@/lib/landing";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { contactHref, pagePath, REPO_URL } from "@/lib/site";
-import { MEDIA_CDN, storefrontStill, TOUR, tourClip, tourStill } from "@/lib/tour";
+import { heroTake, MEDIA_CDN, TOUR, tourClip, tourStill } from "@/lib/tour";
 
 import preview from "../../../../dev-preview.json";
 
@@ -46,12 +46,12 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   const signIn = `/${locale}/sign-in`;
   const shop = `/${locale}/s/${DEMO_SHOP}`;
   const trustHref = { canada: pagePath(locale, "privacy"), prepare: signIn, open: REPO_URL } as const;
-  const steps = TOUR.steps.map((id) => ({ id, title: d.tour.steps[id].title, description: d.tour.steps[id].text, alt: d.tour.steps[id].alt, poster: tourStill(id), video: tourClip(id) }));
+  const steps = TOUR.steps.map((id) => ({ id, title: d.tour.steps[id].title, description: d.tour.steps[id].text, alt: d.tour.steps[id].alt, poster: tourStill(id, locale), video: tourClip(id, locale) }));
   // The storefront still is the page's LCP: open the CDN's connection now and fetch it at once (React hoists the link into <head>).
   preconnect(MEDIA_CDN);
   return (
     <>
-      <link rel="preload" as="image" href={storefrontStill()} fetchPriority="high" />
+      <link rel="preload" as="image" href={heroTake(locale).poster} fetchPriority="high" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="home" />
       <main id="content">

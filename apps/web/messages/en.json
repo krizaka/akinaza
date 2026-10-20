@@ -57,27 +57,32 @@
       "play": "Play the steps",
       "pause": "Pause the steps",
       "step": "Step {n} of {total}",
-      "captured": "Captured on dev.akinaza.com (French interface) on October 17, 2026 · a demo shop, no real person",
+      "captured": "Recorded on dev.akinaza.com on October 19, 2026, as one continuous take · a demo shop, no real person",
       "steps": {
         "book": {
-          "title": "The client books",
-          "text": "Sofia picks a group walk and her two dogs.",
-          "alt": "The booking form: the service, the zone, the dogs, the open slots."
+          "title": "A client books",
+          "text": "A client picks a group walk, a slot and her dog.",
+          "alt": "The booking form: the service, the area, the dog, the open slots, the confirmation."
         },
         "day": {
           "title": "The walker's day",
-          "text": "Léa opens her day on her phone: dogs, owners, notes.",
-          "alt": "The walker's day: the dogs of the 2 p.m. group walk and their owners."
+          "text": "Léa opens her day on her phone and starts the walk with one tap.",
+          "alt": "The walker's day: the dogs of the group walk, their owners and the start button."
         },
         "report": {
           "title": "The report",
-          "text": "A note and a photo for each dog, sent in one tap.",
-          "alt": "The visit report: a photo added, a note for the owner, sent to Sofia."
+          "text": "A note and a photo for the dog, sent in one tap.",
+          "alt": "The visit report: a note, a photo added, ready to send to the owner."
         },
         "client": {
           "title": "The client sees it",
-          "text": "Sofia finds the report in her space.",
-          "alt": "Sofia's bookings: the past walk with its report and photo."
+          "text": "The owner finds the report in her space.",
+          "alt": "The client's space: the walk and its report with the photo."
+        },
+        "books": {
+          "title": "Your books",
+          "text": "The quarter's GST and QST, prepared from your invoices and expenses: every figure with its documents, never filed for you.",
+          "alt": "Your books: the GST and QST for the quarter, the return's lines and the documents behind them."
         }
       }
     },
@@ -148,8 +153,8 @@
     },
     "visualLabel": "dev.akinaza.com — the public storefront",
     "hero": {
-      "visualAlt": "The public storefront of Pattes de Saint-Henri on a phone: its title, its services, the Book button.",
-      "caption": "The real demo storefront, captured on a phone on 17 October 2026. No real person."
+      "visualAlt": "The Pattes de Saint-Henri demo shop on a phone: its storefront, a booking, the walker's day, the visit report and « Your books » — one continuous take.",
+      "caption": "The real app, one take, October 19, 2026. No real person."
     },
     "figures": {
       "gst": "% GST, to the cent",
