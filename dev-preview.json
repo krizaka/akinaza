@@ -17,9 +17,9 @@
       "checked": "2026-10-16"
     },
     "journey.core": {
-      "evidence": "https://krizaka-assets.b-cdn.net/pr-assets/akinaza/walker-journey/journey.json",
-      "checked": "2026-10-17",
-      "note": "Dog walker journey (#52) run on dev.akinaza.com as the fictional Saint-Henri walker and client: booking, check-in/out, report with photo, sent; 14 API calls with request ids; videos beside the journey file."
+      "evidence": "https://krizaka-assets.b-cdn.net/pr-assets/akinaza/hero-take/take-fr.mp4",
+      "checked": "2026-10-19",
+      "note": "One continuous phone take (FR; EN: take-en.mp4): storefront, slot, booking, walker check-in/out, report sent, the client's report, Vos livres. Request ids in journey-fr.json / journey-en.json beside it."
     },
     "journey.ai-via-orazaka": {
       "evidence": null,
@@ -27,14 +27,14 @@
       "issue": "https://github.com/krizaka/akinaza/issues/24"
     },
     "ui.krizaka-ui": {
-      "evidence": null,
-      "gap": "No CI crawl proves NAV-SYS, one footer, dark/light, phone/desktop.",
-      "issue": "https://github.com/krizaka/akinaza/issues/25"
+      "evidence": "https://github.com/krizaka/akinaza/blob/main/scripts/check-overflow.mjs",
+      "checked": "2026-10-19",
+      "note": "CI crawl (check-overflow): 8 pages x 6 widths x dark/light, refuses horizontal overflow, console errors, HTTP errors, empty pages; one footer (probe)."
     },
     "ui.themes-devices": {
-      "evidence": null,
-      "gap": "No CI crawl proves NAV-SYS, one footer, dark/light, phone/desktop.",
-      "issue": "https://github.com/krizaka/akinaza/issues/25"
+      "evidence": "https://krizaka-assets.b-cdn.net/pr-assets/akinaza/hero-take/after/books-phone-light.png",
+      "checked": "2026-10-19",
+      "note": "CI crawl job 'Lint · Typecheck · Tests · Build' (scripts/check-overflow.mjs) + reviewed captures, phone and desktop, dark and light: https://krizaka-assets.b-cdn.net/pr-assets/akinaza/hero-take/after/"
     },
     "ux.ia-review": {
       "evidence": null,
@@ -65,9 +65,9 @@
       "issue": "https://github.com/krizaka/akinaza/issues/33"
     },
     "seo.family": {
-      "evidence": null,
-      "gap": "node scripts/check-seo-family.mjs --base https://dev.akinaza.com --host https://dev.akinaza.com --index off fails (empty sitemap / no Sitemap: line wh…",
-      "issue": "https://github.com/krizaka/akinaza/issues/35"
+      "evidence": "https://github.com/krizaka/akinaza/blob/main/apps/web/lib/proxy.test.ts",
+      "checked": "2026-10-19",
+      "note": "node scripts/check-seo-family.mjs --base https://dev.akinaza.com --host https://dev.akinaza.com --index off: 6 pages and robots.txt, all good (run 2026-10-19)."
     },
     "ops.cost": {
       "evidence": null,
