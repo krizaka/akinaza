@@ -76,7 +76,7 @@ function JoinCard({ data }: { data: BookingData }) {
         <form.Checkbox name="consentReminders" label={say("book.consentReminders")} />
         {needConsent ? <Alert tone="danger">{say("errors.CONSENT_REQUIRED")}</Alert> : null}
         {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
-        <form.Submit size="lg" shape="cut" className="w-full sm:w-auto sm:self-start">
+        <form.Submit size="lg" className="w-full sm:w-auto sm:self-start">
           {say("book.join")}
         </form.Submit>
       </form.Form>
@@ -128,7 +128,7 @@ function DogCard({ clientId, onDone }: { clientId: string; onDone?: () => void }
         <form.TextField name="emergencyPhone" label={say("book.emergencyPhone")} type="tel" />
         <div className="flex flex-col gap-3 sm:col-span-2">
           {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
-          <form.Submit size="lg" shape="cut" className="w-full sm:w-auto sm:self-start">
+          <form.Submit size="lg" className="w-full sm:w-auto sm:self-start">
             {say("book.addDog")}
           </form.Submit>
         </div>
@@ -143,7 +143,7 @@ function AnotherDog({ clientId }: { clientId: string }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="flex flex-col gap-3">
-      <Button size="md" variant="outline" shape="cut" className="self-start" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+      <Button size="md" variant="outline" className="self-start" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
         {say("book.addAnother")}
       </Button>
       {open ? <DogCard key="another" clientId={clientId} onDone={() => setOpen(false)} /> : null}
@@ -221,7 +221,7 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
           )}
         </form.Watch>
         {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
-        <form.Submit size="lg" shape="cut" variant="primary" className="w-full sm:w-auto sm:self-start">
+        <form.Submit size="lg" variant="primary" className="w-full sm:w-auto sm:self-start">
           {say("book.confirm")}
         </form.Submit>
       </form.Form>
@@ -292,7 +292,7 @@ function AccessCard({ clientId }: { clientId: string }) {
         <form.TextArea name="notes" label={say("book.accessNotes")} rows={2} maxLength={500} />
         {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
         {saved ? <Alert tone="success">{say("book.accessSaved")}</Alert> : null}
-        <form.Submit size="md" shape="cut" variant="secondary" className="w-full sm:w-auto sm:self-start">
+        <form.Submit size="md" variant="secondary" className="w-full sm:w-auto sm:self-start">
           {say("book.accessSave")}
         </form.Submit>
       </form.Form>

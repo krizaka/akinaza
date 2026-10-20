@@ -57,7 +57,7 @@ function FileSection({ file }: { file: ClientFileView }) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="font-display text-xl font-bold text-fg">{file.client.shopName}</h2>
         {file.client.shopSlug ? (
-          <Button asChild size="md" shape="cut" variant="primary">
+          <Button asChild size="md" variant="primary">
             <Link href={`/${locale}/s/${file.client.shopSlug}/book`}>{say("client.bookAgain", { shop: file.client.shopName })}</Link>
           </Button>
         ) : null}

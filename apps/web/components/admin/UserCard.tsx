@@ -53,11 +53,11 @@ export function UserCard({ initial, self }: { initial: UserDetail; self: boolean
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="break-all font-display text-xl font-extrabold text-fg">{user.email}</h2>
         {self ? null : user.status === "ACTIVE" ? (
-          <Button variant="secondary" size="sm" shape="cut" loading={status.isPending} onClick={() => status.mutate("suspend")}>
+          <Button variant="secondary" size="sm" loading={status.isPending} onClick={() => status.mutate("suspend")}>
             {say("admin.user.suspend")}
           </Button>
         ) : (
-          <Button variant="primary" size="sm" shape="cut" loading={status.isPending} onClick={() => status.mutate("restore")}>
+          <Button variant="primary" size="sm" loading={status.isPending} onClick={() => status.mutate("restore")}>
             {say("admin.user.restore")}
           </Button>
         )}

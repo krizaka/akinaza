@@ -152,10 +152,10 @@ function PlatformCard({ platform: p, enabled, onMessage }: { platform: Connectio
       {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
       {enabled && connected ? (
         <div className="flex flex-wrap gap-2">
-          <Button size="md" shape="cut" variant="primary" disabled={call.pending} onClick={pull}>
+          <Button size="md" variant="primary" disabled={call.pending} onClick={pull}>
             {say("connections.actions.import", { platform: label })}
           </Button>
-          <Button size="md" shape="cut" variant="secondary" disabled={call.pending} onClick={push}>
+          <Button size="md" variant="secondary" disabled={call.pending} onClick={push}>
             {say("connections.actions.publish", { platform: label })}
           </Button>
           <ConfirmButton size="md" variant="ghost" disabled={call.pending} confirmLabel={say("connections.actions.disconnectConfirm", { platform: label })} onConfirm={disconnect}>
@@ -165,7 +165,7 @@ function PlatformCard({ platform: p, enabled, onMessage }: { platform: Connectio
       ) : null}
       {enabled && !connected && !consenting ? (
         <div>
-          <Button size="md" shape="cut" variant="primary" onClick={() => setConsenting(true)}>
+          <Button size="md" variant="primary" onClick={() => setConsenting(true)}>
             {say(p.status === "needs_reconnect" ? "connections.actions.reconnect" : "connections.actions.connect")}
           </Button>
         </div>
@@ -178,7 +178,7 @@ function PlatformCard({ platform: p, enabled, onMessage }: { platform: Connectio
             {say("connections.consent.checkbox", { platform: label })}
           </Checkbox>
           <div className="flex flex-wrap gap-2">
-            <Button size="md" shape="cut" variant="primary" disabled={!agreed || call.pending} onClick={connect}>
+            <Button size="md" variant="primary" disabled={!agreed || call.pending} onClick={connect}>
               {say("connections.consent.continue", { platform: label })}
             </Button>
             <Button size="md" variant="ghost" onClick={() => setConsenting(false)}>
@@ -234,7 +234,7 @@ function ProposalCard({ proposal, onDone }: { proposal: ConnectionsData["proposa
       </ul>
       {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
       <div className="flex flex-wrap items-center gap-3">
-        <Button size="md" shape="cut" variant="primary" disabled={chosen.length === 0 || call.pending} onClick={apply}>
+        <Button size="md" variant="primary" disabled={chosen.length === 0 || call.pending} onClick={apply}>
           {say("connections.proposal.apply")}
         </Button>
         {chosen.length > 0 && chosen.length < proposal.items.length ? <span className="text-sm text-fg-muted">{say("connections.proposal.pending")}</span> : null}
