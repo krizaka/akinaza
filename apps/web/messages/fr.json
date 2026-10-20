@@ -509,7 +509,10 @@
       "SYNC_RECONNECT": "L'accès a pris fin. Reconnectez le compte.",
       "SYNC_UNAVAILABLE": "La plateforme n'a pas répondu. Réessayez dans un instant.",
       "SYNC_INVALID": "La plateforme a refusé la demande.",
-      "SYNC_PROPOSAL_UNKNOWN": "Cet examen n'est plus ouvert."
+      "SYNC_PROPOSAL_UNKNOWN": "Cet examen n'est plus ouvert.",
+      "UPLOAD_UNAVAILABLE": "Le téléversement de photos n'est pas encore disponible. Collez plutôt l'adresse d'un fichier.",
+      "UPLOAD_TOO_LARGE": "Cette photo est trop lourde.",
+      "UPLOAD_NOT_IMAGE": "Utilisez une photo JPEG, PNG ou WebP."
     },
     "today": {
       "day": "{date} · {count} rendez-vous",
@@ -774,7 +777,15 @@
         "gallery": "Galerie",
         "galleryHint": "Une image par ligne : adresse | description (fr) | description (en) | légende (fr) | légende (en). Douze au plus.",
         "submit": "Enregistrer les photos",
-        "saved": "Photos enregistrées."
+        "saved": "Photos enregistrées.",
+        "uploadCover": "Téléverser la couverture",
+        "uploadGallery": "Ajouter une photo à la galerie",
+        "uploadHint": "Une photo JPEG, PNG ou WebP; elle est réduite sur votre téléphone avant l'envoi.",
+        "uploadCoverTitle": "Déposez la photo de couverture ici",
+        "uploadGalleryTitle": "Déposez les photos de la galerie ici",
+        "browse": "Choisir sur cet appareil",
+        "remove": "Retirer {name}",
+        "tooBig": "{name} est trop lourd"
       }
     },
     "shopPage": {

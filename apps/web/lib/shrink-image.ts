@@ -5,13 +5,15 @@
  */
 // @fixed: the longest side of a report photo, in pixels — a display size, not a business rule.
 const LONG_SIDE = 1280;
+// @fixed: the longest side of a storefront photo (a cover shows at 1600 px) — a display size.
+export const STOREFRONT_LONG_SIDE = 1920;
 // @fixed: JPEG quality of the redraw (0–1) — an encoder setting.
 const QUALITY = 0.82;
 
-export async function shrinkImage(file: File): Promise<Blob> {
+export async function shrinkImage(file: File, longSide: number = LONG_SIDE): Promise<Blob> {
   if (typeof createImageBitmap !== "function") return file;
   const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-  const scale = Math.min(1, LONG_SIDE / Math.max(bitmap.width, bitmap.height));
+  const scale = Math.min(1, longSide / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement("canvas");
   canvas.width = Math.round(bitmap.width * scale);
   canvas.height = Math.round(bitmap.height * scale);

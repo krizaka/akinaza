@@ -62,6 +62,12 @@ export const envSchema = z.object({
    * platform, no real account). Never `fake` in production. Real connectors arrive with their own AUTH_<PLATFORM>_* keys.
    */
   APP_SOCIAL_SYNC: z.enum(["off", "fake"]).default("off"),
+  /** The media storage for the owners' storefront photos (the vendor is a value of the storage, not of the name); off when unset. */
+  MEDIA_STORAGE_API_KEY: z.string().optional(),
+  MEDIA_STORAGE_ZONE: z.string().optional(),
+  MEDIA_STORAGE_ENDPOINT: z.string().optional(),
+  /** The CDN host that serves the uploaded files (no scheme). */
+  MEDIA_CDN_HOSTNAME: z.string().optional(),
   /** The point of sale: off until the SRM scope and the payment provider are decided — and never for a restaurant or a bar. */
   APP_POS_ENABLED: flag,
 });

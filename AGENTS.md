@@ -14,6 +14,10 @@
   A missing generic component goes to krizaka-ui, released, then used — never copied here. No `@tanstack/*` import, no
   `fetch` in a client `useEffect`, no hand-written `<table>` or multi-field `<form>`.
 
+- **Storefront photos are uploaded by the owner** (`/api/walker/media/upload`): JPEG/PNG/WebP checked by bytes, ≤ 2 MB after the
+  phone redraws them, stored content-hashed under `user/akinaza/shops/<shop>/` of the media storage (`MEDIA_STORAGE_*`,
+  `MEDIA_CDN_HOSTNAME`), only the CDN address kept. Off (503, the owner pastes an address) until the storage is configured.
+
 ## 2. Non-negotiables
 
 - **Akinaza prepares; the merchant files.** "Prepare my tax return" produces the GST/QST figures (FPZ-500) and their
