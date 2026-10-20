@@ -42,14 +42,10 @@
       "issue": "https://github.com/krizaka/akinaza/issues/27"
     },
     "mobile.build": {
-      "evidence": null,
-      "gap": "apps/mobile exists; no build recorded against dev.",
-      "issue": "https://github.com/krizaka/akinaza/issues/29"
+      "na": "Akinaza has no mobile app in the dev preview: AGENTS.md §1 says so (apps/mobile is an unbuilt skeleton, outside the workspace until the mobile phase A5). The dog walker uses the phone-first web app."
     },
     "mobile.ux-review": {
-      "evidence": null,
-      "gap": "No UX/IA review of the mobile app.",
-      "issue": "https://github.com/krizaka/akinaza/issues/31"
+      "na": "Follows mobile.build, which is na."
     },
     "quality.ci-green": {
       "evidence": "https://github.com/krizaka/akinaza/actions?query=branch%3Amain",
@@ -110,6 +106,9 @@
     "admin.ci": {
       "evidence": "https://github.com/krizaka/akinaza/actions?query=branch%3Amain",
       "checked": "2026-10-16"
+    },
+    "mobile.app-links": {
+      "na": "Follows mobile.build, which is na."
     }
   }
 }

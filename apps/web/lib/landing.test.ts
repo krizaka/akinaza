@@ -78,9 +78,12 @@ describe("the landing is the product landing template of @krizaka/ui, at the Yom
   });
 
   it("says its honest status, read from dev-preview.json", () => {
-    const preview = JSON.parse(read("../../dev-preview.json")) as { criteria: Record<string, { evidence: string | null; na?: boolean }> };
-    const gaps = Object.values(preview.criteria).some((c) => c.evidence === null && !c.na);
+    const preview = JSON.parse(read("../../dev-preview.json")) as { criteria: Record<string, { evidence?: string | null; na?: string }> };
+    const gaps = Object.values(preview.criteria).some((c) => !c.evidence && !c.na);
     expect(productStatus(preview)).toBe(gaps ? "development" : "preview");
+    // A justified `na` (a string, as in the standard) counts like evidence; a gap does not.
+    expect(productStatus({ criteria: { a: { na: "no mobile app" }, b: { evidence: "https://x" } } })).toBe("preview");
+    expect(productStatus({ criteria: { a: { evidence: null }, b: { na: "x" } } })).toBe("development");
   });
 
   it("prepares the tax return and never files it, is not for restaurants and bars, and says Orazaka is planned until it is wired", () => {

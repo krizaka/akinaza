@@ -22,11 +22,11 @@ export const HOW_STEPS = ["book", "work", "books"] as const;
 /** Why a shop can trust it: Loi 25 and Canada, the tax return prepared (never filed), the code. */
 export const TRUST = ["canada", "prepare", "open"] as const;
 
-type DevPreview = { criteria: Record<string, { evidence: string | null; na?: boolean }> };
+type DevPreview = { criteria: Record<string, { evidence?: string | null; na?: boolean | string }> };
 
 /** The honest status chip, from dev-preview.json: « Dev preview » only once every criterion has its evidence. */
 export function productStatus(preview: DevPreview): "development" | "preview" {
-  return Object.values(preview.criteria).every((c) => c.evidence !== null || c.na === true) ? "preview" : "development";
+  return Object.values(preview.criteria).every((c) => Boolean(c.evidence) || Boolean(c.na)) ? "preview" : "development";
 }
 
 /** The band's figures, read from the tax code (`@akinaza/core`) and the languages the app speaks — never typed in a message. */
