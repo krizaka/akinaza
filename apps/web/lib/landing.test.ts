@@ -123,8 +123,10 @@ describe("the tour plays the walker journey's recording, stills first", () => {
     expect(home).toMatch(/poster: tourStill\(id\), video: tourClip\(id\)/);
     for (const step of TOUR.steps) {
       const clip = tourClip(step);
-      expect(clip.webm).toMatch(new RegExp(`^${MEDIA_CDN}/site/products/akinaza/tour/${step}\\.[0-9a-f]{10}\\.webm$`));
-      expect(clip.mp4).toMatch(new RegExp(`^${MEDIA_CDN}/site/products/akinaza/tour/${step}\\.[0-9a-f]{10}\\.mp4$`));
+      expect(clip.webm.startsWith(`${MEDIA_CDN}/site/products/akinaza/tour/${step}.`)).toBe(true);
+      expect(clip.webm.slice(`${MEDIA_CDN}/site/products/akinaza/tour/${step}.`.length)).toMatch(/^[0-9a-f]{10}\.webm$/);
+      expect(clip.mp4.startsWith(`${MEDIA_CDN}/site/products/akinaza/tour/${step}.`)).toBe(true);
+      expect(clip.mp4.slice(`${MEDIA_CDN}/site/products/akinaza/tour/${step}.`.length)).toMatch(/^[0-9a-f]{10}\.mp4$/);
       expect(tourStill(step)).toMatch(/\.jpg$/);
       expect(en.landing.tour.steps[step].title && fr.landing.tour.steps[step].title).toBeTruthy();
     }
