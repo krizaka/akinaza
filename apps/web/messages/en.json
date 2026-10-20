@@ -514,7 +514,8 @@
       "SYNC_PROPOSAL_UNKNOWN": "This review is no longer open.",
       "UPLOAD_UNAVAILABLE": "Photo upload is not available yet. Paste the address of a file instead.",
       "UPLOAD_TOO_LARGE": "This photo is too large.",
-      "UPLOAD_NOT_IMAGE": "Use a JPEG, PNG or WebP photo."
+      "UPLOAD_NOT_IMAGE": "Use a JPEG, PNG or WebP photo.",
+      "ALREADY_BOOKED": "This dog already has a seat on that walk."
     },
     "today": {
       "day": "{date} · {count} appointments",
