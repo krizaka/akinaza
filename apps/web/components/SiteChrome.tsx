@@ -12,6 +12,8 @@ import { type Locale, translator } from "@/lib/i18n";
 import { DEMO_SHOP } from "@/lib/landing";
 import { contactHref, type PageId, pagePath, REPO_URL } from "@/lib/site";
 
+/* inlineUpTo={0}: with 3.27 a menu of three links is inline, which pushes the French bar past the edge at 768 px
+   (check:overflow, /fr @768); the dropdown stays until the bar can inline from lg (krizaka-ui follow-up, see orchestration.md). */
 /** The product's pages, in the one « Product » menu (the products' bar standard): no Platforms (web only), no Docs yet. */
 const MENU = [
   { id: "home", icon: <HomeIcon />, path: (l: Locale) => pagePath(l, "home"), page: "home" },
@@ -39,7 +41,7 @@ export function SiteHeader({ locale, current, path }: { locale: Locale; current:
           </Link>
         </NavBar.Brand>
         <NavBar.Items>
-          <NavBar.Menu value="product" label={t("chrome.nav.product")} active={items.some((i) => i.active)} columns={1}>
+          <NavBar.Menu value="product" label={t("chrome.nav.product")} active={items.some((i) => i.active)} columns={1} inlineUpTo={0}>
             {items.map((i) => (
               <NavBar.MenuLink key={i.id} asChild icon={i.icon} title={t(`chrome.menu.${i.id}.title`)} description={t(`chrome.menu.${i.id}.text`)} active={i.active}>
                 <Link href={i.href} />

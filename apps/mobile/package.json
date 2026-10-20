@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@akinaza/core": "workspace:*",
-    "@krizaka/tokens": "^3.26.0",
-    "@krizaka/ui": "^3.26.0",
+    "@krizaka/tokens": "^3.27.0",
+    "@krizaka/ui": "^3.27.0",
     "expo": "~58.0.7",
     "expo-router": "~58.0.17",
     "react": "19.2.3",
