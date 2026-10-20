@@ -49,6 +49,7 @@ export const shopPageSchema = z.object({
   bioEn: z.string().trim().max(600).optional(),
   publicPhone: z.string().trim().max(40).optional(),
   publicEmail: z.string().trim().max(120).optional(),
+  publicWebsite: z.string().trim().max(200).optional(),
   /** What a seat of a group service is called (« chiens »): « Up to 5 dogs ». */
   seatUnitFr: z.string().trim().max(30).optional(),
   seatUnitEn: z.string().trim().max(30).optional(),
@@ -118,6 +119,7 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput):
         ...(input.bioEn === undefined ? {} : { bioEn: input.bioEn || null }),
         ...(input.publicPhone === undefined ? {} : { publicPhone: input.publicPhone || null }),
         ...(input.publicEmail === undefined ? {} : { publicEmail: input.publicEmail || null }),
+        ...(input.publicWebsite === undefined ? {} : { publicWebsite: input.publicWebsite || null }),
         ...(input.seatUnitFr === undefined ? {} : { seatUnitFr: input.seatUnitFr || null }),
         ...(input.seatUnitEn === undefined ? {} : { seatUnitEn: input.seatUnitEn || null }),
       };
