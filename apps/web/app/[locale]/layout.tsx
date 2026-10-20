@@ -27,7 +27,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: t.meta.description,
     applicationName: t.meta.siteName,
     authors: [{ name: "Krizaka", url: "https://www.krizaka.com" }],
-    icons: { icon: "/icon.svg" },
     ...(indexable() ? {} : { robots: { index: false, follow: false } }),
   };
 }
