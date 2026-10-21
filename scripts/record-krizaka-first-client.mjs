@@ -25,7 +25,7 @@ const device = flag("device", "desktop");
 const locale = flag("locale", "en") === "fr" ? "fr" : "en";
 const wanted = flag("clips", "onboarding,invoice,books,return").split(",");
 const voice = args.includes("--voice");
-const BASE = (process.env.APP_BASE_URL ?? "https://dev.akinaza.com").replace(/\/$/, "");
+const BASE = (process.env.APP_BASE_URL ?? "https://www.akinaza.com").replace(/\/$/, "");
 const need = (n) => {
   if (!process.env[n]) throw new Error(`${n} is required`);
   return process.env[n];
@@ -46,6 +46,10 @@ export const WORDS = {
       en: "Its services are bookable and invoiceable items, by the hour or by the project: development, design, consulting, a scoping workshop and a monthly support plan.",
       fr: "Ses services sont des éléments réservables et facturables, à l'heure ou au projet : développement, design, conseil, un atelier de cadrage et un forfait de soutien mensuel.",
     },
+    today: {
+      en: "Éric's day speaks a studio's words: appointments and clients, not a dog walker's walks. The business type decides the vocabulary, and the shop page says so.",
+      fr: "La journée d'Éric parle les mots d'un studio : des rendez-vous et des clients, pas les promenades d'un promeneur de chiens. Le type d'entreprise fixe le vocabulaire, et la page de la boutique le dit.",
+    },
     clients: {
       en: "Three business clients are on file, each with the consent that Loi 25 asks for. Akinaza only prepares taxes; it never files them.",
       fr: "Trois clients d'affaires sont au dossier, chacun avec le consentement que la Loi 25 exige. Akinaza prépare les taxes; elle ne les produit jamais.",
@@ -53,22 +57,22 @@ export const WORDS = {
   },
   invoice: {
     form: {
-      en: "Éric issues an invoice from the services themselves: the client, the language, ten hours of one service and one flat-fee line.",
-      fr: "Éric émet une facture à partir des services eux-mêmes : le client, la langue, dix heures d'un service et une ligne à forfait.",
+      en: "Éric issues an invoice from the services themselves: the client, the language, seven and a half hours of one service and one flat-fee line, under the shop's payment terms.",
+      fr: "Éric émet une facture à partir des services eux-mêmes : le client, la langue, sept heures et demie d'un service et une ligne à forfait, selon les conditions de paiement de la boutique.",
     },
     issued: {
       en: "Issued. The invoice has its number, and the taxes were computed once, on the taxable total, to the cent.",
       fr: "Émise. La facture a son numéro, et les taxes ont été calculées une seule fois, sur le total taxable, au cent près.",
     },
     document: {
-      en: "The document is in the client's language and carries the supplier's GST and QST numbers, which a business buyer needs to claim its credits.",
-      fr: "Le document est dans la langue du client et porte les numéros de TPS et de TVQ du fournisseur, dont un acheteur d'affaires a besoin pour réclamer ses crédits.",
+      en: "The document is in the client's language and carries the supplier's GST and QST numbers, the payment terms and the due date: what a business buyer needs to claim its credits.",
+      fr: "Le document est dans la langue du client et porte les numéros de TPS et de TVQ du fournisseur, les conditions de paiement et l'échéance : ce dont un acheteur d'affaires a besoin pour réclamer ses crédits.",
     },
   },
   books: {
     list: {
-      en: "The books start here: every invoice of the studio, in French or in English, with its subtotal, GST, QST and total.",
-      fr: "Les livres commencent ici : chaque facture du studio, en français ou en anglais, avec son sous-total, sa TPS, sa TVQ et son total.",
+      en: "The books start here: every invoice of the studio, in French or in English, with its due date, subtotal, GST, QST and total.",
+      fr: "Les livres commencent ici : chaque facture du studio, en français ou en anglais, avec son échéance, son sous-total, sa TPS, sa TVQ et son total.",
     },
     sources: {
       en: "Each figure of the return opens onto the documents behind it: the invoices that collected the taxes, the expenses that give credits. Every invoice posts to the ledger in the same step, and the database refuses an unbalanced one.",
@@ -150,6 +154,14 @@ await clip("onboarding", async ({ take, page, go, glide }) => {
   take.beat("services");
   await glide(520, 2000);
   await take.speak("services");
+  take.beat("today");
+  await go("app");
+  await page.waitForTimeout(1200);
+  await glide(220, 1400);
+  await go("app/shop");
+  await page.waitForTimeout(800);
+  await glide(520, 2200);
+  await take.speak("today");
   take.beat("clients");
   await go("app/clients");
   await page.waitForTimeout(800);
@@ -163,11 +175,11 @@ await clip("invoice", async ({ take, page, go, glide }) => {
   await take.start();
   take.beat("form");
   await page.waitForTimeout(900);
-  // English: the English-speaking client, 8 h of consulting and a workshop; French: the French-speaking client, 10 h of development and the support plan.
+  // English: the English-speaking client, 7.5 h of consulting and a workshop; French: the French-speaking client, 7,5 h of development and the support plan.
   await choose(page.getByLabel(T.client, { exact: true }), english ? T.nord : T.cafe);
   await page.waitForTimeout(500);
   await choose(page.getByLabel(new RegExp(`^${T.service} 1`)), english ? T.consulting : T.dev);
-  await page.getByLabel(T.quantity).nth(0).fill(english ? "8" : "10");
+  await page.getByLabel(T.quantity).nth(0).fill(english ? "7.5" : "7,5");
   await page.waitForTimeout(500);
   await choose(page.getByLabel(new RegExp(`^${T.service} 2`)), english ? T.workshop : T.support);
   await page.getByLabel(T.quantity).nth(1).fill("1");
@@ -186,8 +198,8 @@ await clip("invoice", async ({ take, page, go, glide }) => {
   await issued.click();
   await page.waitForURL(/\/app\/invoices\//);
   take.beat("document");
-  // The taxes to the cent, on screen: 8 × 180 + 600 = 2 040.00 → GST 102.00, QST 203.49; 10 × 150 + 500 = 2 000.00 → GST 100.00, QST 199.50.
-  const totals = english ? ["2,040.00", "102.00", "203.49", "2,345.49"] : ["2 000,00", "100,00", "199,50", "2 299,50"];
+  // The taxes to the cent, on screen: 7.5 × 180 + 600 = 1 950.00 → GST 97.50, QST 194.51 (194.5125); 7,5 × 150 + 500 = 1 625,00 → GST 81,25, QST 162,09 (162.09375).
+  const totals = english ? ["1,950.00", "97.50", "194.51", "2,242.01"] : ["1 625,00", "81,25", "162,09", "1 868,34"];
   for (const figure of totals) await page.getByText(new RegExp(figure.replace(/[.,]/g, "[.,]").replace(/ /g, "\\s"))).first().waitFor({ timeout: 15_000 });
   await page.waitForTimeout(800);
   await glide(260, 1600);
