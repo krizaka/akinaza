@@ -19,7 +19,9 @@ const list = z
 export const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   /** The public origin of the site (canonical URLs, sitemap, llms.txt). */
-  APP_PUBLIC_URL: z.string().url().default("https://dev.akinaza.com"),
+  APP_PUBLIC_URL: z.string().url().default("https://www.akinaza.com"),
+  /** The development address (`dev.akinaza.com`): every page goes to www (308); only the API, auth callbacks, webhooks, /.well-known and /healthz keep serving there, all noindex (lib/indexing.ts). Unset: no dev host. */
+  APP_DEV_HOST: z.string().optional(),
   /** PostgreSQL (the cluster krizaka-dev-pg in dev: database akinaza_db, role akinaza_db). */
   DATABASE_URL: z.string().optional(),
   /** The cluster's CA (PEM), to verify its certificate; without it a TLS URL is refused in production. */
