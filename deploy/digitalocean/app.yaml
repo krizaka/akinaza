@@ -47,9 +47,10 @@ services:
         scope: RUN_TIME
         value: "false"
       # Only these client addresses (do-connecting-ip) reach admin.akinaza.com, its sign-in included; empty = nobody.
+      # (krizaka-deploy keeps the live value: the addresses are not committed.)
       - key: AUTH_ALLOWED_IPS
         scope: RUN_TIME
-        value: "142.122.41.109"
+        value: __AUTH_ALLOWED_IPS__
       - key: AUTH_SESSION_SECRET
         scope: RUN_TIME
         type: SECRET
@@ -75,12 +76,27 @@ services:
         value: __DATABASE_CA_CERT__
       # Connection budget (krizaka/.github#60): the cluster's pool for this database is 2 server connections, so one
       # process holds at most 2; one instance, so the realtime bus lives in memory (no LISTEN connection).
+      # (live: 1 — one process, one connection through the pool, until the cluster's budget grows.)
       - key: DATABASE_MAX_CONNECTIONS
         scope: RUN_TIME
-        value: "2"
+        value: "1"
       - key: REALTIME_BUS
         scope: RUN_TIME
         value: memory
       - key: ABUSE_CLIENT_IP_HEADER
         scope: RUN_TIME
         value: do-connecting-ip
+      # The media zone of this site on Bunny (akinaza-dev; its own zone, never the krizaka-assets one): the storage key is a SECRET.
+      - key: MEDIA_STORAGE_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+        value: __MEDIA_STORAGE_API_KEY__
+      - key: MEDIA_STORAGE_ZONE
+        scope: RUN_TIME
+        value: akinaza-dev
+      - key: MEDIA_STORAGE_ENDPOINT
+        scope: RUN_TIME
+        value: ny.storage.bunnycdn.com
+      - key: MEDIA_CDN_HOSTNAME
+        scope: RUN_TIME
+        value: akinaza-dev.b-cdn.net
