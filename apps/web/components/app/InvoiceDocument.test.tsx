@@ -4,7 +4,13 @@ import { describe, expect, it } from "vitest";
 import { InvoiceDocument, type InvoiceView } from "./InvoiceDocument";
 
 /** The plain text of the markup, one line per block: what a PDF text layer or a screen reader gives. */
-const textOf = (html: string) => html.replace(/<\/(dt|dd|li|p|h1|h2|div|section|header)>/g, "\n").replace(/<[^>]*>/g, "").replace(/&[a-z#0-9]+;/gi, " ");
+const textOf = (html: string) =>
+  html
+    .replace(/<\/(dt|dd|li|p|h1|h2|div|section|header)>/g, "\n")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&[a-z#0-9]+;/gi, " ")
+    .replace(/[ \t]+/g, " ")
+    .replace(/ ?\n ?/g, "\n");
 
 /** QC-INV-008 of Yomizaka's qc-invoice ruleset (orazaka-packs, document-validation): a payment-terms mention. Kept here as the guard that the document says it. */
 const QC_INV_008 = /(?:conditions?\s+de\s+paiement|modalit[ée]s?\s+de\s+paiement|payable\s+(?:dans|sous|au\s+plus|[àa]\s+\d|[àa]\s+r[ée]ception|d[èe]s|le\b)|\bnet\s*\d+|[ée]ch[ée]ance|payment\s+terms|due\s+(?:date|on|upon))/i;
