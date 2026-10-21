@@ -5,6 +5,5 @@
   "indexing": "off",
   "spec": "deploy/digitalocean/app.yaml",
   "product": "akinaza",
-  "seoFamily": { "script": "scripts/check-seo-family.mjs", "args": ["--types", "WebSite,SoftwareApplication"] },
   "waitMinutes": 25
 }

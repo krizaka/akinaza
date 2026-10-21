@@ -5,7 +5,7 @@
 templates skips the heavy job; the required check « Lint · Typecheck · Tests · Build » still reports green. After the production build,
 `scripts/ci-after-build.sh` runs the SEO family contract, checks that sign-up is closed and the responsive guard.
 
-**Deploy.** `.krizaka-deploy.json` describes `akinaza-dev` (dev.akinaza.com, a noindex site). From a checkout of
+**Deploy.** `.krizaka-deploy.json` describes `akinaza-dev` (checked on dev.akinaza.com: noindex, robots Disallow, the API; the public address is www.akinaza.com). From a checkout of
 [krizaka/.github](https://github.com/krizaka/.github) (`cd deploy && npm ci`):
 
 ```bash

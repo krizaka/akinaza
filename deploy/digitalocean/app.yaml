@@ -6,11 +6,31 @@
 name: akinaza-dev
 region: tor
 domains:
-  - domain: dev.akinaza.com
+  # The public address (epic krizaka/.github#119): www is primary and indexed, the apex answers 308 with www (ingress below).
+  - domain: www.akinaza.com
     type: PRIMARY
+  - domain: akinaza.com
+    type: ALIAS
+  # The development address: every page goes to www (308); the API, .well-known and healthz keep serving, noindex (APP_DEV_HOST).
+  - domain: dev.akinaza.com
+    type: ALIAS
   # The administration console: the same app, host-routed (lib/host.ts); session + ADMIN role + AUTH_ALLOWED_IPS.
   - domain: admin.akinaza.com
     type: ALIAS
+# The apex leads to www (308); the other hosts are the app's (dev's page redirect and noindex are the app's own: lib/indexing.ts).
+ingress:
+  rules:
+    - match:
+        authority:
+          exact: akinaza.com
+      redirect:
+        authority: www.akinaza.com
+        redirect_code: 308
+    - match:
+        path:
+          prefix: /
+      component:
+        name: web
 services:
   - name: web
     github:
@@ -28,18 +48,19 @@ services:
       period_seconds: 10
       timeout_seconds: 5
       failure_threshold: 3
-    routes:
-      - path: /
     envs:
       - key: NODE_ENV
         value: production
       - key: APP_PUBLIC_URL
         scope: RUN_TIME
-        value: https://dev.akinaza.com
+        value: https://www.akinaza.com
+      - key: APP_DEV_HOST
+        scope: RUN_TIME
+        value: dev.akinaza.com
       - key: APP_COMMIT_SHA
         scope: BUILD_TIME
         value: ${_self.COMMIT_HASH}
-      # Every dev deployment: noindex on every response, robots.txt closed, the development notice in the footer.
+      # Every dev deployment: noindex and a closed robots.txt on every host but www (the public address), the development notice in the footer.
       - key: APP_SEARCH_INDEXING
         scope: RUN_AND_BUILD_TIME
         value: "off"

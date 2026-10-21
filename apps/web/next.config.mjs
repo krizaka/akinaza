@@ -38,9 +38,7 @@ const securityHeaders = [
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
 
-// A dev / preview deployment is closed to search engines on every response, the API included (the proxy covers pages).
-const closedToSearch = process.env.APP_SEARCH_INDEXING?.trim().toLowerCase() === "off";
-if (closedToSearch) securityHeaders.push({ key: "X-Robots-Tag", value: "noindex, nofollow" });
+// The noindex of a closed deployment is per host (www is public, dev is not): the proxy says it, API included (proxy.ts).
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -60,7 +58,11 @@ const nextConfig = {
     return [{ source: "/maps/v1/:path*", destination: "https://krizaka-assets.b-cdn.net/maps/v1/:path*" }];
   },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      // App links files (assetlinks.json, apple-app-site-association) are for the apps, never for search.
+      { source: "/.well-known/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] },
+    ];
   },
 };
 
