@@ -14,7 +14,7 @@ import { checkIn, checkOut, saveReport } from "./visits";
  * operations the product uses — no row is written around the rules. Idempotent per walker account.
  */
 export const SAINT_HENRI = {
-  shop: { name: "Pattes de Saint-Henri", legalName: "Pattes de Saint-Henri (démo)", address: "2000 rue Notre-Dame O., Montréal QC H3J 1N4", slug: "pattes-saint-henri", ownerName: "Léa" },
+  shop: { name: "Pattes de Saint-Henri", legalName: "Pattes de Saint-Henri (démo)", address: "2000 rue Notre-Dame O., Montréal QC H3J 1N4", slug: "pattes-saint-henri", ownerName: "Léa", businessType: "pets" as const },
   taglineFr: "Des promenades de quartier, avec une photo et un mot après chaque sortie.",
   taglineEn: "Neighbourhood dog walks, with a photo and a note after every outing.",
   /** What the storefront shows beyond the tagline: the locality, the bio (it says the shop is a demo), how to reach the shop. */
@@ -102,7 +102,7 @@ export const SAINT_HENRI_EMAILS = ["lea.beaulieu@akinaza.test", ...SAINT_HENRI.c
 /** The storefront's words, places and photos of the persona: idempotent, so a shop seeded before them gains them on the next run. */
 export async function enrichSaintHenri(db: Db, ownerId: string, shopId: string): Promise<void> {
   const shop = (await db.select().from(shops).where(eq(shops.id, shopId)))[0]!;
-  const owner = { name: shop.name, legalName: shop.legalName, address: shop.address, slug: shop.slug ?? SAINT_HENRI.shop.slug, ownerName: SAINT_HENRI.shop.ownerName, published: shop.published };
+  const owner = { name: shop.name, legalName: shop.legalName, address: shop.address, slug: shop.slug ?? SAINT_HENRI.shop.slug, ownerName: SAINT_HENRI.shop.ownerName, businessType: SAINT_HENRI.shop.businessType, published: shop.published };
   await saveShopPage(db, ownerId, { ...owner, taglineFr: SAINT_HENRI.taglineFr, taglineEn: SAINT_HENRI.taglineEn, ...SAINT_HENRI.profile });
   for (const [name, place] of Object.entries(SAINT_HENRI.zonePlaces)) await db.update(shopZones).set(place).where(and(eq(shopZones.shopId, shopId), eq(shopZones.name, name)));
   for (const [nameEn, card] of Object.entries(SAINT_HENRI.cards)) await db.update(services).set(card).where(and(eq(services.shopId, shopId), eq(services.nameEn, nameEn)));

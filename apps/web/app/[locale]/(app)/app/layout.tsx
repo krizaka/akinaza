@@ -6,6 +6,7 @@ import { AppFrame } from "@/components/app/AppFrame";
 import { pageSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { asLocale } from "@/lib/i18n";
+import { VocabularyProvider } from "@/lib/i18n-client";
 
 // The signed-in space is never indexed and never cached: it reads the session on every request.
 export const dynamic = "force-dynamic";
@@ -19,7 +20,7 @@ export default async function MemberLayout({ children, params }: { children: Rea
   const owner = await shopOfOwner(db(), session.account.id);
   return (
     <AppFrame locale={locale} email={session.account.email} base={`/${locale}/app`} items={owner ? ["today", "clients", "invoices", "books", "shop", "connections", "profile"] : ["bookings", "shop", "profile"]}>
-      {children}
+      {owner ? <VocabularyProvider type={owner.businessType}>{children}</VocabularyProvider> : children}
     </AppFrame>
   );
 }

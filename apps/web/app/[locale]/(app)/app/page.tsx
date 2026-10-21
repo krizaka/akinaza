@@ -14,6 +14,7 @@ import { pageSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { asLocale, format, getDictionary, type Locale } from "@/lib/i18n";
 import { todayView } from "@/lib/today";
+import { consoleFor } from "@/lib/vocabulary";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export default async function Home({ params, searchParams }: { params: Promise<{
 }
 
 async function ServiceDay({ locale, shop, day: requested }: { locale: "en" | "fr"; shop: NonNullable<Awaited<ReturnType<typeof shopOfOwner>>>; day: string | undefined }) {
-  const t = getDictionary(locale).console;
+  const t = consoleFor(locale, shop.businessType);
   const today = await shopDay(db(), shop.id, new Date());
   const day = requested && /^\d{4}-\d{2}-\d{2}$/.test(requested) ? requested : today;
   const visits = await dayVisits(db(), shop.id, day);
@@ -71,7 +72,7 @@ async function ClientSpace({ locale, accountId }: { locale: "en" | "fr"; account
     <ClientHome
       files={await Promise.all(
         files.map(async (f) => ({
-          client: { id: f.id, fullName: f.fullName, shopName: f.shopName, shopSlug: f.shopSlug },
+          client: { id: f.id, fullName: f.fullName, shopName: f.shopName, shopSlug: f.shopSlug, businessType: f.businessType },
           dogs: (await dependantsOf(db(), f.id)).map((d) => ({ id: d.id, name: d.name, breed: (d.profile as { breed?: string }).breed ?? null })),
           bookings: (await clientBookings(db(), f.id)).map((b) => ({ ...b, report: b.report ? { id: b.report.id, note: b.report.note, hasPhoto: b.report.hasPhoto, durationMinutes: b.report.durationMinutes } : null })),
           now,

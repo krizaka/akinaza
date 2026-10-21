@@ -706,7 +706,13 @@
         "publicEmail": "Courriel montré aux visiteurs",
         "seatUnitFr": "Comment s'appelle une place (français)",
         "seatUnitEn": "Comment s'appelle une place (anglais)",
-        "seatUnitHint": "Pour un service de groupe : « Jusqu'à 5 chiens ». Vide : « places »."
+        "seatUnitHint": "Pour un service de groupe : « Jusqu'à 5 chiens ». Vide : « places ».",
+        "businessType": "Type d'entreprise",
+        "businessTypeHint": "Il fixe les mots de vos écrans et de ceux de vos clients.",
+        "businessTypes": {
+          "professional": "Services professionnels (studio, conseil, réparation…)",
+          "pets": "Soins aux animaux (promenades, toilettage…)"
+        }
       },
       "zones": {
         "title": "Zones desservies",
@@ -894,7 +900,7 @@
     },
     "client": {
       "title": "Mes réservations",
-      "none": "Aucune réservation pour l'instant. Ouvrez la page d'une boutique et réservez une promenade.",
+      "none": "Aucune réservation pour l'instant. Ouvrez la page d'une boutique et réservez à partir de là.",
       "upcoming": "À venir",
       "past": "Passées",
       "cancel": "Annuler",
@@ -1180,6 +1186,61 @@
       "credit": "Note de crédit",
       "creditOf": "Cette note de crédit annule une facture antérieure.",
       "footer": "Préparée avec Akinaza. Le commerçant produit lui-même la déclaration de TPS/TVQ; Akinaza ne la produit jamais."
+    },
+    "vocabularies": {
+      "professional": {
+        "meta": {
+          "book": "Prendre un rendez-vous"
+        },
+        "errors": {
+          "CAPACITY_FULL": "Ce rendez-vous est complet.",
+          "CANCEL_TOO_LATE": "Il est trop tard pour annuler en ligne. Contactez l'entreprise.",
+          "VISIT_UNKNOWN": "Ce rendez-vous n'existe plus.",
+          "STAFF_UNKNOWN": "Personne n'est encore disponible pour prendre des rendez-vous.",
+          "ALREADY_CHECKED_IN": "Ce rendez-vous est déjà commencé.",
+          "NOT_CHECKED_IN": "Commencez d'abord le rendez-vous.",
+          "ALREADY_CHECKED_OUT": "Ce rendez-vous est déjà terminé.",
+          "VISIT_CANCELLED": "Ce rendez-vous a été annulé.",
+          "ALREADY_BOOKED": "Vous avez déjà une place à ce moment."
+        },
+        "walker": {
+          "title": "Les rendez-vous du jour",
+          "dayLine": "{date} · rendez-vous : {count}",
+          "none": "Aucun rendez-vous ce jour-là.",
+          "owner": "Client : {name}",
+          "checkIn": "Commencer le rendez-vous",
+          "checkOut": "Terminer le rendez-vous"
+        },
+        "shopSetup": {
+          "page": {
+            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio",
+            "areaHint": "Montréal — jamais l'adresse civique.",
+            "seatUnitHint": "Pour un service de groupe : « Jusqu'à 5 personnes ». Vide : « places »."
+          },
+          "zones": {
+            "placeholder": "Notre bureau"
+          },
+          "services": {
+            "capacity": "Personnes par rendez-vous",
+            "capacityHint": "1 = un client à la fois; plus = une séance de groupe.",
+            "group": "jusqu'à {count} personnes"
+          }
+        },
+        "book": {
+          "title": "Prendre un rendez-vous avec {shop}",
+          "joinIntro": "{shop} a besoin de votre nom et d'un numéro de téléphone pour confirmer vos rendez-vous.",
+          "consentService": "J'accepte que {shop} conserve mes coordonnées pour assurer mes rendez-vous et m'envoyer ce qui les concerne.",
+          "consentReminders": "Je souhaite recevoir des rappels avant un rendez-vous (facultatif).",
+          "pick": "Choisissez le rendez-vous",
+          "joins": "Se joint à une séance de groupe",
+          "confirm": "Réserver ce rendez-vous"
+        },
+        "client": {
+          "cancelConfirm": "Annuler ce rendez-vous?",
+          "privacyIntro": "{shop} conserve votre dossier. Vous pouvez en prendre une copie ou le faire effacer.",
+          "eraseDescription": "Vos coordonnées et vos réservations sont effacées pour de bon. Les factures sont conservées comme la loi l'exige. Saisissez votre courriel pour confirmer."
+        }
+      }
     }
   },
   "changelog": {

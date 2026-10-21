@@ -706,7 +706,13 @@
         "publicEmail": "E-mail shown to visitors",
         "seatUnitFr": "What a seat is called (French)",
         "seatUnitEn": "What a seat is called (English)",
-        "seatUnitHint": "For a group service: « Up to 5 dogs ». Empty: « places »."
+        "seatUnitHint": "For a group service: « Up to 5 dogs ». Empty: « places ».",
+        "businessType": "Type of business",
+        "businessTypeHint": "It sets the words your screens and your clients use.",
+        "businessTypes": {
+          "professional": "Professional services (studio, consulting, repairs…)",
+          "pets": "Pet care (walks, grooming…)"
+        }
       },
       "zones": {
         "title": "Zones you serve",
@@ -894,7 +900,7 @@
     },
     "client": {
       "title": "My bookings",
-      "none": "No booking yet. Open the page of a shop and book a walk.",
+      "none": "No booking yet. Open the page of a shop and book from there.",
       "upcoming": "Upcoming",
       "past": "Past",
       "cancel": "Cancel",
@@ -1180,6 +1186,61 @@
       "credit": "Credit note",
       "creditOf": "This credit note cancels an earlier invoice.",
       "footer": "Prepared with Akinaza. The merchant files the GST/QST return; Akinaza never does."
+    },
+    "vocabularies": {
+      "professional": {
+        "meta": {
+          "book": "Book an appointment"
+        },
+        "errors": {
+          "CAPACITY_FULL": "This appointment is full.",
+          "CANCEL_TOO_LATE": "It is too late to cancel online. Contact the business.",
+          "VISIT_UNKNOWN": "This appointment no longer exists.",
+          "STAFF_UNKNOWN": "Nobody is available to take appointments yet.",
+          "ALREADY_CHECKED_IN": "This appointment has already started.",
+          "NOT_CHECKED_IN": "Start the appointment first.",
+          "ALREADY_CHECKED_OUT": "This appointment is already over.",
+          "VISIT_CANCELLED": "This appointment was cancelled.",
+          "ALREADY_BOOKED": "You already have a place at that time."
+        },
+        "walker": {
+          "title": "Today's appointments",
+          "dayLine": "{date} · appointments: {count}",
+          "none": "No appointment this day.",
+          "owner": "Client: {name}",
+          "checkIn": "Start the appointment",
+          "checkOut": "End the appointment"
+        },
+        "shopSetup": {
+          "page": {
+            "slugHint": "Lowercase words joined by hyphens, e.g. my-studio",
+            "areaHint": "Montréal — never the street address.",
+            "seatUnitHint": "For a group service: « Up to 5 people ». Empty: « places »."
+          },
+          "zones": {
+            "placeholder": "Our office"
+          },
+          "services": {
+            "capacity": "People per appointment",
+            "capacityHint": "1 = one client at a time; more = a group session.",
+            "group": "up to {count} people"
+          }
+        },
+        "book": {
+          "title": "Book an appointment with {shop}",
+          "joinIntro": "{shop} needs your name and a phone number to confirm your appointments.",
+          "consentService": "I agree that {shop} keeps my details to run my appointments and send me what concerns them.",
+          "consentReminders": "I would like reminders before an appointment (optional).",
+          "pick": "Choose the appointment",
+          "joins": "Joins a group session",
+          "confirm": "Book this appointment"
+        },
+        "client": {
+          "cancelConfirm": "Cancel this appointment?",
+          "privacyIntro": "{shop} keeps your file. You can take a copy or have it erased.",
+          "eraseDescription": "Your details and your bookings are erased for good. Invoices are kept as the law requires. Type your e-mail to confirm."
+        }
+      }
     }
   },
   "changelog": {

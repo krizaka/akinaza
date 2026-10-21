@@ -11,7 +11,7 @@ import { z } from "zod";
 
 import { AccessNotes } from "@/components/app/AccessNotes";
 import { useCall } from "@/components/app/useCall";
-import { useSay } from "@/lib/i18n-client";
+import { useSay, useVocabulary } from "@/lib/i18n-client";
 import { shrinkImage } from "@/lib/shrink-image";
 
 export interface DayVisitView {
@@ -66,6 +66,7 @@ export function WalkerDay({ visits, timeZone, nav }: { visits: DayVisitView[]; t
 
 function VisitCard({ visit, timeZone }: { visit: DayVisitView; timeZone: string }) {
   const { say, locale } = useSay();
+  const { dependants, visitReports } = useVocabulary();
   const call = useCall();
   const time = (iso: string) => new Date(iso).toLocaleTimeString(locale === "fr" ? "fr-CA" : "en-CA", { hour: "2-digit", minute: "2-digit", timeZone });
   const live = visit.checkedInAt && !visit.checkedOutAt;
@@ -80,7 +81,7 @@ function VisitCard({ visit, timeZone }: { visit: DayVisitView; timeZone: string 
             </span>{" "}
             · {visit.service[locale]}
           </h2>
-          <p className="text-sm text-fg-secondary">{visit.service.capacity > 1 ? say("walker.dogsOf", { count: visit.bookings.length, max: visit.service.capacity }) : say("walker.dogs", { count: visit.bookings.length })}</p>
+          {dependants ? <p className="text-sm text-fg-secondary">{visit.service.capacity > 1 ? say("walker.dogsOf", { count: visit.bookings.length, max: visit.service.capacity }) : say("walker.dogs", { count: visit.bookings.length })}</p> : null}
         </div>
         <div className="flex flex-wrap gap-2">
           {visit.zone ? <Badge tone="accent">{visit.zone}</Badge> : null}
@@ -92,11 +93,13 @@ function VisitCard({ visit, timeZone }: { visit: DayVisitView; timeZone: string 
         {visit.bookings.map((b) => (
           <li key={b.bookingId} className="flex flex-col gap-2 py-3">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <p className="text-base font-semibold text-fg">
-                {b.dependant.name}
-                <span className="ml-2 text-sm font-normal text-fg-secondary">{[b.dependant.profile.breed, b.dependant.profile.size ? say(`clients.sizes.${b.dependant.profile.size}`) : null].filter(Boolean).join(" · ")}</span>
-              </p>
-              <p className="text-sm text-fg-secondary">
+              {dependants ? (
+                <p className="text-base font-semibold text-fg">
+                  {b.dependant.name}
+                  <span className="ml-2 text-sm font-normal text-fg-secondary">{[b.dependant.profile.breed, b.dependant.profile.size ? say(`clients.sizes.${b.dependant.profile.size}`) : null].filter(Boolean).join(" · ")}</span>
+                </p>
+              ) : null}
+              <p className={dependants ? "text-sm text-fg-secondary" : "text-base font-semibold text-fg"}>
                 {say("walker.owner", { name: b.clientName })}
                 {b.clientPhone ? (
                   <>
@@ -108,9 +111,9 @@ function VisitCard({ visit, timeZone }: { visit: DayVisitView; timeZone: string 
                 ) : null}
               </p>
             </div>
-            {b.dependant.profile.temperament ? <p className="text-sm text-fg-secondary">{b.dependant.profile.temperament}</p> : null}
-            {b.hasAccessNotes ? <AccessNotes clientId={b.clientId} clientName={b.clientName} /> : null}
-            {done ? <ReportBox booking={b} /> : null}
+            {dependants && b.dependant.profile.temperament ? <p className="text-sm text-fg-secondary">{b.dependant.profile.temperament}</p> : null}
+            {dependants && b.hasAccessNotes ? <AccessNotes clientId={b.clientId} clientName={b.clientName} /> : null}
+            {done && visitReports ? <ReportBox booking={b} /> : null}
           </li>
         ))}
       </ul>

@@ -127,3 +127,19 @@ Feedback: the pinned Discussion of the repository.
   button (Akinaza prepares, the merchant files), a PDF engine of our own for now (the document prints from the browser).
 - **Cost**: three service lines and one free line per invoice; a quantity is a whole number.
 - **Signal we are wrong**: owners who issue two invoices for one job because the form has too few lines.
+
+## The words of the business (krizaka/akinaza#117)
+
+- **Decision**: a shop has a *business type* (« Type of business » on the shop page: professional services, or pet care).
+  The type sets the words of every screen of the owner and of the clients of that shop (`console.vocabularies.<type>` in
+  the messages: only what differs from the base) and two behaviours: a pet-care shop books for a dog and reports on the
+  visit; any other business books the client for themselves and has no report.
+- **Problem**: the model is vertical-neutral, the words were the dog walker's: a software studio read « Today's walks »,
+  « Dogs per walk » and a zone « Saint-Henri », and was asked for its client's dog before an appointment.
+- **Principle**: match between the system and the real world (Nielsen, 1994): the owner and their clients read their own
+  trade's words.
+- **Refused**: guessing the words from the shop's name or its first services; a hidden setting (a closed set is a picker);
+  forking the screens per vertical (one set of screens, two vocabularies).
+- **Cost**: each new vertical adds its overlay in both languages; a test fails when a screen of a non-pet shop still carries
+  a dog word that is not overridden.
+- **Signal we are wrong**: owners who set the wrong type, or ask for a third (groomers, repairers) that fits neither.

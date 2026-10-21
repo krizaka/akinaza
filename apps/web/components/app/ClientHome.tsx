@@ -1,5 +1,6 @@
 "use client";
 
+import type { BusinessType } from "@akinaza/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
@@ -12,10 +13,10 @@ import { useState } from "react";
 import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
-import { useSay } from "@/lib/i18n-client";
+import { useSay, useVocabulary, VocabularyProvider } from "@/lib/i18n-client";
 
 export interface ClientFileView {
-  client: { id: string; fullName: string; shopName: string; shopSlug: string | null };
+  client: { id: string; fullName: string; shopName: string; shopSlug: string | null; businessType: BusinessType };
   dogs: { id: string; name: string; breed: string | null }[];
   bookings: {
     bookingId: string;
@@ -40,7 +41,9 @@ export function ClientHome({ files }: { files: ClientFileView[] }) {
       <h1 className="font-display text-2xl font-bold text-fg">{say("client.title")}</h1>
       {files.length === 0 ? <p className="text-fg-secondary">{say("client.none")}</p> : null}
       {files.map((f) => (
-        <FileSection key={f.client.id} file={f} />
+        <VocabularyProvider key={f.client.id} type={f.client.businessType}>
+          <FileSection file={f} />
+        </VocabularyProvider>
       ))}
     </div>
   );
@@ -48,6 +51,7 @@ export function ClientHome({ files }: { files: ClientFileView[] }) {
 
 function FileSection({ file }: { file: ClientFileView }) {
   const { say, locale } = useSay();
+  const { dependants } = useVocabulary();
   const lang = locale === "fr" ? "fr-CA" : "en-CA";
   const when = (iso: string) => new Date(iso).toLocaleString(lang, { dateStyle: "full", timeStyle: "short", timeZone: file.timeZone });
   const upcoming = file.bookings.filter((b) => b.status === "booked" && b.visitStatus === "booked" && b.startsAt >= file.now).sort((a, b) => a.startsAt.localeCompare(b.startsAt));
@@ -64,7 +68,7 @@ function FileSection({ file }: { file: ClientFileView }) {
       </div>
       <BookingList title={say("client.upcoming")} items={upcoming} file={file} when={when} cancellable />
       <BookingList title={say("client.past")} items={past} file={file} when={when} />
-      {file.dogs.length ? (
+      {dependants && file.dogs.length ? (
         <p className="text-sm text-fg-secondary">
           <strong className="text-fg">{say("client.dogsTitle")}</strong> · {file.dogs.map((d) => [d.name, d.breed].filter(Boolean).join(" · ")).join(" · ")}
         </p>

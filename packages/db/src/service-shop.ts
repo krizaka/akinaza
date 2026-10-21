@@ -1,4 +1,4 @@
-import { addLocalDays, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, type WeeklyWindow } from "@akinaza/core";
+import { addLocalDays, businessTypeSchema, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
 import { addDays } from "date-fns";
 import { and, asc, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -43,6 +43,8 @@ export const shopPageSchema = z.object({
   publicPhone: z.string().trim().max(40).optional(),
   publicEmail: z.string().trim().max(120).optional(),
   publicWebsite: z.string().trim().max(200).optional(),
+  /** The kind of business: it sets the words of the screens and whether a booking is made for a dog (krizaka/akinaza#117). Omitted = left as it is. */
+  businessType: businessTypeSchema.optional(),
   /** What a seat of a group service is called (« chiens »): « Up to 5 dogs ». */
   seatUnitFr: z.string().trim().max(30).optional(),
   seatUnitEn: z.string().trim().max(30).optional(),
@@ -107,6 +109,7 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput):
         taglineFr: input.taglineFr || null,
         taglineEn: input.taglineEn || null,
         published: input.published,
+        ...(input.businessType === undefined ? {} : { businessType: input.businessType }),
         ...(input.area === undefined ? {} : { area: input.area || null }),
         ...(input.bioFr === undefined ? {} : { bioFr: input.bioFr || null }),
         ...(input.bioEn === undefined ? {} : { bioEn: input.bioEn || null }),
@@ -246,7 +249,7 @@ export interface PublicMedia {
 
 /** What a visitor of the public page may know: no owner account, legal name, street address, tax numbers, staff id or days-off reasons. */
 export interface PublicShop {
-  shop: Pick<typeof shops.$inferSelect, "id" | "name" | "slug" | "timezone" | "taglineFr" | "taglineEn" | "area" | "bioFr" | "bioEn" | "publicPhone" | "publicEmail" | "seatUnitFr" | "seatUnitEn"> & {
+  shop: Pick<typeof shops.$inferSelect, "id" | "name" | "slug" | "timezone" | "taglineFr" | "taglineEn" | "area" | "bioFr" | "bioEn" | "publicPhone" | "publicEmail" | "seatUnitFr" | "seatUnitEn" | "businessType"> & {
     /** The first name shown for the person who works. */
     ownerName: string;
   };
@@ -277,7 +280,7 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
   const publicMedia = (m: typeof shopMedia.$inferSelect): PublicMedia => ({ id: m.id, url: m.url, webmUrl: m.webmUrl, mp4Url: m.mp4Url, altFr: m.altFr, altEn: m.altEn, captionFr: m.captionFr, captionEn: m.captionEn, wide: m.wide });
   const bookingCounts = (counts.rows as { service_id: string; bookings: number }[]).map((r) => ({ serviceId: r.service_id, bookings: r.bookings }));
   return {
-    shop: { id: row.id, name: row.name, slug: row.slug, timezone: row.timezone, taglineFr: row.taglineFr, taglineEn: row.taglineEn, area: row.area, bioFr: row.bioFr, bioEn: row.bioEn, publicPhone: row.publicPhone, publicEmail: row.publicEmail, seatUnitFr: row.seatUnitFr, seatUnitEn: row.seatUnitEn, ownerName: full.staff.name },
+    shop: { id: row.id, name: row.name, slug: row.slug, timezone: row.timezone, taglineFr: row.taglineFr, taglineEn: row.taglineEn, area: row.area, bioFr: row.bioFr, bioEn: row.bioEn, publicPhone: row.publicPhone, publicEmail: row.publicEmail, seatUnitFr: row.seatUnitFr, seatUnitEn: row.seatUnitEn, businessType: row.businessType, ownerName: full.staff.name },
     zones: full.zones.map((z) => ({ id: z.id, name: z.name, lat: z.lat, lng: z.lng })),
     services: full.services.map((s) => ({ id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, descriptionFr: s.descriptionFr, descriptionEn: s.descriptionEn, includedFr: s.includedFr, includedEn: s.includedEn, priceVaries: s.priceVaries })),
     windows: full.windows.map((w) => ({ weekday: w.weekday, startsAt: w.startsAt, endsAt: w.endsAt })),
@@ -403,7 +406,7 @@ export async function joinShop(db: Db, accountId: string, accountEmail: string, 
 /** The client files of an account (one per shop it joined), erased ones excluded. */
 export async function clientFilesOf(db: Db, accountId: string) {
   return db
-    .select({ id: clients.id, fullName: clients.fullName, phone: clients.phone, language: clients.language, shopId: shops.id, shopName: shops.name, shopSlug: shops.slug, timezone: shops.timezone })
+    .select({ id: clients.id, fullName: clients.fullName, phone: clients.phone, language: clients.language, shopId: shops.id, shopName: shops.name, shopSlug: shops.slug, businessType: shops.businessType, timezone: shops.timezone })
     .from(clients)
     .innerJoin(shops, eq(shops.id, clients.shopId))
     .where(and(eq(clients.accountId, accountId), isNull(clients.erasedAt)))
@@ -415,6 +418,14 @@ export async function addDependant(db: Db, clientId: string, raw: z.input<typeof
   const [client] = await db.select({ shopId: clients.shopId }).from(clients).where(and(eq(clients.id, clientId), isNull(clients.erasedAt)));
   if (!client) return refuse("AK_CLIENT_UNKNOWN");
   const [row] = await db.insert(dependants).values({ shopId: client.shopId, clientId, kind: input.kind, name: input.name, profile: input.profile }).returning({ id: dependants.id });
+  return row!.id;
+}
+
+/** The entry that stands for a client who books for themselves (a business that has no dogs): made once, named like the client. */
+async function selfDependant(db: Tx, client: { id: string; shopId: string; fullName: string }): Promise<string> {
+  const [existing] = await db.select({ id: dependants.id }).from(dependants).where(and(eq(dependants.clientId, client.id), eq(dependants.kind, "other"), isNull(dependants.erasedAt))).orderBy(asc(dependants.createdAt)).limit(1);
+  if (existing) return existing.id;
+  const [row] = await db.insert(dependants).values({ shopId: client.shopId, clientId: client.id, kind: "other", name: client.fullName }).returning({ id: dependants.id });
   return row!.id;
 }
 
@@ -450,7 +461,7 @@ export interface BookInput {
  * a seat per dependant is taken — the database refuses a full visit or a double booking whatever happens above.
  */
 export async function bookVisit(db: Db, input: BookInput): Promise<{ appointmentId: string; bookingIds: string[]; joined: boolean }> {
-  if (input.dependantIds.length === 0 || new Set(input.dependantIds).size !== input.dependantIds.length) refuse("AK_DEPENDANTS_REQUIRED");
+  if (new Set(input.dependantIds).size !== input.dependantIds.length) refuse("AK_DEPENDANTS_REQUIRED");
   try {
     return await db.transaction(async (tx) => {
       const [client] = await tx.select().from(clients).where(and(eq(clients.id, input.clientId), isNull(clients.erasedAt)));
@@ -461,13 +472,15 @@ export async function bookVisit(db: Db, input: BookInput): Promise<{ appointment
       if (!service) return refuse("AK_SERVICE_UNKNOWN");
       const zones = await tx.select().from(shopZones).where(and(eq(shopZones.shopId, shop.id), eq(shopZones.active, true)));
       if (zones.length > 0 && !zones.some((z) => z.id === input.zoneId)) refuse("AK_ZONE_REQUIRED");
-      if (input.dependantIds.length > service.capacity) refuse("AK_CAPACITY_FULL");
+      // A pet-care shop books for a dog. Any other business takes the client for themselves: their own entry stands for them.
+      const dependantIds = input.dependantIds.length > 0 ? input.dependantIds : vocabularyOf(shop.businessType).dependants ? refuse("AK_DEPENDANTS_REQUIRED") : [await selfDependant(tx, client)];
+      if (dependantIds.length > service.capacity) refuse("AK_CAPACITY_FULL");
       const member = await ownStaff(tx, shop.id);
       await tx.execute(sql`SELECT 1 FROM staff WHERE id = ${member.id} FOR UPDATE`);
       const slots = await listSlots(tx, { shopId: shop.id, serviceId: service.id, zoneId: input.zoneId, now: input.now, fromDay: localDay(input.startsAt, shop.timezone), days: 1 });
       const slot = slots.find((s) => s.startsAt.getTime() === input.startsAt.getTime());
       if (!slot) return refuse("AK_SLOT_UNAVAILABLE");
-      if (slot.seatsLeft < input.dependantIds.length) refuse("AK_CAPACITY_FULL");
+      if (slot.seatsLeft < dependantIds.length) refuse("AK_CAPACITY_FULL");
       let appointmentId: string;
       if (slot.joins) {
         const found = await tx.execute(sql`
@@ -481,7 +494,7 @@ export async function bookVisit(db: Db, input: BookInput): Promise<{ appointment
           .returning({ id: appointments.id });
         appointmentId = row!.id;
       }
-      const rows = await tx.insert(bookings).values(input.dependantIds.map((dependantId) => ({ appointmentId, clientId: client.id, dependantId }))).returning({ id: bookings.id });
+      const rows = await tx.insert(bookings).values(dependantIds.map((dependantId) => ({ appointmentId, clientId: client.id, dependantId }))).returning({ id: bookings.id });
       return { appointmentId, bookingIds: rows.map((r) => r.id), joined: slot.joins };
     });
   } catch (error) {
