@@ -167,5 +167,7 @@ export const shopRulesSchema = z.object({
   slotStepMinutes: z.number().int().min(5).max(240),
   minNoticeMinutes: z.number().int().min(0).max(10_080),
   reportLinkDays: z.number().int().min(1).max(365),
+  /** The terms new invoices are issued under, in days; 0 = due on receipt (krizaka/akinaza#113). */
+  paymentTermsDays: z.number().int().min(0).max(365),
 });
 export type ShopRules = z.infer<typeof shopRulesSchema>;

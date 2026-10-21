@@ -524,8 +524,11 @@ export async function cancelBooking(db: Db, clientId: string, bookingId: string,
 
 /** The shop's own rules (cancellation window, horizon, step, notice, report-link life) — validated against the same bounds the database keeps. */
 export async function saveRules(db: Db, shopId: string, raw: ShopRules): Promise<void> {
-  const rules = shopRulesSchema.parse(raw);
-  await db.update(shopRules).set(rules).where(eq(shopRules.shopId, shopId));
+  const { paymentTermsDays, ...rules } = shopRulesSchema.parse(raw);
+  await db.transaction(async (tx) => {
+    await tx.update(shopRules).set(rules).where(eq(shopRules.shopId, shopId));
+    await tx.update(shops).set({ paymentTermsDays }).where(eq(shops.id, shopId));
+  });
 }
 
 /** A client file, if it belongs to the signed-in account (and is not erased). */

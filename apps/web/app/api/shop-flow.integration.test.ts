@@ -84,8 +84,8 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     ids.solo = (await call(services, "POST", "/api/walker/services", { token: walker, json: { nameFr: "Promenade solo 60 min", nameEn: "Solo walk 60 min", durationMinutes: 60, priceCents: 3000, capacity: 1 } })).body.id;
     for (const weekday of [0, 1, 2, 3, 4, 5, 6]) expect((await call(hours, "POST", "/api/walker/hours", { token: walker, json: { weekday, startsAt: "08:00", endsAt: "20:00" } })).status).toBe(201);
     expect((await call(hours, "POST", "/api/walker/hours", { token: walker, json: { weekday: 1, startsAt: "10:00", endsAt: "11:00" } })).body).toMatchObject({ code: "WINDOW_OVERLAP" });
-    expect((await call(rules, "POST", "/api/walker/rules", { token: walker, json: { cancellationHours: 2, bookingHorizonDays: 30, slotStepMinutes: 1, minNoticeMinutes: 0, reportLinkDays: 30 } })).status).toBe(400);
-    expect((await call(rules, "POST", "/api/walker/rules", { token: walker, json: { cancellationHours: 2, bookingHorizonDays: 30, slotStepMinutes: 30, minNoticeMinutes: 0, reportLinkDays: 30 } })).status).toBe(200);
+    expect((await call(rules, "POST", "/api/walker/rules", { token: walker, json: { cancellationHours: 2, bookingHorizonDays: 30, slotStepMinutes: 1, minNoticeMinutes: 0, reportLinkDays: 30, paymentTermsDays: 30 } })).status).toBe(400);
+    expect((await call(rules, "POST", "/api/walker/rules", { token: walker, json: { cancellationHours: 2, bookingHorizonDays: 30, slotStepMinutes: 30, minNoticeMinutes: 0, reportLinkDays: 30, paymentTermsDays: 30 } })).status).toBe(200);
     expect((await call(shop, "POST", "/api/walker/shop", { token: walker, json: { ...page, published: true } })).body).toMatchObject({ created: false });
   });
 

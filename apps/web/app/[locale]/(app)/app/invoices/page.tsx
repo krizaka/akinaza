@@ -39,7 +39,7 @@ export default async function Invoices({ params }: { params: Promise<{ locale: s
         <h1 className="font-display text-2xl font-bold text-fg">{t.title}</h1>
         <p className="text-fg-secondary">{t.lead}</p>
       </header>
-      <InvoiceForm locale={locale} data={{ today, clients: clientRows.map((c) => ({ ...c, language: c.language === "en" ? "en" : "fr" })), services: serviceRows }} />
+      <InvoiceForm locale={locale} data={{ today, termsDays: shop.paymentTermsDays, clients: clientRows.map((c) => ({ ...c, language: c.language === "en" ? "en" : "fr" })), services: serviceRows }} />
       <section aria-labelledby="issued" className="flex flex-col gap-3">
         <h2 id="issued" className="font-display text-lg font-bold text-fg">
           {t.list.title}
@@ -60,6 +60,7 @@ export default async function Invoices({ params }: { params: Promise<{ locale: s
                   </p>
                   <p className="text-sm text-fg-secondary">
                     {i.client ?? t.list.noClient} · {day(i.issuedOn)}
+                    {i.dueOn ? ` · ${format(t.list.dueOn, { date: day(i.dueOn) })}` : ""}
                   </p>
                   <p className="text-sm text-fg-muted">
                     {money(i.subtotalCents)} + {money(i.gstCents)} + {money(i.qstCents)}

@@ -32,7 +32,7 @@ export default async function ShopSetupPage({ params }: { params: Promise<{ loca
     media: { cover: media.cover ? line(media.cover) : null, gallery: media.gallery.map(line) },
     windows: setup.windows.map((x) => ({ id: x.id, weekday: x.weekday, startsAt: x.startsAt, endsAt: x.endsAt })),
     daysOff: setup.daysOff,
-    rules: { cancellationHours: setup.rules.cancellationHours, bookingHorizonDays: setup.rules.bookingHorizonDays, slotStepMinutes: setup.rules.slotStepMinutes, minNoticeMinutes: setup.rules.minNoticeMinutes, reportLinkDays: setup.rules.reportLinkDays },
+    rules: { cancellationHours: setup.rules.cancellationHours, bookingHorizonDays: setup.rules.bookingHorizonDays, slotStepMinutes: setup.rules.slotStepMinutes, minNoticeMinutes: setup.rules.minNoticeMinutes, reportLinkDays: setup.rules.reportLinkDays, paymentTermsDays: shop.paymentTermsDays },
   };
   return <ShopSetupView data={data} />;
 }

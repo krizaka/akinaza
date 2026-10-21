@@ -772,7 +772,8 @@
         "minNoticeMinutes": "Préavis minimal (minutes)",
         "reportLinkDays": "Les liens de rapport durent (jours)",
         "submit": "Enregistrer les règles",
-        "saved": "Règles enregistrées."
+        "saved": "Règles enregistrées.",
+        "paymentTermsDays": "Conditions de paiement des nouvelles factures (jours, 0 = à la réception)"
       },
       "weekdays": {
         "0": "Dimanche",
@@ -1154,7 +1155,12 @@
         "taxes": "Les taxes sont calculées une seule fois, sur le total taxable, et arrondies au cent.",
         "day": "Jour",
         "month": "Mois",
-        "year": "Année"
+        "year": "Année",
+        "terms": "Conditions de paiement",
+        "termsDefault": "Celles de la boutique ({days} jours)",
+        "termsOnReceipt": "Payable à la réception",
+        "termsNet": "Net {days} jours",
+        "termsHint": "Un acheteur a besoin des conditions et de l'échéance dès 500 $ pour réclamer ses crédits de taxe sur les intrants."
       },
       "list": {
         "title": "Factures émises",
@@ -1162,7 +1168,8 @@
         "open": "Ouvrir {number}",
         "credit": "Note de crédit",
         "noClient": "Sans fiche client",
-        "total": "Total {amount}"
+        "total": "Total {amount}",
+        "dueOn": "Échéance le {date}"
       },
       "back": "Toutes les factures"
     },
@@ -1185,7 +1192,12 @@
       "total": "Total (CAD)",
       "credit": "Note de crédit",
       "creditOf": "Cette note de crédit annule une facture antérieure.",
-      "footer": "Préparée avec Akinaza. Le commerçant produit lui-même la déclaration de TPS/TVQ; Akinaza ne la produit jamais."
+      "footer": "Préparée avec Akinaza. Le commerçant produit lui-même la déclaration de TPS/TVQ; Akinaza ne la produit jamais.",
+      "terms": "Conditions de paiement",
+      "dueOn": "Date d'échéance",
+      "termsNet": "Net {days} jours",
+      "termsNetOne": "Net 1 jour",
+      "termsOnReceipt": "Payable à la réception"
     },
     "vocabularies": {
       "professional": {
