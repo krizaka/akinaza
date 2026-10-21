@@ -15,7 +15,7 @@ import { issueInvoice, recordExpense } from "./shop-ops";
  * figures, the clients are fictional companies. Through the same operations the product uses; idempotent per owner account.
  */
 export const KRIZAKA = {
-  shop: { name: "Krizaka (démo)", legalName: "Technologies Krizaka inc. (démo)", address: "1 rue Exemple, Montréal QC H2X 1Y1 (adresse fictive)", slug: "krizaka-demo", ownerName: "Éric" },
+  shop: { name: "Krizaka (démo)", legalName: "Technologies Krizaka inc. (démo)", address: "1 rue Exemple, Montréal QC H2X 1Y1 (adresse fictive)", slug: "krizaka-demo", ownerName: "Éric", businessType: "professional" as const },
   taglineFr: "Un studio de logiciel à Montréal : développement, design et conseil, facturés à l'heure ou au forfait.",
   taglineEn: "A software studio in Montréal: development, design and consulting, billed by the hour or by the project.",
   profile: {

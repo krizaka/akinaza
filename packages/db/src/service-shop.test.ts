@@ -3,10 +3,10 @@ import { randomBytes } from "node:crypto";
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { appointments, bookings, clients } from "./schema";
+import { appointments, bookings, clients, dependants, shops } from "./schema";
 import { addDayOff, addDependant, addWindow, akCode, bookVisit, cancelBooking, joinShop, listSlots, publicShop, revealAccessNotes, saveShopPage, setAccessNotes, ShopError } from "./service-shop";
 import { freshDatabase, refusal } from "./test/db";
-import { account, NOW, walkerShop } from "./test/fixtures";
+import { account, NOW, studioShop, walkerShop } from "./test/fixtures";
 
 let t: Awaited<ReturnType<typeof freshDatabase>>;
 beforeAll(async () => {
@@ -56,7 +56,7 @@ describe("the shop page", () => {
     for (const secret of ["12 rue Secrète", "123456789RT0001", "1234567890TQ0001", "ownerId", "legalName", "address", "gstNumber", "qstNumber", "invoicePrefix", "staffId"]) {
       expect(wire, secret).not.toContain(secret);
     }
-    expect(Object.keys(page!.shop).sort()).toEqual(["area", "bioEn", "bioFr", "id", "name", "ownerName", "publicEmail", "publicPhone", "seatUnitEn", "seatUnitFr", "slug", "taglineEn", "taglineFr", "timezone"]);
+    expect(Object.keys(page!.shop).sort()).toEqual(["area", "bioEn", "bioFr", "businessType", "id", "name", "ownerName", "publicEmail", "publicPhone", "seatUnitEn", "seatUnitFr", "slug", "taglineEn", "taglineFr", "timezone"]);
   });
 
   it("keeps a worker's weekly windows apart and refuses an end before a start", async () => {
@@ -175,5 +175,40 @@ describe("access notes (keys, door codes) are encrypted at rest", () => {
     expect(await refusal(t.db.update(clients).set({ accessNotesEnc: "Code 4821" }).where(eq(clients.id, w.jordan.clientId)))).toMatch(/clients_access_notes_sealed/);
     await setAccessNotes(t.db, key, w.camille.clientId, null);
     expect(await revealAccessNotes(t.db, key, w.camille.clientId)).toBeNull();
+  });
+});
+
+describe("the business type (the vocabulary, krizaka/akinaza#117)", () => {
+  it("is professional by default and is the owner's to choose", async () => {
+    const owner = await account(t.db, "type-default@example.test");
+    const input = { name: "Sans type", legalName: "Sans type", address: "1 rue Test", slug: "sans-type", ownerName: "Léa" };
+    const { shopId } = await saveShopPage(t.db, owner.id, input);
+    expect((await t.db.select().from(shops).where(eq(shops.id, shopId)))[0]!.businessType).toBe("professional");
+    await saveShopPage(t.db, owner.id, { ...input, businessType: "pets" });
+    expect((await t.db.select().from(shops).where(eq(shops.id, shopId)))[0]!.businessType).toBe("pets");
+    await saveShopPage(t.db, owner.id, input); // a save that does not say it leaves it as it is
+    expect((await t.db.select().from(shops).where(eq(shops.id, shopId)))[0]!.businessType).toBe("pets");
+    await expect(saveShopPage(t.db, owner.id, { ...input, businessType: "dogs" as never })).rejects.toThrow();
+  });
+
+  it("the database refuses a type it does not know", async () => {
+    const w = await walkerShop(t.db, "type-check");
+    expect(await refusal(t.pool.query(`UPDATE shops SET business_type = 'dogs' WHERE id = '${w.shopId}'`))).toMatch(/shops_business_type/);
+  });
+
+  it("a studio's client books for themselves: no dog is asked, one self dependant is kept and reused", async () => {
+    const s = await studioShop(t.db, "self");
+    const book = (startsAt: Date) => bookVisit(t.db, { clientId: s.client.clientId, serviceId: s.hour, zoneId: null, dependantIds: [], startsAt, now: NOW });
+    const first = await book(tuesday9);
+    expect(first.bookingIds).toHaveLength(1);
+    await book(new Date("2026-10-20T15:00:00Z"));
+    const rows = await t.db.select().from(dependants).where(eq(dependants.clientId, s.client.clientId));
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ kind: "other", name: "Café du Parc inc." });
+  });
+
+  it("a pet-care shop still needs a dog", async () => {
+    const w = await walkerShop(t.db, "needs-dog");
+    expect(await code(bookVisit(t.db, { clientId: w.camille.clientId, serviceId: w.solo, zoneId: w.zones.stHenri, dependantIds: [], startsAt: tuesday9, now: NOW }))).toBe("AK_DEPENDANTS_REQUIRED");
   });
 });

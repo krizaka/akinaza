@@ -4,7 +4,7 @@ import { Badge } from "@krizaka/ui/badge";
 import { Card } from "@krizaka/ui/card";
 
 import { AccessNotes } from "@/components/app/AccessNotes";
-import { useSay } from "@/lib/i18n-client";
+import { useSay, useVocabulary } from "@/lib/i18n-client";
 
 export interface ClientView {
   id: string;
@@ -18,6 +18,7 @@ export interface ClientView {
 /** The walker's clients and their dogs: breed, size, temperament, vet and emergency contact; the access notes on demand. */
 export function ClientsList({ clients }: { clients: ClientView[] }) {
   const { say } = useSay();
+  const { dependants } = useVocabulary();
   if (clients.length === 0) return <p className="text-fg-secondary">{say("clients.none")}</p>;
   return (
     <ul className="grid gap-4 lg:grid-cols-2">
@@ -34,6 +35,7 @@ export function ClientsList({ clients }: { clients: ClientView[] }) {
               {c.phone && c.email ? " · " : ""}
               {c.email}
             </p>
+            {dependants ? (
             <ul className="mt-3 flex flex-col gap-2">
               {c.dependants.map((d) => (
                 <li key={d.id} className="rounded-lg border border-border-default bg-surface-1 p-3">
@@ -47,7 +49,8 @@ export function ClientsList({ clients }: { clients: ClientView[] }) {
                 </li>
               ))}
             </ul>
-            {c.hasNotes ? (
+            ) : null}
+            {dependants && c.hasNotes ? (
               <div className="mt-3">
                 <AccessNotes clientId={c.id} clientName={c.fullName} />
               </div>

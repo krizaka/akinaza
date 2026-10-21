@@ -1,5 +1,6 @@
 "use client";
 
+import { BUSINESS_TYPES, type BusinessType } from "@akinaza/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
@@ -15,7 +16,7 @@ import { type GalleryLine, galleryText, joinLines, keepExtras, parseGallery, spl
 
 /** What the setup page needs, plain (the server picks it from the shop). */
 export interface SetupData {
-  page: { name: string; legalName: string; address: string; slug: string; ownerName: string; taglineFr: string; taglineEn: string; published: boolean; area: string; bioFr: string; bioEn: string; publicPhone: string; publicEmail: string; seatUnitFr: string; seatUnitEn: string } | null;
+  page: { name: string; legalName: string; address: string; slug: string; ownerName: string; taglineFr: string; taglineEn: string; published: boolean; area: string; bioFr: string; bioEn: string; publicPhone: string; publicEmail: string; seatUnitFr: string; seatUnitEn: string; businessType: BusinessType } | null;
   publicUrl: string | null;
   zones: { id: string; name: string }[];
   services: { id: string; nameFr: string; nameEn: string; durationMinutes: number; priceCents: number; capacity: number; descriptionFr: string; descriptionEn: string; includedFr: string[]; includedEn: string[]; priceVaries: boolean }[];
@@ -80,8 +81,9 @@ const pageForm = createKrizakaForm({
     publicEmail: z.string().trim().max(120),
     seatUnitFr: z.string().trim().max(30),
     seatUnitEn: z.string().trim().max(30),
+    businessType: z.enum(BUSINESS_TYPES),
   }),
-  defaultValues: { name: "", legalName: "", address: "", slug: "", ownerName: "", taglineFr: "", taglineEn: "", published: false, area: "", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "" },
+  defaultValues: { name: "", legalName: "", address: "", slug: "", ownerName: "", taglineFr: "", taglineEn: "", published: false, area: "", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "", businessType: "professional" as BusinessType },
 });
 
 function PageCard({ page }: { page: SetupData["page"] }) {
@@ -101,6 +103,7 @@ function PageCard({ page }: { page: SetupData["page"] }) {
       <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.page.title")}</h2>
       <form.Form aria-label={say("shopSetup.page.title")} className="grid gap-4 sm:grid-cols-2">
         <form.TextField name="name" label={say("shopSetup.page.name")} autoComplete="organization" />
+        <form.Select name="businessType" label={say("shopSetup.page.businessType")} hint={say("shopSetup.page.businessTypeHint")} options={BUSINESS_TYPES.map((type) => ({ value: type, label: say(`shopSetup.page.businessTypes.${type}`) }))} />
         <form.TextField name="legalName" label={say("shopSetup.page.legalName")} />
         <form.TextField name="address" label={say("shopSetup.page.address")} autoComplete="street-address" />
         <form.TextField name="slug" label={say("shopSetup.page.slug")} hint={say("shopSetup.page.slugHint")} transform={(v) => v.toLowerCase().replace(/[^a-z0-9-]/g, "-")} />

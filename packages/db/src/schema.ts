@@ -82,6 +82,8 @@ export const shops = pgTable(
     name: text("name").notNull(),
     legalName: text("legal_name").notNull(),
     kind: text("kind", { enum: ["salon", "bakery", "cafe", "boutique", "services", "other"] }).notNull(),
+    /** The kind of business: it sets the words of the screens (« appointment » or « walk ») and whether a booking is made for a dog (krizaka/akinaza#117). */
+    businessType: text("business_type", { enum: ["professional", "pets"] }).notNull().default("professional"),
     /** Registered for the GST and the QST (a small supplier under $30 000 is not). */
     registrant: boolean("registrant").notNull().default(true),
     gstNumber: text("gst_number"),
@@ -115,6 +117,7 @@ export const shops = pgTable(
     check("shops_slug_format", sql`${t.slug} IS NULL OR (${t.slug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$' AND length(${t.slug}) BETWEEN 3 AND 40)`),
     check("shops_published_has_slug", sql`NOT ${t.published} OR ${t.slug} IS NOT NULL`),
     check("shops_kind", sql`${t.kind} IN ('salon','bakery','cafe','boutique','services','other')`),
+    check("shops_business_type", sql`${t.businessType} IN ('professional','pets')`),
     check("shops_tax_numbers", sql`NOT ${t.registrant} OR (coalesce(${t.gstNumber}, '') ~ '^[0-9]{9}RT[0-9]{4}$' AND coalesce(${t.qstNumber}, '') ~ '^[0-9]{10}TQ[0-9]{4}$')`),
   ],
 );

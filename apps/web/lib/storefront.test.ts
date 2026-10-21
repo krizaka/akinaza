@@ -15,7 +15,7 @@ const week = (weekdays: number[], startsAt: string, endsAt: string) => weekdays.
 
 /** The dog walker: zones with coordinates, a group service with a unit, a popular service, a cover and a gallery. */
 const walker: PublicShop = {
-  shop: { id: "shop-w", name: "Pattes de Saint-Henri", slug: "pattes", timezone: TZ, taglineFr: "Des promenades de quartier.", taglineEn: "Neighbourhood dog walks.", area: "Saint-Henri, Montréal", bioFr: "Je m'appelle Léa.", bioEn: "I'm Léa.", publicPhone: "514-555-0100", publicEmail: "bonjour@pattes.example", seatUnitFr: "chiens", seatUnitEn: "dogs", ownerName: "Léa" },
+  shop: { id: "shop-w", name: "Pattes de Saint-Henri", slug: "pattes", timezone: TZ, taglineFr: "Des promenades de quartier.", taglineEn: "Neighbourhood dog walks.", area: "Saint-Henri, Montréal", bioFr: "Je m'appelle Léa.", bioEn: "I'm Léa.", publicPhone: "514-555-0100", publicEmail: "bonjour@pattes.example", seatUnitFr: "chiens", seatUnitEn: "dogs", businessType: "pets", ownerName: "Léa" },
   zones: [
     { id: "z1", name: "Saint-Henri", lat: 45.4786, lng: -73.5878 },
     { id: "z2", name: "Griffintown", lat: 45.4935, lng: -73.561 },
@@ -36,7 +36,7 @@ const walker: PublicShop = {
 
 /** A hair salon — not a dog walker: no zones, no media, no bio, no unit, nothing popular, Tuesday to Saturday. */
 const salon: PublicShop = {
-  shop: { id: "shop-s", name: "Salon Laurier", slug: "salon-laurier", timezone: TZ, taglineFr: null, taglineEn: "Cuts and colour, by appointment.", area: null, bioFr: null, bioEn: null, publicPhone: null, publicEmail: null, seatUnitFr: null, seatUnitEn: null, ownerName: "Julie" },
+  shop: { id: "shop-s", name: "Salon Laurier", slug: "salon-laurier", timezone: TZ, taglineFr: null, taglineEn: "Cuts and colour, by appointment.", area: null, bioFr: null, bioEn: null, publicPhone: null, publicEmail: null, seatUnitFr: null, seatUnitEn: null, businessType: "professional", ownerName: "Julie" },
   zones: [],
   services: [
     { id: "cut", nameFr: "Coupe", nameEn: "Haircut", durationMinutes: 45, priceCents: 4_500, capacity: 1, descriptionFr: null, descriptionEn: "A cut and a blow-dry.", includedFr: [], includedEn: [], priceVaries: false },

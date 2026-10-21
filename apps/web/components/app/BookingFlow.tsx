@@ -13,7 +13,7 @@ import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
 import { bookingDefaults } from "@/lib/booking-defaults";
-import { useSay } from "@/lib/i18n-client";
+import { useSay, useVocabulary } from "@/lib/i18n-client";
 
 export interface BookingData {
   shop: { id: string; name: string; slug: string };
@@ -33,11 +33,14 @@ const money = (cents: number, locale: string) => new Intl.NumberFormat(locale ==
 
 /** Join the shop (a file, with consents) → add a dog → pick a walk → book. Each step shows once the one before is done. */
 export function BookingFlow({ data }: { data: BookingData }) {
+  const { dependants } = useVocabulary();
   return (
     <div className="flex flex-col gap-4">
       {!data.client ? <JoinCard data={data} /> : null}
-      {data.client && data.dogs.length === 0 ? <DogCard clientId={data.client.id} /> : null}
-      {data.client && data.dogs.length > 0 ? (
+      {/* A business that has no dogs (a studio, a consultant) books the client for themselves: join → pick → book. */}
+      {data.client && !dependants ? <BookCard data={data} clientId={data.client.id} /> : null}
+      {data.client && dependants && data.dogs.length === 0 ? <DogCard clientId={data.client.id} /> : null}
+      {data.client && dependants && data.dogs.length > 0 ? (
         <>
           <AnotherDog clientId={data.client.id} />
           <BookCard data={data} clientId={data.client.id} />
@@ -151,10 +154,11 @@ function AnotherDog({ clientId }: { clientId: string }) {
   );
 }
 
-const bookForm = createKrizakaForm({
-  schema: z.object({ serviceId: z.string().min(1), zoneId: z.string(), dogIds: z.array(z.string()).min(1), startsAt: z.string().min(1) }),
-  defaultValues: { serviceId: "", zoneId: "", dogIds: [] as string[], startsAt: "" },
-});
+const bookFields = { serviceId: z.string().min(1), zoneId: z.string(), startsAt: z.string().min(1) };
+const bookDefaults = { serviceId: "", zoneId: "", dogIds: [] as string[], startsAt: "" };
+/** A pet-care booking names who comes (a dog at least); any other business books the client for themselves. */
+const bookForm = createKrizakaForm({ schema: z.object({ ...bookFields, dogIds: z.array(z.string()).min(1) }), defaultValues: bookDefaults });
+const bookSelfForm = createKrizakaForm({ schema: z.object({ ...bookFields, dogIds: z.array(z.string()) }), defaultValues: bookDefaults });
 
 interface SlotView {
   startsAt: string;
@@ -168,7 +172,8 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
   const { say, locale } = useSay();
   const call = useCall();
   const [booked, setBooked] = useState(false);
-  const form = bookForm.useForm({
+  const { dependants } = useVocabulary();
+  const form = (dependants ? bookForm : (bookSelfForm as unknown as typeof bookForm)).useForm({
     i18n: i18nOf(say, locale),
     defaultValues: bookingDefaults({ services: data.services, zones: data.zones, dogs: data.dogs, preselect: data.preselect }),
     onSubmit: async (v) => {
@@ -191,6 +196,7 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
       <form.Form aria-label={say("book.pick")} className="flex flex-col gap-4">
         <form.Select name="serviceId" label={say("book.service")} options={data.services.map((s) => ({ value: s.id, label: `${locale === "fr" ? s.nameFr : s.nameEn} · ${money(s.priceCents, locale)}` }))} />
         {data.zones.length ? <form.Select name="zoneId" label={say("book.zone")} options={data.zones.map((z) => ({ value: z.id, label: z.name }))} /> : null}
+        {dependants ? (
         <form.Field name="dogIds">
           {(field) => (
             <fieldset className="flex flex-col gap-2" aria-describedby={field.errorId}>
@@ -213,6 +219,7 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
             </fieldset>
           )}
         </form.Field>
+        ) : null}
         <form.Watch name="serviceId">
           {(serviceId) => (
             <form.Watch name="zoneId">

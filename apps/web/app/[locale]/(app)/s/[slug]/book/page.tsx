@@ -8,8 +8,10 @@ import { BookingFlow } from "@/components/app/BookingFlow";
 import { pageSession } from "@/lib/access";
 import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";
-import { asLocale, format, getDictionary } from "@/lib/i18n";
+import { asLocale, format } from "@/lib/i18n";
+import { VocabularyProvider } from "@/lib/i18n-client";
 import { backToHere } from "@/lib/next-url";
+import { consoleFor } from "@/lib/vocabulary";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -27,11 +29,12 @@ export default async function BookPage({ params, searchParams }: { params: Promi
   if (!page) notFound();
   const file = (await clientFilesOf(db(), session.account.id)).find((f) => f.shopId === page.shop.id) ?? null;
   const dogs = file ? await dependantsOf(db(), file.id) : [];
-  const t = getDictionary(locale).console.book;
+  const t = consoleFor(locale, page.shop.businessType).book;
   return (
     <AppFrame locale={locale} email={session.account.email} base={`/${locale}/app`} items={["bookings", "profile"]}>
       <div className="flex flex-col gap-4">
         <h1 className="font-display text-2xl font-bold text-fg">{format(t.title, { shop: page.shop.name })}</h1>
+        <VocabularyProvider type={page.shop.businessType}>
         <BookingFlow
           data={{
             shop: { id: page.shop.id, name: page.shop.name, slug },
@@ -44,6 +47,7 @@ export default async function BookPage({ params, searchParams }: { params: Promi
             bookingsHref: `/${locale}/app`,
           }}
         />
+        </VocabularyProvider>
       </div>
     </AppFrame>
   );

@@ -22,7 +22,7 @@ describe("Krizaka, a software studio, as Akinaza's first client (demo data, clea
     const first = await seedKrizaka(t.db, NOW);
     expect(first.created).toBe(true);
     const [shop] = await t.db.select().from(shops).where(eq(shops.id, first.shopId));
-    expect(shop).toMatchObject({ kind: "services", registrant: true, invoicePrefix: "KZ", slug: "krizaka-demo" });
+    expect(shop).toMatchObject({ kind: "services", registrant: true, invoicePrefix: "KZ", slug: "krizaka-demo", businessType: "professional" });
     expect(shop!.legalName).toMatch(/démo/);
     expect(shop!.gstNumber).toBe("123456789RT0001"); // the documented fake numbers, never Krizaka's own
     const page = await publicShop(t.db, "krizaka-demo");
