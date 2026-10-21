@@ -11,8 +11,8 @@ import { booksView, periodChoices, periodFor } from "@/lib/books";
 import { db } from "@/lib/db";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
 
-const CHIP = "rounded-full border border-border-default px-3 py-1 text-sm text-fg-secondary";
-const CHIP_ON = "rounded-full border border-border-accent bg-surface-2 px-3 py-1 text-sm font-semibold text-fg";
+const CHIP = "rounded-sm border border-border-default px-3 py-1 text-sm text-fg-secondary";
+const CHIP_ON = "rounded-sm border border-border-accent bg-surface-2 px-3 py-1 text-sm font-semibold text-fg";
 
 export const dynamic = "force-dynamic";
 

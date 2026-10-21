@@ -246,7 +246,7 @@ function ProposalCard({ proposal, onDone }: { proposal: ConnectionsData["proposa
 function Side({ title, lines, empty }: { title: string; lines: string[] | null; empty: string }) {
   return (
     <div className="rounded-lg bg-surface-2 p-3">
-      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-fg-muted">{title}</p>
+      <p className="mb-1 text-xs font-semibold text-fg-muted">{title}</p>
       {lines ? (
         lines.map((l) => (
           <p key={l} className="text-sm text-fg">
