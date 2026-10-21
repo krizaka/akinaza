@@ -772,7 +772,8 @@
         "minNoticeMinutes": "Shortest notice (minutes)",
         "reportLinkDays": "Report links last (days)",
         "submit": "Save the rules",
-        "saved": "Rules saved."
+        "saved": "Rules saved.",
+        "paymentTermsDays": "Payment terms of new invoices (days, 0 = on receipt)"
       },
       "weekdays": {
         "0": "Sunday",
@@ -1154,7 +1155,12 @@
         "taxes": "The taxes are computed once, on the taxable total, and rounded to the cent.",
         "day": "Day",
         "month": "Month",
-        "year": "Year"
+        "year": "Year",
+        "terms": "Payment terms",
+        "termsDefault": "The shop's terms ({days} days)",
+        "termsOnReceipt": "Due on receipt",
+        "termsNet": "Net {days} days",
+        "termsHint": "A buyer needs the terms and the due date from $500 to claim its input tax credits."
       },
       "list": {
         "title": "Issued invoices",
@@ -1162,7 +1168,8 @@
         "open": "Open {number}",
         "credit": "Credit note",
         "noClient": "No client file",
-        "total": "Total {amount}"
+        "total": "Total {amount}",
+        "dueOn": "Due {date}"
       },
       "back": "All invoices"
     },
@@ -1185,7 +1192,12 @@
       "total": "Total (CAD)",
       "credit": "Credit note",
       "creditOf": "This credit note cancels an earlier invoice.",
-      "footer": "Prepared with Akinaza. The merchant files the GST/QST return; Akinaza never does."
+      "footer": "Prepared with Akinaza. The merchant files the GST/QST return; Akinaza never does.",
+      "terms": "Payment terms",
+      "dueOn": "Due date",
+      "termsNet": "Net {days} days",
+      "termsNetOne": "Net 1 day",
+      "termsOnReceipt": "Due on receipt"
     },
     "vocabularies": {
       "professional": {

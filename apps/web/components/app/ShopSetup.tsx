@@ -10,7 +10,7 @@ import { useState } from "react";
 import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
-import { useSay } from "@/lib/i18n-client";
+import { useSay, useVocabulary } from "@/lib/i18n-client";
 import { shrinkImage, STOREFRONT_LONG_SIDE } from "@/lib/shrink-image";
 import { type GalleryLine, galleryText, joinLines, keepExtras, parseGallery, splitLines } from "@/lib/storefront-form";
 
@@ -23,7 +23,7 @@ export interface SetupData {
   media: { cover: (GalleryLine) | null; gallery: GalleryLine[] };
   windows: { id: string; weekday: number; startsAt: string; endsAt: string }[];
   daysOff: { id: string; onDate: string; reason: string | null }[];
-  rules: { cancellationHours: number; bookingHorizonDays: number; slotStepMinutes: number; minNoticeMinutes: number; reportLinkDays: number } | null;
+  rules: { cancellationHours: number; bookingHorizonDays: number; slotStepMinutes: number; minNoticeMinutes: number; reportLinkDays: number; paymentTermsDays: number } | null;
 }
 
 const WEEK = [1, 2, 3, 4, 5, 6, 0] as const;
@@ -450,12 +450,13 @@ function HoursCard({ windows, daysOff }: { windows: SetupData["windows"]; daysOf
 
 const num = z.string().regex(/^\d{1,5}$/);
 const rulesForm = createKrizakaForm({
-  schema: z.object({ cancellationHours: num, bookingHorizonDays: num, slotStepMinutes: num, minNoticeMinutes: num, reportLinkDays: num }),
-  defaultValues: { cancellationHours: "24", bookingHorizonDays: "60", slotStepMinutes: "30", minNoticeMinutes: "120", reportLinkDays: "30" },
+  schema: z.object({ cancellationHours: num, bookingHorizonDays: num, slotStepMinutes: num, minNoticeMinutes: num, reportLinkDays: num, paymentTermsDays: num }),
+  defaultValues: { cancellationHours: "24", bookingHorizonDays: "60", slotStepMinutes: "30", minNoticeMinutes: "120", reportLinkDays: "30", paymentTermsDays: "30" },
 });
 
 function RulesCard({ rules }: { rules: NonNullable<SetupData["rules"]> }) {
   const { say, locale } = useSay();
+  const { visitReports } = useVocabulary();
   const call = useCall();
   const [saved, setSaved] = useState(false);
   const form = rulesForm.useForm({
@@ -475,7 +476,8 @@ function RulesCard({ rules }: { rules: NonNullable<SetupData["rules"]> }) {
         <form.TextField name="bookingHorizonDays" label={say("shopSetup.rules.bookingHorizonDays")} inputMode="numeric" />
         <form.TextField name="slotStepMinutes" label={say("shopSetup.rules.slotStepMinutes")} inputMode="numeric" />
         <form.TextField name="minNoticeMinutes" label={say("shopSetup.rules.minNoticeMinutes")} inputMode="numeric" />
-        <form.TextField name="reportLinkDays" label={say("shopSetup.rules.reportLinkDays")} inputMode="numeric" />
+        {visitReports ? <form.TextField name="reportLinkDays" label={say("shopSetup.rules.reportLinkDays")} inputMode="numeric" /> : null}
+        <form.TextField name="paymentTermsDays" label={say("shopSetup.rules.paymentTermsDays")} inputMode="numeric" />
         <div className="flex flex-col gap-3 sm:col-span-2 lg:col-span-3">
           {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
           {saved ? <Alert tone="success">{say("shopSetup.rules.saved")}</Alert> : null}

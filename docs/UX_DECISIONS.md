@@ -143,3 +143,17 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: each new vertical adds its overlay in both languages; a test fails when a screen of a non-pet shop still carries
   a dog word that is not overridden.
 - **Signal we are wrong**: owners who set the wrong type, or ask for a third (groomers, repairers) that fits neither.
+
+## Payment terms and the due date (krizaka/akinaza#113)
+
+- **Decision**: every invoice carries the terms it was issued under (« Net 30 days ») and the due date they give, in the
+  language of the invoice. The shop sets its default terms once (the rules card of the shop page; 30 days, 0 = on receipt); one
+  invoice can pick others from a short list. A credit note, and an invoice issued before this existed, carry none.
+- **Problem**: a buyer needs the payment terms from $500 to claim its input tax credits (DORS/91-45, art. 3); Yomizaka's
+  `qc-invoice` flagged our own invoice (rule 008).
+- **Principle**: defaults that are right most of the time and visible (Nielsen: visibility of system status): the picker says
+  what the default is.
+- **Refused**: inventing terms on invoices already issued; making the owner type a date (the date follows from the terms and
+  the issue date, and the database refuses a due date that does not).
+- **Cost**: a custom date that is not « issue date + n days » cannot be expressed; use the nearest terms.
+- **Signal we are wrong**: owners who issue an invoice, then ask for another to change its due date.

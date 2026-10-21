@@ -1,4 +1,4 @@
-import { expenseEntries, invoiceEntries, invoiceTotals, type LedgerEntry, type LineInput, prepareReturn, type PreparedReturn, type SlotEvent } from "@akinaza/core";
+import { dueOn, expenseEntries, invoiceEntries, invoiceTotals, type LedgerEntry, type LineInput, prepareReturn, type PreparedReturn, type SlotEvent, termsDaysSchema } from "@akinaza/core";
 import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -16,16 +16,18 @@ const post = (tx: Tx, shopId: string, entries: LedgerEntry[]) =>
  * (GST/QST once on the taxable base, rounded to the cent), the lines, and the ledger entries — one transaction; the
  * database checks at commit that the lines and the ledger add up to the invoice.
  */
-export async function issueInvoice(db: Db, input: { shopId: string; clientId?: string | null; appointmentId?: string | null; language: "fr" | "en"; issuedOn: string; lines: LineInput[]; creditOf?: string | null }) {
+export async function issueInvoice(db: Db, input: { shopId: string; clientId?: string | null; appointmentId?: string | null; language: "fr" | "en"; issuedOn: string; lines: LineInput[]; creditOf?: string | null; termsDays?: number | null }) {
   return db.transaction(async (tx) => {
     const [shop] = await tx.select().from(shops).where(eq(shops.id, input.shopId)).for("update");
     if (!shop) throw new Error(`AK_SHOP_UNKNOWN: ${input.shopId}`);
     const totals = invoiceTotals(input.lines, { registrant: shop.registrant });
+    // The terms the invoice is issued under: the one asked for, else the shop's own; a credit note has none (it cancels, it is not due).
+    const termsDays = input.creditOf ? null : (input.termsDays ?? shop.paymentTermsDays);
     const number = `${shop.invoicePrefix}-${String(shop.nextInvoiceNumber).padStart(5, "0")}`;
     await tx.update(shops).set({ nextInvoiceNumber: shop.nextInvoiceNumber + 1 }).where(eq(shops.id, shop.id));
     const [invoice] = await tx
       .insert(invoices)
-      .values({ shopId: shop.id, number, clientId: input.clientId ?? null, appointmentId: input.appointmentId ?? null, creditOf: input.creditOf ?? null, language: input.language, issuedOn: input.issuedOn, subtotalCents: totals.subtotalCents, gstCents: totals.gstCents, qstCents: totals.qstCents, totalCents: totals.totalCents })
+      .values({ shopId: shop.id, number, clientId: input.clientId ?? null, appointmentId: input.appointmentId ?? null, creditOf: input.creditOf ?? null, language: input.language, issuedOn: input.issuedOn, termsDays, dueOn: termsDays === null ? null : dueOn(input.issuedOn, termsDays), subtotalCents: totals.subtotalCents, gstCents: totals.gstCents, qstCents: totals.qstCents, totalCents: totals.totalCents })
       .returning();
     await tx.insert(invoiceLines).values(totals.lines.map((l, i) => ({ invoiceId: invoice!.id, position: i + 1, description: l.description, quantity: l.quantity, unitPriceCents: l.unitPriceCents, discountCents: l.discountCents ?? 0, taxCategory: l.category, amountCents: l.amountCents })));
     await post(tx, shop.id, invoiceEntries({ id: invoice!.id, number, issuedOn: input.issuedOn, gstCents: totals.gstCents, qstCents: totals.qstCents }));
@@ -120,6 +122,8 @@ export const invoiceInputSchema = z.object({
   clientId: z.string().uuid().nullish(),
   language: z.enum(["fr", "en"]),
   issuedOn: iso,
+  /** The payment terms in days (0 = due on receipt); omitted = the shop's own. */
+  termsDays: termsDaysSchema.optional(),
   lines: z
     .array(
       z.object({
@@ -153,13 +157,13 @@ export async function issueShopInvoice(db: Db, shopId: string, raw: InvoiceInput
       lines.push({ description: l.description!, quantity: l.quantity, unitPriceCents: l.unitPriceCents, category: l.category ?? "standard" });
     }
   }
-  return issueInvoice(db, { shopId, clientId: input.clientId ?? null, language: input.language, issuedOn: input.issuedOn, lines });
+  return issueInvoice(db, { shopId, clientId: input.clientId ?? null, language: input.language, issuedOn: input.issuedOn, termsDays: input.termsDays ?? null, lines });
 }
 
 /** The shop's invoices, newest first, with the client's name (null for a sale without a client file). */
 export async function listInvoices(db: Db, shopId: string) {
   const rows = await db
-    .select({ id: invoices.id, number: invoices.number, issuedOn: invoices.issuedOn, language: invoices.language, creditOf: invoices.creditOf, subtotalCents: invoices.subtotalCents, gstCents: invoices.gstCents, qstCents: invoices.qstCents, totalCents: invoices.totalCents, client: clients.fullName })
+    .select({ id: invoices.id, number: invoices.number, issuedOn: invoices.issuedOn, dueOn: invoices.dueOn, language: invoices.language, creditOf: invoices.creditOf, subtotalCents: invoices.subtotalCents, gstCents: invoices.gstCents, qstCents: invoices.qstCents, totalCents: invoices.totalCents, client: clients.fullName })
     .from(invoices)
     .leftJoin(clients, eq(clients.id, invoices.clientId))
     .where(eq(invoices.shopId, shopId))
@@ -178,5 +182,5 @@ export async function invoiceDetail(db: Db, shopId: string, invoiceId: string) {
   if (!row) return null;
   const lines = await db.select().from(invoiceLines).where(eq(invoiceLines.invoiceId, invoiceId)).orderBy(invoiceLines.position);
   const { invoice } = row;
-  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, language: invoice.language, creditOf: invoice.creditOf, subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
+  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, termsDays: invoice.termsDays, dueOn: invoice.dueOn, language: invoice.language, creditOf: invoice.creditOf, subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
 }

@@ -84,6 +84,8 @@ export const shops = pgTable(
     kind: text("kind", { enum: ["salon", "bakery", "cafe", "boutique", "services", "other"] }).notNull(),
     /** The kind of business: it sets the words of the screens (« appointment » or « walk ») and whether a booking is made for a dog (krizaka/akinaza#117). */
     businessType: text("business_type", { enum: ["professional", "pets"] }).notNull().default("professional"),
+    /** The terms new invoices are issued under, in days (0 = due on receipt): a buyer needs them from $500 (krizaka/akinaza#113). */
+    paymentTermsDays: integer("payment_terms_days").notNull().default(30),
     /** Registered for the GST and the QST (a small supplier under $30 000 is not). */
     registrant: boolean("registrant").notNull().default(true),
     gstNumber: text("gst_number"),
@@ -117,6 +119,7 @@ export const shops = pgTable(
     check("shops_slug_format", sql`${t.slug} IS NULL OR (${t.slug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$' AND length(${t.slug}) BETWEEN 3 AND 40)`),
     check("shops_published_has_slug", sql`NOT ${t.published} OR ${t.slug} IS NOT NULL`),
     check("shops_kind", sql`${t.kind} IN ('salon','bakery','cafe','boutique','services','other')`),
+    check("shops_payment_terms", sql`${t.paymentTermsDays} BETWEEN 0 AND 365`),
     check("shops_business_type", sql`${t.businessType} IN ('professional','pets')`),
     check("shops_tax_numbers", sql`NOT ${t.registrant} OR (coalesce(${t.gstNumber}, '') ~ '^[0-9]{9}RT[0-9]{4}$' AND coalesce(${t.qstNumber}, '') ~ '^[0-9]{10}TQ[0-9]{4}$')`),
   ],
@@ -290,13 +293,16 @@ export const invoices = pgTable(
     creditOf: uuid("credit_of"),
     language: text("language", { enum: ["fr", "en"] }).notNull().default("fr"),
     issuedOn: date("issued_on").notNull(),
+    /** The payment terms the invoice was issued under and the day they make it due; null on a credit note and on an invoice issued before the terms existed. */
+    termsDays: integer("terms_days"),
+    dueOn: date("due_on"),
     subtotalCents: integer("subtotal_cents").notNull(),
     gstCents: integer("gst_cents").notNull(),
     qstCents: integer("qst_cents").notNull(),
     totalCents: integer("total_cents").notNull(),
     createdAt: created(),
   },
-  (t) => [uniqueIndex("invoices_number").on(t.shopId, t.number), check("invoices_total", sql`${t.totalCents} = ${t.subtotalCents} + ${t.gstCents} + ${t.qstCents}`), check("invoices_language", sql`${t.language} IN ('fr','en')`)],
+  (t) => [uniqueIndex("invoices_number").on(t.shopId, t.number), check("invoices_total", sql`${t.totalCents} = ${t.subtotalCents} + ${t.gstCents} + ${t.qstCents}`), check("invoices_language", sql`${t.language} IN ('fr','en')`), check("invoices_terms", sql`(${t.termsDays} IS NULL AND ${t.dueOn} IS NULL) OR (${t.termsDays} IS NOT NULL AND ${t.dueOn} IS NOT NULL AND ${t.termsDays} BETWEEN 0 AND 365 AND ${t.dueOn} = ${t.issuedOn} + ${t.termsDays})`)],
 );
 
 export const invoiceLines = pgTable(

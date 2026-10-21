@@ -7,3 +7,4 @@ export * from "./service-shop";
 export * from "./storefront";
 export * from "./social-sync";
 export * from "./vocabulary";
+export * from "./payment-terms";
