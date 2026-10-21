@@ -179,6 +179,8 @@ describe("the responsive guard", () => {
     expect(script).toContain("export const WIDTHS = [360, 390, 430, 768, 1024, 1440]");
     expect(script).toContain('["dark", "light"]');
     expect(JSON.parse(readFileSync(join(ROOT, "../../package.json"), "utf8")).scripts["check:overflow"]).toBe("node scripts/check-overflow.mjs");
-    expect(readFileSync(join(ROOT, "../../.github/workflows/ci.yml"), "utf8")).toContain("check:overflow");
+    // The pipeline is the org's node-ci.yml; its `after-build` step runs this repository's script after the production build.
+    expect(readFileSync(join(ROOT, "../../.github/workflows/ci.yml"), "utf8")).toContain("after-build: scripts/ci-after-build.sh");
+    expect(readFileSync(join(ROOT, "../../scripts/ci-after-build.sh"), "utf8")).toContain("check:overflow");
   });
 });
