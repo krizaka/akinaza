@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import type { Db, Tx } from "./client";
 import { openField, sealField } from "./crypto";
+import { ShopError } from "./errors";
 import { appointments, bookings, clients, dependants, daysOff, MediaRole, schedules, services, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
 import { recordConsent } from "./shop-ops";
 
@@ -17,15 +18,7 @@ import { recordConsent } from "./shop-ops";
 /** The version of the consent texts shown when a client joins a shop (Loi 25: a decision is tied to the words seen). */
 export const CONSENT_TEXT_VERSION = "2026-10-17";
 
-export class ShopError extends Error {
-  constructor(
-    readonly code: string,
-    message?: string,
-  ) {
-    super(message ?? code);
-    this.name = "ShopError";
-  }
-}
+export { ShopError };
 
 const refuse = (code: string): never => {
   throw new ShopError(code);

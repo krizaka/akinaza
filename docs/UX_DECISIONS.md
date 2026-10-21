@@ -112,3 +112,18 @@ Feedback: the pinned Discussion of the repository.
 - **Consent is a step, not a banner.** « Connect » opens the words of what will be read and written; the continue button stays disabled until the unticked box is ticked (Loi 25).
 - **Disconnect needs a second press** (ConfirmButton), and says what it does at the platform.
 - **Platforms without an API** (Apple Maps, Bing, Yelp) are honest cards with a link and Akinaza's values to paste, not greyed-out buttons.
+
+## Invoices for a services business (krizaka-first-client)
+
+- **Decision**: « Invoices » sits in the shop's menu, between Clients and Your books. One form issues an invoice from the
+  shop's own services (their bilingual name, price and tax category are the defaults; a negotiated price overrides) plus one
+  free line; the issued ones are a list, each opening as a document in the language of the invoice, with the supplier's
+  GST/QST numbers a buyer needs.
+- **Problem**: a business that sells hours (development, design, consulting) had no way to issue an invoice from the app at
+  all — invoices existed only in seeds — and the books had nothing of its own to prepare a return from.
+- **Principle**: recognition over recall (the services are chosen, not typed) and the cost of an error (the taxes are
+  computed on the server once, on the taxable total, so the screen never shows a figure the ledger will not hold).
+- **Refused**: free-form quantities (7.5 h — not billable yet, queued: krizaka/akinaza#111), a « send to Revenu Québec »
+  button (Akinaza prepares, the merchant files), a PDF engine of our own for now (the document prints from the browser).
+- **Cost**: three service lines and one free line per invoice; a quantity is a whole number.
+- **Signal we are wrong**: owners who issue two invoices for one job because the form has too few lines.

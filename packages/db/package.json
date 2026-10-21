@@ -9,7 +9,8 @@
     "./schema": "./src/schema.ts",
     "./seed": "./src/seed.ts",
     "./seed-walker": "./src/seed-walker.ts",
-    "./qa-reset-walker": "./src/qa-reset-walker.ts"
+    "./qa-reset-walker": "./src/qa-reset-walker.ts",
+    "./seed-krizaka": "./src/seed-krizaka.ts"
   },
   "scripts": {
     "lint": "tsc --noEmit -p tsconfig.json",
