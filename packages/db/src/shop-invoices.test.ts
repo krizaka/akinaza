@@ -39,7 +39,7 @@ describe("a services business issues an invoice from its own services (real Post
     expect(totals.lines[0]).toMatchObject({ unitPriceCents: 4_000, amountCents: 8_000 });
   });
 
-  it("refuses a service or a client of another shop, an empty invoice, a free-text line without a price, a fractional quantity", async () => {
+  it("refuses a service or a client of another shop, an empty invoice, a free-text line without a price, a quantity finer than a hundredth", async () => {
     const a = await salon(t.db);
     const b = await salon(t.db);
     expect(await refusal(issueShopInvoice(t.db, a.shop.id, { language: "fr", issuedOn: "2026-10-21", lines: [{ serviceId: b.services.cut.id, quantity: 1 }] }))).toMatch(/AK_SERVICE_UNKNOWN/);
@@ -47,7 +47,8 @@ describe("a services business issues an invoice from its own services (real Post
     expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "2026-10-21", lines: [] }).success).toBe(false);
     expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 1 }] }).success).toBe(true);
     expect(await refusal(issueShopInvoice(t.db, a.shop.id, { language: "fr", issuedOn: "2026-10-21", lines: [{ description: "Travail", quantity: 1 }] }))).toMatch(/AK_LINE_PRICE/);
-    expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 7.5, unitPriceCents: 100 }] }).success).toBe(false);
+    expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 7.555, unitPriceCents: 100 }] }).success).toBe(false);
+    expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 7.5, unitPriceCents: 100 }] }).success).toBe(true); // krizaka/akinaza#111
     expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "21/10/2026", lines: [{ description: "x", quantity: 1, unitPriceCents: 100 }] }).success).toBe(false);
   });
 
