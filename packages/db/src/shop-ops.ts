@@ -29,7 +29,7 @@ export async function issueInvoice(db: Db, input: { shopId: string; clientId?: s
       .insert(invoices)
       .values({ shopId: shop.id, number, clientId: input.clientId ?? null, appointmentId: input.appointmentId ?? null, creditOf: input.creditOf ?? null, language: input.language, issuedOn: input.issuedOn, termsDays, dueOn: termsDays === null ? null : dueOn(input.issuedOn, termsDays), subtotalCents: totals.subtotalCents, gstCents: totals.gstCents, qstCents: totals.qstCents, totalCents: totals.totalCents })
       .returning();
-    await tx.insert(invoiceLines).values(totals.lines.map((l, i) => ({ invoiceId: invoice!.id, position: i + 1, description: l.description, quantity: l.quantity, unitPriceCents: l.unitPriceCents, discountCents: l.discountCents ?? 0, taxCategory: l.category, amountCents: l.amountCents })));
+    await tx.insert(invoiceLines).values(totals.lines.map((l, i) => ({ invoiceId: invoice!.id, position: i + 1, description: l.description, quantityHundredths: l.quantityHundredths, unitPriceCents: l.unitPriceCents, discountCents: l.discountCents ?? 0, taxCategory: l.category, amountCents: l.amountCents })));
     await post(tx, shop.id, invoiceEntries({ id: invoice!.id, number, issuedOn: input.issuedOn, gstCents: totals.gstCents, qstCents: totals.qstCents }));
     return { invoice: invoice!, totals };
   });
@@ -46,7 +46,7 @@ export async function creditNote(db: Db, invoiceId: string, issuedOn: string) {
     language: original.language,
     issuedOn,
     creditOf: original.id,
-    lines: lines.map((l) => ({ description: l.description, quantity: -l.quantity, unitPriceCents: l.unitPriceCents, discountCents: -l.discountCents, category: l.taxCategory })),
+    lines: lines.map((l) => ({ description: l.description, quantity: -l.quantityHundredths / 100, unitPriceCents: l.unitPriceCents, discountCents: -l.discountCents, category: l.taxCategory })),
   });
 }
 
@@ -129,7 +129,8 @@ export const invoiceInputSchema = z.object({
       z.object({
         serviceId: z.string().uuid().optional(),
         description: z.string().trim().min(1).max(200).optional(),
-        quantity: z.number().int().min(1).max(10_000),
+        /** Units billed, to the hundredth (7.5 hours): at least 0.01, at most 10 000. */
+        quantity: z.number().min(0.01).max(10_000).refine((q) => Math.abs(q * 100 - Math.round(q * 100)) < 1e-6, { message: "a quantity has at most two decimals" }),
         unitPriceCents: z.number().int().min(0).max(100_000_000).optional(),
         category: z.enum(["standard", "zeroRated", "exempt"]).optional(),
       }).refine((l) => l.serviceId || l.description, { message: "a line names a service or a description" }),

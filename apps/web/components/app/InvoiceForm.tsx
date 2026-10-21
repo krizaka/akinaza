@@ -9,6 +9,7 @@ import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
 import { useSay } from "@/lib/i18n-client";
+import { parseQuantity, QUANTITY_FIELD } from "@/lib/quantity";
 
 export interface InvoiceFormData {
   today: string;
@@ -20,7 +21,7 @@ export interface InvoiceFormData {
 
 const money = (cents: number, locale: string) => new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(cents / 100);
 
-const quantity = z.string().regex(/^\d{0,4}$/);
+const quantity = QUANTITY_FIELD;
 const invoiceForm = createKrizakaForm({
   schema: z.object({
     clientId: z.string(),
@@ -56,10 +57,11 @@ export function InvoiceForm({ data, locale: base }: { data: InvoiceFormData; loc
       const lines: Record<string, unknown>[] = [];
       for (const n of [1, 2, 3] as const) {
         const serviceId = values[`service${n}`];
-        const qty = Number(values[`quantity${n}`]);
-        if (serviceId && qty >= 1) lines.push({ serviceId, quantity: qty });
+        const qty = parseQuantity(values[`quantity${n}`]);
+        if (serviceId && qty !== null) lines.push({ serviceId, quantity: qty });
       }
-      if (values.customDescription.trim() && Number(values.customQuantity) >= 1) lines.push({ description: values.customDescription.trim(), quantity: Number(values.customQuantity), unitPriceCents: values.customPrice });
+      const customQuantity = parseQuantity(values.customQuantity);
+      if (values.customDescription.trim() && customQuantity !== null) lines.push({ description: values.customDescription.trim(), quantity: customQuantity, unitPriceCents: values.customPrice });
       setNeedLine(lines.length === 0);
       if (lines.length === 0) return;
       const done = await call.run<{ id: string }>("/api/walker/invoices", { json: { clientId: values.clientId || null, language: values.language, issuedOn: values.issuedOn, lines, ...(values.terms === "" ? {} : { termsDays: Number(values.terms) }) } });
@@ -81,13 +83,13 @@ export function InvoiceForm({ data, locale: base }: { data: InvoiceFormData; loc
         {([1, 2, 3] as const).map((n) => (
           <div key={n} className="grid gap-3 sm:col-span-2 sm:grid-cols-[1fr_8rem]">
             <form.Select name={`service${n}`} label={say("invoices.new.service", { n })} options={serviceOptions} />
-            <form.TextField name={`quantity${n}`} label={say("invoices.new.quantity")} inputMode="numeric" />
+            <form.TextField name={`quantity${n}`} label={say("invoices.new.quantity")} inputMode="decimal" />
           </div>
         ))}
         <div className="grid gap-3 sm:col-span-2 sm:grid-cols-[1fr_10rem_8rem]">
           <form.TextField name="customDescription" label={say("invoices.new.customDescription")} />
           <form.Money name="customPrice" label={say("invoices.new.customPrice")} currency="CAD" />
-          <form.TextField name="customQuantity" label={say("invoices.new.customQuantity")} inputMode="numeric" />
+          <form.TextField name="customQuantity" label={say("invoices.new.customQuantity")} inputMode="decimal" />
         </div>
         <p className="text-xs text-fg-muted sm:col-span-2">{say("invoices.new.taxes")}</p>
         <div className="flex flex-col gap-3 sm:col-span-2">

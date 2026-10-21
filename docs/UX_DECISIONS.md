@@ -123,9 +123,9 @@ Feedback: the pinned Discussion of the repository.
   all — invoices existed only in seeds — and the books had nothing of its own to prepare a return from.
 - **Principle**: recognition over recall (the services are chosen, not typed) and the cost of an error (the taxes are
   computed on the server once, on the taxable total, so the screen never shows a figure the ledger will not hold).
-- **Refused**: free-form quantities (7.5 h — not billable yet, queued: krizaka/akinaza#111), a « send to Revenu Québec »
+- **Refused**: a « send to Revenu Québec »
   button (Akinaza prepares, the merchant files), a PDF engine of our own for now (the document prints from the browser).
-- **Cost**: three service lines and one free line per invoice; a quantity is a whole number.
+- **Cost**: three service lines and one free line per invoice; a quantity goes to the hundredth (7,5 h billed since krizaka/akinaza#111).
 - **Signal we are wrong**: owners who issue two invoices for one job because the form has too few lines.
 
 ## The words of the business (krizaka/akinaza#117)
@@ -157,3 +157,14 @@ Feedback: the pinned Discussion of the repository.
   the issue date, and the database refuses a due date that does not).
 - **Cost**: a custom date that is not « issue date + n days » cannot be expressed; use the nearest terms.
 - **Signal we are wrong**: owners who issue an invoice, then ask for another to change its due date.
+
+## Fractional hours (krizaka/akinaza#111)
+
+- **Decision**: a quantity on an invoice line can be fractional to the hundredth (7,5 h, 0,25 day); it is typed with a point or a
+  comma and shown the way the invoice's language writes it. The amount is `round(quantity × price)` half away from zero in whole
+  cents; the GST and the QST are still computed once on the taxable total.
+- **Problem**: a studio or a consultant bills 7.5 hours; whole hours only meant rounding the client's bill by hand.
+- **Principle**: match the real world (Nielsen): people bill the time they worked.
+- **Refused**: a unit label on the line (the service already says « hourly » or « flat fee »); a quantity finer than a hundredth.
+- **Cost**: a line's cent is rounded before the invoice's taxes, so a very long list of fractional lines can differ by a cent from the exact total — the invoice shows the rounded lines, and its taxes are exact on their sum.
+- **Signal we are wrong**: owners who ask to bill by the minute.

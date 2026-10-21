@@ -36,7 +36,7 @@ export async function todayView(accountId: string): Promise<TodayView | null> {
   let invoice: TodayView["invoice"] = null;
   if (last) {
     const lines = await db().select().from(invoiceLines).where(eq(invoiceLines.invoiceId, last.i.id)).orderBy(asc(invoiceLines.position));
-    const totals = invoiceTotals(lines.map((l) => ({ description: l.description, quantity: l.quantity, unitPriceCents: l.unitPriceCents, discountCents: l.discountCents, category: l.taxCategory })), { registrant: shop.registrant });
+    const totals = invoiceTotals(lines.map((l) => ({ description: l.description, quantity: l.quantityHundredths / 100, unitPriceCents: l.unitPriceCents, discountCents: l.discountCents, category: l.taxCategory })), { registrant: shop.registrant });
     invoice = { kind: "issued", number: last.i.number, issuedOn: last.i.issuedOn, language: last.i.language, client: last.client, totals };
   } else if (list[0]) {
     const first = list[0];

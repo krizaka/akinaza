@@ -2,6 +2,7 @@ import type { invoiceDetail } from "@akinaza/db";
 import Link from "next/link";
 
 import { format, getDictionary, type Locale } from "@/lib/i18n";
+import { formatQuantity } from "@/lib/quantity";
 
 export type InvoiceView = NonNullable<Awaited<ReturnType<typeof invoiceDetail>>>;
 
@@ -75,7 +76,7 @@ export function InvoiceDocument({ invoice, locale }: { invoice: InvoiceView; loc
             <span className="text-fg">{l.description}</span>
             <span className="text-right font-mono text-fg">{money(l.amountCents)}</span>
             <span className="text-sm text-fg-muted">
-              {t.quantity} {l.quantity} × {money(l.unitPriceCents)}
+              {t.quantity} {formatQuantity(l.quantityHundredths / 100, invoice.language)} × {money(l.unitPriceCents)}
             </span>
           </li>
         ))}
