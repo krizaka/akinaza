@@ -14,54 +14,36 @@ permissions:
   contents: read
 
 jobs:
-  verify:
-    # The job name is the required status check on main: keep it.
-    name: Lint · Typecheck · Tests · Build
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: akinaza
-          POSTGRES_PASSWORD: ci-only-password
-          POSTGRES_DB: akinaza
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
-    env:
+  # The pipeline is the org's (krizaka/.github docs/standards/ci-and-deploy.md): the changes gate, the pnpm and Playwright caches,
+  # the timeouts and the gate that always reports live there. This file says only what is Akinaza's.
+  ci:
+    uses: krizaka/.github/.github/workflows/node-ci.yml@70fb536c28d970c5d8125ff08f1ecb7d8570c4fb # v1.0.0
+    permissions:
+      contents: read
+    with:
+      package-manager: pnpm
+      typecheck-script: typecheck
+      next-cache-paths: apps/web/.next/cache
+      postgres-image: postgres:16
+      postgres-name: akinaza
       # Test values only — no real secret anywhere. The database tests create a database per file on this server.
-      DATABASE_URL: postgresql://akinaza:ci-only-password@localhost:5432/akinaza
-      DATABASE_IT: "1"
+      env: |
+        DATABASE_URL=postgresql://akinaza:ci-only-password@localhost:5432/akinaza
+        DATABASE_IT=1
+      playwright: chromium
+      # SEO family contract on the built site, sign-up closed, no horizontal overflow (scripts/ci-after-build.sh).
+      after-build: scripts/ci-after-build.sh
+      # Files no test or build reads skip the heavy jobs (docs/, policy text, templates, the README's images). Fails open.
+      ignore: '^docs/|^\.changeset/|^(LICENSE|SECURITY|CODE_OF_CONDUCT|SUPPORT)(\.md)?$|^\.github/(ISSUE_TEMPLATE/|assets/|pull_request_template\.md$|FUNDING\.yml$|dependabot\.yml$)'
+
+  # The job name is the required status check on main: kept by a shim that reads the gate's verdict.
+  verify:
+    name: Lint · Typecheck · Tests · Build
+    needs: ci
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    env:
+      RESULT: ${{ needs.ci.outputs.result }}
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - name: Lint (ESLint, i18n catalogues)
-        run: pnpm run lint
-      - name: Typecheck
-        run: pnpm run typecheck
-      - name: Unit and database tests (PostgreSQL 16)
-        run: pnpm run test
-      - name: Production build
-        run: pnpm run build
-      - name: SEO family contract on the built site, and sign-up closed
-        env:
-          NODE_ENV: production
-          AUTH_SESSION_SECRET: ci-only-session-secret-0123456789abcdef
-          AI_API_KEY: oz_ci_only_not_a_key
-          APP_DATA_ENCRYPTION_KEY: Y2ktb25seS1kYXRhLWtleS0zMi1ieXRlcy0xMjM0NTY=
-          PORT: "3000"
-        run: |
-          (cd apps/web && npx next start -p 3000 > ../../web.log 2>&1 &)
-          for i in $(seq 1 60); do curl -sf http://localhost:3000/api/healthz && break; sleep 1; done
-          pnpm run seo:check
-          # Responsive guard: no horizontal overflow at 360–1440 px in both themes.
-          npx playwright-core install --with-deps chromium
-          pnpm run check:overflow -- --base http://localhost:3000
-          test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3000/api/auth/sign-up)" = "403"
-      - if: failure()
-        run: tail -100 web.log || true
+      - run: test "$RESULT" = success
