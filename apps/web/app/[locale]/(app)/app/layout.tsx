@@ -18,7 +18,7 @@ export default async function MemberLayout({ children, params }: { children: Rea
   if (!session) redirect(`/${locale}/sign-in`);
   const owner = await shopOfOwner(db(), session.account.id);
   return (
-    <AppFrame locale={locale} email={session.account.email} base={`/${locale}/app`} items={owner ? ["today", "clients", "books", "shop", "connections", "profile"] : ["bookings", "shop", "profile"]}>
+    <AppFrame locale={locale} email={session.account.email} base={`/${locale}/app`} items={owner ? ["today", "clients", "invoices", "books", "shop", "connections", "profile"] : ["bookings", "shop", "profile"]}>
       {children}
     </AppFrame>
   );

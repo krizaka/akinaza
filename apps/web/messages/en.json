@@ -288,7 +288,8 @@
       "book": "Book a walk",
       "report": "Walk report",
       "connections": "Connections",
-      "books": "Your books"
+      "books": "Your books",
+      "invoices": "Invoices"
     },
     "signIn": {
       "promise": "Your shop, for less — Loi 25 by design.",
@@ -520,7 +521,8 @@
       "UPLOAD_UNAVAILABLE": "Photo upload is not available yet. Paste the address of a file instead.",
       "UPLOAD_TOO_LARGE": "This photo is too large.",
       "UPLOAD_NOT_IMAGE": "Use a JPEG, PNG or WebP photo.",
-      "ALREADY_BOOKED": "This dog already has a seat on that walk."
+      "ALREADY_BOOKED": "This dog already has a seat on that walk.",
+      "LINE_PRICE": "A free line needs a price."
     },
     "today": {
       "day": "{date} · {count} appointments",
@@ -1120,6 +1122,64 @@
         }
       },
       "footnote": "Line numbers are those of Revenu Québec's combined return (FPZ-500). Check each figure against its documents before you file."
+    },
+    "invoices": {
+      "title": "Invoices",
+      "lead": "Bill your services: GST 5 % and QST 9.975 % to the cent, posted to your ledger in the same step. Akinaza prepares your return; you file it.",
+      "new": {
+        "title": "New invoice",
+        "client": "Client",
+        "noClient": "No client file",
+        "language": "Language of the invoice",
+        "languages": {
+          "fr": "Français",
+          "en": "English"
+        },
+        "issuedOn": "Date",
+        "service": "Service {n}",
+        "noService": "—",
+        "quantity": "Quantity",
+        "quantityHint": "Whole units: hours, days or packages.",
+        "customDescription": "Other line (description)",
+        "customPrice": "Unit price",
+        "customQuantity": "Quantity of the other line",
+        "submit": "Issue the invoice",
+        "needLine": "Choose at least one service or write a line with its price.",
+        "taxes": "The taxes are computed once, on the taxable total, and rounded to the cent.",
+        "day": "Day",
+        "month": "Month",
+        "year": "Year"
+      },
+      "list": {
+        "title": "Issued invoices",
+        "none": "No invoice yet.",
+        "open": "Open {number}",
+        "credit": "Credit note",
+        "noClient": "No client file",
+        "total": "Total {amount}"
+      },
+      "back": "All invoices"
+    },
+    "invoiceDoc": {
+      "title": "Invoice / Facture",
+      "number": "Invoice no.",
+      "date": "Date",
+      "issuedBy": "Issued by",
+      "billedTo": "Billed to",
+      "gstNumber": "GST registration no.",
+      "qstNumber": "QST registration no.",
+      "unregistered": "Not registered for the GST and the QST: no tax is charged.",
+      "description": "Description",
+      "quantity": "Qty",
+      "unitPrice": "Unit price",
+      "amount": "Amount",
+      "subtotal": "Subtotal",
+      "gst": "GST (5 %)",
+      "qst": "QST (9.975 %)",
+      "total": "Total (CAD)",
+      "credit": "Credit note",
+      "creditOf": "This credit note cancels an earlier invoice.",
+      "footer": "Prepared with Akinaza. The merchant files the GST/QST return; Akinaza never does."
     }
   },
   "changelog": {

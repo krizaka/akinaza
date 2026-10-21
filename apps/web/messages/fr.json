@@ -288,7 +288,8 @@
       "book": "Réserver une promenade",
       "report": "Rapport de promenade",
       "connections": "Connexions",
-      "books": "Vos livres"
+      "books": "Vos livres",
+      "invoices": "Factures"
     },
     "signIn": {
       "promise": "Votre boutique, pour moins cher — Loi 25 dès la conception.",
@@ -520,7 +521,8 @@
       "UPLOAD_UNAVAILABLE": "Le téléversement de photos n'est pas encore disponible. Collez plutôt l'adresse d'un fichier.",
       "UPLOAD_TOO_LARGE": "Cette photo est trop lourde.",
       "UPLOAD_NOT_IMAGE": "Utilisez une photo JPEG, PNG ou WebP.",
-      "ALREADY_BOOKED": "Ce chien a déjà une place à cette promenade."
+      "ALREADY_BOOKED": "Ce chien a déjà une place à cette promenade.",
+      "LINE_PRICE": "Une ligne libre doit avoir un prix."
     },
     "today": {
       "day": "{date} · {count} rendez-vous",
@@ -1120,6 +1122,64 @@
         }
       },
       "footnote": "Les numéros de ligne sont ceux de la déclaration combinée de Revenu Québec (FPZ-500). Vérifiez chaque chiffre avec ses documents avant de produire."
+    },
+    "invoices": {
+      "title": "Factures",
+      "lead": "Facturez vos services : TPS 5 % et TVQ 9,975 % au cent près, inscrites à votre grand livre dans la même étape. Akinaza prépare votre déclaration; vous la produisez.",
+      "new": {
+        "title": "Nouvelle facture",
+        "client": "Client",
+        "noClient": "Sans fiche client",
+        "language": "Langue de la facture",
+        "languages": {
+          "fr": "Français",
+          "en": "English"
+        },
+        "issuedOn": "Date",
+        "service": "Service {n}",
+        "noService": "—",
+        "quantity": "Quantité",
+        "quantityHint": "Unités entières : heures, jours ou forfaits.",
+        "customDescription": "Autre ligne (description)",
+        "customPrice": "Prix unitaire",
+        "customQuantity": "Quantité de l'autre ligne",
+        "submit": "Émettre la facture",
+        "needLine": "Choisissez au moins un service, ou écrivez une ligne avec son prix.",
+        "taxes": "Les taxes sont calculées une seule fois, sur le total taxable, et arrondies au cent.",
+        "day": "Jour",
+        "month": "Mois",
+        "year": "Année"
+      },
+      "list": {
+        "title": "Factures émises",
+        "none": "Aucune facture pour l'instant.",
+        "open": "Ouvrir {number}",
+        "credit": "Note de crédit",
+        "noClient": "Sans fiche client",
+        "total": "Total {amount}"
+      },
+      "back": "Toutes les factures"
+    },
+    "invoiceDoc": {
+      "title": "Facture / Invoice",
+      "number": "N° de facture",
+      "date": "Date",
+      "issuedBy": "Émise par",
+      "billedTo": "Facturée à",
+      "gstNumber": "N° d'inscription à la TPS",
+      "qstNumber": "N° d'inscription à la TVQ",
+      "unregistered": "Non inscrit à la TPS et à la TVQ : aucune taxe n'est perçue.",
+      "description": "Description",
+      "quantity": "Qté",
+      "unitPrice": "Prix unitaire",
+      "amount": "Montant",
+      "subtotal": "Sous-total",
+      "gst": "TPS (5 %)",
+      "qst": "TVQ (9,975 %)",
+      "total": "Total (CAD)",
+      "credit": "Note de crédit",
+      "creditOf": "Cette note de crédit annule une facture antérieure.",
+      "footer": "Préparée avec Akinaza. Le commerçant produit lui-même la déclaration de TPS/TVQ; Akinaza ne la produit jamais."
     }
   },
   "changelog": {

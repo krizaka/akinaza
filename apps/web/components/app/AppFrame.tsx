@@ -54,7 +54,7 @@ export function AppFrame({ locale, email, base, items, admin = false, children }
         }
       >
         {items.map((key) => {
-          const to = admin ? (key === "overview" ? base : `${base}/${key}`) : key === "profile" || key === "clients" || key === "shop" || key === "connections" || key === "books" ? `${base}/${key}` : base;
+          const to = admin ? (key === "overview" ? base : `${base}/${key}`) : key === "profile" || key === "clients" || key === "shop" || key === "connections" || key === "books" || key === "invoices" ? `${base}/${key}` : base;
           return (
             <AppShell.Item key={key} asChild label={say(`shell.${key}`)} icon={ICONS[key]} current={isCurrent(to)}>
               <Link href={to}>{say(`shell.${key}`)}</Link>

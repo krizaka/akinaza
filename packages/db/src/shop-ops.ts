@@ -1,8 +1,10 @@
 import { expenseEntries, invoiceEntries, invoiceTotals, type LedgerEntry, type LineInput, prepareReturn, type PreparedReturn, type SlotEvent } from "@akinaza/core";
-import { and, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
+import { z } from "zod";
 
 import type { Db, Tx } from "./client";
 import { appointments, bookings, clientConsents, clients, dependants, expenses, invoiceLines, invoices, mailOutbox, services, shops, taxLedger, visitReports } from "./schema";
+import { ShopError } from "./errors";
 
 const post = (tx: Tx, shopId: string, entries: LedgerEntry[]) =>
   entries.length
@@ -104,4 +106,77 @@ export async function prepareShopReturn(db: Db, shopId: string, periodStart: str
     suppliesCents: supplies?.cents ?? 0,
     entries: rows.map((r) => ({ period: r.period, tax: r.tax, direction: r.direction, amountCents: r.amountCents, source: { kind: r.sourceKind, id: r.sourceId, label: r.sourceLabel } })),
   });
+}
+
+
+const iso = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
+/**
+ * An invoice a business asks for: a client (optional), a language, a day and lines. A line is a **service** of the shop
+ * (its bilingual name, its price and its tax category are the defaults; a negotiated price overrides the price) or free text
+ * with its own price. Quantities are whole numbers (hours, days, packages); fractional hours are not billable yet.
+ */
+export const invoiceInputSchema = z.object({
+  clientId: z.string().uuid().nullish(),
+  language: z.enum(["fr", "en"]),
+  issuedOn: iso,
+  lines: z
+    .array(
+      z.object({
+        serviceId: z.string().uuid().optional(),
+        description: z.string().trim().min(1).max(200).optional(),
+        quantity: z.number().int().min(1).max(10_000),
+        unitPriceCents: z.number().int().min(0).max(100_000_000).optional(),
+        category: z.enum(["standard", "zeroRated", "exempt"]).optional(),
+      }).refine((l) => l.serviceId || l.description, { message: "a line names a service or a description" }),
+    )
+    .min(1)
+    .max(40),
+});
+export type InvoiceInput = z.input<typeof invoiceInputSchema>;
+
+/** Issues an invoice for the shop from its services and free lines (the same transaction as `issueInvoice`). */
+export async function issueShopInvoice(db: Db, shopId: string, raw: InvoiceInput) {
+  const input = invoiceInputSchema.parse(raw);
+  if (input.clientId) {
+    const [client] = await db.select({ id: clients.id }).from(clients).where(and(eq(clients.id, input.clientId), eq(clients.shopId, shopId)));
+    if (!client) throw new ShopError("AK_CLIENT_UNKNOWN", `AK_CLIENT_UNKNOWN: ${input.clientId}`);
+  }
+  const lines: LineInput[] = [];
+  for (const l of input.lines) {
+    if (l.serviceId) {
+      const [service] = await db.select().from(services).where(and(eq(services.id, l.serviceId), eq(services.shopId, shopId)));
+      if (!service) throw new ShopError("AK_SERVICE_UNKNOWN", `AK_SERVICE_UNKNOWN: ${l.serviceId}`);
+      lines.push({ description: l.description ?? `${service.nameFr} / ${service.nameEn}`, quantity: l.quantity, unitPriceCents: l.unitPriceCents ?? service.priceCents, category: l.category ?? service.taxCategory });
+    } else {
+      if (l.unitPriceCents === undefined) throw new ShopError("AK_LINE_PRICE", "AK_LINE_PRICE: a free line needs a price");
+      lines.push({ description: l.description!, quantity: l.quantity, unitPriceCents: l.unitPriceCents, category: l.category ?? "standard" });
+    }
+  }
+  return issueInvoice(db, { shopId, clientId: input.clientId ?? null, language: input.language, issuedOn: input.issuedOn, lines });
+}
+
+/** The shop's invoices, newest first, with the client's name (null for a sale without a client file). */
+export async function listInvoices(db: Db, shopId: string) {
+  const rows = await db
+    .select({ id: invoices.id, number: invoices.number, issuedOn: invoices.issuedOn, language: invoices.language, creditOf: invoices.creditOf, subtotalCents: invoices.subtotalCents, gstCents: invoices.gstCents, qstCents: invoices.qstCents, totalCents: invoices.totalCents, client: clients.fullName })
+    .from(invoices)
+    .leftJoin(clients, eq(clients.id, invoices.clientId))
+    .where(eq(invoices.shopId, shopId))
+    .orderBy(desc(invoices.createdAt), desc(invoices.number));
+  return rows;
+}
+
+/** One invoice with its lines, its client and the supplier's identity (the numbers a buyer needs for input tax credits); null if it is not this shop's. */
+export async function invoiceDetail(db: Db, shopId: string, invoiceId: string) {
+  const [row] = await db
+    .select({ invoice: invoices, client: { fullName: clients.fullName, email: clients.email, phone: clients.phone }, shop: { legalName: shops.legalName, address: shops.address, registrant: shops.registrant, gstNumber: shops.gstNumber, qstNumber: shops.qstNumber } })
+    .from(invoices)
+    .innerJoin(shops, eq(shops.id, invoices.shopId))
+    .leftJoin(clients, eq(clients.id, invoices.clientId))
+    .where(and(eq(invoices.id, invoiceId), eq(invoices.shopId, shopId)));
+  if (!row) return null;
+  const lines = await db.select().from(invoiceLines).where(eq(invoiceLines.invoiceId, invoiceId)).orderBy(invoiceLines.position);
+  const { invoice } = row;
+  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, language: invoice.language, creditOf: invoice.creditOf, subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
 }
