@@ -11,6 +11,13 @@ const MIGRATIONS_DIR = fileURLToPath(new URL("../../drizzle", import.meta.url));
 
 /** A database of its own for a test file, migrated from scratch, dropped at the end. */
 export async function freshDatabase(): Promise<{ db: Db; pool: pg.Pool; drop: () => Promise<void> }> {
+  const empty = await freshEmptyDatabase();
+  await migrate(empty.pool, MIGRATIONS_DIR);
+  return empty;
+}
+
+/** The same, before any migration: for a test that applies them itself (a migration's own test). */
+export async function freshEmptyDatabase(): Promise<{ db: Db; pool: pg.Pool; drop: () => Promise<void> }> {
   const admin = new URL(inject("adminUrl"));
   const name = `ak_it_${randomBytes(6).toString("hex")}`;
   const root = new pg.Client({ connectionString: admin.toString() });
@@ -20,7 +27,6 @@ export async function freshDatabase(): Promise<{ db: Db; pool: pg.Pool; drop: ()
   const url = new URL(admin.toString());
   url.pathname = `/${name}`;
   const pool = new pg.Pool({ connectionString: url.toString(), max: 4 });
-  await migrate(pool, MIGRATIONS_DIR);
   return {
     db: createDb(pool),
     pool,

@@ -1146,7 +1146,7 @@
         "service": "Service {n}",
         "noService": "—",
         "quantity": "Quantity",
-        "quantityHint": "Whole units: hours, days or packages.",
+        "quantityHint": "Hours, days or packages — fractions to the hundredth are fine (7.5 hours).",
         "customDescription": "Other line (description)",
         "customPrice": "Unit price",
         "customQuantity": "Quantity of the other line",

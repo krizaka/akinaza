@@ -13,6 +13,7 @@ import { WalkerDay } from "@/components/app/WalkerDay";
 import { pageSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { asLocale, format, getDictionary, type Locale } from "@/lib/i18n";
+import { formatQuantity } from "@/lib/quantity";
 import { todayView } from "@/lib/today";
 import { consoleFor } from "@/lib/vocabulary";
 
@@ -139,7 +140,7 @@ async function SalonToday({ params }: { params: Promise<{ locale: string }> }) {
                 {inv.totals.lines.map((l, i) => (
                   <li key={i} className="flex justify-between gap-2">
                     <span className="text-fg">
-                      {l.quantity > 1 ? `${l.quantity} × ` : ""}
+                      {l.quantity !== 1 ? `${formatQuantity(l.quantity, inv.language)} × ` : ""}
                       {l.description}
                     </span>
                     <span className="font-mono text-fg">{money(l.amountCents, inv.language)}</span>

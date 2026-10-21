@@ -60,7 +60,8 @@ describe.runIf(enabled)("a services business issues an invoice over HTTP", () =>
   it("refuses what is not valid, in stable codes", async () => {
     const owner = sessions.owner;
     expect((await call(invoices, "/api/walker/invoices", { token: owner, json: { language: "fr", issuedOn: "2026-10-21", lines: [] } })).body).toMatchObject({ code: "BAD_REQUEST" });
-    expect((await call(invoices, "/api/walker/invoices", { token: owner, json: { language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 7.5, unitPriceCents: 100 }] } })).status).toBe(400);
+    expect((await call(invoices, "/api/walker/invoices", { token: owner, json: { language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 7.555, unitPriceCents: 100 }] } })).status).toBe(400); // finer than a hundredth
+    expect((await call(invoices, "/api/walker/invoices", { token: owner, json: { language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 0, unitPriceCents: 100 }] } })).status).toBe(400);
     expect((await call(invoices, "/api/walker/invoices", { token: owner, json: { language: "fr", issuedOn: "2026-10-21", lines: [{ description: "Travail", quantity: 1 }] } })).body).toMatchObject({ code: "LINE_PRICE" });
     expect((await call(invoices, "/api/walker/invoices", { token: owner, json: { language: "fr", issuedOn: "2026-10-21", lines: [{ serviceId: "00000000-0000-4000-8000-000000000000", quantity: 1 }] } })).status).toBe(404);
   });

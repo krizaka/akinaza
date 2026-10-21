@@ -29,7 +29,7 @@ const invoice = (over: Partial<InvoiceView> = {}): InvoiceView => ({
   totalCents: 609_368,
   client: { fullName: "Café du Parc inc. (démo)", email: "contact.cafedupark@akinaza.test", phone: "514-555-0111" },
   shop: { legalName: "Technologies Krizaka inc. (démo)", address: "1 rue Exemple, Montréal QC", registrant: true, gstNumber: "123456789RT0001", qstNumber: "1234567890TQ0001" },
-  lines: [{ id: "l1", invoiceId: "i1", position: 1, description: "Développement logiciel / Software development", quantity: 10, unitPriceCents: 15_000, discountCents: 0, taxCategory: "standard", amountCents: 150_000 }],
+  lines: [{ id: "l1", invoiceId: "i1", position: 1, description: "Développement logiciel / Software development", quantityHundredths: 1_000, unitPriceCents: 15_000, discountCents: 0, taxCategory: "standard", amountCents: 150_000 }],
   ...over,
 });
 
@@ -51,6 +51,12 @@ describe("the invoice document says when it is due and under which terms", () =>
   it("due on receipt reads as such, with the day", () => {
     expect(textOf(renderToStaticMarkup(<InvoiceDocument invoice={invoice({ termsDays: 0, dueOn: "2026-10-21" })} locale="en" />))).toMatch(/Payable à la réception/);
     expect(textOf(renderToStaticMarkup(<InvoiceDocument invoice={invoice({ language: "en", termsDays: 0, dueOn: "2026-10-21" })} locale="en" />))).toMatch(/Due on receipt/);
+  });
+
+  it("a fractional quantity reads as a person writes it: 7,5 in French, 7.5 in English (krizaka/akinaza#111)", () => {
+    const lines = [{ ...invoice().lines[0]!, quantityHundredths: 750, amountCents: 112_500 }];
+    expect(textOf(renderToStaticMarkup(<InvoiceDocument invoice={invoice({ lines })} locale="en" />))).toMatch(/Qté 7,5 × 150,00[\s\u00a0\u202f]\$/);
+    expect(textOf(renderToStaticMarkup(<InvoiceDocument invoice={invoice({ language: "en", lines })} locale="fr" />))).toMatch(/Qty 7\.5 × \$150\.00/);
   });
 
   it("a credit note and an invoice issued before the terms existed carry none", () => {

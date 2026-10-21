@@ -312,13 +312,14 @@ export const invoiceLines = pgTable(
     invoiceId: uuid("invoice_id").notNull().references(() => invoices.id),
     position: integer("position").notNull(),
     description: text("description").notNull(),
-    quantity: integer("quantity").notNull(),
+    /** The quantity in whole hundredths (7.5 hours → 750): the amount is round(quantity × unit price), half away from zero (krizaka/akinaza#111). */
+    quantityHundredths: integer("quantity_hundredths").notNull(),
     unitPriceCents: integer("unit_price_cents").notNull(),
     discountCents: integer("discount_cents").notNull().default(0),
     taxCategory: text("tax_category", { enum: ["standard", "zeroRated", "exempt"] }).notNull(),
     amountCents: integer("amount_cents").notNull(),
   },
-  (t) => [uniqueIndex("invoice_lines_position").on(t.invoiceId, t.position), check("invoice_lines_amount", sql`${t.amountCents} = ${t.quantity} * ${t.unitPriceCents} - ${t.discountCents}`)],
+  (t) => [uniqueIndex("invoice_lines_position").on(t.invoiceId, t.position), check("invoice_lines_quantity", sql`${t.quantityHundredths} <> 0`), check("invoice_lines_amount", sql`${t.amountCents} = round((${t.quantityHundredths}::bigint * ${t.unitPriceCents}::bigint)::numeric / 100) - ${t.discountCents}`)],
 );
 
 /** A payment received against an invoice (cash, card, transfer) — recorded, not processed: no payment provider is wired. */
