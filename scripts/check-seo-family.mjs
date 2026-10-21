@@ -11,6 +11,9 @@
 
    Usage: node scripts/check-seo-family.mjs --base <origin served> --host <https://public-host> [--index on|off]
             [--types SoftwareApplication,WebSite] [--no-llms] [--no-sitemap] [--limit N] [--console]
+                                                  [--redirects-to <https://www.public-host>]
+   A development host (dev.<product>.com): `--redirects-to https://www.<product>.com --index off` checks that robots.txt shuts
+   the door (Disallow: /, X-Robots-Tag noindex) and that a page answers 308 to the same path on www — the API stays served there.
    An operator console (admin.*): `--console --index off` checks only that robots.txt shuts the door and that every
    response says noindex (header and meta); it has no sitemap and no llms.txt.
    `--base` is where the pages are fetched (http://localhost:3000 in CI); `--host` is the public origin they must declare. */
@@ -171,6 +174,20 @@ export function auditHeaders(headers, { index = true }) {
   return [];
 }
 
+/** A development host that sends its pages to www: robots.txt closed and noindex, `/` answers 308 to the same path on www.
+ * @param {{ robotsText: string, robotsHeaders: Headers, rootStatus: number, rootLocation: string | null, rootHeaders: Headers }} seen
+ * @param {{ www: string }} opts
+ * @returns {string[]} */
+export function auditDevRedirect(seen, { www }) {
+  const problems = [];
+  if (!/^disallow:\s*\/\s*$/im.test(seen.robotsText)) problems.push("robots.txt: a development host must Disallow: /");
+  if (!/noindex/i.test(seen.robotsHeaders.get?.("x-robots-tag") ?? "")) problems.push("robots.txt: no X-Robots-Tag noindex");
+  if (seen.rootStatus !== 308) problems.push(`/ answers ${seen.rootStatus}, expected 308 to ${www}/`);
+  else if (!seen.rootLocation || !(seen.rootLocation === `${www}/` || seen.rootLocation.startsWith(`${www}/`))) problems.push(`/ goes to ${seen.rootLocation}, expected ${www}/…`);
+  if (!/noindex/i.test(seen.rootHeaders.get?.("x-robots-tag") ?? "")) problems.push("/: the redirect carries no X-Robots-Tag noindex");
+  return problems;
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const opt = (n, d) => (args.includes(n) ? args[args.indexOf(n) + 1] : d);
@@ -191,6 +208,13 @@ async function main() {
     if (!res.ok) throw new Error(`${p}: HTTP ${res.status}`);
     return res;
   };
+  const redirectsTo = opt("--redirects-to", "");
+  if (redirectsTo) {
+    const robots = await get("/robots.txt");
+    const root = await fetch(`${base}/`, { redirect: "manual" });
+    report("dev host", auditDevRedirect({ robotsText: await robots.text(), robotsHeaders: robots.headers, rootStatus: root.status, rootLocation: root.headers.get("location"), rootHeaders: root.headers }, { www: strip(redirectsTo) }));
+    return done(2);
+  }
   const consoleMode = args.includes("--console");
   report("/robots.txt", auditRobots(await (await get("/robots.txt")).text(), { host, index, sitemap: !consoleMode }));
   if (consoleMode) {
