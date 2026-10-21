@@ -80,7 +80,7 @@ function BookingList({ title, items, file, when, cancellable = false }: { title:
   if (items.length === 0) return null;
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="font-display text-sm font-bold uppercase tracking-wide text-fg-secondary">{title}</h3>
+      <h3 className="font-display text-sm font-bold text-fg-secondary">{title}</h3>
       {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
       <ul className="flex flex-col gap-3">
         {items.map((b) => (

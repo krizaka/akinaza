@@ -102,7 +102,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
               </nav>
               {view.booking.zones.length ? (
                 <nav aria-label={t("console.shopPage.zoneLabel")} className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-fg-secondary">{t("console.shopPage.zoneLabel")}</span>
+                  <span className="text-xs font-semibold text-fg-secondary">{t("console.shopPage.zoneLabel")}</span>
                   {view.booking.zones.map((z) => (
                     <ChipLink key={z.id} asChild size="sm" selected={z.selected}>
                       <Link href={z.href} scroll={false}>

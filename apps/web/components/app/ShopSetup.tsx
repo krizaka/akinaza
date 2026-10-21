@@ -152,7 +152,7 @@ function ZonesCard({ zones }: { zones: SetupData["zones"] }) {
       {zones.length ? (
         <ul className="mb-4 flex flex-wrap gap-2">
           {zones.map((z) => (
-            <li key={z.id} className="inline-flex items-center gap-1 rounded-full border border-border-default bg-surface-2 py-1 pl-3 pr-1 text-sm text-fg">
+            <li key={z.id} className="inline-flex items-center gap-1 rounded-sm border border-border-default bg-surface-2 py-1 pl-3 pr-1 text-sm text-fg">
               {z.name}
               <Button size="sm" variant="ghost" shape="pill" aria-label={say("shopSetup.zones.remove", { name: z.name })} onClick={() => call.run(`/api/walker/zones/${z.id}`, { method: "DELETE" })}>
                 ×
@@ -421,7 +421,7 @@ function HoursCard({ windows, daysOff }: { windows: SetupData["windows"]; daysOf
       {daysOff.length ? (
         <ul className="mb-3 flex flex-wrap gap-2">
           {daysOff.map((d) => (
-            <li key={d.id} className="inline-flex items-center gap-1 rounded-full border border-border-default bg-surface-2 py-1 pl-3 pr-1 text-sm text-fg">
+            <li key={d.id} className="inline-flex items-center gap-1 rounded-sm border border-border-default bg-surface-2 py-1 pl-3 pr-1 text-sm text-fg">
               <span className="font-mono">{d.onDate}</span>
               {d.reason ? <span className="text-fg-secondary">· {d.reason}</span> : null}
               <Button size="sm" variant="ghost" shape="pill" aria-label={say("shopSetup.hours.dayOffRemove", { day: d.onDate })} onClick={() => call.run(`/api/walker/days-off/${d.onDate}`, { method: "DELETE" })}>
