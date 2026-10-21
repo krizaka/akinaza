@@ -55,7 +55,7 @@ describe("the invoice document says when it is due and under which terms", () =>
 
   it("a fractional quantity reads as a person writes it: 7,5 in French, 7.5 in English (krizaka/akinaza#111)", () => {
     const lines = [{ ...invoice().lines[0]!, quantityHundredths: 750, amountCents: 112_500 }];
-    expect(textOf(renderToStaticMarkup(<InvoiceDocument invoice={invoice({ lines })} locale="en" />))).toMatch(/Qté 7,5 × 150,00[\s  ]\$/);
+    expect(textOf(renderToStaticMarkup(<InvoiceDocument invoice={invoice({ lines })} locale="en" />))).toMatch(/Qté 7,5 × 150,00[\s\u00a0\u202f]\$/);
     expect(textOf(renderToStaticMarkup(<InvoiceDocument invoice={invoice({ language: "en", lines })} locale="fr" />))).toMatch(/Qty 7\.5 × \$150\.00/);
   });
 
