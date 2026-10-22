@@ -45,8 +45,8 @@ importers:
         specifier: ^0.7.0
         version: 0.7.0(react@19.3.1)
       '@krizaka/payments':
-        specifier: file:/private/tmp/claude-501/-Users-oussamaabid-krizaka-com/e7017678-cc52-4af1-a9a1-dd01ce97583c/scratchpad/krizaka-payments-0.1.0.tgz
-        version: file:../../../../private/tmp/claude-501/-Users-oussamaabid-krizaka-com/e7017678-cc52-4af1-a9a1-dd01ce97583c/scratchpad/krizaka-payments-0.1.0.tgz
+        specifier: 0.1.0
+        version: 0.1.0
       '@krizaka/query':
         specifier: ^0.2.1
         version: 0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1)
@@ -1025,9 +1025,8 @@ packages:
       react:
         optional: true
 
-  '@krizaka/payments@file:../../../../private/tmp/claude-501/-Users-oussamaabid-krizaka-com/e7017678-cc52-4af1-a9a1-dd01ce97583c/scratchpad/krizaka-payments-0.1.0.tgz':
-    resolution: {integrity: sha512-8L/YuyRbgYVkrJhXkAa9rOT3OcHBeiEcddIh37zoSLWRW81TnCidIJzwgjCEsGtZloZGZ8KvOdrXD+oJlPutbw==, tarball: file:../../../../private/tmp/claude-501/-Users-oussamaabid-krizaka-com/e7017678-cc52-4af1-a9a1-dd01ce97583c/scratchpad/krizaka-payments-0.1.0.tgz}
-    version: 0.1.0
+  '@krizaka/payments@0.1.0':
+    resolution: {integrity: sha512-Np3ZxEqNCr2Hup1GrrTf32ndlE49f+Ea2n4p8FZvgVvTpaY7iS0E2INkw3C4g1+qTMSC/GiZU/OXfG49eiMUig==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -5568,7 +5567,7 @@ snapshots:
     optionalDependencies:
       react: 19.3.1
 
-  '@krizaka/payments@file:../../../../private/tmp/claude-501/-Users-oussamaabid-krizaka-com/e7017678-cc52-4af1-a9a1-dd01ce97583c/scratchpad/krizaka-payments-0.1.0.tgz': {}
+  '@krizaka/payments@0.1.0': {}
 
   '@krizaka/query@0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1)':
     dependencies:
