@@ -6,8 +6,8 @@ import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
-import { llmsText } from "./seo";
 import { COMPARE_ROWS, DEMO_SHOP, FAQ_IDS, FIGURES, HOME_SECTIONS, OUTCOMES, productStatus } from "./landing";
+import { llmsText } from "./seo";
 import { heroTake, MEDIA_CDN, TOUR, tourClip, tourStill } from "./tour";
 
 const ROOT = join(__dirname, "..");
