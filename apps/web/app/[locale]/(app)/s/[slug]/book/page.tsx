@@ -11,6 +11,7 @@ import { db } from "@/lib/db";
 import { asLocale, format } from "@/lib/i18n";
 import { VocabularyProvider } from "@/lib/i18n-client";
 import { backToHere } from "@/lib/next-url";
+import { accountRoutes } from "@/lib/routes";
 import { consoleFor } from "@/lib/vocabulary";
 
 export const dynamic = "force-dynamic";
@@ -31,7 +32,7 @@ export default async function BookPage({ params, searchParams }: { params: Promi
   const dogs = file ? await dependantsOf(db(), file.id) : [];
   const t = consoleFor(locale, page.shop.businessType).book;
   return (
-    <AppFrame locale={locale} email={session.account.email} base={`/${locale}/app`} items={["bookings", "profile"]}>
+    <AppFrame locale={locale} email={session.account.email} base={accountRoutes(locale).home} items={["bookings", "profile"]}>
       <div className="flex flex-col gap-4">
         <h1 className="font-display text-2xl font-bold text-fg">{format(t.title, { shop: page.shop.name })}</h1>
         <VocabularyProvider type={page.shop.businessType}>
@@ -44,7 +45,7 @@ export default async function BookPage({ params, searchParams }: { params: Promi
             dogs: dogs.map((d) => ({ id: d.id, name: d.name })),
             preselect: bookingPreselect({ service: searchValue(query.service), zone: searchValue(query.zone), start: searchValue(query.start) }, page.services, page.zones),
             timeZone: page.shop.timezone,
-            bookingsHref: `/${locale}/app`,
+            bookingsHref: accountRoutes(locale).home,
             staffId: page.team.some((m) => m.id === searchValue(query.staff)) ? searchValue(query.staff) : null,
           }}
         />

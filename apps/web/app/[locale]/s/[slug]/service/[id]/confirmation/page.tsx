@@ -13,6 +13,7 @@ import { db } from "@/lib/db";
 import { asLocale, translator } from "@/lib/i18n";
 import { confirmationStep, journeyBase } from "@/lib/journey";
 import { backToHere } from "@/lib/next-url";
+import { accountRoutes } from "@/lib/routes";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -61,7 +62,7 @@ export default async function ConfirmationPage({ params, searchParams }: { param
       ) : null}
       {!cancelled && !step.cancellable ? <Alert tone="info">{t("console.journey.cancelTooLate")}</Alert> : <p className="m-0 text-sm text-fg-secondary">{step.cancelRule}</p>}
       <div className="flex flex-wrap gap-3">
-        <ButtonLink href={`/${locale}/app`} variant="secondary" size="md">
+        <ButtonLink href={accountRoutes(locale).home} variant="secondary" size="md">
           {t("console.journey.myBookings")}
         </ButtonLink>
         <ButtonLink href={journeyBase(locale, detail.shop.slug)} variant="ghost" size="md">

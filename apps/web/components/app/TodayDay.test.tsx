@@ -7,8 +7,10 @@ import type { TodayAppointment } from "@/lib/today";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
+import { ShopSession } from "./ShopSession";
 import { TodayDay, type TodayDayProps } from "./TodayDay";
 
+vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app" }));
 
 const MESSAGES = { en: { console: en.console }, fr: { console: fr.console } } as const;
@@ -44,7 +46,7 @@ const render = (props: Partial<TodayDayProps> = {}, locale: "en" | "fr" = "en") 
     renderToStaticMarkup(
       <I18nProvider locale={locale} messages={MESSAGES[locale] as never}>
         <KrizakaQueryProvider>
-          <TodayDay {...day} {...props} />
+          <ShopSession locale="en" shopId="s1" remembered><TodayDay {...day} {...props} /></ShopSession>
         </KrizakaQueryProvider>
       </I18nProvider>,
     ),
@@ -84,7 +86,7 @@ describe("the owner's day", () => {
     const html = renderToStaticMarkup(
       <I18nProvider locale="en" messages={MESSAGES.en as never}>
         <KrizakaQueryProvider>
-          <TodayDay {...day} />
+          <ShopSession locale="en" shopId="s1" remembered><TodayDay {...day} /></ShopSession>
         </KrizakaQueryProvider>
       </I18nProvider>,
     );

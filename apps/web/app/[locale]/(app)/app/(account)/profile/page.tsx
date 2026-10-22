@@ -4,7 +4,7 @@ import { SettingsRow, SettingsSection } from "@krizaka/ui/settings-layout";
 import { ProfileFrame } from "@/components/account/ProfileFrame";
 import { pageSession } from "@/lib/access";
 import { asLocale, getDictionary } from "@/lib/i18n";
-import { currentMember } from "@/lib/member-shop";
+import { lastMember } from "@/lib/member-shop";
 
 const LANGUAGE_NAME = { en: "English", fr: "Français" } as const;
 
@@ -13,7 +13,7 @@ export default async function Profile({ params }: { params: Promise<{ locale: st
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale).console.account.profile;
   const { account } = (await pageSession())!;
-  const member = await currentMember(account.id);
+  const member = await lastMember(account.id);
   const role = account.role === "ADMIN" ? t.roleAdmin : member ? t.shopRoles[member.role] : t.roleUser;
   return (
     <ProfileFrame locale={locale} current="profile" account={account}>

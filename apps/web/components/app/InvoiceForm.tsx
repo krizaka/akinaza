@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
 
+import { useShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
 import { useSay } from "@/lib/i18n-client";
 import { parseQuantity, QUANTITY_FIELD } from "@/lib/quantity";
@@ -46,6 +47,7 @@ export function InvoiceForm({ data, locale: base }: { data: InvoiceFormData; loc
   const { say, locale } = useSay();
   const call = useCall();
   const router = useRouter();
+  const routes = useShopRoutes();
   const [needLine, setNeedLine] = useState(false);
   const form = invoiceForm.useForm({
     i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
@@ -64,7 +66,7 @@ export function InvoiceForm({ data, locale: base }: { data: InvoiceFormData; loc
       // The invoice is in the client's language (the shop's page language without a client), dated today, under the shop's terms.
       const language = data.clients.find((c) => c.id === values.clientId)?.language ?? base;
       const done = await call.run<{ id: string }>("/api/walker/invoices", { json: { clientId: values.clientId || null, language, issuedOn: data.today, lines } }, { refresh: false });
-      if (done !== null) router.push(`/${base}/app/invoices/${done.id}`);
+      if (done !== null) router.push(routes.invoice(done.id));
     },
   });
   const serviceOptions = [{ value: "", label: say("invoices.new.noService") }, ...data.services.map((s) => ({ value: s.id, label: `${locale === "fr" ? s.nameFr : s.nameEn} · ${money(s.priceCents, locale)}` }))];

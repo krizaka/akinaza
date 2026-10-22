@@ -13,6 +13,7 @@ import { useMemo, useState } from "react";
 import { z } from "zod";
 
 import { ClientAvatar } from "@/components/app/ClientsTable";
+import { useShopRoutes } from "@/components/app/ShopSession";
 import { errorKey } from "@/lib/client";
 import { formatDate } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
@@ -47,9 +48,10 @@ export interface TeamPanelProps {
 function useTeamCall() {
   const { say } = useSay();
   const router = useRouter();
+  const routes = useShopRoutes();
   const [problem, setProblem] = useState<string | null>(null);
   const request = useMutation({
-    mutationFn: ({ path, method, json }: { path: string; method: "POST" | "PATCH" | "DELETE"; json?: unknown }) => krizakaFetch(path, { method, ...(json === undefined ? {} : { json }) }),
+    mutationFn: ({ path, method, json }: { path: string; method: "POST" | "PATCH" | "DELETE"; json?: unknown }) => krizakaFetch(routes.api(path), { method, ...(json === undefined ? {} : { json }) }),
     onSuccess: () => router.refresh(),
     onError: (error) => setProblem(say(`errors.${errorKey(error)}`)),
     onMutate: () => setProblem(null),
