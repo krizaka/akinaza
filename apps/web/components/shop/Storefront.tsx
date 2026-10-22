@@ -1,7 +1,6 @@
 import { Avatar } from "@krizaka/ui/avatar";
 import { Badge } from "@krizaka/ui/badge";
 import { CardGrid } from "@krizaka/ui/card-grid";
-import { ChipLink } from "@krizaka/ui/chip-link";
 import { CoverHero } from "@krizaka/ui/cover-hero";
 import { CtaPanel } from "@krizaka/ui/cta-panel";
 import { DescriptionList } from "@krizaka/ui/description-list";
@@ -13,14 +12,13 @@ import { StickyAction } from "@krizaka/ui/sticky-action";
 import Link from "next/link";
 
 import { ButtonLink } from "@/components/ButtonLink";
-import { ShopSlots } from "@/components/shop/ShopSlots";
 import { ZoneMap } from "@/components/shop/ZoneMap";
 import { type Locale, translator } from "@/lib/i18n";
 import type { StorefrontView } from "@/lib/storefront";
 
 /**
- * A shop's public page, drawn from its view (lib/storefront.ts): the cover and what it promises, the services as cards,
- * the next free times, the hours, the areas on a map, who you will meet and the rules, a look inside, the way in.
+ * A shop's public page, drawn from its view (lib/storefront.ts): the cover and what it promises, the services as cards (each opens its own page),
+ * who works here, the hours, the areas on a map, who you will meet and the rules, a look inside, the way in.
  * Every section exists only when the shop has what it shows — a salon has no map, a new shop no gallery.
  */
 export function Storefront({ view, locale }: { view: StorefrontView; locale: Locale }) {
@@ -30,14 +28,8 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
       <ButtonLink href={view.bookHref} size="lg" variant="primary" className="hidden md:inline-flex">
         {t("console.shopPage.book")}
       </ButtonLink>
-      {view.services.length ? (
-        <ButtonLink href="#reserver" size="lg" variant="secondary" className="hidden md:inline-flex">
-          {t("console.shopPage.seeTimes")}
-        </ButtonLink>
-      ) : null}
     </>
   );
-  const selected = view.booking.services.find((s) => s.selected);
   return (
     <main id="content">
       <CoverHero
@@ -77,7 +69,6 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
                 description={s.description ?? undefined}
                 included={s.included}
                 tag={s.tag ?? undefined}
-                selected={selected?.id === s.id}
                 actionLabel={t("console.shopPage.choose")}
                 href={s.href}
                 linkAs={Link}
@@ -87,41 +78,23 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
         </Section>
       ) : null}
 
+      {view.team.length ? (
+        <Section id="team" divider eyebrow={t("console.journey.team")} title={t("console.journey.team")} lead={t("console.journey.teamLead")} reveal>
+          <ul className="m-0 flex list-none flex-wrap gap-4 p-0">
+            {view.team.map((m) => (
+              <li key={m.id} className="flex items-center gap-3">
+                <Avatar size="lg" defaultAvatar={{ brand: "akinaza", seed: `${view.name}-${m.name}` }} alt="" fallback={m.name.slice(0, 1)} />
+                <span className="font-display text-base font-bold text-fg">{m.name}</span>
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
+
       {view.services.length ? (
-        <Section id="reserver" divider eyebrow={t("console.shopPage.book")} title={t("console.shopPage.bookTitle")} lead={t("console.shopPage.bookLead")} reveal>
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-            <div className="flex min-w-0 flex-col gap-5">
-              <nav aria-label={t("console.shopPage.serviceLabel")} className="flex flex-wrap gap-2">
-                {view.booking.services.map((s) => (
-                  <ChipLink key={s.id} asChild selected={s.selected}>
-                    <Link href={s.href} scroll={false}>
-                      {s.name}
-                    </Link>
-                  </ChipLink>
-                ))}
-              </nav>
-              {view.booking.zones.length ? (
-                <nav aria-label={t("console.shopPage.zoneLabel")} className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-semibold text-fg-secondary">{t("console.shopPage.zoneLabel")}</span>
-                  {view.booking.zones.map((z) => (
-                    <ChipLink key={z.id} asChild size="sm" selected={z.selected}>
-                      <Link href={z.href} scroll={false}>
-                        {z.name}
-                      </Link>
-                    </ChipLink>
-                  ))}
-                </nav>
-              ) : null}
-              <ShopSlots key={`${selected?.id}-${view.booking.zones.find((z) => z.selected)?.id ?? ""}`} days={view.booking.days} label={t("console.shopPage.timesLabel")} emptyLabel={t("console.shopPage.noTimes")} />
-              <div>
-                <ButtonLink href={view.bookHref} variant="ghost" size="md">
-                  {t("console.shopPage.moreTimes")} →
-                </ButtonLink>
-              </div>
-            </div>
-            <div className="flex min-w-0 flex-col gap-3">
-              <OpeningHours label={t("console.shopPage.hours")} days={view.hours.days} today={view.hours.today} status={view.hours.status} />
-            </div>
+        <Section id="hours" divider eyebrow={t("console.shopPage.hours")} title={t("console.shopPage.hours")} reveal>
+          <div className="max-w-xl">
+            <OpeningHours label={t("console.shopPage.hours")} days={view.hours.days} today={view.hours.today} status={view.hours.status} />
           </div>
         </Section>
       ) : null}

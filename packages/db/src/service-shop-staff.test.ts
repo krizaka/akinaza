@@ -1,6 +1,9 @@
+import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { addDayOff, addStaff, addWindow, akCode, bookVisit, joinShop, listSlots, publicShop, saveService, saveShopPage, ShopError } from "./service-shop";
+import { clients } from "./schema";
+
+import { addDayOff, addStaff, addWindow, akCode, bookingDetail, bookVisit, joinShop, listSlots, publicShop, saveService, saveShopPage, ShopError } from "./service-shop";
 import { freshDatabase } from "./test/db";
 import { account, NOW } from "./test/fixtures";
 
@@ -108,3 +111,24 @@ describe("several people work at the shop", () => {
     expect(await code(bookVisit(t.db, { clientId: s.c3, serviceId: s.cut, zoneId: null, dependantIds: [], startsAt: ten, now: NOW, staffId: s.samuel }))).toBe("AK_SLOT_UNAVAILABLE");
   });
 });
+
+describe("a booking, as its confirmation page reads it", () => {
+  it("is read by its owner only, with the person, the time and whether it can still be cancelled", async () => {
+    const s = await salon("detail");
+    const when = new Date("2026-10-27T17:00:00Z"); // Tuesday, 13:00 Montréal
+    const { bookingIds } = await bookVisit(t.db, { clientId: s.c1, serviceId: s.cut, zoneId: null, dependantIds: [], startsAt: when, now: NOW });
+    const owner = await accountOf(s.c1);
+    const detail = (await bookingDetail(t.db, owner, bookingIds[0]!, NOW))!;
+    expect(detail).toMatchObject({ cancelled: false, staffName: "Samuel", cancellable: true, cancellationHours: 24 });
+    expect(detail.startsAt.toISOString()).toBe(when.toISOString());
+    expect(detail.service.nameEn).toBe("Haircut");
+    // Another account sees nothing; inside the window it cannot be cancelled any more.
+    expect(await bookingDetail(t.db, await accountOf(s.c2), bookingIds[0]!, NOW)).toBeNull();
+    expect((await bookingDetail(t.db, owner, bookingIds[0]!, new Date("2026-10-27T10:00:00Z")))!.cancellable).toBe(false);
+  });
+});
+
+async function accountOf(clientId: string): Promise<string> {
+  const [row] = await t.db.select({ id: clients.accountId }).from(clients).where(eq(clients.id, clientId));
+  return row!.id!;
+}

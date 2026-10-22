@@ -17,7 +17,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
-    "seed": "tsx src/seed-cli.ts"
+    "seed": "tsx src/seed-cli.ts",
+    "seed:demos": "tsx src/seed-demos-cli.ts"
   },
   "dependencies": {
     "@akinaza/core": "workspace:*",

@@ -1,4 +1,3 @@
-import { openSlots } from "@akinaza/core";
 import type { PublicShop } from "@akinaza/db";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
@@ -12,7 +11,7 @@ const NOW = new Date("2026-10-19T10:30:00-04:00"); // Monday, 10:30 in Montréal
 
 /** A hair salon: the page must be made of the salon's data — no dog walker's words, no map, no gallery, no bio. */
 const salon: PublicShop = {
-  shop: { id: "s", name: "Salon Laurier", slug: "salon-laurier", timezone: TZ, taglineFr: null, taglineEn: "Cuts and colour, by appointment.", area: null, bioFr: null, bioEn: null, publicPhone: null, publicEmail: null, seatUnitFr: null, seatUnitEn: null, businessType: "professional", ownerName: "Julie" },
+  shop: { id: "s", name: "Salon Laurier", slug: "salon-laurier", timezone: TZ, registrant: true, taglineFr: null, taglineEn: "Cuts and colour, by appointment.", area: null, bioFr: null, bioEn: null, publicPhone: null, publicEmail: null, seatUnitFr: null, seatUnitEn: null, businessType: "professional", ownerName: "Julie" },
   zones: [],
   services: [
     { id: "cut", nameFr: "Coupe", nameEn: "Haircut", durationMinutes: 45, priceCents: 4_500, capacity: 1, descriptionFr: null, descriptionEn: "A cut and a blow-dry.", includedFr: [], includedEn: ["Shampoo"], priceVaries: false },
@@ -28,7 +27,7 @@ const salon: PublicShop = {
 
 /** A dog walker with everything filled in. */
 const walker: PublicShop = {
-  shop: { id: "w", name: "Pattes de Saint-Henri", slug: "pattes", timezone: TZ, taglineFr: "Des promenades de quartier.", taglineEn: "Neighbourhood dog walks.", area: "Saint-Henri, Montréal", bioFr: "Je m'appelle Léa.", bioEn: "I'm Léa.", publicPhone: "514-555-0100", publicEmail: "bonjour@pattes.example", seatUnitFr: "chiens", seatUnitEn: "dogs", businessType: "pets", ownerName: "Léa" },
+  shop: { id: "w", name: "Pattes de Saint-Henri", slug: "pattes", timezone: TZ, registrant: true, taglineFr: "Des promenades de quartier.", taglineEn: "Neighbourhood dog walks.", area: "Saint-Henri, Montréal", bioFr: "Je m'appelle Léa.", bioEn: "I'm Léa.", publicPhone: "514-555-0100", publicEmail: "bonjour@pattes.example", seatUnitFr: "chiens", seatUnitEn: "dogs", businessType: "pets", ownerName: "Léa" },
   zones: [{ id: "z1", name: "Saint-Henri", lat: 45.4786, lng: -73.5878 }, { id: "z2", name: "Griffintown", lat: 45.4935, lng: -73.561 }],
   services: [
     { id: "solo", nameFr: "Promenade solo 30 min", nameEn: "Solo walk 30 min", durationMinutes: 30, priceCents: 2_200, capacity: 1, descriptionFr: "Un chien, une marcheuse.", descriptionEn: "One dog.", includedFr: ["Eau fraîche"], includedEn: [], priceVaries: false },
@@ -45,11 +44,8 @@ const walker: PublicShop = {
   popularServiceId: "group",
 };
 
-const render = (page: PublicShop, locale: "fr" | "en", service: string | null = null) => {
-  const chosen = service ?? page.popularServiceId ?? page.services[0]!.id;
-  const s = page.services.find((x) => x.id === chosen)!;
-  const slots = openSlots({ timezone: TZ, now: NOW, fromDay: "2026-10-19", days: 10, windows: page.windows, daysOff: [], serviceId: s.id, zoneId: page.zones[0]?.id ?? null, durationMinutes: s.durationMinutes, stepMinutes: 30, capacity: s.capacity, minNoticeMinutes: 120, visits: [] });
-  return renderToStaticMarkup(<Storefront locale={locale} view={buildStorefront({ page, locale, now: NOW, selection: { service }, slots })} />);
+const render = (page: PublicShop, locale: "fr" | "en") => {
+  return renderToStaticMarkup(<Storefront locale={locale} view={buildStorefront({ page, locale, now: NOW })} />);
 };
 
 describe("the storefront renders from the shop's data — a hair salon", () => {
@@ -74,8 +70,9 @@ describe("the storefront renders from the shop's data — a hair salon", () => {
     expect(html).toContain("<details");
     expect(html).toContain("Tuesday");
   });
-  it("offers the next free times as links that carry the service into the booking", () => {
-    expect(html).toMatch(/href="\/en\/s\/salon-laurier\/book\?service=cut&amp;start=/);
+  it("opens each service on its own page (the times come one step later)", () => {
+    expect(html).toContain('href="/en/s/salon-laurier/service/cut"');
+    expect(html).not.toContain("#reserver");
   });
   it("leaves out what the salon does not have: no map, no areas, no gallery, no bio, no contact — and no dog walker's word", () => {
     expect(html).not.toContain('id="zones"');
@@ -106,9 +103,8 @@ describe("the storefront renders from the shop's data — a dog walker, in Frenc
     expect(html).toContain("Jusqu&#x27;à 5 chiens");
     expect(html).toContain("Ouvert maintenant");
   });
-  it("opens the booking with the service chosen: the card and the chips carry it in the address", () => {
-    expect(html).toContain("/fr/s/pattes?service=group&amp;zone=z1#reserver");
-    expect(html).toContain("/fr/s/pattes/book?service=group&amp;zone=z1&amp;start=");
+  it("opens the service's page with the area kept in the address", () => {
+    expect(html).toContain("/fr/s/pattes/service/group?zone=z1");
   });
   it("has its gallery", () => {
     expect(html).toContain('id="gallery"');

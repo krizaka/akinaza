@@ -1,4 +1,3 @@
-import { openSlots } from "@akinaza/core";
 import type { PublicShop } from "@akinaza/db";
 import { describe, expect, it } from "vitest";
 
@@ -15,7 +14,7 @@ const week = (weekdays: number[], startsAt: string, endsAt: string) => weekdays.
 
 /** The dog walker: zones with coordinates, a group service with a unit, a popular service, a cover and a gallery. */
 const walker: PublicShop = {
-  shop: { id: "shop-w", name: "Pattes de Saint-Henri", slug: "pattes", timezone: TZ, taglineFr: "Des promenades de quartier.", taglineEn: "Neighbourhood dog walks.", area: "Saint-Henri, Montréal", bioFr: "Je m'appelle Léa.", bioEn: "I'm Léa.", publicPhone: "514-555-0100", publicEmail: "bonjour@pattes.example", seatUnitFr: "chiens", seatUnitEn: "dogs", businessType: "pets", ownerName: "Léa" },
+  shop: { id: "shop-w", name: "Pattes de Saint-Henri", slug: "pattes", timezone: TZ, registrant: true, taglineFr: "Des promenades de quartier.", taglineEn: "Neighbourhood dog walks.", area: "Saint-Henri, Montréal", bioFr: "Je m'appelle Léa.", bioEn: "I'm Léa.", publicPhone: "514-555-0100", publicEmail: "bonjour@pattes.example", seatUnitFr: "chiens", seatUnitEn: "dogs", businessType: "pets", ownerName: "Léa" },
   zones: [
     { id: "z1", name: "Saint-Henri", lat: 45.4786, lng: -73.5878 },
     { id: "z2", name: "Griffintown", lat: 45.4935, lng: -73.561 },
@@ -37,7 +36,7 @@ const walker: PublicShop = {
 
 /** A hair salon — not a dog walker: no zones, no media, no bio, no unit, nothing popular, Tuesday to Saturday. */
 const salon: PublicShop = {
-  shop: { id: "shop-s", name: "Salon Laurier", slug: "salon-laurier", timezone: TZ, taglineFr: null, taglineEn: "Cuts and colour, by appointment.", area: null, bioFr: null, bioEn: null, publicPhone: null, publicEmail: null, seatUnitFr: null, seatUnitEn: null, businessType: "professional", ownerName: "Julie" },
+  shop: { id: "shop-s", name: "Salon Laurier", slug: "salon-laurier", timezone: TZ, registrant: true, taglineFr: null, taglineEn: "Cuts and colour, by appointment.", area: null, bioFr: null, bioEn: null, publicPhone: null, publicEmail: null, seatUnitFr: null, seatUnitEn: null, businessType: "professional", ownerName: "Julie" },
   zones: [],
   services: [
     { id: "cut", nameFr: "Coupe", nameEn: "Haircut", durationMinutes: 45, priceCents: 4_500, capacity: 1, descriptionFr: null, descriptionEn: "A cut and a blow-dry.", includedFr: [], includedEn: [], priceVaries: false },
@@ -51,10 +50,6 @@ const salon: PublicShop = {
   popularServiceId: null,
 };
 
-const slotsFor = (page: PublicShop, serviceId: string, zoneId: string | null, now = MONDAY_1030) => {
-  const s = page.services.find((x) => x.id === serviceId)!;
-  return openSlots({ timezone: TZ, now, fromDay: "2026-10-19", days: 10, windows: page.windows, daysOff: page.daysOff, serviceId, zoneId, durationMinutes: s.durationMinutes, stepMinutes: 30, capacity: s.capacity, minNoticeMinutes: 120, visits: [] });
-};
 
 describe("resolveSelection — which service and zone the page shows slots for", () => {
   it("takes the service and zone of the address when the shop offers them", () => {
@@ -68,7 +63,7 @@ describe("resolveSelection — which service and zone the page shows slots for",
 });
 
 describe("buildStorefront — a dog walker", () => {
-  const view = (locale: "fr" | "en" = "fr", service = "s-group") => buildStorefront({ page: walker, locale, now: MONDAY_1030, selection: { service, zone: "z1" }, slots: slotsFor(walker, service === "s-group" ? "s-group" : service, "z1") });
+  const view = (locale: "fr" | "en" = "fr") => buildStorefront({ page: walker, locale, now: MONDAY_1030 });
 
   it("shows the hero from the shop's cover, name, promise, locality and the open-now status computed from the hours", () => {
     const v = view();
@@ -77,13 +72,13 @@ describe("buildStorefront — a dog walker", () => {
     expect(v.tagline).toBe("Des promenades de quartier.");
     expect(v.cover).toEqual({ src: "https://cdn.test/cover.webp", alt: "Montréal en automne." });
     expect(v.status).toEqual({ open: true, label: "Ouvert maintenant", detail: nb("ferme à 12 h") });
-    expect(v.bookHref).toBe("/fr/s/pattes/book");
+    expect(v.bookHref).toBe("/fr/s/pattes/service/s-group?zone=z1");
   });
 
   it("says when it opens next while closed, in the shop's own time", () => {
-    const evening = buildStorefront({ page: walker, locale: "fr", now: at("2026-10-19T18:00"), selection: {}, slots: [] });
+    const evening = buildStorefront({ page: walker, locale: "fr", now: at("2026-10-19T18:00") });
     expect(evening.status).toEqual({ open: false, label: "Fermé", detail: nb("ouvre demain à 8 h") });
-    const lunch = buildStorefront({ page: walker, locale: "en", now: at("2026-10-19T12:30"), selection: {}, slots: [] });
+    const lunch = buildStorefront({ page: walker, locale: "en", now: at("2026-10-19T12:30") });
     expect(lunch.status).toEqual({ open: false, label: "Closed", detail: "opens at 1 pm" });
   });
 
@@ -91,20 +86,8 @@ describe("buildStorefront — a dog walker", () => {
     const [solo, group] = view().services;
     expect(solo).toMatchObject({ id: "s-solo", name: "Promenade solo 30 min", duration: "30 min", capacity: null, price: nb("22,00 $"), priceFrom: null, tag: null, included: ["Eau fraîche"], description: "Un chien, une marcheuse." });
     expect(group).toMatchObject({ id: "s-group", capacity: "Jusqu'à 5 chiens", priceFrom: "À partir de", tag: "Populaire", description: null });
-    expect(group!.href).toBe("/fr/s/pattes?service=s-group&zone=z1#reserver");
-    expect(buildStorefront({ page: walker, locale: "en", now: MONDAY_1030, selection: {}, slots: [] }).services[1]).toMatchObject({ capacity: "Up to 5 dogs", priceFrom: "From", tag: "Popular", price: "$22.00" });
-  });
-
-  it("offers the next free times as chips that open the booking with the service, the area and the time", () => {
-    const v = view();
-    expect(v.booking.services.map((s) => [s.id, s.selected])).toEqual([["s-solo", false], ["s-group", true]]);
-    expect(v.booking.zones.map((z) => [z.id, z.selected])).toEqual([["z1", true], ["z2", false]]);
-    const first = v.booking.days[0]!;
-    expect(first.label).toBe("Aujourd'hui");
-    expect(first.slots[0]!.label).toBe(nb("13 h"));
-    expect(first.slots[0]!.href).toBe("/fr/s/pattes/book?service=s-group&zone=z1&start=2026-10-19T17%3A00%3A00.000Z");
-    expect(v.booking.days[1]!.label).toBe("Demain");
-    expect(v.booking.days.length).toBeLessThanOrEqual(7);
+    expect(group!.href).toBe("/fr/s/pattes/service/s-group?zone=z1");
+    expect(buildStorefront({ page: walker, locale: "en", now: MONDAY_1030 }).services[1]).toMatchObject({ capacity: "Up to 5 dogs", priceFrom: "From", tag: "Popular", price: "$22.00" });
   });
 
   it("puts every served area on the map and lists them as chips", () => {
@@ -138,13 +121,12 @@ describe("buildStorefront — a dog walker", () => {
 });
 
 describe("buildStorefront — a hair salon: the sections come from the data, not from the dog walker", () => {
-  const v = buildStorefront({ page: salon, locale: "en", now: MONDAY_1030, selection: { service: "colour" }, slots: slotsFor(salon, "colour", null) });
+  const v = buildStorefront({ page: salon, locale: "en", now: MONDAY_1030 });
 
   it("has no cover, no map, no area chips, no bio, no contact, no gallery — and no word of dogs", () => {
     expect(v.cover).toBeNull();
     expect(v.map).toBeNull();
     expect(v.zones).toEqual([]);
-    expect(v.booking.zones).toEqual([]);
     expect(v.about).toBeNull();
     expect(v.contact).toBeNull();
     expect(v.gallery).toEqual([]);
@@ -167,10 +149,10 @@ describe("buildStorefront — a hair salon: the sections come from the data, not
     expect(v.hours.days[1]!.hours).toBe("10 am – 6 pm");
   });
 
-  it("books the selected service without a zone, and the booking link carries no zone", () => {
-    expect(v.booking.services.find((s) => s.selected)!.id).toBe("colour");
-    expect(v.booking.days[0]!.slots[0]!.href).toMatch(/^\/en\/s\/salon-laurier\/book\?service=colour&start=/);
-    expect(v.booking.days[0]!.slots[0]!.href).not.toContain("zone=");
+  it("opens each service's own page; a shop that does not travel keeps no area in the address", () => {
+    expect(v.services[0]!.href).toBe("/en/s/salon-laurier/service/cut");
+    expect(v.bookHref).toBe("/en/s/salon-laurier/service/cut");
+    expect(v.team).toEqual([]);
   });
 
   it("states the policies from the shop's own rules", () => {
@@ -181,15 +163,13 @@ describe("buildStorefront — a hair salon: the sections come from the data, not
 
 describe("buildStorefront — edge cases", () => {
   it("shows no status and no hours section for a shop without hours, and says plainly when no time is free", () => {
-    const v = buildStorefront({ page: { ...salon, windows: [] }, locale: "fr", now: MONDAY_1030, selection: {}, slots: [] });
+    const v = buildStorefront({ page: { ...salon, windows: [] }, locale: "fr", now: MONDAY_1030 });
     expect(v.status).toBeNull();
     expect(v.hours.days.every((d) => d.hours === "Fermé")).toBe(true);
-    expect(v.booking.days).toEqual([]);
   });
 
   it("keeps a service that is not in the address out of the selection, and builds nothing for a shop without services", () => {
-    const v = buildStorefront({ page: { ...salon, services: [] }, locale: "fr", now: MONDAY_1030, selection: { service: "x" }, slots: [] });
+    const v = buildStorefront({ page: { ...salon, services: [] }, locale: "fr", now: MONDAY_1030 });
     expect(v.services).toEqual([]);
-    expect(v.booking.services).toEqual([]);
   });
 });

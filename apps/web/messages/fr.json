@@ -1271,6 +1271,42 @@
           "eraseDescription": "Vos coordonnées et vos réservations sont effacées pour de bon. Les factures sont conservées comme la loi l'exige. Saisissez votre courriel pour confirmer."
         }
       }
+    },
+    "journey": {
+      "allServices": "Tous les services",
+      "team": "Qui travaille ici",
+      "teamLead": "Choisissez une personne en réservant, ou laissez faire n'importe qui de libre.",
+      "withWhom": "Avec qui ?",
+      "anyone": "N'importe qui",
+      "with": "Avec {name}",
+      "included": "Ce qui est inclus",
+      "seeTimes": "Voir les heures",
+      "fromPrice": "À partir de {price}",
+      "taxLine": "{price} + TPS {gst} + TVQ {qst} = {total}",
+      "taxNote": "Taxes calculées au cent près.",
+      "cancelRule": "Annulation sans frais jusqu'à {hours} h avant.",
+      "freeService": "Gratuit",
+      "pickTime": "Choisissez une heure",
+      "pickTimeLead": "Seules les heures vraiment libres sont affichées. Touchez-en une pour réserver.",
+      "changePerson": "Changer de personne",
+      "noTimes": "Aucune heure n'est libre pour ce choix. Essayez une autre personne, ou revenez bientôt.",
+      "moreDays": "Jours suivants",
+      "bookedTitle": "C'est réservé",
+      "bookedLead": "Une confirmation est aussi dans vos réservations.",
+      "when": "Quand",
+      "who": "Avec",
+      "where": "Où",
+      "price": "Prix",
+      "addToCalendar": "Ajouter au calendrier",
+      "cancelBooking": "Annuler cette réservation",
+      "cancelling": "Annulation…",
+      "cancelled": "Cette réservation est annulée.",
+      "cancelTooLate": "Le délai d'annulation sans frais est passé. Appelez le commerce pour la modifier.",
+      "myBookings": "Mes réservations",
+      "bookAnother": "Réserver une autre heure",
+      "callShop": "Appeler le {phone}",
+      "directions": "Adresse",
+      "loading": "Chargement"
     }
   },
   "changelog": {

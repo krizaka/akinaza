@@ -57,7 +57,7 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
   });
 
   it("the booking asks for a service and a time, never for a dog", () => {
-    const data = { shop: { id: "s", name: "Krizaka (démo)", slug: "krizaka-demo" }, services: [{ id: "x", nameFr: "Atelier", nameEn: "Workshop", durationMinutes: 180, priceCents: 60_000, capacity: 1 }], zones: [], client: { id: "c", fullName: "Café du Parc inc." }, dogs: [], preselect: { serviceId: null, zoneId: null, startsAt: null }, timeZone: "America/Toronto", bookingsHref: "/en/app" };
+    const data = { shop: { id: "s", name: "Krizaka (démo)", slug: "krizaka-demo" }, services: [{ id: "x", nameFr: "Atelier", nameEn: "Workshop", durationMinutes: 180, priceCents: 60_000, capacity: 1 }], zones: [], client: { id: "c", fullName: "Café du Parc inc." }, dogs: [], preselect: { serviceId: null, zoneId: null, startsAt: null }, timeZone: "America/Toronto", bookingsHref: "/en/app", staffId: null };
     const text = readable(around(locale, "professional", <BookingFlow data={data} />));
     expect(text).not.toMatch(DOG_WORDS[locale]);
     expect(text).toMatch(locale === "en" ? /Book this appointment/ : /Réserver ce rendez-vous/);

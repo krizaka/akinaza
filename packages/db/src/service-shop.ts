@@ -283,7 +283,7 @@ export interface PublicMedia {
 
 /** What a visitor of the public page may know: no owner account, legal name, street address, tax numbers, staff id or days-off reasons. */
 export interface PublicShop {
-  shop: Pick<typeof shops.$inferSelect, "id" | "name" | "slug" | "timezone" | "taglineFr" | "taglineEn" | "area" | "bioFr" | "bioEn" | "publicPhone" | "publicEmail" | "seatUnitFr" | "seatUnitEn" | "businessType"> & {
+  shop: Pick<typeof shops.$inferSelect, "id" | "name" | "slug" | "timezone" | "taglineFr" | "taglineEn" | "area" | "bioFr" | "bioEn" | "publicPhone" | "publicEmail" | "seatUnitFr" | "seatUnitEn" | "registrant" | "businessType"> & {
     /** The first name shown for the person who works. */
     ownerName: string;
   };
@@ -319,7 +319,7 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
   const publicMedia = (m: typeof shopMedia.$inferSelect): PublicMedia => ({ id: m.id, url: m.url, webmUrl: m.webmUrl, mp4Url: m.mp4Url, altFr: m.altFr, altEn: m.altEn, captionFr: m.captionFr, captionEn: m.captionEn, wide: m.wide });
   const bookingCounts = (counts.rows as { service_id: string; bookings: number }[]).map((r) => ({ serviceId: r.service_id, bookings: r.bookings }));
   return {
-    shop: { id: row.id, name: row.name, slug: row.slug, timezone: row.timezone, taglineFr: row.taglineFr, taglineEn: row.taglineEn, area: row.area, bioFr: row.bioFr, bioEn: row.bioEn, publicPhone: row.publicPhone, publicEmail: row.publicEmail, seatUnitFr: row.seatUnitFr, seatUnitEn: row.seatUnitEn, businessType: row.businessType, ownerName: full.staff.name },
+    shop: { id: row.id, name: row.name, slug: row.slug, registrant: row.registrant, timezone: row.timezone, taglineFr: row.taglineFr, taglineEn: row.taglineEn, area: row.area, bioFr: row.bioFr, bioEn: row.bioEn, publicPhone: row.publicPhone, publicEmail: row.publicEmail, seatUnitFr: row.seatUnitFr, seatUnitEn: row.seatUnitEn, businessType: row.businessType, ownerName: full.staff.name },
     zones: full.zones.map((z) => ({ id: z.id, name: z.name, lat: z.lat, lng: z.lng })),
     services: full.services.map((s) => ({ id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, descriptionFr: s.descriptionFr, descriptionEn: s.descriptionEn, includedFr: s.includedFr, includedEn: s.includedEn, priceVaries: s.priceVaries })),
     windows: mergeWindows(everyone),
@@ -607,4 +607,52 @@ export async function shopMediaOf(db: Db, shopId: string): Promise<{ cover: Publ
   const rows = await db.select().from(shopMedia).where(eq(shopMedia.shopId, shopId)).orderBy(asc(shopMedia.position));
   const one = (m: typeof shopMedia.$inferSelect): PublicMedia => ({ id: m.id, url: m.url, webmUrl: m.webmUrl, mp4Url: m.mp4Url, altFr: m.altFr, altEn: m.altEn, captionFr: m.captionFr, captionEn: m.captionEn, wide: m.wide });
   return { cover: rows.filter((m) => m.role === MediaRole.Cover).map(one)[0] ?? null, gallery: rows.filter((m) => m.role === MediaRole.Gallery).map(one) };
+}
+
+/** What the confirmation page shows of a booking: when, with whom, where, and whether it can still be cancelled. */
+export interface BookingDetail {
+  id: string;
+  cancelled: boolean;
+  startsAt: Date;
+  endsAt: Date;
+  timezone: string;
+  shop: { name: string; slug: string; address: string; publicPhone: string | null };
+  service: { id: string; nameFr: string; nameEn: string; durationMinutes: number; priceCents: number };
+  /** The first name of the person who takes the visit. */
+  staffName: string;
+  cancellationHours: number;
+  cancellable: boolean;
+}
+
+/** One booking of a signed-in account (never someone else's), as the confirmation page reads it; null when it is not theirs. */
+export async function bookingDetail(db: Db, accountId: string, bookingId: string, now: Date): Promise<BookingDetail | null> {
+  const found = await db.execute(sql`
+    SELECT b.id, (b.status = 'cancelled') AS cancelled, lower(a.during) AS starts_at, upper(a.during) AS ends_at, a.checked_in_at,
+           s.name AS shop_name, s.slug, s.address, s.public_phone, s.timezone,
+           v.id AS service_id, v.name_fr, v.name_en, v.duration_minutes, v.price_cents, m.name AS staff_name, r.cancellation_hours
+      FROM bookings b
+      JOIN clients c ON c.id = b.client_id AND c.account_id = ${accountId} AND c.erased_at IS NULL
+      JOIN appointments a ON a.id = b.appointment_id
+      JOIN shops s ON s.id = a.shop_id
+      JOIN services v ON v.id = a.service_id
+      JOIN staff m ON m.id = a.staff_id
+      JOIN shop_rules r ON r.shop_id = s.id
+     WHERE b.id = ${bookingId}`);
+  const r = found.rows[0] as
+    | { id: string; cancelled: boolean; starts_at: string; ends_at: string; checked_in_at: string | null; shop_name: string; slug: string; address: string; public_phone: string | null; timezone: string; service_id: string; name_fr: string; name_en: string; duration_minutes: number; price_cents: number; staff_name: string; cancellation_hours: number }
+    | undefined;
+  if (!r) return null;
+  const startsAt = new Date(r.starts_at);
+  return {
+    id: r.id,
+    cancelled: r.cancelled,
+    startsAt,
+    endsAt: new Date(r.ends_at),
+    timezone: r.timezone,
+    shop: { name: r.shop_name, slug: r.slug, address: r.address, publicPhone: r.public_phone },
+    service: { id: r.service_id, nameFr: r.name_fr, nameEn: r.name_en, durationMinutes: r.duration_minutes, priceCents: r.price_cents },
+    staffName: r.staff_name,
+    cancellationHours: r.cancellation_hours,
+    cancellable: !r.cancelled && !r.checked_in_at && canCancel(startsAt, now, r.cancellation_hours),
+  };
 }

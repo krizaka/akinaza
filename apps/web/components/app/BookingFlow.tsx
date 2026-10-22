@@ -8,6 +8,7 @@ import { Card } from "@krizaka/ui/card";
 import { Checkbox } from "@krizaka/ui/checkbox";
 import { createKrizakaForm } from "@krizaka/ui/form";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
@@ -25,6 +26,8 @@ export interface BookingData {
   preselect: BookingPreselect;
   timeZone: string;
   bookingsHref: string;
+  /** The person asked for on the way (the address), or null for anyone. */
+  staffId: string | null;
 }
 
 type Say = ReturnType<typeof useSay>["say"];
@@ -173,11 +176,14 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
   const call = useCall();
   const [booked, setBooked] = useState(false);
   const { dependants } = useVocabulary();
+  const router = useRouter();
   const form = (dependants ? bookForm : (bookSelfForm as unknown as typeof bookForm)).useForm({
     i18n: i18nOf(say, locale),
     defaultValues: bookingDefaults({ services: data.services, zones: data.zones, dogs: data.dogs, preselect: data.preselect }),
     onSubmit: async (v) => {
-      const done = await call.run("/api/me/bookings", { json: { clientId, serviceId: v.serviceId, zoneId: v.zoneId || null, dependantIds: v.dogIds, startsAt: v.startsAt } });
+      const done = await call.run<{ bookingIds: string[] }>("/api/me/bookings", { json: { clientId, serviceId: v.serviceId, zoneId: v.zoneId || null, dependantIds: v.dogIds, startsAt: v.startsAt, staffId: data.staffId } }, { refresh: false });
+      // The booking has its own page: the URL is the state (when, with whom, where, add to calendar, cancel).
+      if (done !== null) router.push(`/${locale}/s/${data.shop.slug}/service/${v.serviceId}/confirmation?booking=${done.bookingIds[0]}`);
       if (done !== null) setBooked(true);
     },
   });
@@ -223,7 +229,7 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
         <form.Watch name="serviceId">
           {(serviceId) => (
             <form.Watch name="zoneId">
-              {(zoneId) => <form.Field name="startsAt">{(field) => <SlotPicker slug={data.shop.slug} serviceId={serviceId as string} zoneId={(zoneId as string) || null} timeZone={data.timeZone} value={field.value as string} onPick={field.setValue} error={field.error} />}</form.Field>}
+              {(zoneId) => <form.Field name="startsAt">{(field) => <SlotPicker slug={data.shop.slug} staffId={data.staffId} serviceId={serviceId as string} zoneId={(zoneId as string) || null} timeZone={data.timeZone} value={field.value as string} onPick={field.setValue} error={field.error} />}</form.Field>}
             </form.Watch>
           )}
         </form.Watch>
@@ -236,12 +242,12 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
   );
 }
 
-function SlotPicker({ slug, serviceId, zoneId, timeZone, value, onPick, error }: { slug: string; serviceId: string; zoneId: string | null; timeZone: string; value: string; onPick: (v: string) => void; error: string | undefined }) {
+function SlotPicker({ slug, staffId, serviceId, zoneId, timeZone, value, onPick, error }: { slug: string; staffId: string | null; serviceId: string; zoneId: string | null; timeZone: string; value: string; onPick: (v: string) => void; error: string | undefined }) {
   const { say, locale } = useSay();
   const slots = useQuery({
-    queryKey: ["slots", slug, serviceId, zoneId],
+    queryKey: ["slots", slug, serviceId, zoneId, staffId],
     enabled: !!serviceId,
-    queryFn: () => krizakaFetch(`/api/shops/${slug}/slots`, { query: { serviceId, zoneId } }) as Promise<{ slots: SlotView[] }>,
+    queryFn: () => krizakaFetch(`/api/shops/${slug}/slots`, { query: { serviceId, zoneId, staffId } }) as Promise<{ slots: SlotView[] }>,
   });
   // A time carried from the shop page that is no longer free (someone booked it meanwhile) is dropped, never submitted.
   const offered = slots.data?.slots;
