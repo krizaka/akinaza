@@ -92,6 +92,13 @@
       "when": 1793100000000,
       "tag": "0012_retire_social_sync",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793200000000,
+      "tag": "0013_multi_shop",
+      "breakpoints": true
     }
   ]
 }

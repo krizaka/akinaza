@@ -1,6 +1,6 @@
 import { addLocalDays, businessTypeSchema, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
 import { addDays, compareAsc } from "date-fns";
-import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { Db, Tx } from "./client";
@@ -85,18 +85,31 @@ export function akCode(error: unknown): string | null {
   return /AK_[A-Z_]+/.exec(`${e.message ?? ""} ${e.cause?.message ?? ""}`)?.[0] ?? null;
 }
 
-/** The shop of an owner, or null. */
-export async function shopOfOwner(db: Db, ownerId: string) {
-  const [shop] = await db.select().from(shops).where(eq(shops.ownerId, ownerId)).orderBy(asc(shops.createdAt)).limit(1);
+/** The shop of an owner: the one asked for (it must be theirs), else the default one. Null when there is none. */
+export async function shopOfOwner(db: Db, ownerId: string, shopId?: string) {
+  const [shop] = await db.select().from(shops).where(shopId ? and(eq(shops.ownerId, ownerId), eq(shops.id, shopId)) : eq(shops.ownerId, ownerId)).orderBy(desc(shops.isDefault), asc(shops.createdAt)).limit(1);
   return shop ?? null;
 }
 
-/** Creates the owner's shop page (with its first staff member and default rules) or updates it. Publishing needs an active service. */
-export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput): Promise<{ shopId: string; created: boolean }> {
+/** All the owner's shops, the default first. */
+export async function shopsOfOwner(db: Db, ownerId: string) {
+  return db.select({ id: shops.id, name: shops.name, slug: shops.slug, published: shops.published, isDefault: shops.isDefault, businessType: shops.businessType }).from(shops).where(eq(shops.ownerId, ownerId)).orderBy(desc(shops.isDefault), asc(shops.createdAt));
+}
+
+/** Makes another of the owner's shops the one the app opens on (one statement: there is always exactly one). */
+export async function setDefaultShop(db: Db, ownerId: string, shopId: string): Promise<void> {
+  const own = await shopOfOwner(db, ownerId, shopId);
+  if (!own) refuse("AK_SHOP_UNKNOWN");
+  await db.update(shops).set({ isDefault: sql`(${shops.id} = ${shopId})` }).where(eq(shops.ownerId, ownerId));
+}
+
+/** Creates the owner's shop page (with its first staff member and default rules) or updates it: the default shop, or `shopId`; `additional` adds another shop. A first shop becomes the default. Publishing needs an active service. */
+export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, which: { shopId?: string; additional?: boolean } = {}): Promise<{ shopId: string; created: boolean }> {
   const input = shopPageSchema.parse(raw);
   try {
     return await db.transaction(async (tx) => {
-      const [existing] = await tx.select().from(shops).where(eq(shops.ownerId, ownerId)).orderBy(asc(shops.createdAt)).limit(1).for("update");
+      const [existing] = which.additional ? [] : await tx.select().from(shops).where(which.shopId ? and(eq(shops.ownerId, ownerId), eq(shops.id, which.shopId)) : eq(shops.ownerId, ownerId)).orderBy(desc(shops.isDefault), asc(shops.createdAt)).limit(1).for("update");
+      if (which.shopId && !existing) refuse("AK_SHOP_UNKNOWN");
       if (input.published) {
         const count = existing ? (await tx.select({ n: sql<number>`count(*)::int` }).from(services).where(and(eq(services.shopId, existing.id), eq(services.active, true))))[0]!.n : 0;
         if (count === 0) refuse("AK_NOT_PUBLISHABLE");
