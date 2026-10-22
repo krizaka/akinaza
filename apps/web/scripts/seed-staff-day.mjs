@@ -32,7 +32,7 @@ async function main() {
     const [existing] = (await client.query("SELECT id FROM staff WHERE shop_id = $1 AND account_id = $2", [shop.id, account.id])).rows;
     const staffId =
       existing?.id ?? (await client.query("INSERT INTO staff (shop_id, name, account_id) VALUES ($1, $2, $3) RETURNING id", [shop.id, wanted.email.split("@")[0].split(".")[0].replace(/^./, (c) => c.toUpperCase()), account.id])).rows[0].id;
-    const [service] = (await client.query("SELECT id, duration_minutes FROM services WHERE shop_id = $1 AND active ORDER BY created_at LIMIT 1", [shop.id])).rows;
+    const [service] = (await client.query("SELECT id, duration_minutes FROM services WHERE shop_id = $1 AND active ORDER BY name_en LIMIT 1", [shop.id])).rows;
     if (!service) throw new Error("the shop has no service");
     const [known] = (await client.query("SELECT id FROM clients WHERE shop_id = $1 AND email = $2", [shop.id, wanted.client.email])).rows;
     const clientId = known?.id ?? (await client.query("INSERT INTO clients (shop_id, full_name, email, language) VALUES ($1, $2, $3, 'fr') RETURNING id", [shop.id, wanted.client.fullName, wanted.client.email])).rows[0].id;
