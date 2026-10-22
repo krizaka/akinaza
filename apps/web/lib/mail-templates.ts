@@ -22,6 +22,8 @@ export const MAIL_TEMPLATES = {
   "invoice-issued": { shop: "text", number: "text", total: "text", gst: "text", qst: "text", url: "text" },
   /** The Monday brief's invitation to a regular who has not booked for a while — only with a granted marketing consent (Loi 25, CASL), re-read at send time. */
   "brief-invite": { shop: "text", client: "text", days: "text", url: "text" },
+  /** The Monday brief to the shop's owner: up to three lines, a link to the app, a one-click way to stop it. */
+  "brief-weekly": { shop: "text", line1: "text", line2: "text", has2: "flag", line3: "text", has3: "flag", url: "text", stop: "text" },
 } as const satisfies Record<string, Record<string, VarKind>>;
 
 export type MailTemplateId = keyof typeof MAIL_TEMPLATES;

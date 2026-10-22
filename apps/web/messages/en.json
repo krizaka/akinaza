@@ -1075,6 +1075,18 @@
         "equalVolume": "At the same number of appointments.",
         "revenueNotMargin": "Revenue per hour, not a margin: your expenses are not split by service.",
         "preparedNotFiled": "Akinaza prepares the figures, you file your return."
+      },
+      "mail": {
+        "gaps": "{slots} free slots in the next 7 days ({missed} of missed revenue): {invitees} regulars to invite.",
+        "pricing": "{service}: {time} % of the time, {revenue} % of the revenue. At {suggested}, about +{gain} a month at the same volume.",
+        "taxes": "To set aside for taxes: {setAside} of the {invoiced} invoiced last week. What is really yours: {available}."
+      },
+      "stop": {
+        "title": "Stop the Monday brief e-mail",
+        "lead": "You will no longer get this e-mail for this shop. The brief stays on the Today page every week.",
+        "button": "Stop it",
+        "done": "Done: the Monday brief will no longer be e-mailed to you.",
+        "invalid": "This link leads nowhere: it may have been used already."
       }
     }
   }
