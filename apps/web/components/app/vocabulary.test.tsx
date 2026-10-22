@@ -8,8 +8,8 @@ import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
 import { BookingFlow } from "./BookingFlow";
+import { ClientFilePanel } from "./ClientFilePanel";
 import { type ClientFileView,ClientHome } from "./ClientHome";
-import { ClientsList } from "./ClientsList";
 import { ShopSetupView } from "./ShopSetup";
 import { WalkerDay } from "./WalkerDay";
 
@@ -72,9 +72,14 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
     expect(text).toMatch(locale === "en" ? /People per appointment/ : /Personnes par rendez-vous/);
   });
 
-  it("the clients list shows a client, not a client's dogs", () => {
-    const clients = [{ id: "c", fullName: "Café du Parc inc.", phone: "514-555-0111", email: "contact@example.test", hasNotes: true, dependants: [{ id: "d", name: "Café du Parc inc.", kind: "other" as const, profile: {} }] }];
-    const text = readable(around(locale, "professional", <ClientsList clients={clients} />));
+  it("a client's file shows a client, not a client's dogs", () => {
+    const file = {
+      client: { id: "c", fullName: "Café du Parc inc.", phone: "514-555-0111", email: "contact@example.test", language: "fr" as const, notes: null, hasAccessNotes: true, since: "2026-10-01T12:00:00.000Z" },
+      dependants: [{ id: "d", name: "Café du Parc inc.", kind: "other" as const, profile: {} }],
+      visits: [],
+      invoices: [],
+    };
+    const text = readable(around(locale, "professional", <ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" />));
     expect(text).toContain("Café du Parc inc.");
     expect(text).not.toMatch(DOG_WORDS[locale]);
     expect(text).not.toMatch(/Animal|Chien|Dog|Access notes|Notes d'accès/);
@@ -90,6 +95,18 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
 });
 
 describe("a pet-care shop keeps its words", () => {
+  it("the client's file lists their dogs with the breed", () => {
+    const file = {
+      client: { id: "c", fullName: "Camille", phone: null, email: null, language: "fr" as const, notes: null, hasAccessNotes: false, since: "2026-10-01T12:00:00.000Z" },
+      dependants: [{ id: "d", name: "Rex", kind: "dog" as const, profile: { breed: "Labrador", size: "large" as const } }],
+      visits: [],
+      invoices: [],
+    };
+    const text = readable(around("en", "pets", <ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" />));
+    expect(text).toMatch(/Rex/);
+    expect(text).toMatch(/Labrador · large/);
+  });
+
   it("the day is the walker's: walks, dogs and their owners", () => {
     const text = readable(around("en", "pets", <WalkerDay visits={[{ ...visit, bookings: [{ ...visit.bookings[0]!, clientName: "Camille", dependant: { name: "Rex", kind: "dog" as const, profile: { breed: "Labrador" } } }] }]} timeZone="America/Toronto" nav={nav} />));
     expect(text).toMatch(/Rex/);

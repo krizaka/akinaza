@@ -338,42 +338,43 @@
       "LINE_PRICE": "Une ligne libre doit avoir un prix."
     },
     "today": {
-      "day": "{date} · {count} rendez-vous",
-      "appointments": "Les rendez-vous du jour",
-      "none": "Aucun rendez-vous aujourd'hui.",
       "noShopTitle": "Pas encore de boutique",
       "noShop": "Les boutiques sont configurées par notre équipe pendant le développement d'Akinaza.",
-      "preview": "Prochaine facture (aperçu)",
-      "lastInvoice": "Dernière facture",
-      "notIssued": "Non émise",
-      "issued": "Émise",
-      "noInvoice": "Pas encore de facture.",
-      "table": {
-        "caption": "Les rendez-vous du jour",
-        "time": "Heure",
-        "client": "Client",
-        "service": "Service",
-        "staff": "Avec",
-        "status": "Statut",
-        "walkIn": "Sans rendez-vous"
+      "dayStrip": "Jour",
+      "earlier": "Jours précédents",
+      "later": "Jours suivants",
+      "goToday": "Aujourd'hui",
+      "stats": {
+        "appointments": "Rendez-vous",
+        "expected": "Revenu attendu",
+        "withTaxes": "TPS et TVQ incluses",
+        "noTaxes": "Aucune taxe perçue",
+        "next": "Prochain client",
+        "nobodyLeft": "Personne d'autre aujourd'hui",
+        "nobodyNext": "Personne de réservé"
       },
+      "agendaLabel": "Rendez-vous de la journée",
+      "now": "Maintenant · {time}",
+      "noneTitle": "Rien de réservé",
+      "none": "La journée est libre. Les rendez-vous apparaissent ici dès que vos clients réservent depuis votre page.",
+      "noneOtherDay": "Aucun rendez-vous ce jour-là.",
+      "walkIn": "Sans rendez-vous",
+      "start": "Commencer",
+      "finish": "Terminer",
       "statuses": {
         "booked": "Réservé",
+        "inProgress": "En cours",
         "done": "Fait",
         "cancelled": "Annulé",
         "noShow": "Absent"
       },
-      "invoice": {
-        "gstNo": "No de TPS",
-        "qstNo": "No de TVQ",
-        "smallSupplier": "Petit fournisseur — ni TPS ni TVQ perçues.",
-        "number": "Facture",
-        "date": "Date",
-        "lines": "Lignes",
-        "subtotal": "Sous-total",
-        "gst": "TPS (5 %)",
-        "qst": "TVQ (9,975 %)",
-        "total": "Total"
+      "detail": {
+        "close": "Fermer",
+        "service": "Service",
+        "with": "Avec",
+        "price": "Prix",
+        "status": "Statut",
+        "clientFile": "Ouvrir la fiche client"
       }
     },
     "account": {
@@ -487,7 +488,34 @@
         "other": "Animal"
       },
       "vet": "Vétérinaire : {name}, {phone}",
-      "emergency": "Urgence : {name}, {phone}"
+      "emergency": "Urgence : {name}, {phone}",
+      "never": "—",
+      "caption": "Clients",
+      "back": "Clients",
+      "columns": {
+        "client": "Client",
+        "visits": "Visites",
+        "last": "Dernière visite",
+        "next": "Prochaine visite",
+        "spent": "Total dépensé"
+      },
+      "file": {
+        "since": "Client depuis le {date}",
+        "visits": "Visites",
+        "noVisits": "Aucune visite pour l'instant.",
+        "invoices": "Factures",
+        "noInvoices": "Aucune facture pour l'instant.",
+        "notes": "Notes",
+        "noNotes": "Aucune note.",
+        "date": "Date",
+        "service": "Service",
+        "with": "Avec",
+        "status": "Statut",
+        "price": "Prix",
+        "number": "Numéro",
+        "total": "Total",
+        "credit": "Note de crédit"
+      }
     },
     "shopSetup": {
       "title": "Votre page boutique",
