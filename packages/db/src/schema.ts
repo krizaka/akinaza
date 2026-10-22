@@ -25,6 +25,11 @@ export const accounts = pgTable(
     status: text("status", { enum: ["ACTIVE", "SUSPENDED"] }).notNull().default("ACTIVE"),
     locale: text("locale", { enum: ["en", "fr"] }).notNull().default("fr"),
     passwordHash: text("password_hash"),
+    /** The account baseline (@krizaka/auth, migration 0017). */
+    name: text("name"),
+    avatarSeed: text("avatar_seed"),
+    theme: text("theme"),
+    emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     createdAt: created(),
     lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
     /** The founder offer: the payments processor's ids and the subscription's state, written by its notifications only (0010_billing). */
