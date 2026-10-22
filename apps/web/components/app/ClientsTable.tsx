@@ -5,6 +5,7 @@ import { DataTable, type DataTableColumn } from "@krizaka/ui/data-table";
 import Link from "next/link";
 import { useMemo } from "react";
 
+import { useShopRoutes } from "@/components/app/ShopSession";
 import { formatDate, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
 
@@ -27,6 +28,7 @@ export function ClientAvatar({ name, size = "sm" }: { name: string; size?: "sm" 
 /** The shop's clients on the DataTable: who, how often, when last and next, what they spent. The name opens the file at `/app/clients/<id>`. */
 export function ClientsTable({ clients, timeZone }: { clients: ClientRowView[]; timeZone: string }) {
   const { say, locale } = useSay();
+  const routes = useShopRoutes();
   const columns = useMemo<DataTableColumn<ClientRowView>[]>(() => {
     const day = (iso: string | null) => (iso ? formatDate(iso, locale, timeZone) : say("clients.never"));
     return [
@@ -39,7 +41,7 @@ export function ClientsTable({ clients, timeZone }: { clients: ClientRowView[]; 
         filter: "text",
         value: (c) => c.fullName,
         cell: (c) => (
-          <Link href={`/${locale}/app/clients/${c.id}`} className="flex items-center gap-3 font-semibold text-fg hover:underline">
+          <Link href={routes.client(c.id)} className="flex items-center gap-3 font-semibold text-fg hover:underline">
             <ClientAvatar name={c.fullName} />
             {c.fullName}
           </Link>
@@ -51,6 +53,6 @@ export function ClientsTable({ clients, timeZone }: { clients: ClientRowView[]; 
       { id: "next", header: say("clients.columns.next"), sortable: true, priority: 2, value: (c) => c.nextVisitAt ?? "", cell: (c) => day(c.nextVisitAt) },
       { id: "spent", header: say("clients.columns.spent"), type: "number", sortable: true, priority: 2, value: (c) => c.spentCents, cell: (c) => formatMoney(c.spentCents, locale) },
     ];
-  }, [say, locale, timeZone]);
+  }, [say, locale, timeZone, routes]);
   return <DataTable caption={say("clients.caption")} rows={clients} columns={columns} getRowId={(c) => c.id} rowLabel={(c) => c.fullName} defaultSort={{ column: "client", direction: "ascending" }} />;
 }

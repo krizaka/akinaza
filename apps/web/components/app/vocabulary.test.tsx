@@ -10,9 +10,11 @@ import fr from "@/messages/fr.json";
 import { BookingFlow } from "./BookingFlow";
 import { ClientFilePanel } from "./ClientFilePanel";
 import { type ClientFileView,ClientHome } from "./ClientHome";
+import { ShopSession } from "./ShopSession";
 import { ShopSetupView } from "./ShopSetup";
 import { WalkerDay } from "./WalkerDay";
 
+vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app" }));
 
 const DOG_WORDS = { en: /\b(walks?|walkers?|dogs?|pups?|pets?|leash|breed|vet)\b|Saint-Henri/i, fr: /promenad|chiens?\b|chiot|\ben laisse\b|animal|animaux|vétérin|\brace\b|Saint-Henri/i };
@@ -79,7 +81,7 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
       visits: [],
       invoices: [],
     };
-    const text = readable(around(locale, "professional", <ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" />));
+    const text = readable(around(locale, "professional", <ShopSession locale="en" shopId="s1" remembered><ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>));
     expect(text).toContain("Café du Parc inc.");
     expect(text).not.toMatch(DOG_WORDS[locale]);
     expect(text).not.toMatch(/Animal|Chien|Dog|Access notes|Notes d'accès/);
@@ -102,7 +104,7 @@ describe("a pet-care shop keeps its words", () => {
       visits: [],
       invoices: [],
     };
-    const text = readable(around("en", "pets", <ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" />));
+    const text = readable(around("en", "pets", <ShopSession locale="en" shopId="s1" remembered><ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>));
     expect(text).toMatch(/Rex/);
     expect(text).toMatch(/Labrador · large/);
   });

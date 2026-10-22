@@ -20,7 +20,7 @@ const ICONS = { today: <ClockIcon />, bookings: <ClockIcon />, clients: <UsersIc
  * The signed-in frame (@krizaka/ui AppShell): the shop's space (`/app`) and the administration (admin.akinaza.com)
  * share it — the mark, the sections, the language, the theme, sign-out and the DEV build.
  */
-export function AppFrame({ locale, email, base, items, admin = false, switcher, children }: { locale: "en" | "fr"; email: string; base: string; items: (keyof typeof ICONS)[]; admin?: boolean; switcher?: React.ReactNode; children: React.ReactNode }) {
+export function AppFrame({ locale, email, base, items, hrefs, admin = false, switcher, children }: { locale: "en" | "fr"; email: string; base: string; items: (keyof typeof ICONS)[]; hrefs?: Partial<Record<keyof typeof ICONS, string>>; admin?: boolean; switcher?: React.ReactNode; children: React.ReactNode }) {
   const { say } = useSay();
   const router = useRouter();
   const path = usePathname() ?? "";
@@ -55,7 +55,7 @@ export function AppFrame({ locale, email, base, items, admin = false, switcher, 
       >
         {switcher ? <div className="px-3 pb-2">{switcher}</div> : null}
         {items.map((key) => {
-          const to = key === (admin ? "overview" : "today") || key === "bookings" ? base : `${base}/${key}`;
+          const to = hrefs?.[key] ?? (key === (admin ? "overview" : "today") || key === "bookings" ? base : `${base}/${key}`);
           return (
             <AppShell.Item key={key} asChild label={say(`shell.${key}`)} icon={ICONS[key]} current={isCurrent(to)}>
               <Link href={to}>{say(`shell.${key}`)}</Link>

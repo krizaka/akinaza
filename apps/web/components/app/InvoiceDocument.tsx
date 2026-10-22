@@ -12,7 +12,7 @@ export type InvoiceView = NonNullable<Awaited<ReturnType<typeof invoiceDetail>>>
  * is due, its payment terms and due date (krizaka/akinaza#113: a buyer needs them from $500, DORS/91-45 art. 3).
  * Each label and its value are plain text, so the document reads the same as a PDF text layer or a screen reader.
  */
-export function InvoiceDocument({ invoice, locale }: { invoice: InvoiceView; locale: Locale }) {
+export function InvoiceDocument({ invoice, locale, backHref }: { invoice: InvoiceView; locale: Locale; backHref: string }) {
   const t = getDictionary(invoice.language).console.invoiceDoc;
   const back = getDictionary(locale).console.invoices.back;
   const lang = invoice.language === "fr" ? "fr-CA" : "en-CA";
@@ -23,7 +23,7 @@ export function InvoiceDocument({ invoice, locale }: { invoice: InvoiceView; loc
   return (
     <article lang={invoice.language} className="flex max-w-3xl flex-col gap-5 rounded-lg border border-border-default bg-surface-1 p-5 sm:p-8" aria-labelledby="invoice-title">
       <p>
-        <Link className="text-sm text-fg-accent underline" href={`/${locale}/app/invoices`} lang={locale}>
+        <Link className="text-sm text-fg-accent underline" href={backHref} lang={locale}>
           ← {back}
         </Link>
       </p>

@@ -5,6 +5,7 @@ import { DataTable, type DataTableColumn } from "@krizaka/ui/data-table";
 import Link from "next/link";
 import { useMemo } from "react";
 
+import { useShopRoutes } from "@/components/app/ShopSession";
 import { formatDate, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
 
@@ -22,6 +23,7 @@ export interface InvoiceRowView {
 /** The issued invoices on the DataTable: number (opens the document), client, dates, total; a card per invoice on a phone. */
 export function InvoicesTable({ invoices }: { invoices: InvoiceRowView[] }) {
   const { say, locale } = useSay();
+  const routes = useShopRoutes();
   const columns = useMemo<DataTableColumn<InvoiceRowView>[]>(() => {
     const day = (d: string) => formatDate(`${d}T12:00:00Z`, locale, "UTC");
     return [
@@ -33,7 +35,7 @@ export function InvoicesTable({ invoices }: { invoices: InvoiceRowView[] }) {
         sortable: true,
         value: (i) => i.number,
         cell: (i) => (
-          <Link className="font-mono font-semibold text-fg-accent underline" href={`/${locale}/app/invoices/${i.id}`} aria-label={say("invoices.list.open", { number: i.number })}>
+          <Link className="font-mono font-semibold text-fg-accent underline" href={routes.invoice(i.id)} aria-label={say("invoices.list.open", { number: i.number })}>
             {i.number}
           </Link>
         ),
@@ -45,6 +47,6 @@ export function InvoicesTable({ invoices }: { invoices: InvoiceRowView[] }) {
       { id: "kind", header: say("invoices.table.kind"), type: "status", priority: 3, value: (i) => (i.creditOf ? "credit" : "invoice"), cell: (i) => (i.creditOf ? <Badge tone="warning">{say("invoices.list.credit")}</Badge> : null) },
       { id: "total", header: say("invoices.table.total"), type: "number", sortable: true, value: (i) => i.totalCents, cell: (i) => formatMoney(i.totalCents, locale) },
     ];
-  }, [say, locale]);
+  }, [say, locale, routes]);
   return <DataTable caption={say("invoices.list.title")} rows={invoices} columns={columns} getRowId={(i) => i.id} rowLabel={(i) => i.number} defaultSort={{ column: "issued", direction: "descending" }} />;
 }

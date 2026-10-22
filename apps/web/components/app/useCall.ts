@@ -4,6 +4,7 @@ import { krizakaFetch } from "@krizaka/query";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
+import { useOptionalShopRoutes } from "@/components/app/ShopSession";
 import { errorKey } from "@/lib/client";
 import { useSay } from "@/lib/i18n-client";
 
@@ -14,6 +15,7 @@ import { useSay } from "@/lib/i18n-client";
 export function useCall() {
   const { say } = useSay();
   const router = useRouter();
+  const routes = useOptionalShopRoutes();
   const [pending, setPending] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
   const run = useCallback(
@@ -21,7 +23,8 @@ export function useCall() {
       setPending(true);
       setProblem(null);
       try {
-        const result = (await krizakaFetch(path, { method: init.method ?? "POST", ...(init.json !== undefined ? { json: init.json } : {}), ...(init.body ? { body: init.body } : {}) })) as T;
+        const target = routes && path.startsWith("/api/walker/") ? routes.api(path) : path;
+        const result = (await krizakaFetch(target, { method: init.method ?? "POST", ...(init.json !== undefined ? { json: init.json } : {}), ...(init.body ? { body: init.body } : {}) })) as T;
         if (options.refresh !== false) router.refresh();
         return result;
       } catch (error) {
@@ -31,7 +34,7 @@ export function useCall() {
         setPending(false);
       }
     },
-    [router, say],
+    [router, say, routes],
   );
   return { run, pending, problem, clear: () => setProblem(null) };
 }

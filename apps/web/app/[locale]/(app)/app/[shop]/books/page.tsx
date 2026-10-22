@@ -11,6 +11,7 @@ import { db } from "@/lib/db";
 import { formatLongDay, formatMoney } from "@/lib/format";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
+import { shopRoutes } from "@/lib/routes";
 
 export const dynamic = "force-dynamic";
 
@@ -22,9 +23,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * « Vos livres »: the GST/QST return of a period, prepared from the shop's invoices and expenses, every figure with its
  * sources. It prepares; the merchant reviews and files it themselves with Revenu Québec — nothing is sent from here.
  */
-export default async function Books({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ period?: string }> }) {
-  const locale = asLocale((await params).locale);
-  const { shop } = await memberShop("reports");
+export default async function Books({ params, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ period?: string }> }) {
+  const { locale: rawLocale, shop: shopId } = await params;
+  const locale = asLocale(rawLocale);
+  const { shop } = await memberShop(shopId, "reports");
   const t = getDictionary(locale).console.books;
   const today = await shopDay(db(), shop.id, new Date());
   const period = periodFor((await searchParams).period, today);
@@ -44,7 +46,7 @@ export default async function Books({ params, searchParams }: { params: Promise<
       <nav aria-label={t.periodNav} className="flex flex-wrap gap-2">
         {periodChoices(today).map((p) => (
           <ChipLink key={p.id} asChild selected={p.id === period.id} current={p.id === period.id ? "page" : undefined}>
-            <Link href={`/${locale}/app/books?period=${p.id}`}>{p.id.replace("-", " ")}</Link>
+            <Link href={shopRoutes(locale, shop.id).books(p.id)}>{p.id.replace("-", " ")}</Link>
           </ChipLink>
         ))}
       </nav>

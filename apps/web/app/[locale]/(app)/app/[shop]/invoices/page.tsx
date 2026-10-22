@@ -7,22 +7,24 @@ import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
+import { shopRoutes } from "@/lib/routes";
 
 export const dynamic = "force-dynamic";
 
 export const generateMetadata = titleOf("invoices");
 
 /** The issued invoices (each opens as a document), and the one primary action: a new invoice, on its own address. */
-export default async function Invoices({ params }: { params: Promise<{ locale: string }> }) {
-  const locale = asLocale((await params).locale);
-  const { shop } = await memberShop("invoices");
+export default async function Invoices({ params }: { params: Promise<{ locale: string; shop: string }> }) {
+  const { locale: rawLocale, shop: shopId } = await params;
+  const locale = asLocale(rawLocale);
+  const { shop } = await memberShop(shopId, "invoices");
   const t = getDictionary(locale).console.invoices;
   const issued = await listInvoices(db(), shop.id);
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-2xl font-bold text-fg">{t.title}</h1>
-        <ButtonLink href={`/${locale}/app/invoices/new`} variant="primary" size="md">
+        <ButtonLink href={shopRoutes(locale, shop.id).newInvoice} variant="primary" size="md">
           {t.new.title}
         </ButtonLink>
       </header>

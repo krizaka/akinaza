@@ -12,9 +12,10 @@ export const dynamic = "force-dynamic";
 export const generateMetadata = titleOf("clients");
 
 /** The shop's clients: how often they came, when last and next, what they spent. Each name opens the client's file. */
-export default async function Clients({ params }: { params: Promise<{ locale: string }> }) {
-  const locale = asLocale((await params).locale);
-  const { shop } = await memberShop("clients");
+export default async function Clients({ params }: { params: Promise<{ locale: string; shop: string }> }) {
+  const { locale: rawLocale, shop: shopId } = await params;
+  const locale = asLocale(rawLocale);
+  const { shop } = await memberShop(shopId, "clients");
   const clients = await clientOverview(db(), shop.id, new Date());
   return (
     <div className="flex flex-col gap-4">

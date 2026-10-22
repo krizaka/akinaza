@@ -11,9 +11,10 @@ export const dynamic = "force-dynamic";
 export const generateMetadata = titleOf("team");
 
 /** The shop's team: members with their role, pending invitations, and the invitation form. The roles one may hand out are read from the role table. */
-export default async function Team({ params }: { params: Promise<{ locale: string }> }) {
-  const locale = asLocale((await params).locale);
-  const { session, shop, role } = await memberShop("team");
+export default async function Team({ params }: { params: Promise<{ locale: string; shop: string }> }) {
+  const { locale: rawLocale, shop: shopId } = await params;
+  const locale = asLocale(rawLocale);
+  const { session, shop, role } = await memberShop(shopId, "team");
   const roles = team();
   const [members, invitations] = await Promise.all([roles.members(shop.id), roles.pendingInvitations(shop.id, new Date())]);
   const manages = SHOP_ROLES.manages[role];

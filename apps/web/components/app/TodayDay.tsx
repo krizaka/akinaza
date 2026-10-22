@@ -14,6 +14,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
 
+import { useShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
 import { AppointmentStatus, daySummary, STATUS_TONE, statusWord, stripWindow } from "@/lib/day";
 import { formatMoney, formatTime } from "@/lib/format";
@@ -54,6 +55,7 @@ export interface TodayDayProps {
 export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, allow }: TodayDayProps) {
   const { say, locale } = useSay();
   const router = useRouter();
+  const routes = useShopRoutes();
   const pathname = usePathname();
   const now = useMemo(() => new Date(nowIso), [nowIso]);
   const isToday = day === today;
@@ -151,7 +153,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
               <VisitAction appointment={open.appointment} />
               {allow.clients && open.appointment.clientId ? (
                 <Button asChild variant="secondary">
-                  <Link href={`/${locale}/app/clients/${open.appointment.clientId}`}>{say("today.detail.clientFile")}</Link>
+                  <Link href={routes.client(open.appointment.clientId)}>{say("today.detail.clientFile")}</Link>
                 </Button>
               ) : null}
             </Dialog.Footer>

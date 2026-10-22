@@ -1,22 +1,19 @@
 // @template: app-dashboard
 import { visitMinutes, vocabularyOf } from "@akinaza/core";
-import { clientBookings, clientFilesOf, dayVisits, dependantsOf, shopDay,type ShopRole } from "@akinaza/db";
-import { EmptyState } from "@krizaka/ui/empty-state";
-import { Mascot } from "@krizaka/ui/mascots";
+import { dayVisits, shopDay, type ShopRole } from "@akinaza/db";
 import type { Metadata } from "next";
 
-import { ClientHome } from "@/components/app/ClientHome";
 import { TodayDay } from "@/components/app/TodayDay";
 import { WalkerDay } from "@/components/app/WalkerDay";
-import { pageSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { formatLongDay } from "@/lib/format";
 import { asLocale, format, getDictionary, type Locale } from "@/lib/i18n";
-import { currentMember, may } from "@/lib/member-shop";
+import { may, memberShop } from "@/lib/member-shop";
+import { shopRoutes } from "@/lib/routes";
 import { todayView } from "@/lib/today";
 import { consoleFor } from "@/lib/vocabulary";
 
-type MemberShop = NonNullable<Awaited<ReturnType<typeof currentMember>>>["shop"];
+type MemberShop = Awaited<ReturnType<typeof memberShop>>["shop"];
 
 export const dynamic = "force-dynamic";
 
@@ -25,30 +22,28 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /**
- * The signed-in home. The owner of a service shop (a dog walker…) lands on their day: the walks, the dogs, the check-in
- * and the reports. A client lands on their bookings. A shop of another kind keeps the salon-style day below.
+ * A shop's day. A dog walker's day is built around the walk (check-in, the report); every other business reads its day as an
+ * agenda. The shop is the address's: a deep link opens it whatever the cookie remembers.
  */
-export default async function Home({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ day?: string; appointment?: string }> }) {
-  const locale = asLocale((await params).locale);
-  const session = (await pageSession())!;
-  const member = await currentMember(session.account.id);
-  if (!member) return <ClientSpace locale={locale} accountId={session.account.id} />;
-  const { shop, role } = member;
+export default async function Today({ params, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ day?: string; appointment?: string }> }) {
+  const { locale: raw, shop: shopId } = await params;
+  const locale = asLocale(raw);
+  const { session, shop, role } = await memberShop(shopId, "agenda");
   const query = await searchParams;
-  // A dog walker's day is built around the walk (check-in, the report); every other business reads its day as an agenda.
   if (vocabularyOf(shop.businessType).dependants) return <ServiceDay locale={locale} shop={shop} day={query.day} />;
   return <ShopToday locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} />;
 }
 
 async function ServiceDay({ locale, shop, day: requested }: { locale: "en" | "fr"; shop: MemberShop; day: string | undefined }) {
   const t = consoleFor(locale, shop.businessType);
+  const routes = shopRoutes(locale, shop.id);
   const today = await shopDay(db(), shop.id, new Date());
   const day = requested && /^\d{4}-\d{2}-\d{2}$/.test(requested) ? requested : today;
   const visits = await dayVisits(db(), shop.id, day);
   const step = (n: number) => {
     const d = new Date(`${day}T12:00:00Z`);
     d.setUTCDate(d.getUTCDate() + n);
-    return `/${locale}/app?day=${d.toISOString().slice(0, 10)}`;
+    return routes.today(d.toISOString().slice(0, 10));
   };
   const lang = locale === "fr" ? "fr-CA" : "en-CA";
   return (
@@ -60,31 +55,9 @@ async function ServiceDay({ locale, shop, day: requested }: { locale: "en" | "fr
       <WalkerDay
         visits={visits.map((v) => ({ ...v, minutes: v.checkedInAt && v.checkedOutAt ? visitMinutes(new Date(v.checkedInAt), new Date(v.checkedOutAt)) : null }))}
         timeZone={shop.timezone}
-        nav={{ prev: step(-1), next: step(1), today: `/${locale}/app`, isToday: day === today }}
+        nav={{ prev: step(-1), next: step(1), today: routes.today(), isToday: day === today }}
       />
     </div>
-  );
-}
-
-async function ClientSpace({ locale, accountId }: { locale: "en" | "fr"; accountId: string }) {
-  const files = await clientFilesOf(db(), accountId);
-  if (files.length === 0) {
-    const t = getDictionary(locale).console.client;
-    return <EmptyState icon={<Mascot bird="beaver" mood="empty" size={72} />} title={t.title} description={t.none} />;
-  }
-  const now = new Date().toISOString();
-  return (
-    <ClientHome
-      files={await Promise.all(
-        files.map(async (f) => ({
-          client: { id: f.id, fullName: f.fullName, shopName: f.shopName, shopSlug: f.shopSlug, businessType: f.businessType },
-          dogs: (await dependantsOf(db(), f.id)).map((d) => ({ id: d.id, name: d.name, breed: (d.profile as { breed?: string }).breed ?? null })),
-          bookings: (await clientBookings(db(), f.id)).map((b) => ({ ...b, report: b.report ? { id: b.report.id, note: b.report.note, hasPhoto: b.report.hasPhoto, durationMinutes: b.report.durationMinutes } : null })),
-          now,
-          timeZone: f.timezone,
-        })),
-      )}
-    />
   );
 }
 

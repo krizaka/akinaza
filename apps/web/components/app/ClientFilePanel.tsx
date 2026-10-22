@@ -9,6 +9,7 @@ import { useMemo } from "react";
 
 import { ClientAvatar } from "@/components/app/ClientsTable";
 import { AccessNotesFor, DependantsList } from "@/components/app/DependantsList";
+import { useShopRoutes } from "@/components/app/ShopSession";
 import { AppointmentStatus, STATUS_TONE } from "@/lib/day";
 import { formatDate, formatMoney, formatTime } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
@@ -26,6 +27,7 @@ export interface ClientFilePanelProps {
 /** A client's file: who they are, four figures, then their visits, their invoices, their notes. */
 export function ClientFilePanel({ file, timeZone, nowIso }: ClientFilePanelProps) {
   const { say, locale } = useSay();
+  const routes = useShopRoutes();
   const { client } = file;
   const now = Date.parse(nowIso);
   const began = file.visits.filter((v) => v.status !== AppointmentStatus.Cancelled && v.status !== AppointmentStatus.NoShow && Date.parse(v.startsAt) <= now);
@@ -54,7 +56,7 @@ export function ClientFilePanel({ file, timeZone, nowIso }: ClientFilePanelProps
         card: "title",
         value: (i) => i.number,
         cell: (i) => (
-          <Link href={`/${locale}/app/invoices/${i.id}`} className="font-mono font-semibold text-fg-accent underline">
+          <Link href={routes.invoice(i.id)} className="font-mono font-semibold text-fg-accent underline">
             {i.number}
           </Link>
         ),
@@ -63,7 +65,7 @@ export function ClientFilePanel({ file, timeZone, nowIso }: ClientFilePanelProps
       { id: "kind", header: say("clients.file.status"), type: "status", value: (i) => (i.creditOf ? "credit" : "invoice"), cell: (i) => (i.creditOf ? <Badge tone="warning">{say("clients.file.credit")}</Badge> : null) },
       { id: "total", header: say("clients.file.total"), type: "number", value: (i) => i.totalCents, cell: (i) => formatMoney(i.totalCents, locale) },
     ],
-    [say, locale],
+    [say, locale, routes],
   );
 
   return (
