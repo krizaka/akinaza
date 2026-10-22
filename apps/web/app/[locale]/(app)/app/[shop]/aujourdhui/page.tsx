@@ -3,8 +3,10 @@ import { visitMinutes, vocabularyOf } from "@akinaza/core";
 import { dayVisits, shopDay, type ShopRole } from "@akinaza/db";
 import type { Metadata } from "next";
 
+import { MondayBrief } from "@/components/app/MondayBrief";
 import { TodayDay } from "@/components/app/TodayDay";
 import { WalkerDay } from "@/components/app/WalkerDay";
+import { loadShopBrief } from "@/lib/brief";
 import { db } from "@/lib/db";
 import { formatLongDay } from "@/lib/format";
 import { asLocale, format, getDictionary, type Locale } from "@/lib/i18n";
@@ -30,8 +32,20 @@ export default async function Today({ params, searchParams }: { params: Promise<
   const locale = asLocale(raw);
   const { session, shop, role } = await memberShop(shopId, "agenda");
   const query = await searchParams;
-  if (vocabularyOf(shop.businessType).dependants) return <ServiceDay locale={locale} shop={shop} day={query.day} />;
-  return <ShopToday locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} />;
+  const day = vocabularyOf(shop.businessType).dependants ? <ServiceDay locale={locale} shop={shop} day={query.day} /> : <ShopToday locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} />;
+  // The Monday brief, for whoever runs the shop (owner, manager): the money and the clients are theirs to see.
+  if (!may(role, "reports")) return day;
+  return (
+    <div className="flex flex-col gap-6">
+      <Brief shop={shop} />
+      {day}
+    </div>
+  );
+}
+
+async function Brief({ shop }: { shop: MemberShop }) {
+  const brief = await loadShopBrief(shop, new Date());
+  return <MondayBrief items={brief.items.map((i) => ({ id: i.id, kind: i.kind, subject: i.subject, figures: { ...i.figures }, assumptions: [...i.assumptions] }))} done={brief.done} services={brief.services} publicPage={brief.publicPage} />;
 }
 
 async function ServiceDay({ locale, shop, day: requested }: { locale: "en" | "fr"; shop: MemberShop; day: string | undefined }) {

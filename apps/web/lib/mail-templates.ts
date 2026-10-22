@@ -20,6 +20,8 @@ export const MAIL_TEMPLATES = {
   /** The report on a visit (a walk): the note, the time spent, a link to the private page with the photo. Part of the service, not a reminder. */
   "walk-report": { shop: "text", dog: "text", client: "text", service: "text", date: "text", time: "text", duration: "text", note: "text", url: "text", photo: "flag" },
   "invoice-issued": { shop: "text", number: "text", total: "text", gst: "text", qst: "text", url: "text" },
+  /** The Monday brief's invitation to a regular who has not booked for a while — only with a granted marketing consent (Loi 25, CASL), re-read at send time. */
+  "brief-invite": { shop: "text", client: "text", days: "text", url: "text" },
 } as const satisfies Record<string, Record<string, VarKind>>;
 
 export type MailTemplateId = keyof typeof MAIL_TEMPLATES;

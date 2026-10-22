@@ -1,0 +1,7 @@
+Bonjour {client},
+
+Ça fait un moment ! {shop} a des places libres {days}.
+
+Réserver : {url}
+
+(Vous recevez ce message parce que vous avez accepté les nouvelles de {shop}. Pour ne plus en recevoir, répondez-lui ou retirez ce consentement dans votre espace client.)
