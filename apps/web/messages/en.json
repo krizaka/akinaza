@@ -298,7 +298,7 @@
       "LAST_ADMIN": "The last administrator keeps the role.",
       "CONFIRM_MISMATCH": "The e-mail typed does not match the account.",
       "RETENTION_REQUIRED": "This account owns a shop whose invoices are kept for six years.",
-      "SLUG_TAKEN": "This address is already taken.",
+      "SLUG_TAKEN": "This address is already taken, or it was another page's address.",
       "NOT_PUBLISHABLE": "Add at least one service before publishing the page.",
       "ZONE_EXISTS": "This zone is already in the list.",
       "WINDOW_OVERLAP": "This window overlaps another one that day.",
@@ -543,7 +543,7 @@
         "legalName": "Legal name",
         "address": "Address",
         "slug": "Page address",
-        "slugHint": "Lowercase words joined by hyphens, e.g. pattes-saint-henri",
+        "slugHint": "Lowercase words joined by hyphens, e.g. pattes-saint-henri You can change it: the old address still leads to your page.",
         "ownerName": "Your first name",
         "taglineFr": "One line, in French",
         "taglineEn": "One line, in English",
@@ -941,7 +941,7 @@
         },
         "shopSetup": {
           "page": {
-            "slugHint": "Lowercase words joined by hyphens, e.g. my-studio",
+            "slugHint": "Lowercase words joined by hyphens, e.g. my-studio You can change it: the old address still leads to your page.",
             "areaHint": "Montréal — never the street address.",
             "seatUnitHint": "For a group service: « Up to 5 people ». Empty: « places »."
           },

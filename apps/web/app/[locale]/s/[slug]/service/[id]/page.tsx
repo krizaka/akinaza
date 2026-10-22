@@ -10,7 +10,7 @@ import { JourneyFrame } from "@/components/journey/JourneyFrame";
 import { searchValue } from "@/lib/booking-defaults";
 import { asLocale, translator } from "@/lib/i18n";
 import { serviceStep } from "@/lib/journey";
-import { loadPublicShop } from "@/lib/shop-page";
+import { loadPublicShopOrMove, queryString } from "@/lib/shop-page";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -21,7 +21,7 @@ export default async function ServicePage({ params, searchParams }: { params: Pr
   const query = await searchParams;
   const locale = asLocale(raw);
   const t = translator(locale);
-  const page = await loadPublicShop(slug);
+  const page = await loadPublicShopOrMove(locale, slug, `/service/${id}${queryString(query)}`);
   const step = page ? serviceStep({ page, locale, serviceId: id, staffId: searchValue(query.staff), zoneId: searchValue(query.zone) }) : null;
   if (!page || !step) notFound();
   return (

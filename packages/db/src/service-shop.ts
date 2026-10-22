@@ -6,7 +6,7 @@ import { z } from "zod";
 import type { Db, Tx } from "./client";
 import { openField, sealField } from "./crypto";
 import { ShopError } from "./errors";
-import { appointments, bookings, memberships, clients, dependants, daysOff, MediaRole, schedules, services, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
+import { appointments, bookings, memberships, clients, dependants, daysOff, MediaRole, schedules, services, shopFormerSlugs, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
 import { recordConsent } from "./shop-ops";
 
 /**
@@ -346,6 +346,12 @@ export interface PublicShop {
 }
 
 /** The public page of a published shop, by its address; null when there is none (or it is not published). Projected here, once: a caller cannot leak a column. */
+/** Where a former address of a published shop now leads: its current slug, or null (unknown, or the shop is not public). */
+export async function currentSlugOf(db: Db, formerSlug: string): Promise<string | null> {
+  const [row] = await db.select({ slug: shops.slug }).from(shopFormerSlugs).innerJoin(shops, eq(shops.id, shopFormerSlugs.shopId)).where(and(eq(shopFormerSlugs.slug, formerSlug), eq(shops.published, true)));
+  return row?.slug ?? null;
+}
+
 export async function publicShop(db: Db, slug: string): Promise<PublicShop | null> {
   const [row] = await db.select().from(shops).where(and(eq(shops.slug, slug), eq(shops.published, true)));
   if (!row) return null;

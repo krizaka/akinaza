@@ -149,6 +149,13 @@ export const shops = pgTable(
 );
 
 /** An area a shop serves (Saint-Henri, Griffintown…). A visit belongs to one. */
+/** A shop's former page addresses: each leads to the shop (308) while it exists; never taken by another shop (0021, trigger). */
+export const shopFormerSlugs = pgTable("shop_former_slugs", {
+  slug: text("slug").primaryKey(),
+  shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+  retiredAt: timestamp("retired_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const shopZones = pgTable(
   "shop_zones",
   {
