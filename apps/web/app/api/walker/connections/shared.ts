@@ -2,9 +2,8 @@ import type { Platform, SocialConnector } from "@akinaza/core";
 import type { pullProposal } from "@akinaza/db";
 
 import { requireOwner } from "@/lib/access";
-import { db } from "@/lib/db";
-
 import { connectorFor } from "@/lib/connectors";
+import { db } from "@/lib/db";
 import { dataKey, readEnv, sessionSecret } from "@/lib/env";
 import { handle, refuse } from "@/lib/http";
 
