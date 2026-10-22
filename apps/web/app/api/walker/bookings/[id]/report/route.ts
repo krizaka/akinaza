@@ -1,6 +1,6 @@
 import { saveReport } from "@akinaza/db";
 
-import { requireOwner } from "@/lib/access";
+import { requireShop } from "@/lib/access";
 import { db } from "@/lib/db";
 import { handle, idParam, refuse } from "@/lib/http";
 import { limit } from "@/lib/rate-limit";
@@ -13,7 +13,7 @@ const MAX_PHOTO_BYTES = 1_572_864;
 /** The note and, optionally, the photo of one dog's walk (multipart: `note`, `photo`, `removePhoto`). */
 export function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    const { session, shop } = await requireOwner(req);
+    const { session, shop } = await requireShop(req, "visit-reports");
     limit("walker-report", req, session.account.id, [60, 600]);
     const form = await req.formData().catch(() => null);
     if (!form) throw refuse(400, "BAD_REQUEST", "The body is not a form");

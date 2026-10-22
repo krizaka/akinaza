@@ -1,7 +1,7 @@
 import { paymentInputSchema, recordPayment } from "@akinaza/db";
 
 import { systemClock } from "@/app/system-clock";
-import { requireOwner } from "@/lib/access";
+import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { handle, idParam, readJson } from "@/lib/http";
@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 /** Records a payment received against an invoice (cash, card, transfer, other): never more than what is due, none on a credit note. The one that completes the invoice tells `invoice.paid`. */
 export function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
-    const { session, shop } = await requireOwner(req);
+    const { session, shop } = await requireShop(req, "invoices");
     const invoiceId = idParam((await params).id);
     const input = await readJson(req, paymentInputSchema);
     const result = await recordPayment(db(), shop.id, invoiceId, input, systemClock.now());

@@ -26,3 +26,9 @@ import { WEBHOOKS_MIGRATION_SQL } from "./webhooks-migration";
 it("the webhooks migration file is exactly what the shared block generates", () => {
   expect(readFileSync(fileURLToPath(new URL("../drizzle/0019_webhooks.sql", import.meta.url)), "utf8")).toBe(WEBHOOKS_MIGRATION_SQL);
 });
+
+import { ROLES_MIGRATION_SQL } from "./roles-migration";
+
+it("the shop roles migration file is exactly what the shared block generates", () => {
+  expect(readFileSync(fileURLToPath(new URL("../drizzle/0020_shop_roles.sql", import.meta.url)), "utf8")).toBe(ROLES_MIGRATION_SQL);
+});

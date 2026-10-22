@@ -6,7 +6,7 @@ import { z } from "zod";
 import type { Db, Tx } from "./client";
 import { openField, sealField } from "./crypto";
 import { ShopError } from "./errors";
-import { appointments, bookings, clients, dependants, daysOff, MediaRole, schedules, services, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
+import { appointments, bookings, memberships, clients, dependants, daysOff, MediaRole, schedules, services, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
 import { recordConsent } from "./shop-ops";
 
 /**
@@ -89,6 +89,21 @@ export function akCode(error: unknown): string | null {
 export async function shopOfOwner(db: Db, ownerId: string, shopId?: string) {
   const [shop] = await db.select().from(shops).where(shopId ? and(eq(shops.ownerId, ownerId), eq(shops.id, shopId)) : eq(shops.ownerId, ownerId)).orderBy(desc(shops.isDefault), asc(shops.createdAt)).limit(1);
   return shop ?? null;
+}
+
+/**
+ * The shop an account works in, with its role there: the one asked for (they must be a member), else the one they own and opened last
+ * (the default), else the first they were invited to. Null when they belong to none.
+ */
+export async function shopOfMember(db: Db, accountId: string, shopId?: string) {
+  const [row] = await db
+    .select({ shop: shops, role: sql<"owner" | "manager" | "staff">`${memberships.role}` })
+    .from(memberships)
+    .innerJoin(shops, eq(shops.id, memberships.scopeId))
+    .where(shopId ? and(eq(memberships.accountId, accountId), eq(shops.id, shopId)) : eq(memberships.accountId, accountId))
+    .orderBy(sql`(${memberships.role} = 'owner' AND ${shops.isDefault}) DESC`, sql`(${memberships.role} = 'owner') DESC`, asc(shops.createdAt))
+    .limit(1);
+  return row ?? null;
 }
 
 /** The account that runs a shop (null once the account is gone): who its webhooks and keys belong to. */
