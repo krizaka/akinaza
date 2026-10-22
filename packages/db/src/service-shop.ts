@@ -1,5 +1,5 @@
 import { addLocalDays, businessTypeSchema, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
-import { addDays } from "date-fns";
+import { addDays, compareAsc } from "date-fns";
 import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -428,7 +428,7 @@ export async function listSlots(db: Reader, query: SlotQuery): Promise<StaffSlot
       if (!held || (slot.joins && !held.joins)) byStart.set(key, { ...slot, staffId: member.id });
     }
   }
-  return [...byStart.values()].sort((x, y) => x.startsAt.getTime() - y.startsAt.getTime());
+  return [...byStart.values()].sort((x, y) => compareAsc(x.startsAt, y.startsAt));
 }
 
 function daysBetween(from: string, to: string): number {
