@@ -193,6 +193,8 @@ export const staff = pgTable("staff", {
   shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   active: boolean("active").notNull().default(true),
+  /** The owner is the first person created. */
+  createdAt: created(),
 });
 
 export const services = pgTable(
