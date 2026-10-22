@@ -1,16 +1,14 @@
 {
   "meta": {
     "siteName": "Akinaza",
-    "titleTemplate": "{title} — Akinaza",
+    "titleTemplate": "{title} · Akinaza",
     "description": "Your appointments, invoices and taxes, sorted. Akinaza is for salons, studios and the self-employed in Québec: clients book, you invoice, your GST/QST figures are ready. In French and in English."
   },
   "chrome": {
     "brandHome": "Akinaza, home",
     "navLabel": "Akinaza",
     "nav": {
-      "product": "Product",
-      "how": "How it works",
-      "invoice": "Invoices & taxes"
+      "product": "Product"
     },
     "signIn": "Sign in",
     "talk": "Talk to us",
@@ -26,248 +24,26 @@
         "title": "Overview",
         "text": "What Akinaza does for a service shop."
       },
-      "how": {
-        "title": "How it works",
-        "text": "Book, work the day, keep the books."
-      },
       "shop": {
         "title": "The demo shop",
         "text": "A dog walker's real booking page, on dev."
       }
     },
     "footerLabel": "Site footer",
-    "preferences": "Preferences"
+    "preferences": "Preferences",
+    "version": "v{version}"
   },
   "landing": {
-    "eyebrow": "For salons, studios and the self-employed in Québec",
     "title": "Your appointments, invoices and taxes, sorted.",
     "lead": "Clients book, you invoice, your tax figures are ready. In French and in English.",
     "talk": "Talk to us about Akinaza",
-    "seeShop": "See the demo shop",
     "status": {
       "development": "In development: sign-up is closed while we build it with the first shops.",
       "preview": "Dev preview: sign-up is closed, access by invitation."
     },
-    "statusChip": {
-      "development": "In development",
-      "preview": "Dev preview"
-    },
-    "tour": {
-      "label": "A dog walker's day on Akinaza, captured on the real app",
-      "play": "Play the steps",
-      "pause": "Pause the steps",
-      "step": "Step {n} of {total}",
-      "captured": "Recorded on dev.akinaza.com on October 19, 2026, as one continuous take · a demo shop, no real person",
-      "steps": {
-        "book": {
-          "title": "A client books",
-          "text": "A client picks a group walk, a slot and her dog.",
-          "alt": "The booking form: the service, the area, the dog, the open slots, the confirmation."
-        },
-        "day": {
-          "title": "The walker's day",
-          "text": "Léa opens her day on her phone and starts the walk with one tap.",
-          "alt": "The walker's day: the dogs of the group walk, their owners and the start button."
-        },
-        "report": {
-          "title": "The report",
-          "text": "A note and a photo for the dog, sent in one tap.",
-          "alt": "The visit report: a note, a photo added, ready to send to the owner."
-        },
-        "client": {
-          "title": "The client sees it",
-          "text": "The owner finds the report in her space.",
-          "alt": "The client's space: the walk and its report with the photo."
-        },
-        "books": {
-          "title": "Your books",
-          "text": "The quarter's GST and QST, prepared from your invoices and expenses: every figure with its documents, never filed for you.",
-          "alt": "Your books: the GST and QST for the quarter, the return's lines and the documents behind them."
-        }
-      }
-    },
-    "outcomes": {
-      "eyebrow": "What you can do",
-      "title": "Less admin, more clients",
-      "bookings": {
-        "title": "Fill your day without the back-and-forth",
-        "text": "Clients book open slots themselves; a full group or a taken hour disappears at once.",
-        "cta": "See the demo shop"
-      },
-      "reports": {
-        "title": "Show every client the job was done",
-        "text": "Check in, check out, a note and a photo: the report reaches the client the same minute.",
-        "cta": "Sign in (by invitation)"
-      },
-      "taxes": {
-        "title": "Get your tax return prepared",
-        "text": "Every invoice posts its GST and QST, and Akinaza lays out your return's figures with their sources. It prepares the report and stays out of the filing: you file it yourself.",
-        "cta": "Sign in (by invitation)"
-      }
-    },
-    "how": {
-      "eyebrow": "How it works",
-      "title": "Book, work, keep the books",
-      "lead": "One tool for the shop, the team and the clients, from the booking to the tax return.",
-      "steps": {
-        "book": {
-          "title": "Clients book",
-          "text": "Your page lists your services, prices and zones; a slot taken is gone everywhere, and nobody is booked twice."
-        },
-        "work": {
-          "title": "Your team works the day",
-          "text": "Each person sees their day on their phone, with the access notes kept encrypted, and sends a report after each visit."
-        },
-        "books": {
-          "title": "The books keep themselves",
-          "text": "Bilingual invoices, GST 5 % and QST 9.975 % to the cent, an append-only ledger, and the return prepared from it."
-        }
-      },
-      "beaverLabel": "The beaver's promise",
-      "beaver": "The beaver builds the shop."
-    },
-    "trust": {
-      "eyebrow": "Trust",
-      "title": "Your clients' files, governed",
-      "lead": "Made for studios, salons and the self-employed. Not for restaurants, cafés, bars or bakeries with on-site consumption, which must bill through a system certified MEV-WEB.",
-      "canada": {
-        "title": "Designed for Loi 25 and Loi 96",
-        "text": "Data in Canada, encrypted at rest; consent per purpose, never pre-ticked; erasure keeps only the invoices tax law requires; French and English on every screen and every invoice.",
-        "cta": "Privacy"
-      },
-      "prepare": {
-        "title": "Prepared, never filed",
-        "text": "Akinaza prepares your GST/QST figures and their working papers. You stay the one who signs and files.",
-        "cta": "Sign in (by invitation)"
-      },
-      "open": {
-        "title": "Open source",
-        "text": "The app, its tax code and its database rules are on GitHub under Apache-2.0.",
-        "cta": "Read the code"
-      },
-      "powered": "Its tax assistant will run on Orazaka (planned, not wired yet).",
-      "line": "Data in Canada · Designed for Loi 25 and Loi 96 · French first"
-    },
-    "closing": {
-      "title": "You run a studio, a salon, or you work for yourself in Québec?",
-      "body": "Akinaza is in development and sign-up is closed. Tell us how you work today: we are choosing the first shops."
-    },
-    "visualLabel": "dev.akinaza.com — the public storefront",
     "hero": {
-      "visualAlt": "The Pattes de Saint-Henri demo shop on a phone: its storefront, a booking, the walker's day, the visit report and « Your books » — one continuous take.",
+      "visualAlt": "The Pattes de Saint-Henri demo shop on a phone: a booking, the walker's day, the visit report and the books.",
       "caption": "The real app, one take, October 19, 2026. No real person."
-    },
-    "figures": {
-      "gst": "% GST, to the cent",
-      "qst": "% QST, to the cent",
-      "languages": "languages on every invoice"
-    },
-    "features": {
-      "eyebrow": "What you can do",
-      "title": "Less admin, more clients",
-      "lead": "Appointment booking, invoices exact to the cent, a balanced ledger and a tax report: three results, seen on the real app below."
-    },
-    "tourIntro": "Every step is captured on the real app, on a phone.",
-    "books": {
-      "badge": "Your books"
-    },
-    "compare": {
-      "eyebrow": "Side by side",
-      "title": "Akinaza, next to the diary, the spreadsheet and the accountant",
-      "lead": "The usual stack works; here is what Akinaza changes, and what it leaves to your accountant.",
-      "label": "Akinaza compared with the usual stack",
-      "topic": "What matters",
-      "columns": {
-        "akinaza": "Akinaza",
-        "stack": "Diary + spreadsheet + accountant"
-      },
-      "rows": {
-        "booking": {
-          "topic": "Bookings",
-          "akinaza": {
-            "key": "Your clients book themselves.",
-            "detail": "A taken slot disappears at once."
-          },
-          "stack": {
-            "key": "Back and forth.",
-            "detail": "Messages and calls to find a slot."
-          }
-        },
-        "day": {
-          "topic": "The team's day",
-          "akinaza": {
-            "key": "On everyone's phone.",
-            "detail": "Dogs, owners and encrypted access notes."
-          },
-          "stack": {
-            "key": "A shared diary.",
-            "detail": "The notes live elsewhere."
-          }
-        },
-        "report": {
-          "topic": "The report to the client",
-          "akinaza": {
-            "key": "A note and a photo, in one tap.",
-            "detail": "It reaches the client within a minute."
-          },
-          "stack": {
-            "key": "A message by hand.",
-            "detail": "Written after every visit."
-          }
-        },
-        "taxes": {
-          "topic": "GST and QST",
-          "akinaza": {
-            "key": "Written on every invoice.",
-            "detail": "To the cent, in a ledger that is never rewritten."
-          },
-          "stack": {
-            "key": "Typed into a spreadsheet.",
-            "detail": "To copy over, then to check."
-          }
-        },
-        "filing": {
-          "topic": "The tax return",
-          "akinaza": {
-            "key": "Prepared, with its sources.",
-            "detail": "You file it: Akinaza never submits it."
-          },
-          "stack": {
-            "key": "Filed by your accountant.",
-            "detail": "Or by you, from your numbers."
-          }
-        }
-      }
-    },
-    "faq": {
-      "eyebrow": "Questions",
-      "title": "What people ask us",
-      "items": {
-        "open": {
-          "q": "Can I sign up?",
-          "a": "Not yet: registration is closed while we build Akinaza with the first shops. Tell us how you work today."
-        },
-        "filing": {
-          "q": "Does Akinaza file my tax return?",
-          "a": "No. Akinaza prepares your GST and QST amounts and their supporting documents; you sign and you file. Akinaza never submits a return."
-        },
-        "who": {
-          "q": "Which shops is it for?",
-          "a": "Studios, salons and self-employed people who sell services: appointments, invoices, taxes. Not restaurants, cafés, bars or bakeries with on-site consumption, which must invoice with a system certified MEV-WEB by Revenu Québec."
-        },
-        "data": {
-          "q": "Where are my clients' records?",
-          "a": "In Canada, encrypted at rest. Consent is given per purpose and never pre-ticked; erasure keeps only the invoices the tax law requires."
-        },
-        "bilingual": {
-          "q": "Are the invoices bilingual?",
-          "a": "Yes, in French and in English, with GST at 5 % and QST at 9.975 % computed to the cent."
-        },
-        "engine": {
-          "q": "Is there AI in this?",
-          "a": "Its tax assistant will run on Orazaka, Krizaka's engine: planned, not wired yet. The tax amounts come from deterministic code."
-        }
-      }
     },
     "founder": {
       "eyebrow": "Founder offer",
@@ -282,7 +58,29 @@
       "cta": "Subscribe to the founder offer",
       "note": "You pay on Stripe's secure page, and you manage or cancel your subscription there. Already a member? Sign in first.",
       "talk": "Talk to us first"
-    }
+    },
+    "screens": {
+      "book": {
+        "title": "Clients book on their own",
+        "text": "A taken time disappears at once: nobody is booked twice.",
+        "alt": "The booking page: the service, the dog, the free times and the confirmation."
+      },
+      "invoice": {
+        "title": "The invoice, taxes included",
+        "text": "GST 5 % and QST 9.975 % to the cent, in French or in English.",
+        "alt": "An invoice: subtotal, GST, QST and total."
+      },
+      "books": {
+        "title": "Your tax report, ready",
+        "text": "Every figure with its invoices. You file the return yourself.",
+        "alt": "Your books: the quarter's GST and QST, line by line, with the documents behind."
+      }
+    },
+    "trust": {
+      "line": "Data in Canada · Designed for Loi 25 and Loi 96 · Taxes prepared, return filed by you",
+      "scope": "For studios, salons and the self-employed. Not for restaurants, cafés, bars or bakeries with on-site consumption."
+    },
+    "visualLabel": "dev.akinaza.com"
   },
   "privacy": {
     "title": "Privacy",
@@ -307,7 +105,6 @@
       "clients": "Clients",
       "book": "Book a walk",
       "report": "Walk report",
-      "connections": "Connections",
       "books": "Your books",
       "invoices": "Invoices"
     },
@@ -359,7 +156,6 @@
       "bookings": "My bookings",
       "clients": "Clients",
       "shop": "My shop page",
-      "connections": "Connections",
       "books": "Your books"
     },
     "admin": {
@@ -971,131 +767,10 @@
         "network": "No connection. Check your network and try again."
       }
     },
-    "connections": {
-      "title": "Connections",
-      "intro": "Keep your hours, description, phone and website the same everywhere customers look. Akinaza is your reference: nothing changes on a platform or on your page without your say.",
-      "privacy": "You connect your own account. We store the access securely, read only what is listed on each card, and you can disconnect at any time (we also revoke the access at the platform). Nothing is shared with anyone else.",
-      "off": "Connections are not switched on in this environment.",
-      "status": {
-        "connected": "Connected",
-        "needs_reconnect": "Reconnect needed",
-        "disconnected": "Not connected",
-        "soon": "Coming soon"
-      },
-      "platforms": {
-        "google": {
-          "name": "Google Business Profile",
-          "what": "Your listing on Google Search and Maps."
-        },
-        "facebook": {
-          "name": "Facebook Page",
-          "what": "Your business Page on Facebook."
-        },
-        "instagram": {
-          "name": "Instagram",
-          "what": "Your professional account. We read its profile; photos and posts come later."
-        }
-      },
-      "fields": {
-        "hours": "Opening hours",
-        "description": "Description",
-        "phone": "Phone",
-        "email": "E-mail",
-        "website": "Website"
-      },
-      "syncs": "What syncs: {fields}",
-      "account": "Account: {label}",
-      "lastSync": "Last sync {date}",
-      "neverSynced": "Not synced yet",
-      "actions": {
-        "connect": "Connect",
-        "import": "Import from {platform}",
-        "publish": "Publish to {platform}",
-        "disconnect": "Disconnect",
-        "disconnectConfirm": "Disconnect {platform}? Press again",
-        "reconnect": "Reconnect",
-        "cancel": "Cancel"
-      },
-      "consent": {
-        "title": "Before you connect {platform}",
-        "text": "Akinaza will read and, when you ask, update these facts on {platform}: {fields}. It uses your {platform} login, keeps the access encrypted in Canada, and you can disconnect at any time. Nothing is changed without you.",
-        "checkbox": "I allow Akinaza to read and update these facts on my {platform} account.",
-        "continue": "Continue to {platform}"
-      },
-      "flash": {
-        "connected": "{platform} is connected.",
-        "upToDate": "{platform} already matches Akinaza.",
-        "imported": {
-          "one": "{count} difference to review below.",
-          "other": "{count} differences to review below."
-        },
-        "published": "Published to {platform}: {fields}.",
-        "nothingToPublish": "Nothing to publish: {platform} already has your values.",
-        "held": "Waiting for your decision: {fields}.",
-        "disconnected": "{platform} is disconnected."
-      },
-      "proposal": {
-        "title": "Review what {platform} says",
-        "intro": "Choose, field by field. Nothing changes until you apply.",
-        "akinaza": "Akinaza",
-        "theirs": "{platform}",
-        "empty": "(empty)",
-        "useTheirs": "Use {platform}'s",
-        "keepMine": "Keep Akinaza's",
-        "apply": "Apply my choices",
-        "applied": "Your choices are saved.",
-        "state": {
-          "changed": "Differs",
-          "remote_only": "Only on {platform}",
-          "local_only": "Only in Akinaza"
-        },
-        "choose": "Choice for {field}",
-        "pending": "Decide the rest later."
-      },
-      "log": {
-        "title": "What happened",
-        "empty": "Nothing yet.",
-        "outcome": {
-          "connected": "Connected",
-          "disconnected": "Disconnected",
-          "proposed": "Proposed",
-          "accepted": "Took the platform's value",
-          "kept_local": "Kept Akinaza's value",
-          "pushed": "Published",
-          "skipped": "Skipped",
-          "failed": "Failed"
-        },
-        "line": "{platform} · {field} · {outcome}",
-        "reason": {
-          "too_long": "Too long for {platform}"
-        }
-      },
-      "guidance": {
-        "title": "Other places",
-        "apple": {
-          "name": "Apple Maps",
-          "text": "Apple has no connection open to businesses like yours. Update your place in Apple Business Connect; use the values below."
-        },
-        "bing": {
-          "name": "Bing Places",
-          "text": "Bing can import your Google listing by itself: keep Google right and choose « Import from Google » in Bing Places."
-        },
-        "yelp": {
-          "name": "Yelp",
-          "text": "Yelp does not let other apps edit your page. Update it in Yelp for Business."
-        },
-        "open": "Open the site",
-        "values": "Your values"
-      }
-    },
     "books": {
       "title": "Your books",
       "period": "Return for {from} to {to}",
       "periodNav": "Return period",
-      "notFiled": {
-        "title": "Prepared for you, never filed",
-        "body": "Akinaza prepares your GST/QST return from your invoices and expenses. You review it and file it yourself with Revenu Québec: nothing is sent from here."
-      },
       "net": {
         "gst": "GST (line 109)",
         "qst": "QST (line 209)"
@@ -1118,67 +793,43 @@
       },
       "lines": {
         "101": {
-          "label": "Sales and other revenue",
-          "how": "The subtotal of the invoices issued in the period."
+          "label": "Sales and other revenue"
         },
         "103": {
-          "label": "GST collected",
-          "how": "The GST on your invoices."
+          "label": "GST collected"
         },
         "106": {
-          "label": "Input tax credits (ITC)",
-          "how": "The GST paid on your expenses, times the share used for the business."
+          "label": "Input tax credits (ITC)"
         },
         "109": {
-          "label": "Net GST",
-          "how": "Line 103 minus line 106."
+          "label": "Net GST"
         },
         "203": {
-          "label": "QST collected",
-          "how": "The QST on your invoices."
+          "label": "QST collected"
         },
         "206": {
-          "label": "Input tax refunds (ITR)",
-          "how": "The QST paid on your expenses, times the share used for the business."
+          "label": "Input tax refunds (ITR)"
         },
         "209": {
-          "label": "Net QST",
-          "how": "Line 203 minus line 206."
+          "label": "Net QST"
         }
       },
-      "footnote": "Line numbers are those of Revenu Québec's combined return (FPZ-500). Check each figure against its documents before you file."
+      "footnote": "Akinaza prepares these figures from your invoices and expenses. You file the return with Revenu Québec yourself, after checking each figure."
     },
     "invoices": {
       "title": "Invoices",
-      "lead": "Bill your services: GST 5 % and QST 9.975 % to the cent, posted to your ledger in the same step. Akinaza prepares your return; you file it.",
       "new": {
         "title": "New invoice",
         "client": "Client",
         "noClient": "No client file",
-        "language": "Language of the invoice",
-        "languages": {
-          "fr": "Français",
-          "en": "English"
-        },
-        "issuedOn": "Date",
         "service": "Service {n}",
         "noService": "—",
         "quantity": "Quantity",
-        "quantityHint": "Hours, days or packages — fractions to the hundredth are fine (7.5 hours).",
         "customDescription": "Other line (description)",
         "customPrice": "Unit price",
         "customQuantity": "Quantity of the other line",
         "submit": "Issue the invoice",
-        "needLine": "Choose at least one service or write a line with its price.",
-        "taxes": "The taxes are computed once, on the taxable total, and rounded to the cent.",
-        "day": "Day",
-        "month": "Month",
-        "year": "Year",
-        "terms": "Payment terms",
-        "termsDefault": "The shop's terms ({days} days)",
-        "termsOnReceipt": "Due on receipt",
-        "termsNet": "Net {days} days",
-        "termsHint": "A buyer needs the terms and the due date from $500 to claim its input tax credits."
+        "needLine": "Choose at least one service or write a line with its price."
       },
       "list": {
         "title": "Issued invoices",
@@ -1308,39 +959,5 @@
       "directions": "Address",
       "loading": "Loading"
     }
-  },
-  "changelog": {
-    "metaTitle": "Changelog",
-    "metaDescription": "What changed in Akinaza, week by week: new, fixed, security and breaking, with the pull request behind each line.",
-    "eyebrow": "Changelog",
-    "title": "What shipped",
-    "lead": "What changed in Akinaza, newest week first — read from the merged pull requests, not written for the page.",
-    "runs": "This site runs v{version} on Krizaka UI {ui}.",
-    "runsNoUi": "This site runs v{version}.",
-    "feed": "Subscribe (RSS)",
-    "logLabel": "Weeks",
-    "empty": "The changes could not be read right now.",
-    "emptyLink": "See the pull requests on GitHub",
-    "kinds": {
-      "added": "New",
-      "changed": "Changed",
-      "fixed": "Fixed",
-      "removed": "Removed",
-      "security": "Security",
-      "breaking": "Breaking"
-    },
-    "tags": {
-      "feature": "New",
-      "fix": "Fixed",
-      "security": "Security",
-      "breaking": "Breaking",
-      "change": "Changed"
-    },
-    "pull": "Pull request #{number}",
-    "week": "Week of {date}",
-    "feedTitle": "Akinaza — changelog",
-    "feedDescription": "What shipped in Akinaza, week by week.",
-    "footerVersion": "v{version}",
-    "langTag": "en"
   }
 }

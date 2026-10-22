@@ -8,7 +8,7 @@
 - A **pnpm + Turborepo** monorepo — one product, one repository: `apps/web` (Next.js 16: the public page, sign-in, the
   member's space, the administration and the BFF — route handlers are the only HTTP surface), `apps/mobile` (Expo,
   skeleton), `packages/core` (the domain, pure and deterministic), `packages/db` (PostgreSQL 16, Drizzle, versioned
-  migrations, the shop's operations), `packages/mcp` (the tax-assistant Studio contract).
+  migrations, the shop's operations).
 - **Built only from Krizaka bricks**: `@krizaka/ui` (auth-layout, app-shell, product-page, data-table, cards, mascots…),
   `@krizaka/query`, `@krizaka/i18n`, `@krizaka/icons`, `@krizaka/tokens` (`brands/akinaza.css`), `@krizaka/realtime`.
   A missing generic component goes to krizaka-ui, released, then used — never copied here. No `@tanstack/*` import, no
@@ -26,7 +26,7 @@
 
 - **Akinaza prepares; the merchant files.** "Prepare my tax return" produces the GST/QST figures (FPZ-500) and their
   working papers; nothing in the code or the copy files, transmits or promises electronic transmission to Revenu Québec or
-  the CRA. A test scans the e-mails for such a promise; the Studio contract has no filing call.
+  the CRA. A test scans the e-mails for such a promise.
 - **Money is integer cents.** No float, no `real`, no `numeric` read as a float. GST 5/100 and QST 9975/100000 are exact
   fractions, applied once per invoice on the taxable subtotal, rounded half away from zero (`@akinaza/core`). Changing a
   rate or a rounding rule needs a test on known invoices first.
@@ -38,8 +38,7 @@
 - **Loi 25 by design.** Data in Canada, encrypted at rest (the managed database's volumes); consent per purpose, never
   pre-ticked, append-only; erasure blanks every personal field and keeps the invoices tax law requires (six years). The
   Loi 25 pack of Orazaka (orazaka-packs#14) is reused for the consent texts and the incident register when it lands.
-- **AI only through Orazaka.** The tax assistant is an Orazaka Studio called on `AI_API_URL` with an `oz_` service key;
-  receipts are read by Orazaka's document reading (Yomizaka's pack). Never a model called from here.
+- **No AI in the product, in its screens or its words.** Akinaza says what it does (appointments, invoices, tax figures) in plain words; never « IA », « intelligent » or « révolutionnaire ». If a model is ever needed, it goes through Orazaka, behind a port, and the epic krizaka/akinaza#161 is reopened first.
 
 ## 3. The product is independent
 
@@ -54,7 +53,7 @@
 - The administration lives on **admin.akinaza.com** (same app, host-routed by `proxy.ts` / `lib/host.ts`; 404 on the
   product host); a session, the ADMIN role **and** an address of `AUTH_ALLOWED_IPS`. Never indexed.
 - Passwords scrypt; sessions random tokens kept as keyed hashes; rate limits on sign-in; CSP same-origin, HSTS.
-- Environment variables by bounded context (`APP_`, `DATABASE_`, `AUTH_`, `ABUSE_`, `AI_`, `REALTIME_`), declared once in
+- Environment variables by bounded context (`APP_`, `DATABASE_`, `AUTH_`, `ABUSE_`, `REALTIME_`), declared once in
   `apps/web/lib/env.ts`. Secrets never in the repository, never printed (`~/.krizaka-worktrees/tools/secret.sh`).
 - **Not deployed.** No DigitalOcean app, no DNS: hosting is Oussama's decision.
 

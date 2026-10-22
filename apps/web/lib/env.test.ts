@@ -7,7 +7,6 @@ const PROD = {
   DATABASE_URL: "postgresql://akinaza_db:x@db.example:25060/akinaza_db?sslmode=require",
   DATABASE_CA_CERT: "-----BEGIN CERTIFICATE-----",
   AUTH_SESSION_SECRET: "a".repeat(40),
-  AI_API_KEY: "oz_live_key",
   APP_DATA_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString("base64"),
 };
 
@@ -24,12 +23,6 @@ describe("env", () => {
     expect(() => assertProductionEnv(PROD)).not.toThrow();
   });
 
-  it("runs the tax assistant on Orazaka only", () => {
-    expect(readEnv({}).AI_PROVIDER).toBe("orazaka");
-    expect(() => readEnv({ AI_PROVIDER: "openai" })).toThrow();
-    expect(readEnv({}).AI_API_URL).toBe("https://dev.orazaka.com/edge");
-  });
-
   it("keeps the connections off by default, and never fake in production", () => {
     expect(readEnv({}).APP_SOCIAL_SYNC).toBe("off");
     expect(() => readEnv({ APP_SOCIAL_SYNC: "on" })).toThrow();
@@ -38,26 +31,18 @@ describe("env", () => {
 
   it("refuses a production start without its secrets, naming them, never showing them", () => {
     expect(() => assertProductionEnv(PROD)).not.toThrow();
-    const problems = productionProblems(readEnv({ NODE_ENV: "production", AI_API_KEY: "sk-not-orazaka", DATABASE_URL: PROD.DATABASE_URL }));
+    const problems = productionProblems(readEnv({ NODE_ENV: "production", DATABASE_URL: PROD.DATABASE_URL }));
     expect(problems).toEqual([
       "AUTH_SESSION_SECRET must be at least 32 characters",
-      "AI_API_KEY must be an Orazaka key (oz_…)",
       "APP_DATA_ENCRYPTION_KEY must be 32 random bytes, base64-encoded",
       "DATABASE_CA_CERT is required for a TLS database",
     ]);
-    expect(problems.join(" ")).not.toContain("sk-not-orazaka");
     expect(productionProblems(readEnv({}))).toEqual([]);
   });
 
   it("keeps the point of sale off unless its flag is exactly true", () => {
     expect(readEnv({}).APP_POS_ENABLED).toBe(false);
     expect(readEnv({ APP_POS_ENABLED: "true" }).APP_POS_ENABLED).toBe(true);
-  });
-
-  it("starts without an Orazaka key (the feed is off) but never with a foreign one", () => {
-    const withoutKey: Record<string, string | undefined> = { ...PROD, AI_API_KEY: undefined };
-    expect(() => assertProductionEnv(withoutKey)).not.toThrow();
-    expect(() => assertProductionEnv({ ...PROD, AI_API_KEY: "sk-other" })).toThrow(/AI_API_KEY/);
   });
 
   it("bounds the pool and closes search engines only by an exact off", () => {

@@ -25,12 +25,10 @@ export function SiteFooter({ locale }: { locale: Locale }) {
       data-testid="app-version"
       legal={
         <>
-          <SiteFooterLink asChild>
-            <Link href={`${pagePath(locale, "changelog")}#${APP_VERSION}`}>
-              {format(getDictionary(locale).changelog.footerVersion, { version: APP_VERSION })}
-              {uiVersion() ? ` · Krizaka UI ${uiVersion()}` : ""}
-            </Link>
-          </SiteFooterLink>
+          <span>
+            {format(getDictionary(locale).chrome.version, { version: APP_VERSION })}
+            {uiVersion() ? ` · Krizaka UI ${uiVersion()}` : ""}
+          </span>
           {indexable() ? null : <span data-testid="dev-notice">{t("chrome.devNotice")}</span>}
         </>
       }

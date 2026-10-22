@@ -25,7 +25,7 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
 - **A ledger that balances** — every invoice posts its GST and QST to an append-only ledger; the database checks at
   commit that the lines make the subtotal and the ledger holds exactly the invoice's taxes. A correction is a credit note.
 - **"Prepare my tax return"** — the FPZ-500 figures (lines 101, 103/106/109, 203/206/209) from the ledger, with their
-  working papers; an Orazaka Studio assists, its figures reconciled against the ledger line by line. **Akinaza
+  working papers; **Akinaza
   prepares; the merchant files.** Nothing is transmitted to any government.
 - **Bookings** — services, staff, schedules; the database refuses a double booking (`EXCLUDE` on time ranges).
 - **Loi 25** — consent per purpose, append-only; erasure blanks personal data and keeps the invoices tax law requires.
@@ -52,7 +52,6 @@ The database tests run on a real PostgreSQL 16: CI's service, or a Testcontainer
 | `apps/mobile` | the Expo skeleton (joins the workspace in the mobile phase) |
 | `packages/core` | the domain, pure: money, GST/QST, the ledger, the return and its reconciliation, consent, the POS gate |
 | `packages/db` | PostgreSQL schema (Drizzle), versioned SQL migrations with the rules the database enforces, the shop's operations |
-| `packages/mcp` | the tax-assistant Studio contract, its client over Orazaka's edge, a fake Studio, the reconciliation |
 
 Rules for contributors and agents: [AGENTS.md](AGENTS.md). Security: [SECURITY.md](SECURITY.md).
 
