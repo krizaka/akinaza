@@ -1,17 +1,16 @@
-import { prepareShopReturn, shopDay, shopOfOwner } from "@akinaza/db";
-import { Stat } from "@krizaka/ui/stat";
+// @template: app-dashboard
+import { prepareShopReturn, shopDay } from "@akinaza/db";
+import { ChipLink } from "@krizaka/ui/chip-link";
+import { Stat, StatGrid } from "@krizaka/ui/stat";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
 import { BooksLines } from "@/components/app/BooksLines";
-import { pageSession } from "@/lib/access";
 import { booksView, periodChoices, periodFor } from "@/lib/books";
 import { db } from "@/lib/db";
+import { formatLongDay, formatMoney } from "@/lib/format";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
-
-const CHIP = "rounded-sm border border-border-default px-3 py-1 text-sm text-fg-secondary";
-const CHIP_ON = "rounded-sm border border-border-accent bg-surface-2 px-3 py-1 text-sm font-semibold text-fg";
+import { ownerShop } from "@/lib/owner-shop";
 
 export const dynamic = "force-dynamic";
 
@@ -25,17 +24,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  */
 export default async function Books({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ period?: string }> }) {
   const locale = asLocale((await params).locale);
-  const session = (await pageSession())!;
-  const shop = await shopOfOwner(db(), session.account.id);
-  if (!shop) notFound();
+  const { shop } = await ownerShop();
   const t = getDictionary(locale).console.books;
   const today = await shopDay(db(), shop.id, new Date());
   const period = periodFor((await searchParams).period, today);
   const prepared = await prepareShopReturn(db(), shop.id, period.start, period.end);
   const view = booksView(prepared);
-  const lang = locale === "fr" ? "fr-CA" : "en-CA";
-  const money = (cents: number) => new Intl.NumberFormat(lang, { style: "currency", currency: "CAD" }).format(cents / 100);
-  const day = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString(lang, { dateStyle: "long", timeZone: "UTC" });
+  const money = (cents: number) => formatMoney(cents, locale);
   const nets = [
     { key: "gst", net: view.gst },
     { key: "qst", net: view.qst },
@@ -44,20 +39,20 @@ export default async function Books({ params, searchParams }: { params: Promise<
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-1">
         <h1 className="font-display text-2xl font-bold text-fg">{t.title}</h1>
-        <p className="text-fg-secondary">{format(t.period, { from: day(period.start), to: day(period.end) })}</p>
+        <p className="text-fg-secondary">{format(t.period, { from: formatLongDay(period.start, locale), to: formatLongDay(period.end, locale) })}</p>
       </header>
       <nav aria-label={t.periodNav} className="flex flex-wrap gap-2">
         {periodChoices(today).map((p) => (
-          <Link key={p.id} href={`/${locale}/app/books?period=${p.id}`} aria-current={p.id === period.id ? "page" : undefined} className={p.id === period.id ? CHIP_ON : CHIP}>
-            {p.id.replace("-", " ")}
-          </Link>
+          <ChipLink key={p.id} asChild selected={p.id === period.id} current={p.id === period.id ? "page" : undefined}>
+            <Link href={`/${locale}/app/books?period=${p.id}`}>{p.id.replace("-", " ")}</Link>
+          </ChipLink>
         ))}
       </nav>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <StatGrid>
         {nets.map(({ key, net }) => (
           <Stat key={key} label={t.net[key]} value={money(net.netCents)} hint={t.outcome[net.outcome]} />
         ))}
-      </div>
+      </StatGrid>
       <BooksLines lines={view.lines} />
       <p className="text-sm text-fg-muted">{t.footnote}</p>
     </div>

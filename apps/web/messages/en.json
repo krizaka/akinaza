@@ -338,42 +338,43 @@
       "LINE_PRICE": "A free line needs a price."
     },
     "today": {
-      "day": "{date} · {count} appointments",
-      "appointments": "Today's appointments",
-      "none": "No appointment today.",
       "noShopTitle": "No shop yet",
       "noShop": "Shops are set up by our team while Akinaza is in development.",
-      "preview": "Next invoice (preview)",
-      "lastInvoice": "Latest invoice",
-      "notIssued": "Not issued",
-      "issued": "Issued",
-      "noInvoice": "No invoice yet.",
-      "table": {
-        "caption": "Today's appointments",
-        "time": "Time",
-        "client": "Client",
-        "service": "Service",
-        "staff": "With",
-        "status": "Status",
-        "walkIn": "Walk-in"
+      "dayStrip": "Day",
+      "earlier": "Earlier days",
+      "later": "Later days",
+      "goToday": "Today",
+      "stats": {
+        "appointments": "Appointments",
+        "expected": "Expected revenue",
+        "withTaxes": "GST and QST included",
+        "noTaxes": "No taxes charged",
+        "next": "Next client",
+        "nobodyLeft": "Nobody else today",
+        "nobodyNext": "Nobody booked"
       },
+      "agendaLabel": "Appointments of the day",
+      "now": "Now · {time}",
+      "noneTitle": "Nothing booked",
+      "none": "The day is free. Appointments appear here as clients book from your page.",
+      "noneOtherDay": "No appointment on this day.",
+      "walkIn": "Walk-in",
+      "start": "Start",
+      "finish": "Finish",
       "statuses": {
         "booked": "Booked",
+        "inProgress": "In progress",
         "done": "Done",
         "cancelled": "Cancelled",
         "noShow": "No-show"
       },
-      "invoice": {
-        "gstNo": "GST No.",
-        "qstNo": "QST No.",
-        "smallSupplier": "Small supplier — no GST or QST charged.",
-        "number": "Invoice",
-        "date": "Date",
-        "lines": "Lines",
-        "subtotal": "Subtotal",
-        "gst": "GST (5 %)",
-        "qst": "QST (9.975 %)",
-        "total": "Total"
+      "detail": {
+        "close": "Close",
+        "service": "Service",
+        "with": "With",
+        "price": "Price",
+        "status": "Status",
+        "clientFile": "Open the client file"
       }
     },
     "account": {
@@ -421,7 +422,13 @@
         "current": "Current password",
         "next": "New password",
         "submit": "Change my password",
-        "saved": "Your password is changed. Your other sessions have ended."
+        "saved": "Your password is changed. Your other sessions have ended.",
+        "roleOwner": "Owner",
+        "sectionsLabel": "Account sections",
+        "sections": {
+          "profile": "Profile",
+          "security": "Security"
+        }
       },
       "nav": {
         "profile": "Profile",
@@ -487,7 +494,34 @@
         "other": "Animal"
       },
       "vet": "Vet: {name}, {phone}",
-      "emergency": "Emergency: {name}, {phone}"
+      "emergency": "Emergency: {name}, {phone}",
+      "never": "—",
+      "caption": "Clients",
+      "back": "Clients",
+      "columns": {
+        "client": "Client",
+        "visits": "Visits",
+        "last": "Last visit",
+        "next": "Next visit",
+        "spent": "Total spent"
+      },
+      "file": {
+        "since": "Client since {date}",
+        "visits": "Visits",
+        "noVisits": "No visit yet.",
+        "invoices": "Invoices",
+        "noInvoices": "No invoice yet.",
+        "notes": "Notes",
+        "noNotes": "No note.",
+        "date": "Date",
+        "service": "Service",
+        "with": "With",
+        "status": "Status",
+        "price": "Price",
+        "number": "Number",
+        "total": "Total",
+        "credit": "Credit note"
+      }
     },
     "shopSetup": {
       "title": "Your shop page",
@@ -838,7 +872,15 @@
         "total": "Total {amount}",
         "dueOn": "Due {date}"
       },
-      "back": "All invoices"
+      "back": "All invoices",
+      "table": {
+        "number": "Number",
+        "client": "Client",
+        "issued": "Issued",
+        "due": "Due",
+        "kind": "Type",
+        "total": "Total"
+      }
     },
     "invoiceDoc": {
       "title": "Invoice / Facture",

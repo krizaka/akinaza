@@ -161,3 +161,20 @@ Feedback: the pinned Discussion of the repository.
 - **Refused**: a unit label on the line (the service already says « hourly » or « flat fee »); a quantity finer than a hundredth.
 - **Cost**: a line's cent is rounded before the invoice's taxes, so a very long list of fractional lines can differ by a cent from the exact total — the invoice shows the rounded lines, and its taxes are exact on their sum.
 - **Signal we are wrong**: owners who ask to bill by the minute.
+
+## Today is a timeline, Clients are files (krizaka/krizaka-ui#515)
+
+- **Decision**: Today is the owner's day as an agenda: times in a column, one row per appointment (client, service, who
+  does it, a status in words), a « now » line between the ones past and the ones to come, one quiet action per row (Start,
+  then Finish), a strip of days above and three figures (appointments, what the day will bill with the GST and QST, the next
+  client). A row opens a side sheet with the detail. The day and the open appointment are in the address. Clients are a table
+  (visits, last and next visit, total spent) whose names open a file at `/app/clients/<id>`: figures, visits, invoices,
+  notes, with the clients beside it on a computer.
+- **Problem**: the old Today was a plain table beside an invoice preview: the owner could not see what was next, nor how
+  the day would pay, and a client was a card with a phone number.
+- **Principle**: recognition over recall (Nielsen) and a visible system status: the « now » line says where the day is
+  without a clock; the figures answer the three questions an owner asks in the morning.
+- **Refused**: a calendar grid (a salon of one to four chairs reads a list faster, and it is one column on a phone); the
+  invoice preview on Today (invoices have their own page); a full-width action button on every row.
+- **Cost**: no week view yet; « expected revenue » counts booked and done appointments at their service's price.
+- **Signal we are wrong**: owners who open Invoices to know what the day brings, or ask for a week.

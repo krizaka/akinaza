@@ -18,7 +18,7 @@ const DOG_WORDS = {
 const PET_ONLY = /^(clients\.(dogs|kinds|sizes|profile|vet|emergency)|book\.(dogTitle|dogName|breed|size|temperament|temperamentHint|vet\w*|emergency\w*|addDog|addAnother|needDog|dogs|dogsHint|access\w*)|walker\.(dogs|dogsOf|reveal|hide|noNotes|notesTitle|reportTitle|note|notePlaceholder|photo\w*|save|saved|send|sendAgain|sentOn|sentNow|queued|failed)|report\.|meta\.report|client\.dogsTitle|errors\.(VISIT_NOT_DONE|NO_CONSENT|CLIENT_UNREACHABLE|BOOKING_OWNERSHIP|DEPENDANTS_REQUIRED|ACCESS_\w+|PHOTO_\w+|REPORT_\w+))/;
 /** Not the signed-in screens of a shop: the marketing site, the legal text and the administration. */
 /** The picker names the other type by design; « walk-in » is the salon's word for a client without an appointment. */
-const NAMES_THE_OTHER_TYPE = /^(shopSetup\.page\.businessTypes\.pets|today\.table\.walkIn)$/;
+const NAMES_THE_OTHER_TYPE = /^(shopSetup\.page\.businessTypes\.pets|today\.walkIn)$/;
 const NOT_A_SHOP_SCREEN = /^(admin|adminSignIn|signIn|vocabularies)\b/;
 
 describe.each(Object.entries(LOCALES))("the professional vocabulary, %s", (locale, console_) => {
