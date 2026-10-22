@@ -11,6 +11,7 @@ import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
+import { isUuid } from "@/lib/shop-id";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,7 @@ export default async function ClientPage({ params }: { params: Promise<{ locale:
   const locale = asLocale(rawLocale);
   const t = getDictionary(locale).console.clients;
   const { shop } = await memberShop(shopId, "clients");
+  if (!isUuid(id)) notFound();
   const now = new Date();
   const [file, overview] = await Promise.all([clientFile(db(), shop.id, id), clientOverview(db(), shop.id, now)]);
   if (!file) notFound();

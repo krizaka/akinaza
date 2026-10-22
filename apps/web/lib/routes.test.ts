@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { accountRoutes, inOtherShop, isShopId, placeHref, shopRoutes } from "./routes";
+import { isUuid } from "./shop-id";
 
 const A = "11111111-1111-4111-8111-111111111111";
 const B = "22222222-2222-4222-8222-222222222222";
@@ -44,5 +45,10 @@ describe("the routes of the signed-in space", () => {
     expect(inOtherShop("en", `/en/app/${A}/invoices/new`, A, B)).toBe(`/en/app/${B}/invoices/new`);
     expect(inOtherShop("en", `/en/app/${A}/clients/c1`, A, B)).toBe(`/en/app/${B}/aujourdhui`);
     expect(inOtherShop("en", "/en/app/profile", A, B)).toBe(`/en/app/${B}/aujourdhui`);
+  });
+
+  it("reads a segment that is not a UUID as naming nothing (so the page answers 404, not 500)", () => {
+    expect(isUuid(A)).toBe(true);
+    for (const bad of ["x", "clients", "1", `${A}'; DROP`]) expect(isUuid(bad)).toBe(false);
   });
 });
