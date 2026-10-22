@@ -36,7 +36,15 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
 export type ShopRoutes = ReturnType<typeof shopRoutes>;
 
 /** The addresses that belong to the account, not to a shop. */
-export const accountRoutes = (locale: RouteLocale) => ({ home: `/${locale}/app`, profile: `/${locale}/app/profile`, security: `/${locale}/app/profile/security` });
+export const ACCOUNT_SECTIONS = ["profile", "preferences", "security", "subscription", "data"] as const;
+export type AccountSection = (typeof ACCOUNT_SECTIONS)[number];
+
+export const accountRoutes = (locale: RouteLocale) => ({
+  home: `/${locale}/app`,
+  profile: `/${locale}/app/profile`,
+  /** One section of the account: the first is the profile itself, the others are below it. */
+  section: (id: AccountSection) => (id === "profile" ? `/${locale}/app/profile` : `/${locale}/app/profile/${id}`),
+});
 
 /** Where each place of the bar leads, for a person working in `shopId` (or in none: a client). */
 export function placeHref(locale: RouteLocale, shopId: string | null, place: AppPlace): string {
