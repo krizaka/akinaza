@@ -23,6 +23,7 @@
   "dependencies": {
     "@akinaza/core": "workspace:*",
     "@date-fns/tz": "^1.5.0",
+    "@krizaka/api-keys": "0.1.0",
     "@krizaka/organize": "0.3.0",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.4",
