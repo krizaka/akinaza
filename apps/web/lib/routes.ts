@@ -24,6 +24,8 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
     client: (id: string) => `${root}/clients/${id}`,
     invoices: `${root}/invoices`,
     invoice: (id: string) => `${root}/invoices/${id}`,
+    /** « Modifier » (#207): the replacement of an issued invoice, prefilled. */
+    invoiceCorrect: (id: string) => `${root}/invoices/${id}/correct`,
     newInvoice: `${root}/invoices/new`,
     books: (period?: string) => `${root}/books${query({ period })}`,
     team: `${root}/team`,

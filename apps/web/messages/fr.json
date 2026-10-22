@@ -341,7 +341,9 @@
       "LINE_PRICE": "Une ligne libre doit avoir un prix.",
       "BRIEF_UNKNOWN": "Cette recommandation a changé : rechargez la page.",
       "BRIEF_DONE": "C'est déjà fait cette semaine.",
-      "SHOP_NOT_PUBLIC": "Publiez votre page pour inviter vos clients."
+      "SHOP_NOT_PUBLIC": "Publiez votre page pour inviter vos clients.",
+      "INVOICE_IS_CREDIT": "Une note de crédit ne se modifie pas.",
+      "INVOICE_ALREADY_CORRECTED": "Cette facture a déjà été corrigée ou annulée."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -890,6 +892,24 @@
         "due": "Échéance",
         "kind": "Type",
         "total": "Total"
+      },
+      "correct": {
+        "title": "Modifier la facture {number}",
+        "lead": "Une facture émise ne change jamais : en confirmant, Akinaza émet la note de crédit de {number} et la nouvelle facture, ensemble. Le client, la langue et les conditions restent les mêmes.",
+        "back": "Retour à {number}",
+        "description": "Description",
+        "unitPrice": "Prix unitaire",
+        "remove": "Retirer",
+        "add": "Ajouter une ligne",
+        "submit": "Émettre la facture corrigée"
+      },
+      "chain": {
+        "replaces": "Remplace la facture {number}",
+        "replacedBy": "Remplacée par la facture {number}",
+        "creditedBy": "Annulée par la note de crédit {number}"
+      },
+      "actions": {
+        "correct": "Modifier"
       }
     },
     "invoiceDoc": {
