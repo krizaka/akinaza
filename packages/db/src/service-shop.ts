@@ -91,6 +91,12 @@ export async function shopOfOwner(db: Db, ownerId: string, shopId?: string) {
   return shop ?? null;
 }
 
+/** The account that runs a shop (null once the account is gone): who its webhooks and keys belong to. */
+export async function ownerOfShop(db: Db, shopId: string): Promise<string | null> {
+  const [row] = await db.select({ ownerId: shops.ownerId }).from(shops).where(eq(shops.id, shopId));
+  return row?.ownerId ?? null;
+}
+
 /** All the owner's shops, the default first. */
 export async function shopsOfOwner(db: Db, ownerId: string) {
   return db.select({ id: shops.id, name: shops.name, slug: shops.slug, published: shops.published, isDefault: shops.isDefault, businessType: shops.businessType, description: shops.description, avatar: shops.avatar, collectionId: shops.collectionId }).from(shops).where(eq(shops.ownerId, ownerId)).orderBy(desc(shops.isDefault), asc(shops.createdAt));

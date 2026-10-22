@@ -27,6 +27,7 @@
     "@krizaka/tailwind": "^3.45.0",
     "@krizaka/tokens": "^3.45.0",
     "@krizaka/ui": "^3.45.0",
+    "@krizaka/webhooks": "0.1.0",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.4",
     "maplibre-gl": "6.11.2",

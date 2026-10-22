@@ -26,6 +26,7 @@ import { POST as services } from "./walker/services/route";
 import { POST as shop } from "./walker/shop/route";
 import { POST as checkIn } from "./walker/visits/[id]/check-in/route";
 import { POST as checkOut } from "./walker/visits/[id]/check-out/route";
+import { POST as addHook } from "./walker/webhooks/route";
 import { POST as zones } from "./walker/zones/route";
 
 /** The dog walker's whole journey through the HTTP surface, on a real PostgreSQL (CI's service; locally DATABASE_IT=1 DATABASE_URL=…). */
@@ -106,8 +107,15 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     expect(raw[0]!.access_notes_enc).toMatch(/^v1\./);
     expect(raw[0]!.access_notes_enc).not.toContain("4821");
     const start = offered.body.slots[0].startsAt;
+    const hook = await call(addHook, "POST", "/api/walker/webhooks", { token: walker, json: { url: "https://hooks.example.com/bookings", events: ["booking.created"] } });
+    expect(hook.status).toBe(201);
     const booked = await call(book, "POST", "/api/me/bookings", { token: client, json: { clientId: ids.clientFile, serviceId: ids.solo, zoneId: ids.stHenri, dependantIds: [ids.dog], startsAt: start } });
     expect(booked.status).toBe(201);
+    // the shop's systems are told, once, without the client's name or phone
+    const told = await query<{ payload: Record<string, unknown> }>("SELECT payload FROM webhook_deliveries WHERE endpoint_id = $1", [hook.body.endpoint.id]);
+    expect(told).toHaveLength(1);
+    expect(told[0]!.payload).toMatchObject({ appointmentId: booked.body.appointmentId, shopId: ids.shop, serviceId: ids.solo });
+    expect(JSON.stringify(told[0]!.payload)).not.toMatch(/514|Chien|fullName/);
     ids.booking = booked.body.bookingIds[0];
     ids.visit = booked.body.appointmentId;
     expect((await call(book, "POST", "/api/me/bookings", { token: client, json: { clientId: ids.clientFile, serviceId: ids.solo, zoneId: ids.stHenri, dependantIds: [ids.dog], startsAt: start } })).body).toMatchObject({ code: "SLOT_UNAVAILABLE" });
