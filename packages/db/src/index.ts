@@ -7,3 +7,7 @@ export * from "./client-files";
 export * from "./demo-shops";
 export * from "./service-shop";
 export * from "./visits";
+export * from "./account-migration";
+export * from "./settings-migration";
+export * from "./api-keys";
+export * from "./organize";

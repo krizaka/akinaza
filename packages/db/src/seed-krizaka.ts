@@ -3,8 +3,9 @@ import { addMonths } from "date-fns";
 import { eq } from "drizzle-orm";
 
 import type { Db } from "./client";
+import { organizeOver, SHOP_AVATAR_SEEDS } from "./organize";
 import { accounts, invoices, shops } from "./schema";
-import { addWindow, joinShop, saveService, saveShopPage, shopOfOwner } from "./service-shop";
+import { addWindow, joinShop, saveService, saveShopPage, shopOfOwner, shopsOfOwner } from "./service-shop";
 import { issueInvoice, recordExpense } from "./shop-ops";
 
 /**
@@ -43,6 +44,13 @@ export const KRIZAKA = {
     { email: "contact.atelierboreal@akinaza.test", name: "Atelier Boréal inc. (démo)", phone: "514-555-0112", language: "fr" as const },
     { email: "contact.nordstudio@akinaza.test", name: "Nord Studio Montréal Ltd. (demo)", phone: "514-555-0113", language: "en" as const },
   ],
+};
+
+/** Éric's second business (multi-shop): a small design studio, to try the switch between shops. Demo data like the first. */
+export const KRIZAKA_SECOND = {
+  shop: { name: "Krizaka Atelier (démo)", legalName: "Atelier Krizaka inc. (démo)", address: "2 rue Exemple, Montréal QC H2X 1Y2 (adresse fictive)", slug: "krizaka-atelier", ownerName: "Éric", businessType: "professional" as const, area: "Montréal", bioFr: "Le second commerce d'Éric dans la démonstration : un petit atelier de design. Données fictives.", bioEn: "Éric's second business in the demonstration: a small design workshop. Fictional data." },
+  service: { nameFr: "Séance de design (à l'heure)", nameEn: "Design session (hourly)", durationMinutes: 60, priceCents: 11_000, capacity: 1 },
+  hours: [2, 4].map((weekday) => ({ weekday, startsAt: "10:00", endsAt: "16:00" })),
 };
 
 /** The persona's accounts in the order the seed expects them: Éric (the owner) first, then one contact per client. */
@@ -101,5 +109,30 @@ export async function seedKrizaka(db: Db, now: Date): Promise<{ shopId: string; 
     clientIds[c.name] = { id: clientId, language: c.language };
   }
   await seedBooks(db, shopId, clientIds, now);
+  if (!(await shopsOfOwner(db, owner.id)).some((x) => x.slug === KRIZAKA_SECOND.shop.slug)) {
+    const second = await saveShopPage(db, owner.id, KRIZAKA_SECOND.shop, { additional: true });
+    await saveService(db, second.shopId, KRIZAKA_SECOND.service);
+    for (const w of KRIZAKA_SECOND.hours) await addWindow(db, second.shopId, w);
+    await saveShopPage(db, owner.id, { ...KRIZAKA_SECOND.shop, published: true }, { shopId: second.shopId });
+  }
+  await organizeShops(db, owner.id);
   return { shopId, created: !existing };
+}
+
+/** Éric's shops as items of « organize »: a description, an avatar, a tag, and the two in one collection (idempotent). */
+async function organizeShops(db: Db, ownerId: string): Promise<void> {
+  const o = organizeOver(async (sql, params) => (await (db as unknown as { $client: { query: (s: string, p: unknown[]) => Promise<{ rows: unknown[] }> } }).$client.query(sql, params as unknown[])).rows);
+  const mine = await shopsOfOwner(db, ownerId);
+  const first = mine.find((x) => x.slug === KRIZAKA.shop.slug);
+  const second = mine.find((x) => x.slug === KRIZAKA_SECOND.shop.slug);
+  if (!first || !second || first.description) return;
+  const tag = (await o.tags.list(ownerId)).find((x) => x.name === "démo") ?? (await o.tags.create(ownerId, { name: "démo", color: "violet" }));
+  const group = (await o.collections.list(ownerId)).find((c) => c.name === "Studios") ?? (await o.collections.create(ownerId, { name: "Studios", description: "Les deux commerces d'Éric dans la démonstration." }));
+  const shop = o.profile("shop");
+  for (const [row, text, seed] of [[first, "Le studio de logiciel : développement, design et conseil.", SHOP_AVATAR_SEEDS[0]], [second, "Le petit atelier de design.", SHOP_AVATAR_SEEDS[2]]] as const) {
+    await shop.describe(ownerId, row.id, text);
+    await shop.setAvatar(ownerId, row.id, seed, { allowedSeeds: SHOP_AVATAR_SEEDS });
+    await o.tags.assign(ownerId, "shop", row.id, [tag.id]);
+    await shop.setCollection(ownerId, row.id, group.id);
+  }
 }

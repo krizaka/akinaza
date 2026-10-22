@@ -25,6 +25,11 @@ export const accounts = pgTable(
     status: text("status", { enum: ["ACTIVE", "SUSPENDED"] }).notNull().default("ACTIVE"),
     locale: text("locale", { enum: ["en", "fr"] }).notNull().default("fr"),
     passwordHash: text("password_hash"),
+    /** The account baseline (@krizaka/auth, migration 0017). */
+    name: text("name"),
+    avatarSeed: text("avatar_seed"),
+    theme: text("theme"),
+    emailVerifiedAt: timestamp("email_verified_at", { withTimezone: true }),
     createdAt: created(),
     lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
     /** The founder offer: the payments processor's ids and the subscription's state, written by its notifications only (0010_billing). */
@@ -123,6 +128,12 @@ export const shops = pgTable(
     /** What a seat of a group service is called (« chiens », « dogs »): « Up to 5 dogs ». Empty = « places ». */
     seatUnitFr: text("seat_unit_fr"),
     seatUnitEn: text("seat_unit_en"),
+    /** The shop the app opens on: exactly one per owner (the database keeps it, migration 0013). */
+    isDefault: boolean("is_default").notNull().default(false),
+    /** « organize »: a shop is an item (name, description, avatar, tags, collection come from @krizaka/organize; migration 0014). */
+    description: text("description"),
+    avatar: jsonb("avatar"),
+    collectionId: uuid("collection_id"),
     createdAt: created(),
   },
   (t) => [
