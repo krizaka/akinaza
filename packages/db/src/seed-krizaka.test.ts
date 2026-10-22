@@ -2,6 +2,7 @@ import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { accounts, invoices, shops } from "./schema";
+import { organizeOver } from "./organize";
 import { KRIZAKA, KRIZAKA_EMAILS, seedKrizaka } from "./seed-krizaka";
 import { invoiceDetail, listInvoices, prepareShopReturn } from "./shop-ops";
 import { publicShop, shopsOfOwner } from "./service-shop";
@@ -39,6 +40,16 @@ describe("Krizaka, a software studio, as Akinaza's first client (demo data, clea
     const list = await shopsOfOwner(t.db, owner!.id);
     expect(list.map((x) => [x.slug, x.isDefault, x.published])).toEqual([["krizaka-demo", true, true], ["krizaka-atelier", false, true]]);
     expect((await publicShop(t.db, "krizaka-atelier"))?.services.map((s) => s.nameEn)).toEqual(["Design session (hourly)"]);
+  });
+
+  it("Éric's shops are items of « organize »: a description, an avatar, a tag, and one collection for both", async () => {
+    const [owner] = await t.db.select().from(accounts).where(eq(accounts.email, KRIZAKA_EMAILS[0]));
+    const o = organizeOver(async (sql, params) => (await t.pool.query(sql, params as unknown[])).rows);
+    const list = await shopsOfOwner(t.db, owner!.id);
+    expect(list.every((x) => x.description && x.avatar)).toBe(true);
+    expect(new Set(list.map((x) => x.collectionId)).size).toBe(1);
+    expect((await o.collections.list(owner!.id)).find((c) => c.id === list[0]!.collectionId)?.name).toBe("Studios");
+    expect([...(await o.tags.of(owner!.id, "shop", list.map((x) => x.id))).values()].map((tags) => tags.map((x) => x.name))).toEqual([["démo"], ["démo"]]);
   });
 
   it("keeps the books of the quarter: bilingual invoices to the cent, a balanced ledger, a return prepared and never filed", async () => {

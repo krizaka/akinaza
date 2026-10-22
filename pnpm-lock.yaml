@@ -157,6 +157,9 @@ importers:
       '@date-fns/tz':
         specifier: ^1.5.0
         version: 1.5.0
+      '@krizaka/organize':
+        specifier: 0.3.0
+        version: 0.3.0
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
@@ -995,6 +998,10 @@ packages:
 
   '@krizaka/intl@0.2.1':
     resolution: {integrity: sha512-vZWoRmptN0/Ac1rUZ3BiOdXXGOkxBAq2yYDe9tMOpPNhi8kKP/L8NCptokshBjKPmEZxq9lJ55MoAabTL+WbBw==}
+    engines: {node: '>=22'}
+
+  '@krizaka/organize@0.3.0':
+    resolution: {integrity: sha512-Gd2CUGtAVMR8WuPqcjoA+wgblPxNvvNMA0hv3GPbv0+dna8D59gQPrxM9UV8+olw9lVh1sxhStW9Yn2qDZCDUg==}
     engines: {node: '>=22'}
 
   '@krizaka/pacer@0.1.0':
@@ -5541,6 +5548,8 @@ snapshots:
       react: 19.3.1
 
   '@krizaka/intl@0.2.1': {}
+
+  '@krizaka/organize@0.3.0': {}
 
   '@krizaka/pacer@0.1.0(react@19.3.1)':
     dependencies:

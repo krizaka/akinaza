@@ -5,6 +5,10 @@ import { resetRateLimits } from "@/lib/rate-limit";
 import { createSession, SESSION_COOKIE } from "@/lib/session";
 
 import { POST as saveShop } from "./walker/shop/route";
+import { PATCH as patchShop } from "./walker/shops/[id]/route";
+import { GET as listCollections, POST as addCollection } from "./walker/shop-collections/route";
+import { PATCH as patchCollection } from "./walker/shop-collections/[id]/route";
+import { POST as addTag } from "./walker/shop-tags/route";
 import { POST as makeDefault } from "./walker/shops/[id]/default/route";
 import { GET as listShops, POST as addShop } from "./walker/shops/route";
 
@@ -53,5 +57,27 @@ describe.runIf(enabled)("an owner with two shops over HTTP", () => {
     expect((await call(makeDefault, "POST", "/x", { token: tokens.stranger, params: { id: first } })).status).toBe(404);
     expect((await call(saveShop, "POST", `/api/walker/shop?shopId=${first}`, { token: tokens.stranger, json: page("vol") })).status).toBe(404);
     expect((await call(listShops, "GET", "/api/walker/shops", { token: tokens.stranger })).body.shops).toEqual([]);
+  });
+
+  it("gives each shop a description, an avatar, tags and a collection — the package's — for the owner only", async () => {
+    const owner = tokens.owner;
+    const shops = (await call(listShops, "GET", "/api/walker/shops", { token: owner })).body.shops as { id: string; collectionId: string }[];
+    const [a, b] = [shops[0]!.id, shops[1]!.id];
+    const tag = (await call(addTag, "POST", "/api/walker/shop-tags", { token: owner, json: { name: "centre", color: "blue" } })).body.tag.id as string;
+    const group = (await call(addCollection, "POST", "/api/walker/shop-collections", { token: owner, json: { name: "Montréal" } })).body.collection.id as string;
+    const patched = await call(patchShop, "PATCH", "/x", { token: owner, params: { id: a }, json: { description: "  Le salon  ", avatar: { kind: "set", seed: "plain-2" }, tagIds: [tag], collectionId: group } });
+    expect(patched.status).toBe(200);
+    expect(patched.body.shop).toMatchObject({ description: "Le salon", avatar: { kind: "set", seed: "plain-2" }, collectionId: group });
+    expect(patched.body.tags.map((t: { name: string }) => t.name)).toEqual(["centre"]);
+    expect((await call(patchShop, "PATCH", "/x", { token: owner, params: { id: a }, json: { avatar: { kind: "set", seed: "nope" } } })).body.code).toBe("AVATAR_NOT_ALLOWED");
+    const listed = (await call(listShops, "GET", "/api/walker/shops", { token: owner })).body.shops as { id: string; tags: unknown[]; collectionId: string }[];
+    expect(listed.find((s) => s.id === a)!.tags).toHaveLength(1);
+    expect(listed.find((s) => s.id === b)!.collectionId).not.toBe(group);
+    // the owner's default collection is there and cannot be removed; another one can become the default
+    const cols = (await call(listCollections, "GET", "/api/walker/shop-collections", { token: owner })).body.collections as { id: string; isDefault: boolean }[];
+    expect(cols.filter((c) => c.isDefault)).toHaveLength(1);
+    expect((await call(patchCollection, "PATCH", "/x", { token: owner, params: { id: group }, json: { default: true } })).status).toBe(200);
+    // a stranger cannot touch the owner's shop
+    expect((await call(patchShop, "PATCH", "/x", { token: tokens.stranger, params: { id: a }, json: { description: "vol" } })).status).toBe(404);
   });
 });

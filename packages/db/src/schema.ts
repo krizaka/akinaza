@@ -125,6 +125,10 @@ export const shops = pgTable(
     seatUnitEn: text("seat_unit_en"),
     /** The shop the app opens on: exactly one per owner (the database keeps it, migration 0013). */
     isDefault: boolean("is_default").notNull().default(false),
+    /** « organize »: a shop is an item (name, description, avatar, tags, collection come from @krizaka/organize; migration 0014). */
+    description: text("description"),
+    avatar: jsonb("avatar"),
+    collectionId: uuid("collection_id"),
     createdAt: created(),
   },
   (t) => [
