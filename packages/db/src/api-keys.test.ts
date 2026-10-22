@@ -20,3 +20,9 @@ import { SETTINGS_MIGRATION_SQL } from "./settings-migration";
 it("the settings migration file is exactly what the shared block generates", () => {
   expect(readFileSync(fileURLToPath(new URL("../drizzle/0018_settings.sql", import.meta.url)), "utf8")).toBe(SETTINGS_MIGRATION_SQL);
 });
+
+import { WEBHOOKS_MIGRATION_SQL } from "./webhooks-migration";
+
+it("the webhooks migration file is exactly what the shared block generates", () => {
+  expect(readFileSync(fileURLToPath(new URL("../drizzle/0019_webhooks.sql", import.meta.url)), "utf8")).toBe(WEBHOOKS_MIGRATION_SQL);
+});

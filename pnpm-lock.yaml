@@ -71,6 +71,9 @@ importers:
       '@krizaka/ui':
         specifier: ^3.48.0
         version: 3.48.0(@krizaka/query@0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.48.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)
+      '@krizaka/webhooks':
+        specifier: 0.1.0
+        version: 0.1.0
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
@@ -178,6 +181,9 @@ importers:
       '@krizaka/settings':
         specifier: 0.1.0
         version: 0.1.0(zod@4.6.7)
+      '@krizaka/webhooks':
+        specifier: 0.1.0
+        version: 0.1.0
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
@@ -1133,6 +1139,10 @@ packages:
         optional: true
       tailwindcss:
         optional: true
+
+  '@krizaka/webhooks@0.1.0':
+    resolution: {integrity: sha512-0gnaM8oShVdYK9I2Sm2iCkmHv+80mPJ3+dGm24M3dxgnkNk4oenZUHUo8/mVR6ZVqYiMy1tTHeG7fr5QZ2rseg==}
+    engines: {node: '>=22'}
 
   '@kwsites/file-exists@1.1.1':
     resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
@@ -5667,6 +5677,10 @@ snapshots:
       - '@types/react-dom'
       - octane
       - tailwind-merge
+
+  '@krizaka/webhooks@0.1.0':
+    dependencies:
+      date-fns: 4.4.0
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
