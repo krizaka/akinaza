@@ -129,7 +129,7 @@
     "trust": {
       "eyebrow": "Confiance",
       "title": "Les dossiers de vos clients, bien gardés",
-      "lead": "Fait pour les commerces de services : promeneurs, toiletteurs, salons, réparateurs. Pas pour les restaurants et les bars, qui doivent facturer avec une caisse certifiée.",
+      "lead": "Fait pour les commerces de services : promeneurs, toiletteurs, salons, réparateurs. Pas pour les restaurants, cafés, bars et boulangeries, qui doivent facturer avec un système certifié MEV-WEB.",
       "canada": {
         "title": "Loi 25 dès la conception",
         "text": "Données au Canada, chiffrées au repos ; consentement par finalité, jamais précoché ; l'effacement ne garde que les factures exigées par la loi fiscale.",
@@ -252,7 +252,7 @@
         },
         "who": {
           "q": "C'est pour quel commerce ?",
-          "a": "Les commerces de services : promeneurs, toiletteurs, salons, réparateurs. Pas pour les restaurants et les bars, qui doivent facturer avec une caisse certifiée."
+          "a": "Les commerces de services : promeneurs, toiletteurs, salons, réparateurs. Pas pour les restaurants, cafés, bars et boulangeries, qui doivent facturer avec un système certifié MEV-WEB."
         },
         "data": {
           "q": "Où sont les dossiers de mes clients ?",
@@ -389,8 +389,6 @@
       },
       "kinds": {
         "salon": "Salon",
-        "bakery": "Boulangerie",
-        "cafe": "Café",
         "boutique": "Boutique",
         "services": "Services",
         "other": "Autre"

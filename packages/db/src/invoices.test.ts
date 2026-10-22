@@ -84,7 +84,10 @@ describe("invoices and the GST/QST ledger (real PostgreSQL 16)", () => {
     expect(await refusal(t.db.update(shops).set({ registrant: true }).where(eq(shops.id, s.shop.id)))).toMatch(/shops_tax_numbers/);
   });
 
-  it("refuses a restaurant or a bar: they must bill through a certified SRM", async () => {
+  it("refuses a restaurant, a café, a bar or a bakery: they must bill through a certified SRM (MEV-WEB)", async () => {
+    for (const kind of ["cafe", "bakery"]) {
+      expect(await refusal(t.db.execute(sql`INSERT INTO shops (name, legal_name, kind, registrant, address) VALUES ('Shop', 'Shop inc.', ${kind}, false, 'Montréal')`))).toMatch(/shops_kind/);
+    }
     expect(await refusal(t.db.execute(sql`INSERT INTO shops (name, legal_name, kind, registrant, address) VALUES ('Bistro', 'Bistro inc.', 'restaurant', false, 'Montréal')`))).toMatch(/shops_kind/);
     expect(await refusal(t.db.execute(sql`INSERT INTO shops (name, legal_name, kind, registrant, address) VALUES ('Le Bar', 'Le Bar inc.', 'bar', false, 'Montréal')`))).toMatch(/shops_kind/);
   });

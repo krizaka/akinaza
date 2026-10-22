@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { balance, expenseEntries, invoiceEntries, type LedgerEntry } from "./ledger";
-import { posAllowed } from "./shop";
+import { EXCLUDED_KINDS, posAllowed, SHOP_KINDS } from "./shop";
 import { prepareReturn, reconcile } from "./tax-return";
 
 const inv = (id: string, issuedOn: string, gstCents: number, qstCents: number) => invoiceEntries({ id, number: `F-${id}`, issuedOn, gstCents, qstCents });
@@ -58,5 +58,13 @@ describe("the point of sale gate", () => {
     expect(posAllowed("bar", true)).toBe(false);
     expect(posAllowed("salon", false)).toBe(false);
     expect(posAllowed("salon", true)).toBe(true);
+  });
+
+  it("serves service businesses only: no restaurant, café, bar or bakery (sales recording system, MEV-WEB)", () => {
+    for (const kind of ["restaurant", "cafe", "bar", "bakery"]) {
+      expect(SHOP_KINDS as readonly string[]).not.toContain(kind);
+      expect(EXCLUDED_KINDS as readonly string[]).toContain(kind);
+      expect(posAllowed(kind, true)).toBe(false);
+    }
   });
 });

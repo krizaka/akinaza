@@ -1,15 +1,16 @@
 import { z } from "zod";
 
 /**
- * The shops Akinaza serves: independent Québec shops. **Restaurants and bars are excluded**: in Québec they must bill
- * through a certified sales recording module (SRM / MEV) — Akinaza is not one. The point of sale is a stub behind a flag
+ * The businesses Akinaza serves: independent Québec **service businesses** (hair and beauty salons, studios,
+ * consultants, freelancers). **Restaurants, cafés, bars and bakeries with on-site consumption are excluded**: in Québec
+ * they must use a sales recording system (SEV) certified MEV-WEB by Revenu Québec — Akinaza is not one. The point of sale is a stub behind a flag
  * until the SRM scope and the payment provider are decided (epic krizaka/.github#52).
  */
-export const SHOP_KINDS = ["salon", "bakery", "cafe", "boutique", "services", "other"] as const;
+export const SHOP_KINDS = ["salon", "boutique", "services", "other"] as const;
 export type ShopKind = (typeof SHOP_KINDS)[number];
-export const EXCLUDED_KINDS = ["restaurant", "bar"] as const;
+export const EXCLUDED_KINDS = ["restaurant", "cafe", "bar", "bakery"] as const;
 
-/** Whether the point of sale may open for a shop: never for a restaurant or a bar, and only when the flag is on. */
+/** Whether the point of sale may open for a shop: never for a restaurant, a café, a bar or a bakery, and only when the flag is on. */
 export function posAllowed(kind: string, flagEnabled: boolean): boolean {
   return flagEnabled && (SHOP_KINDS as readonly string[]).includes(kind) && !(EXCLUDED_KINDS as readonly string[]).includes(kind);
 }

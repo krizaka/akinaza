@@ -204,7 +204,7 @@ describe("the migration that makes quantities fractional keeps every existing in
     try {
       cpSync(full, before, { recursive: true });
       const journal = JSON.parse(readFileSync(join(before, "meta/_journal.json"), "utf8")) as { entries: { tag: string }[] };
-      journal.entries = journal.entries.filter((e) => !e.tag.startsWith("0008"));
+      journal.entries = journal.entries.filter((e) => Number(e.tag.slice(0, 4)) < 8);
       writeFileSync(join(before, "meta/_journal.json"), JSON.stringify(journal));
       const old = await freshEmptyDatabase();
       try {

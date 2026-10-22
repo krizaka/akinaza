@@ -33,7 +33,7 @@
 - **The ledger is the authority.** Append-only (triggers); every invoice's ledger entries equal its taxes at commit (a
   deferred constraint trigger); a correction is a credit note. An AI's figures are reconciled against the ledger and every
   difference is shown — never silently adopted.
-- **Restaurants and bars are excluded** (certified SRM / MEV required in Québec): the database refuses those shop kinds.
+- **Restaurants, cafés, bars and bakeries are excluded** (a sales recording system certified MEV-WEB is required in Québec): the database refuses those shop kinds. Akinaza targets service businesses only.
   The point of sale stays a stub behind `APP_POS_ENABLED`; **no payment provider is wired** (Oussama's decision).
 - **Loi 25 by design.** Data in Canada, encrypted at rest (the managed database's volumes); consent per purpose, never
   pre-ticked, append-only; erasure blanks every personal field and keeps the invoices tax law requires (six years). The

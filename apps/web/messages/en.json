@@ -129,7 +129,7 @@
     "trust": {
       "eyebrow": "Trust",
       "title": "Your clients' files, governed",
-      "lead": "Made for service shops: walkers, groomers, salons, repairers. Not for restaurants and bars, which must bill through a certified till.",
+      "lead": "Made for service shops: walkers, groomers, salons, repairers. Not for restaurants, cafés, bars and bakeries, which must bill through a system certified MEV-WEB.",
       "canada": {
         "title": "Loi 25 by design",
         "text": "Data in Canada, encrypted at rest; consent per purpose, never pre-ticked; erasure keeps only the invoices tax law requires.",
@@ -252,7 +252,7 @@
         },
         "who": {
           "q": "Which shops is it for?",
-          "a": "Service shops: dog walkers, groomers, salons, repairers. Not for restaurants and bars, which must invoice with a certified cash register."
+          "a": "Service shops: dog walkers, groomers, salons, repairers. Not for restaurants, cafés, bars and bakeries, which must invoice with a system certified MEV-WEB by Revenu Québec."
         },
         "data": {
           "q": "Where are my clients' records?",
@@ -389,8 +389,6 @@
       },
       "kinds": {
         "salon": "Salon",
-        "bakery": "Bakery",
-        "cafe": "Café",
         "boutique": "Boutique",
         "services": "Services",
         "other": "Other"

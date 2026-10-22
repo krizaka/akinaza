@@ -8,7 +8,7 @@ import { applyRate, type Cents, type Rate } from "./money";
 export const GST: Rate = { numerator: 5, denominator: 100 };
 export const QST: Rate = { numerator: 9975, denominator: 100_000 };
 
-/** standard: taxable at both rates · zeroRated: taxable at 0 % (basic groceries — a bakery's bread) · exempt: outside the taxes. */
+/** standard: taxable at both rates · zeroRated: taxable at 0 % (basic groceries) · exempt: outside the taxes. */
 export type TaxCategory = "standard" | "zeroRated" | "exempt";
 
 export interface LineInput {
