@@ -2,7 +2,7 @@
   "name": "akinaza-monorepo",
   "version": "0.1.0",
   "private": true,
-  "description": "Akinaza — the all-in-one for independent Québec shops: bookings, Loi 25 client files, bilingual invoices with GST/QST, a tax ledger, the GST/QST return prepared for the merchant.",
+  "description": "Akinaza \u2014 the all-in-one for independent Qu\u00e9bec shops: bookings, Loi 25 client files, bilingual invoices with GST/QST, a tax ledger, the GST/QST return prepared for the merchant.",
   "packageManager": "pnpm@10.34.6",
   "scripts": {
     "dev": "turbo run dev --filter=@akinaza/web",
@@ -21,7 +21,8 @@
     "lint:sg:test": "ast-grep test --skip-snapshot-tests",
     "sg:ratchet:update": "node scripts/sg-ratchet.mjs --update",
     "sg:fix": "node scripts/sg-fix.mjs",
-    "e2e:walker": "node scripts/e2e-walker.mjs"
+    "e2e:walker": "node scripts/e2e-walker.mjs",
+    "payments:setup": "krizaka-payments-setup --catalogue payments/catalogue.json"
   },
   "devDependencies": {
     "@ast-grep/cli": "0.51.0",

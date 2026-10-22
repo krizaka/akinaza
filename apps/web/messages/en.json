@@ -271,10 +271,10 @@
     },
     "founder": {
       "eyebrow": "Founder offer",
-      "title": "Founder offer: 39 $ CAD a month, setup included",
+      "title": "Founder offer: {price} a month, setup included",
       "lead": "A limited offer for the first shops. Akinaza is an early product: we build it with you, and we set your shop up with you at no extra cost.",
       "points": [
-        "39 $ CAD per month, plus GST and QST, as long as you stay",
+        "{price} per month, plus GST and QST, as long as you stay",
         "Setup included: your services, your hours, your first invoices",
         "Cancel any time from your billing page, in two clicks",
         "Limited to the first shops we welcome"
