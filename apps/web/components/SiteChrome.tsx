@@ -1,6 +1,6 @@
 "use client";
 
-import { HomeIcon, InfoIcon, PlayIcon } from "@krizaka/icons";
+import { HomeIcon, PlayIcon } from "@krizaka/icons";
 import { AkinazaLogo } from "@krizaka/ui";
 import { Button } from "@krizaka/ui/button";
 import { languagesFor } from "@krizaka/ui/language-switch";
@@ -15,7 +15,6 @@ import { contactHref, type PageId, pagePath, REPO_URL } from "@/lib/site";
 /** The product's pages, in the one « Product » menu (the products' bar standard): no Platforms (web only), no Docs yet. */
 const MENU = [
   { id: "home", icon: <HomeIcon />, path: (l: Locale) => pagePath(l, "home"), page: "home" },
-  { id: "how", icon: <InfoIcon />, path: (l: Locale) => `${pagePath(l, "home")}#how`, page: null },
   { id: "shop", icon: <PlayIcon />, path: (l: Locale) => `/${l}/s/${DEMO_SHOP}`, page: null },
 ] as const;
 

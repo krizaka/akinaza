@@ -57,6 +57,14 @@ const nextConfig = {
   async rewrites() {
     return [{ source: "/maps/v1/:path*", destination: "https://krizaka-assets.b-cdn.net/maps/v1/:path*" }];
   },
+  // The retired pages answer 308 to what replaced them.
+  async redirects() {
+    return [
+      { source: "/:locale(en|fr)/changelog/feed.xml", destination: "/:locale", permanent: true },
+      { source: "/:locale(en|fr)/changelog", destination: "/:locale", permanent: true },
+      { source: "/:locale(en|fr)/app/connections", destination: "/:locale/app", permanent: true },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

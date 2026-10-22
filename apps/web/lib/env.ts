@@ -3,8 +3,8 @@ import { z } from "zod";
 import type { MailSettings } from "./mail-settings";
 
 /**
- * Every environment variable of the app, declared once (named by bounded context — APP_, DATABASE_, AUTH_, ABUSE_, AI_ —
- * never by product or vendor: the vendor is a value, `AI_PROVIDER=orazaka`). A production server refuses to start
+ * Every environment variable of the app, declared once (named by bounded context — APP_, DATABASE_, AUTH_, ABUSE_ —
+ * never by product or vendor: the vendor is a value; `MAIL_PROVIDER=mailgun`). A production server refuses to start
  * without its secrets (instrumentation.ts calls `assertProductionEnv`): no demo mode, no default key.
  */
 const flag = z
@@ -45,12 +45,6 @@ export const envSchema = z.object({
   /** A header the edge sets with the client's address (`do-connecting-ip` on App Platform). */
   ABUSE_CLIENT_IP_HEADER: z.string().optional(),
   ABUSE_TRUSTED_PROXY_HOPS: z.coerce.number().int().min(1).max(10).default(1),
-  /** Where the tax-assistant Studio runs: Orazaka, and only Orazaka. */
-  AI_PROVIDER: z.literal("orazaka").default("orazaka"),
-  /** Orazaka's edge (`https://dev.orazaka.com/edge`). */
-  AI_API_URL: z.string().url().default("https://dev.orazaka.com/edge"),
-  /** Akinaza's `oz_` service key (Orazaka `dev-deploy.mjs service-account akinaza`), a DO SECRET. */
-  AI_API_KEY: z.string().optional(),
   /** `off` on every dev / preview deployment: noindex everywhere, robots.txt closed, the development notice in the footer. */
   APP_SEARCH_INDEXING: z.enum(["on", "off"]).default("on"),
   /** Connections this process's pool may hold (the cluster's budget is shared: dev uses 2 behind a PgBouncer pool). */
@@ -94,8 +88,6 @@ export function productionProblems(env: Env): string[] {
   const problems: string[] = [];
   if (!env.DATABASE_URL) problems.push("DATABASE_URL is not set");
   if (!env.AUTH_SESSION_SECRET || env.AUTH_SESSION_SECRET.length < 32) problems.push("AUTH_SESSION_SECRET must be at least 32 characters");
-  // Without a key the live feed is simply off (the sports feed answers FEED_NOT_CONFIGURED); a key that is set must be Orazaka's.
-  if (env.AI_API_KEY && !env.AI_API_KEY.startsWith("oz_")) problems.push("AI_API_KEY must be an Orazaka key (oz_…)");
   if (!validDataKey(env.APP_DATA_ENCRYPTION_KEY)) problems.push("APP_DATA_ENCRYPTION_KEY must be 32 random bytes, base64-encoded");
   if (env.APP_SOCIAL_SYNC === "fake") problems.push("APP_SOCIAL_SYNC=fake is for development and tests, never production");
   if (env.MAIL_PROVIDER === "mailgun" && !(env.MAIL_API_KEY && env.MAIL_DOMAIN)) problems.push("MAIL_PROVIDER=mailgun needs MAIL_API_KEY and MAIL_DOMAIN");

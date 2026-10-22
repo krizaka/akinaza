@@ -22,9 +22,7 @@
       "note": "One continuous phone take (FR; EN: take-en.mp4): storefront, slot, booking, walker check-in/out, report sent, the client's report, Vos livres. Request ids in journey-fr.json / journey-en.json beside it."
     },
     "journey.ai-via-orazaka": {
-      "evidence": null,
-      "gap": "The AI is « planned » (krizaka.com engine table): no Orazaka-backed feature runs yet.",
-      "issue": "https://github.com/krizaka/akinaza/issues/24"
+      "na": "Akinaza ships no AI feature (krizaka/akinaza#161): nothing to prove."
     },
     "ui.krizaka-ui": {
       "evidence": "https://github.com/krizaka/akinaza/blob/main/scripts/check-overflow.mjs",

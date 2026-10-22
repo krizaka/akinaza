@@ -1,16 +1,14 @@
 {
   "meta": {
     "siteName": "Akinaza",
-    "titleTemplate": "{title} — Akinaza",
+    "titleTemplate": "{title} · Akinaza",
     "description": "Vos rendez-vous, vos factures et vos taxes, réglés. Akinaza s'adresse aux salons, studios et travailleurs autonomes du Québec : vos clients réservent, vous facturez, vos montants de TPS/TVQ sont prêts. En français et en anglais."
   },
   "chrome": {
     "brandHome": "Akinaza, accueil",
     "navLabel": "Akinaza",
     "nav": {
-      "product": "Produit",
-      "how": "Comment ça marche",
-      "invoice": "Factures et taxes"
+      "product": "Produit"
     },
     "signIn": "Se connecter",
     "talk": "Nous écrire",
@@ -26,248 +24,26 @@
         "title": "Vue d'ensemble",
         "text": "Ce qu'Akinaza fait pour un commerce de services."
       },
-      "how": {
-        "title": "Comment ça marche",
-        "text": "Réserver, travailler la journée, tenir les livres."
-      },
       "shop": {
         "title": "La boutique de démonstration",
         "text": "La vraie page de réservation d'un promeneur de chiens, sur dev."
       }
     },
     "footerLabel": "Pied de page",
-    "preferences": "Préférences"
+    "preferences": "Préférences",
+    "version": "v{version}"
   },
   "landing": {
-    "eyebrow": "Pour les salons, studios et travailleurs autonomes du Québec",
     "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
     "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",
     "talk": "Parler d'Akinaza avec nous",
-    "seeShop": "Voir la boutique de démo",
     "status": {
       "development": "En développement : les inscriptions sont fermées pendant que nous le bâtissons avec les premiers commerces.",
       "preview": "Aperçu de développement : inscriptions fermées, accès sur invitation."
     },
-    "statusChip": {
-      "development": "En développement",
-      "preview": "Aperçu de développement"
-    },
-    "tour": {
-      "label": "La journée d'un promeneur de chiens sur Akinaza, captée sur la vraie application",
-      "play": "Lire les étapes",
-      "pause": "Mettre les étapes en pause",
-      "step": "Étape {n} sur {total}",
-      "captured": "Enregistré sur dev.akinaza.com le 19 octobre 2026, en une seule prise · une boutique de démonstration, aucune personne réelle",
-      "steps": {
-        "book": {
-          "title": "La cliente réserve",
-          "text": "Une cliente choisit une promenade en groupe, un créneau et son chien.",
-          "alt": "Le formulaire de réservation : le service, la zone, le chien, les créneaux libres, la confirmation."
-        },
-        "day": {
-          "title": "La journée de la promeneuse",
-          "text": "Léa ouvre sa journée sur son téléphone et lance la promenade d'un toucher.",
-          "alt": "La journée de la promeneuse : les chiens de la promenade en groupe, leurs propriétaires et le bouton de départ."
-        },
-        "report": {
-          "title": "Le rapport",
-          "text": "Une note et une photo pour le chien, envoyées en un toucher.",
-          "alt": "Le rapport de visite : une note, une photo ajoutée, prêt à envoyer à la propriétaire."
-        },
-        "client": {
-          "title": "La cliente le voit",
-          "text": "La propriétaire retrouve le rapport dans son espace.",
-          "alt": "L'espace de la cliente : la promenade et son rapport avec la photo."
-        },
-        "books": {
-          "title": "Vos livres",
-          "text": "La TPS et la TVQ du trimestre, préparées à partir de vos factures et de vos dépenses : chaque chiffre avec ses documents, jamais produite à votre place.",
-          "alt": "Vos livres : la TPS et la TVQ du trimestre, les lignes de la déclaration et les documents derrière."
-        }
-      }
-    },
-    "outcomes": {
-      "eyebrow": "Ce que vous pouvez faire",
-      "title": "Moins d'administration, plus de clients",
-      "bookings": {
-        "title": "Remplir votre journée sans aller-retour",
-        "text": "Les clients réservent eux-mêmes les heures libres ; un groupe complet ou une heure prise disparaît aussitôt.",
-        "cta": "Voir la boutique de démo"
-      },
-      "reports": {
-        "title": "Montrer à chaque client que c'est fait",
-        "text": "Arrivée, départ, une note et une photo : le rapport arrive au client dans la minute.",
-        "cta": "Se connecter (sur invitation)"
-      },
-      "taxes": {
-        "title": "Recevoir votre déclaration de taxes préparée",
-        "text": "Chaque facture inscrit sa TPS et sa TVQ, et Akinaza présente les montants de votre déclaration avec leurs sources. Il prépare le rapport, jamais il ne le produit à votre place : c'est vous qui le produisez.",
-        "cta": "Se connecter (sur invitation)"
-      }
-    },
-    "how": {
-      "eyebrow": "Comment ça marche",
-      "title": "Réserver, travailler, tenir les livres",
-      "lead": "Un seul outil pour le commerce, l'équipe et les clients, de la réservation à la déclaration de taxes.",
-      "steps": {
-        "book": {
-          "title": "Les clients réservent",
-          "text": "Votre page présente vos services, vos prix et vos zones ; une heure prise disparaît partout, et personne n'est réservé deux fois."
-        },
-        "work": {
-          "title": "Votre équipe fait sa journée",
-          "text": "Chacun voit sa journée sur son téléphone, avec les notes d'accès gardées chiffrées, et envoie un rapport après chaque visite."
-        },
-        "books": {
-          "title": "Les livres se tiennent seuls",
-          "text": "Des factures bilingues, TPS 5 % et TVQ 9,975 % au cent près, un registre qu'on ne réécrit pas, et la déclaration préparée à partir de lui."
-        }
-      },
-      "beaverLabel": "La promesse du castor",
-      "beaver": "Le castor construit la boutique."
-    },
-    "trust": {
-      "eyebrow": "Confiance",
-      "title": "Les dossiers de vos clients, bien gardés",
-      "lead": "Fait pour les studios, les salons et les travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place, qui doivent facturer avec un système certifié MEV-WEB.",
-      "canada": {
-        "title": "Conçu pour la Loi 25 et la Loi 96",
-        "text": "Données au Canada, chiffrées au repos ; consentement par finalité, jamais précoché ; l'effacement ne garde que les factures exigées par la loi fiscale ; français et anglais sur chaque écran et chaque facture.",
-        "cta": "Confidentialité"
-      },
-      "prepare": {
-        "title": "Préparée, jamais produite à votre place",
-        "text": "Akinaza prépare vos montants de TPS/TVQ et leurs pièces justificatives. C'est vous qui signez et qui produisez.",
-        "cta": "Se connecter (sur invitation)"
-      },
-      "open": {
-        "title": "Open source",
-        "text": "L'application, son code fiscal et les règles de sa base de données sont sur GitHub, sous licence Apache-2.0.",
-        "cta": "Lire le code"
-      },
-      "powered": "Son assistant fiscal tournera sur Orazaka (prévu, pas encore branché).",
-      "line": "Données au Canada · Conçu pour la Loi 25 et la Loi 96 · Français d'abord"
-    },
-    "closing": {
-      "title": "Vous tenez un studio, un salon, ou vous travaillez à votre compte au Québec ?",
-      "body": "Akinaza est en développement et les inscriptions sont fermées. Dites-nous comment vous travaillez aujourd'hui : nous choisissons les premiers commerces."
-    },
-    "visualLabel": "dev.akinaza.com — la boutique publique",
     "hero": {
-      "visualAlt": "La boutique de démonstration Pattes de Saint-Henri sur un téléphone : sa vitrine, une réservation, la journée de la promeneuse, le rapport de visite et « Vos livres » — une seule prise.",
+      "visualAlt": "La boutique de démonstration Pattes de Saint-Henri sur un téléphone : une réservation, la journée de la promeneuse, le rapport de visite et les livres.",
       "caption": "La vraie application, une seule prise, le 19 octobre 2026. Aucune personne réelle."
-    },
-    "figures": {
-      "gst": "% de TPS, au cent près",
-      "qst": "% de TVQ, au cent près",
-      "languages": "langues pour chaque facture"
-    },
-    "features": {
-      "eyebrow": "Ce que vous pouvez faire",
-      "title": "Moins d'administration, plus de clients",
-      "lead": "Prise de rendez-vous, factures exactes au cent près, grand livre équilibré et rapport de taxes : trois résultats, vus sur la vraie application plus bas."
-    },
-    "tourIntro": "Chaque étape est captée sur la vraie application, sur un téléphone.",
-    "books": {
-      "badge": "Vos livres"
-    },
-    "compare": {
-      "eyebrow": "En comparaison",
-      "title": "Akinaza, face à l'agenda, au chiffrier et au comptable",
-      "lead": "La pile habituelle fonctionne ; voici ce qu'Akinaza change, et ce qu'il laisse à votre comptable.",
-      "label": "Akinaza comparé à la pile habituelle",
-      "topic": "Ce qui compte",
-      "columns": {
-        "akinaza": "Akinaza",
-        "stack": "Agenda + chiffrier + comptable"
-      },
-      "rows": {
-        "booking": {
-          "topic": "Les réservations",
-          "akinaza": {
-            "key": "Vos clients réservent seuls.",
-            "detail": "Une heure prise disparaît aussitôt."
-          },
-          "stack": {
-            "key": "Des allers-retours.",
-            "detail": "Messages et appels pour trouver une heure."
-          }
-        },
-        "day": {
-          "topic": "La journée de l'équipe",
-          "akinaza": {
-            "key": "Sur le téléphone de chacun.",
-            "detail": "Chiens, propriétaires et notes d'accès chiffrées."
-          },
-          "stack": {
-            "key": "Un agenda partagé.",
-            "detail": "Les notes sont ailleurs."
-          }
-        },
-        "report": {
-          "topic": "Le rapport au client",
-          "akinaza": {
-            "key": "Une note et une photo, d'un geste.",
-            "detail": "Il arrive au client dans la minute."
-          },
-          "stack": {
-            "key": "Un message à la main.",
-            "detail": "Écrit après chaque visite."
-          }
-        },
-        "taxes": {
-          "topic": "La TPS et la TVQ",
-          "akinaza": {
-            "key": "Inscrites sur chaque facture.",
-            "detail": "Au cent près, dans un registre qu'on ne réécrit pas."
-          },
-          "stack": {
-            "key": "Saisies dans un chiffrier.",
-            "detail": "À reporter, puis à vérifier."
-          }
-        },
-        "filing": {
-          "topic": "La déclaration de taxes",
-          "akinaza": {
-            "key": "Préparée, avec ses sources.",
-            "detail": "Vous la produisez : Akinaza ne la transmet jamais."
-          },
-          "stack": {
-            "key": "Produite par votre comptable.",
-            "detail": "Ou par vous, à partir de vos chiffres."
-          }
-        }
-      }
-    },
-    "faq": {
-      "eyebrow": "Questions",
-      "title": "Ce qu'on nous demande",
-      "items": {
-        "open": {
-          "q": "Je peux m'inscrire ?",
-          "a": "Pas encore : les inscriptions sont fermées pendant que nous bâtissons Akinaza avec les premiers commerces. Dites-nous comment vous travaillez aujourd'hui."
-        },
-        "filing": {
-          "q": "Akinaza produit ma déclaration de taxes ?",
-          "a": "Non. Akinaza prépare vos montants de TPS et de TVQ et leurs pièces justificatives ; c'est vous qui signez et qui produisez. Akinaza ne transmet jamais une déclaration."
-        },
-        "who": {
-          "q": "C'est pour quel commerce ?",
-          "a": "Les studios, les salons et les travailleurs autonomes qui vendent des services : rendez-vous, factures, taxes. Pas les restaurants, cafés, bars ou boulangeries avec consommation sur place, qui doivent facturer avec un système certifié MEV-WEB."
-        },
-        "data": {
-          "q": "Où sont les dossiers de mes clients ?",
-          "a": "Au Canada, chiffrés au repos. Le consentement se donne par finalité et n'est jamais précoché ; l'effacement ne garde que les factures exigées par la loi fiscale."
-        },
-        "bilingual": {
-          "q": "Les factures sont bilingues ?",
-          "a": "Oui, en français et en anglais, avec la TPS à 5 % et la TVQ à 9,975 % calculées au cent près."
-        },
-        "engine": {
-          "q": "Il y a de l'IA là-dedans ?",
-          "a": "Son assistant fiscal tournera sur Orazaka, le moteur de Krizaka : c'est prévu, pas encore branché. Les montants de taxes, eux, viennent d'un code déterministe."
-        }
-      }
     },
     "founder": {
       "eyebrow": "Offre fondateur",
@@ -282,7 +58,29 @@
       "cta": "Profiter de l’offre fondateur",
       "note": "Vous payez sur la page sécurisée de Stripe, et vous y gérez ou annulez votre abonnement. Déjà membre ? Connectez-vous d’abord.",
       "talk": "Nous parler d’abord"
-    }
+    },
+    "screens": {
+      "book": {
+        "title": "Vos clients réservent seuls",
+        "text": "Une heure prise disparaît aussitôt : personne n'est réservé deux fois.",
+        "alt": "La page de réservation : le service, le chien, les créneaux libres et la confirmation."
+      },
+      "invoice": {
+        "title": "La facture, taxes comprises",
+        "text": "TPS 5 % et TVQ 9,975 % au cent près, en français ou en anglais.",
+        "alt": "Une facture : sous-total, TPS, TVQ et total."
+      },
+      "books": {
+        "title": "Votre rapport de taxes, prêt",
+        "text": "Chaque montant avec ses factures. C'est vous qui produisez la déclaration.",
+        "alt": "Vos livres : la TPS et la TVQ du trimestre, ligne par ligne, avec les documents derrière."
+      }
+    },
+    "trust": {
+      "line": "Données au Canada · Conçu pour la Loi 25 et la Loi 96 · Taxes préparées, déclaration produite par vous",
+      "scope": "Pour les studios, salons et travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place."
+    },
+    "visualLabel": "dev.akinaza.com"
   },
   "privacy": {
     "title": "Confidentialité",
@@ -307,7 +105,6 @@
       "clients": "Clients",
       "book": "Réserver une promenade",
       "report": "Rapport de promenade",
-      "connections": "Connexions",
       "books": "Vos livres",
       "invoices": "Factures"
     },
@@ -359,7 +156,6 @@
       "bookings": "Mes réservations",
       "clients": "Clients",
       "shop": "Ma page boutique",
-      "connections": "Connexions",
       "books": "Vos livres"
     },
     "admin": {
@@ -971,131 +767,10 @@
         "network": "Pas de connexion. Vérifiez votre réseau et réessayez."
       }
     },
-    "connections": {
-      "title": "Connexions",
-      "intro": "Gardez vos heures, votre description, votre téléphone et votre site identiques partout où vos clients vous cherchent. Akinaza est votre référence : rien ne change sur une plateforme ni sur votre page sans votre accord.",
-      "privacy": "Vous connectez votre propre compte. L'accès est conservé de façon sécurisée, nous lisons seulement ce qui est indiqué sur chaque carte, et vous pouvez vous déconnecter en tout temps (nous révoquons aussi l'accès auprès de la plateforme). Rien n'est partagé avec personne d'autre.",
-      "off": "Les connexions ne sont pas activées dans cet environnement.",
-      "status": {
-        "connected": "Connecté",
-        "needs_reconnect": "Reconnexion requise",
-        "disconnected": "Non connecté",
-        "soon": "Bientôt"
-      },
-      "platforms": {
-        "google": {
-          "name": "Profil d'entreprise Google",
-          "what": "Votre fiche dans la recherche Google et Maps."
-        },
-        "facebook": {
-          "name": "Page Facebook",
-          "what": "La Page de votre entreprise sur Facebook."
-        },
-        "instagram": {
-          "name": "Instagram",
-          "what": "Votre compte professionnel. Nous lisons son profil ; photos et publications viendront plus tard."
-        }
-      },
-      "fields": {
-        "hours": "Heures d'ouverture",
-        "description": "Description",
-        "phone": "Téléphone",
-        "email": "Courriel",
-        "website": "Site web"
-      },
-      "syncs": "Ce qui se synchronise : {fields}",
-      "account": "Compte : {label}",
-      "lastSync": "Dernière synchronisation {date}",
-      "neverSynced": "Pas encore synchronisé",
-      "actions": {
-        "connect": "Connecter",
-        "import": "Importer depuis {platform}",
-        "publish": "Publier sur {platform}",
-        "disconnect": "Déconnecter",
-        "disconnectConfirm": "Déconnecter {platform} ? Appuyez encore",
-        "reconnect": "Reconnecter",
-        "cancel": "Annuler"
-      },
-      "consent": {
-        "title": "Avant de connecter {platform}",
-        "text": "Akinaza lira et, à votre demande, mettra à jour ces informations sur {platform} : {fields}. Elle utilise votre connexion {platform}, garde l'accès chiffré au Canada, et vous pouvez vous déconnecter en tout temps. Rien n'est modifié sans vous.",
-        "checkbox": "J'autorise Akinaza à lire et à mettre à jour ces informations sur mon compte {platform}.",
-        "continue": "Continuer vers {platform}"
-      },
-      "flash": {
-        "connected": "{platform} est connecté.",
-        "upToDate": "{platform} correspond déjà à Akinaza.",
-        "imported": {
-          "one": "{count} différence à examiner ci-dessous.",
-          "other": "{count} différences à examiner ci-dessous."
-        },
-        "published": "Publié sur {platform} : {fields}.",
-        "nothingToPublish": "Rien à publier : {platform} a déjà vos valeurs.",
-        "held": "En attente de votre décision : {fields}.",
-        "disconnected": "{platform} est déconnecté."
-      },
-      "proposal": {
-        "title": "Examinez ce que dit {platform}",
-        "intro": "Choisissez, champ par champ. Rien ne change avant que vous appliquiez.",
-        "akinaza": "Akinaza",
-        "theirs": "{platform}",
-        "empty": "(vide)",
-        "useTheirs": "Prendre celle de {platform}",
-        "keepMine": "Garder celle d'Akinaza",
-        "apply": "Appliquer mes choix",
-        "applied": "Vos choix sont enregistrés.",
-        "state": {
-          "changed": "Différent",
-          "remote_only": "Seulement sur {platform}",
-          "local_only": "Seulement dans Akinaza"
-        },
-        "choose": "Choix pour {field}",
-        "pending": "Décidez le reste plus tard."
-      },
-      "log": {
-        "title": "Ce qui s'est passé",
-        "empty": "Rien pour l'instant.",
-        "outcome": {
-          "connected": "Connecté",
-          "disconnected": "Déconnecté",
-          "proposed": "Proposé",
-          "accepted": "Valeur de la plateforme prise",
-          "kept_local": "Valeur d'Akinaza gardée",
-          "pushed": "Publié",
-          "skipped": "Ignoré",
-          "failed": "Échec"
-        },
-        "line": "{platform} · {field} · {outcome}",
-        "reason": {
-          "too_long": "Trop long pour {platform}"
-        }
-      },
-      "guidance": {
-        "title": "Autres endroits",
-        "apple": {
-          "name": "Plans d'Apple",
-          "text": "Apple n'ouvre aucune connexion aux entreprises comme la vôtre. Mettez votre lieu à jour dans Apple Business Connect ; reprenez les valeurs ci-dessous."
-        },
-        "bing": {
-          "name": "Bing Places",
-          "text": "Bing peut importer votre fiche Google lui-même : gardez Google à jour et choisissez « Importer depuis Google » dans Bing Places."
-        },
-        "yelp": {
-          "name": "Yelp",
-          "text": "Yelp ne laisse pas d'autres applications modifier votre page. Mettez-la à jour dans Yelp pour les entreprises."
-        },
-        "open": "Ouvrir le site",
-        "values": "Vos valeurs"
-      }
-    },
     "books": {
       "title": "Vos livres",
       "period": "Déclaration du {from} au {to}",
       "periodNav": "Période de la déclaration",
-      "notFiled": {
-        "title": "Préparée pour vous, jamais produite",
-        "body": "Akinaza prépare votre déclaration de TPS/TVQ à partir de vos factures et de vos dépenses. Vous la vérifiez et la produisez vous-même auprès de Revenu Québec : rien n'est envoyé d'ici."
-      },
       "net": {
         "gst": "TPS (ligne 109)",
         "qst": "TVQ (ligne 209)"
@@ -1118,67 +793,43 @@
       },
       "lines": {
         "101": {
-          "label": "Ventes et autres revenus",
-          "how": "Le sous-total des factures émises pendant la période."
+          "label": "Ventes et autres revenus"
         },
         "103": {
-          "label": "TPS perçue",
-          "how": "La TPS de vos factures."
+          "label": "TPS perçue"
         },
         "106": {
-          "label": "Crédits de taxe sur les intrants (CTI)",
-          "how": "La TPS payée sur vos dépenses, selon la part utilisée pour l'entreprise."
+          "label": "Crédits de taxe sur les intrants (CTI)"
         },
         "109": {
-          "label": "TPS nette",
-          "how": "Ligne 103 moins ligne 106."
+          "label": "TPS nette"
         },
         "203": {
-          "label": "TVQ perçue",
-          "how": "La TVQ de vos factures."
+          "label": "TVQ perçue"
         },
         "206": {
-          "label": "Remboursements de la taxe sur les intrants (RTI)",
-          "how": "La TVQ payée sur vos dépenses, selon la part utilisée pour l'entreprise."
+          "label": "Remboursements de la taxe sur les intrants (RTI)"
         },
         "209": {
-          "label": "TVQ nette",
-          "how": "Ligne 203 moins ligne 206."
+          "label": "TVQ nette"
         }
       },
-      "footnote": "Les numéros de ligne sont ceux de la déclaration combinée de Revenu Québec (FPZ-500). Vérifiez chaque chiffre avec ses documents avant de produire."
+      "footnote": "Akinaza prépare ces chiffres à partir de vos factures et de vos dépenses. C'est vous qui produisez la déclaration auprès de Revenu Québec, après avoir vérifié chaque chiffre."
     },
     "invoices": {
       "title": "Factures",
-      "lead": "Facturez vos services : TPS 5 % et TVQ 9,975 % au cent près, inscrites à votre grand livre dans la même étape. Akinaza prépare votre déclaration; vous la produisez.",
       "new": {
         "title": "Nouvelle facture",
         "client": "Client",
         "noClient": "Sans fiche client",
-        "language": "Langue de la facture",
-        "languages": {
-          "fr": "Français",
-          "en": "English"
-        },
-        "issuedOn": "Date",
         "service": "Service {n}",
         "noService": "—",
         "quantity": "Quantité",
-        "quantityHint": "Heures, jours ou forfaits — les fractions au centième sont permises (7,5 heures).",
         "customDescription": "Autre ligne (description)",
         "customPrice": "Prix unitaire",
         "customQuantity": "Quantité de l'autre ligne",
         "submit": "Émettre la facture",
-        "needLine": "Choisissez au moins un service, ou écrivez une ligne avec son prix.",
-        "taxes": "Les taxes sont calculées une seule fois, sur le total taxable, et arrondies au cent.",
-        "day": "Jour",
-        "month": "Mois",
-        "year": "Année",
-        "terms": "Conditions de paiement",
-        "termsDefault": "Celles de la boutique ({days} jours)",
-        "termsOnReceipt": "Payable à la réception",
-        "termsNet": "Net {days} jours",
-        "termsHint": "Un acheteur a besoin des conditions et de l'échéance dès 500 $ pour réclamer ses crédits de taxe sur les intrants."
+        "needLine": "Choisissez au moins un service, ou écrivez une ligne avec son prix."
       },
       "list": {
         "title": "Factures émises",
@@ -1308,39 +959,5 @@
       "directions": "Adresse",
       "loading": "Chargement"
     }
-  },
-  "changelog": {
-    "metaTitle": "Journal des changements",
-    "metaDescription": "Ce qui a changé dans Akinaza, semaine par semaine : nouveautés, corrections, sécurité et ruptures, avec la pull request derrière chaque ligne.",
-    "eyebrow": "Journal des changements",
-    "title": "Ce qui a été livré",
-    "lead": "Ce qui a changé dans Akinaza, la semaine la plus récente d'abord — lu dans les pull requests fusionnées, pas écrit pour la page.",
-    "runs": "Ce site tourne en v{version} sur Krizaka UI {ui}.",
-    "runsNoUi": "Ce site tourne en v{version}.",
-    "feed": "S'abonner (RSS)",
-    "logLabel": "Semaines",
-    "empty": "Les changements n'ont pas pu être lus pour l'instant.",
-    "emptyLink": "Voir les pull requests sur GitHub",
-    "kinds": {
-      "added": "Nouveau",
-      "changed": "Modifié",
-      "fixed": "Corrigé",
-      "removed": "Retiré",
-      "security": "Sécurité",
-      "breaking": "Rupture"
-    },
-    "tags": {
-      "feature": "Nouveau",
-      "fix": "Corrigé",
-      "security": "Sécurité",
-      "breaking": "Rupture",
-      "change": "Modifié"
-    },
-    "pull": "Pull request n° {number}",
-    "week": "Semaine du {date}",
-    "feedTitle": "Akinaza — journal des changements",
-    "feedDescription": "Ce que Akinaza a livré, semaine par semaine.",
-    "footerVersion": "v{version}",
-    "langTag": "fr-CA"
   }
 }

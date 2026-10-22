@@ -19,8 +19,8 @@ const url = (locale: Locale, page: PageId) => `${SITE_URL}${pagePath(locale, pag
 
 export function pageMetadata(locale: Locale, page: PageId): Metadata {
   const t = getDictionary(locale);
-  const title = page === "home" ? `${t.meta.siteName} — ${t.landing.title}` : page === "changelog" ? `${t.changelog.metaTitle} — ${t.meta.siteName}` : `${t.privacy.title} — ${t.meta.siteName}`;
-  const description = page === "changelog" ? t.changelog.metaDescription : t.meta.description;
+  const title = page === "home" ? `${t.meta.siteName} · ${t.landing.title}` : `${t.privacy.title} · ${t.meta.siteName}`;
+  const description = t.meta.description;
   return {
     title: { absolute: title },
     description,
@@ -80,7 +80,7 @@ export function llmsText(): string {
 
 ## Source
 
-- [Akinaza repository](${REPO_URL}): the app, its BFF, its schema and its Studio contract (Apache-2.0)
+- [Akinaza repository](${REPO_URL}): the app, its BFF and its schema (Apache-2.0)
 
 ## Publisher
 

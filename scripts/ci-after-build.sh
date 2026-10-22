@@ -5,7 +5,6 @@
 set -euo pipefail
 export NODE_ENV=production
 export AUTH_SESSION_SECRET=ci-only-session-secret-0123456789abcdef
-export AI_API_KEY=oz_ci_only_not_a_key
 export APP_DATA_ENCRYPTION_KEY=Y2ktb25seS1kYXRhLWtleS0zMi1ieXRlcy0xMjM0NTY=
 export PORT=3000
 trap 'tail -100 web.log || true' ERR

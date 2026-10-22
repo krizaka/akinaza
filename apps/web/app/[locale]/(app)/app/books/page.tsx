@@ -1,5 +1,4 @@
 import { prepareShopReturn, shopDay, shopOfOwner } from "@akinaza/db";
-import { Alert } from "@krizaka/ui/alert";
 import { Stat } from "@krizaka/ui/stat";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -54,9 +53,6 @@ export default async function Books({ params, searchParams }: { params: Promise<
           </Link>
         ))}
       </nav>
-      <Alert tone="info" title={t.notFiled.title}>
-        {t.notFiled.body}
-      </Alert>
       <div className="grid gap-4 sm:grid-cols-2">
         {nets.map(({ key, net }) => (
           <Stat key={key} label={t.net[key]} value={money(net.netCents)} hint={t.outcome[net.outcome]} />

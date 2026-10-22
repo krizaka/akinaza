@@ -32,7 +32,6 @@ export function BooksLines({ lines }: { lines: BooksLineView[] }) {
         cell: (r) => (
           <div className="flex flex-col gap-1">
             <span className="font-semibold text-fg">{say(`books.lines.${r.line}.label`)}</span>
-            <span className="text-xs text-fg-muted">{say(`books.lines.${r.line}.how`)}</span>
             {r.sources.length > 0 ? (
               <details className="text-sm">
                 <summary className="cursor-pointer text-fg-accent">{say("books.sources", { count: r.sources.length })}</summary>
@@ -55,5 +54,5 @@ export function BooksLines({ lines }: { lines: BooksLineView[] }) {
     ],
     [say, locale],
   );
-  return <DataTable caption={say("books.table.caption")} showCaption rows={lines} columns={columns} getRowId={(r) => r.line} rowLabel={(r) => `${r.line} ${say(`books.lines.${r.line}.label`)}`} pageSize={10} />;
+  return <DataTable caption={say("books.table.caption")} showCaption rows={lines} columns={columns} getRowId={(r) => r.line} rowLabel={(r) => `${r.line} ${say(`books.lines.${r.line}.label`)}`} />;
 }
