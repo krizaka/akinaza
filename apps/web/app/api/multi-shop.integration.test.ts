@@ -5,11 +5,11 @@ import { resetRateLimits } from "@/lib/rate-limit";
 import { createSession, SESSION_COOKIE } from "@/lib/session";
 
 import { POST as saveShop } from "./walker/shop/route";
-import { PATCH as patchShop } from "./walker/shops/[id]/route";
-import { GET as listCollections, POST as addCollection } from "./walker/shop-collections/route";
 import { PATCH as patchCollection } from "./walker/shop-collections/[id]/route";
+import { GET as listCollections, POST as addCollection } from "./walker/shop-collections/route";
 import { POST as addTag } from "./walker/shop-tags/route";
 import { POST as makeDefault } from "./walker/shops/[id]/default/route";
+import { PATCH as patchShop } from "./walker/shops/[id]/route";
 import { GET as listShops, POST as addShop } from "./walker/shops/route";
 
 /** An owner with two shops, over HTTP, on a real PostgreSQL (CI's service; locally DATABASE_IT=1 DATABASE_URL=…). */
