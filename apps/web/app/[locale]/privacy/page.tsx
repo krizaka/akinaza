@@ -25,6 +25,10 @@ export default async function Privacy({ params }: { params: Promise<{ locale: st
         <PageHero back={{ href: pagePath(locale, "home"), label: t.meta.siteName }} linkAs={Link} title={t.privacy.title} lead={format(t.privacy.updated, { date: PRIVACY_UPDATED })} />
         <Page>
           <p className="max-w-3xl text-base leading-relaxed text-fg-secondary">{t.privacy.body}</p>
+          <section id="officer" className="mt-8 max-w-3xl">
+            <h2 className="m-0 text-xl font-semibold text-fg">{t.privacy.officer.title}</h2>
+            <p className="mt-2 text-base leading-relaxed text-fg-secondary">{format(t.privacy.officer.text, { role: t.privacy.officer.role })}</p>
+          </section>
         </Page>
       </main>
       <SiteFooter locale={locale} />
