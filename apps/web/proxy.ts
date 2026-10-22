@@ -2,11 +2,12 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { isAdminHost, routeFor } from "./lib/host";
 import { CLOSED_ROBOTS, closedRobots, devRedirect, indexableOn, isDevHost, NOINDEX } from "./lib/indexing";
+import { negotiateLocale } from "./lib/locale-negotiation";
 import { SITE_URL } from "./lib/site";
 
 /**
  * Every page exists in English and French (`/en/…`, `/fr/…`); an address without a language goes to the visitor's choice
- * (cookie `NEXT_LOCALE`), else English. admin.akinaza.com serves only the administration console (lib/host.ts), never
+ * (cookie `NEXT_LOCALE`), else French (Loi 96) unless the browser asks for English and never French. admin.akinaza.com serves only the administration console (lib/host.ts), never
  * indexed; dev.akinaza.com never serves it. The API never passes here.
  */
 export function proxy(request: NextRequest) {
@@ -30,7 +31,7 @@ export function proxy(request: NextRequest) {
     if (closed) response.headers.set("x-robots-tag", NOINDEX);
     return response;
   }
-  const chosen = request.cookies.get("NEXT_LOCALE")?.value === "fr" ? "fr" : "en";
+  const chosen = negotiateLocale(request.cookies.get("NEXT_LOCALE")?.value, request.headers.get("accept-language"));
   const route = routeFor(host, request.nextUrl.pathname, chosen);
   const admin = isAdminHost(host);
   // A deployment closed to search engines (APP_SEARCH_INDEXING=off): robots.txt disallows everything (the sitemap is still served, noindexed).
