@@ -2,7 +2,7 @@
   "meta": {
     "siteName": "Akinaza",
     "titleTemplate": "{title} — Akinaza",
-    "description": "The all-in-one for independent Québec shops: bookings, client files with Loi 25 consent, bilingual invoices with GST and QST, a tax ledger, and your GST/QST return prepared for you to review and file. Data in Canada."
+    "description": "The bilingual OS designed for Québec's Loi 25 and Loi 96, for studios, salons and the self-employed: bookings, GST/QST invoices to the cent, a balanced ledger, a tax report prepared for Revenu Québec (never filed). Data in Canada."
   },
   "chrome": {
     "brandHome": "Akinaza, home",
@@ -39,9 +39,9 @@
     "preferences": "Preferences"
   },
   "landing": {
-    "eyebrow": "Akinaza · for independent Québec service shops",
-    "title": "Your shop, all in one place.",
-    "lead": "Bookings, your team's day, client reports, bilingual invoices with GST and QST, and your tax return prepared. First proof: a dog walker in Saint-Henri.",
+    "eyebrow": "Akinaza · for studios, salons and the self-employed in Québec",
+    "title": "The bilingual OS designed for Loi 25 and Loi 96.",
+    "lead": "Appointment booking, GST/QST invoices exact to the cent, a balanced ledger, and a tax report prepared for Revenu Québec: prepared, never filed.",
     "talk": "Talk to us about Akinaza",
     "seeShop": "See the demo shop",
     "status": {
@@ -129,10 +129,10 @@
     "trust": {
       "eyebrow": "Trust",
       "title": "Your clients' files, governed",
-      "lead": "Made for service shops: walkers, groomers, salons, repairers. Not for restaurants, cafés, bars and bakeries, which must bill through a system certified MEV-WEB.",
+      "lead": "Made for studios, salons and the self-employed. Not for restaurants, cafés, bars or bakeries with on-site consumption, which must bill through a system certified MEV-WEB.",
       "canada": {
-        "title": "Loi 25 by design",
-        "text": "Data in Canada, encrypted at rest; consent per purpose, never pre-ticked; erasure keeps only the invoices tax law requires.",
+        "title": "Designed for Loi 25 and Loi 96",
+        "text": "Data in Canada, encrypted at rest; consent per purpose, never pre-ticked; erasure keeps only the invoices tax law requires; French and English on every screen and every invoice.",
         "cta": "Privacy"
       },
       "prepare": {
@@ -148,7 +148,7 @@
       "powered": "Its tax assistant will run on Orazaka (planned, not wired yet)."
     },
     "closing": {
-      "title": "You run a service shop in Québec?",
+      "title": "You run a studio, a salon, or you work for yourself in Québec?",
       "body": "Akinaza is in development and sign-up is closed. Tell us how you work today: we are choosing the first shops."
     },
     "visualLabel": "dev.akinaza.com — the public storefront",
@@ -252,7 +252,7 @@
         },
         "who": {
           "q": "Which shops is it for?",
-          "a": "Service shops: dog walkers, groomers, salons, repairers. Not for restaurants, cafés, bars and bakeries, which must invoice with a system certified MEV-WEB by Revenu Québec."
+          "a": "Studios, salons and self-employed people who sell services: appointments, invoices, taxes. Not restaurants, cafés, bars or bakeries with on-site consumption, which must invoice with a system certified MEV-WEB by Revenu Québec."
         },
         "data": {
           "q": "Where are my clients' records?",

@@ -2,7 +2,7 @@
   "meta": {
     "siteName": "Akinaza",
     "titleTemplate": "{title} — Akinaza",
-    "description": "Le tout-en-un des boutiques indépendantes du Québec : rendez-vous, dossiers clients avec consentement Loi 25, factures bilingues avec TPS et TVQ, registre des taxes, et votre déclaration TPS/TVQ préparée pour que vous la vérifiiez et la produisiez. Données au Canada."
+    "description": "L'OS bilingue conçu pour la Loi 25 et la Loi 96, pour les studios, salons et travailleurs autonomes du Québec : rendez-vous, factures TPS/TVQ au cent près, grand livre équilibré, rapport de taxes préparé pour Revenu Québec (jamais produit). Données au Canada."
   },
   "chrome": {
     "brandHome": "Akinaza, accueil",
@@ -39,9 +39,9 @@
     "preferences": "Préférences"
   },
   "landing": {
-    "eyebrow": "Akinaza · pour les commerces de services indépendants du Québec",
-    "title": "Votre commerce, tout au même endroit.",
-    "lead": "Les réservations, la journée de votre équipe, les rapports aux clients, des factures bilingues avec TPS et TVQ, et votre déclaration de taxes préparée. Première preuve : un promeneur de chiens à Saint-Henri.",
+    "eyebrow": "Akinaza · pour les studios, salons et travailleurs autonomes du Québec",
+    "title": "L'OS bilingue conçu pour la Loi 25 et la Loi 96.",
+    "lead": "Prise de rendez-vous, factures TPS/TVQ exactes au cent près, grand livre équilibré et rapport de taxes préparé pour Revenu Québec : préparé, jamais produit.",
     "talk": "Parler d'Akinaza avec nous",
     "seeShop": "Voir la boutique de démo",
     "status": {
@@ -129,10 +129,10 @@
     "trust": {
       "eyebrow": "Confiance",
       "title": "Les dossiers de vos clients, bien gardés",
-      "lead": "Fait pour les commerces de services : promeneurs, toiletteurs, salons, réparateurs. Pas pour les restaurants, cafés, bars et boulangeries, qui doivent facturer avec un système certifié MEV-WEB.",
+      "lead": "Fait pour les studios, les salons et les travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place, qui doivent facturer avec un système certifié MEV-WEB.",
       "canada": {
-        "title": "Loi 25 dès la conception",
-        "text": "Données au Canada, chiffrées au repos ; consentement par finalité, jamais précoché ; l'effacement ne garde que les factures exigées par la loi fiscale.",
+        "title": "Conçu pour la Loi 25 et la Loi 96",
+        "text": "Données au Canada, chiffrées au repos ; consentement par finalité, jamais précoché ; l'effacement ne garde que les factures exigées par la loi fiscale ; français et anglais sur chaque écran et chaque facture.",
         "cta": "Confidentialité"
       },
       "prepare": {
@@ -148,7 +148,7 @@
       "powered": "Son assistant fiscal tournera sur Orazaka (prévu, pas encore branché)."
     },
     "closing": {
-      "title": "Vous tenez un commerce de services au Québec ?",
+      "title": "Vous tenez un studio, un salon, ou vous travaillez à votre compte au Québec ?",
       "body": "Akinaza est en développement et les inscriptions sont fermées. Dites-nous comment vous travaillez aujourd'hui : nous choisissons les premiers commerces."
     },
     "visualLabel": "dev.akinaza.com — la boutique publique",
@@ -252,7 +252,7 @@
         },
         "who": {
           "q": "C'est pour quel commerce ?",
-          "a": "Les commerces de services : promeneurs, toiletteurs, salons, réparateurs. Pas pour les restaurants, cafés, bars et boulangeries, qui doivent facturer avec un système certifié MEV-WEB."
+          "a": "Les studios, les salons et les travailleurs autonomes qui vendent des services : rendez-vous, factures, taxes. Pas les restaurants, cafés, bars ou boulangeries avec consommation sur place, qui doivent facturer avec un système certifié MEV-WEB."
         },
         "data": {
           "q": "Où sont les dossiers de mes clients ?",
