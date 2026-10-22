@@ -204,6 +204,8 @@ export const staff = pgTable("staff", {
   shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   active: boolean("active").notNull().default(true),
+  /** The sign-in of this person, when they have one (a team member invited as staff; migration 0020). */
+  accountId: uuid("account_id"),
   /** The owner is the first person created. */
   createdAt: created(),
 });
@@ -514,4 +516,17 @@ export const mailOutbox = pgTable(
     sentAt: timestamp("sent_at", { withTimezone: true }),
   },
   (t) => [index("mail_outbox_related").on(t.relatedKind, t.relatedId), check("mail_outbox_status", sql`${t.status} IN ('pending','sent','failed')`), check("mail_outbox_locale", sql`${t.locale} IN ('fr','en')`)],
+);
+
+/** Who has which role in which shop (migration 0020, `@krizaka/auth`): the owner of a shop is its `owner` member. */
+export const memberships = pgTable(
+  "memberships",
+  {
+    scopeId: uuid("scope_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    accountId: uuid("account_id").notNull().references(() => accounts.id, { onDelete: "cascade" }),
+    role: text("role", { enum: ["owner", "manager", "staff"] }).notNull(),
+    invitedBy: uuid("invited_by"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
+  },
+  (t) => [index("memberships_account").on(t.accountId)],
 );

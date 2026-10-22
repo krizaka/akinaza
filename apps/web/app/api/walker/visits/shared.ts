@@ -1,6 +1,6 @@
 import type { checkIn } from "@akinaza/db";
 
-import { requireOwner } from "@/lib/access";
+import { requireShop } from "@/lib/access";
 import { db } from "@/lib/db";
 import { handle, idParam } from "@/lib/http";
 
@@ -10,7 +10,7 @@ type VisitCall<R> = (database: ReturnType<typeof db>, shopId: Parameters<typeof 
 export function visitRoute<R>(act: VisitCall<R>, answer: (at: Date, result: R) => unknown) {
   return (req: Request, { params }: { params: Promise<{ id: string }> }) =>
     handle(async () => {
-      const { shop } = await requireOwner(req);
+      const { shop } = await requireShop(req, "checkin");
       const at = new Date();
       const result = await act(db(), shop.id, idParam((await params).id), at);
       return Response.json(answer(at, result));
