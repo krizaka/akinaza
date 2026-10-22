@@ -93,7 +93,7 @@ export async function shopOfOwner(db: Db, ownerId: string, shopId?: string) {
 
 /** All the owner's shops, the default first. */
 export async function shopsOfOwner(db: Db, ownerId: string) {
-  return db.select({ id: shops.id, name: shops.name, slug: shops.slug, published: shops.published, isDefault: shops.isDefault, businessType: shops.businessType }).from(shops).where(eq(shops.ownerId, ownerId)).orderBy(desc(shops.isDefault), asc(shops.createdAt));
+  return db.select({ id: shops.id, name: shops.name, slug: shops.slug, published: shops.published, isDefault: shops.isDefault, businessType: shops.businessType, description: shops.description, avatar: shops.avatar, collectionId: shops.collectionId }).from(shops).where(eq(shops.ownerId, ownerId)).orderBy(desc(shops.isDefault), asc(shops.createdAt));
 }
 
 /** Makes another of the owner's shops the one the app opens on (one statement: there is always exactly one). */

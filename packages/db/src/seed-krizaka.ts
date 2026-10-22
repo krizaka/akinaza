@@ -3,6 +3,7 @@ import { addMonths } from "date-fns";
 import { eq } from "drizzle-orm";
 
 import type { Db } from "./client";
+import { organizeOver, SHOP_AVATAR_SEEDS } from "./organize";
 import { accounts, invoices, shops } from "./schema";
 import { addWindow, joinShop, saveService, saveShopPage, shopOfOwner, shopsOfOwner } from "./service-shop";
 import { issueInvoice, recordExpense } from "./shop-ops";
@@ -114,5 +115,24 @@ export async function seedKrizaka(db: Db, now: Date): Promise<{ shopId: string; 
     for (const w of KRIZAKA_SECOND.hours) await addWindow(db, second.shopId, w);
     await saveShopPage(db, owner.id, { ...KRIZAKA_SECOND.shop, published: true }, { shopId: second.shopId });
   }
+  await organizeShops(db, owner.id);
   return { shopId, created: !existing };
+}
+
+/** Éric's shops as items of « organize »: a description, an avatar, a tag, and the two in one collection (idempotent). */
+async function organizeShops(db: Db, ownerId: string): Promise<void> {
+  const o = organizeOver(async (sql, params) => (await (db as unknown as { $client: { query: (s: string, p: unknown[]) => Promise<{ rows: unknown[] }> } }).$client.query(sql, params as unknown[])).rows);
+  const mine = await shopsOfOwner(db, ownerId);
+  const first = mine.find((x) => x.slug === KRIZAKA.shop.slug);
+  const second = mine.find((x) => x.slug === KRIZAKA_SECOND.shop.slug);
+  if (!first || !second || first.description) return;
+  const tag = (await o.tags.list(ownerId)).find((x) => x.name === "démo") ?? (await o.tags.create(ownerId, { name: "démo", color: "violet" }));
+  const group = (await o.collections.list(ownerId)).find((c) => c.name === "Studios") ?? (await o.collections.create(ownerId, { name: "Studios", description: "Les deux commerces d'Éric dans la démonstration." }));
+  const shop = o.profile("shop");
+  for (const [row, text, seed] of [[first, "Le studio de logiciel : développement, design et conseil.", SHOP_AVATAR_SEEDS[0]], [second, "Le petit atelier de design.", SHOP_AVATAR_SEEDS[2]]] as const) {
+    await shop.describe(ownerId, row.id, text);
+    await shop.setAvatar(ownerId, row.id, seed, { allowedSeeds: SHOP_AVATAR_SEEDS });
+    await o.tags.assign(ownerId, "shop", row.id, [tag.id]);
+    await shop.setCollection(ownerId, row.id, group.id);
+  }
 }
