@@ -1,7 +1,7 @@
 import { SiteFooter as FamilyFooter, SiteFooterColumn, SiteFooterLink } from "@krizaka/ui/site-footer";
-import { familyLabels } from "@krizaka/ui/sites";
 import Link from "next/link";
 
+import { productFooterLabels } from "@/lib/footer-labels";
 import { format, getDictionary, type Locale, translator } from "@/lib/i18n";
 import { indexable } from "@/lib/indexing";
 import { DEMO_SHOP } from "@/lib/landing";
@@ -19,7 +19,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
     <FamilyFooter
       current="akinaza"
       family={false}
-      labels={familyLabels[locale]}
+      labels={productFooterLabels(locale)}
       aria-label={t("chrome.footerLabel")}
       env={indexable() ? undefined : "DEV"}
       data-testid="app-version"
