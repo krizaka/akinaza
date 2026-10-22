@@ -36,15 +36,3 @@ jobs:
       after-build: scripts/ci-after-build.sh
       # Files no test or build reads skip the heavy jobs (docs/, policy text, templates, the README's images). Fails open.
       ignore: '^docs/|^\.changeset/|^(LICENSE|SECURITY|CODE_OF_CONDUCT|SUPPORT)(\.md)?$|^\.github/(ISSUE_TEMPLATE/|assets/|pull_request_template\.md$|FUNDING\.yml$|dependabot\.yml$)'
-
-  # The job name is the required status check on main: kept by a shim that reads the gate's verdict.
-  verify:
-    name: Lint · Typecheck · Tests · Build
-    needs: ci
-    if: ${{ always() }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    env:
-      RESULT: ${{ needs.ci.outputs.result }}
-    steps:
-      - run: test "$RESULT" = success
