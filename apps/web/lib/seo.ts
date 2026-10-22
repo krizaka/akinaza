@@ -24,7 +24,7 @@ export function pageMetadata(locale: Locale, page: PageId): Metadata {
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical: url(locale, page), languages: { en: url("en", page), fr: url("fr", page), "x-default": url("en", page) } },
+    alternates: { canonical: url(locale, page), languages: { en: url("en", page), fr: url("fr", page), "x-default": url("fr", page) } },
     openGraph: {
       type: "website",
       siteName: t.meta.siteName,
