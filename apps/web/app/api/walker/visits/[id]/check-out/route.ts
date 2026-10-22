@@ -1,17 +1,8 @@
 import { checkOut } from "@akinaza/db";
 
-import { requireOwner } from "@/lib/access";
-import { db } from "@/lib/db";
-import { handle, idParam } from "@/lib/http";
+import { visitRoute } from "../../shared";
 
 export const dynamic = "force-dynamic";
 
 /** The walker ends the walk: it is done, and its reports can be written. */
-export function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  return handle(async () => {
-    const { shop } = await requireOwner(req);
-    const at = new Date();
-    const { minutes } = await checkOut(db(), shop.id, idParam((await params).id), at);
-    return Response.json({ checkedOutAt: at.toISOString(), minutes });
-  });
-}
+export const POST = visitRoute(checkOut, (at, { minutes }) => ({ checkedOutAt: at.toISOString(), minutes }));
