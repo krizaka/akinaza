@@ -14,10 +14,12 @@ import { preconnect } from "react-dom";
 
 import { ComparisonSection } from "@/components/home/ComparisonSection";
 import { FaqSection } from "@/components/home/FaqSection";
+import { FounderOffer } from "@/components/home/FounderOffer";
 import { HeroPhone } from "@/components/home/HeroPhone";
 import { JourneyTour } from "@/components/JourneyTour";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
+import { env } from "@/lib/env";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { DEMO_SHOP, FIGURES, OUTCOMES, productStatus, TRUST } from "@/lib/landing";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
@@ -135,6 +137,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
             />
             <p className="mt-2 max-w-2xl text-sm text-fg-secondary">{d.status[status]}</p>
           </Section>
+
+          {env().APP_FOUNDER_OFFER_ENABLED && <FounderOffer locale={locale} />}
 
           <FaqSection locale={locale} />
         </LandingPage>

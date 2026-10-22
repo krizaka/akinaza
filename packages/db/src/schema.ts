@@ -27,9 +27,21 @@ export const accounts = pgTable(
     passwordHash: text("password_hash"),
     createdAt: created(),
     lastSeenAt: timestamp("last_seen_at", { withTimezone: true }),
+    /** The founder offer: the payments processor's ids and the subscription's state, written by its notifications only (0010_billing). */
+    paymentCustomerId: text("payment_customer_id"),
+    paymentSubscriptionId: text("payment_subscription_id"),
+    subscriptionStatus: text("subscription_status"),
+    currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
   },
   (t) => [check("accounts_email_lower", sql`${t.email} = lower(${t.email})`), check("accounts_role", sql`${t.role} IN ('USER','ADMIN')`), check("accounts_status", sql`${t.status} IN ('ACTIVE','SUSPENDED')`), check("accounts_locale", sql`${t.locale} IN ('en','fr')`)],
 );
+
+/** Each payments notification, applied once (its id is the key). */
+export const paymentEvents = pgTable("payment_events", {
+  id: text("id").primaryKey(),
+  type: text("type").notNull(),
+  receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
+});
 
 export const sessions = pgTable(
   "sessions",
