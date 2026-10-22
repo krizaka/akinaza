@@ -39,8 +39,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(vitest@4.1.11(@types/node@24.19.2)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))
       '@krizaka/auth':
-        specifier: 0.2.0
-        version: 0.2.0
+        specifier: 0.3.0
+        version: 0.3.0
       '@krizaka/fonts':
         specifier: 0.3.0
         version: 0.3.0
@@ -173,8 +173,8 @@ importers:
         specifier: 0.1.0
         version: 0.1.0(vitest@4.1.11(@types/node@24.19.2)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))
       '@krizaka/auth':
-        specifier: 0.2.0
-        version: 0.2.0
+        specifier: 0.3.0
+        version: 0.3.0
       '@krizaka/organize':
         specifier: 0.3.0
         version: 0.3.0
@@ -987,8 +987,8 @@ packages:
       vitest:
         optional: true
 
-  '@krizaka/auth@0.2.0':
-    resolution: {integrity: sha512-amVEU0w4q3MWQpVHe2luEVqvjuVSRZsCrZWtvF+s18SPxrnk5JCj/n6QmFbVN6zBoJ1aGfHYpOvnyOXa/eb5iA==}
+  '@krizaka/auth@0.3.0':
+    resolution: {integrity: sha512-Cq40fWK3VLgYEAMCApJznbgeXI3A6WfeL8NP45DfZQBUdPbHCgBxIFDDxeC0+JqbADPIgGIAXIJMBwq7RCWLVA==}
     engines: {node: '>=22'}
 
   '@krizaka/config@0.7.0':
@@ -5572,7 +5572,7 @@ snapshots:
     optionalDependencies:
       vitest: 4.1.11(@types/node@24.19.2)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 
-  '@krizaka/auth@0.2.0':
+  '@krizaka/auth@0.3.0':
     dependencies:
       date-fns: 4.4.0
 

@@ -1,11 +1,12 @@
-import { ownClient, shopClient, shopOfOwner } from "@akinaza/db";
+import { ownClient, SHOP_ROLES, shopClient, shopOfMember,type ShopPermission } from "@akinaza/db";
+import { can } from "@krizaka/auth";
 import { cookies, headers } from "next/headers";
 
 import { clientIp } from "./client-ip";
 import { db } from "./db";
 import { consoleAllowedIps } from "./env";
 import { isAdminHost } from "./host";
-import { refuse } from "./http";
+import { idParam, refuse } from "./http";
 import { resolveSession, type Session, SESSION_COOKIE } from "./session";
 
 /**
@@ -58,13 +59,22 @@ export async function pageAdmin(): Promise<Session | null> {
   return ipAllowed(await headers()) ? session : null;
 }
 
-/** The walker: a session that owns a shop (403 otherwise). */
-export async function requireOwner(req: Request) {
+/**
+ * A member of a shop who may do `permission` there: the session, the shop (the one asked for with `?shopId=`, else the one the person
+ * works in) and their role. 403 NO_SHOP for someone who belongs to none, 404 for a shop they are not a member of, 403 FORBIDDEN (with the
+ * permission) for a role that does not hold it — the table is `SHOP_ROLES`, never a check on a role here.
+ */
+export async function requireShop(req: Request, permission: ShopPermission) {
   const session = await requireSession(req);
-  const shop = await shopOfOwner(db(), session.account.id);
-  if (!shop) throw refuse(403, "NO_SHOP", "You do not run a shop");
-  return { session, shop };
+  const asked = new URL(req.url).searchParams.get("shopId");
+  const member = await shopOfMember(db(), session.account.id, asked ? idParam(asked) : undefined);
+  if (!member) throw asked ? refuse(404, "NOT_FOUND", "Not found") : refuse(403, "NO_SHOP", "You do not run a shop");
+  if (!can(SHOP_ROLES, member.role, permission)) throw refuse(403, "FORBIDDEN", "Your role does not allow this", { permission });
+  return { session, shop: member.shop, role: member.role };
 }
+
+/** The shop's owner (the settings, billing, deletion — everything). */
+export const requireOwner = (req: Request) => requireShop(req, "settings");
 
 /** A client file of the signed-in account (404 for anyone else's: nothing tells it exists). */
 export async function requireOwnClient(req: Request, clientId: string) {
@@ -75,8 +85,8 @@ export async function requireOwnClient(req: Request, clientId: string) {
 }
 
 /** A client file of the walker's shop. */
-export async function requireShopClient(req: Request, clientId: string) {
-  const { session, shop } = await requireOwner(req);
+export async function requireShopClient(req: Request, clientId: string, permission: ShopPermission = "clients") {
+  const { session, shop } = await requireShop(req, permission);
   const client = await shopClient(db(), shop.id, clientId);
   if (!client) throw refuse(404, "NOT_FOUND", "Not found");
   return { session, shop, client };
