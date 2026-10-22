@@ -24,3 +24,27 @@ describe("host routing", () => {
     expect(routeFor("dev.akinaza.com", "/en/consoles", "en")).toEqual({ kind: "next" });
   });
 });
+
+describe("a shop's own subdomain (#77, level 2)", () => {
+  const site = "https://www.akinaza.com";
+  it("reads the shop from <slug>.akinaza.com, never from a platform host", async () => {
+    const { shopOfHost } = await import("./host");
+    expect(shopOfHost("pattes-saint-henri.akinaza.com", "akinaza.com")).toBe("pattes-saint-henri");
+    expect(shopOfHost("Pattes-Saint-Henri.akinaza.com:443", "akinaza.com")).toBe("pattes-saint-henri");
+    for (const h of ["www.akinaza.com", "dev.akinaza.com", "admin.akinaza.com", "api.akinaza.com", "akinaza.com", "a.b.akinaza.com", "ab.akinaza.com", "bad_slug.akinaza.com", "evil.akinaza.com.attacker.io", "salon.yomizaka.com", null]) {
+      expect(shopOfHost(h, "akinaza.com"), String(h)).toBeNull();
+    }
+  });
+  it("serves the shop page at the root, keeping the short address", () => {
+    expect(routeFor("salon-laurier.akinaza.com", "/", "fr", site)).toEqual({ kind: "rewrite", path: "/fr/s/salon-laurier" });
+    expect(routeFor("salon-laurier.akinaza.com", "/en", "fr", site)).toEqual({ kind: "rewrite", path: "/en/s/salon-laurier" });
+  });
+  it("lets the shop's own journey through, as the page links it", () => {
+    expect(routeFor("salon-laurier.akinaza.com", "/fr/s/salon-laurier/service/42/creneau", "fr", site)).toEqual({ kind: "next" });
+  });
+  it("sends everything else to www: another shop, the sign-in, the app", () => {
+    expect(routeFor("salon-laurier.akinaza.com", "/fr/s/autre-salon", "fr", site)).toEqual({ kind: "redirect", path: "https://www.akinaza.com/fr/s/autre-salon" });
+    expect(routeFor("salon-laurier.akinaza.com", "/fr/sign-in", "fr", site)).toEqual({ kind: "redirect", path: "https://www.akinaza.com/fr/sign-in" });
+    expect(routeFor("salon-laurier.akinaza.com", "/robots.txt", "fr", site)).toEqual({ kind: "robotsClosed" });
+  });
+});

@@ -11,6 +11,8 @@ domains:
     type: PRIMARY
   - domain: akinaza.com
     type: ALIAS
+    # And every <slug>.akinaza.com: a shop's own address (#77, level 2; lib/host.ts shopOfHost). Certificate by TXT tokens on Porkbun.
+    wildcard: true
   # The development address: every page goes to www (308); the API, .well-known and healthz keep serving, noindex (APP_DEV_HOST).
   - domain: dev.akinaza.com
     type: ALIAS
