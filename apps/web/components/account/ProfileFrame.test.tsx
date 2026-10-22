@@ -16,8 +16,9 @@ describe("the account frame", () => {
   it("gives each section its address and marks the current one", () => {
     const page = html("security");
     expect(page).toContain('href="/fr/app/profile"');
-    expect(page).toMatch(/href="\/fr\/app\/profile\/security"[^>]*aria-current="page"/);
-    expect(page).not.toMatch(/href="\/fr\/app\/profile"[^>]*aria-current/);
+    const link = (href: string) => page.match(new RegExp(`<a[^>]*href="${href}"[^>]*>`))?.[0] ?? "";
+    expect(link("/fr/app/profile/security")).toContain('aria-current="page"');
+    expect(link("/fr/app/profile")).not.toContain("aria-current");
   });
 
   it("shows who the account is above the sections", () => {

@@ -34,7 +34,7 @@ const day: TodayDayProps = {
   shop: { timezone: "America/Toronto", registrant: true },
   day: "2026-10-22",
   today: "2026-10-22",
-  nowIso: "2026-10-22T15:30:00.000Z",
+  nowIso: "2026-10-22T14:30:00.000Z",
   selectedId: null,
 };
 
@@ -52,9 +52,9 @@ const render = (props: Partial<TodayDayProps> = {}, locale: "en" | "fr" = "en") 
 describe("the owner's day", () => {
   it("lists the appointments in time order with the « now » line between the past and the next", () => {
     const text = render();
-    expect(text.indexOf("Client a")).toBeLessThan(text.indexOf("Now · 11:30"));
-    expect(text.indexOf("Now · 11:30")).toBeLessThan(text.indexOf("Client b"));
-    expect(text.indexOf("Client b")).toBeLessThan(text.indexOf("Walk-in"));
+    expect(text.indexOf("Client a")).toBeLessThan(text.indexOf("Now · 10:30"));
+    expect(text.indexOf("Now · 10:30")).toBeLessThan(text.lastIndexOf("Client b"));
+    expect(text.lastIndexOf("Client b")).toBeLessThan(text.lastIndexOf("Walk-in"));
   });
 
   it("draws no « now » line on another day, and says the day is free when nothing is booked", () => {
@@ -79,16 +79,15 @@ describe("the owner's day", () => {
     expect(text).toContain("In progress");
   });
 
-  it("opens the appointment named in the address in a side sheet, with the way to the client's file", () => {
+  it("makes each row an address of its own, so the open appointment is in the URL", () => {
     const html = renderToStaticMarkup(
       <I18nProvider locale="en" messages={MESSAGES.en as never}>
         <KrizakaQueryProvider>
-          <TodayDay {...day} selectedId="b" />
+          <TodayDay {...day} />
         </KrizakaQueryProvider>
       </I18nProvider>,
     );
-    expect(html).toContain('href="/en/app/clients/c-b"');
-    expect(readable(html)).toContain("Open the client file");
+    expect(html).toContain('href="/en/app?appointment=b"');
   });
 
   it("speaks French with the French money", () => {

@@ -1,4 +1,3 @@
-import { Avatar } from "@krizaka/ui/avatar";
 import { SettingsLayout } from "@krizaka/ui/settings-layout";
 import Link from "next/link";
 
@@ -19,15 +18,8 @@ export function ProfileFrame({ locale, current, account, children }: { locale: L
       navLabel={t.sectionsLabel}
       linkAs={Link}
       nav={PROFILE_SECTIONS.map((id) => ({ id, label: t.sections[id], href: `/${locale}/app/${PATH[id]}`, current: id === current }))}
-      header={
-        <>
-          <Avatar size="lg" alt={t.avatar} defaultAvatar={{ brand: "akinaza", seed: account.id, kind: "person" }} />
-          <div className="min-w-0">
-            <h1 className="font-display text-2xl font-bold text-fg">{t.title}</h1>
-            <p className="truncate text-fg-secondary">{account.email}</p>
-          </div>
-        </>
-      }
+      title={t.title}
+      description={account.email}
     >
       {children}
     </SettingsLayout>
