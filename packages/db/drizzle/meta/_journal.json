@@ -162,6 +162,13 @@
       "when": 1794100000000,
       "tag": "0022_brief_actions",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1794200000000,
+      "tag": "0023_brief_deliveries",
+      "breakpoints": true
     }
   ]
 }

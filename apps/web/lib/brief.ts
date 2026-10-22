@@ -1,12 +1,15 @@
 import { BRIEF_KIND, DEFAULT_BRIEF_RULES, SHOP_ACTION, shopBrief,type ShopRecommendation } from "@akinaza/core";
-import { briefActionsOf, briefSnapshot, claimBriefAction, enqueueMail, mailById, reachableClients, recordBriefResult, schema } from "@akinaza/db";
-import { weekOf } from "@krizaka/brief";
+import { briefActionsOf, briefMailShops, briefSnapshot, claimBriefAction, claimBriefDelivery, enqueueMail, mailById, reachableClients, recordBriefResult, schema } from "@akinaza/db";
+import { isBriefDue, weekOf } from "@krizaka/brief";
 import { eq } from "drizzle-orm";
 
 import { db } from "./db";
+import { formatMoney } from "./format";
+import { format, getDictionary, type Locale } from "./i18n";
 import { deliver } from "./mail";
 import type { MailSettings } from "./mail-settings";
 import { renderMailTemplate } from "./mail-templates";
+import { shopRoutes } from "./routes";
 
 /** The coming days the brief looks at for free time. */
 const AHEAD_DAYS = 7;
@@ -71,4 +74,51 @@ export async function inviteRegulars(shop: BriefShop, recommendationId: string, 
   }
   await recordBriefResult(db(), shop.id, item.id, result);
   return result;
+}
+
+/** One line per card, in the owner's language: the fact and its figure, as the Today card says them. */
+export function briefLines(items: readonly ShopRecommendation[], services: Record<string, { fr: string; en: string }>, locale: Locale): string[] {
+  const t = getDictionary(locale).console.brief.mail;
+  const money = (cents: number | undefined) => formatMoney(cents ?? 0, locale);
+  return items.map((item) => {
+    const f = item.figures;
+    switch (item.kind) {
+      case BRIEF_KIND.gaps:
+        return format(t.gaps, { slots: f.freeSlots ?? 0, missed: money(f.missedCents), invitees: f.invitees ?? 0 });
+      case BRIEF_KIND.pricing:
+        return format(t.pricing, { service: services[item.subject]?.[locale] ?? "", time: f.timeSharePct ?? 0, revenue: f.revenueSharePct ?? 0, suggested: money(f.suggestedCents), gain: money(f.monthlyGainCents) });
+      default:
+        return format(t.taxes, { setAside: money(f.setAsideCents), invoiced: money(f.invoicedCents), available: money(f.availableCents) });
+    }
+  });
+}
+
+/**
+ * The Monday e-mail of every shop whose brief is due (Monday from 7:00 in its own time zone, or later in the week when a
+ * tick was missed): claimed once per shop and week (several instances never send twice), nothing sent for an empty week,
+ * a one-click way to stop it. The ticker (`instrumentation.ts`) calls it with the wall clock.
+ */
+export async function sendDueBriefs(now: Date, settings: MailSettings, send: typeof fetch = fetch) {
+  const counts = { sent: 0, pending: 0, failed: 0, empty: 0 };
+  for (const shop of await briefMailShops(db())) {
+    if (!isBriefDue(now, shop.timezone, shop.lastWeek)) continue;
+    const brief = await loadShopBrief(shop, now);
+    const token = await claimBriefDelivery(db(), shop.id, brief.week, brief.items.length);
+    if (!token) continue;
+    if (brief.items.length === 0) {
+      counts.empty += 1;
+      continue;
+    }
+    const locale = shop.ownerLocale;
+    const lines = briefLines(brief.items, brief.services, locale);
+    const mail = renderMailTemplate(
+      "brief-weekly",
+      { shop: shop.name, line1: lines[0]!, line2: lines[1] ?? "", has2: lines.length > 1, line3: lines[2] ?? "", has3: lines.length > 2, url: `${settings.appUrl}${shopRoutes(locale, shop.id).today()}`, stop: `${settings.appUrl}/${locale}/brief/stop/${token}` },
+      { locale, appUrl: settings.appUrl, now },
+    );
+    const id = await enqueueMail(db(), { to: shop.ownerEmail, locale: mail.locale, template: "brief-weekly", subject: mail.subject, html: mail.html, text: mail.text, relatedKind: "brief", relatedId: shop.id });
+    const queued = await mailById(db(), id);
+    counts[queued ? await deliver(db(), queued, now, settings, send) : "pending"] += 1;
+  }
+  return counts;
 }

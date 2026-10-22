@@ -1,3 +1,5 @@
+import { createHash, randomBytes } from "node:crypto";
+
 import type { BriefSnapshot } from "@akinaza/core";
 import { sql } from "drizzle-orm";
 
@@ -115,3 +117,39 @@ export async function reachableClients(db: Db, shopId: string, clientIds: readon
          ORDER BY c.id`,
   );
 }
+/** The shops whose Monday brief may be e-mailed: the owner's address and language, the time zone, the last week sent. */
+export async function briefMailShops(db: Db): Promise<{ id: string; name: string; slug: string | null; published: boolean; timezone: string; ownerEmail: string; ownerLocale: "fr" | "en"; lastWeek: string | null }[]> {
+  return rows(
+    db,
+    sql`SELECT s.id, s.name, s.slug, s.published, s.timezone, a.email AS "ownerEmail", a.locale AS "ownerLocale",
+               (SELECT max(d.week) FROM brief_deliveries d WHERE d.shop_id = s.id) AS "lastWeek"
+          FROM shops s JOIN accounts a ON a.id = s.owner_id
+         WHERE s.brief_email AND a.status = 'ACTIVE'
+         ORDER BY s.id`,
+  );
+}
+
+/**
+ * Claims this week's e-mail for a shop: the unsubscribe token's hash on success, null when another instance (or an
+ * earlier tick) already sent it. The token itself is made here and returned once; only its SHA-256 is stored.
+ */
+export async function claimBriefDelivery(db: Db, shopId: string, week: string, items: number): Promise<string | null> {
+  const token = randomBytes(32).toString("base64url");
+  const claimed = await rows<{ shop_id: string }>(
+    db,
+    sql`INSERT INTO brief_deliveries (shop_id, week, items, unsubscribe_sha256) VALUES (${shopId}, ${week}, ${items}, ${sha256(token)}) ON CONFLICT DO NOTHING RETURNING shop_id`,
+  );
+  return claimed.length === 1 ? token : null;
+}
+
+/** Turns the shop's Monday e-mail off from the link of one of its mails; false for a token that leads nowhere. */
+export async function unsubscribeBrief(db: Db, token: string): Promise<boolean> {
+  if (!/^[A-Za-z0-9_-]{43}$/.test(token)) return false;
+  const off = await rows<{ id: string }>(
+    db,
+    sql`UPDATE shops SET brief_email = false WHERE id = (SELECT shop_id FROM brief_deliveries WHERE unsubscribe_sha256 = ${sha256(token)} LIMIT 1) RETURNING id`,
+  );
+  return off.length === 1;
+}
+
+const sha256 = (value: string) => createHash("sha256").update(value).digest("hex");

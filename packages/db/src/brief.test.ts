@@ -1,12 +1,12 @@
 import { shopBrief } from "@akinaza/core";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { briefActionsOf, briefSnapshot, claimBriefAction, reachableClients, recordBriefResult } from "./brief";
+import { briefActionsOf, briefMailShops, briefSnapshot, claimBriefAction, claimBriefDelivery, reachableClients, recordBriefResult, unsubscribeBrief } from "./brief";
 import { appointments, daysOff, schedules, shops } from "./schema";
 import { book, eraseClient, issueInvoice, recordConsent, recordExpense } from "./shop-ops";
 import { freshDatabase } from "./test/db";
-import { salon } from "./test/fixtures";
+import { account, salon } from "./test/fixtures";
 
 let t: Awaited<ReturnType<typeof freshDatabase>>;
 beforeAll(async () => {
@@ -96,5 +96,27 @@ describe("the brief's actions (real PostgreSQL 16, #200)", () => {
     expect(await reachableClients(t.db, s.shop.id, [s.client.id])).toEqual([{ id: s.client.id, fullName: "Camille Tremblay", email: "camille@example.test", language: "fr" }]);
     await eraseClient(t.db, s.client.id, "2026-10-22");
     expect(await reachableClients(t.db, s.shop.id, [s.client.id])).toEqual([]);
+  });
+});
+
+describe("the brief by e-mail (real PostgreSQL 16, #200)", () => {
+  it("lists the shops of an active owner, claims one mail per week, and turns it off from the mail's link", async () => {
+    const s = await salon(t.db);
+    const owner = await account(t.db, `owner-${s.shop.id.slice(0, 8)}@example.test`);
+    await t.db.update(shops).set({ ownerId: owner.id }).where(eq(shops.id, s.shop.id));
+    const mine = async () => (await briefMailShops(t.db)).find((x) => x.id === s.shop.id);
+    expect(await mine()).toMatchObject({ ownerEmail: owner.email, ownerLocale: "fr", lastWeek: null });
+
+    const token = await claimBriefDelivery(t.db, s.shop.id, "2026-W43", 3);
+    expect(token).toMatch(/^[A-Za-z0-9_-]{43}$/);
+    expect(await claimBriefDelivery(t.db, s.shop.id, "2026-W43", 3)).toBeNull(); // the second tick, or another instance
+    expect((await mine())?.lastWeek).toBe("2026-W43");
+    const stored = await t.db.execute(sql`SELECT unsubscribe_sha256 FROM brief_deliveries WHERE shop_id = ${s.shop.id}`);
+    expect(JSON.stringify(stored.rows)).not.toContain(token!); // only the hash is kept
+
+    expect(await unsubscribeBrief(t.db, "not-a-token")).toBe(false);
+    expect(await unsubscribeBrief(t.db, "A".repeat(43))).toBe(false);
+    expect(await unsubscribeBrief(t.db, token!)).toBe(true);
+    expect(await mine()).toBeUndefined();
   });
 });

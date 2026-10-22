@@ -113,6 +113,8 @@ export const shops = pgTable(
     nextInvoiceNumber: integer("next_invoice_number").notNull().default(1),
     /** The public page address (`/{locale}/s/{slug}`); the page is served only when `published`. */
     slug: text("slug"),
+    /** The Monday brief by e-mail to the owner; off in one click from the mail (0023). */
+    briefEmail: boolean("brief_email").notNull().default(true),
     published: boolean("published").notNull().default(false),
     taglineFr: text("tagline_fr"),
     taglineEn: text("tagline_en"),

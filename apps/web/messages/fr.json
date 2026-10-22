@@ -1075,6 +1075,18 @@
         "equalVolume": "À nombre de rendez-vous égal.",
         "revenueNotMargin": "Revenu à l'heure, pas une marge : vos dépenses ne sont pas réparties par service.",
         "preparedNotFiled": "Akinaza prépare les chiffres, vous produisez votre déclaration."
+      },
+      "mail": {
+        "gaps": "{slots} créneaux libres dans les 7 prochains jours ({missed} de manque à gagner) : {invitees} clients fidèles à inviter.",
+        "pricing": "{service} : {time} % du temps, {revenue} % des revenus. À {suggested}, environ +{gain} par mois à volume égal.",
+        "taxes": "À mettre de côté pour les taxes : {setAside} sur {invoiced} facturés la semaine dernière. Votre vrai disponible : {available}."
+      },
+      "stop": {
+        "title": "Ne plus recevoir le point du lundi",
+        "lead": "Vous ne recevrez plus ce courriel pour cette boutique. Le point reste visible chaque semaine sur la page Aujourd'hui.",
+        "button": "Ne plus le recevoir",
+        "done": "C'est fait : le point du lundi ne vous sera plus envoyé par courriel.",
+        "invalid": "Ce lien ne mène nulle part : il a peut-être déjà servi."
       }
     }
   }

@@ -15,4 +15,4 @@ export * from "./invoice-payments";
 export * from "./organize";
 export * from "./roles";
 export * from "./roles-migration";
-export { briefActionsOf, briefSnapshot, claimBriefAction, reachableClients, recordBriefResult } from "./brief";
+export { briefActionsOf, briefMailShops, briefSnapshot, claimBriefAction, claimBriefDelivery, reachableClients, recordBriefResult, unsubscribeBrief } from "./brief";

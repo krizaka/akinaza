@@ -1,7 +1,9 @@
-import { subDays } from "date-fns";
+import { unsubscribeBrief } from "@akinaza/db";
+import { previousThursday, subDays } from "date-fns";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { BriefActionError, inviteRegulars, loadShopBrief } from "./brief";
+import { BriefActionError, inviteRegulars, loadShopBrief, sendDueBriefs } from "./brief";
+import { db } from "./db";
 import { migrate, pool, query } from "./db";
 
 /** The Monday brief's invitation over a real PostgreSQL (CI's service; locally `DATABASE_IT=1 DATABASE_URL=… pnpm test`). */
@@ -10,7 +12,9 @@ const settings = { provider: "none" as const, apiUrl: "https://api.mailgun.net",
 
 describe.runIf(enabled)("the Monday brief's invitation (#200)", () => {
   const stamp = Date.now();
-  const now = new Date();
+  // A Thursday afternoon: the week's brief is due (Monday 7:00 has passed in Montréal), whatever day the test runs.
+  const now = previousThursday(new Date());
+  now.setUTCHours(16, 0, 0, 0);
   let shop: { id: string; name: string; slug: string | null; published: boolean; timezone: string };
   let regular: string;
 
@@ -38,6 +42,25 @@ describe.runIf(enabled)("the Monday brief's invitation (#200)", () => {
     }
   });
   afterAll(async () => pool().end());
+
+  it("e-mails the owner the week's brief once, with a link that stops it", async () => {
+    const [owner] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash, locale) VALUES ($1, 'x', 'fr') RETURNING id", [`owner-${stamp}@akinaza.test`]);
+    await query("UPDATE shops SET owner_id = $1 WHERE id = $2", [owner!.id, shop.id]);
+    const first = await sendDueBriefs(now, settings);
+    expect(first.pending).toBeGreaterThanOrEqual(1);
+    const mine = () => query<{ subject: string; body_text: string }>("SELECT subject, body_text FROM mail_outbox WHERE template = 'brief-weekly' AND related_id = $1", [shop.id]);
+    const [mail] = await mine();
+    expect(mail!.subject).toBe("Le point du lundi — Salon Brief");
+    expect(mail!.body_text).toMatch(/créneaux libres dans les 7 prochains jours/);
+    expect(mail!.body_text).toContain(`https://www.akinaza.com/fr/app/${shop.id}/aujourdhui`);
+    await sendDueBriefs(now, settings); // the next tick: nothing more for this shop this week
+    expect(await mine()).toHaveLength(1);
+    const token = /\/fr\/brief\/stop\/([A-Za-z0-9_-]{43})/.exec(mail!.body_text)?.[1];
+    expect(token).toBeTruthy();
+    expect(await unsubscribeBrief(db(), token!)).toBe(true);
+    const [off] = await query<{ brief_email: boolean }>("SELECT brief_email FROM shops WHERE id = $1", [shop.id]);
+    expect(off!.brief_email).toBe(false);
+  });
 
   it("offers the gaps card with the regular to invite, then invites once", async () => {
     const brief = await loadShopBrief(shop, now);
