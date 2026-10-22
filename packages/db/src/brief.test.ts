@@ -1,0 +1,69 @@
+import { shopBrief } from "@akinaza/core";
+import { eq } from "drizzle-orm";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+
+import { briefSnapshot } from "./brief";
+import { appointments, daysOff, schedules, shops } from "./schema";
+import { book, eraseClient, issueInvoice, recordConsent, recordExpense } from "./shop-ops";
+import { freshDatabase } from "./test/db";
+import { salon } from "./test/fixtures";
+
+let t: Awaited<ReturnType<typeof freshDatabase>>;
+beforeAll(async () => {
+  t = await freshDatabase();
+});
+afterAll(async () => t.drop());
+
+const AT = { week: "2026-W43", today: "2026-10-19", monday: "2026-10-19" };
+const WINDOW = { lookBackWeeks: 8, aheadDays: 7 };
+
+describe("the Monday brief's snapshot (real PostgreSQL 16)", () => {
+  it("reads visits, free time, consents and last week's money in the shop's calendar", async () => {
+    const s = await salon(t.db);
+    await t.db.update(shops).set({ timezone: "America/Montreal" }).where(eq(shops.id, s.shop.id));
+    // Julie works Thursday 9–17; Marc Thursday 9–13 but is off on 2026-10-22.
+    await t.db.insert(schedules).values([
+      { staffId: s.staff.julie.id, weekday: 4, startsAt: "09:00", endsAt: "17:00" },
+      { staffId: s.staff.marc.id, weekday: 4, startsAt: "09:00", endsAt: "13:00" },
+    ]);
+    await t.db.insert(daysOff).values({ staffId: s.staff.marc.id, onDate: "2026-10-22" });
+    // A done cut on 2026-09-03 for Camille; a done colour at 23:30 Montréal on 2026-10-18 (already 2026-10-19 in UTC): still in the window.
+    const past = await book(t.db, { shopId: s.shop.id, staffId: s.staff.julie.id, serviceId: s.services.cut.id, clientId: s.client.id, startsAt: new Date("2026-09-03T14:00:00Z") });
+    const late = await book(t.db, { shopId: s.shop.id, staffId: s.staff.marc.id, serviceId: s.services.colour.id, startsAt: new Date("2026-10-19T03:30:00Z") });
+    await t.db.update(appointments).set({ status: "done" }).where(eq(appointments.id, past.id));
+    await t.db.update(appointments).set({ status: "done" }).where(eq(appointments.id, late.id));
+    // Thursday 2026-10-22: a 45-minute cut booked.
+    await book(t.db, { shopId: s.shop.id, staffId: s.staff.julie.id, serviceId: s.services.cut.id, startsAt: new Date("2026-10-22T14:00:00Z") });
+    await recordConsent(t.db, s.client.id, "marketing", true, "2026-10-01");
+    // Last week (2026-10-12 → 18): one invoice and one half-business expense; this week's invoice is not counted.
+    await issueInvoice(t.db, { shopId: s.shop.id, clientId: s.client.id, language: "fr", issuedOn: "2026-10-15", lines: [{ description: "Coupe", quantity: 1, unitPriceCents: 4500, category: "standard" }] });
+    await issueInvoice(t.db, { shopId: s.shop.id, language: "fr", issuedOn: "2026-10-19", lines: [{ description: "Coupe", quantity: 1, unitPriceCents: 4500, category: "standard" }] });
+    await recordExpense(t.db, { shopId: s.shop.id, supplier: "Fournitures Laval", paidOn: "2026-10-14", subtotalCents: 2000, gstCents: 100, qstCents: 200, businessSharePct: 50 });
+
+    const snap = await briefSnapshot(t.db, s.shop.id, AT, WINDOW);
+    expect(snap.done.map((v) => ({ day: v.day, minutes: v.minutes, clientId: v.clientId }))).toEqual([
+      { day: "2026-09-03", minutes: 45, clientId: s.client.id },
+      { day: "2026-10-18", minutes: 90, clientId: null },
+    ]);
+    expect(snap.ahead.find((d) => d.day === "2026-10-22")).toEqual({ day: "2026-10-22", openMinutes: 480, bookedMinutes: 45 });
+    expect(snap.ahead.filter((d) => d.openMinutes > 0)).toHaveLength(1);
+    expect(snap.clients).toEqual([{ id: s.client.id, contactable: true, marketing: true, erased: false }]);
+    expect(snap.lastWeek.invoices.map((i) => [i.issuedOn, i.gstCents, i.qstCents])).toEqual([["2026-10-15", 225, 449]]);
+    expect(snap.lastWeek.expenses.map((e) => [e.paidOn, e.businessSharePct])).toEqual([["2026-10-14", 50]]);
+    // The core computes the taxes card from it: 225 + 449 − (50 + 100) = 524 ¢ to set aside.
+    expect(shopBrief(snap).items.find((i) => i.kind === "taxes")?.figures.setAsideCents).toBe(524);
+  });
+
+  it("follows the latest consent: a withdrawn marketing consent and an erased client are never reachable", async () => {
+    const s = await salon(t.db);
+    const v = await book(t.db, { shopId: s.shop.id, staffId: s.staff.julie.id, serviceId: s.services.cut.id, clientId: s.client.id, startsAt: new Date("2026-09-10T14:00:00Z") });
+    await t.db.update(appointments).set({ status: "done" }).where(eq(appointments.id, v.id));
+    await recordConsent(t.db, s.client.id, "marketing", true, "2026-09-01");
+    await recordConsent(t.db, s.client.id, "marketing", false, "2026-10-01");
+    expect((await briefSnapshot(t.db, s.shop.id, AT, WINDOW)).clients).toEqual([{ id: s.client.id, contactable: true, marketing: false, erased: false }]);
+    await recordConsent(t.db, s.client.id, "marketing", true, "2026-10-02");
+    // Erasure also withdraws the consents: nothing left to write to.
+    await eraseClient(t.db, s.client.id, "2026-10-02");
+    expect((await briefSnapshot(t.db, s.shop.id, AT, WINDOW)).clients).toEqual([{ id: s.client.id, contactable: false, marketing: false, erased: true }]);
+  });
+});

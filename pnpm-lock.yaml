@@ -144,6 +144,9 @@ importers:
       '@date-fns/tz':
         specifier: ^1.5.0
         version: 1.5.0
+      '@krizaka/brief':
+        specifier: 0.1.0
+        version: 0.1.0
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
@@ -989,6 +992,10 @@ packages:
 
   '@krizaka/auth@0.3.0':
     resolution: {integrity: sha512-Cq40fWK3VLgYEAMCApJznbgeXI3A6WfeL8NP45DfZQBUdPbHCgBxIFDDxeC0+JqbADPIgGIAXIJMBwq7RCWLVA==}
+    engines: {node: '>=22'}
+
+  '@krizaka/brief@0.1.0':
+    resolution: {integrity: sha512-nE8CEbFT1jdREjIHgUZQfVFOBs4oA2swe2VxiYvSMHXkPmgMwxItx+PecGnB/4HSMFpoIRWkykdfGudaH1CWLg==}
     engines: {node: '>=22'}
 
   '@krizaka/config@0.7.0':
@@ -5573,6 +5580,10 @@ snapshots:
       vitest: 4.1.11(@types/node@24.19.2)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 
   '@krizaka/auth@0.3.0':
+    dependencies:
+      date-fns: 4.4.0
+
+  '@krizaka/brief@0.1.0':
     dependencies:
       date-fns: 4.4.0
 
