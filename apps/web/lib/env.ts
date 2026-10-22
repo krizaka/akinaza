@@ -70,6 +70,14 @@ export const envSchema = z.object({
   MEDIA_STORAGE_ENDPOINT: z.string().optional(),
   /** The CDN host that serves the uploaded files (no scheme). */
   MEDIA_CDN_HOSTNAME: z.string().optional(),
+  /** The payments vendor is a value (`stripe`); unset = payments off (fails closed, 503). Prices are data at the vendor, found by lookup key. */
+  PAYMENTS_PROVIDER: z.enum(["stripe"]).optional(),
+  PAYMENTS_STRIPE_SECRET_KEY: z.string().optional(),
+  PAYMENTS_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+  PAYMENTS_STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  PAYMENTS_PRICE_KEY_FOUNDER: z.string().default("akinaza_founder_monthly_cad"),
+  /** The founder offer is shown on the public page only when this is `true` (after a test-card checkout is proven live). */
+  APP_FOUNDER_OFFER_ENABLED: flag,
   /** The point of sale: off until the SRM scope and the payment provider are decided — and never for a restaurant or a bar. */
   APP_POS_ENABLED: flag,
 });
