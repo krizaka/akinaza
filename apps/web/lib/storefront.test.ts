@@ -68,7 +68,7 @@ describe("buildStorefront — a dog walker", () => {
   it("shows the hero from the shop's cover, name, promise, locality and the open-now status computed from the hours", () => {
     const v = view();
     expect(v.name).toBe("Pattes de Saint-Henri");
-    expect(v.eyebrow).toBe("Saint-Henri, Montréal");
+    expect(v.area).toBe("Saint-Henri, Montréal");
     expect(v.tagline).toBe("Des promenades de quartier.");
     expect(v.cover).toEqual({ src: "https://cdn.test/cover.webp", alt: "Montréal en automne." });
     expect(v.status).toEqual({ open: true, label: "Ouvert maintenant", detail: nb("ferme à 12 h") });
@@ -131,7 +131,7 @@ describe("buildStorefront — a hair salon: the sections come from the data, not
     expect(v.contact).toBeNull();
     expect(v.gallery).toEqual([]);
     expect(JSON.stringify(v).toLowerCase()).not.toMatch(/dog|chien|walk|promenade/);
-    expect(v.eyebrow).toBe("A shop on Akinaza");
+    expect(v.area).toBeNull();
   });
 
   it("sells its own services: « from » for the colour, a sentence, capacity omitted for single visits, no Popular tag", () => {

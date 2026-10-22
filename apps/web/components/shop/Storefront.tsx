@@ -34,11 +34,15 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
     <main id="content">
       <CoverHero
         cover={view.cover ?? undefined}
-        eyebrow={view.eyebrow}
         title={view.name}
         lead={view.tagline ?? undefined}
         facts={
           <>
+            {view.area ? (
+              <Badge tone={view.cover ? "scrim" : "neutral"} size="md">
+                {view.area}
+              </Badge>
+            ) : null}
             {view.status ? (
               <Badge tone={view.status.open ? "success" : "neutral"} dot={view.status.open} size="md" className={view.cover ? "bg-scrim text-fg-on-media ring-0" : undefined}>
                 {view.status.label}
@@ -56,7 +60,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
       />
 
       {view.services.length ? (
-        <Section id="services" eyebrow={t("console.shopPage.services")} title={t("console.shopPage.servicesTitle")} lead={t("console.shopPage.servicesLead")} reveal>
+        <Section id="services" title={t("console.shopPage.servicesTitle")} lead={t("console.shopPage.servicesLead")} reveal>
           <CardGrid min={250} fit="fit" as="ul" aria-label={t("console.shopPage.servicesLabel")}>
             {view.services.map((s) => (
               <ServiceCard
@@ -79,7 +83,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
       ) : null}
 
       {view.team.length ? (
-        <Section id="team" divider eyebrow={t("console.journey.team")} title={t("console.journey.team")} lead={t("console.journey.teamLead")} reveal>
+        <Section id="team" divider title={t("console.journey.team")} lead={t("console.journey.teamLead")} reveal>
           <ul className="m-0 flex list-none flex-wrap gap-4 p-0">
             {view.team.map((m) => (
               <li key={m.id} className="flex items-center gap-3">
@@ -92,7 +96,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
       ) : null}
 
       {view.services.length ? (
-        <Section id="hours" divider eyebrow={t("console.shopPage.hours")} title={t("console.shopPage.hours")} reveal>
+        <Section id="hours" divider title={t("console.shopPage.hours")} reveal>
           <div className="max-w-xl">
             <OpeningHours label={t("console.shopPage.hours")} days={view.hours.days} today={view.hours.today} status={view.hours.status} />
           </div>
@@ -100,7 +104,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
       ) : null}
 
       {view.map ? (
-        <Section id="zones" divider eyebrow={view.eyebrow} title={t("console.shopPage.zones")} lead={t("console.shopPage.zonesLead")} reveal>
+        <Section id="zones" divider title={t("console.shopPage.zones")} lead={t("console.shopPage.zonesLead")} reveal>
           <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
             <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
               {view.zones.map((z) => (
@@ -116,7 +120,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
         </Section>
       ) : null}
 
-      <Section id="trust" divider eyebrow={view.about ? t("console.shopPage.good") : undefined} title={view.about ? t("console.shopPage.about") : t("console.shopPage.good")} reveal>
+      <Section id="trust" divider title={view.about ? t("console.shopPage.about") : t("console.shopPage.good")} reveal>
         <div className={view.about || view.contact ? "grid items-start gap-6 lg:grid-cols-2" : "max-w-2xl"}>
           {view.about || view.contact ? (
             <div className="flex flex-col gap-4 rounded-xl border border-border-default bg-surface-1 p-5">
@@ -152,7 +156,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
       </Section>
 
       {view.gallery.length ? (
-        <Section id="gallery" divider eyebrow={t("console.shopPage.gallery")} title={t("console.shopPage.galleryLabel", { shop: view.name })} reveal>
+        <Section id="gallery" divider title={t("console.shopPage.galleryLabel", { shop: view.name })} reveal>
           <MediaGallery label={t("console.shopPage.galleryLabel", { shop: view.name })} items={view.gallery} />
         </Section>
       ) : null}

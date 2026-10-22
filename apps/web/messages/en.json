@@ -46,7 +46,6 @@
       "caption": "The real app, one take, October 19, 2026. No real person."
     },
     "founder": {
-      "eyebrow": "Founder offer",
       "title": "Founder offer: {price} a month, setup included",
       "lead": "A limited offer for the first shops. Akinaza is an early product: we build it with you, and we set your shop up with you at no extra cost.",
       "points": [
@@ -620,7 +619,6 @@
       }
     },
     "shopPage": {
-      "by": "A shop on Akinaza",
       "notFound": "This page does not exist.",
       "signInToBook": "Sign in to book",
       "book": "Book",
