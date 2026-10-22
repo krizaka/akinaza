@@ -422,7 +422,13 @@
         "current": "Current password",
         "next": "New password",
         "submit": "Change my password",
-        "saved": "Your password is changed. Your other sessions have ended."
+        "saved": "Your password is changed. Your other sessions have ended.",
+        "roleOwner": "Owner",
+        "sectionsLabel": "Account sections",
+        "sections": {
+          "profile": "Profile",
+          "security": "Security"
+        }
       },
       "nav": {
         "profile": "Profile",
@@ -866,7 +872,15 @@
         "total": "Total {amount}",
         "dueOn": "Due {date}"
       },
-      "back": "All invoices"
+      "back": "All invoices",
+      "table": {
+        "number": "Number",
+        "client": "Client",
+        "issued": "Issued",
+        "due": "Due",
+        "kind": "Type",
+        "total": "Total"
+      }
     },
     "invoiceDoc": {
       "title": "Invoice / Facture",

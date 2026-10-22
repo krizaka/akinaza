@@ -4,6 +4,7 @@ import { Badge } from "@krizaka/ui/badge";
 import { DataTable, type DataTableColumn } from "@krizaka/ui/data-table";
 import { useMemo } from "react";
 
+import { formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
 
 export interface BooksLineView {
@@ -12,8 +13,6 @@ export interface BooksLineView {
   computed: boolean;
   sources: { kind: "invoice" | "expense"; id: string; label: string; amountCents: number }[];
 }
-
-const money = (cents: number, locale: string) => new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(cents / 100);
 
 /**
  * The lines of the return (FPZ-500) with the figure of each and where it comes from: the invoice or the expense behind it,
@@ -41,7 +40,7 @@ export function BooksLines({ lines }: { lines: BooksLineView[] }) {
                       <span>
                         <Badge tone={s.kind === "invoice" ? "accent" : "neutral"}>{say(`books.kinds.${s.kind}`)}</Badge> {s.label}
                       </span>
-                      <span className="font-mono">{money(s.amountCents, locale)}</span>
+                      <span className="font-mono">{formatMoney(s.amountCents, locale)}</span>
                     </li>
                   ))}
                 </ul>
@@ -50,7 +49,7 @@ export function BooksLines({ lines }: { lines: BooksLineView[] }) {
           </div>
         ),
       },
-      { id: "amount", header: say("books.table.amount"), align: "end", value: (r) => r.amountCents, cell: (r) => <span className="font-mono font-semibold">{money(r.amountCents, locale)}</span> },
+      { id: "amount", header: say("books.table.amount"), align: "end", value: (r) => r.amountCents, cell: (r) => <span className="font-mono font-semibold">{formatMoney(r.amountCents, locale)}</span> },
     ],
     [say, locale],
   );

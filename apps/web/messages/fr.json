@@ -422,7 +422,13 @@
         "current": "Mot de passe actuel",
         "next": "Nouveau mot de passe",
         "submit": "Changer mon mot de passe",
-        "saved": "Votre mot de passe est changé. Vos autres sessions ont pris fin."
+        "saved": "Votre mot de passe est changé. Vos autres sessions ont pris fin.",
+        "roleOwner": "Propriétaire",
+        "sectionsLabel": "Sections du compte",
+        "sections": {
+          "profile": "Profil",
+          "security": "Sécurité"
+        }
       },
       "nav": {
         "profile": "Profil",
@@ -866,7 +872,15 @@
         "total": "Total {amount}",
         "dueOn": "Échéance le {date}"
       },
-      "back": "Toutes les factures"
+      "back": "Toutes les factures",
+      "table": {
+        "number": "Numéro",
+        "client": "Client",
+        "issued": "Émise le",
+        "due": "Échéance",
+        "kind": "Type",
+        "total": "Total"
+      }
     },
     "invoiceDoc": {
       "title": "Facture / Invoice",
