@@ -1,6 +1,6 @@
 // @template: app-dashboard
-import { visitMinutes } from "@akinaza/core";
-import { clientBookings, clientFilesOf, dayVisits, dependantsOf, shopDay, shopOfOwner } from "@akinaza/db";
+import { visitMinutes, vocabularyOf } from "@akinaza/core";
+import { clientBookings, clientFilesOf, dayVisits, dependantsOf, shopDay,type ShopRole } from "@akinaza/db";
 import { EmptyState } from "@krizaka/ui/empty-state";
 import { Mascot } from "@krizaka/ui/mascots";
 import type { Metadata } from "next";
@@ -11,9 +11,12 @@ import { WalkerDay } from "@/components/app/WalkerDay";
 import { pageSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { formatLongDay } from "@/lib/format";
-import { asLocale, format, getDictionary } from "@/lib/i18n";
+import { asLocale, format, getDictionary, type Locale } from "@/lib/i18n";
+import { currentMember, may } from "@/lib/member-shop";
 import { todayView } from "@/lib/today";
 import { consoleFor } from "@/lib/vocabulary";
+
+type MemberShop = NonNullable<Awaited<ReturnType<typeof currentMember>>>["shop"];
 
 export const dynamic = "force-dynamic";
 
@@ -28,13 +31,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function Home({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ day?: string; appointment?: string }> }) {
   const locale = asLocale((await params).locale);
   const session = (await pageSession())!;
-  const shop = await shopOfOwner(db(), session.account.id);
-  if (shop && shop.kind !== "services") return <SalonToday params={params} searchParams={searchParams} />;
-  if (shop) return <ServiceDay locale={locale} shop={shop} day={(await searchParams).day} />;
-  return <ClientSpace locale={locale} accountId={session.account.id} />;
+  const member = await currentMember(session.account.id);
+  if (!member) return <ClientSpace locale={locale} accountId={session.account.id} />;
+  const { shop, role } = member;
+  const query = await searchParams;
+  // A dog walker's day is built around the walk (check-in, the report); every other business reads its day as an agenda.
+  if (vocabularyOf(shop.businessType).dependants) return <ServiceDay locale={locale} shop={shop} day={query.day} />;
+  return <ShopToday locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} />;
 }
 
-async function ServiceDay({ locale, shop, day: requested }: { locale: "en" | "fr"; shop: NonNullable<Awaited<ReturnType<typeof shopOfOwner>>>; day: string | undefined }) {
+async function ServiceDay({ locale, shop, day: requested }: { locale: "en" | "fr"; shop: MemberShop; day: string | undefined }) {
   const t = consoleFor(locale, shop.businessType);
   const today = await shopDay(db(), shop.id, new Date());
   const day = requested && /^\d{4}-\d{2}-\d{2}$/.test(requested) ? requested : today;
@@ -83,23 +89,18 @@ async function ClientSpace({ locale, accountId }: { locale: "en" | "fr"; account
 }
 
 /**
- * The shop-style day (a shop that is not a service shop): the strip of days, the three figures of the day and its agenda.
- * The day and the open appointment are in the address, so a link, back and refresh all land on the same screen.
+ * The agenda day: the strip of days, the three figures of the day and its appointments. The day and the open appointment are
+ * in the address, so a link, back and refresh all land on the same screen. A staff member sees their own appointments.
  */
-async function SalonToday({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ day?: string; appointment?: string }> }) {
-  const locale = asLocale((await params).locale);
-  const t = getDictionary(locale).console.today;
-  const { day, appointment } = await searchParams;
-  const session = (await pageSession())!;
-  const view = await todayView(session.account.id, day);
-  if (!view) return <EmptyState icon={<Mascot bird="beaver" mood="empty" size={72} />} title={t.noShopTitle} description={t.noShop} />;
+async function ShopToday({ locale, shop, role, staffAccountId, query }: { locale: Locale; shop: MemberShop; role: ShopRole; staffAccountId: string | undefined; query: { day?: string; appointment?: string } }) {
+  const view = await todayView(shop, { day: query.day, staffAccountId });
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-1">
         <h1 className="font-display text-2xl font-bold text-fg">{view.shop.name}</h1>
         <p className="text-fg-secondary">{formatLongDay(view.day, locale)}</p>
       </header>
-      <TodayDay appointments={view.appointments} shop={view.shop} day={view.day} today={view.today} nowIso={new Date().toISOString()} selectedId={appointment ?? null} />
+      <TodayDay appointments={view.appointments} shop={view.shop} day={view.day} today={view.today} nowIso={new Date().toISOString()} selectedId={query.appointment ?? null} allow={{ clients: may(role, "clients"), revenue: may(role, "invoices") }} />
     </div>
   );
 }

@@ -8,7 +8,7 @@ import { ClientFilePanel } from "@/components/app/ClientFilePanel";
 import { ClientNav } from "@/components/app/ClientNav";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
-import { ownerShop } from "@/lib/owner-shop";
+import { memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,7 @@ export default async function ClientPage({ params }: { params: Promise<{ locale:
   const { locale: rawLocale, id } = await params;
   const locale = asLocale(rawLocale);
   const t = getDictionary(locale).console.clients;
-  const { shop } = await ownerShop();
+  const { shop } = await memberShop("clients");
   const now = new Date();
   const [file, overview] = await Promise.all([clientFile(db(), shop.id, id), clientOverview(db(), shop.id, now)]);
   if (!file) notFound();

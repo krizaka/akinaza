@@ -1,11 +1,13 @@
-import { loadShop, shopMediaOf, shopOfOwner } from "@akinaza/db";
+import { loadShop, shopMediaOf } from "@akinaza/db";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 import { type SetupData, ShopSetupView } from "@/components/app/ShopSetup";
 import { pageSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { readEnv } from "@/lib/env";
 import { asLocale, getDictionary } from "@/lib/i18n";
+import { currentMember, may } from "@/lib/member-shop";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +21,9 @@ const line = (m: { url: string; altFr: string; altEn: string; captionFr: string 
 export default async function ShopSetupPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
   const session = (await pageSession())!;
-  const shop = await shopOfOwner(db(), session.account.id);
+  const member = await currentMember(session.account.id);
+  if (member && !may(member.role, "settings")) notFound();
+  const shop = member?.shop;
   const base = readEnv().APP_PUBLIC_URL;
   if (!shop) return <ShopSetupView data={{ page: null, publicUrl: null, zones: [], services: [], windows: [], daysOff: [], rules: null, media: { cover: null, gallery: [] } }} />;
   const setup = await loadShop(db(), shop);

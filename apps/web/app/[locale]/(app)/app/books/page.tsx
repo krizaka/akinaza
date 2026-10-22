@@ -10,7 +10,7 @@ import { booksView, periodChoices, periodFor } from "@/lib/books";
 import { db } from "@/lib/db";
 import { formatLongDay, formatMoney } from "@/lib/format";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
-import { ownerShop } from "@/lib/owner-shop";
+import { memberShop } from "@/lib/member-shop";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  */
 export default async function Books({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ period?: string }> }) {
   const locale = asLocale((await params).locale);
-  const { shop } = await ownerShop();
+  const { shop } = await memberShop("reports");
   const t = getDictionary(locale).console.books;
   const today = await shopDay(db(), shop.id, new Date());
   const period = periodFor((await searchParams).period, today);

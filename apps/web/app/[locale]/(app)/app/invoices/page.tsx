@@ -5,7 +5,7 @@ import { InvoicesTable } from "@/components/app/InvoicesTable";
 import { ButtonLink } from "@/components/ButtonLink";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
-import { ownerShop } from "@/lib/owner-shop";
+import { memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +15,7 @@ export const generateMetadata = titleOf("invoices");
 /** The issued invoices (each opens as a document), and the one primary action: a new invoice, on its own address. */
 export default async function Invoices({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
-  const { shop } = await ownerShop();
+  const { shop } = await memberShop("invoices");
   const t = getDictionary(locale).console.invoices;
   const issued = await listInvoices(db(), shop.id);
   return (

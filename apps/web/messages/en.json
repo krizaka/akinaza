@@ -105,7 +105,8 @@
       "book": "Book a walk",
       "report": "Walk report",
       "books": "Your books",
-      "invoices": "Invoices"
+      "invoices": "Invoices",
+      "team": "Team"
     },
     "signIn": {
       "promise": "Your shop, for less — Loi 25 by design.",
@@ -155,7 +156,9 @@
       "bookings": "My bookings",
       "clients": "Clients",
       "shop": "My shop page",
-      "books": "Your books"
+      "books": "Your books",
+      "team": "Team",
+      "shopSwitcher": "Switch shop"
     },
     "admin": {
       "health": "Health",
@@ -423,11 +426,15 @@
         "next": "New password",
         "submit": "Change my password",
         "saved": "Your password is changed. Your other sessions have ended.",
-        "roleOwner": "Owner",
         "sectionsLabel": "Account sections",
         "sections": {
           "profile": "Profile",
           "security": "Security"
+        },
+        "shopRoles": {
+          "owner": "Owner",
+          "manager": "Manager",
+          "staff": "Staff"
         }
       },
       "nav": {
@@ -998,6 +1005,42 @@
       "callShop": "Call {phone}",
       "directions": "Address",
       "loading": "Loading"
+    },
+    "team": {
+      "title": "Your team",
+      "members": "Members",
+      "invitations": "Pending invitations",
+      "noInvitations": "No pending invitation.",
+      "you": "You",
+      "columns": {
+        "member": "Member",
+        "role": "Role",
+        "since": "Since",
+        "actions": "Actions"
+      },
+      "roles": {
+        "owner": "Owner",
+        "manager": "Manager",
+        "staff": "Staff"
+      },
+      "roleHints": {
+        "owner": "Everything, billing and the team included.",
+        "manager": "Bookings, clients, invoices, books and the staff.",
+        "staff": "Their own agenda, check-in and the access notes of their visits."
+      },
+      "changeRole": "Role of {name}",
+      "remove": "Remove",
+      "removeConfirm": "Remove from the shop?",
+      "revoke": "Cancel",
+      "revokeConfirm": "Cancel the invitation?",
+      "expires": "Valid until {date}",
+      "invite": {
+        "title": "Invite someone",
+        "email": "E-mail address",
+        "role": "Role",
+        "submit": "Send the invitation",
+        "sent": "Invitation sent. You can also pass this link on:"
+      }
     }
   }
 }

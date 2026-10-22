@@ -106,6 +106,16 @@ export async function shopOfMember(db: Db, accountId: string, shopId?: string) {
   return row ?? null;
 }
 
+/** Every shop an account works in, with its role there: the switcher's list (the default shop first). */
+export async function shopsOfMember(db: Db, accountId: string) {
+  return db
+    .select({ id: shops.id, name: shops.name, role: sql<"owner" | "manager" | "staff">`${memberships.role}` })
+    .from(memberships)
+    .innerJoin(shops, eq(shops.id, memberships.scopeId))
+    .where(eq(memberships.accountId, accountId))
+    .orderBy(sql`(${memberships.role} = 'owner' AND ${shops.isDefault}) DESC`, sql`(${memberships.role} = 'owner') DESC`, asc(shops.name));
+}
+
 /** The account that runs a shop (null once the account is gone): who its webhooks and keys belong to. */
 export async function ownerOfShop(db: Db, shopId: string): Promise<string | null> {
   const [row] = await db.select({ ownerId: shops.ownerId }).from(shops).where(eq(shops.id, shopId));
