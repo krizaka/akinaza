@@ -123,6 +123,8 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
     for (const w of person.hours) await addWindow(db, shopId, w, id);
   }
   for (const s of demo.services) await saveService(db, shopId, s);
+  // Registered for the GST and the QST (fictional numbers), so a price is shown before taxes and the tax is exact.
+  await db.update(shops).set({ registrant: true, gstNumber: "123456789RT0001", qstNumber: "1234567890TQ0001" }).where(eq(shops.id, shopId));
   const [current] = await db.select().from(shops).where(eq(shops.id, shopId));
   await saveRules(db, shopId, { cancellationHours: 24, bookingHorizonDays: 60, slotStepMinutes: 30, minNoticeMinutes: 120, reportLinkDays: 30, paymentTermsDays: current!.paymentTermsDays, ...demo.rules });
   if (demo.cover) await saveShopMedia(db, shopId, { cover: { ...demo.cover } });

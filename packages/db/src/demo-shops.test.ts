@@ -21,6 +21,10 @@ describe("the three fictional demo shops", () => {
     expect(second.map((s) => s.shopId)).toEqual(first.map((s) => s.shopId));
   });
 
+  it("are registered for the GST and the QST, so the tax shown is exact", async () => {
+    for (const demo of DEMO_SHOPS) expect((await publicShop(t.db, demo.shop.slug))!.shop.registrant).toBe(true);
+  });
+
   it("match the positioning: a salon with several stylists, a studio with a free consultation first, a consultant with a discovery call", async () => {
     const salon = (await publicShop(t.db, "cedre-ciseaux"))!;
     expect(salon.team.map((m) => m.name)).toEqual(["Maëlle", "Karim", "Jade"]);

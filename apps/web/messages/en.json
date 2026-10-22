@@ -1271,6 +1271,42 @@
           "eraseDescription": "Your details and your bookings are erased for good. Invoices are kept as the law requires. Type your e-mail to confirm."
         }
       }
+    },
+    "journey": {
+      "allServices": "All services",
+      "team": "Who works here",
+      "teamLead": "Choose a person when you book, or leave it to anyone free.",
+      "withWhom": "With whom?",
+      "anyone": "Anyone free",
+      "with": "With {name}",
+      "included": "What is included",
+      "seeTimes": "See times",
+      "fromPrice": "From {price}",
+      "taxLine": "{price} + GST {gst} + QST {qst} = {total}",
+      "taxNote": "Taxes calculated to the cent.",
+      "cancelRule": "Free cancellation until {hours} h before.",
+      "freeService": "Free",
+      "pickTime": "Pick a time",
+      "pickTimeLead": "Only times that are really free are shown. Tap one to book it.",
+      "changePerson": "Change person",
+      "noTimes": "No time is free for this choice. Try another person, or come back soon.",
+      "moreDays": "Later days",
+      "bookedTitle": "You are booked",
+      "bookedLead": "A confirmation is also in your bookings.",
+      "when": "When",
+      "who": "With",
+      "where": "Where",
+      "price": "Price",
+      "addToCalendar": "Add to calendar",
+      "cancelBooking": "Cancel this booking",
+      "cancelling": "Cancelling…",
+      "cancelled": "This booking is cancelled.",
+      "cancelTooLate": "The free cancellation window has passed. Call the shop to change it.",
+      "myBookings": "My bookings",
+      "bookAnother": "Book another time",
+      "callShop": "Call {phone}",
+      "directions": "Address",
+      "loading": "Loading"
     }
   },
   "changelog": {

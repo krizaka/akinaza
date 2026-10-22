@@ -45,6 +45,7 @@ export default async function BookPage({ params, searchParams }: { params: Promi
             preselect: bookingPreselect({ service: searchValue(query.service), zone: searchValue(query.zone), start: searchValue(query.start) }, page.services, page.zones),
             timeZone: page.shop.timezone,
             bookingsHref: `/${locale}/app`,
+            staffId: page.team.some((m) => m.id === searchValue(query.staff)) ? searchValue(query.staff) : null,
           }}
         />
         </VocabularyProvider>

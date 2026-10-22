@@ -1,7 +1,8 @@
-import { addLocalDays, bookingPreselect, groupSlotsByDay, localDay, openStatus, type Slot, weekdayOf, weekSchedule } from "@akinaza/core";
+import { bookingPreselect, localDay, openStatus, weekdayOf, weekSchedule } from "@akinaza/core";
 import type { PublicMedia, PublicShop } from "@akinaza/db";
 
 import { type Locale, translator } from "@/lib/i18n";
+import { serviceHref } from "@/lib/journey-paths";
 
 /**
  * A shop's public page, as the page draws it: every section is computed from the shop's data (its hours, services, zones,
@@ -51,11 +52,8 @@ export interface StorefrontView {
   status: { open: boolean; label: string; detail: string } | null;
   bookHref: string;
   services: ServiceView[];
-  booking: {
-    services: { id: string; name: string; selected: boolean; href: string }[];
-    zones: { id: string; name: string; selected: boolean; href: string }[];
-    days: DayView[];
-  };
+  /** Who works here (first names), when several people do. */
+  team: { id: string; name: string }[];
   zones: { id: string; name: string }[];
   map: { center: LngLat; zoom: number; places: { id: string; name: string; position: LngLat }[] } | null;
   hours: { today: string; status: { open: boolean; label: string; detail?: string }; days: { id: string; label: string; hours: string }[] };
@@ -90,10 +88,8 @@ export function clockLabel(clock: string, locale: Locale): string {
   return `${h12}${m === "00" ? "" : `:${m}`} ${h < 12 ? "am" : "pm"}`;
 }
 
-const localClock = (instant: Date, timezone: string) => new Intl.DateTimeFormat("en-CA", { timeZone: timezone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(instant);
 const lang = (locale: Locale) => (locale === "fr" ? "fr-CA" : "en-CA");
 const dayName = (day: string, locale: Locale, weekday: "short" | "long") => new Intl.DateTimeFormat(lang(locale), { timeZone: "UTC", weekday }).format(new Date(`${day}T12:00:00Z`));
-const dayMonth = (day: string, locale: Locale) => new Intl.DateTimeFormat(lang(locale), { timeZone: "UTC", day: "numeric", month: "short" }).format(new Date(`${day}T12:00:00Z`));
 const money = (cents: number, locale: Locale) => new Intl.NumberFormat(lang(locale), { style: "currency", currency: "CAD" }).format(cents / 100);
 
 const telHref = (phone: string): string | null => {
@@ -115,17 +111,15 @@ const mediaView = (m: PublicMedia, locale: Locale) => {
   return { src: m.url, alt: locale === "fr" ? m.altFr : m.altEn, ...(video ? { video } : {}) };
 };
 
-export function buildStorefront(input: { page: PublicShop; locale: Locale; now: Date; selection: Selection; slots: readonly Slot[] }): StorefrontView {
-  const { page, locale, now, slots } = input;
+export function buildStorefront(input: { page: PublicShop; locale: Locale; now: Date }): StorefrontView {
+  const { page, locale, now } = input;
   const t = translator(locale);
   const timezone = page.shop.timezone;
   const base = `/${locale}/s/${page.shop.slug}`;
   const pick = (fr: string | null | undefined, en: string | null | undefined) => (locale === "fr" ? fr : en) || null;
-  const { serviceId, zoneId } = resolveSelection(page, input.selection);
-  const pageHref = (service: string | null, zone: string | null) => {
-    const query = [service ? `service=${service}` : "", zone ? `zone=${zone}` : ""].filter(Boolean).join("&");
-    return `${base}${query ? `?${query}` : ""}#reserver`;
-  };
+  const { serviceId, zoneId } = resolveSelection(page, {});
+  /** A service has its own page; the first area is kept in the address when the shop travels. */
+  const pageHref = (service: string) => serviceHref(locale, page.shop.slug ?? "", service, { zoneId });
 
   // Open now, from the hours.
   const windows = page.windows;
@@ -153,22 +147,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; now: 
     price: money(s.priceCents, locale),
     priceFrom: s.priceVaries ? t("console.shopPage.from") : null,
     tag: s.id === page.popularServiceId ? t("console.shopPage.popular") : null,
-    href: pageHref(s.id, zoneId),
-  }));
-
-  // The next free times, as chips that open the booking with everything chosen.
-  const today = localDay(now, timezone);
-  const tomorrow = addLocalDays(today, 1);
-  const days: DayView[] = groupSlotsByDay(slots, timezone, { maxDays: 7, maxPerDay: 8 }).map((d) => ({
-    id: d.day,
-    label: d.day === today ? t("console.shopPage.today") : d.day === tomorrow ? t("console.shopPage.tomorrow") : dayName(d.day, locale, "short"),
-    sub: dayMonth(d.day, locale),
-    slots: d.slots.map((s) => ({
-      id: s.startsAt.toISOString(),
-      label: time(localClock(s.startsAt, timezone)),
-      ...(s.joins ? { note: `${s.seatsLeft}/${s.capacity}` } : {}),
-      href: `${base}/book?${[`service=${serviceId}`, zoneId ? `zone=${zoneId}` : "", `start=${encodeURIComponent(s.startsAt.toISOString())}`].filter(Boolean).join("&")}`,
-    })),
+    href: pageHref(s.id),
   }));
 
   // Where: chips and a map of the places that have a position.
@@ -178,6 +157,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; now: 
     : null;
 
   // The week, compact, today marked.
+  const today = localDay(now, timezone);
   const todayId = String(weekdayOf(today));
   const week = weekSchedule(windows).map((d) => ({
     id: String(d.weekday),
@@ -201,13 +181,9 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; now: 
     tagline: pick(page.shop.taglineFr, page.shop.taglineEn),
     cover: page.media.cover ? mediaView(page.media.cover, locale) : null,
     status,
-    bookHref: `${base}/book`,
+    bookHref: serviceId ? pageHref(serviceId) : base,
     services,
-    booking: {
-      services: page.services.map((s) => ({ id: s.id, name: locale === "fr" ? s.nameFr : s.nameEn, selected: s.id === serviceId, href: pageHref(s.id, zoneId) })),
-      zones: page.zones.length > 1 ? page.zones.map((z) => ({ id: z.id, name: z.name, selected: z.id === zoneId, href: pageHref(serviceId, z.id) })) : [],
-      days,
-    },
+    team: page.team.length > 1 ? page.team.map((m) => ({ id: m.id, name: m.name })) : [],
     zones: page.zones.map((z) => ({ id: z.id, name: z.name })),
     map,
     hours: { today: todayId, status: status ?? { open: false, label: t("console.shopPage.closed") }, days: week },
