@@ -271,10 +271,10 @@
     },
     "founder": {
       "eyebrow": "Offre fondateur",
-      "title": "Offre fondateur : 39 $ CAD par mois, mise en route incluse",
+      "title": "Offre fondateur : {price} par mois, mise en route incluse",
       "lead": "Une offre limitée pour les premiers commerces. Akinaza est un produit à ses débuts : nous le construisons avec vous et nous installons votre commerce avec vous, sans frais de plus.",
       "points": [
-        "39 $ CAD par mois, plus TPS et TVQ, tant que vous restez",
+        "{price} par mois, plus TPS et TVQ, tant que vous restez",
         "Mise en route incluse : vos services, vos heures, vos premières factures",
         "Annulez en tout temps depuis votre page de facturation, en deux clics",
         "Limitée aux premiers commerces que nous accueillons"

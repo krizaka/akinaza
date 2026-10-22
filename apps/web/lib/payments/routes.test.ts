@@ -11,8 +11,9 @@ describe("the domain and the routes know no vendor", () => {
       expect(src, f).not.toMatch(/stripe/i);
     }
   });
-  it("only config.ts imports the adapter", () => {
-    expect(read("lib/payments/config.ts")).toMatch(/stripe-adapter/);
-    expect(read("lib/payments/port.ts")).not.toMatch(/^import /m);
+  it("only config.ts chooses the vendor (the adapter is @krizaka/payments), and no copy of the port stays here", () => {
+    expect(read("lib/payments/config.ts")).toMatch(/stripeAdapter/);
+    expect(() => read("lib/payments/port.ts")).toThrow();
+    expect(() => read("lib/payments/stripe-adapter.ts")).toThrow();
   });
 });

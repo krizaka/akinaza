@@ -1,0 +1,7 @@
+{
+  "product": "akinaza",
+  "plans": [
+    { "lookupKey": "akinaza_founder_monthly_cad", "name": "Akinaza — Founder offer (monthly, setup included)", "amount": 3900, "currency": "cad", "interval": "month", "taxCode": "txcd_10103001" }
+  ],
+  "portal": { "headline": "Akinaza — manage your subscription", "cancel": "at_period_end" }
+}

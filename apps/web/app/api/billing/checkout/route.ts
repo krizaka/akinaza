@@ -1,10 +1,11 @@
+import { PaymentsError } from "@krizaka/payments";
+
 import { requireSession } from "@/lib/access";
 import { customerOf } from "@/lib/billing";
 import { query } from "@/lib/db";
 import { env } from "@/lib/env";
 import { handle, HttpError, refuse } from "@/lib/http";
-import { paymentsFrom } from "@/lib/payments/config";
-import { PaymentsError } from "@/lib/payments/port";
+import { FOUNDER, paymentsFrom } from "@/lib/payments/config";
 import { limit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +28,7 @@ export function POST(req: Request) {
     try {
       const customerId = await customerOf(query, account.id, () => port.createCustomer(account.email, account.id));
       const base = `${e.APP_PUBLIC_URL.replace(/\/$/, "")}/${account.locale}`;
-      const session = await port.checkout({ kind: "founder", customerId, accountId: account.id, successUrl: `${base}/app?billing=success`, cancelUrl: `${base}?billing=cancelled`, locale: account.locale });
+      const session = await port.checkout({ kind: FOUNDER, customerId, accountId: account.id, successUrl: `${base}/app?billing=success`, cancelUrl: `${base}?billing=cancelled`, locale: account.locale });
       return redirect ? new Response(null, { status: 303, headers: { Location: session.url } }) : Response.json({ url: session.url });
     } catch (error) {
       if (error instanceof PaymentsError) throw refuse(502, "PAYMENTS_UNAVAILABLE", "The payment page could not be opened");

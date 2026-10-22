@@ -1,6 +1,5 @@
+import { applyOnce, type PaymentEvent, pgEventStore } from "@krizaka/payments";
 import type { QueryResultRow } from "pg";
-
-import type { PaymentEvent } from "./payments/port";
 
 /**
  * The founder offer's state — the domain, vendor-free (it speaks the payments port's events, never a processor's). The
@@ -36,23 +35,20 @@ export async function customerOf(query: Query, accountId: string, create: () => 
   return kept?.customer ?? made.id;
 }
 
-/** Applies a verified payment event once: its id is recorded first (`ON CONFLICT DO NOTHING`), a replay changes nothing. */
-export async function applyPaymentEvent(query: Query, event: PaymentEvent): Promise<"applied" | "duplicate" | "ignored"> {
-  if (event.type === "ignored") return "ignored";
-  const fresh = await query("INSERT INTO payment_events (id, type) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING RETURNING id", [event.id, event.type]);
-  if (!fresh.length) return "duplicate";
-  switch (event.type) {
-    case "subscription_started":
-      if (event.customerId) await query("UPDATE accounts SET payment_customer_id = COALESCE(payment_customer_id, $2) WHERE id = $1", [event.accountId, event.customerId]);
-      await query("UPDATE accounts SET payment_subscription_id = $2, subscription_status = COALESCE(subscription_status, 'active') WHERE id = $1", [event.accountId, event.subscriptionId]);
-      return "applied";
-    case "subscription_changed": {
+/** Applies a verified payment event once (@krizaka/payments records its id first): a replay changes nothing. */
+export function applyPaymentEvent(query: Query, event: PaymentEvent): Promise<"applied" | "duplicate" | "ignored"> {
+  return applyOnce(pgEventStore(query), event, {
+    async subscription_started(e) {
+      if (e.customerId) await query("UPDATE accounts SET payment_customer_id = COALESCE(payment_customer_id, $2) WHERE id = $1", [e.accountId, e.customerId]);
+      await query("UPDATE accounts SET payment_subscription_id = $2, subscription_status = COALESCE(subscription_status, 'active') WHERE id = $1", [e.accountId, e.subscriptionId]);
+    },
+    async subscription_changed(e) {
       const rows = await query(
         `UPDATE accounts SET subscription_status = $3, payment_subscription_id = $4, current_period_end = to_timestamp($5)
            WHERE payment_customer_id = $1 OR id::text = $2 RETURNING id`,
-        [event.customerId, event.accountId, event.status, event.subscriptionId, event.periodEnd],
+        [e.customerId, e.accountId, e.status, e.subscriptionId, e.periodEnd],
       );
-      return rows.length ? "applied" : "ignored";
-    }
-  }
+      return rows.length ? undefined : "ignored";
+    },
+  });
 }
