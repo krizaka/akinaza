@@ -1,17 +1,16 @@
 // @template: app-dashboard
-import { prepareShopReturn, shopDay, shopOfOwner } from "@akinaza/db";
+import { prepareShopReturn, shopDay } from "@akinaza/db";
 import { ChipLink } from "@krizaka/ui/chip-link";
 import { Stat, StatGrid } from "@krizaka/ui/stat";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
 import { BooksLines } from "@/components/app/BooksLines";
-import { pageSession } from "@/lib/access";
 import { booksView, periodChoices, periodFor } from "@/lib/books";
 import { db } from "@/lib/db";
 import { formatLongDay, formatMoney } from "@/lib/format";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
+import { ownerShop } from "@/lib/owner-shop";
 
 export const dynamic = "force-dynamic";
 
@@ -25,9 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  */
 export default async function Books({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ period?: string }> }) {
   const locale = asLocale((await params).locale);
-  const session = (await pageSession())!;
-  const shop = await shopOfOwner(db(), session.account.id);
-  if (!shop) notFound();
+  const { shop } = await ownerShop();
   const t = getDictionary(locale).console.books;
   const today = await shopDay(db(), shop.id, new Date());
   const period = periodFor((await searchParams).period, today);

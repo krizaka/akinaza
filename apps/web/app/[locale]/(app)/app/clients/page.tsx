@@ -1,25 +1,20 @@
 // @template: app-list-detail
-import { clientOverview, shopOfOwner } from "@akinaza/db";
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { clientOverview } from "@akinaza/db";
 
 import { ClientsTable } from "@/components/app/ClientsTable";
-import { pageSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
+import { ownerShop } from "@/lib/owner-shop";
+import { titleOf } from "@/lib/page-title";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
-  return { title: getDictionary(asLocale((await params).locale)).console.meta.clients };
-}
+export const generateMetadata = titleOf("clients");
 
 /** The shop's clients: how often they came, when last and next, what they spent. Each name opens the client's file. */
 export default async function Clients({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
-  const session = (await pageSession())!;
-  const shop = await shopOfOwner(db(), session.account.id);
-  if (!shop) notFound();
+  const { shop } = await ownerShop();
   const clients = await clientOverview(db(), shop.id, new Date());
   return (
     <div className="flex flex-col gap-4">
