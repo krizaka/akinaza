@@ -27,6 +27,7 @@
     "@krizaka/auth": "0.2.0",
     "@krizaka/organize": "0.3.0",
     "@krizaka/settings": "0.1.0",
+    "@krizaka/webhooks": "0.1.0",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.4",
     "pg": "^8.16.3",
