@@ -46,7 +46,6 @@
       "caption": "La vraie application, une seule prise, le 19 octobre 2026. Aucune personne réelle."
     },
     "founder": {
-      "eyebrow": "Offre fondateur",
       "title": "Offre fondateur : {price} par mois, mise en route incluse",
       "lead": "Une offre limitée pour les premiers commerces. Akinaza est un produit à ses débuts : nous le construisons avec vous et nous installons votre commerce avec vous, sans frais de plus.",
       "points": [
@@ -620,7 +619,6 @@
       }
     },
     "shopPage": {
-      "by": "Une boutique sur Akinaza",
       "notFound": "Cette page n'existe pas.",
       "signInToBook": "Se connecter pour réserver",
       "book": "Réserver",

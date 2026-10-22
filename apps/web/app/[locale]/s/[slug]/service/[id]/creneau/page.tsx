@@ -28,7 +28,7 @@ export default async function TimesPage({ params, searchParams }: { params: Prom
   const step = timesStep({ page, locale, now, serviceId: id, staffId: choice.staffId, zoneId: choice.zoneId, slots });
   if (!step) notFound();
   return (
-    <JourneyFrame locale={locale} path={`/${locale}/s/${slug}/service/${id}/creneau`} back={{ href: step.backHref, label: step.title }} eyebrow={step.who ?? page.shop.name} title={t("console.journey.pickTime")} lead={t("console.journey.pickTimeLead")}>
+    <JourneyFrame locale={locale} path={`/${locale}/s/${slug}/service/${id}/creneau`} back={{ href: step.backHref, label: step.title }} title={t("console.journey.pickTime")} lead={[step.who, t("console.journey.pickTimeLead")].filter(Boolean).join(" · ")}>
       <ShopSlots days={step.days} label={t("console.shopPage.timesLabel")} emptyLabel={t("console.journey.noTimes")} />
       {step.changeHref ? (
         <p className="m-0">

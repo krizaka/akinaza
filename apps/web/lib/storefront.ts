@@ -46,7 +46,8 @@ export interface DayView {
 
 export interface StorefrontView {
   name: string;
-  eyebrow: string;
+  /** The locality the shop gives (« Saint-Henri, Montréal »), as a plain fact. */
+  area: string | null;
   tagline: string | null;
   cover: { src: string; alt: string; video?: { webm?: string; mp4?: string } } | null;
   status: { open: boolean; label: string; detail: string } | null;
@@ -177,7 +178,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; now: 
 
   return {
     name: page.shop.name,
-    eyebrow: page.shop.area || t("console.shopPage.by"),
+    area: page.shop.area || null,
     tagline: pick(page.shop.taglineFr, page.shop.taglineEn),
     cover: page.media.cover ? mediaView(page.media.cover, locale) : null,
     status,

@@ -18,7 +18,7 @@ export async function FounderOffer({ locale }: { locale: Locale }) {
   if (!copy) return null;
   const t = getDictionary(locale).landing.founder;
   return (
-    <Section id="offer" eyebrow={t.eyebrow} title={format(t.title, copy)} lead={t.lead} reveal divider>
+    <Section id="offer" title={format(t.title, copy)} lead={t.lead} reveal divider>
       <ul className="m-0 flex list-none flex-col gap-2 p-0">
         {t.points.map((point) => (
           <li key={point} className="flex items-start gap-2 text-sm text-fg-secondary">
