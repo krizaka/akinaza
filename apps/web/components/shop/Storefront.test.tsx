@@ -22,6 +22,7 @@ const salon: PublicShop = {
   daysOff: [],
   rules: { cancellationHours: 48, bookingHorizonDays: 30 },
   media: { cover: null, gallery: [] },
+  team: [],
   popularServiceId: null,
 };
 
@@ -40,6 +41,7 @@ const walker: PublicShop = {
     cover: { id: "c", url: "https://cdn.test/cover.webp", webmUrl: null, mp4Url: null, altFr: "Montréal en automne.", altEn: "Autumn.", captionFr: null, captionEn: null, wide: true },
     gallery: [{ id: "g", url: "https://cdn.test/g.jpg", webmUrl: null, mp4Url: null, altFr: "Le rapport.", altEn: "The report.", captionFr: "Après la sortie", captionEn: "After", wide: false }],
   },
+  team: [],
   popularServiceId: "group",
 };
 

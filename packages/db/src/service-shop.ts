@@ -1,6 +1,6 @@
 import { addLocalDays, businessTypeSchema, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
-import { addDays } from "date-fns";
-import { and, asc, eq, isNull, sql } from "drizzle-orm";
+import { addDays, compareAsc } from "date-fns";
+import { and, asc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { Db, Tx } from "./client";
@@ -121,7 +121,8 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput):
       };
       if (existing) {
         await tx.update(shops).set(values).where(eq(shops.id, existing.id));
-        await tx.update(staff).set({ name: input.ownerName }).where(and(eq(staff.shopId, existing.id), eq(staff.active, true)));
+        const owner = await ownStaff(tx, existing.id);
+        await tx.update(staff).set({ name: input.ownerName }).where(eq(staff.id, owner.id));
         return { shopId: existing.id, created: false };
       }
       const [shop] = await tx.insert(shops).values({ ...values, ownerId, kind: "services", registrant: false, timezone: "America/Toronto" }).returning({ id: shops.id });
@@ -179,17 +180,38 @@ export async function saveService(db: Db, shopId: string, raw: ServiceInput): Pr
 }
 
 async function ownStaff(tx: Db | Tx, shopId: string) {
-  const [member] = await tx.select().from(staff).where(and(eq(staff.shopId, shopId), eq(staff.active, true))).orderBy(asc(staff.name)).limit(1);
+  const [member] = await tx.select().from(staff).where(and(eq(staff.shopId, shopId), eq(staff.active, true))).orderBy(asc(staff.createdAt), asc(staff.id)).limit(1);
   return member ?? refuse("AK_STAFF_UNKNOWN");
+}
+
+/** Everyone who works at the shop, the owner first, then in the order they joined. */
+async function activeStaff(tx: Db | Tx, shopId: string) {
+  return tx.select().from(staff).where(and(eq(staff.shopId, shopId), eq(staff.active, true))).orderBy(asc(staff.createdAt), asc(staff.id));
+}
+
+/** A member of this shop (the owner when none is named). */
+async function staffFor(tx: Db | Tx, shopId: string, staffId?: string | null) {
+  if (!staffId) return ownStaff(tx, shopId);
+  const [member] = await tx.select().from(staff).where(and(eq(staff.id, staffId), eq(staff.shopId, shopId), eq(staff.active, true)));
+  return member ?? refuse("AK_STAFF_UNKNOWN");
+}
+
+/** Adds a person who works at the shop (a stylist, an artist): their own weekly hours and days off come next. */
+export async function addStaff(db: Db, shopId: string, name: string): Promise<string> {
+  const first = text(60).parse(name);
+  const [shop] = await db.select({ id: shops.id }).from(shops).where(eq(shops.id, shopId));
+  if (!shop) return refuse("AK_SHOP_UNKNOWN");
+  const [row] = await db.insert(staff).values({ shopId, name: first }).returning({ id: staff.id });
+  return row!.id;
 }
 
 const minutes = (clock: string) => Number(clock.slice(0, 2)) * 60 + Number(clock.slice(3, 5));
 
 /** Adds a weekly window of the shop's worker; two windows of one weekday never overlap. */
-export async function addWindow(db: Db, shopId: string, raw: z.input<typeof windowInputSchema>): Promise<string> {
+export async function addWindow(db: Db, shopId: string, raw: z.input<typeof windowInputSchema>, staffId?: string): Promise<string> {
   const input = windowInputSchema.parse(raw);
   if (minutes(input.endsAt) <= minutes(input.startsAt)) refuse("AK_WINDOW_ORDER");
-  const member = await ownStaff(db, shopId);
+  const member = await staffFor(db, shopId, staffId);
   const same = await db.select().from(schedules).where(and(eq(schedules.staffId, member.id), eq(schedules.weekday, input.weekday)));
   if (same.some((w) => minutes(input.startsAt) < minutes(w.endsAt) && minutes(w.startsAt) < minutes(input.endsAt))) refuse("AK_WINDOW_OVERLAP");
   const [row] = await db.insert(schedules).values({ staffId: member.id, weekday: input.weekday, startsAt: input.startsAt, endsAt: input.endsAt }).returning({ id: schedules.id });
@@ -201,8 +223,8 @@ export async function removeWindow(db: Db, shopId: string, windowId: string): Pr
   await db.delete(schedules).where(and(eq(schedules.id, windowId), eq(schedules.staffId, member.id)));
 }
 
-export async function addDayOff(db: Db, shopId: string, day: string, reason?: string): Promise<void> {
-  const member = await ownStaff(db, shopId);
+export async function addDayOff(db: Db, shopId: string, day: string, reason?: string, staffId?: string): Promise<void> {
+  const member = await staffFor(db, shopId, staffId);
   await db.insert(daysOff).values({ staffId: member.id, onDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).parse(day), reason: reason?.trim().slice(0, 120) || null }).onConflictDoNothing();
 }
 
@@ -234,6 +256,18 @@ export async function loadShop(db: Db, shop: typeof shops.$inferSelect): Promise
   return { shop, staff: { id: member.id, name: member.name }, zones, services: svc, windows, daysOff: off, rules: rules[0] ?? refuse("AK_RULES_UNKNOWN") };
 }
 
+/** Overlapping or touching weekly windows of several people, as the shop's opening hours. */
+function mergeWindows(rows: { weekday: number; startsAt: string; endsAt: string }[]): { weekday: number; startsAt: string; endsAt: string }[] {
+  const sorted = [...rows].sort((a, b) => a.weekday - b.weekday || a.startsAt.localeCompare(b.startsAt));
+  const out: { weekday: number; startsAt: string; endsAt: string }[] = [];
+  for (const w of sorted) {
+    const last = out[out.length - 1];
+    if (last && last.weekday === w.weekday && w.startsAt <= last.endsAt) last.endsAt = w.endsAt > last.endsAt ? w.endsAt : last.endsAt;
+    else out.push({ weekday: w.weekday, startsAt: w.startsAt, endsAt: w.endsAt });
+  }
+  return out;
+}
+
 /** A photo or a loop of the public page. */
 export interface PublicMedia {
   id: string;
@@ -255,7 +289,10 @@ export interface PublicShop {
   };
   zones: Pick<typeof shopZones.$inferSelect, "id" | "name" | "lat" | "lng">[];
   services: Pick<typeof services.$inferSelect, "id" | "nameFr" | "nameEn" | "durationMinutes" | "priceCents" | "capacity" | "descriptionFr" | "descriptionEn" | "includedFr" | "includedEn" | "priceVaries">[];
+  /** The shop's opening hours: everyone's weekly windows, merged. */
   windows: Pick<typeof schedules.$inferSelect, "weekday" | "startsAt" | "endsAt">[];
+  /** Who works here (first names), to choose from; one person = no choice to offer. */
+  team: { id: string; name: string }[];
   /** The days off, dates only (the reasons stay private). */
   daysOff: string[];
   rules: Pick<typeof shopRules.$inferSelect, "cancellationHours" | "bookingHorizonDays">;
@@ -269,6 +306,8 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
   const [row] = await db.select().from(shops).where(and(eq(shops.slug, slug), eq(shops.published, true)));
   if (!row) return null;
   const full = await loadShop(db, row);
+  const team = await activeStaff(db, row.id);
+  const everyone = team.length > 1 ? await db.select().from(schedules).where(inArray(schedules.staffId, team.map((m) => m.id))) : full.windows;
   const [media, counts] = await Promise.all([
     db.select().from(shopMedia).where(eq(shopMedia.shopId, row.id)).orderBy(asc(shopMedia.position)),
     db.execute(sql`
@@ -283,7 +322,8 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
     shop: { id: row.id, name: row.name, slug: row.slug, timezone: row.timezone, taglineFr: row.taglineFr, taglineEn: row.taglineEn, area: row.area, bioFr: row.bioFr, bioEn: row.bioEn, publicPhone: row.publicPhone, publicEmail: row.publicEmail, seatUnitFr: row.seatUnitFr, seatUnitEn: row.seatUnitEn, businessType: row.businessType, ownerName: full.staff.name },
     zones: full.zones.map((z) => ({ id: z.id, name: z.name, lat: z.lat, lng: z.lng })),
     services: full.services.map((s) => ({ id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, descriptionFr: s.descriptionFr, descriptionEn: s.descriptionEn, includedFr: s.includedFr, includedEn: s.includedEn, priceVaries: s.priceVaries })),
-    windows: full.windows.map((w) => ({ weekday: w.weekday, startsAt: w.startsAt, endsAt: w.endsAt })),
+    windows: mergeWindows(everyone),
+    team: team.map((m) => ({ id: m.id, name: m.name })),
     daysOff: full.daysOff.map((d) => d.onDate),
     rules: { cancellationHours: full.rules.cancellationHours, bookingHorizonDays: full.rules.bookingHorizonDays },
     media: { cover: media.filter((m) => m.role === MediaRole.Cover).map(publicMedia)[0] ?? null, gallery: media.filter((m) => m.role === MediaRole.Gallery).map(publicMedia) },
@@ -335,44 +375,60 @@ export interface SlotQuery {
   serviceId: string;
   zoneId: string | null;
   now: Date;
+  /** One person's times; omitted = anyone's. */
+  staffId?: string | null;
   /** Local day to start from (`YYYY-MM-DD`); default today in the shop's zone. */
   fromDay?: string;
   days?: number;
 }
 
-/** The start times a client may book for a service in a zone — computed from the weekly hours, days off, rules and visits. */
-export async function listSlots(db: Reader, query: SlotQuery): Promise<Slot[]> {
+/** A start time a client may book, and the person who would take it. */
+export type StaffSlot = Slot & { staffId: string };
+
+/** The start times a client may book for a service in a zone — computed from the weekly hours, days off, rules and visits of one person, or of anyone (the union, each time once). */
+export async function listSlots(db: Reader, query: SlotQuery): Promise<StaffSlot[]> {
   const [shop] = await db.select().from(shops).where(eq(shops.id, query.shopId));
   if (!shop) return refuse("AK_SHOP_UNKNOWN");
   const [service] = await db.select().from(services).where(and(eq(services.id, query.serviceId), eq(services.shopId, shop.id), eq(services.active, true)));
   if (!service) return refuse("AK_SERVICE_UNKNOWN");
-  const member = await ownStaff(db, shop.id);
+  const members = query.staffId ? [await staffFor(db, shop.id, query.staffId)] : await activeStaff(db, shop.id);
+  if (members.length === 0) return refuse("AK_STAFF_UNKNOWN");
   const [rules] = await db.select().from(shopRules).where(eq(shopRules.shopId, shop.id));
   if (!rules) return refuse("AK_RULES_UNKNOWN");
   const today = localDay(query.now, shop.timezone);
   const fromDay = query.fromDay && query.fromDay > today ? query.fromDay : today;
   const horizonEnd = addLocalDays(today, rules.bookingHorizonDays);
   const days = Math.max(0, Math.min(query.days ?? rules.bookingHorizonDays, 62, daysBetween(fromDay, horizonEnd)));
-  const [windows, off] = await Promise.all([db.select().from(schedules).where(eq(schedules.staffId, member.id)), db.select({ d: daysOff.onDate }).from(daysOff).where(eq(daysOff.staffId, member.id))]);
   const rangeStart = addDays(query.now, -1);
   const rangeEnd = addDays(query.now, daysBetween(today, fromDay) + days + 2);
-  const visits = await takenVisits(db, member.id, rangeStart, rangeEnd);
-  const asWindows: WeeklyWindow[] = windows.map((w) => ({ weekday: w.weekday, startsAt: w.startsAt.slice(0, 5), endsAt: w.endsAt.slice(0, 5) }));
-  return openSlots({
-    timezone: shop.timezone,
-    now: query.now,
-    fromDay,
-    days,
-    windows: asWindows,
-    daysOff: off.map((o) => o.d),
-    serviceId: service.id,
-    zoneId: query.zoneId,
-    durationMinutes: service.durationMinutes,
-    stepMinutes: rules.slotStepMinutes,
-    capacity: service.capacity,
-    minNoticeMinutes: rules.minNoticeMinutes,
-    visits,
-  });
+  const byStart = new Map<number, StaffSlot>();
+  for (const member of members) {
+    const [windows, off] = await Promise.all([db.select().from(schedules).where(eq(schedules.staffId, member.id)), db.select({ d: daysOff.onDate }).from(daysOff).where(eq(daysOff.staffId, member.id))]);
+    const visits = await takenVisits(db, member.id, rangeStart, rangeEnd);
+    const asWindows: WeeklyWindow[] = windows.map((w) => ({ weekday: w.weekday, startsAt: w.startsAt.slice(0, 5), endsAt: w.endsAt.slice(0, 5) }));
+    const open = openSlots({
+      timezone: shop.timezone,
+      now: query.now,
+      fromDay,
+      days,
+      windows: asWindows,
+      daysOff: off.map((o) => o.d),
+      serviceId: service.id,
+      zoneId: query.zoneId,
+      durationMinutes: service.durationMinutes,
+      stepMinutes: rules.slotStepMinutes,
+      capacity: service.capacity,
+      minNoticeMinutes: rules.minNoticeMinutes,
+      visits,
+    });
+    // « Anyone »: a time is offered once; a group visit already started is preferred (it fills the visit), else the first who joined.
+    for (const slot of open) {
+      const key = slot.startsAt.getTime();
+      const held = byStart.get(key);
+      if (!held || (slot.joins && !held.joins)) byStart.set(key, { ...slot, staffId: member.id });
+    }
+  }
+  return [...byStart.values()].sort((x, y) => compareAsc(x.startsAt, y.startsAt));
 }
 
 function daysBetween(from: string, to: string): number {
@@ -453,6 +509,8 @@ export interface BookInput {
   dependantIds: string[];
   startsAt: Date;
   now: Date;
+  /** The person asked for; omitted = anyone free at that time. */
+  staffId?: string | null;
 }
 
 /**
@@ -475,22 +533,23 @@ export async function bookVisit(db: Db, input: BookInput): Promise<{ appointment
       // A pet-care shop books for a dog. Any other business takes the client for themselves: their own entry stands for them.
       const dependantIds = input.dependantIds.length > 0 ? input.dependantIds : vocabularyOf(shop.businessType).dependants ? refuse("AK_DEPENDANTS_REQUIRED") : [await selfDependant(tx, client)];
       if (dependantIds.length > service.capacity) refuse("AK_CAPACITY_FULL");
-      const member = await ownStaff(tx, shop.id);
-      await tx.execute(sql`SELECT 1 FROM staff WHERE id = ${member.id} FOR UPDATE`);
-      const slots = await listSlots(tx, { shopId: shop.id, serviceId: service.id, zoneId: input.zoneId, now: input.now, fromDay: localDay(input.startsAt, shop.timezone), days: 1 });
+      if (input.staffId) await staffFor(tx, shop.id, input.staffId);
+      // Everyone's row is locked in a fixed order, so two bookings (for anyone, or for the same person) queue.
+      await tx.execute(sql`SELECT 1 FROM staff WHERE shop_id = ${shop.id} AND active ORDER BY id FOR UPDATE`);
+      const slots = await listSlots(tx, { shopId: shop.id, serviceId: service.id, zoneId: input.zoneId, now: input.now, fromDay: localDay(input.startsAt, shop.timezone), days: 1, staffId: input.staffId });
       const slot = slots.find((s) => s.startsAt.getTime() === input.startsAt.getTime());
       if (!slot) return refuse("AK_SLOT_UNAVAILABLE");
       if (slot.seatsLeft < dependantIds.length) refuse("AK_CAPACITY_FULL");
       let appointmentId: string;
       if (slot.joins) {
         const found = await tx.execute(sql`
-          SELECT id FROM appointments WHERE staff_id = ${member.id} AND service_id = ${service.id} AND status <> 'cancelled'
+          SELECT id FROM appointments WHERE staff_id = ${slot.staffId} AND service_id = ${service.id} AND status <> 'cancelled'
              AND zone_id IS NOT DISTINCT FROM ${input.zoneId} AND lower(during) = ${slot.startsAt.toISOString()}::timestamptz`);
         appointmentId = (found.rows[0] as { id: string } | undefined)?.id ?? refuse("AK_SLOT_UNAVAILABLE");
       } else {
         const [row] = await tx
           .insert(appointments)
-          .values({ shopId: shop.id, staffId: member.id, serviceId: service.id, clientId: service.capacity === 1 ? client.id : null, zoneId: input.zoneId, during: `[${slot.startsAt.toISOString()},${slot.endsAt.toISOString()})` })
+          .values({ shopId: shop.id, staffId: slot.staffId, serviceId: service.id, clientId: service.capacity === 1 ? client.id : null, zoneId: input.zoneId, during: `[${slot.startsAt.toISOString()},${slot.endsAt.toISOString()})` })
           .returning({ id: appointments.id });
         appointmentId = row!.id;
       }
