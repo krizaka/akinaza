@@ -19,7 +19,7 @@ import { JourneyTour } from "@/components/JourneyTour";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { asLocale, getDictionary } from "@/lib/i18n";
-import { DEMO_SHOP, FIGURES, OUTCOMES, productStatus, TRUST } from "@/lib/landing";
+import { FIGURES, OUTCOMES, productStatus, TRUST } from "@/lib/landing";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { contactHref, pagePath, REPO_URL } from "@/lib/site";
 import { heroTake, MEDIA_CDN, TOUR, tourClip, tourStill } from "@/lib/tour";
