@@ -12,7 +12,7 @@ const body = z.object({
   clientId: z.string().uuid(),
   serviceId: z.string().uuid(),
   zoneId: z.string().uuid().nullable(),
-  dependantIds: z.array(z.string().uuid()).min(1).max(50),
+  dependantIds: z.array(z.string().uuid()).max(50),
   startsAt: z.string().datetime(),
   staffId: z.string().uuid().nullish(),
 });
