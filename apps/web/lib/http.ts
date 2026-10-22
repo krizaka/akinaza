@@ -1,4 +1,5 @@
 import { OrganizeError, ShopError } from "@akinaza/db";
+import { SettingsError } from "@krizaka/settings";
 import { z, ZodError } from "zod";
 
 /** An error the API answers with: a status, a stable code (the client translates it), a message for logs. */
@@ -44,6 +45,9 @@ async function dispatch(run: () => Promise<Response>, requestId: string): Promis
       return Response.json({ error: error.code, code: error.code.replace(/^AK_/, "") }, { status: SHOP_STATUS[error.code] ?? 400 });
     }
     if (error instanceof OrganizeError) {
+      return Response.json({ error: error.message, code: error.code }, { status: error.status });
+    }
+    if (error instanceof SettingsError) {
       return Response.json({ error: error.message, code: error.code }, { status: error.status });
     }
     if (error instanceof ZodError) {

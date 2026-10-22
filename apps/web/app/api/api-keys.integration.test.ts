@@ -3,7 +3,11 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { migrate, pool, query } from "@/lib/db";
 import { resetRateLimits } from "@/lib/rate-limit";
 import { createSession, SESSION_COOKIE } from "@/lib/session";
+import { resetAppSettings } from "@/lib/settings";
 
+import { DELETE as resetSetting, PUT as setSetting } from "./admin/settings/[key]/route";
+import { GET as settingsHistory } from "./admin/settings/history/route";
+import { GET as adminSettings } from "./admin/settings/route";
 import { POST as rotate } from "./me/api-keys/[id]/rotate/route";
 import { DELETE as revoke } from "./me/api-keys/[id]/route";
 import { GET as listKeys,POST as create } from "./me/api-keys/route";
@@ -34,7 +38,8 @@ describe.runIf(enabled)("API keys over HTTP", () => {
   };
   beforeAll(async () => {
     await migrate();
-    for (const label of ["owner", "other", "noshop"]) await make(label);
+    for (const label of ["owner", "other", "noshop", "admin"]) await make(label);
+    await query("UPDATE accounts SET role = 'ADMIN' WHERE email = $1", [`admin-${stamp}@akinaza.test`]);
     await call(saveShop, "POST", "/api/walker/shop", { cookie: sessions.owner, json: { name: "Atelier", legalName: "Atelier", address: "1 rue Test", slug: `atelier-${stamp}`, ownerName: "Éric" } });
     await call(saveShop, "POST", "/api/walker/shop", { cookie: sessions.other, json: { name: "Autre", legalName: "Autre", address: "2 rue Test", slug: `autre-${stamp}`, ownerName: "Zoé" } });
   });
@@ -86,5 +91,32 @@ describe.runIf(enabled)("API keys over HTTP", () => {
     let last = 0;
     for (let i = n; i <= 2; i++) last = (await call(create, "POST", "/api/me/api-keys", { cookie: sessions.owner, json: { name: `k${i}`, scopes: ["clients:read"], expiresInDays: 7 } })).status;
     expect(last).toBe(409);
+  });
+
+  it("an administrator's switches rule the API: the global switch, the plan's quota, the pace — every change audited, an owner cannot touch them", async () => {
+    const admin = sessions.admin;
+    const key = (await call(create, "POST", "/api/me/api-keys", { cookie: sessions.other, json: { name: "switch", scopes: ["clients:read"], expiresInDays: 7 } })).body.key as string;
+    expect((await call(clients, "GET", "/api/v1/clients", { bearer: key })).status).toBe(200);
+    expect((await call(adminSettings, "GET", "/api/admin/settings", { cookie: sessions.owner })).status).toBe(403);
+    expect((await call(setSetting, "PUT", "/x", { cookie: sessions.owner, params: { key: "features.apiKeys" }, json: { value: false } })).status).toBe(403);
+    const screen = (await call(adminSettings, "GET", "/api/admin/settings", { cookie: admin })).body;
+    expect(screen.settings.map((x: { key: string }) => x.key)).toContain("features.apiKeys");
+    expect(screen.values["features.apiKeys"]).toEqual({ value: true, source: "default" });
+    // switch off: creating and using are refused, said as FEATURE_OFF
+    expect((await call(setSetting, "PUT", "/x", { cookie: admin, params: { key: "features.apiKeys" }, json: { value: false } })).status).toBe(200);
+    resetAppSettings();
+    expect((await call(create, "POST", "/api/me/api-keys", { cookie: sessions.other, json: { name: "x", scopes: ["clients:read"], expiresInDays: 7 } })).body.code).toBe("FEATURE_OFF");
+    expect((await call(clients, "GET", "/api/v1/clients", { bearer: key })).status).toBe(403);
+    // back on; a plan without an API
+    expect((await call(resetSetting, "DELETE", "/x", { cookie: admin, params: { key: "features.apiKeys" }, json: {} })).status).toBe(200);
+    expect((await call(setSetting, "PUT", "/x", { cookie: admin, params: { key: "plans.free.apiKeys" }, json: { value: 0 } })).status).toBe(200);
+    resetAppSettings();
+    expect((await call(create, "POST", "/api/me/api-keys", { cookie: sessions.other, json: { name: "y", scopes: ["clients:read"], expiresInDays: 7 } })).body.code).toBe("API_PLAN");
+    expect((await call(setSetting, "PUT", "/x", { cookie: admin, params: { key: "plans.free.apiKeys" }, json: { value: 500 } })).body.code).toBe("BAD_VALUE");
+    await call(resetSetting, "DELETE", "/x", { cookie: admin, params: { key: "plans.free.apiKeys" }, json: {} });
+    resetAppSettings();
+    const history = (await call(settingsHistory, "GET", "/api/admin/settings/history?key=features.apiKeys", { cookie: admin })).body.history as { before: unknown; after: unknown; actorLabel: string }[];
+    expect(history.map((h) => [h.before, h.after])).toEqual([[false, null], [null, false]]);
+    expect(history[0]!.actorLabel).toBe(`admin-${stamp}@akinaza.test`);
   });
 });
