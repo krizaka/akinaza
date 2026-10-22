@@ -1,0 +1,7 @@
+Hello {client},
+
+It has been a while! {shop} has free times {days}.
+
+Book: {url}
+
+(You get this message because you agreed to hear from {shop}. To stop, reply to them or withdraw this consent in your client space.)

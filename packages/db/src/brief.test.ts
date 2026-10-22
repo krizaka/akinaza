@@ -2,7 +2,7 @@ import { shopBrief } from "@akinaza/core";
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { briefSnapshot } from "./brief";
+import { briefActionsOf, briefSnapshot, claimBriefAction, reachableClients, recordBriefResult } from "./brief";
 import { appointments, daysOff, schedules, shops } from "./schema";
 import { book, eraseClient, issueInvoice, recordConsent, recordExpense } from "./shop-ops";
 import { freshDatabase } from "./test/db";
@@ -65,5 +65,36 @@ describe("the Monday brief's snapshot (real PostgreSQL 16)", () => {
     // Erasure also withdraws the consents: nothing left to write to.
     await eraseClient(t.db, s.client.id, "2026-10-02");
     expect((await briefSnapshot(t.db, s.shop.id, AT, WINDOW)).clients).toEqual([{ id: s.client.id, contactable: false, marketing: false, erased: true }]);
+  });
+});
+
+describe("the brief's actions (real PostgreSQL 16, #200)", () => {
+  it("claims an action once: a button pressed twice never sends twice, and the result is kept for the week", async () => {
+    const s = await salon(t.db);
+    const id = "2026-W43:gaps:ahead";
+    expect(await claimBriefAction(t.db, s.shop.id, id, "invite")).toBe(true);
+    expect(await claimBriefAction(t.db, s.shop.id, id, "invite")).toBe(false);
+    await recordBriefResult(t.db, s.shop.id, id, { sent: 3, pending: 1, skipped: 2 });
+    expect(await briefActionsOf(t.db, s.shop.id, "2026-W43")).toEqual({ [id]: { sent: 3, pending: 1, skipped: 2 } });
+    expect(await briefActionsOf(t.db, s.shop.id, "2026-W44")).toEqual({});
+  });
+
+  it("refuses an id that is not a brief's", async () => {
+    const s = await salon(t.db);
+    await expect(claimBriefAction(t.db, s.shop.id, "anything; drop", "invite")).rejects.toThrow();
+  });
+
+  it("reads the invitees again at send time: consent withdrawn since the brief, another shop's client, an erased one are skipped", async () => {
+    const s = await salon(t.db);
+    const other = await salon(t.db);
+    await recordConsent(t.db, s.client.id, "marketing", true, "2026-10-01");
+    await recordConsent(t.db, other.client.id, "marketing", true, "2026-10-01");
+    expect((await reachableClients(t.db, s.shop.id, [s.client.id, other.client.id])).map((c) => c.id)).toEqual([s.client.id]);
+    await recordConsent(t.db, s.client.id, "marketing", false, "2026-10-20");
+    expect(await reachableClients(t.db, s.shop.id, [s.client.id])).toEqual([]);
+    await recordConsent(t.db, s.client.id, "marketing", true, "2026-10-21");
+    expect(await reachableClients(t.db, s.shop.id, [s.client.id])).toEqual([{ id: s.client.id, fullName: "Camille Tremblay", email: "camille@example.test", language: "fr" }]);
+    await eraseClient(t.db, s.client.id, "2026-10-22");
+    expect(await reachableClients(t.db, s.shop.id, [s.client.id])).toEqual([]);
   });
 });

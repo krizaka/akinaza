@@ -156,6 +156,15 @@ export const shopFormerSlugs = pgTable("shop_former_slugs", {
   retiredAt: timestamp("retired_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** What the owner did with a recommendation of the Monday brief: once per recommendation, its result kept (0022). */
+export const briefActions = pgTable("brief_actions", {
+  shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+  recommendationId: text("recommendation_id").notNull(),
+  kind: text("kind", { enum: ["invite", "price", "taxes"] }).notNull(),
+  result: jsonb("result").$type<Record<string, number>>().notNull().default({}),
+  doneAt: timestamp("done_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 export const shopZones = pgTable(
   "shop_zones",
   {

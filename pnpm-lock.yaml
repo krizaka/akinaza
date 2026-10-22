@@ -41,6 +41,9 @@ importers:
       '@krizaka/auth':
         specifier: 0.3.0
         version: 0.3.0
+      '@krizaka/brief':
+        specifier: 0.1.0
+        version: 0.1.0
       '@krizaka/fonts':
         specifier: 0.3.0
         version: 0.3.0

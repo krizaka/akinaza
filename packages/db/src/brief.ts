@@ -76,3 +76,42 @@ export async function briefSnapshot(db: Db, shopId: string, at: { week: string; 
     },
   };
 }
+
+/** Claims a recommendation's action for the shop: true the first time, false when it was already done (idempotent). */
+export async function claimBriefAction(db: Db, shopId: string, recommendationId: string, kind: "invite" | "price" | "taxes"): Promise<boolean> {
+  const done = await rows<{ shop_id: string }>(
+    db,
+    sql`INSERT INTO brief_actions (shop_id, recommendation_id, kind) VALUES (${shopId}, ${recommendationId}, ${kind}) ON CONFLICT DO NOTHING RETURNING shop_id`,
+  );
+  return done.length === 1;
+}
+
+/** Records what an action did (how many invitations went out, were kept waiting, were skipped). */
+export async function recordBriefResult(db: Db, shopId: string, recommendationId: string, result: Record<string, number>): Promise<void> {
+  await db.execute(sql`UPDATE brief_actions SET result = ${JSON.stringify(result)}::jsonb WHERE shop_id = ${shopId} AND recommendation_id = ${recommendationId}`);
+}
+
+/** The actions taken on one week's brief, by recommendation id. */
+export async function briefActionsOf(db: Db, shopId: string, week: string): Promise<Record<string, Record<string, number>>> {
+  const done = await rows<{ recommendation_id: string; result: Record<string, number> }>(
+    db,
+    sql`SELECT recommendation_id, result FROM brief_actions WHERE shop_id = ${shopId} AND recommendation_id LIKE ${`${week}:%`}`,
+  );
+  return Object.fromEntries(done.map((d) => [d.recommendation_id, d.result]));
+}
+
+/**
+ * The clients an invitation may go to, read again at send time: of the shop, not erased, an e-mail on file, the latest
+ * marketing consent granted (Loi 25, CASL). Whoever is not here is skipped, never written to.
+ */
+export async function reachableClients(db: Db, shopId: string, clientIds: readonly string[]): Promise<{ id: string; fullName: string; email: string; language: "fr" | "en" }[]> {
+  if (clientIds.length === 0) return [];
+  return rows(
+    db,
+    sql`SELECT c.id, c.full_name AS "fullName", c.email, c.language FROM clients c
+         WHERE c.shop_id = ${shopId} AND c.erased_at IS NULL AND c.email IS NOT NULL
+           AND c.id IN (${sql.join(clientIds.map((id) => sql`${id}::uuid`), sql`, `)})
+           AND COALESCE((SELECT k.granted FROM client_consents k WHERE k.client_id = c.id AND k.purpose = 'marketing' ORDER BY k.at DESC, k.id DESC LIMIT 1), false)
+         ORDER BY c.id`,
+  );
+}

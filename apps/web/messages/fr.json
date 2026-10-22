@@ -338,7 +338,10 @@
       "UPLOAD_TOO_LARGE": "Cette photo est trop lourde.",
       "UPLOAD_NOT_IMAGE": "Utilisez une photo JPEG, PNG ou WebP.",
       "ALREADY_BOOKED": "Ce chien a déjà une place à cette promenade.",
-      "LINE_PRICE": "Une ligne libre doit avoir un prix."
+      "LINE_PRICE": "Une ligne libre doit avoir un prix.",
+      "BRIEF_UNKNOWN": "Cette recommandation a changé : rechargez la page.",
+      "BRIEF_DONE": "C'est déjà fait cette semaine.",
+      "SHOP_NOT_PUBLIC": "Publiez votre page pour inviter vos clients."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -1040,6 +1043,38 @@
         "role": "Rôle",
         "submit": "Envoyer l'invitation",
         "sent": "Invitation envoyée. Vous pouvez aussi transmettre ce lien :"
+      }
+    },
+    "brief": {
+      "title": "Le point du lundi",
+      "lead": "Ce qui compte cette semaine, calculé sur vos rendez-vous et vos factures.",
+      "empty": "Rien à signaler cette semaine. Le point revient lundi.",
+      "gaps": {
+        "title": "{slots} créneaux libres dans les 7 prochains jours",
+        "figure": "Manque à gagner",
+        "line": "{invitees} clients fidèles ne sont pas venus depuis {weeks} semaines et ont accepté vos nouvelles.",
+        "action": "Inviter ces {invitees} clients",
+        "done": "{sent} invitations en route.",
+        "notPublic": "Publiez votre page pour inviter vos clients.",
+        "doneSkipped": "{skipped} sans consentement à jour n'ont pas été contactés."
+      },
+      "pricing": {
+        "title": "{service} : {time} % du temps, {revenue} % des revenus",
+        "figure": "Par mois",
+        "line": "À {suggested} au lieu de {current}, ce service rejoint votre revenu moyen à l'heure.",
+        "action": "Ajuster le prix"
+      },
+      "taxes": {
+        "title": "À mettre de côté pour les taxes",
+        "figure": "TPS et TVQ à remettre",
+        "line": "Sur {invoiced} facturés la semaine dernière, après {credits} de crédits sur vos dépenses. Votre vrai disponible : {available}.",
+        "action": "Voir le détail"
+      },
+      "assumptions": {
+        "atAverageRate": "Estimé à votre revenu moyen par minute des 8 dernières semaines.",
+        "equalVolume": "À nombre de rendez-vous égal.",
+        "revenueNotMargin": "Revenu à l'heure, pas une marge : vos dépenses ne sont pas réparties par service.",
+        "preparedNotFiled": "Akinaza prépare les chiffres, vous produisez votre déclaration."
       }
     }
   }

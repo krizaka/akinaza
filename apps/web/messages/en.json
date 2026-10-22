@@ -338,7 +338,10 @@
       "UPLOAD_TOO_LARGE": "This photo is too large.",
       "UPLOAD_NOT_IMAGE": "Use a JPEG, PNG or WebP photo.",
       "ALREADY_BOOKED": "This dog already has a seat on that walk.",
-      "LINE_PRICE": "A free line needs a price."
+      "LINE_PRICE": "A free line needs a price.",
+      "BRIEF_UNKNOWN": "This recommendation changed: reload the page.",
+      "BRIEF_DONE": "Already done this week.",
+      "SHOP_NOT_PUBLIC": "Publish your page to invite your clients."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -1040,6 +1043,38 @@
         "role": "Role",
         "submit": "Send the invitation",
         "sent": "Invitation sent. You can also pass this link on:"
+      }
+    },
+    "brief": {
+      "title": "The Monday brief",
+      "lead": "What matters this week, worked out from your appointments and invoices.",
+      "empty": "Nothing to report this week. The brief is back on Monday.",
+      "gaps": {
+        "title": "{slots} free slots in the next 7 days",
+        "figure": "Missed revenue",
+        "line": "{invitees} regulars have not come for {weeks} weeks and agreed to hear from you.",
+        "action": "Invite these {invitees} clients",
+        "done": "{sent} invitations on their way.",
+        "notPublic": "Publish your page to invite your clients.",
+        "doneSkipped": "{skipped} without an up-to-date consent were not contacted."
+      },
+      "pricing": {
+        "title": "{service}: {time} % of the time, {revenue} % of the revenue",
+        "figure": "Per month",
+        "line": "At {suggested} instead of {current}, this service reaches your average revenue per hour.",
+        "action": "Adjust the price"
+      },
+      "taxes": {
+        "title": "To set aside for taxes",
+        "figure": "GST and QST to remit",
+        "line": "Out of {invoiced} invoiced last week, after {credits} of credits on your expenses. What is really yours: {available}.",
+        "action": "See the detail"
+      },
+      "assumptions": {
+        "atAverageRate": "Estimated at your average revenue per minute over the last 8 weeks.",
+        "equalVolume": "At the same number of appointments.",
+        "revenueNotMargin": "Revenue per hour, not a margin: your expenses are not split by service.",
+        "preparedNotFiled": "Akinaza prepares the figures, you file your return."
       }
     }
   }

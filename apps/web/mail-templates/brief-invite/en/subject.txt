@@ -1,0 +1,1 @@
+{shop} has room for you {days}
