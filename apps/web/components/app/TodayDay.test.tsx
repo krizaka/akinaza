@@ -36,6 +36,7 @@ const day: TodayDayProps = {
   today: "2026-10-22",
   nowIso: "2026-10-22T14:30:00.000Z",
   selectedId: null,
+  allow: { clients: true, revenue: true },
 };
 
 const render = (props: Partial<TodayDayProps> = {}, locale: "en" | "fr" = "en") =>
@@ -88,6 +89,12 @@ describe("the owner's day", () => {
       </I18nProvider>,
     );
     expect(html).toContain('href="/en/app?appointment=b"');
+  });
+
+  it("shows a staff member the agenda without the day's revenue", () => {
+    const text = render({ allow: { clients: false, revenue: false } });
+    expect(text).not.toContain("Expected revenue");
+    expect(text).toContain("Appointments 3");
   });
 
   it("speaks French with the French money", () => {

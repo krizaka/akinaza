@@ -1,13 +1,12 @@
-import { shopDay, shopOfOwner } from "@akinaza/db";
+import { shopDay } from "@akinaza/db";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
 import { InvoiceForm } from "@/components/app/InvoiceForm";
-import { pageSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { invoiceChoices } from "@/lib/invoice-choices";
+import { memberShop } from "@/lib/member-shop";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 /** A new invoice, on its own address (`/app/invoices/new`): the form, nothing else. It opens the issued invoice when done. */
 export default async function NewInvoice({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
-  const session = (await pageSession())!;
-  const shop = await shopOfOwner(db(), session.account.id);
-  if (!shop) notFound();
+  const { shop } = await memberShop("invoices");
   const t = getDictionary(locale).console.invoices;
   const [today, choices] = await Promise.all([shopDay(db(), shop.id, new Date()), invoiceChoices(shop.id)]);
   return (

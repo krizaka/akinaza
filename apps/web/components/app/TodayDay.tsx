@@ -43,13 +43,15 @@ export interface TodayDayProps {
   /** The server's clock, so the « now » line and the next client are the same on both sides of the page. */
   nowIso: string;
   selectedId: string | null;
+  /** What the role may see beside the agenda: the client's file, and what the day will bill. */
+  allow: { clients: boolean; revenue: boolean };
 }
 
 /**
  * The owner's day: a strip of days, three figures (appointments, what the day will bill, the next client) and the agenda
  * with its « now » line. The day (`?day=`) and the open appointment (`?appointment=`) are in the address.
  */
-export function TodayDay({ appointments, shop, day, today, nowIso, selectedId }: TodayDayProps) {
+export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, allow }: TodayDayProps) {
   const { say, locale } = useSay();
   const router = useRouter();
   const pathname = usePathname();
@@ -106,7 +108,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId }:
 
       <StatGrid>
         <Stat label={say("today.stats.appointments")} value={summary.count} />
-        <Stat label={say("today.stats.expected")} value={formatMoney(summary.expectedCents, locale)} hint={say(shop.registrant ? "today.stats.withTaxes" : "today.stats.noTaxes")} />
+        {allow.revenue ? <Stat label={say("today.stats.expected")} value={formatMoney(summary.expectedCents, locale)} hint={say(shop.registrant ? "today.stats.withTaxes" : "today.stats.noTaxes")} /> : null}
         <Stat
           label={say("today.stats.next")}
           value={summary.next?.client ?? (summary.next ? say("today.walkIn") : "—")}
@@ -147,7 +149,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId }:
             </Dialog.Body>
             <Dialog.Footer>
               <VisitAction appointment={open.appointment} />
-              {open.appointment.clientId ? (
+              {allow.clients && open.appointment.clientId ? (
                 <Button asChild variant="secondary">
                   <Link href={`/${locale}/app/clients/${open.appointment.clientId}`}>{say("today.detail.clientFile")}</Link>
                 </Button>

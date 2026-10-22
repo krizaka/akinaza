@@ -11,9 +11,9 @@ const read = (path: string) => readFileSync(join(ROOT, path), "utf8");
 const APP = "app/[locale]/(app)/app";
 
 describe("the owner's app keeps only what the job needs (krizaka/akinaza#161)", () => {
-  it("has six places in the bar: today, clients, invoices, books, the shop page, the profile; no connections", () => {
+  it("has the places of a shop in the bar (what each role sees is lib/app-nav); no connections", () => {
     const layout = read(`${APP}/layout.tsx`);
-    expect(layout).toContain('["today", "clients", "invoices", "books", "shop", "profile"]');
+    expect(layout).toContain("placesFor(member.role)");
     expect(layout).not.toContain("connections");
     expect(existsSync(join(ROOT, `${APP}/connections/page.tsx`))).toBe(false);
     expect(read("next.config.mjs")).toContain('source: "/:locale(en|fr)/app/connections"');
@@ -48,5 +48,10 @@ describe("the owner's app keeps only what the job needs (krizaka/akinaza#161)", 
   it("the period of the books and the day of the schedule live in the URL", () => {
     expect(read(`${APP}/books/page.tsx`)).toContain("?period=");
     expect(read(`${APP}/page.tsx`)).toContain("?day=");
+  });
+
+  it("the shop's pages ask the role table, never the owner: no page reads shopOfOwner", () => {
+    const pages = ["page.tsx", "layout.tsx", "clients/page.tsx", "clients/[id]/page.tsx", "invoices/page.tsx", "invoices/[id]/page.tsx", "invoices/new/page.tsx", "books/page.tsx", "shop/page.tsx", "profile/page.tsx", "team/page.tsx"];
+    for (const page of pages) expect(read(`${APP}/${page}`), page).not.toContain("shopOfOwner");
   });
 });

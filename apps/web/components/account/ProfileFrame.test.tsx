@@ -10,7 +10,7 @@ const html = (current: "profile" | "security", locale: "en" | "fr" = "fr") => re
 
 describe("the account frame", () => {
   it("names the owner's role « Propriétaire » in French", () => {
-    expect(fr.console.account.profile.roleOwner).toBe("Propriétaire");
+    expect(fr.console.account.profile.shopRoles.owner).toBe("Propriétaire");
   });
 
   it("gives each section its address and marks the current one", () => {

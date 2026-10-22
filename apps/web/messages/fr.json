@@ -105,7 +105,8 @@
       "book": "Réserver une promenade",
       "report": "Rapport de promenade",
       "books": "Vos livres",
-      "invoices": "Factures"
+      "invoices": "Factures",
+      "team": "Équipe"
     },
     "signIn": {
       "promise": "Votre boutique, pour moins cher — Loi 25 dès la conception.",
@@ -155,7 +156,9 @@
       "bookings": "Mes réservations",
       "clients": "Clients",
       "shop": "Ma page boutique",
-      "books": "Vos livres"
+      "books": "Vos livres",
+      "team": "Équipe",
+      "shopSwitcher": "Changer de boutique"
     },
     "admin": {
       "health": "Santé",
@@ -423,11 +426,15 @@
         "next": "Nouveau mot de passe",
         "submit": "Changer mon mot de passe",
         "saved": "Votre mot de passe est changé. Vos autres sessions ont pris fin.",
-        "roleOwner": "Propriétaire",
         "sectionsLabel": "Sections du compte",
         "sections": {
           "profile": "Profil",
           "security": "Sécurité"
+        },
+        "shopRoles": {
+          "owner": "Propriétaire",
+          "manager": "Gérant",
+          "staff": "Employé"
         }
       },
       "nav": {
@@ -998,6 +1005,42 @@
       "callShop": "Appeler le {phone}",
       "directions": "Adresse",
       "loading": "Chargement"
+    },
+    "team": {
+      "title": "Votre équipe",
+      "members": "Membres",
+      "invitations": "Invitations en attente",
+      "noInvitations": "Aucune invitation en attente.",
+      "you": "Vous",
+      "columns": {
+        "member": "Membre",
+        "role": "Rôle",
+        "since": "Depuis",
+        "actions": "Actions"
+      },
+      "roles": {
+        "owner": "Propriétaire",
+        "manager": "Gérant",
+        "staff": "Employé"
+      },
+      "roleHints": {
+        "owner": "Tout, la facturation et l'équipe comprises.",
+        "manager": "Réservations, clients, factures, livres et les employés.",
+        "staff": "Son propre agenda, l'arrivée et les notes d'accès de ses visites."
+      },
+      "changeRole": "Rôle de {name}",
+      "remove": "Retirer",
+      "removeConfirm": "Retirer de la boutique ?",
+      "revoke": "Annuler",
+      "revokeConfirm": "Annuler l'invitation ?",
+      "expires": "Valable jusqu'au {date}",
+      "invite": {
+        "title": "Inviter quelqu'un",
+        "email": "Adresse courriel",
+        "role": "Rôle",
+        "submit": "Envoyer l'invitation",
+        "sent": "Invitation envoyée. Vous pouvez aussi transmettre ce lien :"
+      }
     }
   }
 }

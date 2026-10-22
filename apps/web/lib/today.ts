@@ -1,11 +1,13 @@
 import type { TaxCategory } from "@akinaza/core";
 import { schema } from "@akinaza/db";
-import { and, asc, eq, ne, sql } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 
 import { type AppointmentStatus, isIsoDay } from "./day";
 import { db } from "./db";
 
-const { appointments, clients, services, shops, staff } = schema;
+const { appointments, clients, services, staff } = schema;
+
+const whoComes = sql<string | null>`COALESCE(${appointments.clientId}, (SELECT b.client_id FROM bookings b WHERE b.appointment_id = ${appointments.id} AND b.status = 'booked' ORDER BY b.created_at LIMIT 1))`;
 
 export interface TodayAppointment {
   id: string;
@@ -31,12 +33,12 @@ export interface TodayView {
 }
 
 /**
- * The shop's day, read on the server: the appointments of `requested` (the shop's today when absent or not a day) in the
- * shop's time zone. The account sees its own shop only.
+ * The shop's day, read on the server: the appointments of `options.day` (the shop's today when absent or not a day) in the
+ * shop's time zone. `staffAccountId` narrows it to the appointments of that person (a staff member sees their own agenda).
+ * The client of an appointment is read from the appointment or, for a booked visit, from its first booking.
  */
-export async function todayView(accountId: string, requested?: string): Promise<TodayView | null> {
-  const [shop] = await db().select().from(shops).where(eq(shops.ownerId, accountId)).orderBy(asc(shops.createdAt)).limit(1);
-  if (!shop) return null;
+export async function todayView(shop: { id: string; name: string; registrant: boolean; timezone: string }, options: { day?: string; staffAccountId?: string } = {}): Promise<TodayView> {
+  const requested = options.day;
   const [{ today } = { today: "" }] = (await db().execute(sql`SELECT to_char(now() AT TIME ZONE ${shop.timezone}, 'YYYY-MM-DD') AS today`)).rows as { today: string }[];
   const day = isIsoDay(requested) ? requested : today;
   const rows = await db()
@@ -44,8 +46,8 @@ export async function todayView(accountId: string, requested?: string): Promise<
     .from(appointments)
     .innerJoin(staff, eq(staff.id, appointments.staffId))
     .innerJoin(services, eq(services.id, appointments.serviceId))
-    .leftJoin(clients, eq(clients.id, appointments.clientId))
-    .where(and(eq(appointments.shopId, shop.id), ne(appointments.status, "cancelled"), sql`(lower(${appointments.during}) AT TIME ZONE ${shop.timezone})::date = ${day}::date`))
+    .leftJoin(clients, sql`${clients.id} = ${whoComes}`)
+    .where(and(eq(appointments.shopId, shop.id), options.staffAccountId ? eq(staff.accountId, options.staffAccountId) : undefined, ne(appointments.status, "cancelled"), sql`(lower(${appointments.during}) AT TIME ZONE ${shop.timezone})::date = ${day}::date`))
     .orderBy(sql`lower(${appointments.during})`);
   return {
     shop: { id: shop.id, name: shop.name, registrant: shop.registrant, timezone: shop.timezone },
