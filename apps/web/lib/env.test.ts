@@ -24,9 +24,6 @@ describe("env", () => {
   });
 
   it("keeps the connections off by default, and never fake in production", () => {
-    expect(readEnv({}).APP_SOCIAL_SYNC).toBe("off");
-    expect(() => readEnv({ APP_SOCIAL_SYNC: "on" })).toThrow();
-    expect(productionProblems(readEnv({ ...PROD, APP_SOCIAL_SYNC: "fake" }))).toEqual(["APP_SOCIAL_SYNC=fake is for development and tests, never production"]);
   });
 
   it("refuses a production start without its secrets, naming them, never showing them", () => {

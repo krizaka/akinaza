@@ -1,7 +1,6 @@
 # ADR-002 — Social and listings sync: Akinaza is the source of truth
 
-- Status: accepted (2026-10-17)
-- Research: [docs/integrations/social-sync.md](../integrations/social-sync.md)
+- Status: retired (2026-10-22, krizaka/akinaza#174). Accepted 2026-10-17; the screen went in #161, the routes, module and tables in #174. Resumes with #74 (Google / Meta access), from `git log` and the research note in the history.
 - Deciders: Akinaza integrations session; Oussama (the request)
 
 ## Context

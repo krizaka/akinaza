@@ -106,13 +106,6 @@ Feedback: the pinned Discussion of the repository.
   API do); a service chosen on the page needs the visitor to sign in before the booking, and comes back to it with the choice.
 - **Signal we are wrong**: visitors who open a shop page still tap « Book » without looking at the times; owners without photos.
 
-## Connections (ADR-002)
-
-- **Nothing changes without a choice.** An import is a proposal: each differing field shows Akinaza's value and the platform's side by side, with no choice pre-selected; « Apply my choices » is disabled until one is made. The choice is two plain radios (« Keep Akinaza's » / « Use Google's »), a vertical list so it never overflows a phone.
-- **Consent is a step, not a banner.** « Connect » opens the words of what will be read and written; the continue button stays disabled until the unticked box is ticked (Loi 25).
-- **Disconnect needs a second press** (ConfirmButton), and says what it does at the platform.
-- **Platforms without an API** (Apple Maps, Bing, Yelp) are honest cards with a link and Akinaza's values to paste, not greyed-out buttons.
-
 ## Invoices for a services business (krizaka-first-client)
 
 - **Decision**: « Invoices » sits in the shop's menu, between Clients and Your books. One form issues an invoice from the
