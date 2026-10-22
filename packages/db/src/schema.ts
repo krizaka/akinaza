@@ -123,6 +123,8 @@ export const shops = pgTable(
     /** What a seat of a group service is called (« chiens », « dogs »): « Up to 5 dogs ». Empty = « places ». */
     seatUnitFr: text("seat_unit_fr"),
     seatUnitEn: text("seat_unit_en"),
+    /** The shop the app opens on: exactly one per owner (the database keeps it, migration 0013). */
+    isDefault: boolean("is_default").notNull().default(false),
     createdAt: created(),
   },
   (t) => [
