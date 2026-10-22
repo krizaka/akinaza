@@ -2,7 +2,7 @@
   "meta": {
     "siteName": "Akinaza",
     "titleTemplate": "{title} — Akinaza",
-    "description": "L'OS bilingue conçu pour la Loi 25 et la Loi 96, pour les studios, salons et travailleurs autonomes du Québec : rendez-vous, factures TPS/TVQ au cent près, grand livre équilibré, rapport de taxes préparé pour Revenu Québec (jamais produit). Données au Canada."
+    "description": "Vos rendez-vous, vos factures et vos taxes, réglés. Akinaza s'adresse aux salons, studios et travailleurs autonomes du Québec : vos clients réservent, vous facturez, vos montants de TPS/TVQ sont prêts. En français et en anglais."
   },
   "chrome": {
     "brandHome": "Akinaza, accueil",
@@ -39,9 +39,9 @@
     "preferences": "Préférences"
   },
   "landing": {
-    "eyebrow": "Akinaza · pour les studios, salons et travailleurs autonomes du Québec",
-    "title": "L'OS bilingue conçu pour la Loi 25 et la Loi 96.",
-    "lead": "Prise de rendez-vous, factures TPS/TVQ exactes au cent près, grand livre équilibré et rapport de taxes préparé pour Revenu Québec : préparé, jamais produit.",
+    "eyebrow": "Pour les salons, studios et travailleurs autonomes du Québec",
+    "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
+    "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",
     "talk": "Parler d'Akinaza avec nous",
     "seeShop": "Voir la boutique de démo",
     "status": {
@@ -101,7 +101,7 @@
       },
       "taxes": {
         "title": "Recevoir votre déclaration de taxes préparée",
-        "text": "Chaque facture inscrit sa TPS et sa TVQ ; Akinaza présente les montants de votre déclaration, avec leurs sources. Vous la produisez.",
+        "text": "Chaque facture inscrit sa TPS et sa TVQ, et Akinaza présente les montants de votre déclaration avec leurs sources. Il prépare le rapport, jamais il ne le produit à votre place : c'est vous qui le produisez.",
         "cta": "Se connecter (sur invitation)"
       }
     },
@@ -145,7 +145,8 @@
         "text": "L'application, son code fiscal et les règles de sa base de données sont sur GitHub, sous licence Apache-2.0.",
         "cta": "Lire le code"
       },
-      "powered": "Son assistant fiscal tournera sur Orazaka (prévu, pas encore branché)."
+      "powered": "Son assistant fiscal tournera sur Orazaka (prévu, pas encore branché).",
+      "line": "Données au Canada · Conçu pour la Loi 25 et la Loi 96 · Français d'abord"
     },
     "closing": {
       "title": "Vous tenez un studio, un salon, ou vous travaillez à votre compte au Québec ?",
@@ -164,7 +165,7 @@
     "features": {
       "eyebrow": "Ce que vous pouvez faire",
       "title": "Moins d'administration, plus de clients",
-      "lead": "Trois résultats, vus sur la vraie application plus bas."
+      "lead": "Prise de rendez-vous, factures exactes au cent près, grand livre équilibré et rapport de taxes : trois résultats, vus sur la vraie application plus bas."
     },
     "tourIntro": "Chaque étape est captée sur la vraie application, sur un téléphone.",
     "books": {

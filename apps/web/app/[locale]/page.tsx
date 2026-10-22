@@ -69,9 +69,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                   {d.talk} <ForwardIcon size={16} strokeWidth={2.25} />
                 </a>
               </Button>
-              <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
-                <Link href={shop}>{d.seeShop}</Link>
-              </Button>
             </>
           }
           proofs={[
@@ -134,6 +131,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               ]}
             />
             <p className="mt-2 max-w-2xl text-sm text-fg-secondary">{d.status[status]}</p>
+            <p className="mt-4 text-sm text-fg-muted" data-testid="trust-line">{d.trust.line}</p>
           </Section>
 
           <FaqSection locale={locale} />
