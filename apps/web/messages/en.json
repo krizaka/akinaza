@@ -2,7 +2,7 @@
   "meta": {
     "siteName": "Akinaza",
     "titleTemplate": "{title} — Akinaza",
-    "description": "The bilingual OS designed for Québec's Loi 25 and Loi 96, for studios, salons and the self-employed: bookings, GST/QST invoices to the cent, a balanced ledger, a tax report prepared for Revenu Québec (never filed). Data in Canada."
+    "description": "Your appointments, invoices and taxes, sorted. Akinaza is for salons, studios and the self-employed in Québec: clients book, you invoice, your GST/QST figures are ready. In French and in English."
   },
   "chrome": {
     "brandHome": "Akinaza, home",
@@ -39,9 +39,9 @@
     "preferences": "Preferences"
   },
   "landing": {
-    "eyebrow": "Akinaza · for studios, salons and the self-employed in Québec",
-    "title": "The bilingual OS designed for Loi 25 and Loi 96.",
-    "lead": "Appointment booking, GST/QST invoices exact to the cent, a balanced ledger, and a tax report prepared for Revenu Québec: prepared, never filed.",
+    "eyebrow": "For salons, studios and the self-employed in Québec",
+    "title": "Your appointments, invoices and taxes, sorted.",
+    "lead": "Clients book, you invoice, your tax figures are ready. In French and in English.",
     "talk": "Talk to us about Akinaza",
     "seeShop": "See the demo shop",
     "status": {
@@ -101,7 +101,7 @@
       },
       "taxes": {
         "title": "Get your tax return prepared",
-        "text": "Every invoice posts its GST and QST; Akinaza lays out your return's figures, with their sources. You file it.",
+        "text": "Every invoice posts its GST and QST, and Akinaza lays out your return's figures with their sources. It prepares the report and stays out of the filing: you file it yourself.",
         "cta": "Sign in (by invitation)"
       }
     },
@@ -145,7 +145,8 @@
         "text": "The app, its tax code and its database rules are on GitHub under Apache-2.0.",
         "cta": "Read the code"
       },
-      "powered": "Its tax assistant will run on Orazaka (planned, not wired yet)."
+      "powered": "Its tax assistant will run on Orazaka (planned, not wired yet).",
+      "line": "Data in Canada · Designed for Loi 25 and Loi 96 · French first"
     },
     "closing": {
       "title": "You run a studio, a salon, or you work for yourself in Québec?",
@@ -164,7 +165,7 @@
     "features": {
       "eyebrow": "What you can do",
       "title": "Less admin, more clients",
-      "lead": "Three results, seen on the real app below."
+      "lead": "Appointment booking, invoices exact to the cent, a balanced ledger and a tax report: three results, seen on the real app below."
     },
     "tourIntro": "Every step is captured on the real app, on a phone.",
     "books": {

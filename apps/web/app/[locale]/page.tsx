@@ -21,7 +21,7 @@ import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { env } from "@/lib/env";
 import { asLocale, getDictionary } from "@/lib/i18n";
-import { DEMO_SHOP, FIGURES, OUTCOMES, productStatus, TRUST } from "@/lib/landing";
+import { FIGURES, OUTCOMES, productStatus, TRUST } from "@/lib/landing";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { contactHref, pagePath, REPO_URL } from "@/lib/site";
 import { heroTake, MEDIA_CDN, TOUR, tourClip, tourStill } from "@/lib/tour";
@@ -46,7 +46,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   const d = getDictionary(locale).landing;
   const status = productStatus(preview);
   const signIn = `/${locale}/sign-in`;
-  const shop = `/${locale}/s/${DEMO_SHOP}`;
   const trustHref = { canada: pagePath(locale, "privacy"), prepare: signIn, open: REPO_URL } as const;
   const steps = TOUR.steps.map((id) => ({ id, title: d.tour.steps[id].title, description: d.tour.steps[id].text, alt: d.tour.steps[id].alt, poster: tourStill(id, locale), video: tourClip(id, locale) }));
   // The storefront still is the page's LCP: open the CDN's connection now and fetch it at once (React hoists the link into <head>).
@@ -70,9 +69,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
                 <a href={contactHref("dev-akinaza-hero")}>
                   {d.talk} <ForwardIcon size={16} strokeWidth={2.25} />
                 </a>
-              </Button>
-              <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
-                <Link href={shop}>{d.seeShop}</Link>
               </Button>
             </>
           }
@@ -136,6 +132,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               ]}
             />
             <p className="mt-2 max-w-2xl text-sm text-fg-secondary">{d.status[status]}</p>
+            <p className="mt-4 text-sm text-fg-muted" data-testid="trust-line">{d.trust.line}</p>
           </Section>
 
           {env().APP_FOUNDER_OFFER_ENABLED && <FounderOffer locale={locale} />}

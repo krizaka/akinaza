@@ -187,21 +187,36 @@ describe("the responsive guard", () => {
 });
 
 describe("the positioning: the bilingual OS designed for Law 25 and Law 96, for studios, salons and the self-employed (services only)", () => {
-  const pages = (m: typeof en) => [m.meta.description, m.landing.eyebrow, m.landing.title, m.landing.lead, m.landing.trust.lead, m.landing.faq.items.who.a].join("\n");
+  const pages = (m: typeof en) => [m.meta.description, m.landing.eyebrow, m.landing.title, m.landing.lead, m.landing.trust.lead, m.landing.trust.line, m.landing.faq.items.who.a].join("\n");
 
   it("names the audience and the four things it does, in both languages", () => {
     expect(pages(en)).toMatch(/studios, salons/i);
     expect(pages(en)).toMatch(/self-employed/i);
-    expect(pages(fr)).toMatch(/studios, (aux )?salons/i);
+    expect(pages(fr)).toMatch(/(salons, studios|studios, (aux )?salons)/i);
     expect(pages(fr)).toMatch(/travailleurs autonomes/i);
-    for (const m of [en, fr]) expect(m.meta.description).toMatch(/Loi 25/);
-    for (const m of [en, fr]) expect(m.meta.description).toMatch(/Loi 96/);
+    for (const m of [en, fr]) expect(m.landing.trust.line).toMatch(/Loi 25/);
+    for (const m of [en, fr]) expect(m.landing.trust.line).toMatch(/Loi 96/);
+  });
+
+  it("the hero speaks to the customer's day: no law, no « prepared, never filed », a short title and lead", () => {
+    for (const m of [en, fr]) {
+      const hero = [m.landing.eyebrow, m.landing.title, m.landing.lead, m.meta.description].join("\n");
+      expect(hero).not.toMatch(/Loi 25|Loi 96|Law 25|Law 96|never filed|jamais (produit|déposé)|\bOS\b/i);
+      expect(m.landing.title.length).toBeLessThanOrEqual(60);
+      expect(m.landing.lead.length).toBeLessThanOrEqual(120);
+    }
+  });
+
+  it("« prepared, never filed » is said plainly in the taxes feature and the FAQ", () => {
+    expect(en.landing.outcomes.taxes.text).toMatch(/prepares the report/);
+    expect(fr.landing.outcomes.taxes.text).toMatch(/jamais il ne le produit/);
+    for (const m of [en, fr]) expect(m.landing.faq.items.filing.a.length).toBeGreaterThan(20);
   });
 
   it("claims « designed for », never « compliant » (until a lawyer has validated)", () => {
     const everything = JSON.stringify([en.meta, en.landing, fr.meta, fr.landing]) + llmsText();
     expect(everything).not.toMatch(/conforme|conformité|compliant|compliance|complies with|certified for/i);
-    expect(fr.meta.description).toMatch(/conçu pour la Loi 25 et la Loi 96/);
+    expect(fr.landing.trust.line).toMatch(/Conçu pour la Loi 25 et la Loi 96/);
   });
 
   it("excludes restaurants, cafés, bars and bakeries with on-site consumption, and llms.txt says so", () => {
