@@ -12,8 +12,8 @@ export type TourLocale = "en" | "fr";
 
 /** The three screens of the home, by language: a real capture of the app on a phone (`phone-<screen>-<locale>.<hash>.jpg`). */
 const SCREEN_STILLS = {
-  book: { fr: "ca4f250d6d", en: "fdf7ce2d25" },
-  invoice: { fr: "26e50e33ba", en: "85a5b56961" },
+  book: { fr: "74a4da2ca6", en: "1096afac8d" },
+  invoice: { fr: "f1dee48f69", en: "85a5b56961" },
   books: { fr: "8ac11dfc7f", en: "12f7de9f2b" },
 } as const;
 export type ScreenId = keyof typeof SCREEN_STILLS;
