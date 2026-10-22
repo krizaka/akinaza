@@ -298,7 +298,7 @@
       "LAST_ADMIN": "Le dernier administrateur garde son rôle.",
       "CONFIRM_MISMATCH": "Le courriel saisi ne correspond pas au compte.",
       "RETENTION_REQUIRED": "Ce compte possède un commerce dont les factures sont conservées six ans.",
-      "SLUG_TAKEN": "Cette adresse est déjà prise.",
+      "SLUG_TAKEN": "Cette adresse est déjà prise, ou c'était l'adresse d'une autre page.",
       "NOT_PUBLISHABLE": "Ajoutez au moins un service avant de publier la page.",
       "ZONE_EXISTS": "Cette zone est déjà dans la liste.",
       "WINDOW_OVERLAP": "Cette plage chevauche une autre plage du même jour.",
@@ -543,7 +543,7 @@
         "legalName": "Raison sociale",
         "address": "Adresse",
         "slug": "Adresse de la page",
-        "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. pattes-saint-henri",
+        "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. pattes-saint-henri Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
         "ownerName": "Votre prénom",
         "taglineFr": "Une ligne, en français",
         "taglineEn": "Une ligne, en anglais",
@@ -941,7 +941,7 @@
         },
         "shopSetup": {
           "page": {
-            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio",
+            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
             "areaHint": "Montréal — jamais l'adresse civique.",
             "seatUnitHint": "Pour un service de groupe : « Jusqu'à 5 personnes ». Vide : « places »."
           },

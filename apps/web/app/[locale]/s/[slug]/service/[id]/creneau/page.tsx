@@ -9,7 +9,7 @@ import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";
 import { asLocale, translator } from "@/lib/i18n";
 import { resolveChoice, timesStep } from "@/lib/journey";
-import { loadPublicShop } from "@/lib/shop-page";
+import { loadPublicShopOrMove, queryString } from "@/lib/shop-page";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -20,7 +20,7 @@ export default async function TimesPage({ params, searchParams }: { params: Prom
   const query = await searchParams;
   const locale = asLocale(raw);
   const t = translator(locale);
-  const page = await loadPublicShop(slug);
+  const page = await loadPublicShopOrMove(locale, slug, `/service/${id}/creneau${queryString(query)}`);
   if (!page || !page.services.some((s) => s.id === id)) notFound();
   const now = new Date();
   const choice = resolveChoice(page, { staff: searchValue(query.staff), zone: searchValue(query.zone) });

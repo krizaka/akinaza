@@ -6,7 +6,7 @@ import { Storefront } from "@/components/shop/Storefront";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { asLocale, getDictionary } from "@/lib/i18n";
-import { loadPublicShop } from "@/lib/shop-page";
+import { loadPublicShop, loadPublicShopOrMove } from "@/lib/shop-page";
 import { buildStorefront } from "@/lib/storefront";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function ShopPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale: raw, slug } = await params;
   const locale = asLocale(raw);
-  const page = await loadPublicShop(slug);
+  const page = await loadPublicShopOrMove(locale, slug);
   if (!page) notFound();
   const now = new Date();
   const view = buildStorefront({ page, locale, now });
