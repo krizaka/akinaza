@@ -4,6 +4,7 @@ import { subscriptionOf } from "./billing";
 import { query } from "./db";
 import { refuse } from "./http";
 import { limit } from "./rate-limit";
+import { appSettings, assertFeature } from "./settings";
 
 /** Akinaza's API-key rules — data. Keys are `akz_…`; each scope is read-only for now. */
 export const AKINAZA_API_KEY_RULES: ApiKeyRules = {
@@ -15,11 +16,6 @@ export const AKINAZA_API_KEY_RULES: ApiKeyRules = {
   lastUsedEveryMinutes: 5,
 };
 
-/** How many keys an owner may hold: the plan's data (a member of the paid offer holds more). */
-// @fixed: the plan's quota of keys, a product decision until an administrator can set it per plan
-export const KEYS_PER_PLAN = { free: 2, paid: 10 } as const;
-// @fixed: requests per minute for one key — the ceiling of an integration, not a business parameter
-const REQUESTS_PER_MINUTE = 120;
 
 export const apiKeys = (clock: Clock): ApiKeys => createApiKeys({ store: pgApiKeyStore(query), rules: AKINAZA_API_KEY_RULES, clock });
 
@@ -50,9 +46,18 @@ export async function keyAct<T>(run: () => Promise<T>): Promise<T> {
   }
 }
 
-/** How many keys this owner's plan lets them hold. */
+/** How many keys this owner's plan lets them hold (an administrator sets it per plan; 0 = the plan has no API). */
 export async function maxActiveKeys(accountId: string, now: Date): Promise<number> {
-  return (await subscriptionOf(query, accountId, now)).active ? KEYS_PER_PLAN.paid : KEYS_PER_PLAN.free;
+  const paid = (await subscriptionOf(query, accountId, now)).active;
+  return appSettings().get(paid ? "plans.paid.apiKeys" : "plans.free.apiKeys", { userId: accountId });
+}
+
+/** The owner may manage keys: the global switch is on, and the plan holds at least one. Returns the plan's quota. */
+export async function assertKeysAllowed(accountId: string, now: Date): Promise<number> {
+  await assertFeature("apiKeys", accountId);
+  const max = await maxActiveKeys(accountId, now);
+  if (max < 1) throw refuse(403, "API_PLAN", "Your plan does not include API keys");
+  return max;
 }
 
 /**
@@ -61,10 +66,13 @@ export async function maxActiveKeys(accountId: string, now: Date): Promise<numbe
  * costs a rate-limit hit on the caller's address, so guessing is slow.
  */
 export async function requireApiKey(req: Request, scope: string, clock: Clock): Promise<{ ownerId: string; keyId: string }> {
-  limit("api-key-auth", req, null, [REQUESTS_PER_MINUTE, 60]);
+  limit("api-key-auth", req, null, [120, 60]); // a refused key costs its address a hit: guessing is slow
   const result = await apiKeys(clock).authenticate(req.headers.get("authorization"), scope);
   if (!result.ok) throw keyRefusal(result.code);
   const { ownerId, id } = result.key;
-  limit("api-key", req, id, [REQUESTS_PER_MINUTE * 2, 60], [REQUESTS_PER_MINUTE, 60]);
+  await assertFeature("apiKeys", ownerId);
+  if ((await maxActiveKeys(ownerId, clock.now())) < 1) throw refuse(403, "API_PLAN", "Your plan does not include API keys");
+  const perMinute = await appSettings().get("limits.apiRequestsPerMinute", { userId: ownerId });
+  limit("api-key", req, id, [perMinute * 2, 60], [perMinute, 60]);
   return { ownerId, keyId: id };
 }
