@@ -86,13 +86,13 @@ describe("the landing is the product landing template of @krizaka/ui, at the Yom
     expect(productStatus({ criteria: { a: { evidence: null }, b: { na: "x" } } })).toBe("development");
   });
 
-  it("prepares the tax return and never files it, is not for restaurants and bars, and says Orazaka is planned until it is wired", () => {
+  it("prepares the tax return and never files it, is not for restaurants, cafés, bars and bakeries, and says Orazaka is planned until it is wired", () => {
     for (const m of [en, fr]) {
       const text = JSON.stringify(m.landing);
       expect(text).not.toMatch(/\b(we|on) (file|transmet)|files? (it|your return) for you|transmission électronique|transmet(tons)? à Revenu/i);
     }
-    expect(en.landing.trust.lead).toMatch(/restaurants and bars/);
-    expect(fr.landing.trust.lead).toMatch(/restaurants et (les )?bars/);
+    expect(en.landing.trust.lead).toMatch(/restaurants, cafés, bars and bakeries/);
+    expect(fr.landing.trust.lead).toMatch(/restaurants, cafés, bars et boulangeries/);
     const preview = JSON.parse(read("../../dev-preview.json")) as { criteria: Record<string, { evidence: string | null }> };
     if (preview.criteria["journey.ai-via-orazaka"]?.evidence === null) expect(en.landing.trust.powered).toMatch(/planned/i);
   });

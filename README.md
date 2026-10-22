@@ -7,7 +7,7 @@
 
 # Akinaza
 
-**Run your shop, for less.** The all-in-one for independent Québec shops — hair salons, bakeries, cafés, boutiques:
+**Run your shop, for less.** The all-in-one for independent Québec shops — hair and beauty salons, studios, consultants, freelancers:
 bookings, client files with Loi 25 consent, bilingual invoices with GST 5 % and QST 9.975 %, a tax ledger, and the
 GST/QST return **prepared** for the merchant to review and file.
 
@@ -30,7 +30,7 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
 - **Bookings** — services, staff, schedules; the database refuses a double booking (`EXCLUDE` on time ranges).
 - **Loi 25** — consent per purpose, append-only; erasure blanks personal data and keeps the invoices tax law requires.
 - **Accounts** — sign-in, "forgot password" with one-use 30-minute links (the answer is the same for every address), a password change that ends the other sessions, a profile with Krizaka's default picture; registration is built and closed by configuration (`AUTH_SIGNUP_ENABLED`).
-- **Not for restaurants and bars** — they must bill through a certified SRM (MEV); the point of sale is a stub behind
+- **Not for restaurants, cafés, bars and bakeries with on-site consumption** — they must use a sales recording system certified MEV-WEB by Revenu Québec; the point of sale is a stub behind
   `APP_POS_ENABLED` until that scope and a payment provider are decided. No payment provider is wired.
 
 ## Start

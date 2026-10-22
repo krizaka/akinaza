@@ -81,7 +81,7 @@ export const shops = pgTable(
     ownerId: uuid("owner_id").references(() => accounts.id, { onDelete: "set null" }),
     name: text("name").notNull(),
     legalName: text("legal_name").notNull(),
-    kind: text("kind", { enum: ["salon", "bakery", "cafe", "boutique", "services", "other"] }).notNull(),
+    kind: text("kind", { enum: ["salon", "boutique", "services", "other"] }).notNull(),
     /** The kind of business: it sets the words of the screens (« appointment » or « walk ») and whether a booking is made for a dog (krizaka/akinaza#117). */
     businessType: text("business_type", { enum: ["professional", "pets"] }).notNull().default("professional"),
     /** The terms new invoices are issued under, in days (0 = due on receipt): a buyer needs them from $500 (krizaka/akinaza#113). */
@@ -118,7 +118,7 @@ export const shops = pgTable(
     uniqueIndex("shops_slug").on(t.slug).where(sql`${t.slug} IS NOT NULL`),
     check("shops_slug_format", sql`${t.slug} IS NULL OR (${t.slug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$' AND length(${t.slug}) BETWEEN 3 AND 40)`),
     check("shops_published_has_slug", sql`NOT ${t.published} OR ${t.slug} IS NOT NULL`),
-    check("shops_kind", sql`${t.kind} IN ('salon','bakery','cafe','boutique','services','other')`),
+    check("shops_kind", sql`${t.kind} IN ('salon','boutique','services','other')`),
     check("shops_payment_terms", sql`${t.paymentTermsDays} BETWEEN 0 AND 365`),
     check("shops_business_type", sql`${t.businessType} IN ('professional','pets')`),
     check("shops_tax_numbers", sql`NOT ${t.registrant} OR (coalesce(${t.gstNumber}, '') ~ '^[0-9]{9}RT[0-9]{4}$' AND coalesce(${t.qstNumber}, '') ~ '^[0-9]{10}TQ[0-9]{4}$')`),

@@ -7,6 +7,7 @@ describe("business types", () => {
     expect([...BUSINESS_TYPES]).toEqual(["professional", "pets"]);
     expect(businessTypeSchema.safeParse("pets").success).toBe(true);
     expect(businessTypeSchema.safeParse("dogs").success).toBe(false);
+    for (const food of ["restaurant", "cafe", "bakery", "bar"]) expect(businessTypeSchema.safeParse(food).success).toBe(false);
   });
 
   it("a pet-care shop books for a dependant and reports on the visit; a studio does neither", () => {
