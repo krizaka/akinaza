@@ -44,7 +44,6 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   const d = getDictionary(locale).landing;
   const status = productStatus(preview);
   const signIn = `/${locale}/sign-in`;
-  const shop = `/${locale}/s/${DEMO_SHOP}`;
   const trustHref = { canada: pagePath(locale, "privacy"), prepare: signIn, open: REPO_URL } as const;
   const steps = TOUR.steps.map((id) => ({ id, title: d.tour.steps[id].title, description: d.tour.steps[id].text, alt: d.tour.steps[id].alt, poster: tourStill(id, locale), video: tourClip(id, locale) }));
   // The storefront still is the page's LCP: open the CDN's connection now and fetch it at once (React hoists the link into <head>).
