@@ -70,7 +70,7 @@ export function llmsText(): string {
   return `# ${en.meta.siteName}
 
 > ${en.meta.description}
-> A product of Krizaka (Montréal), in development: sign-up is closed. For independent Québec shops: bookings, client files with Loi 25 consent, bilingual invoices with GST and QST, a tax ledger, and the GST/QST return prepared for the merchant to review and file. Data in Canada.
+> A product of Krizaka (Montréal), in development: sign-up is closed. Designed for Loi 25 and Loi 96, for studios, salons and the self-employed in Québec: appointment booking, bilingual GST/QST invoices exact to the cent, a balanced ledger, and a tax report prepared for Revenu Québec, which the merchant reviews and files (Akinaza never files). Data in Canada. Not for restaurants, cafés, bars or bakeries with on-site consumption.
 
 ## Key pages
 

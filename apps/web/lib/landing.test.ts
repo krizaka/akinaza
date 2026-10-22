@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
+import { llmsText } from "./seo";
 import { COMPARE_ROWS, DEMO_SHOP, FAQ_IDS, FIGURES, HOME_SECTIONS, OUTCOMES, productStatus } from "./landing";
 import { heroTake, MEDIA_CDN, TOUR, tourClip, tourStill } from "./tour";
 
@@ -91,8 +92,8 @@ describe("the landing is the product landing template of @krizaka/ui, at the Yom
       const text = JSON.stringify(m.landing);
       expect(text).not.toMatch(/\b(we|on) (file|transmet)|files? (it|your return) for you|transmission électronique|transmet(tons)? à Revenu/i);
     }
-    expect(en.landing.trust.lead).toMatch(/restaurants, cafés, bars and bakeries/);
-    expect(fr.landing.trust.lead).toMatch(/restaurants, cafés, bars et boulangeries/);
+    expect(en.landing.trust.lead).toMatch(/restaurants, cafés, bars/);
+    expect(fr.landing.trust.lead).toMatch(/restaurants, cafés, bars/);
     const preview = JSON.parse(read("../../dev-preview.json")) as { criteria: Record<string, { evidence: string | null }> };
     if (preview.criteria["journey.ai-via-orazaka"]?.evidence === null) expect(en.landing.trust.powered).toMatch(/planned/i);
   });
@@ -182,5 +183,30 @@ describe("the responsive guard", () => {
     // The pipeline is the org's node-ci.yml; its `after-build` step runs this repository's script after the production build.
     expect(readFileSync(join(ROOT, "../../.github/workflows/ci.yml"), "utf8")).toContain("after-build: scripts/ci-after-build.sh");
     expect(readFileSync(join(ROOT, "../../scripts/ci-after-build.sh"), "utf8")).toContain("check:overflow");
+  });
+});
+
+describe("the positioning: the bilingual OS designed for Law 25 and Law 96, for studios, salons and the self-employed (services only)", () => {
+  const pages = (m: typeof en) => [m.meta.description, m.landing.eyebrow, m.landing.title, m.landing.lead, m.landing.trust.lead, m.landing.faq.items.who.a].join("\n");
+
+  it("names the audience and the four things it does, in both languages", () => {
+    expect(pages(en)).toMatch(/studios, salons/i);
+    expect(pages(en)).toMatch(/self-employed/i);
+    expect(pages(fr)).toMatch(/studios, (aux )?salons/i);
+    expect(pages(fr)).toMatch(/travailleurs autonomes/i);
+    for (const m of [en, fr]) expect(m.meta.description).toMatch(/Loi 25/);
+    for (const m of [en, fr]) expect(m.meta.description).toMatch(/Loi 96/);
+  });
+
+  it("claims « designed for », never « compliant » (until a lawyer has validated)", () => {
+    const everything = JSON.stringify([en.meta, en.landing, fr.meta, fr.landing]) + llmsText();
+    expect(everything).not.toMatch(/conforme|conformité|compliant|compliance|complies with|certified for/i);
+    expect(fr.meta.description).toMatch(/conçu pour la Loi 25 et la Loi 96/);
+  });
+
+  it("excludes restaurants, cafés, bars and bakeries with on-site consumption, and llms.txt says so", () => {
+    expect(llmsText()).toMatch(/restaurants, cafés, bars/i);
+    expect(en.landing.trust.lead).toMatch(/cafés/);
+    expect(fr.landing.trust.lead).toMatch(/cafés/);
   });
 });
