@@ -1,7 +1,8 @@
 import { requireOwner } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { handle, refuse } from "@/lib/http";
-import { detectImage, MAX_UPLOAD_BYTES, mediaSettings, storeImage } from "@/lib/media-upload";
+import { detectImage, MAX_UPLOAD_BYTES, MEDIA_PURPOSES, type MediaPurpose, mediaSettings, PURPOSE_FEATURE, storeImage } from "@/lib/media-upload";
+import { appSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -15,13 +16,18 @@ export function POST(req: Request) {
     const settings = mediaSettings();
     if (!settings) throw refuse(503, "UPLOAD_UNAVAILABLE", "media storage is not configured");
     if (Number(req.headers.get("content-length") ?? 0) > MAX_UPLOAD_BYTES + 4096) throw refuse(413, "UPLOAD_TOO_LARGE", "file too large");
-    const file = (await req.formData().catch(() => null))?.get("file");
+    const form = await req.formData().catch(() => null);
+    const file = form?.get("file");
     if (!(file instanceof File)) throw refuse(400, "BAD_REQUEST", "no file");
+    const purpose = form?.get("purpose") ?? "gallery";
+    if (typeof purpose !== "string" || !MEDIA_PURPOSES.includes(purpose as (typeof MEDIA_PURPOSES)[number])) throw refuse(400, "BAD_REQUEST", "invalid media purpose");
+    const feature = (PURPOSE_FEATURE as Partial<Record<MediaPurpose, "features.shopWall" | "features.shopReels" | "features.shopAnnouncements">>)[purpose as MediaPurpose];
+    if (feature && !(await appSettings().get(feature, { userId: null }))) throw refuse(403, "FEATURE_OFF", "This feature is switched off", { feature });
     if (file.size > MAX_UPLOAD_BYTES) throw refuse(413, "UPLOAD_TOO_LARGE", "file too large");
     const bytes = new Uint8Array(await file.arrayBuffer());
     if (!detectImage(bytes)) throw refuse(400, "UPLOAD_NOT_IMAGE", "not a JPEG, PNG or WebP image");
-    const url = await storeImage(settings, shop.id, bytes);
-    await audit({ action: "shop.media_uploaded", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { bytes: bytes.length }, headers: req.headers });
+    const url = await storeImage(settings, shop.id, bytes, fetch, purpose as (typeof MEDIA_PURPOSES)[number]);
+    await audit({ action: "shop.media_uploaded", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { bytes: bytes.length, purpose }, headers: req.headers });
     return Response.json({ url });
   });
 }

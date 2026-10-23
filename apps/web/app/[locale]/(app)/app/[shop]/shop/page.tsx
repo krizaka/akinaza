@@ -1,4 +1,4 @@
-import { loadShop, shopMediaOf } from "@akinaza/db";
+import { defaultShopPageConfig, loadShop, shopMediaOf, shopPageConfigOf } from "@akinaza/db";
 import type { Metadata } from "next";
 
 import { type SetupData, ShopSetupView } from "@/components/app/ShopSetup";
@@ -21,10 +21,12 @@ export default async function ShopSetupPage({ params }: { params: Promise<{ loca
   const locale = asLocale(rawLocale);
   const { shop } = await memberShop(shopId, "settings");
   const base = readEnv().APP_PUBLIC_URL;
-  if (!shop) return <ShopSetupView data={{ page: null, publicUrl: null, zones: [], services: [], windows: [], daysOff: [], rules: null, media: { cover: null, gallery: [] } }} />;
+  if (!shop) return <ShopSetupView data={{ page: null, shopId: null, pageConfig: defaultShopPageConfig(), publicUrl: null, zones: [], services: [], windows: [], daysOff: [], rules: null, media: { cover: null, gallery: [] } }} />;
   const setup = await loadShop(db(), shop);
-  const media = await shopMediaOf(db(), shop.id);
+  const [media, pageConfig] = await Promise.all([shopMediaOf(db(), shop.id), shopPageConfigOf(db(), shop.id)]);
   const data: SetupData = {
+    shopId: shop.id,
+    pageConfig,
     page: { name: shop.name, legalName: shop.legalName, address: shop.address, slug: shop.slug ?? "", ownerName: setup.staff.name, taglineFr: shop.taglineFr ?? "", taglineEn: shop.taglineEn ?? "", published: shop.published, area: shop.area ?? "", bioFr: shop.bioFr ?? "", bioEn: shop.bioEn ?? "", publicPhone: shop.publicPhone ?? "", publicEmail: shop.publicEmail ?? "", seatUnitFr: shop.seatUnitFr ?? "", seatUnitEn: shop.seatUnitEn ?? "", businessType: shop.businessType },
     publicUrl: shop.slug ? `${base}/${locale}/s/${shop.slug}` : null,
     zones: setup.zones.map((z) => ({ id: z.id, name: z.name })),

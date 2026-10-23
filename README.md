@@ -43,6 +43,14 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
 - **Not for restaurants, cafés, bars and bakeries with on-site consumption** — they must use a sales recording system certified MEV-WEB by Revenu Québec; the point of sale is a stub behind
   `APP_POS_ENABLED` until that scope and a payment provider are decided. No payment provider is wired.
 
+## The shop page
+
+Owners can reorder and show or hide the page's sections, and upload a logo. The per-shop `shop_page` record stores that
+configuration; shops without a record keep the existing layout. Administrator feature switches always override owner
+choices for upcoming wall, reels, reviews, follow and announcements sections. Photos are checked by their bytes and
+stored under content-hashed Bunny paths (`brand/`, `gallery/`, and future media-purpose directories); uploads stay off
+until media storage is configured.
+
 ## Start
 
 ```bash

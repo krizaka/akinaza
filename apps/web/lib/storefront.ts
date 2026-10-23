@@ -62,6 +62,9 @@ export interface StorefrontView {
   about: { name: string; text: string } | null;
   contact: { phone: string | null; phoneHref: string | null; email: string | null } | null;
   gallery: { id: string; src: string; alt: string; caption?: string; shape: "portrait" | "wide"; video?: { webm?: string; mp4?: string } }[];
+  logoUrl: string | null;
+  sections: { id: "services" | "team" | "hours" | "zones" | "gallery" | "wall" | "reels" | "announcements" | "reviews" | "follow"; visible: boolean }[];
+  preparedSections: Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>;
 }
 
 export interface Selection {
@@ -129,7 +132,7 @@ function memberView(member: { id: string; name: string }, day: MemberDay | undef
   return { id: member.id, name: member.name, state: label, free: state.kind === MEMBER_STATE.free };
 }
 
-export function buildStorefront(input: { page: PublicShop; locale: Locale; now: Date; teamDay?: ReadonlyMap<string, MemberDay> }): StorefrontView {
+export function buildStorefront(input: { page: PublicShop; locale: Locale; now: Date; teamDay?: ReadonlyMap<string, MemberDay>; enabledUpcomingSections?: Partial<Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>> }): StorefrontView {
   const { page, locale, now } = input;
   const t = translator(locale);
   const timezone = page.shop.timezone;
@@ -192,6 +195,9 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; now: 
   const bio = pick(page.shop.bioFr, page.shop.bioEn);
   const phone = page.shop.publicPhone;
   const email = page.shop.publicEmail;
+  const pageSections = page.pageConfig?.sections ?? ["services", "team", "hours", "zones", "gallery", "wall", "reels", "announcements", "reviews", "follow"].map((id) => ({ id, visible: true }));
+  const enabled = input.enabledUpcomingSections ?? {};
+  const preparedSections = { wall: enabled.wall ?? false, reels: enabled.reels ?? false, announcements: enabled.announcements ?? false, reviews: enabled.reviews ?? false, follow: enabled.follow ?? false };
 
   return {
     name: page.shop.name,
@@ -209,5 +215,11 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; now: 
     about: bio ? { name: page.shop.ownerName, text: bio } : null,
     contact: phone || email ? { phone: phone || null, phoneHref: phone ? telHref(phone) : null, email: email || null } : null,
     gallery: page.media.gallery.map((m) => ({ id: m.id, ...mediaView(m, locale), ...(pick(m.captionFr, m.captionEn) ? { caption: pick(m.captionFr, m.captionEn)! } : {}), shape: m.wide ? ("wide" as const) : ("portrait" as const) })),
+    logoUrl: page.pageConfig?.logoUrl ?? null,
+    sections: pageSections.map((section) => ({
+      ...section,
+      visible: section.visible && (section.id in preparedSections ? preparedSections[section.id as keyof typeof preparedSections] : true),
+    })) as StorefrontView["sections"],
+    preparedSections,
   };
 }

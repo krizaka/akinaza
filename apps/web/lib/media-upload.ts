@@ -15,6 +15,29 @@ export interface MediaSettings {
   cdn: string;
 }
 
+export const MEDIA_PURPOSES = ["brand", "wall", "reels", "cards", "announcements", "gallery"] as const;
+export type MediaPurpose = (typeof MEDIA_PURPOSES)[number];
+
+const purposeDirectory: Record<MediaPurpose, string> = {
+  brand: "brand",
+  wall: "wall",
+  reels: "reels",
+  cards: "cards",
+  announcements: "announcements",
+  gallery: "gallery",
+};
+
+/** The purposes an administrator can switch off (`features.shop*`): the server refuses an upload for what is off, whatever the browser shows. */
+export const PURPOSE_FEATURE = {
+  wall: "features.shopWall",
+  reels: "features.shopReels",
+  announcements: "features.shopAnnouncements",
+} as const satisfies Partial<Record<MediaPurpose, `features.${string}`>>;
+
+export function mediaPrefix(shopId: string, purpose: MediaPurpose): string {
+  return `user/akinaza/shops/${shopId}/${purposeDirectory[purpose]}/`;
+}
+
 export function mediaSettings(source: Record<string, string | undefined> = process.env): MediaSettings | null {
   const apiKey = source.MEDIA_STORAGE_API_KEY?.trim();
   const zone = source.MEDIA_STORAGE_ZONE?.trim();
@@ -33,15 +56,15 @@ export function detectImage(bytes: Uint8Array): { ext: "jpg" | "png" | "webp"; m
   return null;
 }
 
-export function uploadKey(shopId: string, bytes: Uint8Array, ext: string): string {
-  return `user/akinaza/shops/${shopId}/${createHash("sha256").update(bytes).digest("hex").slice(0, 16)}.${ext}`;
+export function uploadKey(shopId: string, bytes: Uint8Array, ext: string, purpose: MediaPurpose = "gallery"): string {
+  return `${mediaPrefix(shopId, purpose)}${createHash("sha256").update(bytes).digest("hex").slice(0, 16)}.${ext}`;
 }
 
 /** Sends the image to the storage zone and returns its CDN address. The access key never leaves this function. */
-export async function storeImage(settings: MediaSettings, shopId: string, bytes: Uint8Array, fetchImpl: typeof fetch = fetch): Promise<string> {
+export async function storeImage(settings: MediaSettings, shopId: string, bytes: Uint8Array, fetchImpl: typeof fetch = fetch, purpose: MediaPurpose = "gallery"): Promise<string> {
   const kind = detectImage(bytes);
   if (!kind) throw new Error("not an image");
-  const key = uploadKey(shopId, bytes, kind.ext);
+  const key = uploadKey(shopId, bytes, kind.ext, purpose);
   const response = await fetchImpl(`https://${settings.endpoint}/${settings.zone}/${key}`, { method: "PUT", headers: { AccessKey: settings.apiKey, "content-type": kind.mime }, body: bytes as unknown as BodyInit });
   if (!response.ok) throw new Error(`media storage refused (${response.status})`);
   return `https://${settings.cdn}/${key}`;
