@@ -178,3 +178,15 @@ Feedback: the pinned Discussion of the repository.
   invoice preview on Today (invoices have their own page); a full-width action button on every row.
 - **Cost**: no week view yet; « expected revenue » counts booked and done appointments at their service's price.
 - **Signal we are wrong**: owners who open Invoices to know what the day brings, or ask for a week.
+
+## Invoice quick access on Today (krizaka/akinaza#218)
+
+- **Decision**: below the day, members allowed to invoice see a compact card with the three latest invoices, their totals
+  and states, and the count of overdue invoices across the shop. Each opens its document; « All invoices » opens the list.
+  An empty shop sees no card. The same card serves the agenda and the walker's day.
+- **Problem**: checking the latest invoices and late payments required leaving Today.
+- **Principle**: recognition over recall and visibility of system status (Nielsen): the list's payment states use the shop's
+  current calendar day, even when the agenda is showing another day.
+- **Refused**: duplicating search, filters or payment actions on Today; showing financial data to staff without invoice access.
+- **Cost**: older invoices require opening the list; the overdue count includes invoices outside the three shown.
+- **Signal we are wrong**: members mistake the latest three for all overdue invoices.

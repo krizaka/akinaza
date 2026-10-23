@@ -1,10 +1,11 @@
 // @template: app-dashboard
-import { visitMinutes, vocabularyOf } from "@akinaza/core";
-import { dayVisits, offOn, shopDay, type ShopRole } from "@akinaza/db";
+import { localDay, visitMinutes, vocabularyOf } from "@akinaza/core";
+import { dayVisits, listInvoices, offOn, shopDay, type ShopRole } from "@akinaza/db";
 import type { Metadata } from "next";
 
 import { MondayBrief } from "@/components/app/MondayBrief";
 import { TodayDay } from "@/components/app/TodayDay";
+import { TodayInvoices } from "@/components/app/TodayInvoices";
 import { WalkerDay } from "@/components/app/WalkerDay";
 import { loadShopBrief } from "@/lib/brief";
 import { db } from "@/lib/db";
@@ -33,12 +34,14 @@ export default async function Today({ params, searchParams }: { params: Promise<
   const { session, shop, role } = await memberShop(shopId, "agenda");
   const query = await searchParams;
   const day = vocabularyOf(shop.businessType).dependants ? <ServiceDay locale={locale} shop={shop} day={query.day} /> : <ShopToday locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} />;
+  const allowInvoices = may(role, "invoices");
+  const invoices = allowInvoices ? await listInvoices(db(), shop.id) : [];
   // The Monday brief, for whoever runs the shop (owner, manager): the money and the clients are theirs to see.
-  if (!may(role, "reports")) return day;
   return (
     <div className="flex flex-col gap-6">
-      <Brief shop={shop} />
+      {may(role, "reports") ? <Brief shop={shop} /> : null}
       {day}
+      {allowInvoices ? <TodayInvoices invoices={invoices} locale={locale} shopId={shop.id} today={localDay(new Date(), shop.timezone)} /> : null}
     </div>
   );
 }

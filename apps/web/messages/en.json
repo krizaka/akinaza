@@ -355,6 +355,10 @@
     "today": {
       "noShopTitle": "No shop yet",
       "noShop": "Shops are set up by our team while Akinaza is in development.",
+      "invoices": {
+        "title": "Latest invoices",
+        "overdue": "Overdue invoices: {count}"
+      },
       "dayStrip": "Day",
       "earlier": "Earlier days",
       "later": "Later days",
