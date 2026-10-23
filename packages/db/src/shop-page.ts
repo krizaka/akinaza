@@ -1,8 +1,9 @@
-import { SHOP_TYPES } from "@akinaza/core";
+import { SHOP_TYPES, TEMPLATES, type Template } from "@akinaza/core";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { Db } from "./client";
+import { ShopError } from "./errors";
 import { shopPage } from "./schema";
 
 export const SHOP_PAGE_SECTIONS = ["services", "team", "hours", "zones", "gallery", "wall", "reels", "announcements", "reviews", "follow"] as const;
@@ -27,27 +28,68 @@ export const shopPageConfigSchema = z.object({
   shopType: z.enum(SHOP_TYPES).nullable().optional(),
   /** Whether the page shows the proposed images where the owner has none. Omitted on a save = unchanged. */
   useDefaults: z.boolean().optional(),
+  /** Read-only here: the template the owner applied (changed only by `applyTemplate`) and whether the owner has customised the sections. A save ignores them. */
+  templateId: z.string().nullable().optional(),
+  templateVersion: z.number().int().nullable().optional(),
+  sectionsCustom: z.boolean().optional(),
 });
 export type ShopPageConfig = z.infer<typeof shopPageConfigSchema>;
 
 export function defaultShopPageConfig(): ShopPageConfig {
-  return { sections: DEFAULT_SHOP_PAGE_SECTIONS.map((section) => ({ ...section })), logoUrl: null, shopType: null, useDefaults: true };
+  return { sections: DEFAULT_SHOP_PAGE_SECTIONS.map((section) => ({ ...section })), logoUrl: null, shopType: null, useDefaults: true, templateId: null, templateVersion: null, sectionsCustom: false };
 }
 
 export async function shopPageConfigOf(db: Db, shopId: string): Promise<ShopPageConfig> {
   const [row] = await db.select().from(shopPage).where(eq(shopPage.shopId, shopId));
-  return row ? shopPageConfigSchema.parse({ sections: row.sections, logoUrl: row.logoUrl, shopType: row.shopType, useDefaults: row.useDefaults }) : defaultShopPageConfig();
+  return row ? shopPageConfigSchema.parse({ sections: row.sections, logoUrl: row.logoUrl, shopType: row.shopType, useDefaults: row.useDefaults, templateId: row.templateId, templateVersion: row.templateVersion, sectionsCustom: row.sectionsCustom }) : defaultShopPageConfig();
 }
 
-/** What a save may carry: any part of the configuration. What it does not name stays as it was (the look card and the images card each save their own part). */
-export const shopPageSaveSchema = shopPageConfigSchema.partial();
+/** What a save may carry: any part of the configuration but the template and the custom flag (`applyTemplate` owns them; sent anyway, they are dropped). What it does not name stays as it was (the look card and the images card each save their own part). */
+export const shopPageSaveSchema = shopPageConfigSchema.omit({ templateId: true, templateVersion: true, sectionsCustom: true }).partial();
 export type ShopPageSave = z.infer<typeof shopPageSaveSchema>;
+
+const sameSections = (a: readonly { id: string; visible: boolean }[], b: readonly { id: string; visible: boolean }[]) => a.length === b.length && a.every((x, i) => x.id === b[i]!.id && x.visible === b[i]!.visible);
 
 export async function saveShopPageConfig(db: Db, shopId: string, input: unknown): Promise<void> {
   const named = Object.fromEntries(Object.entries(shopPageSaveSchema.parse(input)).filter(([, value]) => value !== undefined)) as ShopPageSave;
   const fresh = defaultShopPageConfig();
-  await db.insert(shopPage).values({ shopId, ...fresh, ...named }).onConflictDoUpdate({
+  // The owner's own order or visibility, once changed by hand, is theirs: a template asks before replacing it (#261). Only a save that names the sections can change that.
+  let custom: { sectionsCustom: boolean } | Record<never, never> = {};
+  if (named.sections) {
+    const [existing] = await db.select({ sections: shopPage.sections, custom: shopPage.sectionsCustom }).from(shopPage).where(eq(shopPage.shopId, shopId));
+    const before = existing?.sections ?? DEFAULT_SHOP_PAGE_SECTIONS;
+    custom = { sectionsCustom: (existing?.custom ?? false) || !sameSections(before, named.sections) };
+  }
+  await db.insert(shopPage).values({ shopId, ...fresh, ...named, ...custom }).onConflictDoUpdate({
     target: shopPage.shopId,
-    set: { ...named, updatedAt: sql`now()` },
+    set: { ...named, ...custom, updatedAt: sql`now()` },
+  });
+}
+
+/** The sections a template lists, in its order, then the others as they are (their order and visibility kept): what the page becomes when a template's order is applied. */
+export function sectionsFromTemplate(template: Template, current: readonly ShopPageSectionSetting[]): ShopPageSectionSetting[] {
+  const known = new Set<string>(SHOP_PAGE_SECTIONS);
+  const listed = template.sections.filter((s) => known.has(s.id)).map((s) => ({ id: s.id as ShopPageSection, visible: s.visible }));
+  return [...listed, ...current.filter((c) => !listed.some((l) => l.id === c.id))];
+}
+
+/**
+ * The owner applies a template (#261): the shop keeps the template's id and version; its section order is replaced by the template's unless the owner chose to keep theirs.
+ * A page the owner customised by hand never has its order replaced silently: `keepOrder` must then be said (`AK_SECTIONS_CUSTOM`). Nothing else of the shop changes: texts, media and
+ * translations are not part of a template. An id or version the catalogue (or the administrator's offered list) does not hold is the answer of an unknown template.
+ */
+export async function applyTemplate(db: Db, shopId: string, input: { templateId: string; templateVersion?: number; keepOrder?: boolean; offered?: readonly string[] }, catalogue: readonly Template[] = TEMPLATES): Promise<Template> {
+  const candidates = catalogue.filter((t) => t.id === input.templateId && (input.templateVersion === undefined || t.version === input.templateVersion)).sort((a, b) => b.version - a.version);
+  const template = candidates[0];
+  if (!template || (input.offered && !input.offered.includes(template.id))) throw new ShopError("AK_TEMPLATE_UNKNOWN", "AK_TEMPLATE_UNKNOWN");
+  return db.transaction(async (tx) => {
+    const [row] = await tx.select().from(shopPage).where(eq(shopPage.shopId, shopId)).for("update");
+    const custom = row?.sectionsCustom ?? false;
+    if (custom && input.keepOrder === undefined) throw new ShopError("AK_SECTIONS_CUSTOM", "AK_SECTIONS_CUSTOM");
+    const keep = input.keepOrder === true;
+    const sections = keep ? (row?.sections ?? DEFAULT_SHOP_PAGE_SECTIONS.map((s) => ({ ...s }))) : sectionsFromTemplate(template, (row?.sections ?? DEFAULT_SHOP_PAGE_SECTIONS) as ShopPageSectionSetting[]);
+    const values = { sections, templateId: template.id, templateVersion: template.version, sectionsCustom: keep ? custom : false };
+    await tx.insert(shopPage).values({ shopId, ...values }).onConflictDoUpdate({ target: shopPage.shopId, set: { ...values, updatedAt: sql`now()` } });
+    return template;
   });
 }

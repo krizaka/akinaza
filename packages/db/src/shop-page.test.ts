@@ -76,7 +76,8 @@ describe("the shop type and the proposed images (#267)", () => {
     await saveShopPageConfig(t.db, shop.shopId, config);
     await saveShopPageConfig(t.db, shop.shopId, { shopType: "coaching" });
     await saveShopPageConfig(t.db, shop.shopId, { useDefaults: false });
-    expect(await shopPageConfigOf(t.db, shop.shopId)).toEqual({ ...config, shopType: "coaching", useDefaults: false });
+    // The reversed order is the owner's own (#261): flagged once, and a save that names no sections leaves the flag alone.
+    expect(await shopPageConfigOf(t.db, shop.shopId)).toEqual({ ...config, shopType: "coaching", useDefaults: false, sectionsCustom: true });
   });
 
   it("a first save that names only the trade starts from today's page", async () => {

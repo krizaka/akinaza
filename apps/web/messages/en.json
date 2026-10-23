@@ -366,7 +366,9 @@
       "TRANSLATION_LIMIT": "You have used today's translations. Try again tomorrow.",
       "TRANSLATION_UNAVAILABLE": "Automatic translation is not available right now.",
       "FEATURE_OFF": "This feature is switched off.",
-      "SHOP_LIMIT": "You have reached the number of shops allowed."
+      "SHOP_LIMIT": "You have reached the number of shops allowed.",
+      "SECTIONS_CUSTOM": "Choose whether to keep your section order or use the template's.",
+      "TEMPLATE_UNKNOWN": "That template is not available."
     },
     "today": {
       "noShopTitle": "No shop yet",

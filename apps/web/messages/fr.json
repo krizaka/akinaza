@@ -366,7 +366,9 @@
       "TRANSLATION_LIMIT": "Vous avez utilisé les traductions du jour. Réessayez demain.",
       "TRANSLATION_UNAVAILABLE": "La traduction automatique n'est pas disponible pour le moment.",
       "FEATURE_OFF": "Cette fonction est désactivée.",
-      "SHOP_LIMIT": "Vous avez atteint le nombre de boutiques permis."
+      "SHOP_LIMIT": "Vous avez atteint le nombre de boutiques permis.",
+      "SECTIONS_CUSTOM": "Choisissez de garder votre ordre de sections ou celui du modèle.",
+      "TEMPLATE_UNKNOWN": "Ce modèle n'est pas disponible."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",

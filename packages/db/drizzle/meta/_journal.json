@@ -218,6 +218,13 @@
       "when": 1794900000000,
       "tag": "0030_shop_default_media",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1795000000000,
+      "tag": "0031_shop_template",
+      "breakpoints": true
     }
   ]
 }

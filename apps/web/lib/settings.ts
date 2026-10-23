@@ -1,4 +1,5 @@
-import { bilingual, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, type SettingsService, subset, WORKSPACE_SCOPES } from "@krizaka/settings";
+import { type ShopType, TEMPLATES } from "@akinaza/core";
+import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, type SettingsService, subset, WORKSPACE_SCOPES } from "@krizaka/settings";
 
 import { query } from "./db";
 import { refuse } from "./http";
@@ -7,6 +8,10 @@ import { refuse } from "./http";
  * Akinaza's configuration as data (`@krizaka/settings`): what an administrator can change without a redeploy. No workspaces here:
  * a value is global, or one person's (a beta, a quota); `WORKSPACE_SCOPES` is global + workspace and a workspace is never named.
  */
+/** The ids of the catalogue: what the administrator can offer or preselect. */
+const TEMPLATE_IDS = [...new Set(TEMPLATES.map((t) => t.id))] as unknown as readonly [string, ...string[]];
+const defaultTemplate = (type: ShopType) => choice("storefront", TEMPLATE_IDS, TEMPLATES.find((t) => t.shopTypes.includes(type))!.id, GLOBAL_ONLY);
+
 export const SETTINGS = {
   "app.maintenance": flag("general", false),
   "app.maintenanceMessage": bilingual("general", { fr: "Akinaza est en maintenance. Revenez dans quelques minutes.", en: "Akinaza is down for maintenance. Please come back in a few minutes." }),
@@ -50,6 +55,15 @@ export const SETTINGS = {
   // The proposed images and videos of the storefronts (#267): the switch, and the trades whose defaults are offered.
   "features.defaultMedia": flag("features", true, GLOBAL_ONLY),
   "storefront.defaultMedia.types": subset("storefront", ["salon", "coaching", "workshop", "cleaning", "pets", "consulting"] as const, ["salon", "coaching", "workshop", "cleaning", "pets", "consulting"], GLOBAL_ONLY),
+  // The storefront templates (#261): the switch (off until the picker ships), the templates offered, and the one preselected for each trade (it never applies by itself).
+  "features.storefrontTemplates": flag("features", false, GLOBAL_ONLY),
+  "storefront.templates.offered": subset("storefront", TEMPLATE_IDS, [...TEMPLATE_IDS], GLOBAL_ONLY),
+  "storefront.templates.default.salon": defaultTemplate("salon"),
+  "storefront.templates.default.coaching": defaultTemplate("coaching"),
+  "storefront.templates.default.workshop": defaultTemplate("workshop"),
+  "storefront.templates.default.cleaning": defaultTemplate("cleaning"),
+  "storefront.templates.default.pets": defaultTemplate("pets"),
+  "storefront.templates.default.consulting": defaultTemplate("consulting"),
   "realtime.storefront.enabled": flag("realtime", true, GLOBAL_ONLY),
   "realtime.storefront.heartbeatSeconds": integer("realtime", 15, { min: 5, max: 60, unit: "seconds" }, GLOBAL_ONLY),
   "realtime.storefront.maxStreamsPerPage": integer("realtime", 100, { min: 1, max: 1000, unit: "streams" }, GLOBAL_ONLY),
