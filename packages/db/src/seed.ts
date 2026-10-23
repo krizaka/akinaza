@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 
 import type { Db } from "./client";
 import { book, issueInvoice, recordConsent, recordExpense } from "./shop-ops";
-import { accounts, clients, services, shops, staff } from "./schema";
+import { accounts, clients, services, shopRules, shops, staff } from "./schema";
 
 /**
  * A demo shop for a development database (never a shared or production one): a Montréal hair salon owned by the QA
@@ -18,6 +18,8 @@ export async function seedDemoShop(db: Db, ownerEmail: string, now = new Date())
     .insert(shops)
     .values({ ownerId: owner.id, name: "Salon Laurier", legalName: "Salon Laurier inc.", kind: "salon", registrant: true, gstNumber: "123456789RT0001", qstNumber: "1234567890TQ0001", address: "1234 av. Laurier E., Montréal QC H2J 1G7" })
     .returning();
+  // The shop's rules at their defaults, as a shop created by the app has them: without the row its slots cannot be listed.
+  await db.insert(shopRules).values({ shopId: shop!.id });
   const [julie, marc] = await db.insert(staff).values([{ shopId: shop!.id, name: "Julie" }, { shopId: shop!.id, name: "Marc" }]).returning();
   const [cut, colour, brushing] = await db
     .insert(services)

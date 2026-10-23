@@ -8,3 +8,4 @@ export * from "./storefront";
 export * from "./vocabulary";
 export * from "./payment-terms";
 export * from "./brief";
+export * from "./time-off";
