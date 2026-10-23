@@ -173,3 +173,29 @@ describe("buildStorefront — edge cases", () => {
     expect(v.services).toEqual([]);
   });
 });
+
+describe("who is here today (akinaza#209)", () => {
+  const team = { ...salon, team: [{ id: "julie", name: "Julie" }, { id: "marc", name: "Marc" }, { id: "lea", name: "Léa" }] };
+  const hours = week([1, 2, 3, 4, 5], "09:00", "17:00");
+  const teamDay = new Map([
+    ["julie", { windows: hours, visits: [{ startsAt: at("2026-10-19T10:00"), endsAt: at("2026-10-19T11:15") }], offUntil: null }],
+    ["marc", { windows: hours, visits: [], offUntil: null }],
+    ["lea", { windows: hours, visits: [], offUntil: "2026-10-27" }],
+  ]);
+
+  it("each first name has one state, in the page's language", () => {
+    const fr = buildStorefront({ page: team, locale: "fr", now: MONDAY_1030, teamDay }).team;
+    const plain = (text: string | null) => (text ?? "").replace(/\u00a0/g, " ");
+    expect(fr.map((m) => [m.name, plain(m.state), m.free])).toEqual([
+      ["Julie", "Occupé·e jusqu'à 11 h 15", false],
+      ["Marc", "Libre maintenant", true],
+      ["Léa", "En congé jusqu'au 27 octobre", false],
+    ]);
+    expect(buildStorefront({ page: team, locale: "en", now: MONDAY_1030, teamDay }).team[1]!.state).toBe("Free now");
+  });
+
+  it("the page receives a name and a state, nothing else — no visit, no reason", () => {
+    for (const m of buildStorefront({ page: team, locale: "fr", now: MONDAY_1030, teamDay }).team) expect(Object.keys(m).sort()).toEqual(["free", "id", "name", "state"]);
+    expect(buildStorefront({ page: team, locale: "fr", now: MONDAY_1030 }).team[0]!.state).toBeNull();
+  });
+});

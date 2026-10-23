@@ -719,7 +719,15 @@
       "galleryLabel": "Photos of {shop}",
       "closingTitle": "Ready when you are",
       "closingBody": "Choose a time in a few taps.",
-      "nav": "Sections of the page"
+      "nav": "Sections of the page",
+      "member": {
+        "free": "Free now",
+        "busy": "Busy until {time}",
+        "startsAt": "Starts at {time}",
+        "done": "Done for today",
+        "away": "Not in today",
+        "off": "On time off until {day}"
+      }
     },
     "book": {
       "title": "Book a walk with {shop}",

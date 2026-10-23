@@ -1,4 +1,4 @@
-import { addLocalDays, businessTypeSchema, timeOffDays, type TimeOffRange, timeOffRanges, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
+import { addLocalDays, businessTypeSchema, type MemberDay, timeOffDays, type TimeOffRange, timeOffRanges, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
 import { addDays, compareAsc } from "date-fns";
 import { and, asc, between, desc, eq, gte, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -439,6 +439,39 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
     media: { cover: media.filter((m) => m.role === MediaRole.Cover).map(publicMedia)[0] ?? null, gallery: media.filter((m) => m.role === MediaRole.Gallery).map(publicMedia) },
     popularServiceId: popularServiceId(full.services.map((s) => ({ serviceId: s.id, bookings: bookingCounts.find((c) => c.serviceId === s.id)?.bookings ?? 0 }))),
   };
+}
+
+/**
+ * Each member's day, for « who is here today » on the public page (akinaza#209): their weekly windows, today's visits as
+ * bare time ranges (never a client nor a service) and the time off they are on. The page computes the state from it.
+ */
+export async function teamDay(db: Db, shopId: string, now: Date): Promise<Map<string, MemberDay>> {
+  const [shop] = await db.select({ timezone: shops.timezone }).from(shops).where(eq(shops.id, shopId));
+  if (!shop) return refuse("AK_SHOP_UNKNOWN");
+  const today = localDay(now, shop.timezone);
+  const team = await activeStaff(db, shopId);
+  const ids = team.map((m) => m.id);
+  if (!ids.length) return new Map();
+  const [windows, visits, off] = await Promise.all([
+    db.select({ staffId: schedules.staffId, weekday: schedules.weekday, startsAt: schedules.startsAt, endsAt: schedules.endsAt }).from(schedules).where(inArray(schedules.staffId, ids)),
+    db.execute(sql`
+      SELECT staff_id, lower(during) AS starts_at, upper(during) AS ends_at
+        FROM appointments
+       WHERE shop_id = ${shopId} AND status = 'booked'
+         AND during && tstzrange(${addDays(now, -1).toISOString()}::timestamptz, ${addDays(now, 1).toISOString()}::timestamptz)`),
+    offOn(db, shopId, today),
+  ]);
+  const rows = visits.rows as { staff_id: string; starts_at: Date | string; ends_at: Date | string }[];
+  return new Map(
+    team.map((m) => [
+      m.id,
+      {
+        windows: windows.filter((w) => w.staffId === m.id),
+        visits: rows.filter((v) => v.staff_id === m.id).map((v) => ({ startsAt: new Date(v.starts_at), endsAt: new Date(v.ends_at) })),
+        offUntil: off.find((o) => o.staffId === m.id)?.until ?? null,
+      },
+    ]),
+  );
 }
 
 const httpsUrl = z.string().trim().url().max(500).refine((u) => u.startsWith("https://"), { message: "https only" });

@@ -88,7 +88,14 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
             {view.team.map((m) => (
               <li key={m.id} className="flex items-center gap-3">
                 <Avatar size="lg" defaultAvatar={{ brand: "akinaza", seed: `${view.name}-${m.name}` }} alt="" fallback={m.name.slice(0, 1)} />
-                <span className="font-display text-base font-bold text-fg">{m.name}</span>
+                <span className="flex flex-col items-start gap-1">
+                  <span className="font-display text-base font-bold text-fg">{m.name}</span>
+                  {m.state ? (
+                    <Badge tone={m.free ? "success" : "neutral"} dot={m.free} size="sm">
+                      {m.state}
+                    </Badge>
+                  ) : null}
+                </span>
               </li>
             ))}
           </ul>

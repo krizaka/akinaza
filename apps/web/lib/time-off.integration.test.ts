@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
 import { addLocalDays, localDay } from "@akinaza/core";
-import { addTimeOff, addWindow, listSlots, offOn, removeTimeOff, ShopError, teamTimeOff } from "@akinaza/db";
+import { addTimeOff, addWindow, listSlots, offOn, removeTimeOff, ShopError, teamDay, teamTimeOff } from "@akinaza/db";
 import { seedDemoShop } from "@akinaza/db/seed";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -69,5 +69,15 @@ describe.runIf(enabled)("team time off", () => {
     await expect(addTimeOff(db(), shopId, julie, { from: day(4), to: day(1) })).rejects.toMatchObject({ code: "AK_TIME_OFF_ORDER" });
     await expect(addTimeOff(db(), shopId, julie, { from: day(0), to: addLocalDays(first, 200) })).rejects.toMatchObject({ code: "AK_TIME_OFF_TOO_LONG" });
     await expect(addTimeOff(db(), shopId, randomUUID(), { from: day(0), to: day(0) })).rejects.toBeInstanceOf(ShopError);
+  });
+
+  it("each member's day for the public page: bare time ranges of today's visits, and the time off they are on (akinaza#209)", async () => {
+    await addTimeOff(db(), shopId, marc, { from: localDay(now, tz), to: day(0) });
+    const days = await teamDay(db(), shopId, now);
+    const julieToday = days.get(julie)!;
+    expect(julieToday.visits.length).toBeGreaterThan(0);
+    for (const v of julieToday.visits) expect(Object.keys(v).sort()).toEqual(["endsAt", "startsAt"]);
+    expect(days.get(marc)!.offUntil).toBe(day(0));
+    expect(julieToday.offUntil).toBeNull();
   });
 });

@@ -1,4 +1,5 @@
 import { TZDate } from "@date-fns/tz";
+import { compareAsc } from "date-fns";
 import { z } from "zod";
 
 import { addLocalDays, localDay, type Slot, weekdayOf, type WeeklyWindow } from "./service-shop";
@@ -59,6 +60,54 @@ export function openStatus(windows: readonly WeeklyWindow[], now: Date, timezone
     }
   }
   return { open: false, closesAt: null, nextOpen: null };
+}
+
+/**
+ * Where one member of the team stands right now, for the public page (akinaza#209): free, busy until a time, starting
+ * later today, done for the day, away today, or on time off until a day. Read from their weekly hours, today's visits and
+ * their time off — never a client, a service or a reason. Pure: the clock and the zone are parameters.
+ */
+export const MEMBER_STATE = { free: "free", busy: "busy", startsAt: "startsAt", done: "done", away: "away", off: "off" } as const;
+export type MemberState =
+  | { kind: typeof MEMBER_STATE.free }
+  | { kind: typeof MEMBER_STATE.busy; until: string }
+  | { kind: typeof MEMBER_STATE.startsAt; time: string }
+  | { kind: typeof MEMBER_STATE.done }
+  | { kind: typeof MEMBER_STATE.away }
+  | { kind: typeof MEMBER_STATE.off; until: string };
+
+export interface MemberDay {
+  windows: readonly WeeklyWindow[];
+  /** Their visits of the day that still hold the time (booked or under way), as instants. */
+  visits: readonly { startsAt: Date; endsAt: Date }[];
+  /** The last day of the time off they are on, when they are. */
+  offUntil: string | null;
+}
+
+const localMinutes = (instant: Date, timezone: string) => {
+  const local = new TZDate(instant, timezone);
+  return local.getHours() * 60 + local.getMinutes();
+};
+const clockOf = (minutes: number) => `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
+
+export function memberStateAt(member: MemberDay, now: Date, timezone: string): MemberState {
+  if (member.offUntil) return { kind: MEMBER_STATE.off, until: member.offUntil };
+  const runs = runsOf(member.windows, weekdayOf(localDay(now, timezone)));
+  if (!runs.length) return { kind: MEMBER_STATE.away };
+  const minutes = localMinutes(now, timezone);
+  const run = runs.find((r) => minutesOf(r.startsAt) <= minutes && minutes < minutesOf(r.endsAt));
+  if (!run) {
+    const next = runs.find((r) => minutesOf(r.startsAt) > minutes);
+    return next ? { kind: MEMBER_STATE.startsAt, time: next.startsAt } : { kind: MEMBER_STATE.done };
+  }
+  // Busy until the end of the visit under way, or of the chain of visits that follow it without a gap.
+  const visits = [...member.visits].sort((a, b) => compareAsc(a.startsAt, b.startsAt));
+  let until: Date | null = null;
+  for (const v of visits) {
+    if (until === null ? v.startsAt <= now && now < v.endsAt : v.startsAt <= until && v.endsAt > until) until = v.endsAt;
+  }
+  if (!until) return { kind: MEMBER_STATE.free };
+  return { kind: MEMBER_STATE.busy, until: clockOf(Math.min(localMinutes(until, timezone), minutesOf(run.endsAt))) };
 }
 
 export interface DaySchedule {
