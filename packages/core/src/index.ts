@@ -10,3 +10,4 @@ export * from "./payment-terms";
 export * from "./brief";
 export * from "./time-off";
 export * from "./invoice-state";
+export * from "./figures";

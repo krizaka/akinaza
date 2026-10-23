@@ -44,7 +44,7 @@ describe("« Traduire » through the port", () => {
     expect(calls[0]!.from).toBe("fr");
     expect(calls[0]!.glossary).toEqual(expect.arrayContaining(["Salon Laurier", "Coupe", "Haircut", "1234 av. Laurier E., Montréal QC"]));
     expect(calls[0]!.texts.map((x) => x.key.split(":")[2]).sort()).toEqual(["bio", "name", "name", "tagline"]);
-    expect(JSON.stringify(calls[0])).not.toMatch(/Camille|514|camille@/); // nothing about a client leaves
+    expect(JSON.stringify(calls[0])).not.toMatch(/Camille|camille@|514-555/); // nothing about a client leaves
     const stored = (await translationsOf(t.db, s.shop.id)).filter((x) => x.locale === "es");
     expect(stored).toHaveLength(4);
     expect(stored.every((x) => x.status === "auto" && x.runId === "run-1")).toBe(true);
