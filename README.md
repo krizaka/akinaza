@@ -41,6 +41,9 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
 - **Proposed images** — no section of a shop page is ever empty: each trade (salon, coaching, workshop, cleaning, pets, consulting) has neutral default
   photos, a cover with its silent loop and service images on the media CDN (`site/products/akinaza/defaults/`, named by `apps/web/lib/default-media.manifest.json`).
   The owner picks them in « Images proposées » or turns them off; a slot they filled is never replaced; the administrator chooses which trades are offered.
+- **Page templates** — two per trade, versioned data (order, variants, hue, paper, text styles), never a text or a photo: the owner picks one in « Apparence » with a
+  preview, or at shop creation (the trade's default preselected); a page the owner reordered is asked « keep my order » before anything moves. Admin:
+  `features.storefrontTemplates`, `storefront.templates.offered`, `storefront.templates.default.<trade>`.
 - **Live storefront** — team states and free times refresh from the shop's slots channel while the page is visible.
   SSE carries only a slots-changed signal, never booking details; without it, the visit-time render remains.
   Audited database settings in the admin configuration control `realtime.storefront.enabled` (default `true`),
