@@ -18,6 +18,10 @@ export const SCENES = {
   look: { path: (locale, shop) => `/${locale}/app/${shop.id}/shop?tab=look`, expect: { fr: "Modèle de page", en: "Page template" }, signedIn: true },
   new: { path: (locale, shop) => `/${locale}/app/${shop.id}/shop/new`, expect: { fr: "Votre métier", en: "Your trade" }, signedIn: true },
   storefront: { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
+  // The demo shops (packages/db/src/demo-shops.ts), each on a template of its trade (#261, step 6).
+  salon: { path: (locale) => `/${locale}/s/cedre-ciseaux`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
+  workshop: { path: (locale) => `/${locale}/s/encre-vive`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
+  consulting: { path: (locale) => `/${locale}/s/ferland-conseil`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
 };
 export const THEMES = ["dark", "light"];
 export const DEVICES = { desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844 } };
@@ -73,11 +77,13 @@ async function main() {
   let app = null;
   const out = (line) => process.stdout.write(`${line}\n`);
   try {
-    const db = new pg.Client({ connectionString: DATABASE_URL });
-    for (let i = 0; ; i += 1) {
+    // A pg Client that failed to connect cannot try again: a fresh one per attempt, until the container answers.
+    let db = null;
+    for (let i = 0; db === null; i += 1) {
+      const attempt = new pg.Client({ connectionString: DATABASE_URL });
       try {
-        await db.connect();
-        break;
+        await attempt.connect();
+        db = attempt;
       } catch (error) {
         if (i >= 60) throw error;
         await sleep(1000);
