@@ -13,10 +13,18 @@ export const SETTINGS = {
   // API keys (#178): the global switch, what a plan holds, the pace of one key.
   "features.apiKeys": flag("features", true, WORKSPACE_SCOPES),
   "features.webhooks": flag("features", true, WORKSPACE_SCOPES),
+  "features.shopWall": flag("features", false),
+  "features.shopReels": flag("features", false),
+  "features.shopFollow": flag("features", false),
+  "features.shopReviews": flag("features", false),
+  "features.shopAnnouncements": flag("features", false),
   "plans.free.apiKeys": integer("plans", 2, { min: 0, max: 100, unit: "keys" }, WORKSPACE_SCOPES),
   "plans.paid.apiKeys": integer("plans", 10, { min: 0, max: 100, unit: "keys" }, WORKSPACE_SCOPES),
   "limits.apiRequestsPerMinute": integer("limits", 120, { min: 1, max: 6000, unit: "requests" }, WORKSPACE_SCOPES),
   "limits.webhookEndpoints": integer("limits", 5, { min: 0, max: 50, unit: "endpoints" }, WORKSPACE_SCOPES),
+  "limits.wallItems": integer("limits", 24, { min: 1, max: 500, unit: "items" }),
+  "limits.reelSeconds": integer("limits", 60, { min: 1, max: 300, unit: "seconds" }),
+  "limits.reelMegabytes": integer("limits", 40, { min: 1, max: 500, unit: "megabytes" }),
 } as const;
 
 export const settings = defineSettings(SETTINGS);
@@ -34,6 +42,19 @@ export function appSettings(): SettingsService<typeof SETTINGS> {
 export const resetAppSettings = () => {
   holder.__akinazaSettings = undefined;
 };
+
+export async function shopSectionFeatures(): Promise<Record<"wall" | "reels" | "follow" | "reviews" | "announcements", boolean>> {
+  const service = appSettings();
+  const options = { userId: null };
+  const [wall, reels, follow, reviews, announcements] = await Promise.all([
+    service.get("features.shopWall", options),
+    service.get("features.shopReels", options),
+    service.get("features.shopFollow", options),
+    service.get("features.shopReviews", options),
+    service.get("features.shopAnnouncements", options),
+  ]);
+  return { wall, reels, follow, reviews, announcements };
+}
 
 /** The features that can be switched off: the server refuses what is off, whatever the browser shows. */
 export const FEATURE = { apiKeys: "features.apiKeys", webhooks: "features.webhooks" } as const satisfies Record<string, SettingKey>;

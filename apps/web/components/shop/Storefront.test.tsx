@@ -1,4 +1,4 @@
-import type { PublicShop } from "@akinaza/db";
+import type { PublicShop, ShopPageConfig } from "@akinaza/db";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
@@ -97,6 +97,36 @@ describe("the storefront renders from the shop's data — a dog walker, in Frenc
     expect(html).toContain("Carte des secteurs desservis");
     expect(html).toContain("Je m&#x27;appelle Léa.");
     expect(html).toContain('href="tel:+15145550100"');
+  });
+
+  describe("configured shop page sections", () => {
+    it("uses the owner's order and hides owner-disabled or administrator-disabled sections", () => {
+      const page = {
+        ...walker,
+        pageConfig: {
+          sections: [
+            { id: "wall", visible: true },
+            { id: "gallery", visible: true },
+            { id: "services", visible: false },
+            { id: "team", visible: true },
+            { id: "hours", visible: true },
+            { id: "zones", visible: true },
+            { id: "reels", visible: true },
+            { id: "announcements", visible: true },
+            { id: "reviews", visible: true },
+            { id: "follow", visible: true },
+          ] satisfies ShopPageConfig["sections"],
+          logoUrl: "https://cdn.test/brand/logo.webp",
+        },
+      };
+      const view = buildStorefront({ page, locale: "en", now: NOW, enabledUpcomingSections: { wall: true } });
+      const html = renderToStaticMarkup(<Storefront locale="en" view={view} />);
+      expect(html.indexOf('id="wall"')).toBeLessThan(html.indexOf('id="gallery"'));
+      expect(html).toContain("https://cdn.test/brand/logo.webp");
+      expect(html).not.toContain('id="services"');
+      expect(html).not.toContain('id="reels"');
+      expect(html).toContain("This section is being prepared.");
+    });
   });
   it("tags the popular service, names the capacity in the shop's unit, and says it is open now", () => {
     expect(html).toContain("Populaire");

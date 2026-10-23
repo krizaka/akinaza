@@ -75,6 +75,28 @@ describe("buildStorefront — a dog walker", () => {
     expect(v.bookHref).toBe("/fr/s/pattes/service/s-group?zone=z1");
   });
 
+  it("honours owner order and visibility while global feature switches remain authoritative", () => {
+    const sections = [
+      { id: "wall", visible: true },
+      { id: "gallery", visible: true },
+      { id: "services", visible: false },
+      { id: "team", visible: true },
+      { id: "hours", visible: true },
+      { id: "zones", visible: true },
+      { id: "reels", visible: true },
+      { id: "announcements", visible: true },
+      { id: "reviews", visible: true },
+      { id: "follow", visible: true },
+    ] as const;
+    const page = { ...walker, pageConfig: { sections: [...sections], logoUrl: "https://cdn.example/brand/logo.webp" } };
+    const result = buildStorefront({ page, locale: "en", now: MONDAY_1030, enabledUpcomingSections: { wall: true } });
+    expect(result.sections.map(({ id, visible }) => [id, visible])).toEqual([
+      ["wall", true], ["gallery", true], ["services", false], ["team", true], ["hours", true], ["zones", true],
+      ["reels", false], ["announcements", false], ["reviews", false], ["follow", false],
+    ]);
+    expect(result.logoUrl).toBe("https://cdn.example/brand/logo.webp");
+  });
+
   it("says when it opens next while closed, in the shop's own time", () => {
     const evening = buildStorefront({ page: walker, locale: "fr", now: at("2026-10-19T18:00") });
     expect(evening.status).toEqual({ open: false, label: "Fermé", detail: nb("ouvre demain à 8 h") });

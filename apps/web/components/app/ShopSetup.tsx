@@ -1,10 +1,12 @@
 "use client";
 
 import { BUSINESS_TYPES, type BusinessType } from "@akinaza/core";
+import type { ShopPageConfig, ShopPageSection } from "@akinaza/db";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
+import { Checkbox } from "@krizaka/ui/checkbox";
 import { createKrizakaForm } from "@krizaka/ui/form";
 import { useState } from "react";
 import { z } from "zod";
@@ -17,6 +19,8 @@ import { type GalleryLine, galleryText, joinLines, keepExtras, parseGallery, spl
 /** What the setup page needs, plain (the server picks it from the shop). */
 export interface SetupData {
   page: { name: string; legalName: string; address: string; slug: string; ownerName: string; taglineFr: string; taglineEn: string; published: boolean; area: string; bioFr: string; bioEn: string; publicPhone: string; publicEmail: string; seatUnitFr: string; seatUnitEn: string; businessType: BusinessType } | null;
+  shopId: string | null;
+  pageConfig: ShopPageConfig;
   publicUrl: string | null;
   zones: { id: string; name: string }[];
   services: { id: string; nameFr: string; nameEn: string; durationMinutes: number; priceCents: number; capacity: number; descriptionFr: string; descriptionEn: string; includedFr: string[]; includedEn: string[]; priceVaries: boolean }[];
@@ -55,12 +59,84 @@ export function ShopSetupView({ data }: { data: SetupData }) {
             <ZonesCard zones={data.zones} />
             <ServicesCard services={data.services} />
             <MediaCard media={data.media} />
+            <ShopPageCard shopId={data.shopId!} publicUrl={data.publicUrl} config={data.pageConfig} />
             <HoursCard windows={data.windows} daysOff={data.daysOff} />
             {data.rules ? <RulesCard rules={data.rules} /> : null}
           </>
         ) : null}
       </div>
     </div>
+  );
+}
+
+const logoForm = createKrizakaForm({
+  schema: z.object({ files: z.array(z.instanceof(File)).max(1) }),
+  defaultValues: { files: [] as File[] },
+});
+
+function ShopPageCard({ shopId, publicUrl, config: initial }: { shopId: string; publicUrl: string | null; config: ShopPageConfig }) {
+  const { say, locale } = useSay();
+  const call = useCall();
+  const [config, setConfig] = useState(initial);
+  const [saved, setSaved] = useState(false);
+  const save = async (next: ShopPageConfig) => {
+    setSaved(false);
+    if (await call.run(`/api/walker/shop-page?shopId=${encodeURIComponent(shopId)}`, { json: next })) {
+      setConfig(next);
+      setSaved(true);
+    }
+  };
+  const reorder = (section: ShopPageSection, direction: -1 | 1) => {
+    const sections = [...config.sections];
+    const from = sections.findIndex((item) => item.id === section);
+    const to = from + direction;
+    if (to < 0 || to >= sections.length) return;
+    [sections[from], sections[to]] = [sections[to]!, sections[from]!];
+    void save({ ...config, sections });
+  };
+  const form = logoForm.useForm({
+    i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
+    onSubmit: async ({ files }) => {
+      const file = files[0];
+      if (!file) return;
+      const body = new FormData();
+      body.set("file", await shrinkImage(file, STOREFRONT_LONG_SIDE), "logo.jpg");
+      body.set("purpose", "brand");
+      const url = (await call.run<{ url: string }>(`/api/walker/media/upload?shopId=${encodeURIComponent(shopId)}`, { body }, { refresh: false }))?.url;
+      if (url) await save({ ...config, logoUrl: url });
+      form.reset({ files: [] });
+    },
+  });
+  return (
+    <Card.Root className="p-4 lg:col-span-2">
+      <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.layout.title")}</h2>
+      {publicUrl ? <a className="mb-3 inline-block text-sm font-semibold text-fg-accent underline" href={publicUrl}>{say("shopSetup.viewPage")}</a> : null}
+      <ul className="m-0 flex list-none flex-col gap-2 p-0">
+        {config.sections.map(({ id, visible }, index) => (
+          <li key={id} tabIndex={0} className="flex flex-wrap items-center gap-2 rounded-lg border border-border-default p-2"
+            onKeyDown={(event) => {
+              if (event.key === "ArrowUp" || event.key === "ArrowDown") {
+                event.preventDefault();
+                reorder(id, event.key === "ArrowUp" ? -1 : 1);
+              }
+            }}>
+            <Checkbox checked={visible} onCheckedChange={(checked) => void save({ ...config, sections: config.sections.map((item) => item.id === id ? { ...item, visible: checked === true } : item) })}>
+              {say(`shopSetup.layout.sections.${id}`)}{(["wall", "reels", "announcements", "reviews", "follow"] as ShopPageSection[]).includes(id) ? ` · ${say("shopSetup.layout.preparing")}` : ""}
+            </Checkbox>
+            <span className="ml-auto flex gap-1">
+              <Button type="button" size="sm" variant="ghost" disabled={index === 0} aria-label={say("shopSetup.layout.moveUp", { section: say(`shopSetup.layout.sections.${id}`) })} onClick={() => reorder(id, -1)}>↑</Button>
+              <Button type="button" size="sm" variant="ghost" disabled={index === config.sections.length - 1} aria-label={say("shopSetup.layout.moveDown", { section: say(`shopSetup.layout.sections.${id}`) })} onClick={() => reorder(id, 1)}>↓</Button>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <form.Form aria-label={say("shopSetup.layout.logo")} className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+        <form.FileUpload name="files" label={say("shopSetup.layout.logo")} title={say("shopSetup.layout.logo")} browseLabel={say("shopSetup.media.browse")} hint={say("shopSetup.media.uploadHint")} accept="image/*" maxSize={2 * 1024 * 1024} maxFiles={1} removeLabel={(name) => say("shopSetup.media.remove", { name })} refusalLabel={(r) => say("shopSetup.media.tooBig", { name: r.file.name })} />
+        <form.Submit size="md" variant="secondary">{say("shopSetup.layout.uploadLogo")}</form.Submit>
+      </form.Form>
+      {call.problem ? <Alert tone="danger" className="mt-3">{call.problem}</Alert> : null}
+      {saved ? <Alert tone="success" className="mt-3">{say("shopSetup.layout.saved")}</Alert> : null}
+    </Card.Root>
   );
 }
 

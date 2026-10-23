@@ -1,4 +1,5 @@
 import type { BusinessType } from "@akinaza/core";
+import { defaultShopPageConfig } from "@akinaza/db";
 import { KrizakaQueryProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
@@ -66,7 +67,7 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
   });
 
   it("the setup page words a studio's page and offers the business type", () => {
-    const data = { page: { name: "Krizaka (démo)", legalName: "Technologies Krizaka inc. (démo)", address: "1 rue Exemple", slug: "krizaka-demo", ownerName: "Éric", taglineFr: "", taglineEn: "", published: true, area: "Montréal", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "", businessType: "professional" as const }, publicUrl: null, zones: [], services: [{ id: "x", nameFr: "Atelier", nameEn: "Workshop", durationMinutes: 180, priceCents: 60_000, capacity: 1, descriptionFr: "", descriptionEn: "", includedFr: [], includedEn: [], priceVaries: false }], media: { cover: null, gallery: [] }, windows: [], daysOff: [], rules: null };
+    const data = { page: { name: "Krizaka (démo)", legalName: "Technologies Krizaka inc. (démo)", address: "1 rue Exemple", slug: "krizaka-demo", ownerName: "Éric", taglineFr: "", taglineEn: "", published: true, area: "Montréal", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "", businessType: "professional" as const }, shopId: "s", pageConfig: defaultShopPageConfig(), publicUrl: null, zones: [], services: [{ id: "x", nameFr: "Atelier", nameEn: "Workshop", durationMinutes: 180, priceCents: 60_000, capacity: 1, descriptionFr: "", descriptionEn: "", includedFr: [], includedEn: [], priceVaries: false }], media: { cover: null, gallery: [] }, windows: [], daysOff: [], rules: null };
     const html = around(locale, "professional", <ShopSetupView data={data} />);
     // The type picker names both types, by design; everything else is the studio's.
     const text = readable(html).replace(locale === "en" ? /Pet care \(walks, grooming…\)/ : /Soins aux animaux \(promenades, toilettage…\)/, "");

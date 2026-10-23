@@ -6,6 +6,7 @@ import { z } from "zod";
 import type { Db, Tx } from "./client";
 import { openField, sealField } from "./crypto";
 import { ShopError } from "./errors";
+import { shopPageConfigOf, type ShopPageConfig } from "./shop-page";
 import { appointments, bookings, memberships, clients, dependants, daysOff, MediaRole, schedules, services, shopFormerSlugs, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
 import { recordConsent } from "./shop-ops";
 
@@ -401,6 +402,7 @@ export interface PublicShop {
   daysOff: string[];
   rules: Pick<typeof shopRules.$inferSelect, "cancellationHours" | "bookingHorizonDays">;
   media: { cover: PublicMedia | null; gallery: PublicMedia[] };
+  pageConfig?: ShopPageConfig;
   /** The service to tag « Popular », from real bookings; null when none stands out. */
   popularServiceId: string | null;
 }
@@ -418,8 +420,9 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
   const full = await loadShop(db, row);
   const team = await activeStaff(db, row.id);
   const everyone = team.length > 1 ? await db.select().from(schedules).where(inArray(schedules.staffId, team.map((m) => m.id))) : full.windows;
-  const [media, counts] = await Promise.all([
+  const [media, pageConfig, counts] = await Promise.all([
     db.select().from(shopMedia).where(eq(shopMedia.shopId, row.id)).orderBy(asc(shopMedia.position)),
+    shopPageConfigOf(db, row.id),
     db.execute(sql`
       SELECT a.service_id, count(b.id)::int AS bookings
         FROM bookings b JOIN appointments a ON a.id = b.appointment_id
@@ -437,6 +440,7 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
     daysOff: full.daysOff.map((d) => d.onDate),
     rules: { cancellationHours: full.rules.cancellationHours, bookingHorizonDays: full.rules.bookingHorizonDays },
     media: { cover: media.filter((m) => m.role === MediaRole.Cover).map(publicMedia)[0] ?? null, gallery: media.filter((m) => m.role === MediaRole.Gallery).map(publicMedia) },
+    pageConfig,
     popularServiceId: popularServiceId(full.services.map((s) => ({ serviceId: s.id, bookings: bookingCounts.find((c) => c.serviceId === s.id)?.bookings ?? 0 }))),
   };
 }

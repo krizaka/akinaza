@@ -217,6 +217,18 @@ export const shopMedia = pgTable(
   ],
 );
 
+/** The owner's ordered public sections and logo; absence means the original default page. */
+export const shopPage = pgTable(
+  "shop_page",
+  {
+    shopId: uuid("shop_id").primaryKey().references(() => shops.id, { onDelete: "cascade" }),
+    sections: jsonb("sections").$type<{ id: string; visible: boolean }[]>().notNull().default(sql`'[{"id":"services","visible":true},{"id":"team","visible":true},{"id":"hours","visible":true},{"id":"zones","visible":true},{"id":"gallery","visible":true},{"id":"wall","visible":true},{"id":"reels","visible":true},{"id":"announcements","visible":true},{"id":"reviews","visible":true},{"id":"follow","visible":true}]'::jsonb`),
+    logoUrl: text("logo_url"),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
+);
+
 export const staff = pgTable("staff", {
   id: id(),
   shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
@@ -580,4 +592,3 @@ export const clientRequestFiles = pgTable(
   },
   (t) => [index("client_request_files_request").on(t.requestId)],
 );
-

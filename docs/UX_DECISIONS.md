@@ -178,3 +178,13 @@ Feedback: the pinned Discussion of the repository.
   invoice preview on Today (invoices have their own page); a full-width action button on every row.
 - **Cost**: no week view yet; « expected revenue » counts booked and done appointments at their service's price.
 - **Signal we are wrong**: owners who open Invoices to know what the day brings, or ask for a week.
+
+## The shop page belongs to its owner
+
+- **Decision**: the owner chooses the order and visibility of the shop page's sections and uploads its logo; global
+  administrator switches remain authoritative for sections that are still being prepared.
+- **Problem**: a fixed public page cannot reflect what each shop wants clients to notice first.
+- **Principle**: user control and freedom (Nielsen): make the page configurable without changing its facts or booking rules.
+- **Refused**: arbitrary page building, or letting owner preferences override global safety and rollout switches.
+- **Cost**: new sections can be enabled administratively before they are ready to accept shop content.
+- **Signal we are wrong**: owners cannot express their priorities with the available sections, or visitors cannot find services.

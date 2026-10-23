@@ -9,7 +9,9 @@ import { OpeningHours } from "@krizaka/ui/opening-hours";
 import { Section } from "@krizaka/ui/page";
 import { ServiceCard } from "@krizaka/ui/service-card";
 import { StickyAction } from "@krizaka/ui/sticky-action";
+import Image from "next/image";
 import Link from "next/link";
+import { Fragment, type ReactNode } from "react";
 
 import { ButtonLink } from "@/components/ButtonLink";
 import { ZoneMap } from "@/components/shop/ZoneMap";
@@ -30,6 +32,47 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
       </ButtonLink>
     </>
   );
+  const sections: Record<(typeof view.sections)[number]["id"], ReactNode> = {
+    services: view.services.length ? (
+      <Section id="services" title={t("console.shopPage.servicesTitle")} lead={t("console.shopPage.servicesLead")} reveal>
+        <CardGrid min={250} fit="fit" as="ul" aria-label={t("console.shopPage.servicesLabel")}>
+          {view.services.map((s) => <ServiceCard key={s.id} name={s.name} price={s.price} priceFrom={s.priceFrom ?? undefined} duration={s.duration} capacity={s.capacity ?? undefined} description={s.description ?? undefined} included={s.included} tag={s.tag ?? undefined} actionLabel={t("console.shopPage.choose")} href={s.href} linkAs={Link} />)}
+        </CardGrid>
+      </Section>
+    ) : null,
+    team: view.team.length ? (
+      <Section id="team" divider title={t("console.journey.team")} lead={t("console.journey.teamLead")} reveal>
+        <ul className="m-0 flex list-none flex-wrap gap-4 p-0">
+          {view.team.map((m) => <li key={m.id} className="flex items-center gap-3"><Avatar size="lg" defaultAvatar={{ brand: "akinaza", seed: `${view.name}-${m.name}` }} alt="" fallback={m.name.slice(0, 1)} /><span className="flex flex-col items-start gap-1"><span className="font-display text-base font-bold text-fg">{m.name}</span>{m.state ? <Badge tone={m.free ? "success" : "neutral"} dot={m.free} size="sm">{m.state}</Badge> : null}</span></li>)}
+        </ul>
+      </Section>
+    ) : null,
+    hours: view.services.length ? <Section id="hours" divider title={t("console.shopPage.hours")} reveal><div className="max-w-xl"><OpeningHours label={t("console.shopPage.hours")} days={view.hours.days} today={view.hours.today} status={view.hours.status} /></div></Section> : null,
+    zones: view.map ? (
+      <Section id="zones" divider title={t("console.shopPage.zones")} lead={t("console.shopPage.zonesLead")} reveal>
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]"><ul className="m-0 flex list-none flex-wrap gap-2 p-0">{view.zones.map((z) => <li key={z.id}><Badge tone="accent" size="md">{z.name}</Badge></li>)}</ul><ZoneMap map={view.map} label={t("console.shopPage.mapLabel")} locale={locale} /></div>
+      </Section>
+    ) : null,
+    gallery: view.gallery.length ? <Section id="gallery" divider title={t("console.shopPage.galleryLabel", { shop: view.name })} reveal><MediaGallery label={t("console.shopPage.galleryLabel", { shop: view.name })} items={view.gallery} /></Section> : null,
+    wall: view.preparedSections.wall ? <Section id="wall" divider title={t("console.shopPage.wallTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+    reels: view.preparedSections.reels ? <Section id="reels" divider title={t("console.shopPage.reelsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+    announcements: view.preparedSections.announcements ? <Section id="announcements" divider title={t("console.shopPage.announcementsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+    reviews: view.preparedSections.reviews ? <Section id="reviews" divider title={t("console.shopPage.reviewsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+    follow: view.preparedSections.follow ? <Section id="follow" divider title={t("console.shopPage.followTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+  };
+  const trust = (
+    <Section id="trust" divider title={view.about ? t("console.shopPage.about") : t("console.shopPage.good")} reveal>
+      <div className={view.about || view.contact ? "grid items-start gap-6 lg:grid-cols-2" : "max-w-2xl"}>
+        {view.about || view.contact ? (
+          <div className="flex flex-col gap-4 rounded-xl border border-border-default bg-surface-1 p-5">
+            {view.about ? <div className="flex items-start gap-4"><Avatar size="lg" defaultAvatar={{ brand: "akinaza", seed: view.name }} alt="" fallback={view.about.name.slice(0, 1)} /><div className="flex min-w-0 flex-col gap-2"><p className="m-0 font-display text-lg font-bold text-fg">{view.about.name}</p><p className="m-0 text-sm leading-relaxed text-fg-secondary">{view.about.text}</p></div></div> : null}
+            {view.contact ? <div className="flex flex-wrap gap-2">{view.contact.phone && view.contact.phoneHref ? <ButtonLink href={view.contact.phoneHref} variant="secondary" size="md">{t("console.shopPage.call")} · {view.contact.phone}</ButtonLink> : null}{view.contact.email ? <ButtonLink href={`mailto:${view.contact.email}`} variant="ghost" size="md">{t("console.shopPage.write")}</ButtonLink> : null}</div> : null}
+          </div>
+        ) : null}
+        <div className="rounded-xl border border-border-default bg-surface-1 p-5"><DescriptionList layout="inline" items={view.policies.map((p) => ({ id: p.id, term: p.term, details: p.value }))} /></div>
+      </div>
+    </Section>
+  );
   return (
     <main id="content">
       <CoverHero
@@ -38,6 +81,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
         lead={view.tagline ?? undefined}
         facts={
           <>
+            {view.logoUrl ? <Image src={view.logoUrl} alt={view.name} width={64} height={64} unoptimized className="rounded-lg object-cover" /> : null}
             {view.area ? (
               <Badge tone={view.cover ? "scrim" : "neutral"} size="md">
                 {view.area}
@@ -49,124 +93,19 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
                 {view.status.detail ? ` · ${view.status.detail}` : ""}
               </Badge>
             ) : null}
-            {view.zones.slice(0, 3).map((z) => (
+            {view.sections.find((section) => section.id === "zones")?.visible ? view.zones.slice(0, 3).map((z) => (
               <Badge key={z.id} tone={view.cover ? "scrim" : "neutral"} size="md">
                 {z.name}
               </Badge>
-            ))}
+            )) : null}
           </>
         }
         actions={book}
       />
 
-      {view.services.length ? (
-        <Section id="services" title={t("console.shopPage.servicesTitle")} lead={t("console.shopPage.servicesLead")} reveal>
-          <CardGrid min={250} fit="fit" as="ul" aria-label={t("console.shopPage.servicesLabel")}>
-            {view.services.map((s) => (
-              <ServiceCard
-                key={s.id}
-                name={s.name}
-                price={s.price}
-                priceFrom={s.priceFrom ?? undefined}
-                duration={s.duration}
-                capacity={s.capacity ?? undefined}
-                description={s.description ?? undefined}
-                included={s.included}
-                tag={s.tag ?? undefined}
-                actionLabel={t("console.shopPage.choose")}
-                href={s.href}
-                linkAs={Link}
-              />
-            ))}
-          </CardGrid>
-        </Section>
-      ) : null}
-
-      {view.team.length ? (
-        <Section id="team" divider title={t("console.journey.team")} lead={t("console.journey.teamLead")} reveal>
-          <ul className="m-0 flex list-none flex-wrap gap-4 p-0">
-            {view.team.map((m) => (
-              <li key={m.id} className="flex items-center gap-3">
-                <Avatar size="lg" defaultAvatar={{ brand: "akinaza", seed: `${view.name}-${m.name}` }} alt="" fallback={m.name.slice(0, 1)} />
-                <span className="flex flex-col items-start gap-1">
-                  <span className="font-display text-base font-bold text-fg">{m.name}</span>
-                  {m.state ? (
-                    <Badge tone={m.free ? "success" : "neutral"} dot={m.free} size="sm">
-                      {m.state}
-                    </Badge>
-                  ) : null}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </Section>
-      ) : null}
-
-      {view.services.length ? (
-        <Section id="hours" divider title={t("console.shopPage.hours")} reveal>
-          <div className="max-w-xl">
-            <OpeningHours label={t("console.shopPage.hours")} days={view.hours.days} today={view.hours.today} status={view.hours.status} />
-          </div>
-        </Section>
-      ) : null}
-
-      {view.map ? (
-        <Section id="zones" divider title={t("console.shopPage.zones")} lead={t("console.shopPage.zonesLead")} reveal>
-          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
-            <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
-              {view.zones.map((z) => (
-                <li key={z.id}>
-                  <Badge tone="accent" size="md">
-                    {z.name}
-                  </Badge>
-                </li>
-              ))}
-            </ul>
-            <ZoneMap map={view.map} label={t("console.shopPage.mapLabel")} locale={locale} />
-          </div>
-        </Section>
-      ) : null}
-
-      <Section id="trust" divider title={view.about ? t("console.shopPage.about") : t("console.shopPage.good")} reveal>
-        <div className={view.about || view.contact ? "grid items-start gap-6 lg:grid-cols-2" : "max-w-2xl"}>
-          {view.about || view.contact ? (
-            <div className="flex flex-col gap-4 rounded-xl border border-border-default bg-surface-1 p-5">
-              {view.about ? (
-                <div className="flex items-start gap-4">
-                  <Avatar size="lg" defaultAvatar={{ brand: "akinaza", seed: view.name }} alt="" fallback={view.about.name.slice(0, 1)} />
-                  <div className="flex min-w-0 flex-col gap-2">
-                    <p className="m-0 font-display text-lg font-bold text-fg">{view.about.name}</p>
-                    <p className="m-0 text-sm leading-relaxed text-fg-secondary">{view.about.text}</p>
-                  </div>
-                </div>
-              ) : null}
-              {view.contact ? (
-                <div className="flex flex-wrap gap-2">
-                  {view.contact.phone && view.contact.phoneHref ? (
-                    <ButtonLink href={view.contact.phoneHref} variant="secondary" size="md">
-                      {t("console.shopPage.call")} · {view.contact.phone}
-                    </ButtonLink>
-                  ) : null}
-                  {view.contact.email ? (
-                    <ButtonLink href={`mailto:${view.contact.email}`} variant="ghost" size="md">
-                      {t("console.shopPage.write")}
-                    </ButtonLink>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-          <div className="rounded-xl border border-border-default bg-surface-1 p-5">
-            <DescriptionList layout="inline" items={view.policies.map((p) => ({ id: p.id, term: p.term, details: p.value }))} />
-          </div>
-        </div>
-      </Section>
-
-      {view.gallery.length ? (
-        <Section id="gallery" divider title={t("console.shopPage.galleryLabel", { shop: view.name })} reveal>
-          <MediaGallery label={t("console.shopPage.galleryLabel", { shop: view.name })} items={view.gallery} />
-        </Section>
-      ) : null}
+      {view.sections.map(({ id, visible }) => id === "gallery"
+        ? <Fragment key={id}>{trust}{visible ? sections[id] : null}</Fragment>
+        : visible ? <Fragment key={id}>{sections[id]}</Fragment> : null)}
 
       <Section spacing="lg">
         <CtaPanel title={t("console.shopPage.closingTitle")} body={t("console.shopPage.closingBody")} reveal>

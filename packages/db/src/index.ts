@@ -6,6 +6,7 @@ export { DataKeyError, openField, parseDataKey, sealField } from "./crypto";
 export * from "./client-files";
 export * from "./demo-shops";
 export * from "./service-shop";
+export * from "./shop-page";
 export * from "./visits";
 export * from "./account-migration";
 export * from "./settings-migration";
