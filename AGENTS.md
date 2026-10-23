@@ -63,6 +63,17 @@
   next migration; rules the schema cannot say are custom SQL migrations. A merged migration is never edited.
 - One database per worktree/session; never a shared or `*_demo` database from a session. Tests create a database per file
   on CI's PostgreSQL service or on a Testcontainers one.
+- **Tenant isolation (#247).** A shop's data is reachable only by that shop's members, and nothing tells anyone else it exists.
+  - Every table is classified in `packages/db/src/tenancy.ts` (`TABLE_OWNERSHIP`): `shop` (carries `shop_id`: NOT NULL, a foreign
+    key to shops, the leading column of an index), `child` (reached through a parent that ends at a `shop` table), `scoped`,
+    `account` or `platform`. A new table that is not classified fails `tenancy.test.ts`: say whose data it holds before it ships.
+  - A route works on "the" shop through `requireShop` / `requireOwner` / `requireShopClient` (`lib/access.ts`), never on a shop id
+    taken from the request. Another shop's id (`?shopId=`) and another shop's resource answer **404**, the answer of an id that does
+    not exist (never 403, which would confirm it). Two idempotent deletes (hours, zones) answer 200 and change nothing; two
+    package codes (`AK_NO_REPORT` 409, `INVITE_INVALID` 400) are the same for a foreign and an unknown id.
+  - `app/api/tenant-isolation.integration.test.ts` walks every `app/api/walker/**` route: without a session (401), as a member of
+    another shop (404), and with a resource of another shop (404). A new walker route must use a shop guard, or be declared in the
+    test (`SESSION_OWNED`, `RESOURCES`) with its reason; the test fails otherwise.
 
 ## 6. Checks — local first, CI always
 
