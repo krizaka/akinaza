@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
 
+import { listInvoices, recordPayment, replaceInvoice } from "@akinaza/db";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-import { migrate, pool, query } from "@/lib/db";
+import { db, migrate, pool, query } from "@/lib/db";
 import { resetRateLimits } from "@/lib/rate-limit";
 import { createSession, SESSION_COOKIE } from "@/lib/session";
 
@@ -67,5 +68,16 @@ describe.runIf(enabled)("a services business issues an invoice over HTTP", () =>
     expect((await call(invoices, "/api/walker/invoices", { token: owner, json: { language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 0, unitPriceCents: 100 }] } })).status).toBe(400);
     expect((await call(invoices, "/api/walker/invoices", { token: owner, json: { language: "fr", issuedOn: "2026-10-21", lines: [{ description: "Travail", quantity: 1 }] } })).body).toMatchObject({ code: "LINE_PRICE" });
     expect((await call(invoices, "/api/walker/invoices", { token: owner, json: { language: "fr", issuedOn: "2026-10-21", lines: [{ serviceId: "00000000-0000-4000-8000-000000000000", quantity: 1 }] } })).status).toBe(404);
+  });
+
+  it("the list knows what was received and what was superseded (akinaza#218)", async () => {
+    const body = { clientId: ids.clientFile, language: "fr" as const, issuedOn: "2026-10-22", lines: [{ description: "Atelier / Workshop", quantity: 1, unitPriceCents: 10_000 }] };
+    const issued = await call(invoices, "/api/walker/invoices", { token: sessions.owner, json: body });
+    const [{ shop_id: shopId }] = (await query<{ shop_id: string }>("SELECT shop_id FROM invoices WHERE id = $1", [issued.body.id])) as [{ shop_id: string }];
+    await recordPayment(db(), shopId, issued.body.id, { method: "cash", amountCents: 4_000 }, new Date());
+    const row = (await listInvoices(db(), shopId)).find((i) => i.id === issued.body.id)!;
+    expect(row).toMatchObject({ paidCents: 4_000, superseded: false });
+    await replaceInvoice(db(), shopId, issued.body.id, { ...body, lines: [{ description: "Atelier corrigé / Workshop, corrected", quantity: 1, unitPriceCents: 9_000 }] });
+    expect((await listInvoices(db(), shopId)).find((i) => i.id === issued.body.id)).toMatchObject({ superseded: true });
   });
 });
