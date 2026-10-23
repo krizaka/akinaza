@@ -8,6 +8,7 @@ import { StorefrontLive } from "@/components/shop/StorefrontLive";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { db } from "@/lib/db";
+import { proposedDefaults } from "@/lib/default-media-settings";
 import { asLocale, asPageLocale, getDictionary, uiLocaleOf } from "@/lib/i18n";
 import { appSettings, shopSectionFeatures } from "@/lib/settings";
 import { loadPublicShop, loadPublicShopOrMove } from "@/lib/shop-page";
@@ -38,7 +39,7 @@ export default async function ShopPage({ params }: { params: Promise<{ locale: s
   const now = new Date();
   // Who is here today, computed on the server from bare time ranges: the page receives a state per first name, nothing else.
   const [team, enabledUpcomingSections] = await Promise.all([teamDay(db(), page.shop.id, now), shopSectionFeatures()]);
-  const view = buildStorefront({ page, locale, contentLocale: content, now, teamDay: team, enabledUpcomingSections });
+  const view = buildStorefront({ page, locale, contentLocale: content, now, teamDay: team, enabledUpcomingSections, defaults: await proposedDefaults(page) });
   return (
     <>
       <SiteHeader locale={locale} current="home" path={`/${content}/s/${slug}`} languages={page.languages.enabled} contentLocale={content} />

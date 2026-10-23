@@ -758,6 +758,26 @@
         "link": "Ajouter une boutique",
         "back": "Retour à votre page boutique",
         "submit": "Créer la boutique"
+      },
+      "defaults": {
+        "title": "Images proposées",
+        "lead": "Pas encore de photo ? Choisissez des images qui conviennent à votre métier. Ce sont des images neutres, pas votre boutique : remplacez-les par les vôtres dès que possible.",
+        "type": "Votre métier",
+        "show": "Afficher les images proposées là où je n'en ai pas",
+        "cover": "Couverture",
+        "gallery": "Photos",
+        "useCover": "Utiliser comme couverture",
+        "addPhoto": "Ajouter à mes photos",
+        "saved": "Enregistré.",
+        "preview": "Aperçu de la couverture proposée",
+        "types": {
+          "salon": "Salon (coiffure, beauté)",
+          "coaching": "Coaching et entraînement",
+          "workshop": "Atelier (réparation, artisanat)",
+          "cleaning": "Entretien ménager",
+          "pets": "Soins aux animaux",
+          "consulting": "Services professionnels"
+        }
       }
     },
     "shopPage": {
@@ -808,6 +828,8 @@
       "write": "Écrire",
       "gallery": "Un coup d'œil",
       "galleryLabel": "Photos de {shop}",
+      "galleryIllustrativeLabel": "Images du métier",
+      "galleryIllustrativeNote": "Images d'illustration, pas celles de cette boutique : elles s'effacent devant ses photos.",
       "wallTitle": "Mur de la boutique",
       "reelsTitle": "Vidéos courtes",
       "announcementsTitle": "Annonces",
@@ -1505,6 +1527,104 @@
         "noShow": {
           "term": "Absence (no-show)",
           "definition": "Un rendez-vous où le client ne s'est pas présenté et n'a pas annulé."
+        }
+      }
+    },
+    "defaultMedia": {
+      "salon": {
+        "cover": {
+          "1": "Salon de coiffure lumineux avec deux fauteuils, des plantes et de grandes fenêtres"
+        },
+        "gallery": {
+          "1": "Bassin de lavage et serviettes blanches pliées",
+          "2": "Étagère de produits de soin neutres et une plante",
+          "3": "Plateau en bois avec ciseaux, peigne et brosse",
+          "4": "Miroir rond au-dessus d'une coiffeuse en bois"
+        },
+        "service": {
+          "1": "Bassin de lavage et serviettes blanches pliées",
+          "2": "Étagère de produits de soin neutres et une plante",
+          "3": "Plateau en bois avec ciseaux, peigne et brosse"
+        }
+      },
+      "coaching": {
+        "cover": {
+          "1": "Studio de remise en forme lumineux, plancher de bois, tapis et kettlebells"
+        },
+        "gallery": {
+          "1": "Tapis de yoga roulés dans un support en bois",
+          "2": "Rangée d'haltères sur un support dans un studio lumineux",
+          "3": "Serviette pliée et bouteille d'eau sur un banc en bois",
+          "4": "Mur de miroirs d'un studio vide avec plancher de bois"
+        },
+        "service": {
+          "1": "Tapis de yoga roulés dans un support en bois",
+          "2": "Rangée d'haltères sur un support dans un studio lumineux",
+          "3": "Serviette pliée et bouteille d'eau sur un banc en bois"
+        }
+      },
+      "workshop": {
+        "cover": {
+          "1": "Atelier d'artisan rangé, établi en bois, outils sur panneau perforé"
+        },
+        "gallery": {
+          "1": "Outils à main rangés sur un panneau perforé",
+          "2": "Vélo sur un support de réparation dans un atelier lumineux",
+          "3": "Établi en bois avec un étau et des copeaux",
+          "4": "Bobines de fil, échantillons de tissu et ciseaux de tailleur sur une table"
+        },
+        "service": {
+          "1": "Outils à main rangés sur un panneau perforé",
+          "2": "Vélo sur un support de réparation dans un atelier lumineux",
+          "3": "Établi en bois avec un étau et des copeaux"
+        }
+      },
+      "cleaning": {
+        "cover": {
+          "1": "Salon lumineux fraîchement nettoyé, canapé, plancher brillant, plante"
+        },
+        "gallery": {
+          "1": "Seau métallique, brosses et chiffons propres à côté d'une plante",
+          "2": "Comptoir de cuisine blanc impeccable avec des citrons",
+          "3": "Pile de serviettes blanches pliées sur un tabouret",
+          "4": "Fenêtre propre avec la lumière du matin et une plante"
+        },
+        "service": {
+          "1": "Seau métallique, brosses et chiffons propres à côté d'une plante",
+          "2": "Comptoir de cuisine blanc impeccable avec des citrons",
+          "3": "Pile de serviettes blanches pliées sur un tabouret"
+        }
+      },
+      "pets": {
+        "cover": {
+          "1": "Sentier de parc d'automne bordé d'érables, une laisse accrochée à une clôture"
+        },
+        "gallery": {
+          "1": "Bol pour chien et jouet en corde près d'une fenêtre ensoleillée",
+          "2": "Brosse de toilettage et serviette pliée sur une table",
+          "3": "Golden retriever courant dans l'herbe, vu de dos",
+          "4": "Petit chien au repos sur un coussin dans une pièce lumineuse"
+        },
+        "service": {
+          "1": "Bol pour chien et jouet en corde près d'une fenêtre ensoleillée",
+          "2": "Brosse de toilettage et serviette pliée sur une table",
+          "3": "Golden retriever courant dans l'herbe, vu de dos"
+        }
+      },
+      "consulting": {
+        "cover": {
+          "1": "Bureau calme près d'une fenêtre, ordinateur fermé, carnet, plante"
+        },
+        "gallery": {
+          "1": "Carnet ouvert et stylo sur un bureau en bois",
+          "2": "Salle de réunion vide avec une longue table en bois",
+          "3": "Étagère de livres et petite plante dans un bureau lumineux",
+          "4": "Tasse de café à côté d'une pile de papiers"
+        },
+        "service": {
+          "1": "Carnet ouvert et stylo sur un bureau en bois",
+          "2": "Salle de réunion vide avec une longue table en bois",
+          "3": "Étagère de livres et petite plante dans un bureau lumineux"
         }
       }
     }

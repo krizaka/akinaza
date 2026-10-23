@@ -145,3 +145,25 @@ describe("the storefront renders from the shop's data — a dog walker, in Frenc
     expect(html).toContain("Après la sortie");
   });
 });
+
+describe("the trade's proposed pictures on the public page (#267)", () => {
+  const defaults = {
+    cover: null,
+    gallery: [1, 2].map((n) => ({ id: `salon-gallery-${n}`, altKey: `defaultMedia.salon.gallery.${n}`, src: `https://cdn.test/g${n}.webp`, sources: [], width: 960, height: 720 })),
+    service: [],
+  };
+
+  it("are headed as pictures of the trade with a note, never as « Photos de {shop} »", () => {
+    const html = renderToStaticMarkup(<Storefront locale="fr" view={buildStorefront({ page: salon, locale: "fr", now: NOW, defaults })} />);
+    expect(html).toContain("Images du métier");
+    expect(html).toContain("Images d&#x27;illustration, pas celles de cette boutique");
+    expect(html).not.toContain("Photos de Salon Laurier");
+    expect(html).toContain("https://cdn.test/g1.webp");
+  });
+
+  it("the shop's own photos keep their heading", () => {
+    const html = renderToStaticMarkup(<Storefront locale="fr" view={buildStorefront({ page: walker, locale: "fr", now: NOW, defaults })} />);
+    expect(html).toContain("Photos de Pattes de Saint-Henri");
+    expect(html).not.toContain("Images du métier");
+  });
+});

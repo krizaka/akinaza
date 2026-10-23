@@ -47,6 +47,9 @@ export const SETTINGS = {
   "figures.emptySlotMinOffered": integer("figures", 4, { min: 1, max: 52, unit: "occurrences" }, GLOBAL_ONLY),
   "figures.maxActions": integer("figures", 3, { min: 0, max: 5, unit: "actions" }, GLOBAL_ONLY),
   "figures.actions": subset("figures", ["chase", "taxes", "slot"] as const, ["chase", "taxes", "slot"], GLOBAL_ONLY),
+  // The proposed images and videos of the storefronts (#267): the switch, and the trades whose defaults are offered.
+  "features.defaultMedia": flag("features", true, GLOBAL_ONLY),
+  "storefront.defaultMedia.types": subset("storefront", ["salon", "coaching", "workshop", "cleaning", "pets", "consulting"] as const, ["salon", "coaching", "workshop", "cleaning", "pets", "consulting"], GLOBAL_ONLY),
   "realtime.storefront.enabled": flag("realtime", true, GLOBAL_ONLY),
   "realtime.storefront.heartbeatSeconds": integer("realtime", 15, { min: 5, max: 60, unit: "seconds" }, GLOBAL_ONLY),
   "realtime.storefront.maxStreamsPerPage": integer("realtime", 100, { min: 1, max: 1000, unit: "streams" }, GLOBAL_ONLY),

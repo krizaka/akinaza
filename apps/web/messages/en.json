@@ -758,6 +758,26 @@
         "link": "Add a shop",
         "back": "Back to your shop page",
         "submit": "Create the shop"
+      },
+      "defaults": {
+        "title": "Proposed images",
+        "lead": "No photo yet? Choose images that suit your trade. They are neutral pictures, not your shop: replace them with your own when you can.",
+        "type": "Your trade",
+        "show": "Show proposed images where I have none",
+        "cover": "Cover",
+        "gallery": "Photos",
+        "useCover": "Use as my cover",
+        "addPhoto": "Add to my photos",
+        "saved": "Saved.",
+        "preview": "Preview of the proposed cover",
+        "types": {
+          "salon": "Salon (hair, beauty)",
+          "coaching": "Coaching and training",
+          "workshop": "Workshop (repair, craft)",
+          "cleaning": "Cleaning",
+          "pets": "Pet care",
+          "consulting": "Professional services"
+        }
       }
     },
     "shopPage": {
@@ -808,6 +828,8 @@
       "write": "Write",
       "gallery": "A look inside",
       "galleryLabel": "Photos of {shop}",
+      "galleryIllustrativeLabel": "Pictures of the trade",
+      "galleryIllustrativeNote": "Illustrative pictures, not this shop's own: they make way for its photos.",
       "wallTitle": "Shop wall",
       "reelsTitle": "Short videos",
       "announcementsTitle": "Announcements",
@@ -1505,6 +1527,104 @@
         "noShow": {
           "term": "No-show",
           "definition": "An appointment where the client did not come and did not cancel."
+        }
+      }
+    },
+    "defaultMedia": {
+      "salon": {
+        "cover": {
+          "1": "Bright hair salon with two chairs, plants and large windows"
+        },
+        "gallery": {
+          "1": "Washing basin and folded white towels",
+          "2": "Shelf of plain care products and a plant",
+          "3": "Wooden tray with scissors, a comb and a brush",
+          "4": "Round mirror above a wooden station"
+        },
+        "service": {
+          "1": "Washing basin and folded white towels",
+          "2": "Shelf of plain care products and a plant",
+          "3": "Wooden tray with scissors, a comb and a brush"
+        }
+      },
+      "coaching": {
+        "cover": {
+          "1": "Bright fitness studio with a wooden floor, mats and kettlebells"
+        },
+        "gallery": {
+          "1": "Rolled yoga mats in a wooden rack",
+          "2": "A row of dumbbells on a rack in a bright studio",
+          "3": "A folded towel and a water bottle on a wooden bench",
+          "4": "Mirror wall of an empty studio with a wooden floor"
+        },
+        "service": {
+          "1": "Rolled yoga mats in a wooden rack",
+          "2": "A row of dumbbells on a rack in a bright studio",
+          "3": "A folded towel and a water bottle on a wooden bench"
+        }
+      },
+      "workshop": {
+        "cover": {
+          "1": "Tidy craft workshop with a wooden workbench and tools on a pegboard"
+        },
+        "gallery": {
+          "1": "Hand tools arranged on a pegboard",
+          "2": "Bicycle on a repair stand in a bright workshop",
+          "3": "Wooden workbench with a vise and wood shavings",
+          "4": "Spools of thread, fabric samples and tailor scissors on a table"
+        },
+        "service": {
+          "1": "Hand tools arranged on a pegboard",
+          "2": "Bicycle on a repair stand in a bright workshop",
+          "3": "Wooden workbench with a vise and wood shavings"
+        }
+      },
+      "cleaning": {
+        "cover": {
+          "1": "Bright, freshly cleaned living room with a sofa, shining floor and a plant"
+        },
+        "gallery": {
+          "1": "Metal bucket, brushes and clean cloths beside a plant",
+          "2": "Spotless white kitchen counter with lemons",
+          "3": "Stack of folded white towels on a stool",
+          "4": "Clean window with morning light and a plant"
+        },
+        "service": {
+          "1": "Metal bucket, brushes and clean cloths beside a plant",
+          "2": "Spotless white kitchen counter with lemons",
+          "3": "Stack of folded white towels on a stool"
+        }
+      },
+      "pets": {
+        "cover": {
+          "1": "Autumn park path lined with maple trees, a leash hanging on a fence"
+        },
+        "gallery": {
+          "1": "Dog bowl and rope toy by a sunny window",
+          "2": "Grooming brush and a folded towel on a table",
+          "3": "Golden retriever running on grass, seen from behind",
+          "4": "Small dog resting on a cushion in a bright room"
+        },
+        "service": {
+          "1": "Dog bowl and rope toy by a sunny window",
+          "2": "Grooming brush and a folded towel on a table",
+          "3": "Golden retriever running on grass, seen from behind"
+        }
+      },
+      "consulting": {
+        "cover": {
+          "1": "Calm desk by a window with a closed laptop, a notebook and a plant"
+        },
+        "gallery": {
+          "1": "Open notebook and a pen on a wooden desk",
+          "2": "Empty meeting room with a long wooden table",
+          "3": "Shelf of books and a small plant in a bright office",
+          "4": "Cup of coffee beside a stack of papers"
+        },
+        "service": {
+          "1": "Open notebook and a pen on a wooden desk",
+          "2": "Empty meeting room with a long wooden table",
+          "3": "Shelf of books and a small plant in a bright office"
         }
       }
     }

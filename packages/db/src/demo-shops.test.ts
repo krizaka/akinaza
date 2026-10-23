@@ -66,3 +66,16 @@ describe("the three fictional demo shops", () => {
     }
   });
 });
+
+describe("the demo shops use the proposed images (#267)", () => {
+  it("each demo has its trade, the salon no cover of its own, so the page shows the defaults of its type", async () => {
+    const { shopPageConfigOf } = await import("./shop-page");
+    expect(DEMO_SHOPS.map((d) => d.shopType)).toEqual(["salon", "workshop", "consulting"]);
+    for (const demo of DEMO_SHOPS) {
+      const page = (await publicShop(t.db, demo.shop.slug))!;
+      expect(page.pageConfig?.shopType).toBe(demo.shopType);
+      expect((await shopPageConfigOf(t.db, page.shop.id)).useDefaults).toBe(true);
+    }
+    expect(DEMO_SHOPS[0]!.cover).toBeUndefined();
+  });
+});

@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
 
+import { ProposedImages, type ProposedImagesData } from "@/components/app/ProposedImages";
 import { ContactSection, IdentitySection, PublishSection, TextsSection } from "@/components/app/ShopPageSections";
 import { useCall } from "@/components/app/useCall";
 import { useSay, useVocabulary } from "@/lib/i18n-client";
@@ -31,6 +32,8 @@ export interface SetupData {
   media: { cover: (GalleryLine) | null; gallery: GalleryLine[] };
   windows: { id: string; weekday: number; startsAt: string; endsAt: string }[];
   daysOff: { id: string; onDate: string; reason: string | null }[];
+  /** The proposed images (#267): null when the administrator has switched them off. */
+  proposed: ProposedImagesData | null;
   rules: { cancellationHours: number; bookingHorizonDays: number; slotStepMinutes: number; minNoticeMinutes: number; reportLinkDays: number; paymentTermsDays: number } | null;
 }
 
@@ -75,7 +78,10 @@ export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /**
               {data.rules ? <RulesCard rules={data.rules} /> : null}
             </div>
           </Tabs.Content>
-          <Tabs.Content value="media" className="pt-4"><MediaCard media={data.media} /></Tabs.Content>
+          <Tabs.Content value="media" className="grid gap-4 pt-4 lg:grid-cols-2">
+            <MediaCard media={data.media} />
+            {data.proposed ? <ProposedImages data={data.proposed} /> : null}
+          </Tabs.Content>
           <Tabs.Content value="look" className="grid gap-4 pt-4 lg:grid-cols-2">
             <ShopPageCard shopId={data.shopId} publicUrl={data.publicUrl} config={data.pageConfig} />
             <LanguagesLink shopId={data.shopId} />
