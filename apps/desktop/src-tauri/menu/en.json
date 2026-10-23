@@ -1,0 +1,36 @@
+{
+  "labels": {
+    "about": "About Akinaza",
+    "hide": "Hide Akinaza",
+    "hideOthers": "Hide Others",
+    "showAll": "Show All",
+    "quit": "Quit Akinaza",
+    "edit": "Edit",
+    "undo": "Undo",
+    "redo": "Redo",
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste",
+    "selectAll": "Select All",
+    "window": "Window",
+    "minimize": "Minimize",
+    "zoom": "Zoom",
+    "close": "Close"
+  },
+  "menus": [
+    {
+      "title": "Go",
+      "items": [
+        { "id": "section.today", "label": "Today", "accelerator": "CmdOrCtrl+1" },
+        { "id": "section.invoices", "label": "Invoices", "accelerator": "CmdOrCtrl+2" },
+        { "id": "section.books", "label": "Books", "accelerator": "CmdOrCtrl+3" },
+        { "id": "section.clients", "label": "Clients", "accelerator": "CmdOrCtrl+4" },
+        { "id": "section.shop", "label": "Shop", "accelerator": "CmdOrCtrl+5" }
+      ]
+    },
+    {
+      "title": "View",
+      "items": [{ "id": "view.reload", "label": "Reload the page", "accelerator": "CmdOrCtrl+R" }]
+    }
+  ]
+}
