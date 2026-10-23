@@ -1325,6 +1325,147 @@
         "edited": "Modifié par vous",
         "stale": "À revoir"
       }
+    },
+    "figures": {
+      "state": {
+        "good": "Sur la bonne voie",
+        "watch": "À surveiller",
+        "alert": "À corriger",
+        "info": "Rien à juger pour l'instant"
+      },
+      "updated": "Mis à jour {when}",
+      "stale": "Peut être périmé : recalculé dès que quelque chose change.",
+      "cadence": {
+        "onChange": "Recalculé dès qu'une facture, un paiement, une dépense ou un rendez-vous change.",
+        "daily": "Recalculé chaque jour."
+      },
+      "sources": {
+        "invoice": "{count} factures",
+        "expense": "{count} dépenses",
+        "payment": "{count} paiements",
+        "appointment": "{count} rendez-vous"
+      },
+      "periodLabel": "Période : du {start} au {end}",
+      "howComputed": "Comment c'est calculé",
+      "whereFrom": "D'où ça vient",
+      "learnMore": "Qu'est-ce que ça veut dire ?",
+      "invoiced": {
+        "name": "Facturé",
+        "meaning": "Ce que vous avez facturé dans la période, avant les taxes. Une note de crédit retire ce qu'elle annule.",
+        "formula": "Total de vos factures avant taxes, moins vos notes de crédit."
+      },
+      "collected": {
+        "name": "Encaissé",
+        "meaning": "L'argent que vous avez réellement reçu dans la période, peu importe la date de la facture.",
+        "formula": "Total des paiements reçus dans la période. À côté : ce total sur ce que vous avez facturé, taxes comprises."
+      },
+      "toCollect": {
+        "name": "À encaisser",
+        "meaning": "Ce que vos clients vous doivent encore aujourd'hui, sur toutes vos factures.",
+        "formula": "Factures taxes comprises, moins les paiements reçus. La part en retard : celles dont l'échéance est passée."
+      },
+      "gstCollected": {
+        "name": "TPS perçue",
+        "meaning": "La TPS (5 %) que vos factures ont chargée dans la période.",
+        "formula": "Somme de la TPS de vos factures de la période, notes de crédit déduites."
+      },
+      "qstCollected": {
+        "name": "TVQ perçue",
+        "meaning": "La TVQ (9,975 %) que vos factures ont chargée dans la période.",
+        "formula": "Somme de la TVQ de vos factures de la période, notes de crédit déduites."
+      },
+      "gstToRemit": {
+        "name": "TPS à remettre",
+        "meaning": "Ce que vous paieriez au gouvernement pour la TPS si la période se terminait aujourd'hui. Akinaza le prépare ; vous produisez la déclaration.",
+        "formula": "TPS perçue sur vos factures, moins la TPS que vous pouvez récupérer sur vos dépenses."
+      },
+      "qstToRemit": {
+        "name": "TVQ à remettre",
+        "meaning": "Ce que vous paieriez à Revenu Québec pour la TVQ si la période se terminait aujourd'hui. Akinaza le prépare ; vous produisez la déclaration.",
+        "formula": "TVQ perçue sur vos factures, moins la TVQ que vous pouvez récupérer sur vos dépenses."
+      },
+      "margin": {
+        "name": "Marge",
+        "meaning": "Ce qui reste de vos revenus après vos dépenses, avant les taxes. Elle ne compte ni votre salaire ni les coûts que vous n'avez pas notés.",
+        "formula": "Facturé avant taxes, moins vos dépenses avant taxes, à la part utilisée pour l'entreprise."
+      },
+      "appointments": {
+        "name": "Rendez-vous",
+        "meaning": "Les rendez-vous qui ont eu lieu dans la période.",
+        "formula": "Nombre de rendez-vous marqués comme terminés."
+      },
+      "noShows": {
+        "name": "Absences",
+        "meaning": "Les rendez-vous où le client ne s'est pas présenté, sur ceux qui étaient prévus.",
+        "formula": "Absences sur les rendez-vous terminés plus les absences."
+      },
+      "terms": {
+        "invoicesSubtotal": "Factures avant taxes",
+        "paymentsReceived": "Paiements reçus",
+        "invoicedWithTaxes": "Facturé taxes comprises",
+        "invoicesTotal": "Factures taxes comprises",
+        "overdue": "Dont en retard",
+        "gstOnInvoices": "TPS sur les factures",
+        "qstOnInvoices": "TVQ sur les factures",
+        "gstOnExpenses": "TPS sur les dépenses",
+        "qstOnExpenses": "TVQ sur les dépenses",
+        "expensesBusinessShare": "Dépenses pour l'entreprise",
+        "appointmentsDone": "Rendez-vous terminés",
+        "appointmentsNoShow": "Absences",
+        "appointmentsDue": "Rendez-vous prévus"
+      },
+      "nextTitle": "Que faire maintenant",
+      "nothingToDo": "Rien ne vous attend pour l'instant.",
+      "actions": {
+        "chase": {
+          "title": "Relancer la facture {number}",
+          "why": "Elle est en retard de {days} jours et {amount} reste dû.",
+          "more": "{others} autres factures sont aussi en retard, {total} en tout.",
+          "cta": "Ouvrir la facture"
+        },
+        "taxes": {
+          "title": "Préparer votre déclaration TPS/TVQ",
+          "why": "Votre période se termine dans {days} jours ({start} au {end}). Akinaza prépare les chiffres ; vous produisez la déclaration vous-même.",
+          "whyPast": "Votre période s'est terminée le {end}. Akinaza prépare les chiffres ; vous produisez la déclaration vous-même.",
+          "cta": "Préparer la déclaration"
+        },
+        "slot": {
+          "title": "Ouvrir le {weekday} {time} aux réservations",
+          "why": "Seulement {booked} de ces {offered} plages ont été réservées récemment.",
+          "cta": "Ouvrir les heures"
+        }
+      }
+    },
+    "lexicon": {
+      "title": "Lexique",
+      "intro": "Les mots de vos chiffres, en langage simple.",
+      "accountant": "À valider par votre comptable.",
+      "terms": {
+        "tpsTvq": {
+          "term": "TPS / TVQ",
+          "definition": "Deux taxes de vente que vous chargez à vos clients et remettez au gouvernement : la TPS (5 %, fédérale) et la TVQ (9,975 %, Québec). Vous les percevez ; vous remettez ce que vous avez perçu moins ce que vous avez payé sur vos dépenses d'entreprise."
+        },
+        "htTtc": {
+          "term": "Avant taxes / taxes comprises",
+          "definition": "Avant taxes, c'est le prix sans TPS ni TVQ ; taxes comprises, c'est ce que le client paie. Vos revenus se comptent avant taxes, parce que les taxes ne sont pas à vous."
+        },
+        "margin": {
+          "term": "Marge",
+          "definition": "Ce qui reste de vos revenus après vos dépenses, avant les taxes. Ici, seules les dépenses que vous avez notées comptent : votre salaire, votre impôt sur le revenu et les coûts non saisis n'y sont pas."
+        },
+        "collectedVsInvoiced": {
+          "term": "Encaissé vs facturé",
+          "definition": "Le facturé, c'est ce que vous avez demandé ; l'encaissé, c'est l'argent réellement reçu. L'écart, c'est ce que les clients vous doivent encore."
+        },
+        "declarationPeriod": {
+          "term": "Période de déclaration",
+          "definition": "La durée (un mois, un trimestre ou une année, selon votre fréquence de production) couverte par une déclaration de TPS/TVQ. Akinaza en prépare les chiffres ; vous la vérifiez et la produisez vous-même."
+        },
+        "noShow": {
+          "term": "Absence (no-show)",
+          "definition": "Un rendez-vous où le client ne s'est pas présenté et n'a pas annulé."
+        }
+      }
     }
   }
 }
