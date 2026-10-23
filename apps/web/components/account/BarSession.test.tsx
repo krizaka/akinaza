@@ -28,18 +28,23 @@ describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
     expect(html).toContain('href="/en/sign-up"');
   });
 
-  it("signed in: « Open the app » into the app and the avatar menu, not « Sign in »", () => {
+  it("signed in: the avatar menu is the one entry (no second « Open the app »), never « Sign in »", () => {
     const html = render({ signedIn: true, signupOpen: false, account: { name: "Camille", email: "camille@example.com", avatarSeed: null } });
-    expect(text(html)).toContain("Open the app");
-    expect(html).toContain('href="/en/app"');
     expect(html).toContain('aria-label="Account"');
+    expect(text(html)).not.toContain("Open the app");
     expect(text(html)).not.toContain("Sign in");
+  });
+
+  it("signed in: the bar never prints an e-mail", () => {
+    const html = render({ signedIn: true, signupOpen: false, account: { name: "Camille", email: "camille@example.com", avatarSeed: null } });
+    expect(html).not.toContain("camille@example.com");
   });
 
   it("the avatar menu is in the bar at every width (never inside the phone's panel), « Open the app » also in the panel", () => {
     const me = { signedIn: true, signupOpen: false, account: { name: "Camille", email: "camille@example.com", avatarSeed: null } };
     const bar = render(me, "en", "bar");
     expect(bar).toContain('aria-label="Account"');
+    expect(bar).not.toContain("camille@example.com");
     expect(bar.match(/<[^>]*aria-label="Account"[^>]*>/)![0]).not.toMatch(/class="[^"]*(^|[\s"])(max-\w+:)?hidden\b/);
     const panel = render(me, "en", "panel");
     expect(panel).not.toContain('aria-label="Account"');

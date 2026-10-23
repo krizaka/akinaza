@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { config, proxy } from "../proxy";
+import { LOCALE_HEADER } from "./locale-negotiation";
 
 const get = (path: string) => proxy(new NextRequest(`https://dev.akinaza.com${path}`, { headers: { host: "dev.akinaza.com" } }));
 
@@ -74,5 +75,14 @@ describe("www.akinaza.com is public, dev.akinaza.com leaves search (epic krizaka
   it("admin stays closed on every response", () => {
     setup();
     expect(as("admin.akinaza.com", "/en").headers.get("x-robots-tag")).toBe("noindex, nofollow");
+  });
+});
+
+describe("the language of the address reaches the pages (the 404 has no params)", () => {
+  it("/fr/nope carries fr, /nope carries the visitor's choice", () => {
+    const fr = proxy(new NextRequest("https://www.akinaza.com/fr/nope", { headers: { host: "www.akinaza.com", "accept-language": "en" } }));
+    expect(fr.headers.get(`x-middleware-request-${LOCALE_HEADER}`)).toBe("fr");
+    const en = proxy(new NextRequest("https://www.akinaza.com/en/nope", { headers: { host: "www.akinaza.com" } }));
+    expect(en.headers.get(`x-middleware-request-${LOCALE_HEADER}`)).toBe("en");
   });
 });

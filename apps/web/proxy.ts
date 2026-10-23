@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { isAdminHost, routeFor, shopOfHost } from "./lib/host";
 import { CLOSED_ROBOTS, closedRobots, devRedirect, indexableOn, isDevHost, NOINDEX } from "./lib/indexing";
-import { negotiateLocale } from "./lib/locale-negotiation";
+import { LOCALE_HEADER, negotiateLocale, pageLocaleOf } from "./lib/locale-negotiation";
 import { SITE_URL } from "./lib/site";
 
 /**
@@ -39,6 +39,9 @@ export function proxy(request: NextRequest) {
   const shopHost = shopOfHost(host, new URL(site).hostname.replace(/^www\./, "")) !== null;
   // A deployment closed to search engines (APP_SEARCH_INDEXING=off): robots.txt disallows everything (the sitemap is still served, noindexed).
   if (closed && request.nextUrl.pathname === "/robots.txt") return new NextResponse(CLOSED_ROBOTS, { headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });
+  // The language of the address, handed to the pages (the 404 has no params): set on the request, never trusted from the client.
+  const forwarded = new Headers(request.headers);
+  forwarded.set(LOCALE_HEADER, pageLocaleOf(pathname, chosen));
   let response: NextResponse;
   switch (route.kind) {
     case "robotsClosed":
@@ -51,10 +54,10 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL(route.path, host ? `${proto}://${host}` : request.url));
     }
     case "rewrite":
-      response = NextResponse.rewrite(new URL(route.path, request.url));
+      response = NextResponse.rewrite(new URL(route.path, request.url), { request: { headers: forwarded } });
       break;
     default:
-      response = NextResponse.next();
+      response = NextResponse.next({ request: { headers: forwarded } });
   }
   const segment = request.nextUrl.pathname.split("/")[1];
   if ((segment === "en" || segment === "fr") && request.cookies.get("NEXT_LOCALE")?.value !== segment) {

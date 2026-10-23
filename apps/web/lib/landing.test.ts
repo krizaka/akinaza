@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
-import { HOME_SECTIONS, productStatus, SCREENS } from "./landing";
+import { DEMO_SHOP, heroActions, HOME_SECTIONS, productStatus, SCREENS } from "./landing";
 import { llmsText } from "./seo";
 import { heroTake, MEDIA_CDN, screenStill } from "./tour";
 
@@ -137,5 +137,33 @@ describe("the responsive guard", () => {
     // The pipeline is the org's node-ci.yml; its `after-build` step runs this repository's script after the production build.
     expect(readFileSync(join(ROOT, "../../.github/workflows/ci.yml"), "utf8")).toContain("after-build: scripts/ci-after-build.sh");
     expect(readFileSync(join(ROOT, "../../scripts/ci-after-build.sh"), "utf8")).toContain("check:overflow");
+  });
+});
+
+describe("the hero follows the session (krizaka/akinaza#285)", () => {
+  const label = (dict: typeof en, message: "openShop" | "tryDemo" | "signIn") => dict.landing.actions[message];
+
+  it("signed out, EN: « Try the demo shop » first, « Sign in » second", () => {
+    const { primary, secondary } = heroActions("en", false);
+    expect(primary).toEqual({ href: `/en/s/${DEMO_SHOP}`, message: "tryDemo" });
+    expect(label(en, primary.message)).toBe("Try the demo shop");
+    expect(secondary && label(en, secondary.message)).toBe("Sign in");
+    expect(secondary?.href).toBe("/en/sign-in");
+  });
+
+  it("signed out, FR: « Essayer la boutique démo » and « Se connecter »", () => {
+    const { primary, secondary } = heroActions("fr", false);
+    expect(label(fr, primary.message)).toBe("Essayer la boutique démo");
+    expect(secondary && label(fr, secondary.message)).toBe("Se connecter");
+    expect(primary.href).toBe(`/fr/s/${DEMO_SHOP}`);
+  });
+
+  it("signed in, EN and FR: one primary « Open my shop » / « Ouvrir ma boutique » into the owner's app, no second action", () => {
+    for (const [locale, dict, text] of [["en", en, "Open my shop"], ["fr", fr, "Ouvrir ma boutique"]] as const) {
+      const { primary, secondary } = heroActions(locale, true);
+      expect(primary.href).toBe(`/${locale}/app`);
+      expect(label(dict, primary.message)).toBe(text);
+      expect(secondary).toBeNull();
+    }
   });
 });

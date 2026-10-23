@@ -3,6 +3,7 @@
 import { krizakaFetch, useMutation } from "@krizaka/query";
 import { Alert } from "@krizaka/ui/alert";
 import { createKrizakaForm } from "@krizaka/ui/form";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
@@ -42,6 +43,9 @@ export function SignInForm({ next }: { next: string }) {
     <form.Form aria-label={say("signIn.title")} className="flex flex-col gap-4">
       <form.TextField name="email" label={say("signIn.email")} type="email" autoComplete="username" />
       <form.TextField name="password" label={say("signIn.password")} type="password" autoComplete="current-password" />
+      <Link href={`/${locale}/forgot-password`} className="-mt-2 self-end text-sm font-semibold text-fg-accent underline">
+        {say("signIn.forgot")}
+      </Link>
       {problem ? <Alert tone="danger">{problem}</Alert> : null}
       <form.Submit size="lg" shimmer className="w-full">
         {say("signIn.submit")}

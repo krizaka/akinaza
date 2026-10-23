@@ -40,7 +40,11 @@
   "landing": {
     "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
     "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",
-    "talk": "Parler d'Akinaza avec nous",
+    "actions": {
+      "openShop": "Ouvrir ma boutique",
+      "tryDemo": "Essayer la boutique démo",
+      "signIn": "Se connecter"
+    },
     "status": {
       "development": "En développement : les inscriptions sont fermées pendant que nous le bâtissons avec les premiers commerces.",
       "preview": "Aperçu de développement : inscriptions fermées, accès sur invitation."
@@ -60,7 +64,7 @@
       ],
       "cta": "Profiter de l’offre fondateur",
       "note": "Vous payez sur la page sécurisée de Stripe, et vous y gérez ou annulez votre abonnement. Déjà membre ? Connectez-vous d’abord.",
-      "talk": "Nous parler d’abord"
+      "talk": "Écrivez-nous d’abord"
     },
     "screens": {
       "book": {
@@ -1681,5 +1685,10 @@
         "intent": "La démarche et les cas d'abord."
       }
     }
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "text": "Cette page n’existe pas, ou n’est pas à vous.",
+    "home": "Retour à Akinaza"
   }
 }

@@ -33,12 +33,14 @@ export function BarActionsView({ me, locale, words, placement, onSignOut }: { me
   if (me.signedIn && me.account) {
     return (
       <>
-        <Button asChild variant="primary" size={placement === "bar" ? "sm" : "md"} className={placement === "bar" ? "ml-1 hidden font-bold md:inline-flex" : "mt-2 font-bold"}>
-          <Link href={`/${locale}/app`}>{words.openApp}</Link>
-        </Button>
-        {placement === "bar" ? (
-          <AkinazaAccountMenu locale={locale} name={me.account.name} email={me.account.email} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} words={words} onSignOut={onSignOut} />
-        ) : null}
+        {/* The bar has the account menu only (one entry, no second « Open the app »); the phone's panel has no menu, so it keeps the action. */}
+        {placement === "panel" ? (
+          <Button asChild variant="primary" size="md" className="mt-2 font-bold">
+            <Link href={`/${locale}/app`}>{words.openApp}</Link>
+          </Button>
+        ) : (
+          <AkinazaAccountMenu locale={locale} name={me.account.name} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} words={words} onSignOut={onSignOut} />
+        )}
       </>
     );
   }

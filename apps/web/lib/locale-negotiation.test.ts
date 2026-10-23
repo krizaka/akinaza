@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { negotiateLocale } from "./locale-negotiation";
+import { LOCALE_HEADER, negotiateLocale, pageLocaleOf } from "./locale-negotiation";
 
 const read = (p: string) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
 
@@ -21,5 +21,17 @@ describe("Loi 96: French by default", () => {
     expect(read("proxy.ts")).toMatch(/negotiateLocale\(/);
     expect(read("lib/seo.ts")).toMatch(/"x-default": url\("fr", page\)/);
     expect(read("app/sitemap.ts")).toMatch(/pagePath\("fr", page\)/);
+  });
+});
+
+describe("the 404 reads the language of the address (krizaka/akinaza#299)", () => {
+  it("an address under /fr or /en is that language, whatever the cookie chose", () => {
+    expect(pageLocaleOf("/fr/nope", "en")).toBe("fr");
+    expect(pageLocaleOf("/en/nope", "fr")).toBe("en");
+  });
+
+  it("an address without a language keeps the visitor's choice", () => {
+    expect(pageLocaleOf("/nope", "en")).toBe("en");
+    expect(LOCALE_HEADER).toBe("x-akinaza-locale");
   });
 });

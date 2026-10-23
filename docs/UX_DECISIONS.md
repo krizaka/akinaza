@@ -215,3 +215,12 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: two shops of the same trade can open on the same cover until each owner uploads; a generated set per trade,
   rendered and uploaded by hand (`scripts/default-media/`), with its alt texts to write in both languages.
 - **Signal we are wrong**: owners keep the defaults for months, or clients ask whether the photos are of the shop.
+
+## The hero follows the session, the 404 is ours (krizaka/akinaza#285, #299)
+
+- **Decision**: the hero's action is the session's: signed out « Try the demo shop » with « Sign in » beside it; signed in « Open my shop » into the owner's app. The public bar shows the account menu alone when signed in (no second « Open the app »), never an e-mail. « Talk to us » leaves the public pages; contact lives in the footer. An unknown address answers a branded 404 in the language of its address (`global-not-found`), and the sign-in offers « Forgot your password? ».
+- **Problem**: a signed-in owner was pitched to a stranger (« Talk to us »), the bar repeated « Open the app » beside the avatar, the sign-in never showed the reset link, and an unknown address got Next's default 404.
+- **Principle**: the app first, never a sales call (krizaka-ui#505); one way in per state.
+- **Refused**: a client-side swap of the action (it would flash the signed-out one); a second « Open the app » in the bar.
+- **Cost**: the home is rendered per request (it reads the session); the 404 reads the language from the address through a header the proxy sets.
+- **Signal we are wrong**: signed-in owners do not use the hero's « Open my shop », or the demo shop's visitors leave at the hero.
