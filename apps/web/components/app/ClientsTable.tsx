@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { formatDate, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import { useTableLabels } from "@/lib/table-labels";
 
 export interface ClientRowView {
   id: string;
@@ -28,6 +29,7 @@ export function ClientAvatar({ name, size = "sm" }: { name: string; size?: "sm" 
 /** The shop's clients on the DataTable: who, how often, when last and next, what they spent. The name opens the file at `/app/clients/<id>`. */
 export function ClientsTable({ clients, timeZone }: { clients: ClientRowView[]; timeZone: string }) {
   const { say, locale } = useSay();
+  const labels = useTableLabels();
   const routes = useShopRoutes();
   const columns = useMemo<DataTableColumn<ClientRowView>[]>(() => {
     const day = (iso: string | null) => (iso ? formatDate(iso, locale, timeZone) : say("clients.never"));
@@ -54,5 +56,5 @@ export function ClientsTable({ clients, timeZone }: { clients: ClientRowView[]; 
       { id: "spent", header: say("clients.columns.spent"), type: "number", sortable: true, priority: 2, value: (c) => c.spentCents, cell: (c) => formatMoney(c.spentCents, locale) },
     ];
   }, [say, locale, timeZone, routes]);
-  return <DataTable caption={say("clients.caption")} rows={clients} columns={columns} getRowId={(c) => c.id} rowLabel={(c) => c.fullName} defaultSort={{ column: "client", direction: "ascending" }} />;
+  return <DataTable labels={labels} caption={say("clients.caption")} rows={clients} columns={columns} getRowId={(c) => c.id} rowLabel={(c) => c.fullName} defaultSort={{ column: "client", direction: "ascending" }} />;
 }

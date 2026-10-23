@@ -1,15 +1,15 @@
 // @template: app-list-detail
 import { localDay } from "@akinaza/core";
-import { listInvoices } from "@akinaza/db";
-import { invoiceMailSettings } from "@akinaza/db";
+import { invoiceMailSettings, listInvoices } from "@akinaza/db";
 import { PageHeader } from "@krizaka/ui/page-header";
 
-import { InvoiceMailSettings } from "@/components/app/InvoiceMailSettings";
 import { InvoicesTable } from "@/components/app/InvoicesTable";
+import { ButtonLink } from "@/components/ButtonLink";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
-import { memberShop } from "@/lib/member-shop";
+import { may, memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
+import { shopRoutes } from "@/lib/routes";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +25,16 @@ export default async function Invoices({ params }: { params: Promise<{ locale: s
   const mail = await invoiceMailSettings(db(), shop.id);
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader title={t.title} />
+      <PageHeader
+        title={t.title}
+        actions={
+          may(role, "settings") ? (
+            <ButtonLink href={shopRoutes(locale, shop.id).invoiceSettings} variant="secondary" size="sm">
+              {t.settings.link}
+            </ButtonLink>
+          ) : null
+        }
+      />
       <section aria-label={t.list.title} className="flex flex-col gap-3">
         {issued.length === 0 ? (
           <p className="text-fg-secondary">{t.list.none}</p>
@@ -37,7 +46,6 @@ export default async function Invoices({ params }: { params: Promise<{ locale: s
           />
         )}
       </section>
-      {role === "owner" && mail ? <InvoiceMailSettings initial={mail.shop} /> : null}
     </div>
   );
 }

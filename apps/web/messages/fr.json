@@ -1029,14 +1029,20 @@
         "title": "Nouvelle facture",
         "client": "Client",
         "noClient": "Sans fiche client",
-        "service": "Service {n}",
         "noService": "—",
         "quantity": "Quantité",
-        "customDescription": "Autre ligne (description)",
-        "customPrice": "Prix unitaire",
-        "customQuantity": "Quantité de l'autre ligne",
         "submit": "Émettre la facture",
-        "needLine": "Choisissez au moins un service, ou écrivez une ligne avec son prix."
+        "needLine": "Choisissez au moins un service, ou écrivez une ligne avec son prix.",
+        "line": "Ligne {n}",
+        "free": "Ligne libre",
+        "addLine": "Ajouter une ligne",
+        "removeLine": "Retirer la ligne {n}",
+        "description": "Description",
+        "unitPrice": "Prix unitaire",
+        "totals": "Avant d'émettre",
+        "gstRate": "TPS (5 %)",
+        "qstRate": "TVQ (9,975 %)",
+        "noLineYet": "Ajoutez un service ou une ligne libre : le total s'affiche ici."
       },
       "list": {
         "title": "Factures émises",
@@ -1095,7 +1101,10 @@
         "remaining": "Reste dû",
         "open": "Ouvrir la facture",
         "edit": "Modifier",
-        "cash": "Encaisser {amount} ({method})"
+        "cash": "Encaisser {amount} ({method})",
+        "issuedOn": "Émise le {date}",
+        "print": "Imprimer",
+        "aside": "Envois"
       },
       "send": {
         "title": "Envoyer cette facture",
@@ -1103,7 +1112,8 @@
         "email": "Courriel du client",
         "message": "Message (facultatif)",
         "submit": "Mettre le courriel en file",
-        "queued": "Le courriel de la facture a été mis en file."
+        "queued": "Le courriel de la facture a été mis en file.",
+        "close": "Fermer"
       },
       "history": {
         "title": "Historique des envois",
@@ -1124,6 +1134,12 @@
         "cash": "comptant",
         "card": "carte",
         "transfer": "virement"
+      },
+      "settings": {
+        "title": "Courriels de facture",
+        "lead": "Ce que chaque courriel de facture dit par défaut : le message, le nom de l'expéditeur, une copie à la boutique, la durée du lien.",
+        "link": "Courriels de facture",
+        "back": "Retour aux factures"
       }
     },
     "invoiceDoc": {
@@ -1686,6 +1702,35 @@
       "consulting-histoire": {
         "name": "Mon travail",
         "intent": "La démarche et les cas d'abord."
+      }
+    },
+    "table": {
+      "selectAll": "Sélectionner toutes les lignes",
+      "selectRow": "Sélectionner {name}",
+      "loading": "Chargement",
+      "empty": "Rien à afficher",
+      "details": "Détail",
+      "expandRow": "Voir le détail de {name}",
+      "group": "{value}, {count} lignes",
+      "resize": "Redimensionner {header}",
+      "results": "{count} lignes",
+      "filters": "Filtrer le tableau",
+      "clearFilters": "Effacer les filtres",
+      "removeFilter": "Retirer {label}",
+      "activeFilter": "{header} : {value}",
+      "search": "Chercher {header}",
+      "rangeFrom": "{header} de",
+      "rangeTo": "{header} à",
+      "columns": "Colonnes",
+      "showMore": "Voir plus sur {name}",
+      "export": "Exporter en CSV",
+      "pagination": {
+        "nav": "Pages de résultats",
+        "previous": "Page précédente",
+        "next": "Page suivante",
+        "page": "Page {page}",
+        "compact": "Page {page} sur {pageCount}",
+        "pageSize": "Lignes par page"
       }
     }
   }

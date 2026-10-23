@@ -40,7 +40,8 @@ describe("the hydration crawl (one rendering for the server and the browser, K0)
     const shop = "/fr/app/0b1c";
     const invoices = [`${shop}/invoices/new`, `${shop}/invoices/i-1`, `${shop}/invoices/i-2`, `${shop}/invoices/i-1/correct`];
     expect(firstRecord(invoices, `${shop}/invoices`)).toBe(`${shop}/invoices/i-1`);
-    expect(firstRecord([`${shop}/invoices/new?client=c-1`, `${shop}/invoices/i-1/correct`, `${shop}/clients/c-1`], `${shop}/invoices`)).toBeNull();
+    expect(firstRecord([`${shop}/invoices/new?client=c-1`, `${shop}/invoices/settings`, `${shop}/invoices/i-1/correct`, `${shop}/clients/c-1`], `${shop}/invoices`)).toBeNull();
+    expect(firstRecord([`${shop}/invoices/settings`, `${shop}/invoices/i-7`], `${shop}/invoices`)).toBe(`${shop}/invoices/i-7`);
     expect(firstRecord([`${shop}/clients`, null, `${shop}/clients/c-9`], `${shop}/clients`)).toBe(`${shop}/clients/c-9`);
   });
 

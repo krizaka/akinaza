@@ -137,6 +137,21 @@ Feedback: the pinned Discussion of the repository.
   a dog word that is not overridden.
 - **Signal we are wrong**: owners who set the wrong type, or ask for a third (groomers, repairers) that fits neither.
 
+## Invoices speak the page's language, and one invoice is a page of its own (UX review 2026-10, K3)
+
+- **Decision**: every `DataTable` of the app passes its words (`lib/table-labels.ts`, `console.table.*`): a French
+  page shows no « Search numéro », « 12 rows », « Columns » or « Export CSV », and the row expander has a name. An invoice
+  opens on `DetailLayout`: the number as the page's `h1`, its state chip, when it was issued and to whom, its actions by
+  state (« Envoyer la facture » as the primary, in a dialog; « Modifier » for an invoice that still stands; « Imprimer »),
+  the document as the client reads it, and beside it what it replaces or replaced and the deliveries. The new invoice is
+  lines added one by one — a service at its price or a free line — with the total the invoice will carry (subtotal, GST,
+  QST, total) beside them, live, computed by the ledger's own rule (`lib/invoice-lines.ts` → `invoiceTotals`); on a phone
+  the action stays at the bottom edge. The e-mail defaults left the list for their own address (`/invoices/settings`),
+  until Boutique's hub (K4) folds them in. The money field writes « $ » (fr-CA), not « $CA »; the dollar after the amount
+  waits for @krizaka/ui (krizaka-ui K9).
+- **Refused**: three fixed « Service n » selects (a line is a line); settings under a list with a second primary.
+- **Signal we are wrong**: an owner who issues an invoice and only then learns its total.
+
 ## Payment terms and the due date (krizaka/akinaza#113)
 
 - **Decision**: every invoice carries the terms it was issued under (« Net 30 days ») and the due date they give, in the

@@ -1,6 +1,6 @@
 "use client";
 
-import { INVOICE_STATE, type InvoiceState, invoiceState, remainingCents } from "@akinaza/core";
+import { INVOICE_STATE, invoiceState, remainingCents } from "@akinaza/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
@@ -14,6 +14,8 @@ import { useCall } from "@/components/app/useCall";
 import { ButtonLink } from "@/components/ButtonLink";
 import { formatDate, formatMoney, INTL_LOCALE } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import { STATE_TONE } from "@/lib/invoice-actions";
+import { useTableLabels } from "@/lib/table-labels";
 
 export interface InvoiceRowView {
   id: string;
@@ -34,7 +36,6 @@ export interface InvoiceRowView {
   superseded: boolean;
 }
 
-const STATE_TONE: Record<InvoiceState, "neutral" | "success" | "warning" | "danger" | "accent"> = { credit: "warning", cancelled: "neutral", paid: "success", partial: "accent", overdue: "danger", due: "neutral" };
 const standing = (i: InvoiceRowView) => ({ totalCents: i.totalCents, paidCents: i.paidCents, dueOn: i.dueOn, isCredit: !!i.creditOf, superseded: i.superseded });
 
 /** The ways a balance is cashed in one tap from the list (the invoice page records any other). */
@@ -46,6 +47,7 @@ const QUICK_METHODS = ["cash", "card", "transfer"] as const;
  */
 export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoices: InvoiceRowView[]; today: string; defaultMessage?: string }) {
   const { say, locale } = useSay();
+  const labels = useTableLabels();
   const routes = useShopRoutes();
   const call = useCall();
   const columns = useMemo<DataTableColumn<InvoiceRowView>[]>(() => {
@@ -135,6 +137,7 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
 
   return (
     <DataTable
+      labels={labels}
       caption={say("invoices.list.title")}
       rows={invoices}
       columns={columns}

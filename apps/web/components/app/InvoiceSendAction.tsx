@@ -2,6 +2,7 @@
 
 import { Alert } from "@krizaka/ui/alert";
 import { Button } from "@krizaka/ui/button";
+import { Dialog } from "@krizaka/ui/dialog";
 import { createKrizakaForm } from "@krizaka/ui/form";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -14,7 +15,11 @@ const sendInvoiceForm = createKrizakaForm({
   defaultValues: { toEmail: "", message: "" },
 });
 
-export function InvoiceSendAction({ invoiceId, email, defaultMessage = "" }: { invoiceId: string; email: string | null; defaultMessage?: string }) {
+/**
+ * « Envoyer la facture »: the client's e-mail and a message, in a dialog, then the e-mail is queued. The invoice page makes
+ * it its primary action (docs/ux/2026-10-full-review.md D3); the list's unfolded row keeps it quiet.
+ */
+export function InvoiceSendAction({ invoiceId, email, defaultMessage = "", variant = "secondary", size = "sm" }: { invoiceId: string; email: string | null; defaultMessage?: string; variant?: "primary" | "secondary"; size?: "sm" | "md" }) {
   const { say, locale } = useSay();
   const call = useCall();
   const [open, setOpen] = useState(false);
@@ -33,21 +38,42 @@ export function InvoiceSendAction({ invoiceId, email, defaultMessage = "" }: { i
     form.reset({ toEmail: email ?? "", message: defaultMessage });
   }, [email, defaultMessage, form]);
   return (
-    <section className="flex flex-col gap-3">
-      <div className="flex flex-wrap gap-2">
-        <Button size="sm" variant="secondary" onClick={() => { setSent(false); setOpen((value) => !value); }}>
-          {say("invoices.send.open")}
-        </Button>
-      </div>
-      {sent ? <Alert tone="success">{say("invoices.send.queued")}</Alert> : null}
-      {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
-      {open ? (
-        <form.Form aria-label={say("invoices.send.title")} className="flex max-w-xl flex-col gap-3 rounded-lg border border-border-default bg-surface-1 p-4">
-          <form.TextField name="toEmail" label={say("invoices.send.email")} type="email" autoComplete="email" />
-          <form.TextArea name="message" label={say("invoices.send.message")} rows={3} maxLength={500} />
-          <form.Submit size="md" disabled={call.pending}>{say("invoices.send.submit")}</form.Submit>
-        </form.Form>
+    <>
+      <Button
+        size={size}
+        variant={variant}
+        shape={variant === "primary" ? "cut" : undefined}
+        onClick={() => {
+          setSent(false);
+          setOpen(true);
+        }}
+      >
+        {say("invoices.send.open")}
+      </Button>
+      {sent ? (
+        <Alert tone="success" className="basis-full">
+          {say("invoices.send.queued")}
+        </Alert>
       ) : null}
-    </section>
+      <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Content closeLabel={say("invoices.send.close")}>
+          <Dialog.Header>
+            <Dialog.Title>{say("invoices.send.title")}</Dialog.Title>
+          </Dialog.Header>
+          <Dialog.Body>
+            <form.Form aria-label={say("invoices.send.title")} className="flex flex-col gap-3">
+              <form.TextField name="toEmail" label={say("invoices.send.email")} type="email" autoComplete="email" />
+              <form.TextArea name="message" label={say("invoices.send.message")} rows={3} maxLength={500} />
+              {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
+              <div>
+                <form.Submit size="md" variant="primary" disabled={call.pending}>
+                  {say("invoices.send.submit")}
+                </form.Submit>
+              </div>
+            </form.Form>
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog.Root>
+    </>
   );
 }

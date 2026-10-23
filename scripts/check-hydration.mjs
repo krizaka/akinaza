@@ -45,8 +45,8 @@ export const OWNER_PAGES = ["/aujourdhui", "/clients", "/invoices", "/invoices/n
 /** The account's own pages. */
 export const ACCOUNT_PAGES = ["/app/profile", "/app/profile/security"];
 
-/** The first record a list links (`<list>/<id>`), never its creation page (`<list>/new`) nor another list: the detail page to crawl. */
-export const firstRecord = (hrefs, listPath) => hrefs.find((href) => typeof href === "string" && href.startsWith(`${listPath}/`) && !/\/new(\?.*)?$/.test(href) && !href.slice(listPath.length + 1).includes("/")) ?? null;
+/** The first record a list links (`<list>/<id>`), never a page of the list itself (`<list>/new`, `<list>/settings`) nor a deeper address: the detail page to crawl. */
+export const firstRecord = (hrefs, listPath) => hrefs.find((href) => typeof href === "string" && href.startsWith(`${listPath}/`) && !/\/(new|settings)(\?.*)?$/.test(href) && !href.slice(listPath.length + 1).includes("/")) ?? null;
 
 /** What every page owes besides one rendering: exactly one `h1` (the page's, never the frame's) and no horizontal overflow. */
 const audit = (page) => page.evaluate(() => ({ h1: document.querySelectorAll("h1").length, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth }));

@@ -215,7 +215,7 @@ export async function listInvoices(db: Db, shopId: string) {
 /** One invoice with its lines, its client and the supplier's identity (the numbers a buyer needs for input tax credits); null if it is not this shop's. */
 export async function invoiceDetail(db: Db | Tx, shopId: string, invoiceId: string) {
   const [row] = await db
-    .select({ invoice: invoices, client: { fullName: clients.fullName, email: clients.email, phone: clients.phone }, shop: { name: shops.name, legalName: shops.legalName, address: shops.address, timezone: shops.timezone, registrant: shops.registrant, gstNumber: shops.gstNumber, qstNumber: shops.qstNumber, publicEmail: shops.publicEmail } })
+    .select({ invoice: invoices, paidCents: sql<number>`coalesce((SELECT sum(p.amount_cents) FROM payments p WHERE p.invoice_id = ${invoices.id}), 0)::int`, client: { fullName: clients.fullName, email: clients.email, phone: clients.phone }, shop: { name: shops.name, legalName: shops.legalName, address: shops.address, timezone: shops.timezone, registrant: shops.registrant, gstNumber: shops.gstNumber, qstNumber: shops.qstNumber, publicEmail: shops.publicEmail } })
     .from(invoices)
     .innerJoin(shops, eq(shops.id, invoices.shopId))
     .leftJoin(clients, eq(clients.id, invoices.clientId))
@@ -232,5 +232,5 @@ export async function invoiceDetail(db: Db | Tx, shopId: string, invoiceId: stri
     db.select(ref).from(invoices).where(eq(invoices.replaces, invoice.id)).limit(1),
     db.select(ref).from(invoices).where(eq(invoices.creditOf, invoice.id)).limit(1),
   ]);
-  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, termsDays: invoice.termsDays, dueOn: invoice.dueOn, language: invoice.language, clientId: invoice.clientId, creditOf: invoice.creditOf, replaces: orNull(replaces), replacedBy: orNull(replacedBy), creditedBy: orNull(creditedBy), subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
+  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, termsDays: invoice.termsDays, dueOn: invoice.dueOn, language: invoice.language, clientId: invoice.clientId, creditOf: invoice.creditOf, replaces: orNull(replaces), replacedBy: orNull(replacedBy), creditedBy: orNull(creditedBy), subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, paidCents: row.paidCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
 }

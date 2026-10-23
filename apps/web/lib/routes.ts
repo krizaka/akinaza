@@ -28,6 +28,8 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
     /** « Modifier » (#207): the replacement of an issued invoice, prefilled. */
     invoiceCorrect: (id: string) => `${root}/invoices/${id}/correct`,
     newInvoice: `${root}/invoices/new`,
+    /** The e-mail defaults of the invoices (the owner), until Boutique's hub (K4) folds them in. */
+    invoiceSettings: `${root}/invoices/settings`,
     books: (period?: string) => `${root}/books${query({ period })}`,
     team: `${root}/team`,
     setup: `${root}/shop`,

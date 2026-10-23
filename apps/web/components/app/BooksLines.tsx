@@ -6,6 +6,7 @@ import { useMemo } from "react";
 
 import { formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import { useTableLabels } from "@/lib/table-labels";
 
 export interface BooksLineView {
   line: string;
@@ -20,6 +21,7 @@ export interface BooksLineView {
  */
 export function BooksLines({ lines }: { lines: BooksLineView[] }) {
   const { say, locale } = useSay();
+  const labels = useTableLabels();
   const columns = useMemo<DataTableColumn<BooksLineView>[]>(
     () => [
       { id: "line", header: say("books.table.line"), value: (r) => r.line, cell: (r) => <span className="font-mono">{r.line}</span> },
@@ -53,5 +55,5 @@ export function BooksLines({ lines }: { lines: BooksLineView[] }) {
     ],
     [say, locale],
   );
-  return <DataTable caption={say("books.table.caption")} showCaption rows={lines} columns={columns} getRowId={(r) => r.line} rowLabel={(r) => `${r.line} ${say(`books.lines.${r.line}.label`)}`} />;
+  return <DataTable labels={labels} caption={say("books.table.caption")} showCaption rows={lines} columns={columns} getRowId={(r) => r.line} rowLabel={(r) => `${r.line} ${say(`books.lines.${r.line}.label`)}`} />;
 }

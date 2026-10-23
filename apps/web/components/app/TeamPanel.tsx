@@ -17,6 +17,7 @@ import { useShopRoutes } from "@/components/app/ShopSession";
 import { errorKey } from "@/lib/client";
 import { formatDate } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import { useTableLabels } from "@/lib/table-labels";
 
 export interface TeamMemberView {
   accountId: string;
@@ -94,6 +95,7 @@ function InviteForm({ assignable }: { assignable: ShopRole[] }) {
 /** The team of a shop: who works in it with which role, who is invited, and the form to invite. Owner and manager; the roles one may hand out come from the role table. */
 export function TeamPanel({ members, invitations, assignable, timeZone }: TeamPanelProps) {
   const { say, locale } = useSay();
+  const labels = useTableLabels();
   const call = useTeamCall();
   const columns = useMemo<DataTableColumn<TeamMemberView>[]>(
     () => [
@@ -156,7 +158,7 @@ export function TeamPanel({ members, invitations, assignable, timeZone }: TeamPa
         <h2 id="team-members" className="font-display text-lg font-bold text-fg">
           {say("team.members")}
         </h2>
-        <DataTable caption={say("team.members")} rows={members} columns={columns} getRowId={(m) => m.accountId} rowLabel={(m) => m.name ?? m.email} />
+        <DataTable labels={labels} caption={say("team.members")} rows={members} columns={columns} getRowId={(m) => m.accountId} rowLabel={(m) => m.name ?? m.email} />
       </section>
 
       <section aria-labelledby="team-invitations" className="flex flex-col gap-3">

@@ -12,7 +12,7 @@ export type InvoiceView = NonNullable<Awaited<ReturnType<typeof invoiceDetail>>>
  * is due, its payment terms and due date (krizaka/akinaza#113: a buyer needs them from $500, DORS/91-45 art. 3).
  * Each label and its value are plain text, so the document reads the same as a PDF text layer or a screen reader.
  */
-export function InvoiceDocument({ invoice, locale, backHref }: { invoice: InvoiceView; locale: Locale; backHref?: string }) {
+export function InvoiceDocument({ invoice, locale, backHref, heading: Heading = "h1" }: { invoice: InvoiceView; locale: Locale; backHref?: string; /** `h2` under a page that has its own h1 (the invoice's `DetailLayout`). */ heading?: "h1" | "h2" }) {
   const t = getDictionary(invoice.language).console.invoiceDoc;
   const back = getDictionary(locale).console.invoices.back;
   const lang = invoice.language === "fr" ? "fr-CA" : "en-CA";
@@ -24,9 +24,9 @@ export function InvoiceDocument({ invoice, locale, backHref }: { invoice: Invoic
     <article lang={invoice.language} className="flex max-w-3xl flex-col gap-5 rounded-lg border border-border-default bg-surface-1 p-5 sm:p-8" aria-labelledby="invoice-title">
       {backHref ? <p><Link className="text-sm text-fg-accent underline" href={backHref} lang={locale}>← {back}</Link></p> : null}
       <header className="flex flex-wrap items-start justify-between gap-3">
-        <h1 id="invoice-title" className="font-display text-2xl font-bold text-fg">
+        <Heading id="invoice-title" className="font-display text-2xl font-bold text-fg">
           {invoice.creditOf ? t.credit : t.title}
-        </h1>
+        </Heading>
         <dl className="text-right text-sm text-fg-secondary">
           <dt className="sr-only">{t.number}</dt>
           <dd className="font-mono text-base font-semibold text-fg">{invoice.number}</dd>

@@ -1029,14 +1029,20 @@
         "title": "New invoice",
         "client": "Client",
         "noClient": "No client file",
-        "service": "Service {n}",
         "noService": "—",
         "quantity": "Quantity",
-        "customDescription": "Other line (description)",
-        "customPrice": "Unit price",
-        "customQuantity": "Quantity of the other line",
         "submit": "Issue the invoice",
-        "needLine": "Choose at least one service or write a line with its price."
+        "needLine": "Choose at least one service or write a line with its price.",
+        "line": "Line {n}",
+        "free": "Free line",
+        "addLine": "Add a line",
+        "removeLine": "Remove line {n}",
+        "description": "Description",
+        "unitPrice": "Unit price",
+        "totals": "Before issuing",
+        "gstRate": "GST (5 %)",
+        "qstRate": "QST (9.975 %)",
+        "noLineYet": "Add a service or a free line: the total shows here."
       },
       "list": {
         "title": "Issued invoices",
@@ -1095,7 +1101,10 @@
         "remaining": "Balance due",
         "open": "Open the invoice",
         "edit": "Edit",
-        "cash": "Cash {amount} ({method})"
+        "cash": "Cash {amount} ({method})",
+        "issuedOn": "Issued on {date}",
+        "print": "Print",
+        "aside": "Delivery"
       },
       "send": {
         "title": "Send this invoice",
@@ -1103,7 +1112,8 @@
         "email": "Client's e-mail",
         "message": "Message (optional)",
         "submit": "Queue the e-mail",
-        "queued": "The invoice e-mail was queued."
+        "queued": "The invoice e-mail was queued.",
+        "close": "Close"
       },
       "history": {
         "title": "Sending history",
@@ -1124,6 +1134,12 @@
         "cash": "cash",
         "card": "card",
         "transfer": "transfer"
+      },
+      "settings": {
+        "title": "Invoice e-mails",
+        "lead": "What every invoice e-mail says by default: the message, the sender's name, a copy to the shop, how long the link lasts.",
+        "link": "Invoice e-mails",
+        "back": "Back to invoices"
       }
     },
     "invoiceDoc": {
@@ -1686,6 +1702,35 @@
       "consulting-histoire": {
         "name": "My work",
         "intent": "Approach and cases first."
+      }
+    },
+    "table": {
+      "selectAll": "Select all rows",
+      "selectRow": "Select {name}",
+      "loading": "Loading",
+      "empty": "Nothing to show",
+      "details": "Details",
+      "expandRow": "Show details of {name}",
+      "group": "{value}, {count} rows",
+      "resize": "Resize {header}",
+      "results": "{count} rows",
+      "filters": "Filter the table",
+      "clearFilters": "Clear filters",
+      "removeFilter": "Remove {label}",
+      "activeFilter": "{header}: {value}",
+      "search": "Search {header}",
+      "rangeFrom": "{header} from",
+      "rangeTo": "{header} to",
+      "columns": "Columns",
+      "showMore": "Show more about {name}",
+      "export": "Export CSV",
+      "pagination": {
+        "nav": "Pages of results",
+        "previous": "Previous page",
+        "next": "Next page",
+        "page": "Page {page}",
+        "compact": "Page {page} of {pageCount}",
+        "pageSize": "Rows per page"
       }
     }
   }

@@ -31,9 +31,8 @@ const row = (number: string, patch: Partial<InvoiceRowView> = {}): InvoiceRowVie
   ...patch,
 });
 const rows = [row("A-0001", { paidCents: 11_498 }), row("A-0002", { dueOn: "2026-10-15" }), row("A-0003", { paidCents: 5_000 }), row("A-0004", { superseded: true }), row("A-0005", { creditOf: "i-A-0004", totalCents: -11_498 })];
-const render = (locale: "en" | "fr") =>
-  readable(
-    renderToStaticMarkup(
+const markup = (locale: "en" | "fr") =>
+  renderToStaticMarkup(
       <I18nProvider locale={locale} messages={MESSAGES[locale] as never}>
         <KrizakaQueryProvider>
           <ShopSession locale={locale} shopId="s1" remembered>
@@ -41,8 +40,8 @@ const render = (locale: "en" | "fr") =>
           </ShopSession>
         </KrizakaQueryProvider>
       </I18nProvider>,
-    ),
   );
+const render = (locale: "en" | "fr") => readable(markup(locale));
 
 describe("the invoices list (akinaza#218)", () => {
   it("says where each invoice stands, in the shop's words", () => {
@@ -55,5 +54,13 @@ describe("the invoices list (akinaza#218)", () => {
     const text = render("fr");
     expect(text).toMatch(/Export|Exporter/);
     expect(text).toContain("Reste dû");
+  });
+
+  it("speaks the page's language in its chrome too: no English default label in the French table (docs/ux/2026-10-full-review.md D1, D6)", () => {
+    const fr = render("fr");
+    for (const english of ["Search ", " rows", "Columns", "Export CSV", "Show details of", "Clear filters"]) expect(fr, english).not.toContain(english);
+    for (const french of ["lignes", "Colonnes", "Exporter en CSV"]) expect(fr, french).toContain(french);
+    for (const label of ["Chercher Numéro", "Chercher Client", "Voir le détail de A-0001"]) expect(markup("fr"), label).toContain(label);
+    expect(render("en")).toContain("Export CSV");
   });
 });

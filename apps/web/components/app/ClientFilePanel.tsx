@@ -13,6 +13,7 @@ import { useShopRoutes } from "@/components/app/ShopSession";
 import { AppointmentStatus, STATUS_TONE } from "@/lib/day";
 import { formatDate, formatMoney, formatTime } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import { useTableLabels } from "@/lib/table-labels";
 
 type Visit = ClientFile["visits"][number];
 type Bill = ClientFile["invoices"][number];
@@ -27,6 +28,7 @@ export interface ClientFilePanelProps {
 /** A client's file: who they are, four figures, then their visits, their invoices, their notes. */
 export function ClientFilePanel({ file, timeZone, nowIso }: ClientFilePanelProps) {
   const { say, locale } = useSay();
+  const labels = useTableLabels();
   const routes = useShopRoutes();
   const { client } = file;
   const now = Date.parse(nowIso);
@@ -105,7 +107,7 @@ export function ClientFilePanel({ file, timeZone, nowIso }: ClientFilePanelProps
         {file.visits.length === 0 ? (
           <p className="text-fg-secondary">{say("clients.file.noVisits")}</p>
         ) : (
-          <DataTable caption={say("clients.file.visits")} rows={file.visits} columns={visitColumns} getRowId={(v) => v.id} rowLabel={(v) => formatDate(v.startsAt, locale, timeZone)} defaultSort={{ column: "date", direction: "descending" }} />
+          <DataTable labels={labels} caption={say("clients.file.visits")} rows={file.visits} columns={visitColumns} getRowId={(v) => v.id} rowLabel={(v) => formatDate(v.startsAt, locale, timeZone)} defaultSort={{ column: "date", direction: "descending" }} />
         )}
       </section>
 
@@ -116,7 +118,7 @@ export function ClientFilePanel({ file, timeZone, nowIso }: ClientFilePanelProps
         {file.invoices.length === 0 ? (
           <p className="text-fg-secondary">{say("clients.file.noInvoices")}</p>
         ) : (
-          <DataTable caption={say("clients.file.invoices")} rows={file.invoices} columns={billColumns} getRowId={(i) => i.id} rowLabel={(i) => i.number} />
+          <DataTable labels={labels} caption={say("clients.file.invoices")} rows={file.invoices} columns={billColumns} getRowId={(i) => i.id} rowLabel={(i) => i.number} />
         )}
       </section>
 

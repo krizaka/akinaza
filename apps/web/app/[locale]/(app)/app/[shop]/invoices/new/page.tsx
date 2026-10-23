@@ -29,7 +29,7 @@ export default async function NewInvoice({ params }: { params: Promise<{ locale:
         ← {t.back}
       </Link>
       <PageHeader title={t.new.title} />
-      <InvoiceForm locale={locale} data={{ today, ...choices }} />
+      <InvoiceForm locale={locale} data={{ today, registrant: shop.registrant, ...choices }} />
     </div>
   );
 }
