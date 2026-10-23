@@ -22,6 +22,7 @@
     "sg:ratchet:update": "node scripts/sg-ratchet.mjs --update",
     "sg:fix": "node scripts/sg-fix.mjs",
     "e2e:walker": "node scripts/e2e-walker.mjs",
+    "shots:storefront": "node scripts/shots-storefront.mjs",
     "payments:setup": "krizaka-payments-setup --catalogue payments/catalogue.json"
   },
   "devDependencies": {
