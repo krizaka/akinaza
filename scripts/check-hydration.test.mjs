@@ -15,7 +15,12 @@ describe("the hydration crawl (one rendering for the server and the browser, K0)
     for (const page of ["/aujourdhui", "/clients", "/invoices", "/invoices/new", "/books", "/team", "/shop"]) expect(OWNER_PAGES).toContain(page);
     for (const page of ["/app/profile", "/app/profile/security"]) expect(ACCOUNT_PAGES).toContain(page);
     expect(THEMES).toEqual(["dark", "light"]);
-    expect(VIEWPORTS.map((v) => v.width)).toEqual([1440, 390]);
+    expect(VIEWPORTS.map((v) => v.width)).toEqual([1440, 390, 360]);
+  });
+
+  it("owes every page one h1 (the page's, never the frame's) and no sideways scroll, down to 360 px", () => {
+    const source = readFileSync(new URL("./check-hydration.mjs", import.meta.url), "utf8");
+    for (const needle of ['document.querySelectorAll("h1").length', "scrollWidth > document.documentElement.clientWidth", 'report("h1"', 'report("overflow"']) expect(source).toContain(needle);
   });
 
   it("recognises React's hydration errors, minified or not", () => {

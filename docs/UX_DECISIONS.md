@@ -215,3 +215,16 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: two shops of the same trade can open on the same cover until each owner uploads; a generated set per trade,
   rendered and uploaded by hand (`scripts/default-media/`), with its alt texts to write in both languages.
 - **Signal we are wrong**: owners keep the defaults for months, or clients ask whether the photos are of the shop.
+
+## The frame: where you work on the rail, who you are under the avatar (UX review 2026-10, K1)
+
+The signed-in space is the family's frame (`RailNav` + `AppHeader` of @krizaka/ui, `components/app/ShopFrame.tsx`): a rail of
+**five destinations at most** — Aujourd'hui · Clients · Factures · Livres · Boutique for the owner, what the role may open for the
+others (`lib/app-nav.ts`), the bookings alone for a client — icons on a desktop, the tab bar on a phone. The header names the
+product and **the shop** (a chip; a menu with the other shops and « Ajouter une boutique » when there are several or one may be
+added), carries the DEV chip and **the app's one primary action, « Nouvelle facture »** (icon alone under 640 px, never absent),
+and the account menu (Mon compte · Langue · Thème · Se déconnecter). The account is never on the rail, and the frame renders no
+`h1`: every page has exactly one, through `PageHeader` — the crawl (`scripts/check-hydration.mjs`) refuses a page with another
+count, or that scrolls sideways down to 360 px. « Équipe », the languages and the invoice e-mails join « Boutique » as sections of
+its hub (K4); until then « Boutique » opens the page editor (or the team, for who may only see it) and the editor links the team.
+Decided in docs/ux/2026-10-full-review.md § 4.1 (validated on #289); the administration keeps `AppFrame`.

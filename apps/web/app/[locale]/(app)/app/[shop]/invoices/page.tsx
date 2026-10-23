@@ -2,15 +2,14 @@
 import { localDay } from "@akinaza/core";
 import { listInvoices } from "@akinaza/db";
 import { invoiceMailSettings } from "@akinaza/db";
+import { PageHeader } from "@krizaka/ui/page-header";
 
 import { InvoiceMailSettings } from "@/components/app/InvoiceMailSettings";
 import { InvoicesTable } from "@/components/app/InvoicesTable";
-import { ButtonLink } from "@/components/ButtonLink";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
-import { shopRoutes } from "@/lib/routes";
 
 export const dynamic = "force-dynamic";
 
@@ -26,12 +25,7 @@ export default async function Invoices({ params }: { params: Promise<{ locale: s
   const mail = await invoiceMailSettings(db(), shop.id);
   return (
     <div className="flex flex-col gap-5">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="font-display text-2xl font-bold text-fg">{t.title}</h1>
-        <ButtonLink href={shopRoutes(locale, shop.id).newInvoice} variant="primary" size="md">
-          {t.new.title}
-        </ButtonLink>
-      </header>
+      <PageHeader title={t.title} />
       <section aria-label={t.list.title} className="flex flex-col gap-3">
         {issued.length === 0 ? (
           <p className="text-fg-secondary">{t.list.none}</p>

@@ -6,6 +6,7 @@ import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
 import { Field, Select, Textarea } from "@krizaka/ui/field";
+import { PageHeader } from "@krizaka/ui/page-header";
 import { Switch } from "@krizaka/ui/switch";
 import Link from "next/link";
 import { useState } from "react";
@@ -79,11 +80,8 @@ export function ShopLanguages({ data }: { data: LanguagesData }) {
   const targets = data.enabled.filter((l) => l !== data.source);
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <h1 className="font-display text-2xl font-bold text-fg">{t("title")}</h1>
-        <p className="text-fg-secondary">{t("intro")}</p>
-        <p className="text-sm"><Link className="font-semibold text-fg-accent underline" href={data.setupHref}>{t("back")}</Link></p>
-      </header>
+      <PageHeader title={t("title")} description={t("intro")} />
+      <p className="text-sm"><Link className="font-semibold text-fg-accent underline" href={data.setupHref}>{t("back")}</Link></p>
 
       <Card.Root className="flex flex-col gap-4 p-4">
         <h2 className="font-display text-lg font-bold text-fg">{t("languages")}</h2>

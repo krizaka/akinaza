@@ -1,6 +1,7 @@
 // @template: app-dashboard
 import { localDay, visitMinutes, vocabularyOf } from "@akinaza/core";
 import { dayVisits, listInvoices, offOn, shopDay, type ShopRole } from "@akinaza/db";
+import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 
 import { MondayBrief } from "@/components/app/MondayBrief";
@@ -65,10 +66,7 @@ async function ServiceDay({ locale, shop, day: requested }: { locale: "en" | "fr
   const lang = locale === "fr" ? "fr-CA" : "en-CA";
   return (
     <div className="flex flex-col gap-4">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-2xl font-bold text-fg">{shop.name}</h1>
-        <p className="text-fg-secondary">{format(t.walker.dayLine, { date: new Date(`${day}T12:00:00Z`).toLocaleDateString(lang, { dateStyle: "full", timeZone: "UTC" }), count: visits.length })}</p>
-      </header>
+      <PageHeader title={t.meta.today} description={format(t.walker.dayLine, { date: new Date(`${day}T12:00:00Z`).toLocaleDateString(lang, { dateStyle: "full", timeZone: "UTC" }), count: visits.length })} />
       <WalkerDay
         visits={visits.map((v) => ({ ...v, minutes: v.checkedInAt && v.checkedOutAt ? visitMinutes(new Date(v.checkedInAt), new Date(v.checkedOutAt)) : null }))}
         timeZone={shop.timezone}
@@ -89,11 +87,8 @@ async function ShopToday({ locale, shop, role, staffAccountId, query }: { locale
   const t = getDictionary(locale).console.today;
   return (
     <div className="flex flex-col gap-5">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-2xl font-bold text-fg">{view.shop.name}</h1>
-        <p className="text-fg-secondary">{formatLongDay(view.day, locale)}</p>
-        {off.length ? <p className="text-sm text-fg-secondary">{format(t.offToday, { names: off.map((o) => format(t.offUntil, { name: o.name, until: formatLongDay(o.until, locale) })).join(", ") })}</p> : null}
-      </header>
+      <PageHeader title={getDictionary(locale).console.meta.today} description={formatLongDay(view.day, locale)} />
+      {off.length ? <p className="text-sm text-fg-secondary">{format(t.offToday, { names: off.map((o) => format(t.offUntil, { name: o.name, until: formatLongDay(o.until, locale) })).join(", ") })}</p> : null}
       <TodayDay appointments={view.appointments} shop={view.shop} day={view.day} today={view.today} nowIso={new Date().toISOString()} selectedId={query.appointment ?? null} allow={{ clients: may(role, "clients"), revenue: may(role, "invoices") }} />
     </div>
   );

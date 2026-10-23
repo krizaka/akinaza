@@ -8,6 +8,7 @@ import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
 import { Checkbox } from "@krizaka/ui/checkbox";
 import { createKrizakaForm } from "@krizaka/ui/form";
+import { PageHeader } from "@krizaka/ui/page-header";
 import { Tabs } from "@krizaka/ui/tabs";
 import Link from "next/link";
 import { useState } from "react";
@@ -48,17 +49,14 @@ export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /**
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="font-display text-2xl font-bold text-fg">{say("shopSetup.title")}</h1>
-          {data.page ? <Badge tone={data.page.published ? "success" : "neutral"}>{say(data.page.published ? "shopSetup.published" : "shopSetup.notPublished")}</Badge> : null}
-        </div>
-        <p className="text-fg-secondary">{say("shopSetup.intro")}</p>
+        <PageHeader title={say("shopSetup.title")} description={say("shopSetup.intro")} actions={data.page ? <Badge tone={data.page.published ? "success" : "neutral"}>{say(data.page.published ? "shopSetup.published" : "shopSetup.notPublished")}</Badge> : null} />
         <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
           {data.publicUrl && data.page?.published ? (
             <span>
               <a className="font-semibold text-fg-accent underline" href={data.publicUrl}>{say("shopSetup.viewPage")}</a> <span className="font-mono text-xs text-fg-muted">{data.publicUrl}</span>
             </span>
           ) : null}
+          {data.shopId ? <Link className="font-semibold text-fg-accent underline" href={shopRoutes(locale, data.shopId).team}>{say("team.title")}</Link> : null}
           {data.shopId ? <Link className="font-semibold text-fg-accent underline" href={`${shopRoutes(locale, data.shopId).setup}/new`}>{say("shopSetup.addShop.link")}</Link> : null}
         </p>
       </header>
