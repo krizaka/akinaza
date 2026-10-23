@@ -148,6 +148,28 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(@types/node@24.19.2)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 
+  packages/client:
+    dependencies:
+      '@akinaza/core':
+        specifier: workspace:*
+        version: link:../core
+      '@krizaka/app-client':
+        specifier: ^0.1.0
+        version: 0.1.0(react@19.3.1)
+      '@krizaka/query':
+        specifier: ^0.2.1
+        version: 0.2.1(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1)
+      zod:
+        specifier: ^4.6.5
+        version: 4.6.7
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.1.11
+        version: 4.1.11(@types/node@24.19.2)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
+
   packages/core:
     dependencies:
       '@date-fns/tz':
@@ -999,6 +1021,10 @@ packages:
       vitest:
         optional: true
 
+  '@krizaka/app-client@0.1.0':
+    resolution: {integrity: sha512-Zuv+CX3iLJQs6375c3h9/OsykL2tGkMaiTp2WZ1lZlaAPUJrHLCBuGsHnbCnu+7baTBQtq+E8Tr7Vh/It8VK8Q==}
+    engines: {node: '>=22'}
+
   '@krizaka/auth@0.3.0':
     resolution: {integrity: sha512-Cq40fWK3VLgYEAMCApJznbgeXI3A6WfeL8NP45DfZQBUdPbHCgBxIFDDxeC0+JqbADPIgGIAXIJMBwq7RCWLVA==}
     engines: {node: '>=22'}
@@ -1020,6 +1046,15 @@ packages:
       eslint-config-next:
         optional: true
       prettier:
+        optional: true
+
+  '@krizaka/discovery@0.1.0':
+    resolution: {integrity: sha512-45XrvMxxTdJQ6Oi+auQpegfYPBQsfFbMmTKpoQbIbNvQeyccrVgAjZv6Qfe5SOstXc+99oZDMcKtKig1OcgB6g==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      react: '>=18'
+    peerDependenciesMeta:
+      react:
         optional: true
 
   '@krizaka/fonts@0.3.0':
@@ -1260,6 +1295,14 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
+
+  '@noble/curves@2.4.0':
+    resolution: {integrity: sha512-P4/62zrgfH33CneE3Dn4WhJVA22YUU0eR51wKIan4NVRvwsA0YnPTwWGpNbpuacSujmSFLvyzpyuR30+fbq2Ew==}
+    engines: {node: '>= 20.19.0'}
+
+  '@noble/hashes@2.4.0':
+    resolution: {integrity: sha512-X5XaVWZIBCT7HHZGm5I7ZQXDwLG+bGXuSrMQAW+7Zvl87h1kmc1ZB1VSRJcpUfoUrGQp4Fkoxm5kZ+Ms+aW+eA==}
+    engines: {node: '>= 20.19.0'}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -5668,6 +5711,12 @@ snapshots:
     optionalDependencies:
       vitest: 4.1.11(@types/node@24.19.2)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
 
+  '@krizaka/app-client@0.1.0(react@19.3.1)':
+    dependencies:
+      '@krizaka/discovery': 0.1.0(react@19.3.1)
+    transitivePeerDependencies:
+      - react
+
   '@krizaka/auth@0.3.0':
     dependencies:
       date-fns: 4.4.0
@@ -5690,6 +5739,12 @@ snapshots:
       eslint-config-next: 16.4.1(@typescript-eslint/parser@8.71.2(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
     transitivePeerDependencies:
       - supports-color
+
+  '@krizaka/discovery@0.1.0(react@19.3.1)':
+    dependencies:
+      '@noble/curves': 2.4.0
+    optionalDependencies:
+      react: 19.3.1
 
   '@krizaka/fonts@0.3.0': {}
 
@@ -5866,6 +5921,12 @@ snapshots:
 
   '@next/swc-win32-x64-msvc@16.4.1':
     optional: true
+
+  '@noble/curves@2.4.0':
+    dependencies:
+      '@noble/hashes': 2.4.0
+
+  '@noble/hashes@2.4.0': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:

@@ -1,4 +1,4 @@
-import { ownClient, SHOP_ROLES, shopClient, shopOfMember,type ShopPermission } from "@akinaza/db";
+import { ownClient, SHOP_ROLES, shopClient, shopOfMember, type ShopPermission, type ShopRole } from "@akinaza/db";
 import { can } from "@krizaka/auth";
 import { cookies, headers } from "next/headers";
 
@@ -33,16 +33,21 @@ const cookieToken = (header: string | null) =>
     .find((c) => c.startsWith(`${SESSION_COOKIE}=`))
     ?.slice(SESSION_COOKIE.length + 1);
 
-/** The API's caller, from the session cookie — or 401. */
+const bearerToken = (header: string | null) => /^bearer (\S+)$/i.exec(header ?? "")?.[1];
+
+/** The session token of a request: the native apps' `Authorization: Bearer` (which wins: an app never replays a stale cookie), else the web's cookie. */
+export const sessionTokenOf = (requestHeaders: Headers): string | undefined => bearerToken(requestHeaders.get("authorization")) ?? cookieToken(requestHeaders.get("cookie"));
+
+/** The API's caller, from the bearer or the session cookie — or 401. */
 export async function requireSession(req: Request): Promise<Session> {
-  const session = await resolveSession(cookieToken(req.headers.get("cookie")));
+  const session = await resolveSession(sessionTokenOf(req.headers));
   if (!session) throw refuse(401, "UNAUTHENTICATED", "Sign in first");
   return session;
 }
 
 /** The API caller's session, or null when there is none (a public page asking who is there). */
 export async function optionalSession(req: Request): Promise<Session | null> {
-  return resolveSession(cookieToken(req.headers.get("cookie")));
+  return resolveSession(sessionTokenOf(req.headers));
 }
 
 export async function requireAdmin(req: Request): Promise<Session> {
@@ -77,6 +82,13 @@ export async function requireShop(req: Request, permission: ShopPermission) {
   if (!can(SHOP_ROLES, member.role, permission)) throw refuse(403, "FORBIDDEN", "Your role does not allow this", { permission });
   return { session, shop: member.shop, role: member.role };
 }
+
+/**
+ * The agenda a member reads: the whole shop's for whoever handles its bookings (owner, manager), only the appointments
+ * assigned to them otherwise (staff: their own agenda, as the web's Today). Data, from the roles: never a role's name.
+ */
+export const agendaScope = (role: ShopRole, accountId: string): { staffAccountId?: string } =>
+  can(SHOP_ROLES, role, "bookings") ? {} : { staffAccountId: accountId };
 
 /** The shop's owner (the settings, billing, deletion — everything). */
 export const requireOwner = (req: Request) => requireShop(req, "settings");

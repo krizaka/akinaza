@@ -1,4 +1,4 @@
-import { invoiceInputSchema, issueShopInvoice } from "@akinaza/db";
+import { invoiceInputSchema, issueShopInvoice, listInvoices } from "@akinaza/db";
 
 import { requireShop } from "@/lib/access";
 import { db } from "@/lib/db";
@@ -13,5 +13,13 @@ export function POST(req: Request) {
     const input = await readJson(req, invoiceInputSchema);
     const { invoice, totals } = await issueShopInvoice(db(), shop.id, input);
     return Response.json({ id: invoice.id, number: invoice.number, subtotalCents: totals.subtotalCents, gstCents: totals.gstCents, qstCents: totals.qstCents, totalCents: totals.totalCents }, { status: 201 });
+  });
+}
+
+/** The shop's invoices, newest first. */
+export function GET(req: Request) {
+  return handle(async () => {
+    const { shop } = await requireShop(req, "invoices");
+    return Response.json({ invoices: await listInvoices(db(), shop.id) }, { headers: { "Cache-Control": "private, no-store" } });
   });
 }

@@ -35,7 +35,7 @@ describe("signed out, the app is closed", () => {
 
   it("signing out revokes the session and clears the cookie", async () => {
     jar.get.mockReturnValue({ value: `as1.${"B".repeat(43)}` });
-    expect((await signOut()).status).toBe(204);
+    expect((await signOut(new Request("http://localhost/api/auth/sign-out", { method: "POST" }))).status).toBe(204);
     expect(revokeSession).toHaveBeenCalledWith(`as1.${"B".repeat(43)}`);
     expect(jar.delete).toHaveBeenCalledWith("akinaza_session");
   });

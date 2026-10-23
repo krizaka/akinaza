@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { ipAllowed } from "./access";
+import { ipAllowed, sessionTokenOf } from "./access";
 import { isToken, newToken, tokenHash } from "./session";
 
 describe("the administration's address lock", () => {
@@ -29,5 +29,19 @@ describe("session tokens", () => {
     expect(isToken("as1.short")).toBe(false);
     expect(tokenHash(a, "s".repeat(32))).toMatch(/^[0-9a-f]{64}$/);
     expect(tokenHash(a, "s".repeat(32))).not.toBe(tokenHash(a, "t".repeat(32)));
+  });
+});
+
+describe("the session token of a request", () => {
+  const token = newToken();
+  it("reads the cookie of the web", () => {
+    expect(sessionTokenOf(new Headers({ cookie: `a=b; akinaza_session=${token}` }))).toBe(token);
+  });
+  it("reads the bearer of a native app, and prefers it to a stale cookie", () => {
+    expect(sessionTokenOf(new Headers({ authorization: `Bearer ${token}` }))).toBe(token);
+    expect(sessionTokenOf(new Headers({ authorization: `bearer ${token}`, cookie: `akinaza_session=${newToken()}` }))).toBe(token);
+  });
+  it.each([[new Headers()], [new Headers({ authorization: "Basic abc" })], [new Headers({ cookie: "other=1" })]])("answers nothing without a session", (headers) => {
+    expect(sessionTokenOf(headers)).toBeUndefined();
   });
 });

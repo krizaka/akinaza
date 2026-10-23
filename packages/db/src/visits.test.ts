@@ -3,11 +3,11 @@ import { randomBytes } from "node:crypto";
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { dependants, mailOutbox, visitReports } from "./schema";
-import { bookVisit, ShopError, revealAccessNotes, setAccessNotes } from "./service-shop";
+import { dependants, mailOutbox, staff, visitReports } from "./schema";
+import { addStaff, addWindow, bookVisit, ShopError, revealAccessNotes, setAccessNotes } from "./service-shop";
 import { freshDatabase, refusal } from "./test/db";
-import { NOW, walkerShop } from "./test/fixtures";
-import { checkIn, checkOut, clientBookings, dayVisits, enqueueMail, exportClient, issueReportLink, markMailAttempt, markMailSent, pendingMail, reportByToken, reportForClient, reportPhoto, saveReport, shopClients } from "./visits";
+import { account, NOW, walkerShop } from "./test/fixtures";
+import { checkIn, checkOut, clientBookings, dayVisits, visitDays, enqueueMail, exportClient, issueReportLink, markMailAttempt, markMailSent, pendingMail, reportByToken, reportForClient, reportPhoto, saveReport, shopClients } from "./visits";
 import { eraseClient, issueInvoice, recordConsent } from "./shop-ops";
 
 let t: Awaited<ReturnType<typeof freshDatabase>>;
@@ -57,6 +57,42 @@ describe("the walker's day", () => {
     expect(await code(checkOut(t.db, w.shopId, appointmentId, afterWalk))).toBe("AK_ALREADY_CHECKED_OUT");
     const [visit] = await dayVisits(t.db, w.shopId, "2026-10-20");
     expect(visit!.status).toBe("done");
+  });
+});
+
+describe("a staff member's own agenda (the apps' day and calendar)", () => {
+  it("narrows the day and the calendar to the appointments assigned to that person; the shop's agenda keeps them all", async () => {
+    const w = await walkerShop(t.db, "own-agenda");
+    const noeAccount = await account(t.db, "noe-own-agenda@example.test");
+    const noe = await addStaff(t.db, w.shopId, "Noé");
+    await t.db.update(staff).set({ accountId: noeAccount.id }).where(eq(staff.id, noe));
+    await addWindow(t.db, w.shopId, { weekday: 2, startsAt: "13:00", endsAt: "17:00" }, noe);
+    await bookVisit(t.db, { clientId: w.camille.clientId, serviceId: w.solo, zoneId: w.zones.stHenri, dependantIds: [w.camille.dogId], startsAt: start, now: NOW });
+    await bookVisit(t.db, { clientId: w.jordan.clientId, serviceId: w.solo, zoneId: w.zones.stHenri, dependantIds: [w.jordan.dogId], startsAt: new Date("2026-10-20T18:00:00Z"), now: NOW, staffId: noe });
+
+    const names = (visits: Awaited<ReturnType<typeof dayVisits>>) => visits.flatMap((v) => v.bookings.map((b) => b.clientName)).sort();
+    expect(names(await dayVisits(t.db, w.shopId, "2026-10-20"))).toEqual(["Camille Tremblay", "Jordan Lee"]);
+    expect(names(await dayVisits(t.db, w.shopId, "2026-10-20", { staffAccountId: noeAccount.id }))).toEqual(["Jordan Lee"]);
+    expect(await dayVisits(t.db, w.shopId, "2026-10-20", { staffAccountId: w.camille.account.id })).toEqual([]);
+
+    expect(await visitDays(t.db, w.shopId, "2026-10-19", "2026-10-21")).toEqual([{ day: "2026-10-20", visits: 2, bookings: 2 }]);
+    expect(await visitDays(t.db, w.shopId, "2026-10-19", "2026-10-21", { staffAccountId: noeAccount.id })).toEqual([{ day: "2026-10-20", visits: 1, bookings: 1 }]);
+  });
+});
+
+describe("the walker's calendar", () => {
+  it("counts the visits of each local day of a range, cancelled ones excluded, a day with none absent", async () => {
+    const { w } = await walked("calendar");
+    expect(await visitDays(t.db, w.shopId, "2026-10-19", "2026-10-21")).toEqual([{ day: "2026-10-20", visits: 1, bookings: 2 }]);
+    expect(await visitDays(t.db, w.shopId, "2026-10-21", "2026-10-25")).toEqual([]);
+    const other = await walkerShop(t.db, "calendar-other");
+    expect(await visitDays(t.db, other.shopId, "2026-10-19", "2026-10-21")).toEqual([]);
+  });
+
+  it("refuses a range that is not days in order, or longer than a quarter", async () => {
+    const w = await walkerShop(t.db, "calendar-range");
+    expect(await code(visitDays(t.db, w.shopId, "2026-10-21", "2026-10-19"))).toBe("AK_RANGE_INVALID");
+    expect(await code(visitDays(t.db, w.shopId, "2026-01-01", "2026-12-31"))).toBe("AK_RANGE_INVALID");
   });
 });
 
