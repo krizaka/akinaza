@@ -550,3 +550,34 @@ export const memberships = pgTable(
   },
   (t) => [index("memberships_account").on(t.accountId)],
 );
+
+/** A client's request kept at a shop, to renew in one tap (akinaza#210): the files are on the media storage. */
+export const clientRequests = pgTable(
+  "client_requests",
+  {
+    id: id(),
+    clientId: uuid("client_id").notNull().references(() => clients.id, { onDelete: "cascade" }),
+    serviceId: uuid("service_id").notNull().references(() => services.id, { onDelete: "cascade" }),
+    staffId: uuid("staff_id").references(() => staff.id, { onDelete: "set null" }),
+    zoneId: uuid("zone_id").references(() => shopZones.id, { onDelete: "set null" }),
+    title: text("title").notNull(),
+    note: text("note"),
+    createdAt: created(),
+  },
+  (t) => [index("client_requests_client").on(t.clientId)],
+);
+
+/** A file attached to a request: its CDN address on the media storage, its kind and size — never the bytes. */
+export const clientRequestFiles = pgTable(
+  "client_request_files",
+  {
+    id: id(),
+    requestId: uuid("request_id").notNull().references(() => clientRequests.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    kind: text("kind", { enum: ["image", "pdf"] }).notNull(),
+    bytes: integer("bytes").notNull(),
+    createdAt: created(),
+  },
+  (t) => [index("client_request_files_request").on(t.requestId)],
+);
+

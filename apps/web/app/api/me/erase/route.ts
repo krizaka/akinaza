@@ -1,9 +1,8 @@
-import { CONSENT_TEXT_VERSION, eraseClient } from "@akinaza/db";
 import { z } from "zod";
 
 import { requireOwnClient } from "@/lib/access";
 import { audit } from "@/lib/audit";
-import { db } from "@/lib/db";
+import { eraseClientEverywhere } from "@/lib/client-requests";
 import { handle, readJson, refuse } from "@/lib/http";
 import { limit } from "@/lib/rate-limit";
 
@@ -18,7 +17,7 @@ export function POST(req: Request) {
     const { session, client } = await requireOwnClient(req, input.clientId);
     if (input.confirmEmail !== session.account.email) throw refuse(409, "CONFIRM_MISMATCH", "The e-mail typed does not match the account");
     limit("erase", req, session.account.id, [10, 3600]);
-    await eraseClient(db(), client.id, CONSENT_TEXT_VERSION);
+    await eraseClientEverywhere(client.id);
     await audit({ action: "client.erased", actorId: session.account.id, actorLabel: session.account.email, targetId: client.id, headers: req.headers });
     return Response.json({ ok: true });
   });

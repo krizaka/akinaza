@@ -46,3 +46,42 @@ export async function storeImage(settings: MediaSettings, shopId: string, bytes:
   if (!response.ok) throw new Error(`media storage refused (${response.status})`);
   return `https://${settings.cdn}/${key}`;
 }
+
+// @fixed: the largest file attached to a client's request (a photo redrawn by the phone, or a short PDF) — an abuse limit.
+export const MAX_REQUEST_FILE_BYTES = 5 * 1024 * 1024;
+
+/** What a client may attach to a request (akinaza#210): a JPEG, PNG or WebP image, or a PDF — by its bytes, never its name. */
+export function detectRequestFile(bytes: Uint8Array): { ext: "jpg" | "png" | "webp" | "pdf"; mime: string; kind: "image" | "pdf" } | null {
+  const image = detectImage(bytes);
+  if (image) return { ...image, kind: "image" };
+  if (starts(bytes, [0x25, 0x50, 0x44, 0x46, 0x2d])) return { ext: "pdf", mime: "application/pdf", kind: "pdf" };
+  return null;
+}
+
+export function requestFileKey(shopId: string, requestId: string, bytes: Uint8Array, ext: string): string {
+  return `user/akinaza/shops/${shopId}/requests/${requestId}/${createHash("sha256").update(bytes).digest("hex").slice(0, 16)}.${ext}`;
+}
+
+/** Sends a request's file to the storage zone and returns its CDN address and kind. The access key never leaves this function. */
+export async function storeRequestFile(settings: MediaSettings, shopId: string, requestId: string, bytes: Uint8Array, fetchImpl: typeof fetch = fetch): Promise<{ url: string; kind: "image" | "pdf" }> {
+  const file = detectRequestFile(bytes);
+  if (!file) throw new Error("not an image or a PDF");
+  const key = requestFileKey(shopId, requestId, bytes, file.ext);
+  const response = await fetchImpl(`https://${settings.endpoint}/${settings.zone}/${key}`, { method: "PUT", headers: { AccessKey: settings.apiKey, "content-type": file.mime }, body: bytes as unknown as BodyInit });
+  if (!response.ok) throw new Error(`media storage refused (${response.status})`);
+  return { url: `https://${settings.cdn}/${key}`, kind: file.kind };
+}
+
+/**
+ * Removes a stored file by its CDN address (a deleted request, an erased client). Only an address of this zone's CDN under
+ * `user/akinaza/` is accepted: nothing else can be deleted through it. Answers whether the storage removed it (a file already
+ * gone counts as removed).
+ */
+export async function deleteStored(settings: MediaSettings, url: string, fetchImpl: typeof fetch = fetch): Promise<boolean> {
+  const prefix = `https://${settings.cdn}/`;
+  if (!url.startsWith(prefix)) return false;
+  const key = url.slice(prefix.length);
+  if (!key.startsWith("user/akinaza/") || key.includes("..")) return false;
+  const response = await fetchImpl(`https://${settings.endpoint}/${settings.zone}/${key}`, { method: "DELETE", headers: { AccessKey: settings.apiKey } });
+  return response.ok || response.status === 404;
+}

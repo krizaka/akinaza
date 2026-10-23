@@ -346,7 +346,11 @@
       "INVOICE_ALREADY_CORRECTED": "This invoice was already corrected or cancelled.",
       "TIME_OFF_DATE": "A date is written YYYY-MM-DD, e.g. 2026-12-20.",
       "TIME_OFF_ORDER": "The time off ends before it starts.",
-      "TIME_OFF_TOO_LONG": "Time off lasts at most 92 days: add it in two parts."
+      "TIME_OFF_TOO_LONG": "Time off lasts at most 92 days: add it in two parts.",
+      "REQUEST_UNKNOWN": "This request no longer exists.",
+      "REQUESTS_FULL": "You already keep 20 requests here: delete one first.",
+      "REQUEST_FILES_FULL": "A request keeps at most 5 files.",
+      "UPLOAD_NOT_ALLOWED": "Only photos (JPEG, PNG, WebP) and PDFs are accepted."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -794,7 +798,25 @@
       "eraseDescription": "Your details, your dogs, the notes and photos of the reports are erased for good. Invoices are kept as the law requires. Type your e-mail to confirm.",
       "eraseEmail": "Your e-mail",
       "eraseYes": "Erase for good",
-      "erased": "Your file was erased."
+      "erased": "Your file was erased.",
+      "requests": {
+        "title": "My requests",
+        "lead": "Keep what you usually ask for here, with a photo or a document, and book it again in one tap.",
+        "none": "No request kept yet.",
+        "titleField": "Your request",
+        "titlePlaceholder": "Cut and balayage, like last time",
+        "service": "Service",
+        "staff": "With",
+        "anyone": "Anyone",
+        "note": "Note (optional)",
+        "add": "Keep this request",
+        "renew": "Book it again",
+        "delete": "Delete “{title}” and its files",
+        "attach": "Attach a photo or a PDF",
+        "fileImage": "Photo",
+        "filePdf": "PDF document",
+        "fileRemove": "Remove this file"
+      }
     },
     "report": {
       "title": "{dog}'s outing",
