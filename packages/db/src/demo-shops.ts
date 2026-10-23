@@ -3,7 +3,7 @@ import { and, eq } from "drizzle-orm";
 
 import type { Db } from "./client";
 import { accounts, services as servicesTable, shops, staff as staffTable } from "./schema";
-import { saveShopPageConfig, shopPageConfigOf } from "./shop-page";
+import { applyTemplate, saveShopPageConfig, shopPageConfigOf } from "./shop-page";
 import { addStaff, addWindow, saveRules, type ServiceInput, saveService, saveShopMedia, saveShopPage, shopOfOwner } from "./service-shop";
 
 /**
@@ -25,6 +25,8 @@ export interface DemoShop {
   rules: Partial<ShopRules>;
   /** The trade, which picks the default images the page shows where the shop has none (#267). */
   shopType: ShopType;
+  /** The template of its trade the page wears (#261, step 6): applied once, through `applyTemplate`, never touched again. */
+  template: string;
   cover?: { url: string; altFr: string; altEn: string };
 }
 
@@ -56,6 +58,7 @@ export const DEMO_SHOPS: DemoShop[] = [
       { nameFr: "Balayage", nameEn: "Balayage", durationMinutes: 180, priceCents: 22_000, capacity: 1, priceVaries: true, descriptionFr: "Éclaircissement progressif, pour un résultat naturel.", descriptionEn: "Gradual lightening for a natural result.", includedFr: ["Consultation couleur", "Balayage", "Soin", "Coiffage"], includedEn: ["Colour consultation", "Balayage", "Treatment", "Styling"] },
     ],
     shopType: "salon",
+    template: "salon-vitrine",
     rules: { cancellationHours: 24, bookingHorizonDays: 60, slotStepMinutes: 30, minNoticeMinutes: 120 },
   },
   {
@@ -82,6 +85,7 @@ export const DEMO_SHOPS: DemoShop[] = [
       { nameFr: "Séance photo portrait (60 min)", nameEn: "Portrait photo session (60 min)", durationMinutes: 60, priceCents: 18_000, capacity: 1, descriptionFr: "Un portrait en studio, lumière naturelle et artificielle.", descriptionEn: "A studio portrait, natural and studio light.", includedFr: ["Séance en studio", "10 photos retouchées", "Galerie en ligne"], includedEn: ["Studio session", "10 retouched photos", "Online gallery"] },
     ],
     shopType: "workshop",
+    template: "workshop-histoire",
     rules: { cancellationHours: 48, bookingHorizonDays: 90, slotStepMinutes: 30, minNoticeMinutes: 1_440 },
   },
   {
@@ -103,6 +107,7 @@ export const DEMO_SHOPS: DemoShop[] = [
       { nameFr: "Bloc de 3 heures", nameEn: "3-hour block", durationMinutes: 180, priceCents: 40_000, capacity: 1, descriptionFr: "Un bloc d'un seul tenant pour un atelier ou un plan d'action.", descriptionEn: "One uninterrupted block for a workshop or an action plan.", includedFr: ["Atelier ou plan d'action", "Compte rendu écrit"], includedEn: ["Workshop or action plan", "Written summary"] },
     ],
     shopType: "consulting",
+    template: "consulting-carte",
     rules: { cancellationHours: 24, bookingHorizonDays: 60, slotStepMinutes: 30, minNoticeMinutes: 1_440 },
   },
 ];
@@ -120,6 +125,12 @@ async function keepType(db: Db, shopId: string, shopType: ShopType): Promise<voi
   if (!config.shopType) await saveShopPageConfig(db, shopId, { ...config, shopType });
 }
 
+/** The demo's template, once: a page that wears one keeps it (and its version). Through `applyTemplate`, the template's order, as a new shop would get it. */
+async function keepTemplate(db: Db, shopId: string, template: string): Promise<void> {
+  const config = await shopPageConfigOf(db, shopId);
+  if (!config.templateId) await applyTemplate(db, shopId, { templateId: template, keepOrder: false });
+}
+
 /** Seeds (or refreshes) one demo shop through the product's operations. Idempotent per owner: a second run changes nothing it already holds. */
 export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string; created: boolean }> {
   const ownerId = await ensureOwner(db, demo.ownerEmail);
@@ -127,6 +138,7 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
   const existing = await shopOfOwner(db, ownerId);
   if (existing) {
     await keepType(db, existing.id, demo.shopType);
+    await keepTemplate(db, existing.id, demo.template);
     return { shopId: existing.id, created: false };
   }
   const { shopId } = await saveShopPage(db, ownerId, { ...page, published: false });
@@ -144,6 +156,7 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
   if (demo.cover) await saveShopMedia(db, shopId, { cover: { ...demo.cover } });
   await saveShopPage(db, ownerId, { ...page, published: true });
   await keepType(db, shopId, demo.shopType);
+  await keepTemplate(db, shopId, demo.template);
   return { shopId, created: true };
 }
 

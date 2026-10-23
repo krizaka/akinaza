@@ -29,7 +29,9 @@
   variants, media slots, hue, paper, text styles per role), two per trade, never a text or a photo. The shop keeps the `id@version` it applied (`shop_page.template_id`,
   `template_version`; no template = today's page, always) and its own order (`sections_custom`: a template asks « keep my order / use its order » before replacing it,
   `applyTemplate`). The owner picks in « Apparence » / « Look » (`TemplatePicker`, a tiny preview per tile) and at shop creation, where the trade is asked and the
-  administrator's default is preselected — it preselects, never applies by itself. The administrator holds `features.storefrontTemplates`,
+  administrator's default is preselected — it preselects, never applies by itself. A template improves as `id@version+1` beside the old one: the shop keeps its
+  version until the owner updates (« update available »). The demo shops (and the Saint-Henri persona) each wear a template of their trade, applied once by their seed.
+  The administrator holds `features.storefrontTemplates` (on),
   `storefront.templates.offered` and `storefront.templates.default.<trade>`. A missing block or variant goes to krizaka-ui first.
 - **No mobile app in the dev preview.** `apps/mobile` is an unbuilt skeleton, outside the workspace until the mobile phase (A5,
   krizaka/.github#52); the walker's phone is served by the phone-first web app. The Dev preview criteria `mobile.*` are `na` for that
