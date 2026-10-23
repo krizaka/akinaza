@@ -1,6 +1,6 @@
 # Storefront templates — proposal (phase 1)
 
-Issue: krizaka/akinaza#261. Part of epic #236 (the shops platform). Status: **proposal, awaiting « validé »**. No code changes in this PR.
+Issue: krizaka/akinaza#261. Part of epic #236 (the shops platform). Status: **validé** (CTO review: option C, with the corrections below). No code changes in this PR.
 
 Oussama (2026-10-23): « proposer aussi quelques templates pour chaque boutique ». A shop owner starts from a finished storefront that suits
 their trade, not from a blank page. The public pages follow the Cahier (artistic notebook) style; the owner's back office stays plain Krizaka UI.
@@ -22,7 +22,7 @@ Shared vocabulary with the default-media issue (#267): **shop types** `salon · 
 | `gallery` | `MediaGallery` | `shop_media` role `gallery` |
 | `wall`, `reels`, `announcements`, `reviews`, `follow` | placeholders until their features land (#232-#236) | admin switches `features.shop*` |
 | (fixed) hero | `CoverHero` | `shop_media` role `cover`, logo, status, areas |
-| (fixed) trust | `Section` + `DescriptionList` + `ButtonLink` | story, contact, policies |
+| (fixed today) `trust` | `Section` + `DescriptionList` + `ButtonLink`, injected by `Storefront.tsx` just before `gallery` | story, contact, policies; **not** a configurable id in `SHOP_PAGE_SECTIONS` |
 
 The owner already controls **which sections show and in what order** (`shop_page.sections`, #237), the logo, and the languages (#258). What the owner cannot do is start
 from a trade-specific look. A template is therefore **a starting point for the things the owner already controls, plus a look**: it must not own their content.
@@ -69,7 +69,7 @@ copies, while reusing the section components and tests that already exist. A is 
 
 ## 4. ADR (draft, to land in `docs/adr/ADR-004-storefront-templates.md` with phase 2)
 
-- **Decision**: a template is a versioned, validated record of **section order, section variants, media slot names, a hue and default text styles**, held as data in `packages/core` (a zod schema, parsed at build) and selected by the shop with `shop_page.template_id` + `template_version`. The page renders the existing section components in the template's order with its variants; the owner's own section order and visibility (`shop_page.sections`) remain **overrides** over the template.
+- **Decision**: a template is a versioned, validated record of **section order, section variants, media slot names, a hue and default text styles**, held as data in `packages/core` (a zod schema, parsed at build) and selected by the shop with `shop_page.template_id` + `template_version` (never implied by the shop's type). The page renders the existing section components in the template's order with its variants; the owner's own section order and visibility (`shop_page.sections`) remain **overrides** over the template.
 - **Rejected A (stored copy / generic builder)**: copies diverge from improvements, switching is a merge, it grows into a page builder. **Rejected B (a component per type)**: trade-specific code, every improvement six times, no admin control.
 - **Costs**: variants multiply (each section component must support its variants and be tested); templates cannot do what no section component does (a new block means a krizaka-ui or section component first); the registry of section ids is a contract between catalogue and renderer.
 - **Content is never part of a template**: texts are the shop's (and their translations, #258), media are the shop's or the defaults of its type (#267).
@@ -135,14 +135,19 @@ L3 HISTOIRE (desktop)                                  L3 HISTOIRE (phone)
 ## 6. Data model, migration, admin side
 
 - **Catalogue** (code as data): `packages/core/src/storefront-templates/` — `templateSchema` (zod): `{ id, version, shopTypes[], layout, sections: { id, variant, visible }[], slots: Record<SlotId, { default: "type" | "none" }>, hue, paper, textStyles: { title, body, price }, minUiVersion }`. Parsed at module load; a test parses every template.
-- **Shop** — migration `0030_shop_template.sql` on `shop_page`:
-  `template_id text NULL`, `template_version integer NULL`, `sections_custom boolean NOT NULL DEFAULT false` (the owner has reordered or hidden sections),
-  `style jsonb NOT NULL DEFAULT '{}'` (the owner's `TextStyle` overrides per role), `shop_type text NULL CHECK (...)` (the type of #267). No row or NULL = today's page.
-  Classified in `packages/db/src/tenancy.ts` as `shop`; tenant-isolation sweep covers the new route.
+- **Shop** — one migration owns `shop_type`: the default-media work (#267) adds it first (`0030_shop_default_media.sql`, with its CHECK on the list `SHOP_TYPES` of `packages/core/src/shop-media.ts`).
+  The templates' migration takes the next number (`0031_shop_template.sql`) and **only adds** to `shop_page`:
+  `template_id text NULL`, `template_version integer NULL`, `sections_custom boolean NOT NULL DEFAULT false`, `style jsonb NOT NULL DEFAULT '{}'` (the owner's `TextStyle` overrides per role).
+  `shop_type` is read, never re-declared; any CHECK on a type uses the same `SHOP_TYPES` constant (one source). No `template_id` = today's page.
+  **Backfill of `sections_custom`**: `saveShopPageConfig` (#237) already persists owners' order and visibility, so the migration sets
+  `sections_custom = (sections IS DISTINCT FROM <the default sections value>)` for every existing row: a customised page is marked customised and keeps its order when a template is first applied, with the « keep my order / use the template's » question.
+  A test migrates a customised page and a default page and checks both flags, then applies a template to each.
+  Classified in `packages/db/src/tenancy.ts` as `shop`; the tenant-isolation sweep covers the new route.
 - **Admin settings** (`@krizaka/settings`, audited): `features.storefrontTemplates` (flag), `storefront.templates.offered` (subset of the catalogue ids), `storefront.templates.default.<shop-type>` (choice among that type's templates).
+- **The administrator's per-type default never changes an existing shop.** It only **preselects the picker** (at creation of a new shop, or when an owner opens the picker); nothing applies until the owner chooses, and choosing persists an explicit `template_id` and `template_version`. A test: an existing shop with no template renders identically before and after an admin sets a default.
 - **Applying a template**: sets `template_id@version`; the section order/visibility come from the template **unless `sections_custom`**, in which case the owner is asked (« keep my order / use the template's »). Switching never touches fields, media or translations.
 - **Upgrading**: a template improves by publishing `id@version+1`; the shop keeps its applied version; the editor shows « update available » with a preview; applying is the owner's choice and follows the same rule.
-- **Rendering**: `buildStorefront` resolves the template (shop's id@version, else the default of its type, else today's order), the renderer maps section id + variant to the existing section component; every media slot resolves to the owner's media, else the default of the type (#267), never blank.
+- **Rendering**: `buildStorefront` resolves the template (the shop's `id@version`; **a shop with no `template_id` stays on today's rendering path, always**, even when an administrator later sets a per-type default), the renderer maps section id + variant to the existing section component; every media slot resolves to the owner's media, else the default of the type (#267), never blank.
 
 ## 7. Cross-cutting
 
@@ -156,17 +161,17 @@ L3 HISTOIRE (desktop)                                  L3 HISTOIRE (phone)
 | # | Step | Tests / acceptance |
 | :-- | :-- | :-- |
 | 1 | `templateSchema`, the 12 templates as data, a resolver (`resolveTemplate(shop)`) in `packages/core` | every template parses; every `shopType` has at least two; every slot id is known; every text key exists in FR and EN; no template names a missing section id |
-| 2 | Migration 0030, reads/writes, admin settings, tenancy classification | db tests; the settings bounds; tenant sweep; a shop with no row renders as today |
-| 3 | Refactor `Storefront.tsx` to a section registry + variants (no visual change under the default template) | the existing storefront tests unchanged; snapshot of section order per template; CLS guard |
-| 4 | The editor: « Look » tab picker with a live preview, « keep my order / use the template's » | component tests EN/FR; preview renders each template with fixtures |
+| 2 | Migration 0031 (after #267's 0030, which owns `shop_type`): `template_id`, `template_version`, `sections_custom` (backfilled as above), `style`; reads/writes; admin settings; tenancy classification | db tests incl. the backfill of a customised and a default page; the settings bounds; tenant sweep; a shop with no `template_id` renders as today, also after an admin default is set |
+| 3 | **Prerequisite: make `trust` an orderable section id.** Add `trust` to `SHOP_PAGE_SECTIONS` (and its message and toggle). Legacy mapping: a stored `sections` value without `trust` is read as having it **at today's placement** (right before `gallery`), so no existing page changes; saving writes it explicitly. Then refactor `Storefront.tsx` to a section registry + variants (no visual change without a template) | a legacy page without `trust` renders in the same order as before; the existing storefront tests are unchanged; every template's section ids are in `SHOP_PAGE_SECTIONS`; snapshot of section order per template (L3 can now put the story first); CLS guard |
+| 4 | The editor: the picker **inside the « Apparence » / « Look » tab** (the tab #266 introduced, no second tab), with a live preview and « keep my order / use the template's »; offered at shop creation with the default of its type preselected | component tests EN/FR; preview renders each template with fixtures |
 | 5 | Switch template keeps the content; versions and « update available » | integration: switching changes only order/variants/look; an old `@1` renders unchanged after `@2` ships |
 | 6 | The demo shop on one template per type, with the default media (#267) | captures in both themes to Bunny pr-assets |
 | 7 | Text styles (after krizaka-ui#561 ships) | stored value parsed server-side (`parseTextStyle`), contrast warning shown |
 | 8 | Cahier pieces as `@2` versions (after krizaka-ui#537, #540, #539, paper and ink) | per-template captures; the update flow from step 5 |
 
-## 9. Open questions for Oussama
+## 9. Decisions (CTO, delegated, 2026-10-23)
 
-1. Two templates per type is the proposal; is a third (a bolder, photo-led one) wanted for some trades?
-2. Must the owner be able to mix two templates' sections (it pushes toward a builder), or is « pick, then reorder and hide » enough? (Proposed: enough.)
-3. Text styles per role (`title`, `body`, `price`) or per section? (Proposed: three roles, simpler and consistent.)
-4. Should a new shop be offered the template picker at creation, or only after its first publish? (Proposed: at creation, with the default of its type preselected.)
+1. Two templates per shop type for now; a third, photo-led one comes later as data, only if a demo asks for it.
+2. « Pick, then reorder and hide » is enough. No mixing of templates (that is a page builder, already refused).
+3. Text styles per role (`title`, `body`, `price`).
+4. The picker is offered at creation, with the default of the shop's type preselected (it preselects; it does not apply by itself).
