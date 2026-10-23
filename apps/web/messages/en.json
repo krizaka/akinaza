@@ -343,7 +343,10 @@
       "BRIEF_DONE": "Already done this week.",
       "SHOP_NOT_PUBLIC": "Publish your page to invite your clients.",
       "INVOICE_IS_CREDIT": "A credit note cannot be corrected.",
-      "INVOICE_ALREADY_CORRECTED": "This invoice was already corrected or cancelled."
+      "INVOICE_ALREADY_CORRECTED": "This invoice was already corrected or cancelled.",
+      "TIME_OFF_DATE": "A date is written YYYY-MM-DD, e.g. 2026-12-20.",
+      "TIME_OFF_ORDER": "The time off ends before it starts.",
+      "TIME_OFF_TOO_LONG": "Time off lasts at most 92 days: add it in two parts."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -383,7 +386,9 @@
         "price": "Price",
         "status": "Status",
         "clientFile": "Open the client file"
-      }
+      },
+      "offToday": "Off today: {names}.",
+      "offUntil": "{name} (until {until})"
     },
     "account": {
       "forgot": {
@@ -1063,6 +1068,19 @@
         "role": "Role",
         "submit": "Send the invitation",
         "sent": "Invitation sent. You can also pass this link on:"
+      },
+      "timeOff": {
+        "title": "Team time off",
+        "lead": "A date range for anyone on the team: on those days nobody can book with them. The reason stays private.",
+        "none": "No time off ahead.",
+        "who": "Who",
+        "from": "From",
+        "to": "To",
+        "reason": "Reason (optional)",
+        "reasonHint": "Seen by the team only, never by clients.",
+        "add": "Add time off",
+        "remove": "Remove {name}'s time off ({when})",
+        "range": "from {from} to {to}"
       }
     },
     "brief": {

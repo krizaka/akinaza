@@ -18,6 +18,7 @@ import { DELETE as revokeInvitation } from "./walker/team/invitations/[id]/route
 import { POST as invite } from "./walker/team/invitations/route";
 import { DELETE as removeMember, PATCH as changeRole } from "./walker/team/members/[accountId]/route";
 import { GET as teamOf } from "./walker/team/route";
+import { POST as timeOff } from "./walker/time-off/route";
 import { POST as checkIn } from "./walker/visits/[id]/check-in/route";
 import { GET as listHooks } from "./walker/webhooks/route";
 import { POST as zones } from "./walker/zones/route";
@@ -84,6 +85,7 @@ describe.runIf(enabled)("roles of a shop over HTTP", () => {
     ["catalogue: services", services, "POST", "/api/walker/services", {}],
     ["schedule: hours", hours, "POST", "/api/walker/hours", {}],
     ["schedule: days off", dayOff, "POST", "/api/walker/days-off", {}],
+    ["schedule: team time off", timeOff, "POST", "/api/walker/time-off", {}],
     ["invoices", invoices, "POST", "/api/walker/invoices", {}],
     ["team", teamOf, "GET", "/api/walker/team", undefined],
     ["access notes", accessNotes, "GET", `/api/walker/clients/${UUID}/access-notes`, undefined, { id: UUID }],
@@ -91,7 +93,7 @@ describe.runIf(enabled)("roles of a shop over HTTP", () => {
   ];
   const allowed: Record<string, string[]> = {
     owner: probes.map((p) => p[0]),
-    manager: ["catalogue: zones", "catalogue: services", "schedule: hours", "schedule: days off", "invoices", "team", "access notes", "check-in"],
+    manager: ["catalogue: zones", "catalogue: services", "schedule: hours", "schedule: days off", "schedule: team time off", "invoices", "team", "access notes", "check-in"],
     staff: ["access notes", "check-in"],
   };
   describe.each(["owner", "manager", "staff"])("%s", (role) => {

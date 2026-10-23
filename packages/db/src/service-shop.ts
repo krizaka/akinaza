@@ -1,6 +1,6 @@
-import { addLocalDays, businessTypeSchema, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
+import { addLocalDays, businessTypeSchema, timeOffDays, type TimeOffRange, timeOffRanges, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
 import { addDays, compareAsc } from "date-fns";
-import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, between, desc, eq, gte, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { Db, Tx } from "./client";
@@ -275,6 +275,66 @@ export async function addDayOff(db: Db, shopId: string, day: string, reason?: st
 export async function removeDayOff(db: Db, shopId: string, day: string): Promise<void> {
   const member = await ownStaff(db, shopId);
   await db.delete(daysOff).where(and(eq(daysOff.staffId, member.id), eq(daysOff.onDate, day)));
+}
+
+/** The people who work at the shop (with or without a sign-in), in the order they joined: whom time off can be set for. */
+export async function shopStaff(db: Db, shopId: string): Promise<{ id: string; name: string }[]> {
+  return db.select({ id: staff.id, name: staff.name }).from(staff).where(and(eq(staff.shopId, shopId), eq(staff.active, true))).orderBy(asc(staff.createdAt));
+}
+
+/** The days of a range, refused in the shop's own codes (a reversed, malformed or too long range). */
+function daysOfRange(range: TimeOffRange): string[] {
+  try {
+    return timeOffDays(range);
+  } catch (error) {
+    return refuse(error instanceof RangeError ? error.message : "AK_TIME_OFF_DATE");
+  }
+}
+
+/**
+ * Time off for any member of the team, as a date range (akinaza#208). Stored as days, so the slots, the opening status and
+ * the brief keep reading `days_off`; a range that overlaps another simply joins it (one row per staff and day).
+ */
+export async function addTimeOff(db: Db, shopId: string, staffId: string, range: TimeOffRange, reason?: string): Promise<void> {
+  const member = await staffFor(db, shopId, staffId);
+  const note = reason?.trim().slice(0, 120) || null;
+  await db.insert(daysOff).values(daysOfRange(range).map((onDate) => ({ staffId: member.id, onDate, reason: note }))).onConflictDoNothing();
+}
+
+/** Removes a member's time off over a range (a whole holiday, or the days of it that changed). */
+export async function removeTimeOff(db: Db, shopId: string, staffId: string, range: TimeOffRange): Promise<void> {
+  const member = await staffFor(db, shopId, staffId);
+  daysOfRange(range);
+  await db.delete(daysOff).where(and(eq(daysOff.staffId, member.id), between(daysOff.onDate, range.from, range.to)));
+}
+
+export interface TeamTimeOff {
+  staffId: string;
+  name: string;
+  from: string;
+  to: string;
+  /** Private: the team sees it, never a client nor the public page. */
+  reason: string | null;
+}
+
+/** The team's time off from a day on, as ranges per person, in date order. */
+export async function teamTimeOff(db: Db, shopId: string, fromDay: string): Promise<TeamTimeOff[]> {
+  const rows = await db
+    .select({ staffId: staff.id, name: staff.name, onDate: daysOff.onDate, reason: daysOff.reason })
+    .from(daysOff)
+    .innerJoin(staff, eq(staff.id, daysOff.staffId))
+    .where(and(eq(staff.shopId, shopId), eq(staff.active, true), gte(daysOff.onDate, fromDay)))
+    .orderBy(asc(daysOff.onDate));
+  const byStaff = new Map<string, typeof rows>();
+  for (const row of rows) byStaff.set(row.staffId, [...(byStaff.get(row.staffId) ?? []), row]);
+  return [...byStaff.values()]
+    .flatMap((days) => timeOffRanges(days.map((d) => d.onDate)).map((range) => ({ staffId: days[0]!.staffId, name: days[0]!.name, ...range, reason: days.find((d) => d.onDate === range.from)?.reason ?? null })))
+    .sort((a, b) => a.from.localeCompare(b.from) || a.name.localeCompare(b.name));
+}
+
+/** Who is off on a day, with the last day of their time off (for Today: « en congé jusqu'au 27 »). */
+export async function offOn(db: Db, shopId: string, day: string): Promise<{ staffId: string; name: string; until: string }[]> {
+  return (await teamTimeOff(db, shopId, day)).filter((t) => t.from <= day).map(({ staffId, name, to }) => ({ staffId, name, until: to }));
 }
 
 export interface ShopSetup {

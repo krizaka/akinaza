@@ -343,7 +343,10 @@
       "BRIEF_DONE": "C'est déjà fait cette semaine.",
       "SHOP_NOT_PUBLIC": "Publiez votre page pour inviter vos clients.",
       "INVOICE_IS_CREDIT": "Une note de crédit ne se modifie pas.",
-      "INVOICE_ALREADY_CORRECTED": "Cette facture a déjà été corrigée ou annulée."
+      "INVOICE_ALREADY_CORRECTED": "Cette facture a déjà été corrigée ou annulée.",
+      "TIME_OFF_DATE": "Une date s'écrit AAAA-MM-JJ, p. ex. 2026-12-20.",
+      "TIME_OFF_ORDER": "La fin du congé vient avant son début.",
+      "TIME_OFF_TOO_LONG": "Un congé dure au plus 92 jours : ajoutez-le en deux fois."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -383,7 +386,9 @@
         "price": "Prix",
         "status": "Statut",
         "clientFile": "Ouvrir la fiche client"
-      }
+      },
+      "offToday": "En congé aujourd'hui : {names}.",
+      "offUntil": "{name} (jusqu'au {until})"
     },
     "account": {
       "forgot": {
@@ -1063,6 +1068,19 @@
         "role": "Rôle",
         "submit": "Envoyer l'invitation",
         "sent": "Invitation envoyée. Vous pouvez aussi transmettre ce lien :"
+      },
+      "timeOff": {
+        "title": "Congés de l'équipe",
+        "lead": "Une plage de dates pour n'importe qui de l'équipe : ces jours-là, personne ne peut réserver avec cette personne. La raison reste privée.",
+        "none": "Aucun congé à venir.",
+        "who": "Qui",
+        "from": "Du",
+        "to": "Au",
+        "reason": "Raison (facultative)",
+        "reasonHint": "Visible par l'équipe seulement, jamais par les clients.",
+        "add": "Ajouter le congé",
+        "remove": "Retirer le congé de {name} ({when})",
+        "range": "du {from} au {to}"
       }
     },
     "brief": {
