@@ -1,10 +1,12 @@
 import { randomBytes, randomUUID } from "node:crypto";
 
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { addHours } from "date-fns";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { db, migrate, pool, query } from "@/lib/db";
 import { flushOutbox, sendWalkReport } from "@/lib/mail";
 import { resetRateLimits } from "@/lib/rate-limit";
+import { realtimeBus, slotsTopic } from "@/lib/realtime";
 import { createSession, SESSION_COOKIE } from "@/lib/session";
 
 import { POST as notes } from "./me/access-notes/route";
@@ -16,6 +18,7 @@ import { GET as exportData } from "./me/export/route";
 import { POST as join } from "./me/join/route";
 import { GET as meReportPhoto } from "./me/reports/[id]/photo/route";
 import { GET as reportPhoto } from "./report/[token]/photo/route";
+import { GET as events } from "./shops/[slug]/events/route";
 import { GET as slots } from "./shops/[slug]/slots/route";
 import { POST as saveReport } from "./walker/bookings/[id]/report/route";
 import { POST as sendReport } from "./walker/bookings/[id]/report/send/route";
@@ -61,6 +64,7 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
   let accounts: { walker: Awaited<ReturnType<typeof account>>; stranger: Awaited<ReturnType<typeof account>>; client: Awaited<ReturnType<typeof account>>; other: Awaited<ReturnType<typeof account>> };
 
   beforeAll(async () => {
+    vi.stubEnv("REALTIME_BUS", "memory");
     await migrate();
     accounts = { walker: await account("walker"), stranger: await account("stranger"), client: await account("client"), other: await account("other") };
     ({ walker, stranger, client, other } = { walker: accounts.walker.token, stranger: accounts.stranger.token, client: accounts.client.token, other: accounts.other.token });
@@ -69,6 +73,8 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
   afterAll(async () => {
     // The shop stays (the ledger and the consents are written once, so a shop is never deleted); only the accounts go.
     await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+    await realtimeBus().close();
+    vi.unstubAllEnvs();
     await pool().end();
   });
 
@@ -124,6 +130,33 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     const extra = await call(book, "POST", "/api/me/bookings", { token: client, json: { clientId: ids.clientFile, serviceId: ids.solo, zoneId: ids.stHenri, dependantIds: [ids.dog], startsAt: second.startsAt } });
     expect((await call(cancel, "POST", `/api/me/bookings/${extra.body.bookingIds[0]}/cancel`, { token: other, json: { clientId: ids.clientFile }, params: { id: extra.body.bookingIds[0] } })).status).toBe(404);
     expect((await call(cancel, "POST", `/api/me/bookings/${extra.body.bookingIds[0]}/cancel`, { token: client, json: { clientId: ids.clientFile }, params: { id: extra.body.bookingIds[0] } })).status).toBe(200);
+  });
+
+  it("streams a private-free invalidation after a booking or cancellation commits, but not after a refusal", async () => {
+    const published: unknown[] = [];
+    const unsubscribe = realtimeBus().subscribe(slotsTopic(ids.shop!), (event) => published.push(event));
+    const stream = await events(new Request(`http://localhost/api/shops/pattes-${stamp}/events`), { params: Promise.resolve({ slug: `pattes-${stamp}` }) });
+    expect(stream.status).toBe(200);
+    const reader = stream.body!.getReader();
+    const expected = 'event: slots.changed\ndata: {"type":"slots.changed"}\n\n';
+    try {
+      await reader.read(); // retry instruction
+      const offered = await call(slots, "GET", `/api/shops/pattes-${stamp}/slots?serviceId=${ids.solo}&zoneId=${ids.stHenri}`, { params: { slug: `pattes-${stamp}` } });
+      const start = offered.body.slots.find((slot: { startsAt: string }) => new Date(slot.startsAt) > addHours(new Date(), 3)).startsAt;
+      const booked = await call(book, "POST", "/api/me/bookings", { token: client, json: { clientId: ids.clientFile, serviceId: ids.solo, zoneId: ids.stHenri, dependantIds: [ids.dog], startsAt: start } });
+      expect(booked.status).toBe(201);
+      expect(published).toEqual([{ type: "slots.changed" }]);
+      expect(new TextDecoder().decode((await reader.read()).value)).toBe(expected);
+      const params = { id: booked.body.bookingIds[0] };
+      expect((await call(cancel, "POST", "/x", { token: other, json: { clientId: ids.clientFile }, params })).status).toBe(404);
+      expect(published).toHaveLength(1);
+      expect((await call(cancel, "POST", "/x", { token: client, json: { clientId: ids.clientFile }, params })).status).toBe(200);
+      expect(published).toEqual([{ type: "slots.changed" }, { type: "slots.changed" }]);
+      expect(new TextDecoder().decode((await reader.read()).value)).toBe(expected);
+    } finally {
+      await reader.cancel();
+      unsubscribe();
+    }
   });
 
   it("lets the walker check in and out, write the report with a photo, and send it (the mail waits without a provider)", async () => {

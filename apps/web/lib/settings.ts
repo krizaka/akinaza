@@ -1,4 +1,4 @@
-import { bilingual, defineSettings, flag, integer, postgresSettings, type SettingsService, WORKSPACE_SCOPES } from "@krizaka/settings";
+import { bilingual, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, type SettingsService, WORKSPACE_SCOPES } from "@krizaka/settings";
 
 import { query } from "./db";
 import { refuse } from "./http";
@@ -17,6 +17,9 @@ export const SETTINGS = {
   "plans.paid.apiKeys": integer("plans", 10, { min: 0, max: 100, unit: "keys" }, WORKSPACE_SCOPES),
   "limits.apiRequestsPerMinute": integer("limits", 120, { min: 1, max: 6000, unit: "requests" }, WORKSPACE_SCOPES),
   "limits.webhookEndpoints": integer("limits", 5, { min: 0, max: 50, unit: "endpoints" }, WORKSPACE_SCOPES),
+  "realtime.storefront.enabled": flag("realtime", true, GLOBAL_ONLY),
+  "realtime.storefront.heartbeatSeconds": integer("realtime", 15, { min: 5, max: 60, unit: "seconds" }, GLOBAL_ONLY),
+  "realtime.storefront.maxStreamsPerPage": integer("realtime", 100, { min: 1, max: 1000, unit: "streams" }, GLOBAL_ONLY),
 } as const;
 
 export const settings = defineSettings(SETTINGS);

@@ -122,4 +122,28 @@ describe.runIf(enabled)("API keys over HTTP", () => {
     expect(history.map((h) => [h.before, h.after])).toEqual([[false, null], [null, false]]);
     expect(history[0]!.actorLabel).toBe(`admin-${stamp}@akinaza.test`);
   });
+
+  it("stores bounded storefront stream settings without a rebuild and audits each administrator's change", async () => {
+    for (const [key, value, invalid] of [
+      ["realtime.storefront.enabled", false, "yes"],
+      ["realtime.storefront.heartbeatSeconds", 10, 61],
+      ["realtime.storefront.maxStreamsPerPage", 2, 1001],
+    ] as const) {
+      const opts = { cookie: sessions.admin, params: { key } };
+      expect((await call(setSetting, "PUT", "/x", { ...opts, cookie: sessions.owner, json: { value } })).status).toBe(403);
+      expect((await call(setSetting, "PUT", "/x", { ...opts, json: { value: invalid } })).body.code).toBe("BAD_VALUE");
+      expect((await call(setSetting, "PUT", "/x", { ...opts, json: { value } })).status).toBe(200);
+      try {
+        resetAppSettings();
+        const screen = (await call(adminSettings, "GET", "/api/admin/settings", { cookie: sessions.admin })).body;
+        expect(screen.values[key]).toEqual({ value, source: "global" });
+        expect((await query<{ value: unknown }>("SELECT value FROM app_settings WHERE scope = 'global' AND key = $1", [key]))[0]!.value).toBe(value);
+        const history = (await call(settingsHistory, "GET", `/api/admin/settings/history?key=${key}`, { cookie: sessions.admin })).body.history;
+        expect(history[0]).toMatchObject({ before: null, after: value, actorLabel: `admin-${stamp}@akinaza.test` });
+      } finally {
+        await call(resetSetting, "DELETE", "/x", { ...opts, json: {} });
+        resetAppSettings();
+      }
+    }
+  });
 });
