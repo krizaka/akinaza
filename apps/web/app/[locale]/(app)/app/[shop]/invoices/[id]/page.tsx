@@ -1,9 +1,12 @@
 import { invoiceDetail } from "@akinaza/db";
+import { invoiceDeliveryHistory, invoiceMailSettings } from "@akinaza/db";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
+import { InvoiceDeliveryHistory } from "@/components/app/InvoiceDeliveryHistory";
 import { InvoiceDocument } from "@/components/app/InvoiceDocument";
+import { InvoiceSendAction } from "@/components/app/InvoiceSendAction";
 import { ButtonLink } from "@/components/ButtonLink";
 import { db } from "@/lib/db";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
@@ -26,6 +29,7 @@ export default async function InvoicePage({ params }: { params: Promise<{ locale
   const { shop } = await memberShop(shopId, "invoices");
   const invoice = await invoiceDetail(db(), shop.id, id);
   if (!invoice) notFound();
+  const [deliveries, mail] = await Promise.all([invoiceDeliveryHistory(db(), shop.id, id), invoiceMailSettings(db(), shop.id)]);
   const routes = shopRoutes(locale, shop.id);
   const t = getDictionary(locale).console.invoices;
   // An invoice that still stands can be corrected (#207); a credit note or an already credited invoice cannot.
@@ -55,7 +59,9 @@ export default async function InvoicePage({ params }: { params: Promise<{ locale
           ) : null}
         </div>
       ) : null}
+      {invoice.clientId ? <InvoiceSendAction invoiceId={invoice.id} email={invoice.client?.email ?? null} defaultMessage={mail?.shop.message} /> : null}
       <InvoiceDocument invoice={invoice} locale={locale} backHref={routes.invoices} />
+      <InvoiceDeliveryHistory deliveries={deliveries} locale={locale} />
     </div>
   );
 }

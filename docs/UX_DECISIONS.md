@@ -188,3 +188,15 @@ Feedback: the pinned Discussion of the repository.
 - **Refused**: arbitrary page building, or letting owner preferences override global safety and rollout switches.
 - **Cost**: new sections can be enabled administratively before they are ready to accept shop content.
 - **Signal we are wrong**: owners cannot express their priorities with the available sections, or visitors cannot find services.
+
+## Invoice quick access on Today (krizaka/akinaza#218)
+
+- **Decision**: below the day, members allowed to invoice see a compact card with the three latest invoices, their totals
+  and states, and the count of overdue invoices across the shop. Each opens its document; « All invoices » opens the list.
+  An empty shop sees no card. The same card serves the agenda and the walker's day.
+- **Problem**: checking the latest invoices and late payments required leaving Today.
+- **Principle**: recognition over recall and visibility of system status (Nielsen): the list's payment states use the shop's
+  current calendar day, even when the agenda is showing another day.
+- **Refused**: duplicating search, filters or payment actions on Today; showing financial data to staff without invoice access.
+- **Cost**: older invoices require opening the list; the overdue count includes invoices outside the three shown.
+- **Signal we are wrong**: members mistake the latest three for all overdue invoices.

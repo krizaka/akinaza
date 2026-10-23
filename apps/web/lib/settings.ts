@@ -1,4 +1,4 @@
-import { bilingual, defineSettings, flag, integer, postgresSettings, type SettingsService, WORKSPACE_SCOPES } from "@krizaka/settings";
+import { bilingual, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, type SettingsService, WORKSPACE_SCOPES } from "@krizaka/settings";
 
 import { query } from "./db";
 import { refuse } from "./http";
@@ -21,10 +21,15 @@ export const SETTINGS = {
   "plans.free.apiKeys": integer("plans", 2, { min: 0, max: 100, unit: "keys" }, WORKSPACE_SCOPES),
   "plans.paid.apiKeys": integer("plans", 10, { min: 0, max: 100, unit: "keys" }, WORKSPACE_SCOPES),
   "limits.apiRequestsPerMinute": integer("limits", 120, { min: 1, max: 6000, unit: "requests" }, WORKSPACE_SCOPES),
+  // Invoice e-mails (#229): the most one shop sends per day (UTC), whatever the clients.
+  "limits.invoiceEmailsPerShopPerDay": integer("limits", 50, { min: 1, max: 10000, unit: "e-mails" }, GLOBAL_ONLY),
   "limits.webhookEndpoints": integer("limits", 5, { min: 0, max: 50, unit: "endpoints" }, WORKSPACE_SCOPES),
   "limits.wallItems": integer("limits", 24, { min: 1, max: 500, unit: "items" }),
   "limits.reelSeconds": integer("limits", 60, { min: 1, max: 300, unit: "seconds" }),
   "limits.reelMegabytes": integer("limits", 40, { min: 1, max: 500, unit: "megabytes" }),
+  "realtime.storefront.enabled": flag("realtime", true, GLOBAL_ONLY),
+  "realtime.storefront.heartbeatSeconds": integer("realtime", 15, { min: 5, max: 60, unit: "seconds" }, GLOBAL_ONLY),
+  "realtime.storefront.maxStreamsPerPage": integer("realtime", 100, { min: 1, max: 1000, unit: "streams" }, GLOBAL_ONLY),
 } as const;
 
 export const settings = defineSettings(SETTINGS);

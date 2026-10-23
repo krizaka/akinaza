@@ -3,7 +3,7 @@ import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { Db, Tx } from "./client";
-import { appointments, bookings, clientConsents, clients, dependants, expenses, invoiceLines, invoices, mailOutbox, services, shops, taxLedger, visitReports } from "./schema";
+import { appointments, bookings, clientConsents, clients, dependants, expenses, invoiceDeliveries, invoiceLines, invoices, mailOutbox, services, shops, taxLedger, visitReports } from "./schema";
 import { ShopError } from "./errors";
 
 const post = (tx: Tx, shopId: string, entries: LedgerEntry[]) =>
@@ -89,6 +89,10 @@ export async function eraseClient(db: Db, clientId: string, textVersion: string)
     await tx.update(dependants).set({ name: "—", profile: {}, erasedAt: sql`now()` }).where(eq(dependants.clientId, clientId));
     const reports = tx.select({ id: visitReports.id }).from(visitReports).innerJoin(bookings, eq(bookings.id, visitReports.bookingId)).where(eq(bookings.clientId, clientId));
     await tx.delete(mailOutbox).where(and(eq(mailOutbox.relatedKind, "visit_report"), inArray(mailOutbox.relatedId, reports)));
+    const invoiceIds = tx.select({ id: invoices.id }).from(invoices).where(eq(invoices.clientId, clientId));
+    const deliveryIds = tx.select({ id: invoiceDeliveries.id }).from(invoiceDeliveries).innerJoin(invoices, eq(invoices.id, invoiceDeliveries.invoiceId)).where(eq(invoices.clientId, clientId));
+    await tx.delete(mailOutbox).where(and(eq(mailOutbox.relatedKind, "invoice_delivery"), inArray(mailOutbox.relatedId, deliveryIds)));
+    await tx.update(invoiceDeliveries).set({ revokedAt: sql`now()`, toEmail: "—" }).where(inArray(invoiceDeliveries.invoiceId, invoiceIds));
     await tx.update(visitReports).set({ note: "—", photo: null, photoType: null, tokenExpiresAt: sql`now()`, viewTokenHash: sql`encode(sha256(gen_random_uuid()::text::bytea), 'hex')`, sentAt: null }).where(inArray(visitReports.bookingId, tx.select({ id: bookings.id }).from(bookings).where(eq(bookings.clientId, clientId))));
     await tx.insert(clientConsents).values((["service", "reminders", "marketing"] as const).map((purpose) => ({ clientId, purpose, granted: false, textVersion })));
     return true;
@@ -194,7 +198,9 @@ export async function listInvoices(db: Db, shopId: string) {
       gstCents: invoices.gstCents,
       qstCents: invoices.qstCents,
       totalCents: invoices.totalCents,
+      clientId: invoices.clientId,
       client: clients.fullName,
+      clientEmail: clients.email,
       // What was received against it, and whether a credit note or a correction (#207) superseded it (akinaza#218).
       paidCents: sql<number>`coalesce((SELECT sum(p.amount_cents) FROM payments p WHERE p.invoice_id = ${invoices.id}), 0)::int`,
       superseded: sql<boolean>`EXISTS (SELECT 1 FROM invoices o WHERE o.credit_of = ${invoices.id} OR o.replaces = ${invoices.id})`,
@@ -209,7 +215,7 @@ export async function listInvoices(db: Db, shopId: string) {
 /** One invoice with its lines, its client and the supplier's identity (the numbers a buyer needs for input tax credits); null if it is not this shop's. */
 export async function invoiceDetail(db: Db | Tx, shopId: string, invoiceId: string) {
   const [row] = await db
-    .select({ invoice: invoices, client: { fullName: clients.fullName, email: clients.email, phone: clients.phone }, shop: { legalName: shops.legalName, address: shops.address, registrant: shops.registrant, gstNumber: shops.gstNumber, qstNumber: shops.qstNumber } })
+    .select({ invoice: invoices, client: { fullName: clients.fullName, email: clients.email, phone: clients.phone }, shop: { name: shops.name, legalName: shops.legalName, address: shops.address, timezone: shops.timezone, registrant: shops.registrant, gstNumber: shops.gstNumber, qstNumber: shops.qstNumber, publicEmail: shops.publicEmail } })
     .from(invoices)
     .innerJoin(shops, eq(shops.id, invoices.shopId))
     .leftJoin(clients, eq(clients.id, invoices.clientId))

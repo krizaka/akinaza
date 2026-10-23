@@ -24,10 +24,20 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
   away from zero (zero-rated lines stay at zero; a small supplier charges nothing). Tested on known invoices.
 - **A ledger that balances** — every invoice posts its GST and QST to an append-only ledger; the database checks at
   commit that the lines make the subtotal and the ledger holds exactly the invoice's taxes. A correction is a credit note.
+- **Send an invoice** — the shop queues bilingual invoice e-mails through the outbox. Every send gets a private, expiring
+  link whose SHA-256 hash is stored; the page shows the invoice and payment balance, and opening is recorded without a pixel.
+  Client erasure revokes the links. PDF download uses the browser's print stylesheet. The daily send limit per shop is an
+  audited database setting (`limits.invoiceEmailsPerShopPerDay`, 50; 1–10000), changed in the admin configuration; the
+  sender address is the deployment's (`MAIL_*`), a shop only chooses the display name.
 - **"Prepare my tax return"** — the FPZ-500 figures (lines 101, 103/106/109, 203/206/209) from the ledger, with their
   working papers; **Akinaza
   prepares; the merchant files.** Nothing is transmitted to any government.
 - **Bookings** — services, staff, schedules; the database refuses a double booking (`EXCLUDE` on time ranges).
+- **Live storefront** — team states and free times refresh from the shop's slots channel while the page is visible.
+  SSE carries only a slots-changed signal, never booking details; without it, the visit-time render remains.
+  Audited database settings in the admin configuration control `realtime.storefront.enabled` (default `true`),
+  `realtime.storefront.heartbeatSeconds` (15; 5–60) and `realtime.storefront.maxStreamsPerPage` (100; 1–1000 concurrent
+  streams per shop page per server instance). Streams reconnect within five minutes to reread settings; no rebuild is needed.
 - **Loi 25** — consent per purpose, append-only; erasure blanks personal data and keeps the invoices tax law requires.
 - **Accounts** — sign-in, "forgot password" with one-use 30-minute links (the answer is the same for every address), a password change that ends the other sessions, a profile with Krizaka's default picture; registration is built and closed by configuration (`AUTH_SIGNUP_ENABLED`).
 - **Not for restaurants, cafés, bars and bakeries with on-site consumption** — they must use a sales recording system certified MEV-WEB by Revenu Québec; the point of sale is a stub behind
@@ -56,7 +66,7 @@ The database tests run on a real PostgreSQL 16: CI's service, or a Testcontainer
 
 | Path | |
 | :-- | :-- |
-| `apps/web` | Next.js 16: the public page, sign-in (`@krizaka/ui/auth-layout`), the shop's day (appointments + an invoice with its GST/QST lines), the administration (admin.akinaza.com), the BFF, the e-mail templates |
+| `apps/web` | Next.js 16: the public page, sign-in (`@krizaka/ui/auth-layout`), the shop's day (appointments, plus the latest invoices and overdue count for members with invoice access), the administration (admin.akinaza.com), the BFF, the e-mail templates |
 | `apps/mobile` | the Expo skeleton (joins the workspace in the mobile phase) |
 | `packages/core` | the domain, pure: money, GST/QST, the ledger, the return and its reconciliation, consent, the POS gate |
 | `packages/db` | PostgreSQL schema (Drizzle), versioned SQL migrations with the rules the database enforces, the shop's operations |

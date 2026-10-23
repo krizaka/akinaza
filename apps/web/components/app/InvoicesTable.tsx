@@ -8,6 +8,7 @@ import { DataTable, type DataTableColumn, DataTableColumnsMenu, DataTableExport,
 import Link from "next/link";
 import { useMemo } from "react";
 
+import { InvoiceSendAction } from "@/components/app/InvoiceSendAction";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
 import { ButtonLink } from "@/components/ButtonLink";
@@ -18,6 +19,8 @@ export interface InvoiceRowView {
   id: string;
   number: string;
   client: string | null;
+  clientId?: string | null;
+  clientEmail?: string | null;
   issuedOn: string;
   dueOn: string | null;
   language: "fr" | "en";
@@ -41,7 +44,7 @@ const QUICK_METHODS = ["cash", "card", "transfer"] as const;
  * The issued invoices (akinaza#218): searched by number and client, filtered by state and month, exported as CSV, each
  * unfolding its amounts and its quick actions — open, edit (#207), cash the balance. A card per invoice on a phone.
  */
-export function InvoicesTable({ invoices, today }: { invoices: InvoiceRowView[]; today: string }) {
+export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoices: InvoiceRowView[]; today: string; defaultMessage?: string }) {
   const { say, locale } = useSay();
   const routes = useShopRoutes();
   const call = useCall();
@@ -108,6 +111,7 @@ export function InvoicesTable({ invoices, today }: { invoices: InvoiceRowView[];
           ))}
         </dl>
         <div className="flex flex-wrap gap-2">
+          {i.clientId && i.clientEmail ? <InvoiceSendAction invoiceId={i.id} email={i.clientEmail} defaultMessage={defaultMessage} /> : null}
           <ButtonLink href={routes.invoice(i.id)} variant="secondary" size="sm">
             {say("invoices.detail.open")}
           </ButtonLink>

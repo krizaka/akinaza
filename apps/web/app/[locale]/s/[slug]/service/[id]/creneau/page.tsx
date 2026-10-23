@@ -5,10 +5,12 @@ import { notFound } from "next/navigation";
 
 import { JourneyFrame } from "@/components/journey/JourneyFrame";
 import { ShopSlots } from "@/components/shop/ShopSlots";
+import { StorefrontLive } from "@/components/shop/StorefrontLive";
 import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";
 import { asLocale, translator } from "@/lib/i18n";
 import { resolveChoice, timesStep } from "@/lib/journey";
+import { appSettings } from "@/lib/settings";
 import { loadPublicShopOrMove, queryString } from "@/lib/shop-page";
 
 export const dynamic = "force-dynamic";
@@ -29,6 +31,7 @@ export default async function TimesPage({ params, searchParams }: { params: Prom
   if (!step) notFound();
   return (
     <JourneyFrame locale={locale} path={`/${locale}/s/${slug}/service/${id}/creneau`} back={{ href: step.backHref, label: step.title }} title={t("console.journey.pickTime")} lead={[step.who, t("console.journey.pickTimeLead")].filter(Boolean).join(" · ")}>
+      <StorefrontLive slug={slug} enabled={await appSettings().get("realtime.storefront.enabled")} />
       <ShopSlots days={step.days} label={t("console.shopPage.timesLabel")} emptyLabel={t("console.journey.noTimes")} />
       {step.changeHref ? (
         <p className="m-0">

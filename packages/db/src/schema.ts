@@ -115,6 +115,10 @@ export const shops = pgTable(
     slug: text("slug"),
     /** The Monday brief by e-mail to the owner; off in one click from the mail (0023). */
     briefEmail: boolean("brief_email").notNull().default(true),
+    invoiceMailMessage: text("invoice_mail_message").notNull().default(""),
+    invoiceMailFromName: text("invoice_mail_from_name"),
+    invoiceMailCopy: boolean("invoice_mail_copy").notNull().default(false),
+    invoiceLinkDays: integer("invoice_link_days").notNull().default(30),
     published: boolean("published").notNull().default(false),
     taglineFr: text("tagline_fr"),
     taglineEn: text("tagline_en"),
@@ -145,6 +149,9 @@ export const shops = pgTable(
     check("shops_published_has_slug", sql`NOT ${t.published} OR ${t.slug} IS NOT NULL`),
     check("shops_kind", sql`${t.kind} IN ('salon','boutique','services','other')`),
     check("shops_payment_terms", sql`${t.paymentTermsDays} BETWEEN 0 AND 365`),
+    check("shops_invoice_link_days", sql`${t.invoiceLinkDays} BETWEEN 1 AND 365`),
+    check("shops_invoice_mail_message", sql`length(${t.invoiceMailMessage}) <= 500`),
+    check("shops_invoice_mail_from_name", sql`${t.invoiceMailFromName} IS NULL OR length(${t.invoiceMailFromName}) BETWEEN 1 AND 120`),
     check("shops_business_type", sql`${t.businessType} IN ('professional','pets')`),
     check("shops_tax_numbers", sql`NOT ${t.registrant} OR (coalesce(${t.gstNumber}, '') ~ '^[0-9]{9}RT[0-9]{4}$' AND coalesce(${t.qstNumber}, '') ~ '^[0-9]{10}TQ[0-9]{4}$')`),
   ],
@@ -364,6 +371,22 @@ export const invoices = pgTable(
   (t) => [uniqueIndex("invoices_number").on(t.shopId, t.number), check("invoices_total", sql`${t.totalCents} = ${t.subtotalCents} + ${t.gstCents} + ${t.qstCents}`), check("invoices_language", sql`${t.language} IN ('fr','en')`), check("invoices_terms", sql`(${t.termsDays} IS NULL AND ${t.dueOn} IS NULL) OR (${t.termsDays} IS NOT NULL AND ${t.dueOn} IS NOT NULL AND ${t.termsDays} BETWEEN 0 AND 365 AND ${t.dueOn} = ${t.issuedOn} + ${t.termsDays})`)],
 );
 
+/** A private, per-send invoice link. Only the token hash is retained; erasure revokes it. */
+export const invoiceDeliveries = pgTable(
+  "invoice_deliveries",
+  {
+    id: id(),
+    invoiceId: uuid("invoice_id").notNull().references(() => invoices.id, { onDelete: "cascade" }),
+    viewTokenHash: text("view_token_hash").notNull().unique(),
+    toEmail: text("to_email").notNull(),
+    createdAt: created(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    openedAt: timestamp("opened_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+  },
+  (t) => [index("invoice_deliveries_invoice").on(t.invoiceId, t.createdAt)],
+);
+
 export const invoiceLines = pgTable(
   "invoice_lines",
   {
@@ -534,6 +557,8 @@ export const mailOutbox = pgTable(
   {
     id: id(),
     toEmail: text("to_email").notNull(),
+    ccEmail: text("cc_email"),
+    fromName: text("from_name"),
     locale: text("locale", { enum: ["fr", "en"] }).notNull().default("fr"),
     template: text("template").notNull(),
     subject: text("subject").notNull(),

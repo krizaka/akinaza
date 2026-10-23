@@ -22,4 +22,13 @@ export function realtimeBus(): RealtimeBus {
   return holder.__akinazaBus;
 }
 
+/** Tells the open storefronts that this shop's slots changed. The booking is already committed: a bus failure never turns it into an error. */
+export async function announceSlots(shopId: string): Promise<void> {
+  try {
+    await realtimeBus().publish(slotsTopic(shopId), { type: "slots.changed" });
+  } catch (error) {
+    console.error("storefront slots event not published", error);
+  }
+}
+
 export { slotsTopic };

@@ -1,1 +1,1 @@
-{ "shop": "Salon Laurier", "number": "F-00001", "total": "160,97 $", "gst": "7,00 $", "qst": "13,97 $", "url": "https://dev.akinaza.com/fr/app" }
+{ "shop": "Salon Laurier", "logo": "", "hasLogo": false, "number": "F-00001", "total": "160,97 $", "gst": "7,00 $", "qst": "13,97 $", "dueDate": "20 novembre 2026", "message": "", "hasMessage": false, "url": "https://dev.akinaza.com/fr/app" }

@@ -1,4 +1,4 @@
-import { clientBookings, clientFilesOf, clientRequestsOf, dependantsOf, publicShop } from "@akinaza/db";
+import { clientBookings, clientFilesOf, clientInvoices, clientRequestsOf, dependantsOf, publicShop } from "@akinaza/db";
 import { EmptyState } from "@krizaka/ui/empty-state";
 import { Mascot } from "@krizaka/ui/mascots";
 import type { Metadata } from "next";
@@ -43,6 +43,7 @@ async function ClientSpace({ locale, accountId }: { locale: "en" | "fr"; account
           client: { id: f.id, fullName: f.fullName, shopName: f.shopName, shopSlug: f.shopSlug, businessType: f.businessType },
           dogs: (await dependantsOf(db(), f.id)).map((d) => ({ id: d.id, name: d.name, breed: (d.profile as { breed?: string }).breed ?? null })),
           bookings: (await clientBookings(db(), f.id)).map((b) => ({ ...b, report: b.report ? { id: b.report.id, note: b.report.note, hasPhoto: b.report.hasPhoto, durationMinutes: b.report.durationMinutes } : null })),
+          invoices: (await clientInvoices(db(), f.id)).map((i) => ({ id: i.id, number: i.number, issuedOn: i.issuedOn, totalCents: i.totalCents, shopName: i.shopName })),
           requests: await requestsOf(f.id, f.shopSlug),
           now,
           timeZone: f.timezone,

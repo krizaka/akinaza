@@ -29,6 +29,7 @@ export interface ClientFileView {
     dependantName: string;
     report: { id: string; note: string; hasPhoto: boolean; durationMinutes: number } | null;
   }[];
+  invoices?: { id: string; number: string; issuedOn: string; totalCents: number; shopName: string }[];
   /** The requests kept at this shop, and what to choose from (akinaza#210). */
   requests: RequestsData;
   /** `now` as an ISO string, taken by the server: which bookings are still ahead. */
@@ -71,6 +72,20 @@ function FileSection({ file }: { file: ClientFileView }) {
       </div>
       <BookingList title={say("client.upcoming")} items={upcoming} file={file} when={when} cancellable />
       <BookingList title={say("client.past")} items={past} file={file} when={when} />
+      {file.invoices?.length ? (
+        <section className="flex flex-col gap-2">
+          <h3 className="font-display text-sm font-bold text-fg-secondary">{say("client.invoiceTitle")}</h3>
+          <ul className="flex flex-col gap-2">
+            {file.invoices.map((invoice) => (
+              <li key={invoice.id}>
+                <Link className="text-fg-accent underline" href={`/${locale}/app/invoices/${invoice.id}`}>
+                  {say("client.invoiceOpen", { number: invoice.number })} · {new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(invoice.totalCents / 100)}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
       {dependants && file.dogs.length ? (
         <p className="text-sm text-fg-secondary">
           <strong className="text-fg">{say("client.dogsTitle")}</strong> · {file.dogs.map((d) => [d.name, d.breed].filter(Boolean).join(" · ")).join(" · ")}

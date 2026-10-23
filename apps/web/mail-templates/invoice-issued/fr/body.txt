@@ -1,5 +1,6 @@
-Merci de votre visite.
+Votre facture.
 
-Facture {number} : {total}, dont TPS {gst} et TVQ {qst}.
+Facture {number} de {shop} : {total}, dont TPS {gst} et TVQ {qst}. Échéance : {dueDate}.
+{#hasMessage}{message}{/hasMessage}
 
 Votre facture : {url}

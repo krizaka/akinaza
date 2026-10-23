@@ -13,6 +13,7 @@ export * from "./settings-migration";
 export * from "./webhooks-migration";
 export * from "./api-keys";
 export * from "./invoice-payments";
+export * from "./invoice-deliveries";
 export * from "./organize";
 export * from "./client-requests";
 export * from "./roles";

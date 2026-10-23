@@ -15,3 +15,31 @@ html {
 body {
   background: var(--kz-surface-0);
 }
+
+@media print {
+  @page {
+    margin: 16mm;
+  }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  button {
+    display: none !important;
+  }
+
+  article,
+  article * {
+    color: #111 !important;
+    border-color: #bbb !important;
+  }
+
+  article {
+    max-width: none !important;
+    border: 0 !important;
+    background: #fff !important;
+    padding: 0 !important;
+  }
+}
