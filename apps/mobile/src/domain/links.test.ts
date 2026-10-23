@@ -1,4 +1,4 @@
-import { asLocale, routes } from "./links";
+import { asLocale, routes, safeNext } from "./links";
 
 describe("the app's links are the web's paths", () => {
   it("follows the device's language, French first", () => {
@@ -14,5 +14,11 @@ describe("the app's links are the web's paths", () => {
     expect(routes.newInvoice("fr", "c1")).toBe("/fr/app/invoices/new?client=c1");
     expect(routes.clients("fr", "Camille Roy")).toBe("/fr/app/clients?q=Camille%20Roy");
     expect(routes.settings("en")).toBe("/en/app/settings");
+  });
+
+  it("after signing in, resumes the screen a link asked for, and only an app screen", () => {
+    expect(safeNext("/fr/app/invoices/new?client=c1", "fr")).toBe("/fr/app/invoices/new?client=c1");
+    expect(safeNext("/en/app/calendar?month=2026-10", "fr")).toBe("/en/app/calendar?month=2026-10");
+    for (const bad of [undefined, "", "https://evil.example/fr/app", "//evil.example", "/fr/application", "/fr/app//x", "/admin"]) expect(safeNext(bad, "fr")).toBe("/fr/app");
   });
 });

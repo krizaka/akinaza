@@ -1,6 +1,6 @@
 import { CalendarIcon, ClockIcon, SettingsIcon, UserIcon, WalletIcon } from "@krizaka/icons/native";
 import { TabBar } from "@krizaka/ui/native";
-import { Redirect, Tabs, useRouter } from "expo-router";
+import { Redirect, Tabs, useGlobalSearchParams, usePathname, useRouter } from "expo-router";
 
 import { AUTH, useAuth } from "@/auth";
 import { routes } from "@/domain/links";
@@ -15,7 +15,13 @@ export default function AppLayout() {
   const { status } = useAuth();
   const { locale } = useLocale();
   const router = useRouter();
-  if (status === AUTH.signedOut) return <Redirect href="/sign-in" />;
+  const pathname = usePathname();
+  const params = useGlobalSearchParams<Record<string, string>>();
+  if (status === AUTH.signedOut) {
+    // The screen the link asked for comes back after signing in (sign-in checks it is one of the app's).
+    const query = new URLSearchParams(Object.entries(params).filter(([k, v]) => k !== "locale" && typeof v === "string") as [string, string][]).toString();
+    return <Redirect href={{ pathname: "/sign-in", params: { next: `${pathname}${query ? `?${query}` : ""}` } } as never} />;
+  }
   const items = [
     { value: "index", label: t("tabs.today"), icon: (_on: boolean, color: string) => <ClockIcon color={color} /> },
     { value: "calendar", label: t("tabs.calendar"), icon: (_on: boolean, color: string) => <CalendarIcon color={color} /> },

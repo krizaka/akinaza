@@ -7,6 +7,8 @@ import { View } from "react-native";
 import { queries } from "@/config";
 import { routes } from "@/domain/links";
 import { isMonth, monthOf, monthRange, shiftMonth } from "@/domain/month";
+import { localDay } from "@akinaza/core";
+import { DEFAULT_TIMEZONE } from "@/domain/day";
 import { useI18n } from "@/i18n";
 import { AppHeader } from "@/ui/AppHeader";
 import { useLocale } from "@/use-locale";
@@ -17,7 +19,9 @@ export default function Calendar() {
   const { t } = useI18n();
   const { locale } = useLocale();
   const router = useRouter();
-  const month = isMonth(asked) ? asked : monthOf(new Date().toISOString());
+  // The default month is the shop's, from its own day (a Montréal evening is still October when UTC is November).
+  const shop = useQuery(queries.shop());
+  const month = isMonth(asked) ? asked : monthOf(localDay(new Date(), shop.data?.shop.timezone ?? DEFAULT_TIMEZONE));
   const { from, to } = monthRange(month);
   const days = useQuery(queries.calendar(from, to));
   return (

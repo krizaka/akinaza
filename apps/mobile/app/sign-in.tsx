@@ -1,11 +1,11 @@
 import { ApiError } from "@krizaka/app-client";
 import { Button, Screen, TextField, Txt } from "@krizaka/ui/native";
-import { Redirect } from "expo-router";
+import { Redirect, useLocalSearchParams } from "expo-router";
 import * as React from "react";
 import { View } from "react-native";
 
 import { AUTH, useAuth } from "@/auth";
-import { routes } from "@/domain/links";
+import { safeNext } from "@/domain/links";
 import { useI18n } from "@/i18n";
 import { useLocale } from "@/use-locale";
 
@@ -16,12 +16,13 @@ export default function SignIn() {
   const { t } = useI18n();
   const { locale } = useLocale();
   const { status, signIn } = useAuth();
+  const { next } = useLocalSearchParams<{ next?: string }>();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [error, setError] = React.useState<string | undefined>();
   const [busy, setBusy] = React.useState(false);
 
-  if (status === AUTH.signedIn) return <Redirect href={routes.today(locale) as never} />;
+  if (status === AUTH.signedIn) return <Redirect href={safeNext(next, locale) as never} />;
 
   const submit = async () => {
     setBusy(true);

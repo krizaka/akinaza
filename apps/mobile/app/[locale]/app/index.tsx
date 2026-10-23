@@ -5,7 +5,7 @@ import * as React from "react";
 import { View } from "react-native";
 
 import { akinaza, queries } from "@/config";
-import { isDay, shiftDay } from "@/domain/day";
+import { DEFAULT_TIMEZONE, isDay, shiftDay } from "@/domain/day";
 import { routes } from "@/domain/links";
 import { useI18n } from "@/i18n";
 import { AppHeader } from "@/ui/AppHeader";
@@ -22,7 +22,7 @@ export default function Today() {
   const asked = isDay(date) ? date : undefined;
   const shop = useQuery(queries.shop());
   const day = useQuery(queries.day(asked));
-  const timeZone = shop.data?.shop.timezone ?? "America/Toronto";
+  const timeZone = shop.data?.shop.timezone ?? DEFAULT_TIMEZONE;
   const move = useMutation({
     mutationFn: ({ id, kind }: { id: string; kind: "in" | "out" }) => (kind === "in" ? akinaza.checkIn(id) : akinaza.checkOut(id)),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queries.day(asked).queryKey }),

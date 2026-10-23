@@ -8,6 +8,8 @@ import { View } from "react-native";
 import { akinaza, queries } from "@/config";
 import { routes } from "@/domain/links";
 import { dollars } from "@/domain/money";
+import { localDay } from "@akinaza/core";
+import { parseQuantity } from "@/domain/quantity";
 import { useI18n } from "@/i18n";
 import { useLocale } from "@/use-locale";
 
@@ -29,7 +31,7 @@ export default function NewInvoice() {
   const clientName = clients.data?.find((c) => c.id === client)?.fullName;
 
   const issue = useMutation({
-    mutationFn: () => akinaza.issueInvoice({ clientId: client ?? null, language: locale, issuedOn: new Date().toISOString().slice(0, 10), lines }),
+    mutationFn: () => akinaza.issueInvoice({ clientId: client ?? null, language: locale, issuedOn: localDay(new Date(), shop.data!.shop.timezone), lines }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queries.invoices().queryKey });
       router.replace(routes.invoices(locale) as never);
@@ -37,8 +39,8 @@ export default function NewInvoice() {
   });
 
   const addLine = () => {
-    const units = Number(quantity.replace(",", "."));
-    if (!serviceId || !(units > 0)) return;
+    const units = parseQuantity(quantity);
+    if (!serviceId || units === null) return;
     setLines((current) => [...current, { serviceId, quantity: units }]);
     setServiceId(null);
     setQuantity("1");
@@ -78,7 +80,7 @@ export default function NewInvoice() {
         </Card.Root>
       ) : null}
       {issue.isError ? <Txt tone="danger">{t("invoices.failed")}</Txt> : null}
-      <Button variant="primary" label={t("invoices.issue")} disabled={!lines.length} loading={issue.isPending} onPress={() => issue.mutate()} />
+      <Button variant="primary" label={t("invoices.issue")} disabled={!lines.length || !shop.data} loading={issue.isPending} onPress={() => issue.mutate()} />
       <Txt tone="muted" variant="caption">{t("disclaimer")}</Txt>
     </Screen>
   );

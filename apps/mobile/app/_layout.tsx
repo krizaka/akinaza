@@ -1,5 +1,6 @@
 import { DiscoveryProvider } from "@krizaka/discovery/react";
-import { KrizakaQueryProvider } from "@krizaka/query";
+import { KrizakaQueryProvider, useQueryClient } from "@krizaka/query";
+import { bindNativeLifecycle } from "@krizaka/query/native";
 import { brands } from "@krizaka/tokens/native";
 import { ThemeProvider } from "@krizaka/ui/native";
 import { Stack } from "expo-router";
@@ -8,7 +9,7 @@ import { AppState } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AuthProvider } from "@/auth";
-import { discovery } from "@/config";
+import { discovery, session } from "@/config";
 import { I18nProvider } from "@/i18n";
 import { useLocale } from "@/use-locale";
 
@@ -26,6 +27,25 @@ function Themed({ children }: { children: React.ReactNode }) {
       {children}
     </ThemeProvider>
   );
+}
+
+/**
+ * One account's data never shows to the next: when a session starts or ends (a sign-out, a sign-in, a 401), the queries in
+ * flight are cancelled and the cache is emptied before another account's screens render. And the screens refresh when the
+ * app comes back to the foreground (Query's focus follows the app state).
+ */
+function SessionBoundary({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
+  React.useEffect(
+    () =>
+      session.onChange(() => {
+        void queryClient.cancelQueries();
+        queryClient.clear();
+      }),
+    [queryClient],
+  );
+  React.useEffect(() => bindNativeLifecycle({ appState: AppState }), []);
+  return <>{children}</>;
 }
 
 function Localised() {
@@ -46,7 +66,9 @@ export default function RootLayout() {
       <Themed>
         <DiscoveryProvider discovery={discovery} subscribeForeground={onForeground}>
           <KrizakaQueryProvider throwOnError={false}>
-            <Localised />
+            <SessionBoundary>
+              <Localised />
+            </SessionBoundary>
           </KrizakaQueryProvider>
         </DiscoveryProvider>
       </Themed>

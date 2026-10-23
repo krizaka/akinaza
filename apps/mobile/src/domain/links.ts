@@ -14,6 +14,15 @@ const query = (params: Record<string, string | undefined>) => {
   return pairs.length ? `?${pairs.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join("&")}` : "";
 };
 
+/**
+ * Where to go after signing in: the screen a signed-out link asked for, when it is one of the app's own (`/fr/app…`,
+ * `/en/app…`, never another host or `//…`), else Today.
+ */
+export function safeNext(next: string | undefined, locale: Locale): string {
+  if (next && /^\/(fr|en)\/app(\/|\?|$)/.test(next) && !next.includes("//") && !next.includes("\\")) return next;
+  return routes.today(locale);
+}
+
 export const routes = {
   today: (locale: Locale, date?: string) => `${app(locale)}${query({ date })}`,
   calendar: (locale: Locale, month?: string) => `${app(locale, "calendar")}${query({ month })}`,

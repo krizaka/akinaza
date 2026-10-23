@@ -3,4 +3,6 @@ appId: com.krizaka.akinaza
 ---
 - launchApp:
     clearState: true
-- assertVisible: "Akinaza"
+# Signed out, the app opens on sign-in (in either language): its e-mail field.
+- assertVisible:
+    id: "email"
