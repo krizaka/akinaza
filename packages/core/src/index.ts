@@ -13,3 +13,4 @@ export * from "./invoice-state";
 export * from "./figures";
 export * from "./api";
 export * from "./shop-media";
+export * from "./storefront-templates";
