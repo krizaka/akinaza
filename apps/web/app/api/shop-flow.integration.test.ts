@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -45,7 +45,8 @@ async function call(handler: unknown, method: string, path: string, opts: { toke
 }
 
 describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
-  const stamp = Date.now();
+  // Unique across test files run in parallel: two files starting in the same millisecond collided on accounts_email_unique.
+  const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   let walker: string;
   let stranger: string;
   let client: string;

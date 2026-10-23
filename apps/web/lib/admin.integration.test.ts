@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { seedDemoShop } from "@akinaza/db/seed";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -11,7 +13,8 @@ import { createSession } from "./session";
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 
 describe.runIf(enabled)("administration", () => {
-  const stamp = Date.now();
+  // Unique across test files run in parallel: two files starting in the same millisecond collided on accounts_email_unique.
+  const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   let admin: { id: string; email: string };
   let merchant: { id: string; email: string };
   let plain: { id: string; email: string };

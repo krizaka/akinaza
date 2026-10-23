@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { migrate, pool, query } from "@/lib/db";
@@ -21,7 +23,8 @@ async function call(handler: unknown, path: string, opts: { token?: string; json
 }
 
 describe.runIf(enabled)("a services business issues an invoice over HTTP", () => {
-  const stamp = Date.now();
+  // Unique across test files run in parallel: two files starting in the same millisecond collided on accounts_email_unique.
+  const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   const sessions: Record<"owner" | "stranger" | "client", string> = { owner: "", stranger: "", client: "" };
   const ids: { service?: string; clientFile?: string } = {};
   const account = async (label: string) => {
