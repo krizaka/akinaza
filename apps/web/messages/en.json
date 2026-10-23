@@ -365,7 +365,8 @@
       "LANGUAGE_NOT_ENABLED": "Turn that language on first.",
       "TRANSLATION_LIMIT": "You have used today's translations. Try again tomorrow.",
       "TRANSLATION_UNAVAILABLE": "Automatic translation is not available right now.",
-      "FEATURE_OFF": "This feature is switched off."
+      "FEATURE_OFF": "This feature is switched off.",
+      "SHOP_LIMIT": "You have reached the number of shops allowed."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -717,6 +718,46 @@
         "browse": "Choose from this device",
         "remove": "Remove {name}",
         "tooBig": "{name} is too large"
+      },
+      "sections": {
+        "label": "Sections of your page",
+        "saved": "Saved.",
+        "save": "Save this section",
+        "tabs": {
+          "identity": "Identity",
+          "texts": "Your page",
+          "contact": "Contact and place",
+          "offer": "What you offer",
+          "media": "Photos and video",
+          "look": "Look",
+          "publish": "Publish"
+        },
+        "identity": {
+          "title": "Identity",
+          "lead": "Who the shop is, and the address of its page.",
+          "legalHint": "Used on your invoices; not shown on the page."
+        },
+        "texts": {
+          "title": "Your page, in your words",
+          "lead": "What visitors read. Write it in French and in English, side by side.",
+          "moreLanguages": "Another language, or an automatic translation you can edit:"
+        },
+        "contact": {
+          "title": "Contact and place",
+          "lead": "Where you are and how to reach you.",
+          "addressPrivate": "Private: used on invoices and tax papers, never shown on your public page."
+        },
+        "publish": {
+          "title": "Publish",
+          "lead": "Your page is visible to clients only once it is published."
+        }
+      },
+      "addShop": {
+        "title": "Add a shop",
+        "lead": "Another shop under the same account, with its own page. It starts unpublished.",
+        "link": "Add a shop",
+        "back": "Back to your shop page",
+        "submit": "Create the shop"
       }
     },
     "shopPage": {

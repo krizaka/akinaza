@@ -110,7 +110,7 @@ export async function seedKrizaka(db: Db, now: Date): Promise<{ shopId: string; 
   }
   await seedBooks(db, shopId, clientIds, now);
   if (!(await shopsOfOwner(db, owner.id)).some((x) => x.slug === KRIZAKA_SECOND.shop.slug)) {
-    const second = await saveShopPage(db, owner.id, KRIZAKA_SECOND.shop, { additional: true });
+    const second = await saveShopPage(db, owner.id, KRIZAKA_SECOND.shop, { additional: true, maxShops: 50 });
     await saveService(db, second.shopId, KRIZAKA_SECOND.service);
     for (const w of KRIZAKA_SECOND.hours) await addWindow(db, second.shopId, w);
     await saveShopPage(db, owner.id, { ...KRIZAKA_SECOND.shop, published: true }, { shopId: second.shopId });
