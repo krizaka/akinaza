@@ -1,4 +1,5 @@
 // @template: app-list-detail
+import { localDay } from "@akinaza/core";
 import { listInvoices } from "@akinaza/db";
 
 import { InvoicesTable } from "@/components/app/InvoicesTable";
@@ -32,7 +33,10 @@ export default async function Invoices({ params }: { params: Promise<{ locale: s
         {issued.length === 0 ? (
           <p className="text-fg-secondary">{t.list.none}</p>
         ) : (
-          <InvoicesTable invoices={issued.map((i) => ({ id: i.id, number: i.number, client: i.client, issuedOn: i.issuedOn, dueOn: i.dueOn, language: i.language, creditOf: i.creditOf, totalCents: i.totalCents }))} />
+          <InvoicesTable
+            today={localDay(new Date(), shop.timezone)}
+            invoices={issued.map((i) => ({ id: i.id, number: i.number, client: i.client, issuedOn: i.issuedOn, dueOn: i.dueOn, language: i.language, creditOf: i.creditOf, subtotalCents: i.subtotalCents, gstCents: i.gstCents, qstCents: i.qstCents, totalCents: i.totalCents, paidCents: i.paidCents, superseded: i.superseded }))}
+          />
         )}
       </section>
     </div>

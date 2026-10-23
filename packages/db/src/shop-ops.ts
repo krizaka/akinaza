@@ -183,7 +183,22 @@ export async function replaceInvoice(db: Db, shopId: string, originalId: string,
 /** The shop's invoices, newest first, with the client's name (null for a sale without a client file). */
 export async function listInvoices(db: Db, shopId: string) {
   const rows = await db
-    .select({ id: invoices.id, number: invoices.number, issuedOn: invoices.issuedOn, dueOn: invoices.dueOn, language: invoices.language, creditOf: invoices.creditOf, subtotalCents: invoices.subtotalCents, gstCents: invoices.gstCents, qstCents: invoices.qstCents, totalCents: invoices.totalCents, client: clients.fullName })
+    .select({
+      id: invoices.id,
+      number: invoices.number,
+      issuedOn: invoices.issuedOn,
+      dueOn: invoices.dueOn,
+      language: invoices.language,
+      creditOf: invoices.creditOf,
+      subtotalCents: invoices.subtotalCents,
+      gstCents: invoices.gstCents,
+      qstCents: invoices.qstCents,
+      totalCents: invoices.totalCents,
+      client: clients.fullName,
+      // What was received against it, and whether a credit note or a correction (#207) superseded it (akinaza#218).
+      paidCents: sql<number>`coalesce((SELECT sum(p.amount_cents) FROM payments p WHERE p.invoice_id = ${invoices.id}), 0)::int`,
+      superseded: sql<boolean>`EXISTS (SELECT 1 FROM invoices o WHERE o.credit_of = ${invoices.id} OR o.replaces = ${invoices.id})`,
+    })
     .from(invoices)
     .leftJoin(clients, eq(clients.id, invoices.clientId))
     .where(eq(invoices.shopId, shopId))

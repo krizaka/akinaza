@@ -895,7 +895,8 @@
         "credit": "Credit note",
         "noClient": "No client file",
         "total": "Total {amount}",
-        "dueOn": "Due {date}"
+        "dueOn": "Due {date}",
+        "exportFile": "invoices-{day}.csv"
       },
       "back": "All invoices",
       "table": {
@@ -904,7 +905,10 @@
         "issued": "Issued",
         "due": "Due",
         "kind": "Type",
-        "total": "Total"
+        "total": "Total",
+        "state": "State",
+        "month": "Month",
+        "remaining": "Balance due"
       },
       "correct": {
         "title": "Correct invoice {number}",
@@ -923,6 +927,30 @@
       },
       "actions": {
         "correct": "Correct"
+      },
+      "state": {
+        "credit": "Credit note",
+        "cancelled": "Cancelled",
+        "paid": "Paid",
+        "partial": "Partly paid",
+        "overdue": "Overdue",
+        "due": "Due"
+      },
+      "detail": {
+        "subtotal": "Subtotal",
+        "gst": "GST",
+        "qst": "QST",
+        "total": "Total",
+        "paid": "Received",
+        "remaining": "Balance due",
+        "open": "Open the invoice",
+        "edit": "Edit",
+        "cash": "Cash {amount} ({method})"
+      },
+      "methods": {
+        "cash": "cash",
+        "card": "card",
+        "transfer": "transfer"
       }
     },
     "invoiceDoc": {

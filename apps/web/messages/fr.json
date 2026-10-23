@@ -895,7 +895,8 @@
         "credit": "Note de crédit",
         "noClient": "Sans fiche client",
         "total": "Total {amount}",
-        "dueOn": "Échéance le {date}"
+        "dueOn": "Échéance le {date}",
+        "exportFile": "factures-{day}.csv"
       },
       "back": "Toutes les factures",
       "table": {
@@ -904,7 +905,10 @@
         "issued": "Émise le",
         "due": "Échéance",
         "kind": "Type",
-        "total": "Total"
+        "total": "Total",
+        "state": "État",
+        "month": "Mois",
+        "remaining": "Reste dû"
       },
       "correct": {
         "title": "Modifier la facture {number}",
@@ -923,6 +927,30 @@
       },
       "actions": {
         "correct": "Modifier"
+      },
+      "state": {
+        "credit": "Note de crédit",
+        "cancelled": "Annulée",
+        "paid": "Payée",
+        "partial": "Payée en partie",
+        "overdue": "En retard",
+        "due": "À payer"
+      },
+      "detail": {
+        "subtotal": "Sous-total",
+        "gst": "TPS",
+        "qst": "TVQ",
+        "total": "Total",
+        "paid": "Reçu",
+        "remaining": "Reste dû",
+        "open": "Ouvrir la facture",
+        "edit": "Modifier",
+        "cash": "Encaisser {amount} ({method})"
+      },
+      "methods": {
+        "cash": "comptant",
+        "card": "carte",
+        "transfer": "virement"
       }
     },
     "invoiceDoc": {
