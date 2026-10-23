@@ -32,6 +32,8 @@ const walker: PublicShop = {
   },
   team: [],
   popularServiceId: "s-group",
+  languages: { source: "fr", enabled: ["fr", "en"] },
+  translations: [],
 };
 
 /** A hair salon — not a dog walker: no zones, no media, no bio, no unit, nothing popular, Tuesday to Saturday. */
@@ -48,6 +50,8 @@ const salon: PublicShop = {
   media: { cover: null, gallery: [] },
   team: [],
   popularServiceId: null,
+  languages: { source: "fr", enabled: ["fr", "en"] },
+  translations: [],
 };
 
 

@@ -1,4 +1,4 @@
-import { bilingual, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, type SettingsService, WORKSPACE_SCOPES } from "@krizaka/settings";
+import { bilingual, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, type SettingsService, subset, WORKSPACE_SCOPES } from "@krizaka/settings";
 
 import { query } from "./db";
 import { refuse } from "./http";
@@ -27,6 +27,10 @@ export const SETTINGS = {
   "limits.wallItems": integer("limits", 24, { min: 1, max: 500, unit: "items" }),
   "limits.reelSeconds": integer("limits", 60, { min: 1, max: 300, unit: "seconds" }),
   "limits.reelMegabytes": integer("limits", 40, { min: 1, max: 500, unit: "megabytes" }),
+  // The shop page in other languages (#258): off until the Orazaka Studio is wired; the languages the owner may turn on; the runs per shop and day.
+  "features.storefrontTranslation": flag("features", false, GLOBAL_ONLY),
+  "storefront.languages.allowed": subset("storefront", ["fr", "en", "es"] as const, ["fr", "en", "es"], GLOBAL_ONLY),
+  "limits.translationsPerShopPerDay": integer("limits", 20, { min: 1, max: 500, unit: "runs" }, GLOBAL_ONLY),
   "realtime.storefront.enabled": flag("realtime", true, GLOBAL_ONLY),
   "realtime.storefront.heartbeatSeconds": integer("realtime", 15, { min: 5, max: 60, unit: "seconds" }, GLOBAL_ONLY),
   "realtime.storefront.maxStreamsPerPage": integer("realtime", 100, { min: 1, max: 1000, unit: "streams" }, GLOBAL_ONLY),

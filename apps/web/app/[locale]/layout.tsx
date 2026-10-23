@@ -7,13 +7,13 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 
 import { RoutePageTransition } from "@/components/RoutePageTransition";
-import { getDictionary, type Locale, LOCALES } from "@/lib/i18n";
+import { getDictionary, type Locale, LOCALES, PAGE_LOCALES, type PageLocale } from "@/lib/i18n";
 import { SITE_URL } from "@/lib/site";
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
 
 export function generateStaticParams() {
-  return LOCALES.map((locale) => ({ locale }));
+  return PAGE_LOCALES.map((locale) => ({ locale }));
 }
 
 export const dynamicParams = false;
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 /** The root of every page, in the language of the address, dark by default (the visitor's `kz-theme` wins). */
 export default async function LocaleLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  if (!LOCALES.includes(locale as Locale)) notFound();
+  if (!PAGE_LOCALES.includes(locale as PageLocale)) notFound();
   return (
     <html lang={locale} data-surface="product" suppressHydrationWarning>
       <head>

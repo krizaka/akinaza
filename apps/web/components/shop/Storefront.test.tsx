@@ -23,6 +23,8 @@ const salon: PublicShop = {
   media: { cover: null, gallery: [] },
   team: [],
   popularServiceId: null,
+  languages: { source: "fr", enabled: ["fr", "en"] },
+  translations: [],
 };
 
 /** A dog walker with everything filled in. */
@@ -42,6 +44,8 @@ const walker: PublicShop = {
   },
   team: [],
   popularServiceId: "group",
+  languages: { source: "fr", enabled: ["fr", "en"] },
+  translations: [],
 };
 
 const render = (page: PublicShop, locale: "fr" | "en") => {

@@ -8,11 +8,13 @@ import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
 import { Checkbox } from "@krizaka/ui/checkbox";
 import { createKrizakaForm } from "@krizaka/ui/form";
+import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
 import { useSay, useVocabulary } from "@/lib/i18n-client";
+import { shopRoutes } from "@/lib/routes";
 import { shrinkImage, STOREFRONT_LONG_SIDE } from "@/lib/shrink-image";
 import { type GalleryLine, galleryText, joinLines, keepExtras, parseGallery, splitLines } from "@/lib/storefront-form";
 
@@ -60,6 +62,7 @@ export function ShopSetupView({ data }: { data: SetupData }) {
             <ServicesCard services={data.services} />
             <MediaCard media={data.media} />
             <ShopPageCard shopId={data.shopId!} publicUrl={data.publicUrl} config={data.pageConfig} />
+            <LanguagesLink shopId={data.shopId!} />
             <HoursCard windows={data.windows} daysOff={data.daysOff} />
             {data.rules ? <RulesCard rules={data.rules} /> : null}
           </>
@@ -562,6 +565,18 @@ function RulesCard({ rules }: { rules: NonNullable<SetupData["rules"]> }) {
           </form.Submit>
         </div>
       </form.Form>
+    </Card.Root>
+  );
+}
+
+/** The way into the shop page's languages (#258). */
+function LanguagesLink({ shopId }: { shopId: string }) {
+  const { say, locale } = useSay();
+  return (
+    <Card.Root className="flex flex-col gap-2 p-4">
+      <h2 className="font-display text-lg font-bold text-fg">{say("shopLanguages.title")}</h2>
+      <p className="m-0 text-fg-secondary">{say("shopLanguages.intro")}</p>
+      <Link className="font-semibold text-fg-accent underline" href={`${shopRoutes(locale, shopId).setup}/languages`}>{say("shopLanguages.open")}</Link>
     </Card.Root>
   );
 }

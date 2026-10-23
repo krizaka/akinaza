@@ -196,6 +196,15 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     await r.intact?.();
   });
 
+  it("a translation of shop A's text, written by shop B's owner, is a 404 (#258)", async () => {
+    const handler = (await routeModules["./walker/translations/text/route.ts"]!()).PUT as Handler;
+    for (const key of [`service:${ids.service}:name`, `shop:${ids.shopA}:tagline`]) {
+      const res = await call(handler, "PUT", "/api/walker/translations/text", { token: tokens.b, json: { locale: "en", key, text: "Stolen" } });
+      expect(res.status, key).toBe(404);
+    }
+    expect(await query("SELECT 1 FROM shop_translations WHERE shop_id = $1", [ids.shopA])).toHaveLength(0);
+  });
+
   it("the owner of shop A still reaches their own (the sweeps would pass on a broken fixture otherwise)", async () => {
     const handler = (await routeModules["./walker/webhooks/[id]/deliveries/route.ts"]!()).GET as Handler;
     const { path, params } = at("/api/walker/webhooks/[id]/deliveries", { id: ids.webhook });

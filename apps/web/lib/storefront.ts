@@ -1,7 +1,7 @@
 import { bookingPreselect, localDay, MEMBER_STATE, type MemberDay, memberStateAt, openStatus, weekdayOf, weekSchedule } from "@akinaza/core";
 import type { PublicMedia, PublicShop } from "@akinaza/db";
 
-import { type Locale, translator } from "@/lib/i18n";
+import { type Locale, type PageLocale, translator } from "@/lib/i18n";
 import { serviceHref } from "@/lib/journey-paths";
 
 /**
@@ -132,12 +132,23 @@ function memberView(member: { id: string; name: string }, day: MemberDay | undef
   return { id: member.id, name: member.name, state: label, free: state.kind === MEMBER_STATE.free };
 }
 
-export function buildStorefront(input: { page: PublicShop; locale: Locale; now: Date; teamDay?: ReadonlyMap<string, MemberDay>; enabledUpcomingSections?: Partial<Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>> }): StorefrontView {
+export function buildStorefront(input: { page: PublicShop; locale: Locale; /** The language of the shop's own texts when it is not the product's (a Spanish page); defaults to `locale`. */ contentLocale?: PageLocale; now: Date; teamDay?: ReadonlyMap<string, MemberDay>; enabledUpcomingSections?: Partial<Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>> }): StorefrontView {
   const { page, locale, now } = input;
   const t = translator(locale);
   const timezone = page.shop.timezone;
   const base = `/${locale}/s/${page.shop.slug}`;
   const pick = (fr: string | null | undefined, en: string | null | undefined) => (locale === "fr" ? fr : en) || null;
+  // The shop's own texts, in the page's content language: what the owner wrote in it, else its translation (automatic or edited), else the source language.
+  const content = input.contentLocale ?? locale;
+  const translated = new Map((page.translations ?? []).map((x) => [`${x.key}|${x.locale}`, x.text]));
+  const sourceIsFr = (page.languages?.source ?? "fr") === "fr";
+  const own = (kind: "shop" | "service", refId: string, field: string, fr: string | null | undefined, en: string | null | undefined): string | null => {
+    const written = content === "fr" ? fr : content === "en" ? en : null;
+    if (written?.trim()) return written;
+    const done = translated.get(`${kind}:${refId}:${field}|${content}`);
+    if (done) return done;
+    return (sourceIsFr ? fr || en : en || fr)?.trim() || null;
+  };
   const { serviceId, zoneId } = resolveSelection(page, {});
   /** A service has its own page; the first area is kept in the address when the shop travels. */
   const pageHref = (service: string) => serviceHref(locale, page.shop.slug ?? "", service, { zoneId });
@@ -160,9 +171,9 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; now: 
   const unit = pick(page.shop.seatUnitFr, page.shop.seatUnitEn);
   const services: ServiceView[] = page.services.map((s) => ({
     id: s.id,
-    name: locale === "fr" ? s.nameFr : s.nameEn,
-    description: pick(s.descriptionFr, s.descriptionEn),
-    included: locale === "fr" ? s.includedFr : s.includedEn,
+    name: own("service", s.id, "name", s.nameFr, s.nameEn) ?? s.nameFr,
+    description: own("service", s.id, "description", s.descriptionFr, s.descriptionEn),
+    included: (own("service", s.id, "included", s.includedFr.join("\n"), s.includedEn.join("\n")) ?? "").split("\n").filter(Boolean),
     duration: t("console.shopPage.minutes", { minutes: s.durationMinutes }),
     capacity: s.capacity > 1 ? (unit ? t("console.shopPage.capacityUnit", { count: s.capacity, unit }) : t("console.shopPage.capacitySeats", { count: s.capacity })) : null,
     price: money(s.priceCents, locale),
@@ -192,7 +203,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; now: 
     { id: "horizon", term: t("console.shopPage.policyHorizon"), value: t("console.shopPage.horizon", { days: page.rules.bookingHorizonDays }) },
   ];
 
-  const bio = pick(page.shop.bioFr, page.shop.bioEn);
+  const bio = own("shop", page.shop.id, "bio", page.shop.bioFr, page.shop.bioEn);
   const phone = page.shop.publicPhone;
   const email = page.shop.publicEmail;
   const pageSections = page.pageConfig?.sections ?? ["services", "team", "hours", "zones", "gallery", "wall", "reels", "announcements", "reviews", "follow"].map((id) => ({ id, visible: true }));
@@ -202,7 +213,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; now: 
   return {
     name: page.shop.name,
     area: page.shop.area || null,
-    tagline: pick(page.shop.taglineFr, page.shop.taglineEn),
+    tagline: own("shop", page.shop.id, "tagline", page.shop.taglineFr, page.shop.taglineEn),
     cover: page.media.cover ? mediaView(page.media.cover, locale) : null,
     status,
     bookHref: serviceId ? pageHref(serviceId) : base,

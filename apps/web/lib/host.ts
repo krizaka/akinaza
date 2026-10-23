@@ -27,10 +27,12 @@ export function shopOfHost(host: string | null | undefined, apex: string): strin
 export type HostRoute = { kind: "next" } | { kind: "rewrite"; path: string } | { kind: "redirect"; path: string } | { kind: "notFound" } | { kind: "robotsClosed" };
 
 const LOCALE = /^\/(en|fr)(?=\/|$)/;
+/** A shop page can also be offered in Spanish (#258): `/es/s/<slug>` is the only Spanish address; the product's own pages exist in English and French. */
+const SPANISH_STOREFRONT = /^\/es\/s\/[^/]+\/?$/;
 
 export function routeFor(host: string | null | undefined, pathname: string, preferred: "en" | "fr", site = SITE_URL): HostRoute {
-  const locale = LOCALE.exec(pathname)?.[1];
   const shop = shopOfHost(host, new URL(site).hostname.replace(/^www\./, ""));
+  const locale = LOCALE.exec(pathname)?.[1] ?? (SPANISH_STOREFRONT.test(pathname) || (shop && pathname === "/es") ? "es" : undefined);
   if (shop) {
     // The shop page at the root (the short address stays in the bar), its journey as it links it, everything else on www.
     if (pathname === "/robots.txt") return { kind: "robotsClosed" };

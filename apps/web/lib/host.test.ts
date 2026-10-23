@@ -48,3 +48,18 @@ describe("a shop's own subdomain (#77, level 2)", () => {
     expect(routeFor("salon-laurier.akinaza.com", "/robots.txt", "fr", site)).toEqual({ kind: "robotsClosed" });
   });
 });
+
+describe("the Spanish shop page (#258)", () => {
+  it("serves /es/s/<slug> and nothing else in Spanish: the product's own pages are English and French", () => {
+    expect(routeFor("www.akinaza.com", "/es/s/salon-laurier", "fr")).toEqual({ kind: "next" });
+    expect(routeFor("www.akinaza.com", "/es/s/salon-laurier/", "fr")).toEqual({ kind: "next" });
+    expect(routeFor("www.akinaza.com", "/es/sign-in", "fr")).toEqual({ kind: "redirect", path: "/fr/es/sign-in" });
+    expect(routeFor("www.akinaza.com", "/es/app", "en")).toEqual({ kind: "redirect", path: "/en/es/app" });
+    expect(routeFor("www.akinaza.com", "/es/s/salon-laurier/service/x", "en")).toEqual({ kind: "redirect", path: "/en/es/s/salon-laurier/service/x" });
+  });
+
+  it("a shop's own address answers /es with its page in Spanish", () => {
+    const site = "https://www.akinaza.com";
+    expect(routeFor("salon-laurier.akinaza.com", "/es", "fr", site)).toEqual({ kind: "rewrite", path: "/es/s/salon-laurier" });
+  });
+});

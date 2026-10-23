@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { bigserial, boolean, check, customType, date, doublePrecision, index, integer, jsonb, pgTable, smallint, text, time, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { bigserial, boolean, check, customType, date, doublePrecision, index, integer, jsonb, pgTable, primaryKey, smallint, text, time, timestamp, unique, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 /** A PostgreSQL `bytea` — a report photo (a resized image, 1.5 MB at most). */
 const bytea = customType<{ data: Buffer }>({ dataType: () => "bytea" });
@@ -235,6 +235,45 @@ export const shopPage = pgTable(
   },
   (t) => [check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
 );
+
+/** The languages the owner turned on for the shop page (#258): the language the owner writes in and the ones offered. No row = French source, French and English. */
+export const shopLanguages = pgTable(
+  "shop_languages",
+  {
+    shopId: uuid("shop_id").primaryKey().references(() => shops.id, { onDelete: "cascade" }),
+    sourceLocale: text("source_locale", { enum: ["fr", "en"] }).notNull().default("fr"),
+    enabled: text("enabled").array().notNull().default(sql`'{fr,en}'::text[]`),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check("shop_languages_source", sql`${t.sourceLocale} IN ('fr','en')`), check("shop_languages_enabled", sql`${t.enabled} <@ ARRAY['fr','en','es'] AND ${t.sourceLocale} = ANY (${t.enabled})`)],
+);
+
+/** One translated text of the page: its place (kind, ref, field), language, status (`auto` or `edited`), the Orazaka run and the hash of the source text it was made from (a changed source makes it stale). */
+export const shopTranslations = pgTable(
+  "shop_translations",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: ["shop", "service"] }).notNull(),
+    refId: uuid("ref_id").notNull(),
+    field: text("field").notNull(),
+    locale: text("locale", { enum: ["fr", "en", "es"] }).notNull(),
+    text: text("text").notNull(),
+    status: text("status", { enum: ["auto", "edited"] }).notNull(),
+    runId: text("run_id"),
+    sourceHash: text("source_hash").notNull(),
+    createdAt: created(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [unique("shop_translations_unique").on(t.shopId, t.kind, t.refId, t.field, t.locale), check("shop_translations_text", sql`length(${t.text}) BETWEEN 1 AND 2000`)],
+);
+
+/** Translation runs per shop and day (the administrator's daily limit). */
+export const shopTranslationRuns = pgTable("shop_translation_runs", {
+  shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+  day: date("day").notNull(),
+  runs: integer("runs").notNull().default(0),
+}, (t) => [primaryKey({ columns: [t.shopId, t.day] })]);
 
 export const staff = pgTable("staff", {
   id: id(),
