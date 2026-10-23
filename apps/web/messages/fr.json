@@ -542,6 +542,12 @@
         "number": "Numéro",
         "total": "Total",
         "credit": "Note de crédit"
+      },
+      "requests": {
+        "title": "Ses demandes gardées",
+        "lead": "Ce que la personne demande d'habitude, avec ses photos ou documents : pour préparer la visite.",
+        "photo": "Photo {n}",
+        "pdf": "Document {n}"
       }
     },
     "shopSetup": {
