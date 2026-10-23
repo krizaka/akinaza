@@ -179,6 +179,12 @@
       "invoices": {
         "caption": "Invoices"
       },
+      "invoiceMail": {
+        "title": "Invoice e-mail platform limits",
+        "limit": "Maximum sends per shop per day",
+        "domain": "Allowed sender domain",
+        "save": "Save platform settings"
+      },
       "users": {
         "caption": "Accounts"
       },
@@ -286,6 +292,10 @@
       "NOT_FOUND": "Not found.",
       "BAD_REQUEST": "The request is not valid.",
       "INTERNAL": "Something went wrong.",
+      "INVOICE_SEND_LIMIT": "This shop has reached its daily invoice e-mail limit.",
+      "INVOICE_RECIPIENT": "Enter a valid e-mail address.",
+      "INVOICE_NOT_SENDABLE": "Only an issued client invoice can be sent.",
+      "SENDER_DOMAIN_NOT_ALLOWED": "The configured sender domain is not allowed.",
       "NETWORK": "The network did not answer.",
       "UNKNOWN": "Something went wrong.",
       "PASSWORD_TOO_SHORT": "At least 12 characters.",
@@ -785,6 +795,9 @@
       "none": "No booking yet. Open the page of a shop and book from there.",
       "upcoming": "Upcoming",
       "past": "Past",
+      "invoiceTitle": "Invoices",
+      "invoiceNone": "No invoice for this shop.",
+      "invoiceOpen": "Open invoice {number}",
       "cancel": "Cancel",
       "cancelled": "Cancelled",
       "cancelConfirm": "Cancel this walk?",
@@ -975,6 +988,29 @@
         "edit": "Edit",
         "cash": "Cash {amount} ({method})"
       },
+      "send": {
+        "title": "Send this invoice",
+        "open": "Send invoice",
+        "email": "Client's e-mail",
+        "message": "Message (optional)",
+        "submit": "Queue the e-mail",
+        "queued": "The invoice e-mail was queued."
+      },
+      "history": {
+        "title": "Sending history",
+        "none": "This invoice has not been sent yet.",
+        "opened": "Opened {date}",
+        "notOpened": "Not opened",
+        "revoked": "Link revoked"
+      },
+      "mailSettings": {
+        "title": "Invoice e-mail defaults",
+        "message": "Default message",
+        "fromName": "Sender name",
+        "copy": "Send a copy to the shop",
+        "linkDays": "Link lifetime (days)",
+        "save": "Save e-mail settings"
+      },
       "methods": {
         "cash": "cash",
         "card": "card",
@@ -1006,6 +1042,32 @@
       "termsNet": "Net {days} days",
       "termsNetOne": "Net 1 day",
       "termsOnReceipt": "Due on receipt"
+    },
+    "invoicePublic": {
+      "expired": "This invoice link is no longer valid.",
+      "expiredHelp": "Ask the shop to send you a new invoice link.",
+      "print": "Download or print as PDF",
+      "replaced": "This invoice was replaced by {number}.",
+      "openReplacement": "Open the replacement in your account",
+      "replaces": "This invoice replaces {number}.",
+      "openOriginal": "Open the original invoice",
+      "credited": "This invoice was credited by {number}.",
+      "payment": "Payment",
+      "received": "Received",
+      "balance": "Still owed",
+      "state": "State",
+      "states": {
+        "credit": "Credit note",
+        "cancelled": "Cancelled",
+        "paid": "Paid",
+        "partial": "Partly paid",
+        "overdue": "Overdue",
+        "due": "Due"
+      },
+      "payOnReceipt": "Payment is due on receipt.",
+      "terms": "Payment is due within {days} days.",
+      "noTerms": "Contact the shop to arrange payment.",
+      "contact": "Payment questions:"
     },
     "vocabularies": {
       "professional": {

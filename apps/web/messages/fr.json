@@ -179,6 +179,12 @@
       "invoices": {
         "caption": "Factures"
       },
+      "invoiceMail": {
+        "title": "Limites de courriel de facture de la plateforme",
+        "limit": "Envois maximum par boutique par jour",
+        "domain": "Domaine d'expéditeur autorisé",
+        "save": "Enregistrer les paramètres de la plateforme"
+      },
       "users": {
         "caption": "Comptes"
       },
@@ -286,6 +292,10 @@
       "NOT_FOUND": "Introuvable.",
       "BAD_REQUEST": "La demande n'est pas valide.",
       "INTERNAL": "Une erreur est survenue.",
+      "INVOICE_SEND_LIMIT": "La boutique a atteint sa limite quotidienne de courriels de facture.",
+      "INVOICE_RECIPIENT": "Saisissez une adresse courriel valide.",
+      "INVOICE_NOT_SENDABLE": "Seule une facture client émise peut être envoyée.",
+      "SENDER_DOMAIN_NOT_ALLOWED": "Le domaine d'expéditeur configuré n'est pas autorisé.",
       "NETWORK": "Le réseau n'a pas répondu.",
       "UNKNOWN": "Une erreur est survenue.",
       "PASSWORD_TOO_SHORT": "Au moins 12 caractères.",
@@ -785,6 +795,9 @@
       "none": "Aucune réservation pour l'instant. Ouvrez la page d'une boutique et réservez à partir de là.",
       "upcoming": "À venir",
       "past": "Passées",
+      "invoiceTitle": "Factures",
+      "invoiceNone": "Aucune facture pour cette boutique.",
+      "invoiceOpen": "Ouvrir la facture {number}",
       "cancel": "Annuler",
       "cancelled": "Annulée",
       "cancelConfirm": "Annuler cette promenade?",
@@ -975,6 +988,29 @@
         "edit": "Modifier",
         "cash": "Encaisser {amount} ({method})"
       },
+      "send": {
+        "title": "Envoyer cette facture",
+        "open": "Envoyer la facture",
+        "email": "Courriel du client",
+        "message": "Message (facultatif)",
+        "submit": "Mettre le courriel en file",
+        "queued": "Le courriel de la facture a été mis en file."
+      },
+      "history": {
+        "title": "Historique des envois",
+        "none": "Cette facture n'a pas encore été envoyée.",
+        "opened": "Ouverte le {date}",
+        "notOpened": "Pas encore ouverte",
+        "revoked": "Lien révoqué"
+      },
+      "mailSettings": {
+        "title": "Paramètres par défaut des courriels de facture",
+        "message": "Message par défaut",
+        "fromName": "Nom de l'expéditeur",
+        "copy": "Envoyer une copie à la boutique",
+        "linkDays": "Durée du lien (jours)",
+        "save": "Enregistrer les paramètres"
+      },
       "methods": {
         "cash": "comptant",
         "card": "carte",
@@ -1006,6 +1042,32 @@
       "termsNet": "Net {days} jours",
       "termsNetOne": "Net 1 jour",
       "termsOnReceipt": "Payable à la réception"
+    },
+    "invoicePublic": {
+      "expired": "Ce lien vers la facture n'est plus valide.",
+      "expiredHelp": "Demandez à la boutique de vous envoyer un nouveau lien.",
+      "print": "Télécharger ou imprimer en PDF",
+      "replaced": "Cette facture a été remplacée par {number}.",
+      "openReplacement": "Ouvrir la facture de remplacement dans votre espace",
+      "replaces": "Cette facture remplace {number}.",
+      "openOriginal": "Ouvrir la facture d'origine",
+      "credited": "Cette facture a été créditée par {number}.",
+      "payment": "Paiement",
+      "received": "Reçu",
+      "balance": "Reste à payer",
+      "state": "État",
+      "states": {
+        "credit": "Note de crédit",
+        "cancelled": "Annulée",
+        "paid": "Payée",
+        "partial": "Payée en partie",
+        "overdue": "En retard",
+        "due": "À payer"
+      },
+      "payOnReceipt": "Paiement dû à la réception.",
+      "terms": "Paiement dû dans les {days} jours.",
+      "noTerms": "Communiquez avec la boutique pour convenir du paiement.",
+      "contact": "Questions sur le paiement :"
     },
     "vocabularies": {
       "professional": {

@@ -19,7 +19,7 @@ export const MAIL_TEMPLATES = {
   /** An invoice issued, with its GST and QST — the amounts formatted in the client's language. */
   /** The report on a visit (a walk): the note, the time spent, a link to the private page with the photo. Part of the service, not a reminder. */
   "walk-report": { shop: "text", dog: "text", client: "text", service: "text", date: "text", time: "text", duration: "text", note: "text", url: "text", photo: "flag" },
-  "invoice-issued": { shop: "text", number: "text", total: "text", gst: "text", qst: "text", url: "text" },
+  "invoice-issued": { shop: "text", logo: "text", hasLogo: "flag", number: "text", total: "text", gst: "text", qst: "text", dueDate: "text", message: "text", hasMessage: "flag", url: "text" },
   /** The Monday brief's invitation to a regular who has not booked for a while — only with a granted marketing consent (Loi 25, CASL), re-read at send time. */
   "brief-invite": { shop: "text", client: "text", days: "text", url: "text" },
   /** The Monday brief to the shop's owner: up to three lines, a link to the app, a one-click way to stop it. */

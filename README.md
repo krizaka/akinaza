@@ -24,6 +24,9 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
   away from zero (zero-rated lines stay at zero; a small supplier charges nothing). Tested on known invoices.
 - **A ledger that balances** — every invoice posts its GST and QST to an append-only ledger; the database checks at
   commit that the lines make the subtotal and the ledger holds exactly the invoice's taxes. A correction is a credit note.
+- **Send an invoice** — the shop queues bilingual invoice e-mails through the outbox. Every send gets a private, expiring
+  link whose SHA-256 hash is stored; the page shows the invoice and payment balance, and opening is recorded without a pixel.
+  Client erasure revokes the links. PDF download uses the browser's print stylesheet.
 - **"Prepare my tax return"** — the FPZ-500 figures (lines 101, 103/106/109, 203/206/209) from the ledger, with their
   working papers; **Akinaza
   prepares; the merchant files.** Nothing is transmitted to any government.
