@@ -341,7 +341,9 @@
       "LINE_PRICE": "A free line needs a price.",
       "BRIEF_UNKNOWN": "This recommendation changed: reload the page.",
       "BRIEF_DONE": "Already done this week.",
-      "SHOP_NOT_PUBLIC": "Publish your page to invite your clients."
+      "SHOP_NOT_PUBLIC": "Publish your page to invite your clients.",
+      "INVOICE_IS_CREDIT": "A credit note cannot be corrected.",
+      "INVOICE_ALREADY_CORRECTED": "This invoice was already corrected or cancelled."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -890,6 +892,24 @@
         "due": "Due",
         "kind": "Type",
         "total": "Total"
+      },
+      "correct": {
+        "title": "Correct invoice {number}",
+        "lead": "An issued invoice never changes: when you confirm, Akinaza issues the credit note of {number} and the new invoice, together. The client, the language and the terms stay the same.",
+        "back": "Back to {number}",
+        "description": "Description",
+        "unitPrice": "Unit price",
+        "remove": "Remove",
+        "add": "Add a line",
+        "submit": "Issue the corrected invoice"
+      },
+      "chain": {
+        "replaces": "Replaces invoice {number}",
+        "replacedBy": "Replaced by invoice {number}",
+        "creditedBy": "Cancelled by credit note {number}"
+      },
+      "actions": {
+        "correct": "Correct"
       }
     },
     "invoiceDoc": {

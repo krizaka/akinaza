@@ -18,6 +18,10 @@ const QC_INV_008 = /(?:conditions?\s+de\s+paiement|modalit[ée]s?\s+de\s+paiemen
 const invoice = (over: Partial<InvoiceView> = {}): InvoiceView => ({
   id: "i1",
   number: "KZ-00004",
+  clientId: null,
+  replaces: null,
+  replacedBy: null,
+  creditedBy: null,
   issuedOn: "2026-10-21",
   termsDays: 30,
   dueOn: "2026-11-20",

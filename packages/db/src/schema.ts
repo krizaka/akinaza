@@ -336,6 +336,8 @@ export const invoices = pgTable(
     clientId: uuid("client_id").references(() => clients.id),
     appointmentId: uuid("appointment_id").references(() => appointments.id),
     creditOf: uuid("credit_of"),
+    /** The invoice this one replaces after a correction (#207): set at insert, unique (0024). */
+    replaces: uuid("replaces"),
     language: text("language", { enum: ["fr", "en"] }).notNull().default("fr"),
     issuedOn: date("issued_on").notNull(),
     /** The payment terms the invoice was issued under and the day they make it due; null on a credit note and on an invoice issued before the terms existed. */

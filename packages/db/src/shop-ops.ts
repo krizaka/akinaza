@@ -16,7 +16,7 @@ const post = (tx: Tx, shopId: string, entries: LedgerEntry[]) =>
  * (GST/QST once on the taxable base, rounded to the cent), the lines, and the ledger entries — one transaction; the
  * database checks at commit that the lines and the ledger add up to the invoice.
  */
-export async function issueInvoice(db: Db, input: { shopId: string; clientId?: string | null; appointmentId?: string | null; language: "fr" | "en"; issuedOn: string; lines: LineInput[]; creditOf?: string | null; termsDays?: number | null }) {
+export async function issueInvoice(db: Db | Tx, input: { shopId: string; clientId?: string | null; appointmentId?: string | null; language: "fr" | "en"; issuedOn: string; lines: LineInput[]; creditOf?: string | null; replaces?: string | null; termsDays?: number | null }) {
   return db.transaction(async (tx) => {
     const [shop] = await tx.select().from(shops).where(eq(shops.id, input.shopId)).for("update");
     if (!shop) throw new Error(`AK_SHOP_UNKNOWN: ${input.shopId}`);
@@ -27,7 +27,7 @@ export async function issueInvoice(db: Db, input: { shopId: string; clientId?: s
     await tx.update(shops).set({ nextInvoiceNumber: shop.nextInvoiceNumber + 1 }).where(eq(shops.id, shop.id));
     const [invoice] = await tx
       .insert(invoices)
-      .values({ shopId: shop.id, number, clientId: input.clientId ?? null, appointmentId: input.appointmentId ?? null, creditOf: input.creditOf ?? null, language: input.language, issuedOn: input.issuedOn, termsDays, dueOn: termsDays === null ? null : dueOn(input.issuedOn, termsDays), subtotalCents: totals.subtotalCents, gstCents: totals.gstCents, qstCents: totals.qstCents, totalCents: totals.totalCents })
+      .values({ shopId: shop.id, number, clientId: input.clientId ?? null, appointmentId: input.appointmentId ?? null, creditOf: input.creditOf ?? null, replaces: input.replaces ?? null, language: input.language, issuedOn: input.issuedOn, termsDays, dueOn: termsDays === null ? null : dueOn(input.issuedOn, termsDays), subtotalCents: totals.subtotalCents, gstCents: totals.gstCents, qstCents: totals.qstCents, totalCents: totals.totalCents })
       .returning();
     await tx.insert(invoiceLines).values(totals.lines.map((l, i) => ({ invoiceId: invoice!.id, position: i + 1, description: l.description, quantityHundredths: l.quantityHundredths, unitPriceCents: l.unitPriceCents, discountCents: l.discountCents ?? 0, taxCategory: l.category, amountCents: l.amountCents })));
     await post(tx, shop.id, invoiceEntries({ id: invoice!.id, number, issuedOn: input.issuedOn, gstCents: totals.gstCents, qstCents: totals.qstCents }));
@@ -36,7 +36,7 @@ export async function issueInvoice(db: Db, input: { shopId: string; clientId?: s
 }
 
 /** A credit note cancels an invoice: the same lines with negative quantities, its own number, negative ledger entries. */
-export async function creditNote(db: Db, invoiceId: string, issuedOn: string) {
+export async function creditNote(db: Db | Tx, invoiceId: string, issuedOn: string) {
   const [original] = await db.select().from(invoices).where(eq(invoices.id, invoiceId));
   if (!original) throw new Error(`AK_INVOICE_UNKNOWN: ${invoiceId}`);
   const lines = await db.select().from(invoiceLines).where(eq(invoiceLines.invoiceId, invoiceId)).orderBy(invoiceLines.position);
@@ -141,7 +141,7 @@ export const invoiceInputSchema = z.object({
 export type InvoiceInput = z.input<typeof invoiceInputSchema>;
 
 /** Issues an invoice for the shop from its services and free lines (the same transaction as `issueInvoice`). */
-export async function issueShopInvoice(db: Db, shopId: string, raw: InvoiceInput) {
+export async function issueShopInvoice(db: Db | Tx, shopId: string, raw: InvoiceInput, link: { replaces?: string } = {}) {
   const input = invoiceInputSchema.parse(raw);
   if (input.clientId) {
     const [client] = await db.select({ id: clients.id }).from(clients).where(and(eq(clients.id, input.clientId), eq(clients.shopId, shopId)));
@@ -158,7 +158,26 @@ export async function issueShopInvoice(db: Db, shopId: string, raw: InvoiceInput
       lines.push({ description: l.description!, quantity: l.quantity, unitPriceCents: l.unitPriceCents, category: l.category ?? "standard" });
     }
   }
-  return issueInvoice(db, { shopId, clientId: input.clientId ?? null, language: input.language, issuedOn: input.issuedOn, termsDays: input.termsDays ?? null, lines });
+  return issueInvoice(db, { shopId, clientId: input.clientId ?? null, language: input.language, issuedOn: input.issuedOn, termsDays: input.termsDays ?? null, lines, replaces: link.replaces ?? null });
+}
+
+/**
+ * « Modifier la facture » (#207): an issued invoice never changes, so a correction cancels it with its credit note and issues
+ * its replacement — both in one transaction, so the ledger never holds one without the other. Refused for an invoice of
+ * another shop, a credit note, and an invoice already credited (corrected or cancelled before).
+ */
+export async function replaceInvoice(db: Db, shopId: string, originalId: string, raw: InvoiceInput) {
+  return db.transaction(async (tx) => {
+    const [original] = await tx.select().from(invoices).where(and(eq(invoices.id, originalId), eq(invoices.shopId, shopId))).for("update");
+    if (!original) throw new ShopError("AK_INVOICE_UNKNOWN", `AK_INVOICE_UNKNOWN: ${originalId}`);
+    if (original.creditOf) throw new ShopError("AK_INVOICE_IS_CREDIT", "AK_INVOICE_IS_CREDIT: a credit note is not corrected");
+    const [credited] = await tx.select({ id: invoices.id }).from(invoices).where(eq(invoices.creditOf, originalId)).limit(1);
+    if (credited) throw new ShopError("AK_INVOICE_ALREADY_CORRECTED", "AK_INVOICE_ALREADY_CORRECTED: this invoice was already credited");
+    const input = invoiceInputSchema.parse(raw);
+    const credit = await creditNote(tx, originalId, input.issuedOn);
+    const replacement = await issueShopInvoice(tx, shopId, input, { replaces: originalId });
+    return { credit: credit.invoice, replacement: replacement.invoice, totals: replacement.totals };
+  });
 }
 
 /** The shop's invoices, newest first, with the client's name (null for a sale without a client file). */
@@ -173,7 +192,7 @@ export async function listInvoices(db: Db, shopId: string) {
 }
 
 /** One invoice with its lines, its client and the supplier's identity (the numbers a buyer needs for input tax credits); null if it is not this shop's. */
-export async function invoiceDetail(db: Db, shopId: string, invoiceId: string) {
+export async function invoiceDetail(db: Db | Tx, shopId: string, invoiceId: string) {
   const [row] = await db
     .select({ invoice: invoices, client: { fullName: clients.fullName, email: clients.email, phone: clients.phone }, shop: { legalName: shops.legalName, address: shops.address, registrant: shops.registrant, gstNumber: shops.gstNumber, qstNumber: shops.qstNumber } })
     .from(invoices)
@@ -183,5 +202,14 @@ export async function invoiceDetail(db: Db, shopId: string, invoiceId: string) {
   if (!row) return null;
   const lines = await db.select().from(invoiceLines).where(eq(invoiceLines.invoiceId, invoiceId)).orderBy(invoiceLines.position);
   const { invoice } = row;
-  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, termsDays: invoice.termsDays, dueOn: invoice.dueOn, language: invoice.language, creditOf: invoice.creditOf, subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
+  // The chain of a correction (#207): what this invoice replaces, what replaced it, the credit note that cancelled it.
+  const ref = { id: invoices.id, number: invoices.number };
+  type Ref = { id: string; number: string } | undefined;
+  const orNull = (ref: Ref): { id: string; number: string } | null => ref ?? null;
+  const [[replaces], [replacedBy], [creditedBy]]: [Ref[], Ref[], Ref[]] = await Promise.all([
+    invoice.replaces ? db.select(ref).from(invoices).where(eq(invoices.id, invoice.replaces)) : Promise.resolve([]),
+    db.select(ref).from(invoices).where(eq(invoices.replaces, invoice.id)).limit(1),
+    db.select(ref).from(invoices).where(eq(invoices.creditOf, invoice.id)).limit(1),
+  ]);
+  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, termsDays: invoice.termsDays, dueOn: invoice.dueOn, language: invoice.language, clientId: invoice.clientId, creditOf: invoice.creditOf, replaces: orNull(replaces), replacedBy: orNull(replacedBy), creditedBy: orNull(creditedBy), subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
 }
