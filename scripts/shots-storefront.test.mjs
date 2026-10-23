@@ -38,5 +38,6 @@ describe("shots-storefront (the captures of #261 on a seeded database)", () => {
     expect(source).toMatch(/finally \{[\s\S]*docker[\s\S]*"rm", "-f"/);
     expect(source).toContain('localStorage.setItem("kz-theme", t)');
     expect(source).toContain("features.storefrontTemplates");
+    expect(source).toMatch(/const attempt = new pg\.Client/); // a failed pg Client cannot reconnect: one per attempt
   });
 });

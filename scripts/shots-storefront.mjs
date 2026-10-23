@@ -77,11 +77,13 @@ async function main() {
   let app = null;
   const out = (line) => process.stdout.write(`${line}\n`);
   try {
-    const db = new pg.Client({ connectionString: DATABASE_URL });
-    for (let i = 0; ; i += 1) {
+    // A pg Client that failed to connect cannot try again: a fresh one per attempt, until the container answers.
+    let db = null;
+    for (let i = 0; db === null; i += 1) {
+      const attempt = new pg.Client({ connectionString: DATABASE_URL });
       try {
-        await db.connect();
-        break;
+        await attempt.connect();
+        db = attempt;
       } catch (error) {
         if (i >= 60) throw error;
         await sleep(1000);
