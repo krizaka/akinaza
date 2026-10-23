@@ -11,8 +11,16 @@ import { type Me, meSchema } from "@/lib/me";
 export const ME_KEY = ["me"] as const;
 const SIGNED_OUT: Me = { signedIn: false, signupOpen: false };
 
-/** One client for the bar's two places (the bar and the phone's panel): one request answers both. */
-const client = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, retry: false, refetchOnWindowFocus: true } } });
+/**
+ * One client per browser tab for the bar's two places (the bar and the phone's panel): one request answers both. Created on
+ * first use in the browser, never at module load: a module-level client would be shared by every request the server renders.
+ */
+let browserClient: QueryClient | undefined;
+function barClient(): QueryClient {
+  const make = () => new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, retry: false, refetchOnWindowFocus: true } } });
+  if (typeof window === "undefined") return make();
+  return (browserClient ??= make());
+}
 
 export interface BarWords extends AccountMenuWords {
   signIn: string;
@@ -51,7 +59,7 @@ function Island({ locale, words, placement }: { locale: "en" | "fr"; words: BarW
 /** The public bar's account state: « Sign in » / « Try Akinaza », or « Open the app » and the avatar when a session is open. */
 export function BarSession(props: { locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel" }) {
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={barClient()}>
       <Island {...props} />
     </QueryClientProvider>
   );
