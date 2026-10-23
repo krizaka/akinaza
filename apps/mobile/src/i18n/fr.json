@@ -1,0 +1,97 @@
+{
+  "disclaimer": "Akinaza prépare vos chiffres et ne produit jamais votre déclaration.",
+  "app": {
+    "name": "Akinaza",
+    "tagline": "Votre commerce, pour moins cher. Prépare votre déclaration, ne la produit jamais."
+  },
+  "tabs": {
+    "label": "Navigation principale",
+    "today": "Aujourd'hui",
+    "calendar": "Calendrier",
+    "invoices": "Factures",
+    "clients": "Clients",
+    "settings": "Réglages"
+  },
+  "common": {
+    "retry": "Réessayer",
+    "offline": "Akinaza ne répond pas. Vérifiez votre connexion.",
+    "back": "Retour",
+    "loading": "Chargement…"
+  },
+  "signIn": {
+    "title": "Se connecter",
+    "lead": "Le même compte que sur akinaza.com.",
+    "email": "Adresse courriel",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "wrong": "Adresse ou mot de passe incorrect.",
+    "noShop": "Ce compte ne gère aucun commerce."
+  },
+  "today": {
+    "title": "Aujourd'hui",
+    "empty": "Aucune visite ce jour-là.",
+    "checkIn": "Commencer",
+    "checkOut": "Terminer",
+    "booked": "Prévue",
+    "done": "Terminée",
+    "cancelled": "Annulée",
+    "noShow": "Absent",
+    "in": "Commencée à {time}",
+    "out": "Terminée à {time}",
+    "previous": "Jour précédent",
+    "next": "Jour suivant",
+    "call": "Appeler {name}"
+  },
+  "calendar": {
+    "title": "Calendrier",
+    "previous": "Mois précédent",
+    "next": "Mois suivant",
+    "visits": "{count} visites",
+    "bookings": "{count} réservations",
+    "empty": "Rien de prévu ce mois-ci."
+  },
+  "invoices": {
+    "title": "Factures",
+    "new": "Nouvelle facture",
+    "empty": "Aucune facture pour l'instant.",
+    "credit": "Note de crédit",
+    "total": "Total",
+    "subtotal": "Sous-total",
+    "gst": "TPS (5 %)",
+    "qst": "TVQ (9,975 %)",
+    "client": "Client",
+    "noClient": "Sans fiche client",
+    "service": "Service",
+    "quantity": "Quantité",
+    "addLine": "Ajouter la ligne",
+    "issue": "Émettre la facture",
+    "issued": "Facture {number} émise : {total}.",
+    "failed": "La facture n'a pas pu être émise.",
+    "lines": "Lignes",
+    "smallSupplier": "Petit fournisseur : sans taxes."
+  },
+  "clients": {
+    "title": "Clients",
+    "search": "Chercher un client",
+    "clear": "Effacer",
+    "empty": "Aucun client.",
+    "dependants": "{count} bêtes",
+    "invoice": "Facturer"
+  },
+  "settings": {
+    "title": "Réglages",
+    "language": "Langue",
+    "languages": {
+      "fr": "Français",
+      "en": "English"
+    },
+    "signOut": "Se déconnecter",
+    "version": "Version {version}",
+    "shop": "Commerce",
+    "account": "Le compte"
+  },
+  "account": {
+    "open": "Votre compte",
+    "openNamed": "Votre compte : {name}"
+  }
+}

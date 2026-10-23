@@ -1,0 +1,97 @@
+{
+  "disclaimer": "Akinaza prepares your figures and never files your return.",
+  "app": {
+    "name": "Akinaza",
+    "tagline": "Your shop, for less. It prepares your return and never files it."
+  },
+  "tabs": {
+    "label": "Main navigation",
+    "today": "Today",
+    "calendar": "Calendar",
+    "invoices": "Invoices",
+    "clients": "Clients",
+    "settings": "Settings"
+  },
+  "common": {
+    "retry": "Try again",
+    "offline": "Akinaza is not answering. Check your connection.",
+    "back": "Back",
+    "loading": "Loading…"
+  },
+  "signIn": {
+    "title": "Sign in",
+    "lead": "The same account as on akinaza.com.",
+    "email": "Email address",
+    "password": "Password",
+    "submit": "Sign in",
+    "wrong": "Wrong address or password.",
+    "noShop": "This account does not run a shop."
+  },
+  "today": {
+    "title": "Today",
+    "empty": "No visit that day.",
+    "checkIn": "Start",
+    "checkOut": "Finish",
+    "booked": "Planned",
+    "done": "Done",
+    "cancelled": "Cancelled",
+    "noShow": "No-show",
+    "in": "Started at {time}",
+    "out": "Finished at {time}",
+    "previous": "Previous day",
+    "next": "Next day",
+    "call": "Call {name}"
+  },
+  "calendar": {
+    "title": "Calendar",
+    "previous": "Previous month",
+    "next": "Next month",
+    "visits": "{count} visits",
+    "bookings": "{count} bookings",
+    "empty": "Nothing planned this month."
+  },
+  "invoices": {
+    "title": "Invoices",
+    "new": "New invoice",
+    "empty": "No invoice yet.",
+    "credit": "Credit note",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "gst": "GST (5 %)",
+    "qst": "QST (9.975 %)",
+    "client": "Client",
+    "noClient": "No client file",
+    "service": "Service",
+    "quantity": "Quantity",
+    "addLine": "Add the line",
+    "issue": "Issue the invoice",
+    "issued": "Invoice {number} issued: {total}.",
+    "failed": "The invoice could not be issued.",
+    "lines": "Lines",
+    "smallSupplier": "Small supplier: no taxes."
+  },
+  "clients": {
+    "title": "Clients",
+    "search": "Find a client",
+    "clear": "Clear",
+    "empty": "No client.",
+    "dependants": "{count} pets",
+    "invoice": "Invoice"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languages": {
+      "fr": "Français",
+      "en": "English"
+    },
+    "signOut": "Sign out",
+    "version": "Version {version}",
+    "shop": "Shop",
+    "account": "The account"
+  },
+  "account": {
+    "open": "Your account",
+    "openNamed": "Your account: {name}"
+  }
+}
