@@ -36,6 +36,16 @@ describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
     expect(text(html)).not.toContain("Sign in");
   });
 
+  it("the avatar menu is in the bar at every width (never inside the phone's panel), « Open the app » also in the panel", () => {
+    const me = { signedIn: true, signupOpen: false, account: { name: "Camille", email: "camille@example.com", avatarSeed: null } };
+    const bar = render(me, "en", "bar");
+    expect(bar).toContain('aria-label="Account"');
+    expect(bar.match(/<[^>]*aria-label="Account"[^>]*>/)![0]).not.toMatch(/class="[^"]*(^|[\s"])(max-\w+:)?hidden\b/);
+    const panel = render(me, "en", "panel");
+    expect(panel).not.toContain('aria-label="Account"');
+    expect(text(panel)).toContain("Open the app");
+  });
+
   it("speaks French from the catalogue, in the phone's panel too", () => {
     const html = render({ signedIn: true, signupOpen: false, account: { name: null, email: "c@example.com", avatarSeed: null } }, "fr", "panel");
     expect(text(html)).toContain("Ouvrir l&#x27;app");

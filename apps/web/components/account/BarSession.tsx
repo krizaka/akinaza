@@ -28,9 +28,9 @@ export function BarActionsView({ me, locale, words, placement, onSignOut }: { me
         <Button asChild variant="primary" size={placement === "bar" ? "sm" : "md"} className={placement === "bar" ? "ml-1 hidden font-bold md:inline-flex" : "mt-2 font-bold"}>
           <Link href={`/${locale}/app`}>{words.openApp}</Link>
         </Button>
-        <span className={placement === "bar" ? "hidden md:inline-flex" : "mt-2 inline-flex"}>
+        {placement === "bar" ? (
           <AkinazaAccountMenu locale={locale} name={me.account.name} email={me.account.email} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} words={words} onSignOut={onSignOut} />
-        </span>
+        ) : null}
       </>
     );
   }

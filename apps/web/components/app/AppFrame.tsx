@@ -55,7 +55,6 @@ export function AppFrame({ locale, email, name, avatarSeed, base, items, hrefs, 
         collapseLabels={[say("shell.collapse"), say("shell.expand")]}
         footer={
           <div className="flex flex-col gap-2 px-3 pb-2 text-xs text-fg-muted">
-            <div className="hidden md:block" data-testid="account-menu-rail">{menu}</div>
             {VERSION ? <span data-testid="app-version">{say("shell.devBuild", { version: VERSION })}</span> : null}
           </div>
         }
@@ -74,7 +73,7 @@ export function AppFrame({ locale, email, name, avatarSeed, base, items, hrefs, 
         <AppShell.Header
           title={say(admin ? "shell.admin" : "shell.title")}
           menuLabel={say("shell.openMenu")}
-          actions={<div className="md:hidden" data-testid="account-menu-header">{menu}</div>}
+          actions={<div data-testid="account-menu-header">{menu}</div>}
         />
         <AppShell.Main>{children}</AppShell.Main>
       </AppShell.Body>
