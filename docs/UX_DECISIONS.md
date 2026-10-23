@@ -200,3 +200,18 @@ Feedback: the pinned Discussion of the repository.
 - **Refused**: duplicating search, filters or payment actions on Today; showing financial data to staff without invoice access.
 - **Cost**: older invoices require opening the list; the overdue count includes invoices outside the three shown.
 - **Signal we are wrong**: members mistake the latest three for all overdue invoices.
+
+## Proposed images: no empty section, never a fake shop (krizaka/akinaza#267)
+
+- **Decision**: each trade (salon, coaching, workshop, cleaning, pets, consulting) has neutral default media — a cover with
+  its silent loop, four photos, three service images — shown on the public page only where the owner has none, and offered
+  in « Images proposées » of the « Photos and video » tab, one click to adopt one; a switch turns them off per shop, the
+  administrator chooses which trades are offered. The card says they are neutral pictures, not the shop.
+- **Problem**: a new shop's page opened on a blank hero and an empty photos section; owners without photos left it that way.
+- **Principle**: aesthetic and minimalist design with an honest default (Nielsen): the page reads finished on day one, and
+  nothing on it pretends to be the owner's place — no person, no text, no storefront a client could take for the real one.
+- **Refused**: replacing an owner's own media, ever; stock photos of staff or clients; a generated « shop » exterior;
+  defaults for the logo (the shop name stands) or the team (the avatars already have their own).
+- **Cost**: two shops of the same trade can open on the same cover until each owner uploads; a generated set per trade,
+  rendered and uploaded by hand (`scripts/default-media/`), with its alt texts to write in both languages.
+- **Signal we are wrong**: owners keep the defaults for months, or clients ask whether the photos are of the shop.

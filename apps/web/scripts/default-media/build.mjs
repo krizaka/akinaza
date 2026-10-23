@@ -5,9 +5,9 @@
 // webm and mp4); the gallery images; the service images (3:2 crops of the first gallery images). Then the manifest `apps/web/lib/default-media.manifest.json`
 // (logical path -> first 10 hex of the file's SHA-256, the same rule as krizaka-com's cdn-assets.mjs, so the URL here is the one the upload creates).
 // Upload afterwards, from krizaka-com:  node scripts/cdn-assets.mjs upload <out-dir> --to products/akinaza/defaults
+import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { spawnSync } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
