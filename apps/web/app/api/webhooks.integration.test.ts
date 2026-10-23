@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { verifySignature } from "@krizaka/webhooks";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -29,7 +31,8 @@ async function call(handler: unknown, method: string, path: string, opts: { cook
 }
 
 describe.runIf(enabled)("webhooks and payments over HTTP", () => {
-  const stamp = Date.now();
+  // Unique across test files run in parallel: two files starting in the same millisecond collided on accounts_email_unique.
+  const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   const sessions: Record<string, string> = {};
   const ids: { client?: string; service?: string } = {};
   const make = async (label: string) => {

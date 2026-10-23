@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { seedDemoShop } from "@akinaza/db/seed";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
@@ -18,7 +20,8 @@ const { memberOf, memberShop } = await import("./member-shop");
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 
 describe.runIf(enabled)("the shop of the address", () => {
-  const stamp = Date.now();
+  // Unique across test files run in parallel: two files starting in the same millisecond collided on accounts_email_unique.
+  const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   let owner: string;
   let outsider: string;
   let ownShop: string;
