@@ -1,0 +1,22 @@
+[package]
+name = "akinaza-desktop"
+version = "0.1.0"
+description = "Akinaza for the Mac: the owner's back office in a native window"
+authors = ["Krizaka"]
+edition = "2021"
+license = "Apache-2.0"
+rust-version = "1.80"
+
+[lib]
+name = "akinaza_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri-plugin-krizaka = { git = "https://github.com/krizaka/krizaka-tauri-kit", tag = "v0.2.0" }
+tauri = { version = "2", features = [] }
+url = "2"
+serde_json = "1"
+sys-locale = "0.3"
