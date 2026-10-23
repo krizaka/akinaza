@@ -215,3 +215,22 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: two shops of the same trade can open on the same cover until each owner uploads; a generated set per trade,
   rendered and uploaded by hand (`scripts/default-media/`), with its alt texts to write in both languages.
 - **Signal we are wrong**: owners keep the defaults for months, or clients ask whether the photos are of the shop.
+
+## A template is picked, then the page stays the owner's (krizaka/akinaza#261, step 4)
+
+- **Decision**: « Modèle de page » sits inside « Apparence » / « Look », above the sections: the trade's templates as tiles
+  with a tiny preview (the hero, the sections in the template's order, its hue and paper), the applied one marked « Your
+  template », the administrator's default « Suggested » and chosen when none is applied. Applying replaces the section order
+  with the template's — unless the owner reordered or hid sections by hand: then two buttons ask « keep my order » or « use
+  its order », never a silent replacement. At shop creation the trade is asked (it stands for the business type) and its
+  default template is preselected beside « Plain page »; it applies only because the owner keeps it chosen.
+- **Problem**: a finished page suited to the trade should be one choice away, without a page builder and without losing
+  what an owner already arranged.
+- **Principle**: recognition over recall and user control (Nielsen): see the shape before choosing; nothing the owner wrote,
+  uploaded or ordered changes behind their back.
+- **Refused**: a second tab for templates; mixing templates; a template that carries texts or photos; applying the
+  administrator's default to an existing shop; a full page render inside the picker (the preview is a schema, the real page is
+  one click away).
+- **Cost**: the preview is schematic; a template chosen at creation can only be undone from « Look »; the trade replaces the
+  coarser business type question only when templates are offered.
+- **Signal we are wrong**: owners open the public page to see what a tile means, or lose track of which template they are on.

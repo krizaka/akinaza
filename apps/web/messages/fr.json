@@ -760,7 +760,11 @@
         "lead": "Une autre boutique dans le même compte, avec sa propre page. Elle commence non publiée.",
         "link": "Ajouter une boutique",
         "back": "Retour à votre page boutique",
-        "submit": "Créer la boutique"
+        "submit": "Créer la boutique",
+        "trade": "Votre métier",
+        "tradeHint": "Il choisit les mots de vos pages, les images proposées et les modèles.",
+        "template": "Modèle de page",
+        "templateHint": "Suggéré pour votre métier ; vous pourrez en changer dans « Apparence »."
       },
       "defaults": {
         "title": "Images proposées",
@@ -781,6 +785,27 @@
           "pets": "Soins aux animaux",
           "consulting": "Services professionnels"
         }
+      },
+      "templates": {
+        "title": "Modèle de page",
+        "lead": "Un modèle fixe l'ordre et l'apparence de vos sections. Vos textes, vos photos et vos traductions restent les vôtres.",
+        "label": "Modèles pour votre métier",
+        "current": "Votre modèle",
+        "suggested": "Suggéré",
+        "none": "Page simple",
+        "noneIntent": "La page d'aujourd'hui, section par section, sans modèle.",
+        "noneOffered": "Aucun modèle n'est encore offert pour votre métier.",
+        "layouts": {
+          "vitrine": "Vitrine",
+          "carte": "Carte",
+          "histoire": "Histoire"
+        },
+        "use": "Utiliser ce modèle",
+        "useKeepOrder": "L'utiliser en gardant mon ordre",
+        "useTemplateOrder": "L'utiliser avec son ordre",
+        "customNote": "Votre page a son propre ordre de sections. Dites si vous le gardez.",
+        "isCurrent": "C'est le modèle de votre page.",
+        "applied": "Modèle appliqué."
       }
     },
     "shopPage": {

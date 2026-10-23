@@ -9,7 +9,7 @@ vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.reso
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app/s1/shop", useSearchParams: () => new URLSearchParams() }));
 
 const page: NonNullable<SetupData["page"]> = { name: "Atelier Boréal", legalName: "Atelier Boréal inc.", address: "1234 rue Secrète, Montréal", slug: "atelier-boreal", ownerName: "Éric", taglineFr: "Du bon travail", taglineEn: "Good work", published: false, area: "Montréal", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "", businessType: "professional" };
-const data = (over: Partial<SetupData> = {}): SetupData => ({ page, shopId: "s1", pageConfig: defaultShopPageConfig(), proposed: null, publicUrl: "https://www.akinaza.com/en/s/atelier-boreal", zones: [], services: [], media: { cover: null, gallery: [] }, windows: [], daysOff: [], rules: { cancellationHours: 24, bookingHorizonDays: 30, slotStepMinutes: 30, minNoticeMinutes: 0, reportLinkDays: 30, paymentTermsDays: 30 }, ...over });
+const data = (over: Partial<SetupData> = {}): SetupData => ({ page, shopId: "s1", pageConfig: defaultShopPageConfig(), proposed: null, templates: null, publicUrl: "https://www.akinaza.com/en/s/atelier-boreal", zones: [], services: [], media: { cover: null, gallery: [] }, windows: [], daysOff: [], rules: { cancellationHours: 24, bookingHorizonDays: 30, slotStepMinutes: 30, minNoticeMinutes: 0, reportLinkDays: 30, paymentTermsDays: 30 }, ...over });
 const render = (d: SetupData, tab: Parameters<typeof ShopSetupView>[0]["tab"], locale: "en" | "fr" = "en") => renderIn(locale, "professional", <ShopSetupView data={d} tab={tab} />);
 const text = (h: string) => h.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ");
 
@@ -66,5 +66,16 @@ describe("« My shop page » in sections (#265)", () => {
   it("speaks French", () => {
     const t = text(render(data(), "contact", "fr"));
     for (const word of ["Contact et lieu", "jamais affichée sur votre page publique", "Ajouter une boutique"]) expect(t).toContain(word);
+  });
+});
+
+describe("« Look » holds the page template (#261, step 4)", () => {
+  it("shows the picker first in the tab when the administrator offers templates, nothing of it otherwise", async () => {
+    const { templatesFor } = await import("@akinaza/core");
+    const html = render(data({ templates: { shopType: "salon", choices: templatesFor("salon"), preselected: "salon-carte", current: null, sectionsCustom: false } }), "look");
+    const t = text(html);
+    expect(t).toContain("Page template");
+    expect(t.indexOf("Page template")).toBeLessThan(t.indexOf("Page sections"));
+    expect(text(render(data(), "look"))).not.toContain("Page template");
   });
 });
