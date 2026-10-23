@@ -46,3 +46,18 @@ describe("what the template picker is given (#261, step 4)", () => {
     }
   });
 });
+
+describe("a template that improved (#261, step 5)", () => {
+  const two = { ...TEMPLATES.find((t) => t.id === "salon-vitrine")!, version: 2 };
+  const catalogue = [...TEMPLATES, two];
+
+  it("says a newer version is out for the applied template, and offers the latest version in the tiles; a shop on the latest has nothing to update", () => {
+    const c = templateChoices(rules(), "salon", { templateId: "salon-vitrine", templateVersion: 1, sectionsCustom: false }, catalogue)!;
+    expect(c.current).toEqual({ id: "salon-vitrine", version: 1 });
+    expect(c.updateAvailable).toEqual({ version: 2 });
+    expect(c.choices.find((t) => t.id === "salon-vitrine")!.version).toBe(2);
+    expect(c.choices.filter((t) => t.id === "salon-vitrine")).toHaveLength(1);
+    expect(templateChoices(rules(), "salon", { templateId: "salon-vitrine", templateVersion: 2, sectionsCustom: false }, catalogue)!.updateAvailable).toBeNull();
+    expect(templateChoices(rules(), "salon", null, catalogue)!.updateAvailable).toBeNull();
+  });
+});

@@ -1,4 +1,4 @@
-import { preselectedTemplate, type ShopType, type Template, templatesFor } from "@akinaza/core";
+import { latestTemplate, preselectedTemplate, type ShopType, type Template, templatesFor } from "@akinaza/core";
 import type { ShopPageConfig } from "@akinaza/db";
 
 /**
@@ -12,6 +12,8 @@ export interface TemplateChoices {
   /** Preselects only: nothing applies until the owner chooses. */
   preselected: string | null;
   current: { id: string; version: number } | null;
+  /** The newer version of the applied template, when one is out (step 5): the shop keeps its own until the owner updates. */
+  updateAvailable: { version: number } | null;
   sectionsCustom: boolean;
 }
 
@@ -21,14 +23,17 @@ export interface TemplateRules {
   defaults: Record<ShopType, string>;
 }
 
-export function templateChoices(rules: TemplateRules, shopType: ShopType, config: Pick<ShopPageConfig, "templateId" | "templateVersion" | "sectionsCustom"> | null): TemplateChoices | null {
+export function templateChoices(rules: TemplateRules, shopType: ShopType, config: Pick<ShopPageConfig, "templateId" | "templateVersion" | "sectionsCustom"> | null, catalogue?: readonly Template[]): TemplateChoices | null {
   if (!rules.enabled) return null;
-  const choices = templatesFor(shopType, rules.offered);
+  const choices = templatesFor(shopType, rules.offered, catalogue);
+  const current = config?.templateId && config.templateVersion ? { id: config.templateId, version: config.templateVersion } : null;
+  const latest = current ? latestTemplate(current.id, catalogue) : null;
   return {
     shopType,
     choices,
-    preselected: preselectedTemplate(shopType, rules.defaults[shopType], rules.offered)?.id ?? null,
-    current: config?.templateId && config.templateVersion ? { id: config.templateId, version: config.templateVersion } : null,
+    preselected: preselectedTemplate(shopType, rules.defaults[shopType], rules.offered, catalogue)?.id ?? null,
+    current,
+    updateAvailable: latest && current && latest.version > current.version ? { version: latest.version } : null,
     sectionsCustom: config?.sectionsCustom ?? false,
   };
 }

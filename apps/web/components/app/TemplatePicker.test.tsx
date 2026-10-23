@@ -10,7 +10,7 @@ import { TemplatePreview } from "./TemplatePreview";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app/s1/shop", useSearchParams: () => new URLSearchParams() }));
 
-const data = (over: Partial<TemplateChoices> = {}): TemplateChoices => ({ shopType: "salon", choices: templatesFor("salon"), preselected: "salon-carte", current: null, sectionsCustom: false, ...over });
+const data = (over: Partial<TemplateChoices> = {}): TemplateChoices => ({ shopType: "salon", choices: templatesFor("salon"), preselected: "salon-carte", current: null, updateAvailable: null, sectionsCustom: false, ...over });
 const render = (d: TemplateChoices, locale: "en" | "fr" = "en") => renderIn(locale, "professional", <TemplatePicker data={d} shopId="s1" />);
 const text = (h: string) => h.replace(/<[^>]*>/g, " ").replace(/&#x27;/g, "'").replace(/&quot;/g, '"').replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ");
 /** Whether the tile that names `name` is the chosen one of the radio group. */
@@ -72,5 +72,39 @@ describe("the preview of a template (#261, step 4)", () => {
     expect(t.indexOf("Story, contact and policies")).toBeLessThan(t.indexOf("Photo gallery"));
     expect(t.indexOf("Services")).toBeLessThan(t.indexOf("Story, contact and policies"));
     expect(renderIn("en", "professional", <TemplatePreview template={null} labels={labels} />)).not.toContain("data-hue=");
+  });
+});
+
+describe("« Update available » (#261, step 5)", () => {
+  const two = { ...TEMPLATES.find((t) => t.id === "salon-vitrine")!, version: 2 };
+  const choices = templatesFor("salon").map((t) => (t.id === "salon-vitrine" ? two : t));
+  const outdated = (over: Partial<TemplateChoices> = {}) => data({ choices, current: { id: "salon-vitrine", version: 1 }, updateAvailable: { version: 2 }, ...over });
+
+  it("marks the applied tile, chooses it, explains and offers the update — the shop keeps its version until then", () => {
+    const html = render(outdated());
+    const t = text(html);
+    expect(checked(html, "Salon")).toBe(true);
+    expect(t).toContain("Update available");
+    expect(t).not.toContain("Your template");
+    expect(t).toContain("Version 2 of this template is out: a new look, the same content.");
+    expect(t).toContain("Update to version 2");
+    expect(t).not.toContain("Use this template");
+    expect(t).not.toContain("This is your page's template.");
+  });
+
+  it("asks a customised page about its order before updating, and speaks French", () => {
+    const t = text(render(outdated({ sectionsCustom: true })));
+    expect(t).toContain("Update, keep my order");
+    expect(t).toContain("Update with its order");
+    const f = text(render(outdated(), "fr"));
+    expect(f).toContain("Mise à jour offerte");
+    expect(f).toContain("Mettre à jour vers la version 2");
+  });
+
+  it("on the latest version nothing is offered but the word that it is the page's template", () => {
+    const t = text(render(data({ choices, current: { id: "salon-vitrine", version: 2 } })));
+    expect(t).toContain("Your template");
+    expect(t).toContain("This is your page's template.");
+    expect(t).not.toContain("Update");
   });
 });
