@@ -11,10 +11,20 @@ const read = (p: string) => readFileSync(join(ROOT, p), "utf8");
 describe("page transitions", () => {
   const layout = read("app/[locale]/layout.tsx");
 
-  it("the root layout wraps the page content in PageTransition from @krizaka/ui/motion, once", () => {
-    expect(layout).toMatch(/import \{[^}]*\bPageTransition\b[^}]*\} from "@krizaka\/ui\/motion"/);
-    expect(layout.match(/<PageTransition>/g)).toHaveLength(1);
-    expect(layout).toMatch(/<PageTransition>\s*\{children\}\s*<\/PageTransition>/);
+  const wrapper = read("components/RoutePageTransition.tsx");
+
+  it("the root layout wraps the page content in the route-keyed PageTransition, once", () => {
+    expect(layout).toMatch(/import \{ RoutePageTransition \} from "@\/components\/RoutePageTransition"/);
+    expect(layout.match(/<RoutePageTransition>/g)).toHaveLength(1);
+    expect(layout).toMatch(/<RoutePageTransition>\s*\{children\}\s*<\/RoutePageTransition>/);
+    expect(layout).not.toMatch(/<PageTransition[ >]/);
+  });
+
+  it("is keyed by the pathname, so a search parameter (the appointment drawer, #171) never cross-fades the page", () => {
+    expect(wrapper).toMatch(/^"use client";/);
+    expect(wrapper).toMatch(/import \{ PageTransition \} from "@krizaka\/ui\/motion"/);
+    expect(wrapper).toMatch(/<PageTransition routeKey=\{usePathname\(\)\}>/);
+    expect(wrapper).not.toMatch(/useSearchParams/);
   });
 
   it("the stylesheet that carries the transition (and its reduced-motion rule) is loaded: the @krizaka/tailwind preset imports motion.css", () => {
