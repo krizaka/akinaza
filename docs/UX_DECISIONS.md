@@ -234,3 +234,17 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: the preview is schematic; a template chosen at creation can only be undone from « Look »; the trade replaces the
   coarser business type question only when templates are offered.
 - **Signal we are wrong**: owners open the public page to see what a tile means, or lose track of which template they are on.
+
+## A template improves by version; the owner updates when they choose (krizaka/akinaza#261, step 5)
+
+- **Decision**: a template that improves ships as a new version beside the old one; a shop keeps the version it applied, and
+  its page does not move. In « Apparence » the applied tile says « Update available », with what changes in one line and an
+  « Update to version N » action — the same « keep my order » question when the owner arranged the sections by hand.
+  Switching templates, like updating, changes only the order, the variants and the hue: texts, photos, services and
+  translations are untouched.
+- **Problem**: improving a template must never redraw a page its owner considers done, nor lose what they wrote.
+- **Principle**: visibility of system status and user control (Nielsen): the change is announced, previewed, and taken only
+  by the owner's hand.
+- **Refused**: silent upgrades; a template that carries content; removing an old version while a shop still uses it.
+- **Cost**: the catalogue grows with every version; an owner may stay on an old look for a long time.
+- **Signal we are wrong**: most shops never update, or ask why their page looks older than the demo.

@@ -72,7 +72,7 @@ describe("« My shop page » in sections (#265)", () => {
 describe("« Look » holds the page template (#261, step 4)", () => {
   it("shows the picker first in the tab when the administrator offers templates, nothing of it otherwise", async () => {
     const { templatesFor } = await import("@akinaza/core");
-    const html = render(data({ templates: { shopType: "salon", choices: templatesFor("salon"), preselected: "salon-carte", current: null, sectionsCustom: false } }), "look");
+    const html = render(data({ templates: { shopType: "salon", choices: templatesFor("salon"), preselected: "salon-carte", current: null, updateAvailable: null, sectionsCustom: false } }), "look");
     const t = text(html);
     expect(t).toContain("Page template");
     expect(t.indexOf("Page template")).toBeLessThan(t.indexOf("Page sections"));
