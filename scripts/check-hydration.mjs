@@ -44,6 +44,9 @@ export const OWNER_PAGES = ["/aujourdhui", "/clients", "/invoices", "/invoices/n
 /** The account's own pages. */
 export const ACCOUNT_PAGES = ["/app/profile", "/app/profile/security"];
 
+/** The first record a list links (`<list>/<id>`), never its creation page (`<list>/new`) nor another list: the detail page to crawl. */
+export const firstRecord = (hrefs, listPath) => hrefs.find((href) => typeof href === "string" && href.startsWith(`${listPath}/`) && !/\/new(\?.*)?$/.test(href) && !href.slice(listPath.length + 1).includes("/")) ?? null;
+
 /** What React says when the server and the browser disagree (the minified codes in production, the sentences in development). */
 export const isHydrationError = (text) => /Minified React error #(418|419|420|421|422|423|424|425)\b|Hydration failed|hydrated but some attributes|did not match|Text content does not match|There was an error while hydrating/i.test(text);
 
@@ -96,7 +99,8 @@ async function crawl(browser, { base, paths, theme, account, problems, visited, 
       if (expected404 ? status !== 404 : status >= 400) report("HTTP", String(status));
       // The first record of a list, so the detail pages are crawled too (a client's file, an invoice).
       if (account && /\/(clients|invoices)$/.test(path)) {
-        const href = await page.locator(`main a[href*="${path}/"]`).first().getAttribute("href").catch(() => null);
+        const hrefs = await page.locator("main a[href]").evaluateAll((anchors) => anchors.map((a) => a.getAttribute("href")));
+        const href = firstRecord(hrefs, path);
         if (href) links[path] = href;
       }
     }
@@ -106,7 +110,7 @@ async function crawl(browser, { base, paths, theme, account, problems, visited, 
       expected404 = false;
       await page.goto(`${base}${href}`, { waitUntil: "load" });
       await page.waitForTimeout(SETTLE_MS);
-      visited.push({ path: href, final: new URL(page.url()).pathname, status: 200 });
+      visited.push({ path: href, final: new URL(page.url()).pathname, status: 200, from: list });
     }
   }
   await context.close();
@@ -148,6 +152,8 @@ if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/^.*\//,
   const visitor = { timezoneId: arg("timezone", BROWSER.timezoneId), locale: arg("locale", BROWSER.locale) };
   const { problems, visited } = await check({ base, owner, client, visitor });
   process.stdout.write(`check-hydration: ${visited.length} page loads in ${visitor.timezoneId} (${visitor.locale}), ${THEMES.length} themes, ${VIEWPORTS.length} widths\n`);
+  const details = [...new Set(visited.filter((v) => v.from).map((v) => v.path.replace(/^.*\/app\/[^/]+/, "")))];
+  if (details.length) process.stdout.write(`check-hydration: detail pages found ${details.join(", ")}\n`);
   if (problems.length) {
     process.stdout.write(`${problems.length} problem(s):\n${problems.map((p) => `  ${p}`).join("\n")}\n`);
     process.exit(1);

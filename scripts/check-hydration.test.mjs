@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { ACCOUNT_PAGES, BROWSER, isHydrationError, OWNER_PAGES, PUBLIC_PAGES, THEMES, VIEWPORTS } from "./check-hydration.mjs";
+import { ACCOUNT_PAGES, BROWSER, firstRecord, isHydrationError, OWNER_PAGES, PUBLIC_PAGES, THEMES, VIEWPORTS } from "./check-hydration.mjs";
 
 describe("the hydration crawl (one rendering for the server and the browser, K0)", () => {
   it("hydrates in a visitor's browser — Montréal's clock and the product's first language — never the server's UTC", () => {
@@ -29,6 +29,14 @@ describe("the hydration crawl (one rendering for the server and the browser, K0)
   it("refuses a console error and an uncaught exception on any page, and signs in through the product's own route", () => {
     const source = readFileSync(new URL("./check-hydration.mjs", import.meta.url), "utf8");
     for (const needle of ['page.on("console"', 'page.on("pageerror"', "/api/auth/sign-in", 'localStorage.setItem("kz-theme"']) expect(source).toContain(needle);
+  });
+
+  it("crawls the first record of a list, never its creation page nor a deeper address", () => {
+    const shop = "/fr/app/0b1c";
+    const invoices = [`${shop}/invoices/new`, `${shop}/invoices/i-1`, `${shop}/invoices/i-2`, `${shop}/invoices/i-1/correct`];
+    expect(firstRecord(invoices, `${shop}/invoices`)).toBe(`${shop}/invoices/i-1`);
+    expect(firstRecord([`${shop}/invoices/new?client=c-1`, `${shop}/invoices/i-1/correct`, `${shop}/clients/c-1`], `${shop}/invoices`)).toBeNull();
+    expect(firstRecord([`${shop}/clients`, null, `${shop}/clients/c-9`], `${shop}/clients`)).toBe(`${shop}/clients/c-9`);
   });
 
   it("lets another visitor be tried (--locale, --timezone) and expects the two 404 checks to answer 404", () => {
