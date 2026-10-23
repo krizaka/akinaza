@@ -268,7 +268,7 @@ export const services = pgTable(
     /** « From » on the card: the price varies with the dog, the size, the zone. */
     priceVaries: boolean("price_varies").notNull().default(false),
   },
-  (t) => [check("services_capacity", sql`${t.capacity} BETWEEN 1 AND 50`), check("services_duration", sql`${t.durationMinutes} BETWEEN 5 AND 600`), check("services_price", sql`${t.priceCents} >= 0`), check("services_tax_category", sql`${t.taxCategory} IN ('standard','zeroRated','exempt')`)],
+  (t) => [index("services_shop").on(t.shopId), check("services_capacity", sql`${t.capacity} BETWEEN 1 AND 50`), check("services_duration", sql`${t.durationMinutes} BETWEEN 5 AND 600`), check("services_price", sql`${t.priceCents} >= 0`), check("services_tax_category", sql`${t.taxCategory} IN ('standard','zeroRated','exempt')`)],
 );
 
 /** A staff member's weekly hours (0 = Sunday … 6 = Saturday), in the shop's time zone. */
@@ -432,7 +432,7 @@ export const expenses = pgTable(
     receiptRef: text("receipt_ref"),
     createdAt: created(),
   },
-  (t) => [check("expenses_share", sql`${t.businessSharePct} BETWEEN 0 AND 100`), check("expenses_amounts", sql`${t.subtotalCents} >= 0 AND ${t.gstCents} >= 0 AND ${t.qstCents} >= 0`)],
+  (t) => [index("expenses_shop").on(t.shopId, t.paidOn), check("expenses_share", sql`${t.businessSharePct} BETWEEN 0 AND 100`), check("expenses_amounts", sql`${t.subtotalCents} >= 0 AND ${t.gstCents} >= 0 AND ${t.qstCents} >= 0`)],
 );
 
 /** The GST/QST journal: append-only; a correction is a new entry. */
@@ -505,7 +505,7 @@ export const dependants = pgTable(
     createdAt: created(),
     erasedAt: timestamp("erased_at", { withTimezone: true }),
   },
-  (t) => [index("dependants_client").on(t.clientId), check("dependants_kind", sql`${t.kind} IN ('dog','cat','other')`), check("dependants_erased", sql`${t.erasedAt} IS NULL OR (${t.name} = '—' AND ${t.profile} = '{}'::jsonb)`)],
+  (t) => [index("dependants_client").on(t.clientId), index("dependants_shop").on(t.shopId), check("dependants_kind", sql`${t.kind} IN ('dog','cat','other')`), check("dependants_erased", sql`${t.erasedAt} IS NULL OR (${t.name} = '—' AND ${t.profile} = '{}'::jsonb)`)],
 );
 
 /** One dependant's seat on a visit. The database counts the seats against the service's capacity (trigger `bookings_rules`). */
