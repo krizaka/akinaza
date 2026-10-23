@@ -25,8 +25,8 @@ export const publicHost = (env: Record<string, string | undefined> = process.env
     return "";
   }
 };
-/** Whether a response to this host may be indexed. */
-export const indexableOn = (host: string | null | undefined, env: Record<string, string | undefined> = process.env): boolean => indexable(env) || bare(host) === publicHost(env);
+/** Whether a response to this host may be indexed. A `dev.*` host never is: www is production, whatever APP_DEV_HOST or APP_SEARCH_INDEXING say. */
+export const indexableOn = (host: string | null | undefined, env: Record<string, string | undefined> = process.env): boolean => !bare(host).startsWith("dev.") && (indexable(env) || bare(host) === publicHost(env));
 export const isDevHost = (host: string | null | undefined, env: Record<string, string | undefined> = process.env): boolean => !!env.APP_DEV_HOST?.trim() && bare(host) === bare(env.APP_DEV_HOST);
 
 /** What the dev host keeps serving: robots.txt, /healthz, the API (auth callbacks, webhooks, the mobile apps' calls) and /.well-known. */
