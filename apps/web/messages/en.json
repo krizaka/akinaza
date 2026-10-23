@@ -805,7 +805,12 @@
         "useTemplateOrder": "Use it with its order",
         "customNote": "Your page has its own section order. Say whether to keep it.",
         "isCurrent": "This is your page's template.",
-        "applied": "Template applied."
+        "applied": "Template applied.",
+        "updateAvailable": "Update available",
+        "updateLead": "Version {version} of this template is out: a new look, the same content. Your page keeps its version until you update.",
+        "update": "Update to version {version}",
+        "updateKeepOrder": "Update, keep my order",
+        "updateTemplateOrder": "Update with its order"
       }
     },
     "shopPage": {

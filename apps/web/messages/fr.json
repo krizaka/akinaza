@@ -805,7 +805,12 @@
         "useTemplateOrder": "L'utiliser avec son ordre",
         "customNote": "Votre page a son propre ordre de sections. Dites si vous le gardez.",
         "isCurrent": "C'est le modèle de votre page.",
-        "applied": "Modèle appliqué."
+        "applied": "Modèle appliqué.",
+        "updateAvailable": "Mise à jour offerte",
+        "updateLead": "La version {version} de ce modèle est sortie : une nouvelle apparence, le même contenu. Votre page garde sa version tant que vous ne la mettez pas à jour.",
+        "update": "Mettre à jour vers la version {version}",
+        "updateKeepOrder": "Mettre à jour en gardant mon ordre",
+        "updateTemplateOrder": "Mettre à jour avec son ordre"
       }
     },
     "shopPage": {

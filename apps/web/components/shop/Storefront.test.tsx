@@ -219,3 +219,38 @@ describe("`trust` is a section like the others, and a template changes only orde
     expect(html).toContain('id="services"');
   });
 });
+
+describe("versions, and switching (#261, step 5)", () => {
+  const one = TEMPLATES.find((t) => t.id === "salon-vitrine")!;
+  // Version 2 puts the photos first: a shop that applied version 1 must not move.
+  const two = { ...one, version: 2, sections: [one.sections.find((s) => s.id === "gallery")!, ...one.sections.filter((s) => s.id !== "gallery")] };
+  const catalogue = [...TEMPLATES, two];
+  const on = (template: typeof one) => ({ ...walker, pageConfig: { logoUrl: null, sections: sectionsFromTemplate(template, DEFAULT_SHOP_PAGE_SECTIONS), templateId: template.id, templateVersion: template.version } } as PublicShop);
+
+  it("an old version renders unchanged after a newer one ships; a shop on the newer one draws it", () => {
+    const v1 = buildStorefront({ page: on(one), locale: "en", now: NOW, catalogue });
+    expect(v1.template).toMatchObject({ id: "salon-vitrine", version: 1 });
+    expect(v1.sections[0]!.id).toBe("services");
+    const v2 = buildStorefront({ page: on(two), locale: "en", now: NOW, catalogue });
+    expect(v2.template).toMatchObject({ id: "salon-vitrine", version: 2 });
+    expect(v2.sections[0]!.id).toBe("gallery");
+    expect(renderToStaticMarkup(<Storefront locale="en" view={v1} />)).toContain('data-template="salon-vitrine"');
+  });
+
+  it("switching templates changes only the order, the variants and the hue: every text, photo, service and link stays the same", () => {
+    const a = buildStorefront({ page: on(TEMPLATES.find((t) => t.id === "salon-carte")!), locale: "fr", now: NOW });
+    const b = buildStorefront({ page: on(TEMPLATES.find((t) => t.id === "salon-vitrine")!), locale: "fr", now: NOW });
+    expect(a.template!.id).not.toBe(b.template!.id);
+    expect(a.sections.map((s) => s.id)).not.toEqual(b.sections.map((s) => s.id));
+    const content = (view: typeof a) => {
+      const rest: Partial<typeof a> = { ...view };
+      delete rest.sections;
+      delete rest.template;
+      return rest;
+    };
+    expect(content(a)).toEqual(content(b));
+    expect(a.services.map((s) => s.name)).toEqual(b.services.map((s) => s.name));
+    expect(a.gallery).toEqual(b.gallery);
+    expect(a.tagline).toBe(b.tagline);
+  });
+});
