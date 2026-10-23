@@ -1,16 +1,14 @@
 "use client";
 
-import { BillingIcon, ClockIcon, HomeIcon, LogoutIcon, ServerIcon, ShieldIcon, UserIcon, UsersIcon } from "@krizaka/icons";
+import { BillingIcon, ClockIcon, HomeIcon, ServerIcon, ShieldIcon, UserIcon, UsersIcon } from "@krizaka/icons";
 import { krizakaFetch, useMutation } from "@krizaka/query";
 import { AkinazaLogo } from "@krizaka/ui";
 import { AppShell } from "@krizaka/ui/app-shell";
 import { Badge } from "@krizaka/ui/badge";
-import { Button } from "@krizaka/ui/button";
-import { languagesFor,LanguageSwitch } from "@krizaka/ui/language-switch";
-import { ThemeToggle } from "@krizaka/ui/theme";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
+import { AkinazaAccountMenu } from "@/components/account/AkinazaAccountMenu";
 import { useSay } from "@/lib/i18n-client";
 
 const VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "";
@@ -20,11 +18,10 @@ const ICONS = { today: <ClockIcon />, bookings: <ClockIcon />, clients: <UsersIc
  * The signed-in frame (@krizaka/ui AppShell): the shop's space (`/app`) and the administration (admin.akinaza.com)
  * share it — the mark, the sections, the language, the theme, sign-out and the DEV build.
  */
-export function AppFrame({ locale, email, base, items, hrefs, admin = false, switcher, children }: { locale: "en" | "fr"; email: string; base: string; items: (keyof typeof ICONS)[]; hrefs?: Partial<Record<keyof typeof ICONS, string>>; admin?: boolean; switcher?: React.ReactNode; children: React.ReactNode }) {
+export function AppFrame({ locale, email, name, avatarSeed, base, items, hrefs, admin = false, switcher, children }: { locale: "en" | "fr"; email: string; name?: string | null; avatarSeed?: string | null; base: string; items: (keyof typeof ICONS)[]; hrefs?: Partial<Record<keyof typeof ICONS, string>>; admin?: boolean; switcher?: React.ReactNode; children: React.ReactNode }) {
   const { say } = useSay();
   const router = useRouter();
   const path = usePathname() ?? "";
-  const rest = path.slice(`/${locale}`.length);
   const signOut = useMutation({
     mutationFn: () => krizakaFetch("/api/auth/sign-out", { method: "POST" }),
     onSettled: () => {
@@ -32,6 +29,18 @@ export function AppFrame({ locale, email, base, items, hrefs, admin = false, swi
       router.refresh();
     },
   });
+  const menu = (
+    <AkinazaAccountMenu
+      locale={locale}
+      name={name}
+      email={email}
+      avatarSeed={avatarSeed}
+      settingsHref={hrefs?.profile ?? `${base}/profile`}
+      showName
+      words={{ account: say("shell.account"), settings: say("shell.settings"), language: say("shell.language"), theme: say("shell.theme"), signOut: say("shell.signOut") }}
+      onSignOut={() => signOut.mutate()}
+    />
+  );
   const isCurrent = (to: string) => path === to || (to !== `/${locale}` && path.startsWith(`${to}/`));
   return (
     <AppShell.Root skipLabel={say("shell.skip")}>
@@ -45,10 +54,8 @@ export function AppFrame({ locale, email, base, items, hrefs, admin = false, swi
         closeLabel={say("shell.closeMenu")}
         collapseLabels={[say("shell.collapse"), say("shell.expand")]}
         footer={
-          <div className="flex flex-col gap-1 px-3 pb-2 text-xs text-fg-muted">
-            <span className="truncate" title={email}>
-              {say("shell.signedInAs", { email })}
-            </span>
+          <div className="flex flex-col gap-2 px-3 pb-2 text-xs text-fg-muted">
+            <div className="hidden md:block" data-testid="account-menu-rail">{menu}</div>
             {VERSION ? <span data-testid="app-version">{say("shell.devBuild", { version: VERSION })}</span> : null}
           </div>
         }
@@ -67,15 +74,7 @@ export function AppFrame({ locale, email, base, items, hrefs, admin = false, swi
         <AppShell.Header
           title={say(admin ? "shell.admin" : "shell.title")}
           menuLabel={say("shell.openMenu")}
-          actions={
-            <>
-              <LanguageSwitch label={say("shell.language")} current={locale} languages={languagesFor(`/${locale}${rest}`)} linkAs={Link} />
-              <ThemeToggle label={say("shell.theme")} variant="ghost" />
-              <Button size="sm" variant="secondary" loading={signOut.isPending} onClick={() => signOut.mutate()}>
-                <LogoutIcon size={16} /> <span className="hidden sm:inline">{say("shell.signOut")}</span>
-              </Button>
-            </>
-          }
+          actions={<div className="md:hidden" data-testid="account-menu-header">{menu}</div>}
         />
         <AppShell.Main>{children}</AppShell.Main>
       </AppShell.Body>

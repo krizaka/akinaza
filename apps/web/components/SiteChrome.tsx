@@ -2,15 +2,15 @@
 
 import { HomeIcon, PlayIcon } from "@krizaka/icons";
 import { AkinazaLogo } from "@krizaka/ui";
-import { Button } from "@krizaka/ui/button";
 import { languagesFor } from "@krizaka/ui/language-switch";
 import { NavBar } from "@krizaka/ui/nav-bar";
 import { ThemeToggle } from "@krizaka/ui/theme";
 import Link from "next/link";
 
+import { BarSession, type BarWords } from "@/components/account/BarSession";
 import { type Locale, translator } from "@/lib/i18n";
 import { DEMO_SHOP } from "@/lib/landing";
-import { contactHref, type PageId, pagePath, REPO_URL } from "@/lib/site";
+import { type PageId, pagePath, REPO_URL } from "@/lib/site";
 
 /** The product's pages, in the one « Product » menu (the products' bar standard): no Platforms (web only), no Docs yet. */
 const MENU = [
@@ -27,6 +27,7 @@ export function SiteHeader({ locale, current, path }: { locale: Locale; current:
   const t = translator(locale);
   const languages = languagesFor(path ?? pagePath(locale, current));
   const home = pagePath(locale, "home");
+  const words: BarWords = { signIn: t("chrome.signIn"), tryIt: t("chrome.tryIt"), openApp: t("chrome.openApp"), account: t("chrome.account"), settings: t("chrome.settings"), language: t("chrome.languageLabel"), theme: t("chrome.themeToggle"), signOut: t("chrome.signOut") };
   const items = MENU.map((m) => ({ id: m.id, icon: m.icon, href: m.path(locale), active: m.page === current }));
   return (
     <div className="pointer-events-none fixed inset-x-0 top-3 z-50 px-3">
@@ -55,12 +56,7 @@ export function SiteHeader({ locale, current, path }: { locale: Locale; current:
           <span className="hidden md:inline-flex">
             <NavBar.Language label={t("chrome.languageLabel")} current={locale} languages={languages} linkAs={Link} />
           </span>
-          <Button asChild variant="ghost" size="sm" className="hidden md:inline-flex">
-            <Link href={`/${locale}/sign-in`}>{t("chrome.signIn")}</Link>
-          </Button>
-          <Button asChild variant="primary" size="sm" className="ml-1 hidden font-bold md:inline-flex">
-            <a href={contactHref("dev-akinaza-bar")}>{t("chrome.talk")}</a>
-          </Button>
+          <BarSession locale={locale} words={words} placement="bar" />
 
           <NavBar.Mobile openLabel={t("chrome.menu.label")} closeLabel={t("chrome.menu.label")} className="max-h-[calc(100dvh-6rem)] gap-1 overflow-y-auto overscroll-contain p-3">
             <div role="group" aria-label={t("chrome.nav.product")} className="flex flex-col gap-1">
@@ -71,16 +67,11 @@ export function SiteHeader({ locale, current, path }: { locale: Locale; current:
                 </NavBar.MobileLink>
               ))}
             </div>
-            <NavBar.MobileLink asChild>
-              <Link href={`/${locale}/sign-in`}>{t("chrome.signIn")}</Link>
-            </NavBar.MobileLink>
             <NavBar.MobilePreferences label={t("chrome.preferences")}>
               <ThemeToggle label={t("chrome.themeToggle")} variant="ghost" />
               <NavBar.Language label={t("chrome.languageLabel")} current={locale} languages={languages} linkAs={Link} />
             </NavBar.MobilePreferences>
-            <Button asChild variant="primary" size="md" className="mt-2 font-bold">
-              <a href={contactHref("dev-akinaza-bar")}>{t("chrome.talk")}</a>
-            </Button>
+            <BarSession locale={locale} words={words} placement="panel" />
           </NavBar.Mobile>
         </NavBar.Actions>
       </NavBar.Root>

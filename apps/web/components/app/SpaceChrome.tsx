@@ -1,5 +1,6 @@
 import type { ShopRole } from "@akinaza/db";
 
+import { accounts } from "@/app/accounts";
 import { AppFrame } from "@/components/app/AppFrame";
 import { ShopSwitcher } from "@/components/app/ShopSwitcher";
 import { CLIENT_PLACES, placesFor } from "@/lib/app-nav";
@@ -11,6 +12,7 @@ type Membership = { shop: { id: string; businessType: Parameters<typeof Vocabula
 
 /** The frame of the signed-in space: the bar shows what the role may open, each place leads into the shop in use, the switcher lists the others. */
 export async function SpaceChrome({ locale, account, member, children }: { locale: RouteLocale; account: { id: string; email: string }; member: Membership; children: React.ReactNode }) {
+  const profile = await accounts().profile(account.id);
   const shops = member ? await shopsOf(account.id) : [];
   const places = member ? placesFor(member.role) : [...CLIENT_PLACES];
   const hrefs = Object.fromEntries(places.map((place) => [place, placeHref(locale, member?.shop.id ?? null, place)]));
@@ -18,6 +20,8 @@ export async function SpaceChrome({ locale, account, member, children }: { local
     <AppFrame
       locale={locale}
       email={account.email}
+      name={profile.name}
+      avatarSeed={profile.avatarSeed}
       base={accountRoutes(locale).home}
       items={places}
       hrefs={hrefs}
