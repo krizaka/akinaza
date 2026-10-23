@@ -27,7 +27,7 @@
     "@krizaka/settings": "0.1.0",
     "@krizaka/tailwind": "^3.48.0",
     "@krizaka/tokens": "^3.48.0",
-    "@krizaka/ui": "^3.48.0",
+    "@krizaka/ui": "^3.50.0",
     "@krizaka/webhooks": "0.1.0",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.4",
