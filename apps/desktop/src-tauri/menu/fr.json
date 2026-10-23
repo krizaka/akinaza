@@ -1,0 +1,36 @@
+{
+  "labels": {
+    "about": "À propos d'Akinaza",
+    "hide": "Masquer Akinaza",
+    "hideOthers": "Masquer les autres",
+    "showAll": "Tout afficher",
+    "quit": "Quitter Akinaza",
+    "edit": "Édition",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "cut": "Couper",
+    "copy": "Copier",
+    "paste": "Coller",
+    "selectAll": "Tout sélectionner",
+    "window": "Fenêtre",
+    "minimize": "Réduire",
+    "zoom": "Zoom",
+    "close": "Fermer"
+  },
+  "menus": [
+    {
+      "title": "Aller",
+      "items": [
+        { "id": "section.today", "label": "Aujourd'hui", "accelerator": "CmdOrCtrl+1" },
+        { "id": "section.invoices", "label": "Factures", "accelerator": "CmdOrCtrl+2" },
+        { "id": "section.books", "label": "Livres", "accelerator": "CmdOrCtrl+3" },
+        { "id": "section.clients", "label": "Clients", "accelerator": "CmdOrCtrl+4" },
+        { "id": "section.shop", "label": "Commerce", "accelerator": "CmdOrCtrl+5" }
+      ]
+    },
+    {
+      "title": "Présentation",
+      "items": [{ "id": "view.reload", "label": "Actualiser la page", "accelerator": "CmdOrCtrl+R" }]
+    }
+  ]
+}
