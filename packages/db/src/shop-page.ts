@@ -6,7 +6,8 @@ import type { Db } from "./client";
 import { ShopError } from "./errors";
 import { shopPage } from "./schema";
 
-export const SHOP_PAGE_SECTIONS = ["services", "team", "hours", "zones", "gallery", "wall", "reels", "announcements", "reviews", "follow"] as const;
+/** `trust` (story, contact, policies) is orderable since #261; before, it was injected just before `gallery`, and pages saved then are read with it there (`withTrust`). */
+export const SHOP_PAGE_SECTIONS = ["services", "team", "hours", "zones", "trust", "gallery", "wall", "reels", "announcements", "reviews", "follow"] as const;
 export type ShopPageSection = (typeof SHOP_PAGE_SECTIONS)[number];
 export interface ShopPageSectionSetting {
   id: ShopPageSection;
@@ -14,12 +15,22 @@ export interface ShopPageSectionSetting {
 }
 
 export const DEFAULT_SHOP_PAGE_SECTIONS: readonly ShopPageSectionSetting[] = SHOP_PAGE_SECTIONS.map((id) => ({ id, visible: true }));
-const sectionsSchema = z.array(z.object({ id: z.enum(SHOP_PAGE_SECTIONS), visible: z.boolean() })).length(SHOP_PAGE_SECTIONS.length).superRefine((sections, ctx) => {
+/** A stored list that predates `trust` (ten sections) is read with it at today's placement - right before `gallery` (at the end without one): no page changes. */
+export function withTrust<T extends { id: string; visible: boolean }>(sections: readonly T[]): (T | { id: "trust"; visible: boolean })[] {
+  if (sections.some((section) => section.id === "trust")) return [...sections];
+  const at = sections.findIndex((section) => section.id === "gallery");
+  const out: (T | { id: "trust"; visible: boolean })[] = [...sections];
+  out.splice(at < 0 ? out.length : at, 0, { id: "trust", visible: true });
+  return out;
+}
+const legacyAware = (value: unknown) => (Array.isArray(value) && value.every((x) => x && typeof x === "object" && "id" in x) ? withTrust(value as { id: string; visible: boolean }[]) : value);
+
+const sectionsSchema = z.preprocess(legacyAware, z.array(z.object({ id: z.enum(SHOP_PAGE_SECTIONS), visible: z.boolean() })).length(SHOP_PAGE_SECTIONS.length).superRefine((sections, ctx) => {
   const ids = sections.map((section) => section.id);
   if (new Set(ids).size !== SHOP_PAGE_SECTIONS.length || SHOP_PAGE_SECTIONS.some((id) => !ids.includes(id))) {
     ctx.addIssue({ code: "custom", message: "Every storefront section must occur exactly once" });
   }
-});
+}));
 
 export const shopPageConfigSchema = z.object({
   sections: sectionsSchema,
@@ -57,7 +68,7 @@ export async function saveShopPageConfig(db: Db, shopId: string, input: unknown)
   let custom: { sectionsCustom: boolean } | Record<never, never> = {};
   if (named.sections) {
     const [existing] = await db.select({ sections: shopPage.sections, custom: shopPage.sectionsCustom }).from(shopPage).where(eq(shopPage.shopId, shopId));
-    const before = existing?.sections ?? DEFAULT_SHOP_PAGE_SECTIONS;
+    const before = existing ? withTrust(existing.sections) : DEFAULT_SHOP_PAGE_SECTIONS;
     custom = { sectionsCustom: (existing?.custom ?? false) || !sameSections(before, named.sections) };
   }
   await db.insert(shopPage).values({ shopId, ...fresh, ...named, ...custom }).onConflictDoUpdate({
@@ -87,7 +98,7 @@ export async function applyTemplate(db: Db, shopId: string, input: { templateId:
     const custom = row?.sectionsCustom ?? false;
     if (custom && input.keepOrder === undefined) throw new ShopError("AK_SECTIONS_CUSTOM", "AK_SECTIONS_CUSTOM");
     const keep = input.keepOrder === true;
-    const sections = keep ? (row?.sections ?? DEFAULT_SHOP_PAGE_SECTIONS.map((s) => ({ ...s }))) : sectionsFromTemplate(template, (row?.sections ?? DEFAULT_SHOP_PAGE_SECTIONS) as ShopPageSectionSetting[]);
+    const sections = keep ? (row ? withTrust(row.sections) : DEFAULT_SHOP_PAGE_SECTIONS.map((s) => ({ ...s }))) : sectionsFromTemplate(template, (row ? withTrust(row.sections) : DEFAULT_SHOP_PAGE_SECTIONS) as ShopPageSectionSetting[]);
     const values = { sections, templateId: template.id, templateVersion: template.version, sectionsCustom: keep ? custom : false };
     await tx.insert(shopPage).values({ shopId, ...values }).onConflictDoUpdate({ target: shopPage.shopId, set: { ...values, updatedAt: sql`now()` } });
     return template;

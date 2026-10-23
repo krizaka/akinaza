@@ -24,8 +24,9 @@ describe("the owner's storefront configuration", () => {
     config.sections[0] = { id: "follow", visible: false };
     config.logoUrl = "https://cdn.example/brand/logo.webp";
     await saveShopPageConfig(t.db, shop.shopId, config);
-    expect(await shopPageConfigOf(t.db, shop.shopId)).toEqual(config);
-    expect((await publicShop(t.db, "pattes-page-saved"))?.pageConfig).toEqual(config);
+    // The owner reordered by hand: the page is marked customised (a template asks before replacing it).
+    expect(await shopPageConfigOf(t.db, shop.shopId)).toEqual({ ...config, sectionsCustom: true });
+    expect((await publicShop(t.db, "pattes-page-saved"))?.pageConfig).toEqual({ ...config, sectionsCustom: true });
   });
 
   it("rejects missing or duplicate sections and non-HTTPS logos", async () => {

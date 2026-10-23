@@ -9,7 +9,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { migrate } from "./migrate";
 import { shopPage, shops } from "./schema";
-import { applyTemplate, DEFAULT_SHOP_PAGE_SECTIONS, saveShopPageConfig, SHOP_PAGE_SECTIONS, sectionsFromTemplate, shopPageConfigOf } from "./shop-page";
+import { applyTemplate, DEFAULT_SHOP_PAGE_SECTIONS, saveShopPageConfig, SHOP_PAGE_SECTIONS, sectionsFromTemplate, shopPageConfigOf, withTrust } from "./shop-page";
 import { freshDatabase, freshEmptyDatabase } from "./test/db";
 import { walkerShop } from "./test/fixtures";
 
@@ -134,10 +134,10 @@ describe("applying a template", () => {
     expect((await shopPageConfigOf(t.db, shop.shopId)).templateId).toBeNull();
   });
 
-  it("maps a template onto the sections that exist today (`trust` waits for step 3), keeping the rest as they are", () => {
+  it("maps a template onto the sections, `trust` included, keeping the rest as they are", () => {
     const current = DEFAULT_SHOP_PAGE_SECTIONS.map((s) => (s.id === "wall" ? { ...s, visible: false } : { ...s }));
     const out = sectionsFromTemplate(SALON, current);
-    expect(out.map((s) => s.id)).toEqual(["services", "hours", "team", "gallery", "zones", "wall", "reels", "announcements", "reviews", "follow"]);
+    expect(out.map((s) => s.id)).toEqual(["services", "hours", "team", "trust", "gallery", "zones", "wall", "reels", "announcements", "reviews", "follow"]);
     expect(out.find((s) => s.id === "wall")!.visible).toBe(false);
   });
 
@@ -148,3 +148,46 @@ describe("applying a template", () => {
     expect((await t.db.select().from(shopPage).where(eq(shopPage.shopId, shop.shopId))).length).toBe(0);
   });
 });
+
+describe("`trust` is an orderable section (#261, step 3)", () => {
+  const LEGACY = ["services", "team", "hours", "zones", "gallery", "wall", "reels", "announcements", "reviews", "follow"].map((id) => ({ id, visible: true }));
+
+  it("a page saved before it, with ten sections, is read with `trust` just before `gallery`: today's placement, nothing changes", async () => {
+    const shop = await walkerShop(t.db, "tpl-legacy");
+    await t.pool.query("INSERT INTO shop_page (shop_id, sections) VALUES ($1, $2)", [shop.shopId, JSON.stringify(LEGACY)]);
+    const config = await shopPageConfigOf(t.db, shop.shopId);
+    expect(config.sections.map((s) => s.id)).toEqual(["services", "team", "hours", "zones", "trust", "gallery", "wall", "reels", "announcements", "reviews", "follow"]);
+    expect(config.sections.find((s) => s.id === "trust")!.visible).toBe(true);
+    expect(config.sectionsCustom).toBe(false); // an untouched legacy page is not « customised » by the new id
+    expect(DEFAULT_SHOP_PAGE_SECTIONS.map((s) => s.id)).toEqual(config.sections.map((s) => s.id));
+  });
+
+  it("an owner's hidden gallery or reorder on a legacy page is kept, with `trust` where it always was", async () => {
+    const shop = await walkerShop(t.db, "tpl-legacy-custom");
+    const mine = [{ id: "gallery", visible: false }, ...LEGACY.filter((s) => s.id !== "gallery")];
+    await t.pool.query("INSERT INTO shop_page (shop_id, sections, sections_custom) VALUES ($1, $2, true)", [shop.shopId, JSON.stringify(mine)]);
+    // `trust` was always drawn right before the gallery, wherever the owner put it: it keeps doing so.
+    expect((await shopPageConfigOf(t.db, shop.shopId)).sections.map((s) => s.id).slice(0, 3)).toEqual(["trust", "gallery", "services"]);
+    expect(withTrust(mine)[1]).toMatchObject({ id: "gallery", visible: false });
+  });
+
+  it("an old browser tab that still posts ten sections is accepted, and `trust` stays where it was", async () => {
+    const shop = await walkerShop(t.db, "tpl-oldtab");
+    const config = await shopPageConfigOf(t.db, shop.shopId);
+    await saveShopPageConfig(t.db, shop.shopId, { ...config, sections: LEGACY });
+    expect((await shopPageConfigOf(t.db, shop.shopId)).sections.map((s) => s.id)).toContain("trust");
+    expect((await shopPageConfigOf(t.db, shop.shopId)).sectionsCustom).toBe(false);
+  });
+
+  it("a template's story-first layout can now put `trust` first, and applying it to a legacy page works", async () => {
+    const shop = await walkerShop(t.db, "tpl-story");
+    await t.pool.query("INSERT INTO shop_page (shop_id, sections) VALUES ($1, $2)", [shop.shopId, JSON.stringify(LEGACY)]);
+    await applyTemplate(t.db, shop.shopId, { templateId: "pets-histoire" });
+    expect((await shopPageConfigOf(t.db, shop.shopId)).sections[0]!.id).toBe("trust");
+  });
+
+  it("every section id of every template is a configurable section", () => {
+    for (const template of TEMPLATES) for (const section of template.sections) expect(SHOP_PAGE_SECTIONS as readonly string[], `${template.id}/${section.id}`).toContain(section.id);
+  });
+});
+
