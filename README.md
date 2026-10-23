@@ -28,6 +28,11 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
   working papers; **Akinaza
   prepares; the merchant files.** Nothing is transmitted to any government.
 - **Bookings** — services, staff, schedules; the database refuses a double booking (`EXCLUDE` on time ranges).
+- **Live storefront** — team states and free times refresh from the shop's slots channel while the page is visible.
+  SSE carries only a slots-changed signal, never booking details; without it, the visit-time render remains.
+  Audited database settings in the admin configuration control `realtime.storefront.enabled` (default `true`),
+  `realtime.storefront.heartbeatSeconds` (15; 5–60) and `realtime.storefront.maxStreamsPerPage` (100; 1–1000 concurrent
+  streams per shop page per server instance). Streams reconnect within five minutes to reread settings; no rebuild is needed.
 - **Loi 25** — consent per purpose, append-only; erasure blanks personal data and keeps the invoices tax law requires.
 - **Accounts** — sign-in, "forgot password" with one-use 30-minute links (the answer is the same for every address), a password change that ends the other sessions, a profile with Krizaka's default picture; registration is built and closed by configuration (`AUTH_SIGNUP_ENABLED`).
 - **Not for restaurants, cafés, bars and bakeries with on-site consumption** — they must use a sales recording system certified MEV-WEB by Revenu Québec; the point of sale is a stub behind
