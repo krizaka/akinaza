@@ -1,5 +1,6 @@
-Thank you for your visit.
+Your invoice.
 
-Invoice {number}: {total}, of which GST {gst} and QST {qst}.
+Invoice {number} from {shop}: {total}, including GST {gst} and QST {qst}. Due {dueDate}.
+{#hasMessage}{message}{/hasMessage}
 
 Your invoice: {url}

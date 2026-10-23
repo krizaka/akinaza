@@ -1,7 +1,9 @@
 // @template: app-list-detail
 import { localDay } from "@akinaza/core";
 import { listInvoices } from "@akinaza/db";
+import { invoiceMailSettings } from "@akinaza/db";
 
+import { InvoiceMailSettings } from "@/components/app/InvoiceMailSettings";
 import { InvoicesTable } from "@/components/app/InvoicesTable";
 import { ButtonLink } from "@/components/ButtonLink";
 import { db } from "@/lib/db";
@@ -18,9 +20,10 @@ export const generateMetadata = titleOf("invoices");
 export default async function Invoices({ params }: { params: Promise<{ locale: string; shop: string }> }) {
   const { locale: rawLocale, shop: shopId } = await params;
   const locale = asLocale(rawLocale);
-  const { shop } = await memberShop(shopId, "invoices");
+  const { shop, role } = await memberShop(shopId, "invoices");
   const t = getDictionary(locale).console.invoices;
   const issued = await listInvoices(db(), shop.id);
+  const mail = await invoiceMailSettings(db(), shop.id);
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-wrap items-center justify-between gap-3">
@@ -35,10 +38,12 @@ export default async function Invoices({ params }: { params: Promise<{ locale: s
         ) : (
           <InvoicesTable
             today={localDay(new Date(), shop.timezone)}
-            invoices={issued.map((i) => ({ id: i.id, number: i.number, client: i.client, issuedOn: i.issuedOn, dueOn: i.dueOn, language: i.language, creditOf: i.creditOf, subtotalCents: i.subtotalCents, gstCents: i.gstCents, qstCents: i.qstCents, totalCents: i.totalCents, paidCents: i.paidCents, superseded: i.superseded }))}
+            defaultMessage={mail?.shop.message}
+            invoices={issued.map((i) => ({ id: i.id, number: i.number, client: i.client, clientId: i.clientId, clientEmail: i.clientEmail, issuedOn: i.issuedOn, dueOn: i.dueOn, language: i.language, creditOf: i.creditOf, subtotalCents: i.subtotalCents, gstCents: i.gstCents, qstCents: i.qstCents, totalCents: i.totalCents, paidCents: i.paidCents, superseded: i.superseded }))}
           />
         )}
       </section>
+      {role === "owner" && mail ? <InvoiceMailSettings initial={mail.shop} /> : null}
     </div>
   );
 }

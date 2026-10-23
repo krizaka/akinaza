@@ -1,4 +1,7 @@
-import { type Db, enqueueMail, issueReportLink, mailById, markMailAttempt, markMailSent, pendingMail } from "@akinaza/db";
+import { randomBytes } from "node:crypto";
+
+import { type Db, enqueueInvoiceDelivery, enqueueMail, invoiceDetail, invoiceMailSettings, invoiceTokenHash, issueReportLink, mailById, markMailAttempt, markMailSent, pendingMail } from "@akinaza/db";
+import { addDays } from "date-fns";
 
 import type { MailSettings } from "./mail-settings";
 import { type MailLocale, renderMailTemplate } from "./mail-templates";
@@ -21,7 +24,11 @@ export async function deliver(db: Db, mail: Pending, now: Date, settings: MailSe
     return markMailAttempt(db, mail.id, "MAIL_NOT_CONFIGURED", MAX_ATTEMPTS);
   }
   // https://documentation.mailgun.com — POST /v3/{domain}/messages, Basic auth `api:<key>`, form fields.
-  const form = new URLSearchParams({ from: settings.from || `Akinaza <no-reply@${settings.domain}>`, to: mail.toEmail, subject: mail.subject, text: mail.bodyText, html: mail.html });
+  const configuredFrom = settings.from || `Akinaza <no-reply@${settings.domain}>`;
+  const address = /<([^<>]+)>/.exec(configuredFrom)?.[1] ?? configuredFrom;
+  const from = mail.fromName ? `${mail.fromName.replace(/[\r\n<>]/g, "").slice(0, 120)} <${address}>` : configuredFrom;
+  const form = new URLSearchParams({ from, to: mail.toEmail, subject: mail.subject, text: mail.bodyText, html: mail.html });
+  if (mail.ccEmail) form.set("cc", mail.ccEmail);
   try {
     const response = await send(`${settings.apiUrl.replace(/\/+$/, "")}/v3/${encodeURIComponent(settings.domain!)}/messages`, {
       method: "POST",
@@ -79,4 +86,53 @@ export async function sendWalkReport(db: Db, shopId: string, bookingId: string, 
   const queued = await mailById(db, id);
   const status = queued ? await deliver(db, queued, now, settings, send) : "pending";
   return { mailId: id, status, reportId: ctx.reportId };
+}
+
+/** Issues one private link, queues the invoice e-mail, then gives the outbox its normal first attempt. */
+export async function sendInvoiceMail(db: Db, shopId: string, invoiceId: string, toEmail: string, message: string | undefined, now: Date, settings: MailSettings, maxPerShopPerDay: number, send: typeof fetch = fetch) {
+  const [invoice, config] = await Promise.all([invoiceDetail(db, shopId, invoiceId), invoiceMailSettings(db, shopId)]);
+  if (!invoice || !invoice.clientId || invoice.creditOf || !config) throw new Error("AK_INVOICE_UNKNOWN");
+  if (!invoice.client?.email && !toEmail) throw new Error("AK_INVOICE_RECIPIENT");
+  const token = `iv1.${randomBytes(32).toString("base64url")}`;
+  const appUrl = settings.appUrl;
+  const locale = invoice.language;
+  const f = formatter(locale);
+  const money = new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" });
+  const dueDate = invoice.dueOn
+    ? f.date.format(new Date(`${invoice.dueOn}T12:00:00Z`))
+    : locale === "fr" ? "À réception" : "On receipt";
+  const optionalMessage = message ?? config.shop.message;
+  const rendered = renderMailTemplate(
+    "invoice-issued",
+    {
+      shop: invoice.shop.name,
+      logo: config.logo ?? "",
+      hasLogo: !!config.logo,
+      number: invoice.number,
+      total: money.format(invoice.totalCents / 100),
+      gst: money.format(invoice.gstCents / 100),
+      qst: money.format(invoice.qstCents / 100),
+      dueDate,
+      message: optionalMessage,
+      hasMessage: !!optionalMessage,
+      url: `${appUrl}/${locale}/invoice/${token}`,
+    },
+    { locale, appUrl, now },
+  );
+  const { deliveryId, mailId } = await enqueueInvoiceDelivery(db, shopId, invoiceId, {
+    tokenHash: invoiceTokenHash(token),
+    toEmail,
+    ccEmail: config.shop.copy ? config.shop.publicEmail : null,
+    fromName: config.shop.fromName ?? invoice.shop.name,
+    locale,
+    expiresAt: addDays(now, config.shop.linkDays),
+    createdAt: now,
+    maxPerShopPerDay,
+    subject: rendered.subject,
+    html: rendered.html,
+    text: rendered.text,
+  });
+  const queued = await mailById(db, mailId);
+  const status = queued ? await deliver(db, queued, now, settings, send) : "pending";
+  return { deliveryId, status };
 }
