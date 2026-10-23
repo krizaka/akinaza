@@ -48,7 +48,7 @@ The database tests run on a real PostgreSQL 16: CI's service, or a Testcontainer
 
 | Path | |
 | :-- | :-- |
-| `apps/web` | Next.js 16: the public page, sign-in (`@krizaka/ui/auth-layout`), the shop's day (appointments + an invoice with its GST/QST lines), the administration (admin.akinaza.com), the BFF, the e-mail templates |
+| `apps/web` | Next.js 16: the public page, sign-in (`@krizaka/ui/auth-layout`), the shop's day (appointments, plus the latest invoices and overdue count for members with invoice access), the administration (admin.akinaza.com), the BFF, the e-mail templates |
 | `apps/mobile` | the Expo skeleton (joins the workspace in the mobile phase) |
 | `packages/core` | the domain, pure: money, GST/QST, the ledger, the return and its reconciliation, consent, the POS gate |
 | `packages/db` | PostgreSQL schema (Drizzle), versioned SQL migrations with the rules the database enforces, the shop's operations |
