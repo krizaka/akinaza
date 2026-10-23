@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { unsubscribeBrief } from "@akinaza/db";
 import { previousThursday, subDays } from "date-fns";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -11,7 +13,8 @@ const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 const settings = { provider: "none" as const, apiUrl: "https://api.mailgun.net", appUrl: "https://www.akinaza.com" };
 
 describe.runIf(enabled)("the Monday brief's invitation (#200)", () => {
-  const stamp = Date.now();
+  // Unique across test files run in parallel: two files starting in the same millisecond collided on accounts_email_unique.
+  const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   // A Thursday afternoon: the week's brief is due (Monday 7:00 has passed in Montréal), whatever day the test runs.
   const now = previousThursday(new Date());
   now.setUTCHours(16, 0, 0, 0);

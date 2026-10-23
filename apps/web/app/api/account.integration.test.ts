@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { migrate, pool, query } from "@/lib/db";
@@ -28,7 +30,8 @@ async function call(handler: unknown, method: string, path: string, opts: { cook
 }
 
 describe.runIf(enabled)("the account baseline over HTTP", () => {
-  const stamp = Date.now();
+  // Unique across test files run in parallel: two files starting in the same millisecond collided on accounts_email_unique.
+  const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   const made: string[] = [];
   const account = async (label: string) => {
     const email = `${label}-${stamp}@akinaza.test`;
