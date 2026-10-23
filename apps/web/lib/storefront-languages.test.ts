@@ -57,3 +57,14 @@ describe("the shop page in the languages the owner offers (#258)", () => {
     expect(v.bookHref).toMatch(/^\/en\/s\/salon-laurier/);
   });
 });
+
+describe("what the public page never carries (#265)", () => {
+  it("the street address and the legal name are not in the view of a page", () => {
+    const p = page();
+    (p.shop as Record<string, unknown>).address = "1234 rue Secrète";
+    (p.shop as Record<string, unknown>).legalName = "Salon Laurier inc.";
+    const json = JSON.stringify(view(p, "fr"));
+    expect(json).not.toContain("1234 rue Secrète");
+    expect(json).not.toContain("Salon Laurier inc.");
+  });
+});

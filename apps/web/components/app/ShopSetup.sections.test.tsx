@@ -1,0 +1,73 @@
+import { defaultShopPageConfig } from "@akinaza/db";
+import { KrizakaQueryProvider } from "@krizaka/query";
+import { renderToStaticMarkup } from "react-dom/server";
+import { describe, expect, it, vi } from "vitest";
+
+import { I18nProvider, VocabularyProvider } from "@/lib/i18n-client";
+import en from "@/messages/en.json";
+import fr from "@/messages/fr.json";
+
+import { type SetupData, ShopSetupView } from "./ShopSetup";
+
+vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app/s1/shop", useSearchParams: () => new URLSearchParams() }));
+
+const MESSAGES = { en: { console: en.console }, fr: { console: fr.console } } as const;
+const page: NonNullable<SetupData["page"]> = { name: "Atelier Boréal", legalName: "Atelier Boréal inc.", address: "1234 rue Secrète, Montréal", slug: "atelier-boreal", ownerName: "Éric", taglineFr: "Du bon travail", taglineEn: "Good work", published: false, area: "Montréal", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "", businessType: "professional" };
+const data = (over: Partial<SetupData> = {}): SetupData => ({ page, shopId: "s1", pageConfig: defaultShopPageConfig(), publicUrl: "https://www.akinaza.com/en/s/atelier-boreal", zones: [], services: [], media: { cover: null, gallery: [] }, windows: [], daysOff: [], rules: { cancellationHours: 24, bookingHorizonDays: 30, slotStepMinutes: 30, minNoticeMinutes: 0, reportLinkDays: 30, paymentTermsDays: 30 }, ...over });
+const render = (d: SetupData, tab: Parameters<typeof ShopSetupView>[0]["tab"], locale: "en" | "fr" = "en") =>
+  renderToStaticMarkup(
+    <I18nProvider locale={locale} messages={MESSAGES[locale] as never}>
+      <KrizakaQueryProvider>
+        <VocabularyProvider type="professional"><ShopSetupView data={d} tab={tab} /></VocabularyProvider>
+      </KrizakaQueryProvider>
+    </I18nProvider>,
+  );
+const text = (h: string) => h.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ");
+
+describe("« My shop page » in sections (#265)", () => {
+  it("lists the sections as tabs, the published status and « Add a shop » in the header", () => {
+    const t = text(render(data(), "identity"));
+    for (const tab of ["Identity", "Your page", "Contact and place", "What you offer", "Photos and video", "Look", "Publish"]) expect(t).toContain(tab);
+    expect(t).toContain("Not published");
+    expect(t).toContain("Add a shop");
+  });
+
+  it("identity holds only who the shop is; the other fields live in their own section", () => {
+    const t = text(render(data(), "identity"));
+    for (const word of ["Shop name", "Legal name", "Your first name", "Page address"]) expect(t).toContain(word);
+    for (const word of ["Phone shown to visitors", "Locality shown on the page", "One line"]) expect(t).not.toContain(word);
+  });
+
+  it("the texts are French and English side by side, one save for the section", () => {
+    const html = render(data(), "texts");
+    expect(text(html)).toContain("Français");
+    expect(html).toContain('name="taglineFr"');
+    expect(html).toContain('name="taglineEn"');
+    expect(html.indexOf('name="taglineFr"')).toBeLessThan(html.indexOf('name="taglineEn"'));
+    expect(html.match(/type="submit"/g)).toHaveLength(1);
+  });
+
+  it("the street address is said to be private, in its own section", () => {
+    const t = text(render(data(), "contact"));
+    expect(t).toContain("never shown on your public page");
+    expect(t).toContain("Locality shown on the page");
+  });
+
+  it("publish shows the switch and the public link", () => {
+    const t = text(render(data({ page: { ...page, published: true } }), "publish"));
+    expect(t).toContain("Publish the page");
+    expect(t).toContain("https://www.akinaza.com/en/s/atelier-boreal");
+  });
+
+  it("a person with no shop yet gets the identity form only, no tabs", () => {
+    const html = render(data({ page: null, shopId: null, publicUrl: null }), "identity");
+    expect(text(html)).toContain("Shop name");
+    expect(text(html)).not.toContain("Photos and video");
+  });
+
+  it("speaks French", () => {
+    const t = text(render(data(), "contact", "fr"));
+    for (const word of ["Contact et lieu", "jamais affichée sur votre page publique", "Ajouter une boutique"]) expect(t).toContain(word);
+  });
+});

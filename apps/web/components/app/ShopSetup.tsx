@@ -1,6 +1,6 @@
 "use client";
 
-import { BUSINESS_TYPES, type BusinessType } from "@akinaza/core";
+import type { BusinessType } from "@akinaza/core";
 import type { ShopPageConfig, ShopPageSection } from "@akinaza/db";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
@@ -8,10 +8,12 @@ import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
 import { Checkbox } from "@krizaka/ui/checkbox";
 import { createKrizakaForm } from "@krizaka/ui/form";
+import { Tabs } from "@krizaka/ui/tabs";
 import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
 
+import { ContactSection, IdentitySection, PublishSection, TextsSection } from "@/components/app/ShopPageSections";
 import { useCall } from "@/components/app/useCall";
 import { useSay, useVocabulary } from "@/lib/i18n-client";
 import { shopRoutes } from "@/lib/routes";
@@ -35,8 +37,11 @@ export interface SetupData {
 const WEEK = [1, 2, 3, 4, 5, 6, 0] as const;
 const money = (cents: number, locale: string) => new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(cents / 100);
 
-export function ShopSetupView({ data }: { data: SetupData }) {
-  const { say } = useSay();
+const TABS = ["identity", "texts", "contact", "offer", "media", "look", "publish"] as const;
+
+/** « Ma page boutique », in sections: the tab is in the address (`?tab=`), each section saves on its own, the published status stays in the header. */
+export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /** The section open when the address names none (`?tab=`). */ tab?: (typeof TABS)[number] }) {
+  const { say, locale } = useSay();
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
@@ -45,29 +50,41 @@ export function ShopSetupView({ data }: { data: SetupData }) {
           {data.page ? <Badge tone={data.page.published ? "success" : "neutral"}>{say(data.page.published ? "shopSetup.published" : "shopSetup.notPublished")}</Badge> : null}
         </div>
         <p className="text-fg-secondary">{say("shopSetup.intro")}</p>
-        {data.publicUrl && data.page?.published ? (
-          <p className="text-sm">
-            <a className="font-semibold text-fg-accent underline" href={data.publicUrl}>
-              {say("shopSetup.viewPage")}
-            </a>{" "}
-            <span className="font-mono text-xs text-fg-muted">{data.publicUrl}</span>
-          </p>
-        ) : null}
+        <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+          {data.publicUrl && data.page?.published ? (
+            <span>
+              <a className="font-semibold text-fg-accent underline" href={data.publicUrl}>{say("shopSetup.viewPage")}</a> <span className="font-mono text-xs text-fg-muted">{data.publicUrl}</span>
+            </span>
+          ) : null}
+          {data.shopId ? <Link className="font-semibold text-fg-accent underline" href={`${shopRoutes(locale, data.shopId).setup}/new`}>{say("shopSetup.addShop.link")}</Link> : null}
+        </p>
       </header>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <PageCard page={data.page} />
-        {data.page ? (
-          <>
-            <ZonesCard zones={data.zones} />
-            <ServicesCard services={data.services} />
-            <MediaCard media={data.media} />
-            <ShopPageCard shopId={data.shopId!} publicUrl={data.publicUrl} config={data.pageConfig} />
-            <LanguagesLink shopId={data.shopId!} />
-            <HoursCard windows={data.windows} daysOff={data.daysOff} />
-            {data.rules ? <RulesCard rules={data.rules} /> : null}
-          </>
-        ) : null}
-      </div>
+      {data.page && data.shopId ? (
+        <Tabs.Root routeKey="tab" routeValues={TABS} defaultValue={tab}>
+          <Tabs.List aria-label={say("shopSetup.sections.label")}>
+            {TABS.map((tab) => <Tabs.Trigger key={tab} value={tab}>{say(`shopSetup.sections.tabs.${tab}`)}</Tabs.Trigger>)}
+          </Tabs.List>
+          <Tabs.Content value="identity" className="pt-4"><IdentitySection page={data.page} /></Tabs.Content>
+          <Tabs.Content value="texts" className="pt-4"><TextsSection page={data.page} shopId={data.shopId} /></Tabs.Content>
+          <Tabs.Content value="contact" className="pt-4"><ContactSection page={data.page} /></Tabs.Content>
+          <Tabs.Content value="offer" className="pt-4">
+            <div className="grid gap-4 lg:grid-cols-2">
+              <ZonesCard zones={data.zones} />
+              <ServicesCard services={data.services} />
+              <HoursCard windows={data.windows} daysOff={data.daysOff} />
+              {data.rules ? <RulesCard rules={data.rules} /> : null}
+            </div>
+          </Tabs.Content>
+          <Tabs.Content value="media" className="pt-4"><MediaCard media={data.media} /></Tabs.Content>
+          <Tabs.Content value="look" className="grid gap-4 pt-4 lg:grid-cols-2">
+            <ShopPageCard shopId={data.shopId} publicUrl={data.publicUrl} config={data.pageConfig} />
+            <LanguagesLink shopId={data.shopId} />
+          </Tabs.Content>
+          <Tabs.Content value="publish" className="pt-4"><PublishSection page={data.page} publicUrl={data.publicUrl} /></Tabs.Content>
+        </Tabs.Root>
+      ) : (
+        <IdentitySection page={data.page} />
+      )}
     </div>
   );
 }
@@ -139,76 +156,6 @@ function ShopPageCard({ shopId, publicUrl, config: initial }: { shopId: string; 
       </form.Form>
       {call.problem ? <Alert tone="danger" className="mt-3">{call.problem}</Alert> : null}
       {saved ? <Alert tone="success" className="mt-3">{say("shopSetup.layout.saved")}</Alert> : null}
-    </Card.Root>
-  );
-}
-
-const pageForm = createKrizakaForm({
-  schema: z.object({
-    name: z.string().trim().min(1).max(80),
-    legalName: z.string().trim().min(1).max(120),
-    address: z.string().trim().min(1).max(200),
-    slug: z.string().trim().min(3).max(40),
-    ownerName: z.string().trim().min(1).max(80),
-    taglineFr: z.string().trim().max(160),
-    taglineEn: z.string().trim().max(160),
-    published: z.boolean(),
-    area: z.string().trim().max(80),
-    bioFr: z.string().trim().max(600),
-    bioEn: z.string().trim().max(600),
-    publicPhone: z.string().trim().max(40),
-    publicEmail: z.string().trim().max(120),
-    seatUnitFr: z.string().trim().max(30),
-    seatUnitEn: z.string().trim().max(30),
-    businessType: z.enum(BUSINESS_TYPES),
-  }),
-  defaultValues: { name: "", legalName: "", address: "", slug: "", ownerName: "", taglineFr: "", taglineEn: "", published: false, area: "", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "", businessType: "professional" as BusinessType },
-});
-
-function PageCard({ page }: { page: SetupData["page"] }) {
-  const { say, locale } = useSay();
-  const call = useCall();
-  const [saved, setSaved] = useState(false);
-  const form = pageForm.useForm({
-    i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
-    ...(page ? { defaultValues: page } : {}),
-    onSubmit: async (values) => {
-      setSaved(false);
-      setSaved((await call.run("/api/walker/shop", { json: values })) !== null);
-    },
-  });
-  return (
-    <Card.Root className="p-4 lg:col-span-2">
-      <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.page.title")}</h2>
-      <form.Form aria-label={say("shopSetup.page.title")} className="grid gap-4 sm:grid-cols-2">
-        <form.TextField name="name" label={say("shopSetup.page.name")} autoComplete="organization" />
-        <form.Select name="businessType" label={say("shopSetup.page.businessType")} hint={say("shopSetup.page.businessTypeHint")} options={BUSINESS_TYPES.map((type) => ({ value: type, label: say(`shopSetup.page.businessTypes.${type}`) }))} />
-        <form.TextField name="legalName" label={say("shopSetup.page.legalName")} />
-        <form.TextField name="address" label={say("shopSetup.page.address")} autoComplete="street-address" />
-        <form.TextField name="slug" label={say("shopSetup.page.slug")} hint={say("shopSetup.page.slugHint")} transform={(v) => v.toLowerCase().replace(/[^a-z0-9-]/g, "-")} />
-        <form.TextField name="ownerName" label={say("shopSetup.page.ownerName")} autoComplete="given-name" />
-        <span className="hidden sm:block" />
-        <form.TextField name="taglineFr" label={say("shopSetup.page.taglineFr")} />
-        <form.TextField name="taglineEn" label={say("shopSetup.page.taglineEn")} />
-        <form.TextField name="area" label={say("shopSetup.page.area")} hint={say("shopSetup.page.areaHint")} />
-        <span className="hidden sm:block" />
-        <form.TextArea name="bioFr" label={say("shopSetup.page.bioFr")} hint={say("shopSetup.page.bioHint")} rows={3} maxLength={600} />
-        <form.TextArea name="bioEn" label={say("shopSetup.page.bioEn")} hint={say("shopSetup.page.bioHint")} rows={3} maxLength={600} />
-        <form.TextField name="publicPhone" label={say("shopSetup.page.publicPhone")} type="tel" autoComplete="tel" />
-        <form.TextField name="publicEmail" label={say("shopSetup.page.publicEmail")} type="email" autoComplete="email" />
-        <form.TextField name="seatUnitFr" label={say("shopSetup.page.seatUnitFr")} hint={say("shopSetup.page.seatUnitHint")} />
-        <form.TextField name="seatUnitEn" label={say("shopSetup.page.seatUnitEn")} />
-        <div className="sm:col-span-2">
-          <form.Switch name="published" label={say("shopSetup.page.published")} hint={say("shopSetup.page.publishedHint")} />
-        </div>
-        <div className="flex flex-col gap-3 sm:col-span-2">
-          {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
-          {saved ? <Alert tone="success">{say("shopSetup.page.saved")}</Alert> : null}
-          <form.Submit size="md" className="w-full sm:w-auto sm:self-start">
-            {say("shopSetup.page.submit")}
-          </form.Submit>
-        </div>
-      </form.Form>
     </Card.Root>
   );
 }
