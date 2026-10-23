@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { TEMPLATES, templatesFor } from "@akinaza/core";
 import { describe, expect, it, vi } from "vitest";
 
@@ -106,5 +109,14 @@ describe("« Update available » (#261, step 5)", () => {
     expect(t).toContain("Your template");
     expect(t).toContain("This is your page's template.");
     expect(t).not.toContain("Update");
+  });
+});
+
+describe("the picker's tiles are dressed (#261, step 4)", () => {
+  it("the grid wears @krizaka/ui's story classes, whose stylesheet the locale layout loads", () => {
+    const grid = readFileSync(join(process.cwd(), "node_modules/@krizaka/ui/dist/choice-grid.js"), "utf8");
+    expect(grid).toContain("kzs-choice-grid");
+    expect(readFileSync(join(process.cwd(), "node_modules/@krizaka/ui/dist/story.css"), "utf8")).toContain(".kzs-choice-grid");
+    expect(readFileSync(join(process.cwd(), "app/[locale]/layout.tsx"), "utf8")).toMatch(/import "@krizaka\/ui\/story\.css";/);
   });
 });

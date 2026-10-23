@@ -2,7 +2,7 @@
 // Captures of the storefront work (#261) in a real browser, on a seeded, throw-away database: a PostgreSQL 16 container, `next dev`, the Saint-Henri persona
 // (scripts/seed-saint-henri.mjs) and the demo shops (seed:demos), the templates switched on, then every scene in dark and light, desktop and phone.
 //
-//   SHOTS_OUT=<dir> [SHOTS_SCENES=look,new,storefront] [SHOTS_LOCALE=fr] [SHOTS_PORT=3214] [SHOTS_DB_PORT=5436] pnpm run shots:storefront
+//   SHOTS_OUT=<dir> [SHOTS_SCENES=look,new,storefront] [SHOTS_DEVICES=desktop,phone] [SHOTS_LOCALE=fr] [SHOTS_PORT=3214] [SHOTS_DB_PORT=5436] pnpm run shots:storefront
 //
 // Needs Docker and a Chromium for playwright-core. Every password is generated for the run and never printed; the container and the app are removed at
 // the end, whatever happened. The captures go to Bunny pr-assets (krizaka-com's scripts/pr-assets.mjs), never into the repository.
@@ -17,11 +17,12 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const SCENES = {
   look: { path: (locale, shop) => `/${locale}/app/${shop.id}/shop?tab=look`, expect: { fr: "Modèle de page", en: "Page template" }, signedIn: true },
   new: { path: (locale, shop) => `/${locale}/app/${shop.id}/shop/new`, expect: { fr: "Votre métier", en: "Your trade" }, signedIn: true },
-  storefront: { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
+  // The public pages wait for the shop's name (its heading, there on every device); a button's words move with the layout.
+  storefront: { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Pattes de Saint-Henri", en: "Pattes de Saint-Henri" }, signedIn: false },
   // The demo shops (packages/db/src/demo-shops.ts), each on a template of its trade (#261, step 6).
-  salon: { path: (locale) => `/${locale}/s/cedre-ciseaux`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
-  workshop: { path: (locale) => `/${locale}/s/encre-vive`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
-  consulting: { path: (locale) => `/${locale}/s/ferland-conseil`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
+  salon: { path: (locale) => `/${locale}/s/cedre-ciseaux`, expect: { fr: "Salon Cèdre & Ciseaux", en: "Salon Cèdre & Ciseaux" }, signedIn: false },
+  workshop: { path: (locale) => `/${locale}/s/encre-vive`, expect: { fr: "Encre Vive Studio", en: "Encre Vive Studio" }, signedIn: false },
+  consulting: { path: (locale) => `/${locale}/s/ferland-conseil`, expect: { fr: "Ferland Conseil", en: "Ferland Conseil" }, signedIn: false },
 };
 export const THEMES = ["dark", "light"];
 export const DEVICES = { desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844 } };
@@ -30,10 +31,10 @@ export const DEVICES = { desktop: { width: 1440, height: 900 }, phone: { width: 
 export const shotName = (scene, device, theme) => `${scene}-${device}-${theme}.png`;
 
 /** Every capture of a run, in a stable order (scenes, then devices, then themes). */
-export function plan(scenes = Object.keys(SCENES)) {
-  const unknown = scenes.filter((s) => !SCENES[s]);
-  if (unknown.length) throw new Error(`unknown scene(s): ${unknown.join(", ")} (known: ${Object.keys(SCENES).join(", ")})`);
-  return scenes.flatMap((scene) => Object.keys(DEVICES).flatMap((device) => THEMES.map((theme) => ({ scene, device, theme, file: shotName(scene, device, theme) }))));
+export function plan(scenes = Object.keys(SCENES), devices = Object.keys(DEVICES)) {
+  const unknown = [...scenes.filter((s) => !SCENES[s]), ...devices.filter((d) => !DEVICES[d])];
+  if (unknown.length) throw new Error(`unknown scene(s) or device(s): ${unknown.join(", ")} (known: ${Object.keys(SCENES).join(", ")}; ${Object.keys(DEVICES).join(", ")})`);
+  return scenes.flatMap((scene) => devices.flatMap((device) => THEMES.map((theme) => ({ scene, device, theme, file: shotName(scene, device, theme) }))));
 }
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -52,7 +53,8 @@ async function main() {
   const LOCALE = process.env.SHOTS_LOCALE === "en" ? "en" : "fr";
   const PORT = Number(process.env.SHOTS_PORT ?? 3214);
   const DB_PORT = Number(process.env.SHOTS_DB_PORT ?? 5436);
-  const scenes = plan(process.env.SHOTS_SCENES ? process.env.SHOTS_SCENES.split(",").map((s) => s.trim()).filter(Boolean) : undefined);
+  const list = (name) => (process.env[name] ? process.env[name].split(",").map((s) => s.trim()).filter(Boolean) : undefined);
+  const scenes = plan(list("SHOTS_SCENES"), list("SHOTS_DEVICES"));
   const BASE = `http://localhost:${PORT}`;
   const container = `akinaza-shots-${process.pid}`;
   const dbPassword = crypto.randomBytes(18).toString("base64url");
@@ -139,8 +141,10 @@ async function main() {
 
     const taken = [];
     for (const [device, viewport] of Object.entries(DEVICES)) {
+      if (!scenes.some((s) => s.device === device)) continue;
       for (const theme of THEMES) {
-        const context = await browser.newContext({ viewport, colorScheme: theme, storageState, locale: LOCALE === "fr" ? "fr-CA" : "en-CA", deviceScaleFactor: device === "phone" ? 2 : 1 });
+        // Reduced motion: what the page reveals on scroll is there at once, as for a person who asked for it; the shot shows the whole page.
+        const context = await browser.newContext({ viewport, colorScheme: theme, reducedMotion: "reduce", storageState, locale: LOCALE === "fr" ? "fr-CA" : "en-CA", deviceScaleFactor: device === "phone" ? 2 : 1 });
         await context.addInitScript((t) => {
           try {
             localStorage.setItem("kz-theme", t);
@@ -153,6 +157,14 @@ async function main() {
           const scene = SCENES[shot.scene];
           await p.goto(`${BASE}${scene.path(LOCALE, shop)}`, { waitUntil: "networkidle", timeout: 120_000 });
           await p.getByText(scene.expect[LOCALE]).first().waitFor({ timeout: 60_000 });
+          // Walk the page once so that anything that waits to be seen has been, then back to the top.
+          await p.evaluate(async () => {
+            for (let y = 0; y < document.body.scrollHeight; y += 600) {
+              window.scrollTo(0, y);
+              await new Promise((r) => setTimeout(r, 60));
+            }
+            window.scrollTo(0, 0);
+          });
           await p.waitForTimeout(800); // fonts and the reveal
           await p.screenshot({ path: path.join(OUT, shot.file), fullPage: true });
           taken.push(shot);

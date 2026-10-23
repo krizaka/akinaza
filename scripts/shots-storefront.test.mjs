@@ -17,6 +17,8 @@ describe("shots-storefront (the captures of #261 on a seeded database)", () => {
     expect(shotName("storefront", "phone", "light")).toBe("storefront-phone-light.png");
     expect(() => plan(["nope"])).toThrow(/unknown scene/);
     expect(plan(["new"]).every((s) => s.scene === "new")).toBe(true);
+    expect(plan(["new"], ["phone"]).map((s) => s.file)).toEqual(["new-phone-dark.png", "new-phone-light.png"]);
+    expect(() => plan(["new"], ["tablet"])).toThrow(/unknown scene\(s\) or device/);
   });
 
   it("names the owner's views by the shop's id and the public page by its slug, each with what must be visible, in both languages", () => {
@@ -26,6 +28,7 @@ describe("shots-storefront (the captures of #261 on a seeded database)", () => {
     expect(SCENES.storefront.path("fr", shop)).toBe("/fr/s/pattes-saint-henri");
     expect([SCENES.salon, SCENES.workshop, SCENES.consulting].map((s) => s.path("fr", shop))).toEqual(["/fr/s/cedre-ciseaux", "/fr/s/encre-vive", "/fr/s/ferland-conseil"]);
     for (const scene of Object.values(SCENES)) expect(scene.expect).toMatchObject({ fr: expect.any(String), en: expect.any(String) });
+    expect(SCENES.salon.expect.fr).toBe("Salon Cèdre & Ciseaux"); // the heading, there on every device
     expect(SCENES.look.signedIn).toBe(true);
     expect(SCENES.storefront.signedIn).toBe(false);
   });
@@ -37,6 +40,7 @@ describe("shots-storefront (the captures of #261 on a seeded database)", () => {
     expect(source).not.toMatch(/password:\s*["'`][^"'`]{6,}["'`]/i);
     expect(source).toMatch(/finally \{[\s\S]*docker[\s\S]*"rm", "-f"/);
     expect(source).toContain('localStorage.setItem("kz-theme", t)');
+    expect(source).toContain('reducedMotion: "reduce"'); // the revealed sections are in the shot
     expect(source).toContain("features.storefrontTemplates");
     expect(source).toMatch(/const attempt = new pg\.Client/); // a failed pg Client cannot reconnect: one per attempt
   });
