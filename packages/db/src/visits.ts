@@ -6,7 +6,7 @@ import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 
 import type { Db } from "./client";
 import { openField } from "./crypto";
-import { appointments, bookings, clientConsents, clients, dependants, mailOutbox, services, shops, shopZones, visitReports } from "./schema";
+import { appointments, bookings, clientConsents, clients, dependants, mailOutbox, services, shops, shopZones, staff, visitReports } from "./schema";
 import { ShopError } from "./service-shop";
 
 /**
@@ -42,7 +42,14 @@ export interface DayVisit {
 }
 
 /** The worker's visits of one local day (cancelled ones excluded), with who and what is booked on each. */
-export async function dayVisits(db: Db, shopId: string, day: string): Promise<DayVisit[]> {
+/** Narrows an agenda to the appointments assigned to one person (a staff member's own agenda); absent, the whole shop's. */
+export interface AgendaScope {
+  staffAccountId?: string;
+}
+
+const assignedTo = (staffAccountId: string) => sql`${appointments.staffId} IN (SELECT ${staff.id} FROM ${staff} WHERE ${staff.accountId} = ${staffAccountId})`;
+
+export async function dayVisits(db: Db, shopId: string, day: string, scope: AgendaScope = {}): Promise<DayVisit[]> {
   const [shop] = await db.select({ timezone: shops.timezone }).from(shops).where(eq(shops.id, shopId));
   if (!shop) return refuse("AK_SHOP_UNKNOWN");
   const visits = await db
@@ -50,7 +57,7 @@ export async function dayVisits(db: Db, shopId: string, day: string): Promise<Da
     .from(appointments)
     .innerJoin(services, eq(services.id, appointments.serviceId))
     .leftJoin(shopZones, eq(shopZones.id, appointments.zoneId))
-    .where(and(eq(appointments.shopId, shopId), sql`${appointments.status} <> 'cancelled'`, sql`(lower(${appointments.during}) AT TIME ZONE ${shop.timezone})::date = ${day}::date`))
+    .where(and(eq(appointments.shopId, shopId), scope.staffAccountId ? assignedTo(scope.staffAccountId) : undefined, sql`${appointments.status} <> 'cancelled'`, sql`(lower(${appointments.during}) AT TIME ZONE ${shop.timezone})::date = ${day}::date`))
     .orderBy(sql`lower(${appointments.during})`);
   if (visits.length === 0) return [];
   const rows = await db
@@ -110,7 +117,7 @@ export interface CalendarDay {
 }
 
 /** What the walker's calendar shows: per local day of `from`..`to` (both included), how many visits and bookings there are (cancelled ones excluded). */
-export async function visitDays(db: Db, shopId: string, from: string, to: string): Promise<CalendarDay[]> {
+export async function visitDays(db: Db, shopId: string, from: string, to: string, scope: AgendaScope = {}): Promise<CalendarDay[]> {
   if (!DAY.test(from) || !DAY.test(to) || from > to || (Date.parse(to) - Date.parse(from)) / 86_400_000 >= CALENDAR_MAX_DAYS) return refuse("AK_RANGE_INVALID");
   const [shop] = await db.select({ timezone: shops.timezone }).from(shops).where(eq(shops.id, shopId));
   if (!shop) return refuse("AK_SHOP_UNKNOWN");
@@ -121,6 +128,7 @@ export async function visitDays(db: Db, shopId: string, from: string, to: string
       FROM appointments a
       LEFT JOIN bookings b ON b.appointment_id = a.id AND b.status = 'booked'
      WHERE a.shop_id = ${shopId} AND a.status <> 'cancelled'
+       ${scope.staffAccountId ? sql`AND a.staff_id IN (SELECT s.id FROM staff s WHERE s.account_id = ${scope.staffAccountId})` : sql``}
        AND (lower(a.during) AT TIME ZONE ${shop.timezone})::date BETWEEN ${from}::date AND ${to}::date
      GROUP BY 1 ORDER BY 1`);
   return rows.rows as unknown as CalendarDay[];

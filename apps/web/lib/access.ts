@@ -1,4 +1,4 @@
-import { ownClient, SHOP_ROLES, shopClient, shopOfMember,type ShopPermission } from "@akinaza/db";
+import { ownClient, SHOP_ROLES, shopClient, shopOfMember, type ShopPermission, type ShopRole } from "@akinaza/db";
 import { can } from "@krizaka/auth";
 import { cookies, headers } from "next/headers";
 
@@ -47,7 +47,7 @@ export async function requireSession(req: Request): Promise<Session> {
 
 /** The API caller's session, or null when there is none (a public page asking who is there). */
 export async function optionalSession(req: Request): Promise<Session | null> {
-  return resolveSession(cookieToken(req.headers.get("cookie")));
+  return resolveSession(sessionTokenOf(req.headers));
 }
 
 export async function requireAdmin(req: Request): Promise<Session> {
@@ -82,6 +82,13 @@ export async function requireShop(req: Request, permission: ShopPermission) {
   if (!can(SHOP_ROLES, member.role, permission)) throw refuse(403, "FORBIDDEN", "Your role does not allow this", { permission });
   return { session, shop: member.shop, role: member.role };
 }
+
+/**
+ * The agenda a member reads: the whole shop's for whoever handles its bookings (owner, manager), only the appointments
+ * assigned to them otherwise (staff: their own agenda, as the web's Today). Data, from the roles: never a role's name.
+ */
+export const agendaScope = (role: ShopRole, accountId: string): { staffAccountId?: string } =>
+  can(SHOP_ROLES, role, "bookings") ? {} : { staffAccountId: accountId };
 
 /** The shop's owner (the settings, billing, deletion — everything). */
 export const requireOwner = (req: Request) => requireShop(req, "settings");
