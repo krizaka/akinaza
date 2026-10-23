@@ -7,6 +7,7 @@ import type { Db, Tx } from "./client";
 import { openField, sealField } from "./crypto";
 import { ShopError } from "./errors";
 import { shopPageConfigOf, type ShopPageConfig } from "./shop-page";
+import { type ShopLanguages, shopLanguagesOf, type StoredTranslation, translationsOf } from "./shop-translations";
 import { appointments, bookings, memberships, clients, dependants, daysOff, MediaRole, schedules, services, shopFormerSlugs, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
 import { recordConsent } from "./shop-ops";
 
@@ -403,6 +404,9 @@ export interface PublicShop {
   rules: Pick<typeof shopRules.$inferSelect, "cancellationHours" | "bookingHorizonDays">;
   media: { cover: PublicMedia | null; gallery: PublicMedia[] };
   pageConfig?: ShopPageConfig;
+  /** The languages the owner offers, and the translated texts (read by the page: the source language when a text is missing). */
+  languages: ShopLanguages;
+  translations: StoredTranslation[];
   /** The service to tag « Popular », from real bookings; null when none stands out. */
   popularServiceId: string | null;
 }
@@ -420,9 +424,11 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
   const full = await loadShop(db, row);
   const team = await activeStaff(db, row.id);
   const everyone = team.length > 1 ? await db.select().from(schedules).where(inArray(schedules.staffId, team.map((m) => m.id))) : full.windows;
-  const [media, pageConfig, counts] = await Promise.all([
+  const [media, pageConfig, languages, translations, counts] = await Promise.all([
     db.select().from(shopMedia).where(eq(shopMedia.shopId, row.id)).orderBy(asc(shopMedia.position)),
     shopPageConfigOf(db, row.id),
+    shopLanguagesOf(db, row.id),
+    translationsOf(db, row.id),
     db.execute(sql`
       SELECT a.service_id, count(b.id)::int AS bookings
         FROM bookings b JOIN appointments a ON a.id = b.appointment_id
@@ -441,6 +447,8 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
     rules: { cancellationHours: full.rules.cancellationHours, bookingHorizonDays: full.rules.bookingHorizonDays },
     media: { cover: media.filter((m) => m.role === MediaRole.Cover).map(publicMedia)[0] ?? null, gallery: media.filter((m) => m.role === MediaRole.Gallery).map(publicMedia) },
     pageConfig,
+    languages,
+    translations,
     popularServiceId: popularServiceId(full.services.map((s) => ({ serviceId: s.id, bookings: bookingCounts.find((c) => c.serviceId === s.id)?.bookings ?? 0 }))),
   };
 }

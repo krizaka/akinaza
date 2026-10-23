@@ -360,7 +360,12 @@
       "REQUEST_UNKNOWN": "This request no longer exists.",
       "REQUESTS_FULL": "You already keep 20 requests here: delete one first.",
       "REQUEST_FILES_FULL": "A request keeps at most 5 files.",
-      "UPLOAD_NOT_ALLOWED": "Only photos (JPEG, PNG, WebP) and PDFs are accepted."
+      "UPLOAD_NOT_ALLOWED": "Only photos (JPEG, PNG, WebP) and PDFs are accepted.",
+      "LANGUAGE_NOT_ALLOWED": "That language is not offered on Akinaza.",
+      "LANGUAGE_NOT_ENABLED": "Turn that language on first.",
+      "TRANSLATION_LIMIT": "You have used today's translations. Try again tomorrow.",
+      "TRANSLATION_UNAVAILABLE": "Automatic translation is not available right now.",
+      "FEATURE_OFF": "This feature is switched off."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -1282,6 +1287,43 @@
         "button": "Stop it",
         "done": "Done: the Monday brief will no longer be e-mailed to you.",
         "invalid": "This link leads nowhere: it may have been used already."
+      }
+    },
+    "shopLanguages": {
+      "title": "Languages of your page",
+      "intro": "Write your page once. Offer it in other languages: an automatic translation you can edit, text by text.",
+      "open": "Choose the languages",
+      "back": "Back to your shop page",
+      "languages": "Languages",
+      "source": "The language you write in",
+      "sourceHint": "Your texts are written in this language; the others are translated from it.",
+      "sourceBadge": "Your language",
+      "offer": "Offer the page in {language}",
+      "allowedHint": "A language that is turned off shows the page in your own language.",
+      "saveLanguages": "Save the languages",
+      "unavailable": "Automatic translation is not available yet. You can still write each text yourself.",
+      "translate": "Translate",
+      "translateOne": "Translate this text",
+      "redo": "Redo the translation",
+      "save": "Save my wording",
+      "autoMark": "Texts marked « translated automatically » have not been read by you yet: read them and edit them if needed.",
+      "runs": "{used} of {limit} translations used today.",
+      "nothing": "Nothing to translate yet: fill in your tagline, your story and your services first.",
+      "ownHint": "You wrote this text yourself in this language: change it from the shop page.",
+      "staleHint": "Your original text changed since this translation was made.",
+      "fields": {
+        "tagline": "Tagline",
+        "bio": "Your story",
+        "name": "Service name",
+        "description": "Service description",
+        "included": "What is included"
+      },
+      "state": {
+        "own": "Written by you",
+        "missing": "Not translated",
+        "auto": "Translated automatically",
+        "edited": "Edited by you",
+        "stale": "To review"
       }
     }
   }

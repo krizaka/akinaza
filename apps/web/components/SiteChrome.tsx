@@ -23,9 +23,10 @@ const MENU = [
  * the language, sign-in and the one action. No version chip (the version is in the footer), no family switcher, no link
  * to another product.
  */
-export function SiteHeader({ locale, current, path }: { locale: Locale; current: PageId; path?: string }) {
+export function SiteHeader({ locale, current, path, languages: offered, contentLocale }: { locale: Locale; current: PageId; path?: string; /** The languages the page is offered in (a shop page: the owner's list); default: the product's own. */ languages?: readonly string[]; /** The language of the page's content when it is not the product's (Spanish). */ contentLocale?: string }) {
   const t = translator(locale);
-  const languages = languagesFor(path ?? pagePath(locale, current));
+  const languages = languagesFor(path ?? pagePath(locale, current), offered);
+  const currentLanguage = contentLocale ?? locale;
   const home = pagePath(locale, "home");
   const words: BarWords = { signIn: t("chrome.signIn"), tryIt: t("chrome.tryIt"), openApp: t("chrome.openApp"), account: t("chrome.account"), settings: t("chrome.settings"), language: t("chrome.languageLabel"), theme: t("chrome.themeToggle"), signOut: t("chrome.signOut") };
   const items = MENU.map((m) => ({ id: m.id, icon: m.icon, href: m.path(locale), active: m.page === current }));
@@ -54,7 +55,7 @@ export function SiteHeader({ locale, current, path }: { locale: Locale; current:
             <ThemeToggle label={t("chrome.themeToggle")} variant="ghost" />
           </span>
           <span className="hidden md:inline-flex">
-            <NavBar.Language label={t("chrome.languageLabel")} current={locale} languages={languages} linkAs={Link} />
+            <NavBar.Language label={t("chrome.languageLabel")} current={currentLanguage} languages={languages} linkAs={Link} />
           </span>
           <BarSession locale={locale} words={words} placement="bar" />
 
@@ -69,7 +70,7 @@ export function SiteHeader({ locale, current, path }: { locale: Locale; current:
             </div>
             <NavBar.MobilePreferences label={t("chrome.preferences")}>
               <ThemeToggle label={t("chrome.themeToggle")} variant="ghost" />
-              <NavBar.Language label={t("chrome.languageLabel")} current={locale} languages={languages} linkAs={Link} />
+              <NavBar.Language label={t("chrome.languageLabel")} current={currentLanguage} languages={languages} linkAs={Link} />
             </NavBar.MobilePreferences>
             <BarSession locale={locale} words={words} placement="panel" />
           </NavBar.Mobile>

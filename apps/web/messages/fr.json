@@ -360,7 +360,12 @@
       "REQUEST_UNKNOWN": "Cette demande n'existe plus.",
       "REQUESTS_FULL": "Vous gardez déjà 20 demandes ici : supprimez-en une d'abord.",
       "REQUEST_FILES_FULL": "Une demande garde au plus 5 fichiers.",
-      "UPLOAD_NOT_ALLOWED": "Seules les photos (JPEG, PNG, WebP) et les PDF sont acceptés."
+      "UPLOAD_NOT_ALLOWED": "Seules les photos (JPEG, PNG, WebP) et les PDF sont acceptés.",
+      "LANGUAGE_NOT_ALLOWED": "Cette langue n'est pas offerte sur Akinaza.",
+      "LANGUAGE_NOT_ENABLED": "Activez d'abord cette langue.",
+      "TRANSLATION_LIMIT": "Vous avez utilisé les traductions du jour. Réessayez demain.",
+      "TRANSLATION_UNAVAILABLE": "La traduction automatique n'est pas disponible pour le moment.",
+      "FEATURE_OFF": "Cette fonction est désactivée."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -1282,6 +1287,43 @@
         "button": "Ne plus le recevoir",
         "done": "C'est fait : le point du lundi ne vous sera plus envoyé par courriel.",
         "invalid": "Ce lien ne mène nulle part : il a peut-être déjà servi."
+      }
+    },
+    "shopLanguages": {
+      "title": "Langues de votre page",
+      "intro": "Écrivez votre page une fois. Offrez-la dans d'autres langues : une traduction automatique que vous pouvez modifier, texte par texte.",
+      "open": "Choisir les langues",
+      "back": "Retour à votre page boutique",
+      "languages": "Langues",
+      "source": "La langue dans laquelle vous écrivez",
+      "sourceHint": "Vos textes sont écrits dans cette langue ; les autres en sont traduites.",
+      "sourceBadge": "Votre langue",
+      "offer": "Offrir la page en {language}",
+      "allowedHint": "Une langue désactivée affiche la page dans votre langue.",
+      "saveLanguages": "Enregistrer les langues",
+      "unavailable": "La traduction automatique n'est pas encore disponible. Vous pouvez quand même écrire chaque texte vous-même.",
+      "translate": "Traduire",
+      "translateOne": "Traduire ce texte",
+      "redo": "Refaire la traduction",
+      "save": "Enregistrer ma version",
+      "autoMark": "Les textes marqués « traduit automatiquement » n'ont pas encore été relus par vous : relisez-les et modifiez-les au besoin.",
+      "runs": "{used} traductions sur {limit} utilisées aujourd'hui.",
+      "nothing": "Rien à traduire pour l'instant : remplissez d'abord votre accroche, votre histoire et vos services.",
+      "ownHint": "Vous avez écrit ce texte vous-même dans cette langue : modifiez-le depuis la page boutique.",
+      "staleHint": "Votre texte d'origine a changé depuis cette traduction.",
+      "fields": {
+        "tagline": "Accroche",
+        "bio": "Votre histoire",
+        "name": "Nom du service",
+        "description": "Description du service",
+        "included": "Ce qui est inclus"
+      },
+      "state": {
+        "own": "Écrit par vous",
+        "missing": "Non traduit",
+        "auto": "Traduit automatiquement",
+        "edited": "Modifié par vous",
+        "stale": "À revoir"
       }
     }
   }

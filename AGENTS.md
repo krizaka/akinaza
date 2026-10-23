@@ -39,6 +39,11 @@
   pre-ticked, append-only; erasure blanks every personal field and keeps the invoices tax law requires (six years). The
   Loi 25 pack of Orazaka (orazaka-packs#14) is reused for the consent texts and the incident register when it lands.
 - **No AI in the product, in its screens or its words.** Akinaza says what it does (appointments, invoices, tax figures) in plain words; never « IA », « intelligent » or « révolutionnaire ». If a model is ever needed, it goes through Orazaka, behind a port, and the epic krizaka/akinaza#161 is reopened first.
+  **One model is now involved (2026-10-23, #258, decision recorded on #161): translating the shop page's texts.** It goes through the `TranslationPort`
+  (`packages/db/src/translation-port.ts`; the adapter in `apps/web/lib/translation.ts` calls the Orazaka Studio `text-translation`, krizaka/orazaka-packs#119).
+  Only the page's own texts and a glossary (shop name, service names, street address) are sent, never anything about a client. The owner sees
+  « traduction automatique » (never « IA »), edits any text, an edited text is never overwritten without asking, and a text whose source changed is flagged « à revoir ».
+  The administrator holds `features.storefrontTranslation`, `storefront.languages.allowed` and `limits.translationsPerShopPerDay`. Nothing else in Akinaza uses a model: the ledger, the figures and the tax return stay deterministic.
 
 ## 3. The product is independent
 

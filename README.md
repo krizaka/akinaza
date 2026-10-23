@@ -33,6 +33,11 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
   working papers; **Akinaza
   prepares; the merchant files.** Nothing is transmitted to any government.
 - **Bookings** — services, staff, schedules; the database refuses a double booking (`EXCLUDE` on time ranges).
+- **The shop page in other languages** — the owner writes in French or English and offers the page in the languages they choose, inside the
+  administrator's list (`storefront.languages.allowed`; `/fr`, `/en` and `/es` under `/s/<slug>`, a language that is off shows the source language).
+  Each text is translated automatically through Orazaka (the `TranslationPort`, the Studio `text-translation`), stored with its status (`auto` or
+  `edited`), its run and the version of its source, and edited by the owner on « Langues de votre page »; an edited text is never overwritten, a changed
+  source flags the translation « à revoir ». Admin: `features.storefrontTranslation` (off until the Studio is wired) and `limits.translationsPerShopPerDay`.
 - **Live storefront** — team states and free times refresh from the shop's slots channel while the page is visible.
   SSE carries only a slots-changed signal, never booking details; without it, the visit-time render remains.
   Audited database settings in the admin configuration control `realtime.storefront.enabled` (default `true`),

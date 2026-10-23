@@ -1,4 +1,4 @@
-import { OrganizeError, ShopError } from "@akinaza/db";
+import { OrganizeError, ShopError, TranslationUnavailable } from "@akinaza/db";
 import { SettingsError } from "@krizaka/settings";
 import { z, ZodError } from "zod";
 
@@ -25,6 +25,7 @@ const SHOP_STATUS: Record<string, number> = {
   AK_VISIT_CANCELLED: 409, AK_VISIT_NOT_DONE: 409, AK_NOTE_INVALID: 400, AK_PHOTO_INVALID: 400, AK_PHOTO_TOO_LARGE: 413, AK_NO_CONSENT: 409, AK_CLIENT_UNREACHABLE: 409, AK_NO_REPORT: 409, AK_LINE_PRICE: 400, AK_INVOICE_RECIPIENT: 400, AK_INVOICE_SEND_LIMIT: 429,
   AK_REQUEST_UNKNOWN: 404, AK_REQUESTS_FULL: 409, AK_REQUEST_FILES_FULL: 409,
   AK_TIME_OFF_DATE: 400, AK_TIME_OFF_ORDER: 400, AK_TIME_OFF_TOO_LONG: 400,
+  AK_LANGUAGE_NOT_ALLOWED: 400, AK_LANGUAGE_NOT_ENABLED: 409, AK_TRANSLATION_LIMIT: 429, AK_TRANSLATION_UNKNOWN: 404,
 };
 
 /** Runs a route handler: an HttpError becomes its JSON answer; anything else is a 500 that leaks nothing. */
@@ -45,6 +46,9 @@ async function dispatch(run: () => Promise<Response>, requestId: string): Promis
     }
     if (error instanceof ShopError) {
       return Response.json({ error: error.code, code: error.code.replace(/^AK_/, "") }, { status: SHOP_STATUS[error.code] ?? 400 });
+    }
+    if (error instanceof TranslationUnavailable) {
+      return Response.json({ error: "Translation is unavailable", code: "TRANSLATION_UNAVAILABLE", reason: error.reason }, { status: 503 });
     }
     if (error instanceof OrganizeError) {
       return Response.json({ error: error.message, code: error.code }, { status: error.status });
