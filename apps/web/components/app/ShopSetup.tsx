@@ -60,8 +60,8 @@ export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /**
         </p>
       </header>
       {data.page && data.shopId ? (
-        <Tabs.Root routeKey="tab" routeValues={TABS} defaultValue={tab}>
-          <Tabs.List aria-label={say("shopSetup.sections.label")}>
+        <Tabs.Root className="min-w-0" routeKey="tab" routeValues={TABS} defaultValue={tab}>
+          <Tabs.List aria-label={say("shopSetup.sections.label")} className="max-w-full overflow-x-auto">
             {TABS.map((tab) => <Tabs.Trigger key={tab} value={tab}>{say(`shopSetup.sections.tabs.${tab}`)}</Tabs.Trigger>)}
           </Tabs.List>
           <Tabs.Content value="identity" className="pt-4"><IdentitySection page={data.page} /></Tabs.Content>
