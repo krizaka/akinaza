@@ -22,20 +22,15 @@ export interface BriefCard {
 type Result = Partial<Record<"sent" | "pending" | "failed" | "skipped", number>>;
 
 /**
- * « Le point du lundi »: at most three cards, each one fact, one figure, one button — readable in five seconds. The figures
- * are the shop's own (its appointments, its invoices), the assumption written under them; nothing is sent without a press.
+ * « Le point du lundi » (its own page, `/brief`): at most three cards, each one fact, one figure, one button — readable in five
+ * seconds. The figures are the shop's own (its appointments, its invoices), the assumption written under them; nothing is sent
+ * without a press. Today announces it with `BriefBanner`.
  */
 export function MondayBrief({ items, done, services, publicPage }: { items: BriefCard[]; done: Record<string, Result>; services: Record<string, { fr: string; en: string }>; publicPage: boolean }) {
   const { say, locale } = useSay();
   const money = (cents: number) => formatMoney(cents, locale);
   return (
-    <section aria-labelledby="monday-brief" className="flex flex-col gap-3">
-      <header className="flex flex-col gap-0.5">
-        <h2 id="monday-brief" className="font-display text-lg font-bold text-fg">
-          {say("brief.title")}
-        </h2>
-        <p className="text-sm text-fg-secondary">{items.length ? say("brief.lead") : say("brief.empty")}</p>
-      </header>
+    <section aria-label={say("brief.title")} className="flex flex-col gap-3">
       {items.length > 0 && (
         <ul className="grid gap-3 md:grid-cols-3">
           {items.map((item) => (

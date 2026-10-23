@@ -178,6 +178,12 @@ Feedback: the pinned Discussion of the repository.
   invoice preview on Today (invoices have their own page); a full-width action button on every row.
 - **Cost**: no week view yet; « expected revenue » counts booked and done appointments at their service's price.
 - **Signal we are wrong**: owners who open Invoices to know what the day brings, or ask for a week.
+- **Every trade (UX review 2026-10, K2, decided on #289)**: the owner and a manager read this agenda whatever the trade —
+  a dog walker's owner too; a walk's row reads its service and its dogs, and the side sheet carries what the walker's card
+  carried (the dogs, the owners and a way to call, the access notes folded, start and end, the report). The walker's cards
+  stay for staff on their phone (`lib/day.ts` `dayView`). The day is a `DashboardLayout`: the figures, the agenda beside
+  the last invoices (under it on a phone), the strip of days above; « Le point du lundi » is a banner under the heading
+  only when it has something to say, and lives in full at `/brief` — it never comes before the day.
 
 ## The shop page belongs to its owner
 
