@@ -20,8 +20,11 @@ describe("the proxy of a deployment closed to search engines (APP_SEARCH_INDEXIN
   });
 
   it("leaves an open deployment alone", () => {
-    expect(get("/en").headers.get("x-robots-tag")).toBeNull();
-    expect(get("/sitemap.xml").status).toBe(200);
+    const open = (path: string) => proxy(new NextRequest(`https://www.akinaza.com${path}`, { headers: { host: "www.akinaza.com" } }));
+    expect(open("/en").headers.get("x-robots-tag")).toBeNull();
+    expect(open("/sitemap.xml").status).toBe(200);
+    // ... but a dev.* host is never open, even when the deployment says it is (#249).
+    expect(get("/en").headers.get("x-robots-tag")).toBe("noindex, nofollow");
   });
 });
 

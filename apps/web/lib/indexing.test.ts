@@ -28,7 +28,14 @@ describe("the public host is indexed, the dev host never (epic krizaka/.github#1
     expect(indexableOn("dev.akinaza.com", ENV)).toBe(false);
     expect(indexableOn("admin.akinaza.com", ENV)).toBe(false);
     expect(indexableOn("anything.test", ENV)).toBe(false);
-    expect(indexableOn("dev.akinaza.com", { APP_SEARCH_INDEXING: "on" })).toBe(true);
+  });
+
+  it("a dev.* host is never indexable, whatever the configuration says (#249)", () => {
+    for (const config of [{ APP_SEARCH_INDEXING: "on" }, {}, { APP_PUBLIC_URL: "https://dev.akinaza.com" }, { APP_DEV_HOST: "other.test" }]) {
+      expect(indexableOn("dev.akinaza.com", config)).toBe(false);
+      expect(indexableOn("DEV.akinaza.com:443", config)).toBe(false);
+    }
+    expect(indexableOn("www.akinaza.com", { APP_SEARCH_INDEXING: "on" })).toBe(true);
   });
 
   it("the dev host is the one APP_DEV_HOST names", () => {
