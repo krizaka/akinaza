@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { type SetupData, ShopSetupView } from "@/components/app/ShopSetup";
 import { db } from "@/lib/db";
 import { proposalsFor } from "@/lib/default-media-proposals";
-import { defaultMediaRules } from "@/lib/default-media-rules";
+import { defaultMediaSettings } from "@/lib/default-media-settings";
 import { readEnv } from "@/lib/env";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
@@ -27,7 +27,7 @@ export default async function ShopSetupPage({ params }: { params: Promise<{ loca
   if (!shop) return <ShopSetupView data={{ page: null, shopId: null, pageConfig: defaultShopPageConfig(), publicUrl: null, zones: [], services: [], windows: [], daysOff: [], rules: null, media: { cover: null, gallery: [] }, proposed: null }} />;
   const setup = await loadShop(db(), shop);
   const [media, pageConfig] = await Promise.all([shopMediaOf(db(), shop.id), shopPageConfigOf(db(), shop.id)]);
-  const rules = await defaultMediaRules();
+  const rules = await defaultMediaSettings();
   const proposed = rules.enabled ? { config: pageConfig, shopType: shopTypeOf(shop.businessType, pageConfig.shopType), proposals: proposalsFor(rules.types), media: { cover: media.cover ? line(media.cover) : null, gallery: media.gallery.map(line) } } : null;
   const data: SetupData = {
     proposed,

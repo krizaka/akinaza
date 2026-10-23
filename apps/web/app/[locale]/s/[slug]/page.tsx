@@ -8,7 +8,7 @@ import { StorefrontLive } from "@/components/shop/StorefrontLive";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { db } from "@/lib/db";
-import { proposedDefaults } from "@/lib/default-media-rules";
+import { proposedDefaults } from "@/lib/default-media-settings";
 import { asLocale, asPageLocale, getDictionary, uiLocaleOf } from "@/lib/i18n";
 import { appSettings, shopSectionFeatures } from "@/lib/settings";
 import { loadPublicShop, loadPublicShopOrMove } from "@/lib/shop-page";
