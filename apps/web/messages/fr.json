@@ -366,7 +366,9 @@
       "TRANSLATION_LIMIT": "Vous avez utilisé les traductions du jour. Réessayez demain.",
       "TRANSLATION_UNAVAILABLE": "La traduction automatique n'est pas disponible pour le moment.",
       "FEATURE_OFF": "Cette fonction est désactivée.",
-      "SHOP_LIMIT": "Vous avez atteint le nombre de boutiques permis."
+      "SHOP_LIMIT": "Vous avez atteint le nombre de boutiques permis.",
+      "SECTIONS_CUSTOM": "Choisissez de garder votre ordre de sections ou celui du modèle.",
+      "TEMPLATE_UNKNOWN": "Ce modèle n'est pas disponible."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -595,7 +597,8 @@
           "reels": "Vidéos courtes",
           "announcements": "Annonces",
           "reviews": "Avis",
-          "follow": "Suivre"
+          "follow": "Suivre",
+          "trust": "Histoire, contact et politiques"
         }
       },
       "page": {
@@ -1626,6 +1629,56 @@
           "2": "Salle de réunion vide avec une longue table en bois",
           "3": "Étagère de livres et petite plante dans un bureau lumineux"
         }
+      }
+    },
+    "templates": {
+      "salon-vitrine": {
+        "name": "Salon",
+        "intent": "Lumineux et aéré, miroirs et plantes."
+      },
+      "salon-carte": {
+        "name": "Sur rendez-vous",
+        "intent": "Le menu des coupes et colorations, la réservation d'abord."
+      },
+      "coaching-vitrine": {
+        "name": "Studio",
+        "intent": "De l'énergie et de l'espace, les photos d'abord."
+      },
+      "coaching-histoire": {
+        "name": "Mon approche",
+        "intent": "L'histoire du coach d'abord."
+      },
+      "workshop-histoire": {
+        "name": "L'atelier",
+        "intent": "Le métier, les outils et les mains."
+      },
+      "workshop-carte": {
+        "name": "Réparations et sur mesure",
+        "intent": "Une liste de prix, la réservation d'abord."
+      },
+      "cleaning-vitrine": {
+        "name": "Frais et net",
+        "intent": "Lumineux, avec des forfaits simples."
+      },
+      "cleaning-carte": {
+        "name": "Forfaits",
+        "intent": "Ce qui est inclus, à quel prix."
+      },
+      "pets-histoire": {
+        "name": "Le quartier",
+        "intent": "Des promenades, des photos et un mot après chaque sortie."
+      },
+      "pets-vitrine": {
+        "name": "Promeneur",
+        "intent": "Les zones et l'équipe."
+      },
+      "consulting-carte": {
+        "name": "Bureau",
+        "intent": "Calme, tarifs horaires et forfaits."
+      },
+      "consulting-histoire": {
+        "name": "Mon travail",
+        "intent": "La démarche et les cas d'abord."
       }
     }
   }

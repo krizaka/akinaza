@@ -1,4 +1,4 @@
-import { bookingPreselect, localDay, MEMBER_STATE, type MemberDay, memberStateAt, openStatus, weekdayOf, weekSchedule } from "@akinaza/core";
+import { bookingPreselect, localDay, MEMBER_STATE, type MemberDay, memberStateAt, openStatus, resolveTemplate, weekdayOf, weekSchedule } from "@akinaza/core";
 import type { PublicMedia, PublicShop } from "@akinaza/db";
 
 import type { DefaultImage, ResolvedDefaults } from "@/lib/default-media";
@@ -71,7 +71,9 @@ export interface StorefrontView {
   /** The photos are the trade's proposed pictures, not the shop's own (#267): the page says so, never « Photos de {shop} ». */
   galleryIllustrative: boolean;
   logoUrl: string | null;
-  sections: { id: "services" | "team" | "hours" | "zones" | "gallery" | "wall" | "reels" | "announcements" | "reviews" | "follow"; visible: boolean }[];
+  sections: { id: "services" | "team" | "hours" | "zones" | "trust" | "gallery" | "wall" | "reels" | "announcements" | "reviews" | "follow"; visible: boolean }[];
+  /** The template the shop applied (#261), or null: a shop with none renders exactly as before. Its order is already in `sections`; the variants and the hue are drawn here. */
+  template: { id: string; version: number; layout: string; hue: string; variants: Record<string, string> } | null;
   preparedSections: Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>;
 }
 
@@ -221,8 +223,10 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; /** T
   const bio = own("shop", page.shop.id, "bio", page.shop.bioFr, page.shop.bioEn);
   const phone = page.shop.publicPhone;
   const email = page.shop.publicEmail;
-  const pageSections = page.pageConfig?.sections ?? ["services", "team", "hours", "zones", "gallery", "wall", "reels", "announcements", "reviews", "follow"].map((id) => ({ id, visible: true }));
+  const pageSections = page.pageConfig?.sections ?? ["services", "team", "hours", "zones", "trust", "gallery", "wall", "reels", "announcements", "reviews", "follow"].map((id) => ({ id, visible: true }));
   const enabled = input.enabledUpcomingSections ?? {};
+  // A shop that never applied a template (or whose template the catalogue no longer holds) renders exactly as it always did.
+  const appliedTemplate = resolveTemplate({ templateId: page.pageConfig?.templateId, templateVersion: page.pageConfig?.templateVersion });
   const preparedSections = { wall: enabled.wall ?? false, reels: enabled.reels ?? false, announcements: enabled.announcements ?? false, reviews: enabled.reviews ?? false, follow: enabled.follow ?? false };
 
   return {
@@ -249,6 +253,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; /** T
       ...section,
       visible: section.visible && (section.id in preparedSections ? preparedSections[section.id as keyof typeof preparedSections] : true),
     })) as StorefrontView["sections"],
+    template: appliedTemplate && { id: appliedTemplate.id, version: appliedTemplate.version, layout: appliedTemplate.layout, hue: appliedTemplate.hue, variants: Object.fromEntries(appliedTemplate.sections.map((x) => [x.id, x.variant])) },
     preparedSections,
   };
 }
