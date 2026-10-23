@@ -16,7 +16,7 @@ readable from it.
 ```bash
 pnpm install
 cd apps/desktop
-pnpm test                         # Rust tests (the sections' addresses, the menu's words)
+pnpm check                        # Rust tests (the sections' addresses, the menu's words); on macOS, as in desktop.yml
 AKINAZA_APP_URL=http://localhost:3000 pnpm tauri dev
 ```
 

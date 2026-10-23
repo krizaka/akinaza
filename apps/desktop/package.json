@@ -5,9 +5,8 @@
   "description": "Akinaza for the Mac (Tauri 2): the owner's back office in a native window.",
   "license": "Apache-2.0",
   "scripts": {
-    "typecheck": "true",
-    "test": "cargo test --manifest-path src-tauri/Cargo.toml",
-    "check": "pnpm test",
+    "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
+    "check": "pnpm test:rust",
     "tauri": "tauri",
     "build:app": "tauri build --bundles dmg --target aarch64-apple-darwin"
   },
