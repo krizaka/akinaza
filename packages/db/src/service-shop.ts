@@ -279,7 +279,7 @@ export async function removeDayOff(db: Db, shopId: string, day: string): Promise
 
 /** The people who work at the shop (with or without a sign-in), in the order they joined: whom time off can be set for. */
 export async function shopStaff(db: Db, shopId: string): Promise<{ id: string; name: string }[]> {
-  return db.select({ id: staff.id, name: staff.name }).from(staff).where(and(eq(staff.shopId, shopId), eq(staff.active, true))).orderBy(asc(staff.createdAt));
+  return (await activeStaff(db, shopId)).map((m) => ({ id: m.id, name: m.name }));
 }
 
 /** The days of a range, refused in the shop's own codes (a reversed, malformed or too long range). */
