@@ -1,4 +1,4 @@
-import { calendarAnswer, clientsAnswer, dayAnswer, invoicesAnswer, issuedInvoice, shopAnswer } from "@akinaza/core";
+import { calendarAnswer, clientsAnswer, dayAnswer, invoicesAnswer, issuedInvoice, meAnswer, shopAnswer } from "@akinaza/core";
 import type { ApiClient, SessionStore } from "@krizaka/app-client";
 import { z } from "zod";
 
@@ -32,6 +32,8 @@ export function createAkinazaApi(api: Pick<ApiClient, "call">, session: Pick<Ses
       await post("/api/auth/sign-out").catch(() => undefined);
       await session.clearToken();
     },
+    /** Who is signed in (`GET /api/me`, the bearer): what the header's account button shows. */
+    me: () => get(meAnswer, "/api/me").then((r) => r.account ?? null),
     /** The owner's day (today in the shop's time zone when `date` is omitted). */
     day: (date?: string) => get(dayAnswer, `/api/walker/day${date ? `?date=${date}` : ""}`),
     calendar: (from: string, to: string) => get(calendarAnswer, `/api/walker/calendar?from=${from}&to=${to}`).then((r) => r.days),

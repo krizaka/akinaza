@@ -1,0 +1,8 @@
+# The first screen opens: maestro test .maestro/smoke.yaml (a simulator with the app installed).
+appId: com.krizaka.akinaza
+---
+- launchApp:
+    clearState: true
+# Signed out, the app opens on sign-in (in either language): its e-mail field.
+- assertVisible:
+    id: "email"

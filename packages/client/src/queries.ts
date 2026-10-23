@@ -9,6 +9,7 @@ export const keys = defineKeys("akinaza", {
   clients: () => [],
   invoices: () => [],
   shop: () => [],
+  me: () => [],
 });
 
 // @fixed: a screen that shows today refreshes a booking made by a client within the minute
@@ -16,6 +17,7 @@ const DAY_STALE_MS = 30_000;
 
 export function createQueries(api: AkinazaApi) {
   return {
+    me: () => queryOptions({ queryKey: keys.me(), queryFn: api.me }),
     /** The owner's day: today in the shop's time zone when `date` is omitted. */
     day: (date?: string) => queryOptions({ queryKey: keys.day(date), queryFn: () => api.day(date), staleTime: DAY_STALE_MS }),
     calendar: (from: string, to: string) => queryOptions({ queryKey: keys.calendar(from, to), queryFn: () => api.calendar(from, to) }),
