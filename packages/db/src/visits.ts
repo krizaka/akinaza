@@ -99,6 +99,33 @@ export async function dayVisits(db: Db, shopId: string, day: string): Promise<Da
   }));
 }
 
+// @fixed: a calendar screen draws a month; a quarter is the most a phone asks for at once
+const CALENDAR_MAX_DAYS = 93;
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+
+export interface CalendarDay {
+  day: string;
+  visits: number;
+  bookings: number;
+}
+
+/** What the walker's calendar shows: per local day of `from`..`to` (both included), how many visits and bookings there are (cancelled ones excluded). */
+export async function visitDays(db: Db, shopId: string, from: string, to: string): Promise<CalendarDay[]> {
+  if (!DAY.test(from) || !DAY.test(to) || from > to || (Date.parse(to) - Date.parse(from)) / 86_400_000 >= CALENDAR_MAX_DAYS) return refuse("AK_RANGE_INVALID");
+  const [shop] = await db.select({ timezone: shops.timezone }).from(shops).where(eq(shops.id, shopId));
+  if (!shop) return refuse("AK_SHOP_UNKNOWN");
+  const rows = await db.execute(sql`
+    SELECT to_char((lower(a.during) AT TIME ZONE ${shop.timezone})::date, 'YYYY-MM-DD') AS day,
+           count(DISTINCT a.id)::int AS visits,
+           count(b.id)::int AS bookings
+      FROM appointments a
+      LEFT JOIN bookings b ON b.appointment_id = a.id AND b.status = 'booked'
+     WHERE a.shop_id = ${shopId} AND a.status <> 'cancelled'
+       AND (lower(a.during) AT TIME ZONE ${shop.timezone})::date BETWEEN ${from}::date AND ${to}::date
+     GROUP BY 1 ORDER BY 1`);
+  return rows.rows as unknown as CalendarDay[];
+}
+
 /** The shop's local day for an instant — what "today" is for the walker. */
 export async function shopDay(db: Db, shopId: string, now: Date): Promise<string> {
   const [shop] = await db.select({ timezone: shops.timezone }).from(shops).where(eq(shops.id, shopId));
