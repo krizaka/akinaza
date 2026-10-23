@@ -24,6 +24,8 @@ export const SETTINGS = {
   // Invoice e-mails (#229): the most one shop sends per day (UTC), whatever the clients.
   "limits.invoiceEmailsPerShopPerDay": integer("limits", 50, { min: 1, max: 10000, unit: "e-mails" }, GLOBAL_ONLY),
   "limits.webhookEndpoints": integer("limits", 5, { min: 0, max: 50, unit: "endpoints" }, WORKSPACE_SCOPES),
+  // Several shops under one account (#265): the most an owner may run.
+  "limits.shopsPerOwner": integer("limits", 5, { min: 1, max: 50, unit: "shops" }, GLOBAL_ONLY),
   "limits.wallItems": integer("limits", 24, { min: 1, max: 500, unit: "items" }),
   "limits.reelSeconds": integer("limits", 60, { min: 1, max: 300, unit: "seconds" }),
   "limits.reelMegabytes": integer("limits", 40, { min: 1, max: 500, unit: "megabytes" }),

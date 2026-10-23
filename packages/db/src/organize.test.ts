@@ -38,7 +38,7 @@ describe("a shop is an item of « organize »", () => {
   it("gives a shop a description, an avatar and tags, and groups shops into collections of the owner", async () => {
     const owner = await account(t.db, "orga2@example.test");
     const a = (await saveShopPage(t.db, owner.id, page("orga-a"))).shopId;
-    const b = (await saveShopPage(t.db, owner.id, page("orga-b"), { additional: true })).shopId;
+    const b = (await saveShopPage(t.db, owner.id, page("orga-b"), { additional: true, maxShops: 50 })).shopId;
     const o = org();
     await o.profile("shop").describe(owner.id, a, "  Le salon du centre  ");
     await o.profile("shop").setAvatar(owner.id, a, "plain-3", RULES);

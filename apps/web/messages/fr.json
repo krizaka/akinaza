@@ -365,7 +365,8 @@
       "LANGUAGE_NOT_ENABLED": "Activez d'abord cette langue.",
       "TRANSLATION_LIMIT": "Vous avez utilisé les traductions du jour. Réessayez demain.",
       "TRANSLATION_UNAVAILABLE": "La traduction automatique n'est pas disponible pour le moment.",
-      "FEATURE_OFF": "Cette fonction est désactivée."
+      "FEATURE_OFF": "Cette fonction est désactivée.",
+      "SHOP_LIMIT": "Vous avez atteint le nombre de boutiques permis."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -717,6 +718,46 @@
         "browse": "Choisir sur cet appareil",
         "remove": "Retirer {name}",
         "tooBig": "{name} est trop lourd"
+      },
+      "sections": {
+        "label": "Sections de votre page",
+        "saved": "Enregistré.",
+        "save": "Enregistrer cette section",
+        "tabs": {
+          "identity": "Identité",
+          "texts": "Votre page",
+          "contact": "Contact et lieu",
+          "offer": "Ce que vous offrez",
+          "media": "Photos et vidéo",
+          "look": "Apparence",
+          "publish": "Publier"
+        },
+        "identity": {
+          "title": "Identité",
+          "lead": "Qui est la boutique, et l'adresse de sa page.",
+          "legalHint": "Utilisée sur vos factures ; non affichée sur la page."
+        },
+        "texts": {
+          "title": "Votre page, dans vos mots",
+          "lead": "Ce que les visiteurs lisent. Écrivez-le en français et en anglais, côte à côte.",
+          "moreLanguages": "Une autre langue, ou une traduction automatique que vous pouvez modifier :"
+        },
+        "contact": {
+          "title": "Contact et lieu",
+          "lead": "Où vous êtes et comment vous joindre.",
+          "addressPrivate": "Privée : utilisée sur les factures et les papiers de taxes, jamais affichée sur votre page publique."
+        },
+        "publish": {
+          "title": "Publier",
+          "lead": "Votre page n'est visible des clients qu'une fois publiée."
+        }
+      },
+      "addShop": {
+        "title": "Ajouter une boutique",
+        "lead": "Une autre boutique dans le même compte, avec sa propre page. Elle commence non publiée.",
+        "link": "Ajouter une boutique",
+        "back": "Retour à votre page boutique",
+        "submit": "Créer la boutique"
       }
     },
     "shopPage": {

@@ -1,12 +1,8 @@
 import type { BusinessType } from "@akinaza/core";
 import { defaultShopPageConfig } from "@akinaza/db";
-import { KrizakaQueryProvider } from "@krizaka/query";
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import { I18nProvider, VocabularyProvider } from "@/lib/i18n-client";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import { renderIn } from "@/lib/test-i18n";
 
 import { BookingFlow } from "./BookingFlow";
 import { ClientFilePanel } from "./ClientFilePanel";
@@ -19,16 +15,8 @@ vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.reso
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app" }));
 
 const DOG_WORDS = { en: /\b(walks?|walkers?|dogs?|pups?|pets?|leash|breed|vet)\b|Saint-Henri/i, fr: /promenad|chiens?\b|chiot|\ben laisse\b|animal|animaux|vétérin|\brace\b|Saint-Henri/i };
-const MESSAGES = { en: { console: en.console }, fr: { console: fr.console } } as const;
 
-const around = (locale: "en" | "fr", type: BusinessType, node: React.ReactNode) =>
-  renderToStaticMarkup(
-    <I18nProvider locale={locale} messages={MESSAGES[locale] as never}>
-      <KrizakaQueryProvider>
-        <VocabularyProvider type={type}>{node}</VocabularyProvider>
-      </KrizakaQueryProvider>
-    </I18nProvider>,
-  );
+const around = renderIn;
 /** What a reader sees: the text of the markup, without tags. */
 const readable = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, " ");
 
@@ -68,7 +56,7 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
 
   it("the setup page words a studio's page and offers the business type", () => {
     const data = { page: { name: "Krizaka (démo)", legalName: "Technologies Krizaka inc. (démo)", address: "1 rue Exemple", slug: "krizaka-demo", ownerName: "Éric", taglineFr: "", taglineEn: "", published: true, area: "Montréal", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "", businessType: "professional" as const }, shopId: "s", pageConfig: defaultShopPageConfig(), publicUrl: null, zones: [], services: [{ id: "x", nameFr: "Atelier", nameEn: "Workshop", durationMinutes: 180, priceCents: 60_000, capacity: 1, descriptionFr: "", descriptionEn: "", includedFr: [], includedEn: [], priceVaries: false }], media: { cover: null, gallery: [] }, windows: [], daysOff: [], rules: null };
-    const html = around(locale, "professional", <ShopSetupView data={data} />);
+    const html = around(locale, "professional", <ShopSetupView data={data} tab="offer" />);
     // The type picker names both types, by design; everything else is the studio's.
     const text = readable(html).replace(locale === "en" ? /Pet care \(walks, grooming…\)/ : /Soins aux animaux \(promenades, toilettage…\)/, "");
     expect(text).not.toMatch(DOG_WORDS[locale]);
