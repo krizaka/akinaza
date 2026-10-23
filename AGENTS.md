@@ -18,6 +18,13 @@
   phone redraws them, stored content-hashed under `user/akinaza/shops/<shop>/` of the media storage (`MEDIA_STORAGE_*`,
   `MEDIA_CDN_HOSTNAME`), only the CDN address kept. Off (503, the owner pastes an address) until the storage is configured.
 
+- **Proposed images and videos (#267).** So that no section of a storefront is empty, each trade (`SHOP_TYPES` in `@akinaza/core`: salon, coaching,
+  workshop, cleaning, pets, consulting - never a restaurant or a bar) has default media for the slots `cover` (image + silent loop), `gallery` and `service`
+  (`packages/core/src/shop-media.ts`). The files are generated locally and never committed (`apps/web/scripts/default-media/`: FLUX.2 klein through
+  `sd-cli`, ffmpeg loops, `sharp` renditions), live on the media CDN under `site/products/akinaza/defaults/<type>/<slot>/` (hashed names, uploaded with krizaka-com's
+  `cdn-assets.mjs`), and are named by `apps/web/lib/default-media.manifest.json` (the only thing committed). They are neutral pictures: no real person, no text,
+  never presented as the owner's shop. A slot the owner filled is never replaced; the owner chooses a proposal in « Images proposées » or turns them off
+  (`shop_page.use_defaults`); the administrator holds `features.defaultMedia` and `storefront.defaultMedia.types`.
 - **No mobile app in the dev preview.** `apps/mobile` is an unbuilt skeleton, outside the workspace until the mobile phase (A5,
   krizaka/.github#52); the walker's phone is served by the phone-first web app. The Dev preview criteria `mobile.*` are `na` for that
   reason (`dev-preview.json`); the day a mobile build exists, they become real criteria again.

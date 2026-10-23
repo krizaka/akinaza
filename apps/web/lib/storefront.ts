@@ -1,6 +1,7 @@
 import { bookingPreselect, localDay, MEMBER_STATE, type MemberDay, memberStateAt, openStatus, weekdayOf, weekSchedule } from "@akinaza/core";
 import type { PublicMedia, PublicShop } from "@akinaza/db";
 
+import type { DefaultImage, ResolvedDefaults } from "@/lib/default-media";
 import { type Locale, type PageLocale, translator } from "@/lib/i18n";
 import { serviceHref } from "@/lib/journey-paths";
 
@@ -28,6 +29,8 @@ export interface ServiceView {
   tag: string | null;
   /** The booking section with this service chosen (the address says so). */
   href: string;
+  /** A proposed image for the card, from the shop type's defaults (#267); null when the page does not show them. */
+  image: ServiceImage | null;
 }
 
 export interface SlotView {
@@ -43,6 +46,9 @@ export interface DayView {
   sub: string;
   slots: SlotView[];
 }
+
+/** What a default image says to a screen reader, in the page's language. */
+export type ServiceImage = { id: string; alt: string; src: string; sources: DefaultImage["sources"]; width: number; height: number };
 
 export interface StorefrontView {
   name: string;
@@ -132,7 +138,7 @@ function memberView(member: { id: string; name: string }, day: MemberDay | undef
   return { id: member.id, name: member.name, state: label, free: state.kind === MEMBER_STATE.free };
 }
 
-export function buildStorefront(input: { page: PublicShop; locale: Locale; /** The language of the shop's own texts when it is not the product's (a Spanish page); defaults to `locale`. */ contentLocale?: PageLocale; now: Date; teamDay?: ReadonlyMap<string, MemberDay>; enabledUpcomingSections?: Partial<Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>> }): StorefrontView {
+export function buildStorefront(input: { page: PublicShop; locale: Locale; /** The language of the shop's own texts when it is not the product's (a Spanish page); defaults to `locale`. */ contentLocale?: PageLocale; /** The proposed images of the shop's type, when the page shows them (#267): used where the owner has none. */ defaults?: ResolvedDefaults; now: Date; teamDay?: ReadonlyMap<string, MemberDay>; enabledUpcomingSections?: Partial<Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>> }): StorefrontView {
   const { page, locale, now } = input;
   const t = translator(locale);
   const timezone = page.shop.timezone;
@@ -167,9 +173,15 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; /** T
     }
   }
 
+  // The proposed images (#267): described in the page's language; used only where the owner has no media of their own.
+  const proposed = input.defaults;
+  const describe = (altKey: string) => t(`console.${altKey}` as never, {} as never);
+  const asImage = (d: DefaultImage): ServiceImage => ({ id: d.id, alt: describe(d.altKey), src: d.src, sources: d.sources, width: d.width, height: d.height });
+  const image = (index: number): ServiceImage | null => (proposed?.service.length ? asImage(proposed.service[index % proposed.service.length]!) : null);
+
   // Services, as cards.
   const unit = pick(page.shop.seatUnitFr, page.shop.seatUnitEn);
-  const services: ServiceView[] = page.services.map((s) => ({
+  const services: ServiceView[] = page.services.map((s, index) => ({
     id: s.id,
     name: own("service", s.id, "name", s.nameFr, s.nameEn) ?? s.nameFr,
     description: own("service", s.id, "description", s.descriptionFr, s.descriptionEn),
@@ -180,6 +192,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; /** T
     priceFrom: s.priceVaries ? t("console.shopPage.from") : null,
     tag: s.id === page.popularServiceId ? t("console.shopPage.popular") : null,
     href: pageHref(s.id),
+    image: image(index),
   }));
 
   // Where: chips and a map of the places that have a position.
@@ -214,7 +227,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; /** T
     name: page.shop.name,
     area: page.shop.area || null,
     tagline: own("shop", page.shop.id, "tagline", page.shop.taglineFr, page.shop.taglineEn),
-    cover: page.media.cover ? mediaView(page.media.cover, locale) : null,
+    cover: page.media.cover ? mediaView(page.media.cover, locale) : proposed?.cover ? { src: proposed.cover.poster, alt: describe(proposed.cover.altKey), video: { webm: proposed.cover.webm, mp4: proposed.cover.mp4 } } : null,
     status,
     bookHref: serviceId ? pageHref(serviceId) : base,
     services,
@@ -225,7 +238,9 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; /** T
     policies,
     about: bio ? { name: page.shop.ownerName, text: bio } : null,
     contact: phone || email ? { phone: phone || null, phoneHref: phone ? telHref(phone) : null, email: email || null } : null,
-    gallery: page.media.gallery.map((m) => ({ id: m.id, ...mediaView(m, locale), ...(pick(m.captionFr, m.captionEn) ? { caption: pick(m.captionFr, m.captionEn)! } : {}), shape: m.wide ? ("wide" as const) : ("portrait" as const) })),
+    gallery: page.media.gallery.length
+      ? page.media.gallery.map((m) => ({ id: m.id, ...mediaView(m, locale), ...(pick(m.captionFr, m.captionEn) ? { caption: pick(m.captionFr, m.captionEn)! } : {}), shape: m.wide ? ("wide" as const) : ("portrait" as const) }))
+      : (proposed?.gallery ?? []).map((d) => ({ id: d.id, src: d.src, alt: describe(d.altKey), shape: "portrait" as const })),
     logoUrl: page.pageConfig?.logoUrl ?? null,
     sections: pageSections.map((section) => ({
       ...section,

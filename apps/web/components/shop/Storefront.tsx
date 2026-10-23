@@ -23,6 +23,16 @@ import type { StorefrontView } from "@/lib/storefront";
  * who works here, the hours, the areas on a map, who you will meet and the rules, a look inside, the way in.
  * Every section exists only when the shop has what it shows — a salon has no map, a new shop no gallery.
  */
+/** A proposed image on a service card: AVIF or WebP at the widths it needs, in a box of its own ratio (no layout shift). */
+function ServiceImageView({ image }: { image: NonNullable<StorefrontView["services"][number]["image"]> }) {
+  return (
+    <picture>
+      {image.sources.map((source) => <source key={source.type} type={source.type} srcSet={source.srcSet} sizes="(min-width: 64rem) 22rem, 90vw" />)}
+      <img src={image.src} alt={image.alt} width={image.width} height={image.height} loading="lazy" decoding="async" className="aspect-[3/2] w-full object-cover" />
+    </picture>
+  );
+}
+
 export function Storefront({ view, locale }: { view: StorefrontView; locale: Locale }) {
   const t = translator(locale);
   const book = (
@@ -36,7 +46,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
     services: view.services.length ? (
       <Section id="services" title={t("console.shopPage.servicesTitle")} lead={t("console.shopPage.servicesLead")} reveal>
         <CardGrid min={250} fit="fit" as="ul" aria-label={t("console.shopPage.servicesLabel")}>
-          {view.services.map((s) => <ServiceCard key={s.id} name={s.name} price={s.price} priceFrom={s.priceFrom ?? undefined} duration={s.duration} capacity={s.capacity ?? undefined} description={s.description ?? undefined} included={s.included} tag={s.tag ?? undefined} actionLabel={t("console.shopPage.choose")} href={s.href} linkAs={Link} />)}
+          {view.services.map((s) => <ServiceCard key={s.id} name={s.name} price={s.price} priceFrom={s.priceFrom ?? undefined} duration={s.duration} capacity={s.capacity ?? undefined} description={s.description ?? undefined} included={s.included} tag={s.tag ?? undefined} actionLabel={t("console.shopPage.choose")} href={s.href} linkAs={Link} media={s.image ? <ServiceImageView image={s.image} /> : undefined} />)}
         </CardGrid>
       </Section>
     ) : null,

@@ -1,0 +1,29 @@
+{
+ "style": "photorealistic photograph, soft natural light, calm muted colours, shallow depth of field, no people, no text, no logos, no signage, no watermark",
+ "types": {
+  "salon": {
+   "cover": ["a calm hair salon interior, warm daylight from a large window, wooden shelves with plants, two empty barber chairs, soft linen curtains, muted green and cream colours"],
+   "gallery": ["a ceramic hair-washing basin with folded white towels on a wooden counter", "a plain shelf with unbranded cream-coloured care bottles and a small plant", "a wooden tray with scissors, a comb and a brush on a linen cloth", "a round mirror above a wooden station with a small vase of dried flowers"]
+  },
+  "coaching": {
+   "cover": ["a bright empty fitness studio with a wooden floor, large windows, rolled mats and kettlebells along the wall, morning light"],
+   "gallery": ["rolled yoga mats in a wooden rack against a white wall", "a neat row of dumbbells on a rack in a bright studio", "a folded towel and a steel water bottle on a wooden bench", "a mirror wall of an empty dance and training studio with a wooden floor"]
+  },
+  "workshop": {
+   "cover": ["a tidy craft workshop with a wooden workbench, hand tools hanging on a pegboard, a large window with daylight, warm wood tones"],
+   "gallery": ["hand tools neatly arranged on a pegboard", "a bicycle on a repair stand in a bright workshop", "a wooden workbench with a vise and a few shavings of wood", "spools of thread, fabric samples and a pair of tailor scissors on a table"]
+  },
+  "cleaning": {
+   "cover": ["a bright freshly cleaned living room, sunlit through large windows, a sofa with folded blanket, wooden floor shining, a plant"],
+   "gallery": ["a metal bucket with brushes and clean cloths beside a green plant", "a spotless white kitchen counter with a bowl of lemons and a folded cloth", "a stack of folded white towels on a wooden stool", "a clean window with morning light and a windowsill plant"]
+  },
+  "pets": {
+   "cover": ["an empty autumn park path lined with maple trees, golden leaves on the ground, a leash hanging on a wooden fence, soft morning light"],
+   "gallery": ["a ceramic dog bowl and a rope toy on a wooden floor by a sunny window", "a grooming brush and a folded towel on a table", "a golden retriever running on green grass seen from behind in a park", "a small friendly dog resting on a cushion in a bright room"]
+  },
+  "consulting": {
+   "cover": ["a calm professional desk by a window with a closed laptop, a notebook, a pen and a green plant, soft daylight, neutral colours"],
+   "gallery": ["an open notebook and a pen on a wooden desk, blank pages", "an empty meeting room with a long wooden table and chairs, daylight", "a shelf of books and a small plant in a bright office", "a cup of coffee beside a stack of papers on a desk"]
+  }
+ }
+}
