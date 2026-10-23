@@ -1,4 +1,4 @@
-import { clientBookings, clientFilesOf, dependantsOf } from "@akinaza/db";
+import { clientBookings, clientFilesOf, clientRequestsOf, dependantsOf, publicShop } from "@akinaza/db";
 import { EmptyState } from "@krizaka/ui/empty-state";
 import { Mascot } from "@krizaka/ui/mascots";
 import type { Metadata } from "next";
@@ -43,10 +43,22 @@ async function ClientSpace({ locale, accountId }: { locale: "en" | "fr"; account
           client: { id: f.id, fullName: f.fullName, shopName: f.shopName, shopSlug: f.shopSlug, businessType: f.businessType },
           dogs: (await dependantsOf(db(), f.id)).map((d) => ({ id: d.id, name: d.name, breed: (d.profile as { breed?: string }).breed ?? null })),
           bookings: (await clientBookings(db(), f.id)).map((b) => ({ ...b, report: b.report ? { id: b.report.id, note: b.report.note, hasPhoto: b.report.hasPhoto, durationMinutes: b.report.durationMinutes } : null })),
+          requests: await requestsOf(f.id, f.shopSlug),
           now,
           timeZone: f.timezone,
         })),
       )}
     />
   );
+}
+
+/** A client's requests at a shop, and the shop's catalogue to choose from when its page is published (akinaza#210). */
+async function requestsOf(clientId: string, shopSlug: string | null) {
+  const page = shopSlug ? await publicShop(db(), shopSlug) : null;
+  return {
+    clientId,
+    shopSlug,
+    requests: await clientRequestsOf(db(), clientId),
+    catalogue: page ? { services: page.services.map((s) => ({ id: s.id, nameFr: s.nameFr, nameEn: s.nameEn })), staff: page.team.map((m) => ({ id: m.id, name: m.name })) } : null,
+  };
 }

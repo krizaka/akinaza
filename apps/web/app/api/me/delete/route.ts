@@ -1,10 +1,10 @@
-import { CONSENT_TEXT_VERSION, eraseClient } from "@akinaza/db";
 import { z } from "zod";
 
 import { accounts } from "@/app/accounts";
 import { accountAct } from "@/lib/account-access";
 import { audit } from "@/lib/audit";
-import { db, query } from "@/lib/db";
+import { eraseClientEverywhere } from "@/lib/client-requests";
+import { query } from "@/lib/db";
 import { readJson } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +18,7 @@ export const POST = (req: Request) =>
   accountAct(req, "account-delete", async (s) => {
     const { password } = await readJson(req, z.object({ password: z.string().max(256) }));
     await accounts().confirmPassword(s.account.id, password);
-    for (const file of await query<{ id: string }>("SELECT id FROM clients WHERE account_id = $1", [s.account.id])) await eraseClient(db(), file.id, CONSENT_TEXT_VERSION);
+    for (const file of await query<{ id: string }>("SELECT id FROM clients WHERE account_id = $1", [s.account.id])) await eraseClientEverywhere(file.id);
     await audit({ action: "account.deleted", actorId: null, actorLabel: s.account.email, targetId: s.account.id, headers: req.headers });
     await accounts().deleteAccount(s.account.id);
     return { ok: true };

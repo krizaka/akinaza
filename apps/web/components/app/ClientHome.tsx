@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
 
+import { RequestsCard,type RequestsData } from "@/components/app/RequestsCard";
 import { useCall } from "@/components/app/useCall";
 import { useSay, useVocabulary, VocabularyProvider } from "@/lib/i18n-client";
 
@@ -28,6 +29,8 @@ export interface ClientFileView {
     dependantName: string;
     report: { id: string; note: string; hasPhoto: boolean; durationMinutes: number } | null;
   }[];
+  /** The requests kept at this shop, and what to choose from (akinaza#210). */
+  requests: RequestsData;
   /** `now` as an ISO string, taken by the server: which bookings are still ahead. */
   now: string;
   timeZone: string;
@@ -73,6 +76,7 @@ function FileSection({ file }: { file: ClientFileView }) {
           <strong className="text-fg">{say("client.dogsTitle")}</strong> · {file.dogs.map((d) => [d.name, d.breed].filter(Boolean).join(" · ")).join(" · ")}
         </p>
       ) : null}
+      <RequestsCard data={file.requests} />
       <PrivacyCard file={file} />
     </section>
   );

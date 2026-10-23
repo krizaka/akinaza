@@ -88,7 +88,7 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
   });
 
   it("a client's space speaks each shop's own words", () => {
-    const file = (shopName: string, businessType: BusinessType): ClientFileView => ({ client: { id: shopName, fullName: "Jordan", shopName, shopSlug: shopName.toLowerCase(), businessType }, dogs: businessType === "pets" ? [{ id: "d", name: "Luna", breed: null }] : [], bookings: [], now: "2026-10-20T00:00:00Z", timeZone: "America/Toronto" });
+    const file = (shopName: string, businessType: BusinessType): ClientFileView => ({ client: { id: shopName, fullName: "Jordan", shopName, shopSlug: shopName.toLowerCase(), businessType }, dogs: businessType === "pets" ? [{ id: "d", name: "Luna", breed: null }] : [], bookings: [], requests: { clientId: shopName, shopSlug: shopName.toLowerCase(), requests: [], catalogue: null }, now: "2026-10-20T00:00:00Z", timeZone: "America/Toronto" });
     const html = around(locale, "pets", <ClientHome files={[file("Studio", "professional"), file("Pattes", "pets")]} />);
     const [studio, pattes] = html.split(/<section/).slice(1).map(readable);
     expect(studio).not.toMatch(DOG_WORDS[locale]);

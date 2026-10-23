@@ -346,7 +346,11 @@
       "INVOICE_ALREADY_CORRECTED": "Cette facture a déjà été corrigée ou annulée.",
       "TIME_OFF_DATE": "Une date s'écrit AAAA-MM-JJ, p. ex. 2026-12-20.",
       "TIME_OFF_ORDER": "La fin du congé vient avant son début.",
-      "TIME_OFF_TOO_LONG": "Un congé dure au plus 92 jours : ajoutez-le en deux fois."
+      "TIME_OFF_TOO_LONG": "Un congé dure au plus 92 jours : ajoutez-le en deux fois.",
+      "REQUEST_UNKNOWN": "Cette demande n'existe plus.",
+      "REQUESTS_FULL": "Vous gardez déjà 20 demandes ici : supprimez-en une d'abord.",
+      "REQUEST_FILES_FULL": "Une demande garde au plus 5 fichiers.",
+      "UPLOAD_NOT_ALLOWED": "Seules les photos (JPEG, PNG, WebP) et les PDF sont acceptés."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -794,7 +798,25 @@
       "eraseDescription": "Vos coordonnées, vos chiens, les notes et les photos des rapports sont effacés pour de bon. Les factures sont conservées comme la loi l'exige. Saisissez votre courriel pour confirmer.",
       "eraseEmail": "Votre courriel",
       "eraseYes": "Effacer pour de bon",
-      "erased": "Votre dossier a été effacé."
+      "erased": "Votre dossier a été effacé.",
+      "requests": {
+        "title": "Mes demandes",
+        "lead": "Gardez ce que vous demandez d'habitude ici, avec une photo ou un document, et reprenez-le en un geste.",
+        "none": "Aucune demande gardée pour l'instant.",
+        "titleField": "Votre demande",
+        "titlePlaceholder": "Coupe + balayage, comme la dernière fois",
+        "service": "Prestation",
+        "staff": "Avec",
+        "anyone": "Peu importe",
+        "note": "Note (facultative)",
+        "add": "Garder cette demande",
+        "renew": "Reprendre",
+        "delete": "Supprimer « {title} » et ses fichiers",
+        "attach": "Joindre une photo ou un PDF",
+        "fileImage": "Photo",
+        "filePdf": "Document PDF",
+        "fileRemove": "Retirer ce fichier"
+      }
     },
     "report": {
       "title": "La sortie de {dog}",

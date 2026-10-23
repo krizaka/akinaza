@@ -13,6 +13,7 @@ export * from "./webhooks-migration";
 export * from "./api-keys";
 export * from "./invoice-payments";
 export * from "./organize";
+export * from "./client-requests";
 export * from "./roles";
 export * from "./roles-migration";
 export { briefActionsOf, briefMailShops, briefSnapshot, claimBriefAction, claimBriefDelivery, reachableClients, recordBriefResult, unsubscribeBrief } from "./brief";
