@@ -740,11 +740,6 @@
         "texts": {
           "title": "Votre page, dans vos mots",
           "lead": "Ce que les visiteurs lisent. Écrivez-le en français et en anglais, côte à côte.",
-          "french": "Français",
-          "english": "English",
-          "tagline": "Une ligne",
-          "bio": "Qui vous êtes",
-          "seatUnit": "Comment s'appelle une place",
           "moreLanguages": "Une autre langue, ou une traduction automatique que vous pouvez modifier :"
         },
         "contact": {

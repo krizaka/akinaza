@@ -25,15 +25,23 @@ describe("« My shop page » in sections (#265)", () => {
     const t = text(render(data(), "identity"));
     for (const word of ["Shop name", "Legal name", "Your first name", "Page address"]) expect(t).toContain(word);
     for (const word of ["Phone shown to visitors", "Locality shown on the page", "One line"]) expect(t).not.toContain(word);
+    expect(render(data(), "identity")).not.toContain('name="address"'); // the address is in Contact and place once the shop exists
   });
 
   it("the texts are French and English side by side, one save for the section", () => {
     const html = render(data(), "texts");
-    expect(text(html)).toContain("Français");
     expect(html).toContain('name="taglineFr"');
     expect(html).toContain('name="taglineEn"');
     expect(html.indexOf('name="taglineFr"')).toBeLessThan(html.indexOf('name="taglineEn"'));
     expect(html.match(/type="submit"/g)).toHaveLength(1);
+  });
+
+  it("every text control says its language in its own label, on a phone as on a desktop", () => {
+    const html = render(data(), "texts");
+    const labels = [...html.matchAll(/<label[^>]*for="([^"]*)"[^>]*>([^<]*)<\/label>/g)].map((m) => m[2]!);
+    expect(labels).toEqual(expect.arrayContaining(["One line, in French", "One line, in English", "Who you are (French)", "Who you are (English)", "What a seat is called (French)", "What a seat is called (English)"]));
+    expect(new Set(labels).size).toBe(labels.length); // no two controls share a label
+    expect(html).not.toMatch(/hidden[^"]*sm:block/); // no language heading that disappears below sm
   });
 
   it("the street address is said to be private, in its own section", () => {
@@ -48,9 +56,10 @@ describe("« My shop page » in sections (#265)", () => {
     expect(t).toContain("https://www.akinaza.com/en/s/atelier-boreal");
   });
 
-  it("a person with no shop yet gets the identity form only, no tabs", () => {
+  it("a person with no shop yet gets the identity form only, no tabs, and it collects the address the server requires", () => {
     const html = render(data({ page: null, shopId: null, publicUrl: null }), "identity");
     expect(text(html)).toContain("Shop name");
+    expect(html).toContain('name="address"');
     expect(text(html)).not.toContain("Photos and video");
   });
 

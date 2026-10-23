@@ -740,11 +740,6 @@
         "texts": {
           "title": "Your page, in your words",
           "lead": "What visitors read. Write it in French and in English, side by side.",
-          "french": "Français",
-          "english": "English",
-          "tagline": "One line",
-          "bio": "Who you are",
-          "seatUnit": "What a seat is called",
           "moreLanguages": "Another language, or an automatic translation you can edit:"
         },
         "contact": {

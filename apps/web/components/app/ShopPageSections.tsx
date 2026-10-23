@@ -103,7 +103,7 @@ export function IdentitySection({ page }: { page: Page | null }) {
   return (
     <SectionCard title={s.say("shopSetup.sections.identity.title")} lead={s.say("shopSetup.sections.identity.lead")}>
       <form.Form aria-label={s.say("shopSetup.sections.identity.title")} className="grid gap-4 sm:grid-cols-2">
-        <IdentityFields form={form} say={s.say} />
+        <IdentityFields form={form} say={s.say} withAddress={!page} />
         <SectionFooter s={s} Submit={form.Submit} />
       </form.Form>
     </SectionCard>
@@ -123,14 +123,12 @@ export function TextsSection({ page, shopId }: { page: Page | null; shopId: stri
   return (
     <SectionCard title={say("shopSetup.sections.texts.title")} lead={say("shopSetup.sections.texts.lead")}>
       <form.Form aria-label={say("shopSetup.sections.texts.title")} className="grid gap-4 sm:grid-cols-2">
-        <p className="m-0 text-sm font-semibold text-fg-secondary">{say("shopSetup.sections.texts.french")}</p>
-        <p className="m-0 hidden text-sm font-semibold text-fg-secondary sm:block">{say("shopSetup.sections.texts.english")}</p>
-        <form.TextField name="taglineFr" label={say("shopSetup.sections.texts.tagline")} />
-        <form.TextField name="taglineEn" label={say("shopSetup.sections.texts.tagline")} />
-        <form.TextArea name="bioFr" label={say("shopSetup.sections.texts.bio")} hint={say("shopSetup.page.bioHint")} rows={4} maxLength={600} />
-        <form.TextArea name="bioEn" label={say("shopSetup.sections.texts.bio")} hint={say("shopSetup.page.bioHint")} rows={4} maxLength={600} />
-        <form.TextField name="seatUnitFr" label={say("shopSetup.sections.texts.seatUnit")} hint={say("shopSetup.page.seatUnitHint")} />
-        <form.TextField name="seatUnitEn" label={say("shopSetup.sections.texts.seatUnit")} />
+        <form.TextField name="taglineFr" label={say("shopSetup.page.taglineFr")} />
+        <form.TextField name="taglineEn" label={say("shopSetup.page.taglineEn")} />
+        <form.TextArea name="bioFr" label={say("shopSetup.page.bioFr")} hint={say("shopSetup.page.bioHint")} rows={4} maxLength={600} />
+        <form.TextArea name="bioEn" label={say("shopSetup.page.bioEn")} hint={say("shopSetup.page.bioHint")} rows={4} maxLength={600} />
+        <form.TextField name="seatUnitFr" label={say("shopSetup.page.seatUnitFr")} hint={say("shopSetup.page.seatUnitHint")} />
+        <form.TextField name="seatUnitEn" label={say("shopSetup.page.seatUnitEn")} />
         <p className="m-0 text-sm text-fg-secondary sm:col-span-2">
           {say("shopSetup.sections.texts.moreLanguages")}{" "}
           <Link className="font-semibold text-fg-accent underline" href={`${shopRoutes(s.locale, shopId).setup}/languages`}>{say("shopLanguages.open")}</Link>

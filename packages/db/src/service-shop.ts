@@ -137,12 +137,19 @@ export async function setDefaultShop(db: Db, ownerId: string, shopId: string): P
 }
 
 /** Creates the owner's shop page (with its first staff member and default rules) or updates it: the default shop, or `shopId`; `additional` adds another shop. A first shop becomes the default. Publishing needs an active service. */
-export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, which: { shopId?: string; additional?: boolean } = {}): Promise<{ shopId: string; created: boolean }> {
+export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, which: { shopId?: string; additional?: false } | { additional: true; /** The most shops the owner may run (the administrator's `limits.shopsPerOwner`): checked here, under a lock, so no route can skip it and two requests cannot both pass. */ maxShops: number } = {}): Promise<{ shopId: string; created: boolean }> {
   const input = shopPageSchema.parse(raw);
   try {
     return await db.transaction(async (tx) => {
-      const [existing] = which.additional ? [] : await tx.select().from(shops).where(which.shopId ? and(eq(shops.ownerId, ownerId), eq(shops.id, which.shopId)) : eq(shops.ownerId, ownerId)).orderBy(desc(shops.isDefault), asc(shops.createdAt)).limit(1).for("update");
-      if (which.shopId && !existing) refuse("AK_SHOP_UNKNOWN");
+      if (which.additional) {
+        // One owner, one line at a time: the count and the insert are one decision (a second request waits here until the first has committed).
+        await tx.execute(sql`SELECT id FROM accounts WHERE id = ${ownerId} FOR UPDATE`);
+        const [owned] = await tx.select({ n: sql<number>`count(*)::int` }).from(shops).where(eq(shops.ownerId, ownerId));
+        if (owned!.n >= which.maxShops) refuse("AK_SHOP_LIMIT");
+      }
+      const askedId = which.additional ? undefined : which.shopId;
+      const [existing] = which.additional ? [] : await tx.select().from(shops).where(askedId ? and(eq(shops.ownerId, ownerId), eq(shops.id, askedId)) : eq(shops.ownerId, ownerId)).orderBy(desc(shops.isDefault), asc(shops.createdAt)).limit(1).for("update");
+      if (askedId && !existing) refuse("AK_SHOP_UNKNOWN");
       if (input.published) {
         const count = existing ? (await tx.select({ n: sql<number>`count(*)::int` }).from(services).where(and(eq(services.shopId, existing.id), eq(services.active, true))))[0]!.n : 0;
         if (count === 0) refuse("AK_NOT_PUBLISHABLE");
