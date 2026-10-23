@@ -719,7 +719,15 @@
       "galleryLabel": "Photos de {shop}",
       "closingTitle": "Prêt quand vous l'êtes",
       "closingBody": "Choisissez une heure en quelques touches.",
-      "nav": "Sections de la page"
+      "nav": "Sections de la page",
+      "member": {
+        "free": "Libre maintenant",
+        "busy": "Occupé·e jusqu'à {time}",
+        "startsAt": "Arrive à {time}",
+        "done": "A terminé pour aujourd'hui",
+        "away": "Absent·e aujourd'hui",
+        "off": "En congé jusqu'au {day}"
+      }
     },
     "book": {
       "title": "Réserver une promenade avec {shop}",

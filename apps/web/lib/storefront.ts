@@ -1,4 +1,4 @@
-import { bookingPreselect, localDay, openStatus, weekdayOf, weekSchedule } from "@akinaza/core";
+import { bookingPreselect, localDay, MEMBER_STATE, type MemberDay, memberStateAt, openStatus, weekdayOf, weekSchedule } from "@akinaza/core";
 import type { PublicMedia, PublicShop } from "@akinaza/db";
 
 import { type Locale, translator } from "@/lib/i18n";
@@ -53,8 +53,8 @@ export interface StorefrontView {
   status: { open: boolean; label: string; detail: string } | null;
   bookHref: string;
   services: ServiceView[];
-  /** Who works here (first names), when several people do. */
-  team: { id: string; name: string }[];
+  /** Who works here (first names), when several people do, each with where they stand now (akinaza#209) when it is known. */
+  team: { id: string; name: string; state: string | null; free: boolean }[];
   zones: { id: string; name: string }[];
   map: { center: LngLat; zoom: number; places: { id: string; name: string; position: LngLat }[] } | null;
   hours: { today: string; status: { open: boolean; label: string; detail?: string }; days: { id: string; label: string; hours: string }[] };
@@ -112,7 +112,24 @@ const mediaView = (m: PublicMedia, locale: Locale) => {
   return { src: m.url, alt: locale === "fr" ? m.altFr : m.altEn, ...(video ? { video } : {}) };
 };
 
-export function buildStorefront(input: { page: PublicShop; locale: Locale; now: Date }): StorefrontView {
+const longDate = (day: string, locale: Locale) => new Intl.DateTimeFormat(lang(locale), { timeZone: "UTC", day: "numeric", month: "long" }).format(new Date(`${day}T12:00:00Z`));
+
+/** One member on the public page: a first name and one state, never a client, a service or a reason (akinaza#209). */
+function memberView(member: { id: string; name: string }, day: MemberDay | undefined, now: Date, timezone: string, locale: Locale, t: ReturnType<typeof translator>): StorefrontView["team"][number] {
+  if (!day) return { id: member.id, name: member.name, state: null, free: false };
+  const state = memberStateAt(day, now, timezone);
+  const label =
+    state.kind === MEMBER_STATE.busy
+      ? t("console.shopPage.member.busy", { time: clockLabel(state.until, locale) })
+      : state.kind === MEMBER_STATE.startsAt
+        ? t("console.shopPage.member.startsAt", { time: clockLabel(state.time, locale) })
+        : state.kind === MEMBER_STATE.off
+          ? t("console.shopPage.member.off", { day: longDate(state.until, locale) })
+          : t(`console.shopPage.member.${state.kind}`);
+  return { id: member.id, name: member.name, state: label, free: state.kind === MEMBER_STATE.free };
+}
+
+export function buildStorefront(input: { page: PublicShop; locale: Locale; now: Date; teamDay?: ReadonlyMap<string, MemberDay> }): StorefrontView {
   const { page, locale, now } = input;
   const t = translator(locale);
   const timezone = page.shop.timezone;
@@ -184,7 +201,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; now: 
     status,
     bookHref: serviceId ? pageHref(serviceId) : base,
     services,
-    team: page.team.length > 1 ? page.team.map((m) => ({ id: m.id, name: m.name })) : [],
+    team: page.team.length > 1 ? page.team.map((m) => memberView(m, input.teamDay?.get(m.id), now, timezone, locale, t)) : [],
     zones: page.zones.map((z) => ({ id: z.id, name: z.name })),
     map,
     hours: { today: todayId, status: status ?? { open: false, label: t("console.shopPage.closed") }, days: week },
