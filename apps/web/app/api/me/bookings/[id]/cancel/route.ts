@@ -4,7 +4,7 @@ import { z } from "zod";
 import { requireOwnClient } from "@/lib/access";
 import { db } from "@/lib/db";
 import { handle, idParam, readJson } from "@/lib/http";
-import { realtimeBus, slotsTopic } from "@/lib/realtime";
+import { announceSlots } from "@/lib/realtime";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export function POST(req: Request, { params }: { params: Promise<{ id: string }>
     const { clientId } = await readJson(req, z.object({ clientId: z.string().uuid() }));
     const { client } = await requireOwnClient(req, clientId);
     await cancelBooking(db(), client.id, idParam((await params).id), new Date());
-    await realtimeBus().publish(slotsTopic(client.shopId), { type: "slots.changed" });
+    await announceSlots(client.shopId);
     return Response.json({ ok: true });
   });
 }
