@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useCall } from "@/components/app/useCall";
 import type { Proposals } from "@/lib/default-media-proposals";
 import { useSay } from "@/lib/i18n-client";
-import type { GalleryLine } from "@/lib/storefront-form";
+import { addPhoto, adoptCover, mediaPayload, type MediaState } from "@/lib/proposed-media";
 
 export interface ProposedImagesData {
   config: ShopPageConfig;
@@ -20,7 +20,7 @@ export interface ProposedImagesData {
   shopType: ShopType;
   /** The trades the administrator offers, with their proposals. */
   proposals: Partial<Record<ShopType, Proposals>>;
-  media: { cover: GalleryLine | null; gallery: GalleryLine[] };
+  media: MediaState;
 }
 
 /** « Images proposées »: the owner picks the trade, chooses a proposed cover or photos in one click, or turns the proposals off. They are neutral pictures, never presented as the shop. */
@@ -30,17 +30,22 @@ export function ProposedImages({ data }: { data: ProposedImagesData }) {
   const [type, setType] = useState<ShopType>(data.shopType);
   const [show, setShow] = useState(data.config.useDefaults ?? true);
   const [saved, setSaved] = useState(false);
+  // The media as last saved from here, valid until the server sends a fresh snapshot (after its refresh): a second adoption never starts from what the first one replaced.
+  const [local, setLocal] = useState<{ base: MediaState; media: MediaState } | null>(null);
+  const media = local && local.base === data.media ? local.media : data.media;
   const t = (key: string) => say(`shopSetup.defaults.${key}`);
-  const types = Object.keys(data.proposals) as ShopType[];
+  const offered = Object.keys(data.proposals) as ShopType[];
   const current = data.proposals[type];
   // Only what this card changes: the sections and the logo of the look card stay as they are on the server.
   const savePage = async (next: { shopType?: ShopType; useDefaults?: boolean }) => {
     setSaved(false);
     setSaved((await call.run("/api/walker/shop-page", { json: next })) !== null);
   };
-  const saveMedia = async (cover: GalleryLine | null, gallery: GalleryLine[]) => {
+  const saveMedia = async (next: MediaState) => {
     setSaved(false);
-    setSaved((await call.run("/api/walker/media", { json: { cover, gallery } })) !== null);
+    if ((await call.run("/api/walker/media", { json: mediaPayload(next) })) === null) return;
+    setLocal({ base: data.media, media: next });
+    setSaved(true);
   };
   return (
     <Card.Root className="flex flex-col gap-4 p-4 lg:col-span-2">
@@ -51,7 +56,9 @@ export function ProposedImages({ data }: { data: ProposedImagesData }) {
       <Field.Root>
         <Field.Label htmlFor="shop-type">{t("type")}</Field.Label>
         <Select id="shop-type" value={type} onChange={(e) => { const next = e.target.value as ShopType; setType(next); void savePage({ shopType: next }); }}>
-          {types.map((x) => <option key={x} value={x}>{t(`types.${x}`)}</option>)}
+          {/* The trade in force stays visible (and selectable only when the administrator offers it), so choosing an offered trade is a change the select reports. */}
+          {offered.includes(type) ? null : <option value={type} disabled>{t(`types.${type}`)}</option>}
+          {offered.map((x) => <option key={x} value={x}>{t(`types.${x}`)}</option>)}
         </Select>
       </Field.Root>
       <div className="flex items-center justify-between gap-3">
@@ -64,11 +71,12 @@ export function ProposedImages({ data }: { data: ProposedImagesData }) {
             <div className="flex flex-col gap-2">
               <h3 className="m-0 text-sm font-semibold text-fg">{t("cover")}</h3>
               <figure className="m-0 flex flex-col gap-2 sm:max-w-md">
-                <video className="aspect-video w-full rounded-lg object-cover" poster={current.cover.src} autoPlay muted loop playsInline aria-label={t("preview")}>
+                {/* Keyed by the proposal, so a change of trade loads its own loop; played only when the owner asks (native controls), still otherwise. */}
+                <video key={current.cover.id} className="aspect-video w-full rounded-lg object-cover" poster={current.cover.src} controls muted loop playsInline preload="metadata" aria-label={t("preview")}>
                   <source src={current.cover.webm} type="video/webm" />
                   <source src={current.cover.mp4} type="video/mp4" />
                 </video>
-                <Button size="sm" variant="secondary" className="self-start" disabled={call.pending} onClick={() => void saveMedia({ url: current.cover!.src, altFr: current.cover!.altFr, altEn: current.cover!.altEn, webmUrl: current.cover!.webm, mp4Url: current.cover!.mp4, wide: false } as GalleryLine, data.media.gallery)}>{t("useCover")}</Button>
+                <Button size="sm" variant="secondary" className="self-start" disabled={call.pending} onClick={() => void saveMedia(adoptCover(media, current.cover!))}>{t("useCover")}</Button>
               </figure>
             </div>
           ) : null}
@@ -79,7 +87,7 @@ export function ProposedImages({ data }: { data: ProposedImagesData }) {
                 <li key={p.id} className="flex flex-col gap-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={p.src} alt={({ fr: p.altFr, en: p.altEn })[locale]} width={960} height={720} loading="lazy" className="aspect-[4/3] w-full rounded-lg object-cover" />
-                  <Button size="sm" variant="secondary" disabled={call.pending} onClick={() => void saveMedia(data.media.cover, [...data.media.gallery, { url: p.src, altFr: p.altFr, altEn: p.altEn, wide: false } as GalleryLine].slice(0, 12))}>{t("addPhoto")}</Button>
+                  <Button size="sm" variant="secondary" disabled={call.pending} onClick={() => void saveMedia(addPhoto(media, p))}>{t("addPhoto")}</Button>
                 </li>
               ))}
             </ul>

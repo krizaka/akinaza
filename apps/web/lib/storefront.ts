@@ -68,6 +68,8 @@ export interface StorefrontView {
   about: { name: string; text: string } | null;
   contact: { phone: string | null; phoneHref: string | null; email: string | null } | null;
   gallery: { id: string; src: string; alt: string; caption?: string; shape: "portrait" | "wide"; video?: { webm?: string; mp4?: string } }[];
+  /** The photos are the trade's proposed pictures, not the shop's own (#267): the page says so, never « Photos de {shop} ». */
+  galleryIllustrative: boolean;
   logoUrl: string | null;
   sections: { id: "services" | "team" | "hours" | "zones" | "gallery" | "wall" | "reels" | "announcements" | "reviews" | "follow"; visible: boolean }[];
   preparedSections: Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>;
@@ -241,6 +243,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; /** T
     gallery: page.media.gallery.length
       ? page.media.gallery.map((m) => ({ id: m.id, ...mediaView(m, locale), ...(pick(m.captionFr, m.captionEn) ? { caption: pick(m.captionFr, m.captionEn)! } : {}), shape: m.wide ? ("wide" as const) : ("portrait" as const) }))
       : (proposed?.gallery ?? []).map((d) => ({ id: d.id, src: d.src, alt: describe(d.altKey), shape: "portrait" as const })),
+    galleryIllustrative: page.media.gallery.length === 0 && (proposed?.gallery.length ?? 0) > 0,
     logoUrl: page.pageConfig?.logoUrl ?? null,
     sections: pageSections.map((section) => ({
       ...section,

@@ -828,6 +828,8 @@
       "write": "Write",
       "gallery": "A look inside",
       "galleryLabel": "Photos of {shop}",
+      "galleryIllustrativeLabel": "Pictures of the trade",
+      "galleryIllustrativeNote": "Illustrative pictures, not this shop's own: they make way for its photos.",
       "wallTitle": "Shop wall",
       "reelsTitle": "Short videos",
       "announcementsTitle": "Announcements",

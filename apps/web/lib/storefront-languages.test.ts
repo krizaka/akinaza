@@ -84,6 +84,7 @@ describe("the proposed images fill only what the owner left empty (#267)", () =>
     expect(v.cover).toMatchObject({ src: "https://cdn.test/p.webp", video: { webm: "https://cdn.test/l.webm", mp4: "https://cdn.test/l.mp4" } });
     expect(v.cover!.alt).toBe(fr.console.defaultMedia.pets.cover[1]);
     expect(v.gallery.map((g) => g.id)).toEqual(["pets-gallery-1", "pets-gallery-2"]);
+    expect(v.galleryIllustrative).toBe(true);
     expect(v.services[0]!.image).toMatchObject({ id: "pets-service-1", alt: fr.console.defaultMedia.pets.service[1] });
   });
 
@@ -93,12 +94,14 @@ describe("the proposed images fill only what the owner left empty (#267)", () =>
     const v = build(p);
     expect(v.cover!.src).toBe("https://own/c.jpg");
     expect(v.gallery.map((g) => g.id)).toEqual(["m1"]);
+    expect(v.galleryIllustrative).toBe(false);
   });
 
   it("without defaults (switched off by the owner or the administrator) nothing is added: today's page", () => {
     const v = buildStorefront({ page: page(), locale: "fr", now: NOW });
     expect(v.cover).toBeNull();
     expect(v.gallery).toEqual([]);
+    expect(v.galleryIllustrative).toBe(false);
     expect(v.services[0]!.image).toBeNull();
   });
 

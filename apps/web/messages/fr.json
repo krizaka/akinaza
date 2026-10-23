@@ -828,6 +828,8 @@
       "write": "Écrire",
       "gallery": "Un coup d'œil",
       "galleryLabel": "Photos de {shop}",
+      "galleryIllustrativeLabel": "Images du métier",
+      "galleryIllustrativeNote": "Images d'illustration, pas celles de cette boutique : elles s'effacent devant ses photos.",
       "wallTitle": "Mur de la boutique",
       "reelsTitle": "Vidéos courtes",
       "announcementsTitle": "Annonces",

@@ -32,6 +32,19 @@ describe("« Images proposées » in the editor (#267)", () => {
     expect(html).toContain('poster="https://cdn.test/pets-cover-1.webp"');
   });
 
+  it("the preview plays only when the owner asks: native controls, no autoplay, still under reduced motion", () => {
+    const html = render(data());
+    expect(html).toMatch(/<video[^>]*\scontrols/);
+    expect(html).not.toMatch(/<video[^>]*\sautoplay/i);
+  });
+
+  it("a trade the administrator does not offer stays visible but disabled, so choosing an offered one is a change", () => {
+    const html = render(data({ shopType: "consulting" }));
+    expect(html).toMatch(/<option value="consulting" disabled[^>]*>Professional services<\/option>/);
+    expect(html).toMatch(/<option value="pets"[^>]*>Pet care<\/option>/);
+    expect(render(data())).not.toMatch(/<option[^>]*\sdisabled/);
+  });
+
   it("says they are neutral pictures, not the shop, and describes each in the language of the page", () => {
     expect(text(render(data()))).toContain("They are neutral pictures, not your shop");
     expect(render(data())).toContain('alt="Alt pets-gallery-1"');

@@ -35,6 +35,7 @@ function ServiceImageView({ image }: { image: NonNullable<StorefrontView["servic
 
 export function Storefront({ view, locale }: { view: StorefrontView; locale: Locale }) {
   const t = translator(locale);
+  const galleryLabel = view.galleryIllustrative ? t("console.shopPage.galleryIllustrativeLabel") : t("console.shopPage.galleryLabel", { shop: view.name });
   const book = (
     <>
       <ButtonLink href={view.bookHref} size="lg" variant="primary" className="hidden md:inline-flex">
@@ -63,7 +64,12 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]"><ul className="m-0 flex list-none flex-wrap gap-2 p-0">{view.zones.map((z) => <li key={z.id}><Badge tone="accent" size="md">{z.name}</Badge></li>)}</ul><ZoneMap map={view.map} label={t("console.shopPage.mapLabel")} locale={locale} /></div>
       </Section>
     ) : null,
-    gallery: view.gallery.length ? <Section id="gallery" divider title={t("console.shopPage.galleryLabel", { shop: view.name })} reveal><MediaGallery label={t("console.shopPage.galleryLabel", { shop: view.name })} items={view.gallery} /></Section> : null,
+    // The trade's proposed pictures (#267) are said to be illustrations, never « Photos de {shop} ».
+    gallery: view.gallery.length ? (
+      <Section id="gallery" divider title={galleryLabel} lead={view.galleryIllustrative ? t("console.shopPage.galleryIllustrativeNote") : undefined} reveal>
+        <MediaGallery label={galleryLabel} items={view.gallery} />
+      </Section>
+    ) : null,
     wall: view.preparedSections.wall ? <Section id="wall" divider title={t("console.shopPage.wallTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
     reels: view.preparedSections.reels ? <Section id="reels" divider title={t("console.shopPage.reelsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
     announcements: view.preparedSections.announcements ? <Section id="announcements" divider title={t("console.shopPage.announcementsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
