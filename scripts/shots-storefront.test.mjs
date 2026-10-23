@@ -24,6 +24,7 @@ describe("shots-storefront (the captures of #261 on a seeded database)", () => {
     expect(SCENES.look.path("fr", shop)).toBe("/fr/app/shop-1/shop?tab=look");
     expect(SCENES.new.path("en", shop)).toBe("/en/app/shop-1/shop/new");
     expect(SCENES.storefront.path("fr", shop)).toBe("/fr/s/pattes-saint-henri");
+    expect([SCENES.salon, SCENES.workshop, SCENES.consulting].map((s) => s.path("fr", shop))).toEqual(["/fr/s/cedre-ciseaux", "/fr/s/encre-vive", "/fr/s/ferland-conseil"]);
     for (const scene of Object.values(SCENES)) expect(scene.expect).toMatchObject({ fr: expect.any(String), en: expect.any(String) });
     expect(SCENES.look.signedIn).toBe(true);
     expect(SCENES.storefront.signedIn).toBe(false);

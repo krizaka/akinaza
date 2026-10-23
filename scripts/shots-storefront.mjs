@@ -18,6 +18,10 @@ export const SCENES = {
   look: { path: (locale, shop) => `/${locale}/app/${shop.id}/shop?tab=look`, expect: { fr: "Modèle de page", en: "Page template" }, signedIn: true },
   new: { path: (locale, shop) => `/${locale}/app/${shop.id}/shop/new`, expect: { fr: "Votre métier", en: "Your trade" }, signedIn: true },
   storefront: { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
+  // The demo shops (packages/db/src/demo-shops.ts), each on a template of its trade (#261, step 6).
+  salon: { path: (locale) => `/${locale}/s/cedre-ciseaux`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
+  workshop: { path: (locale) => `/${locale}/s/encre-vive`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
+  consulting: { path: (locale) => `/${locale}/s/ferland-conseil`, expect: { fr: "Réserver", en: "Book" }, signedIn: false },
 };
 export const THEMES = ["dark", "light"];
 export const DEVICES = { desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844 } };
