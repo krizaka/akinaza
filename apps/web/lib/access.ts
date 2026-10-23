@@ -40,6 +40,11 @@ export async function requireSession(req: Request): Promise<Session> {
   return session;
 }
 
+/** The API caller's session, or null when there is none (a public page asking who is there). */
+export async function optionalSession(req: Request): Promise<Session | null> {
+  return resolveSession(cookieToken(req.headers.get("cookie")));
+}
+
 export async function requireAdmin(req: Request): Promise<Session> {
   const session = await requireSession(req);
   if (session.account.role !== "ADMIN") throw refuse(403, "FORBIDDEN", "Administrators only");
