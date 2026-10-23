@@ -375,14 +375,6 @@ export const invoiceDeliveries = pgTable(
   (t) => [index("invoice_deliveries_invoice").on(t.invoiceId, t.createdAt)],
 );
 
-/** Platform-wide invoice email guardrails; singleton row configured by platform administrators. */
-export const invoiceMailPlatformSettings = pgTable("invoice_mail_platform_settings", {
-  id: text("id").primaryKey().default("global"),
-  maxPerShopPerDay: integer("max_per_shop_per_day").notNull().default(50),
-  allowedSenderDomain: text("allowed_sender_domain"),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-}, (t) => [check("invoice_mail_platform_limit", sql`${t.maxPerShopPerDay} BETWEEN 1 AND 10000`), check("invoice_mail_platform_domain", sql`${t.allowedSenderDomain} IS NULL OR ${t.allowedSenderDomain} ~ '^[a-zA-Z0-9.-]+$'`)]);
-
 export const invoiceLines = pgTable(
   "invoice_lines",
   {

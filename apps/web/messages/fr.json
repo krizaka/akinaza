@@ -179,12 +179,6 @@
       "invoices": {
         "caption": "Factures"
       },
-      "invoiceMail": {
-        "title": "Limites de courriel de facture de la plateforme",
-        "limit": "Envois maximum par boutique par jour",
-        "domain": "Domaine d'expéditeur autorisé",
-        "save": "Enregistrer les paramètres de la plateforme"
-      },
       "users": {
         "caption": "Comptes"
       },

@@ -22,12 +22,3 @@ CREATE TABLE invoice_deliveries (
   revoked_at timestamptz
 );
 CREATE INDEX invoice_deliveries_invoice ON invoice_deliveries(invoice_id, created_at);
-
-CREATE TABLE invoice_mail_platform_settings (
-  id text PRIMARY KEY DEFAULT 'global',
-  max_per_shop_per_day integer NOT NULL DEFAULT 50,
-  allowed_sender_domain text,
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT invoice_mail_platform_limit CHECK (max_per_shop_per_day BETWEEN 1 AND 10000),
-  CONSTRAINT invoice_mail_platform_domain CHECK (allowed_sender_domain IS NULL OR allowed_sender_domain ~ '^[a-zA-Z0-9.-]+$')
-);

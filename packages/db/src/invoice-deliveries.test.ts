@@ -36,6 +36,7 @@ describe("private invoice delivery links", () => {
       locale: "fr",
       expiresAt: new Date("2026-11-22T12:00:00.000Z"),
       createdAt: NOW,
+      maxPerShopPerDay: 50,
       subject: "Votre facture",
       html: "<p>Facture</p>",
       text: "Facture",
@@ -90,6 +91,7 @@ describe("private invoice delivery links", () => {
       locale: "en",
       expiresAt: new Date("2026-11-22T12:00:00.000Z"),
       createdAt: NOW,
+      maxPerShopPerDay: 50,
       subject: "Your invoice",
       html: "<p>Invoice</p>",
       text: "Invoice",
@@ -101,5 +103,31 @@ describe("private invoice delivery links", () => {
     const [delivery] = await t.db.select().from(invoiceDeliveries).where(eq(invoiceDeliveries.id, created.deliveryId));
     expect(delivery).toMatchObject({ toEmail: "—" });
     expect(delivery?.revokedAt).not.toBeNull();
+  });
+
+  it("refuses a send past the platform's daily limit, per shop", async () => {
+    const shop = await salon(t.db);
+    const { invoice } = await issueShopInvoice(t.db, shop.shop.id, {
+      clientId: shop.client.id,
+      language: "en",
+      issuedOn: "2026-10-23",
+      lines: [{ serviceId: shop.services.cut.id, quantity: 1 }],
+    });
+    const mail = (letter: string, maxPerShopPerDay: number) => ({
+      tokenHash: invoiceTokenHash(`iv1.${letter.repeat(43)}`),
+      toEmail: "client@example.com",
+      ccEmail: null,
+      fromName: "Salon Laurier",
+      locale: "en" as const,
+      expiresAt: new Date("2026-11-22T12:00:00.000Z"),
+      createdAt: NOW,
+      maxPerShopPerDay,
+      subject: "Your invoice",
+      html: "<p>Invoice</p>",
+      text: "Invoice",
+    });
+    await enqueueInvoiceDelivery(t.db, shop.shop.id, invoice.id, mail("E", 1));
+    await expect(enqueueInvoiceDelivery(t.db, shop.shop.id, invoice.id, mail("F", 1))).rejects.toMatchObject({ code: "AK_INVOICE_SEND_LIMIT" });
+    await expect(enqueueInvoiceDelivery(t.db, shop.shop.id, invoice.id, mail("G", 2))).resolves.toHaveProperty("deliveryId");
   });
 });

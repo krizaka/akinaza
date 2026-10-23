@@ -89,7 +89,7 @@ export async function sendWalkReport(db: Db, shopId: string, bookingId: string, 
 }
 
 /** Issues one private link, queues the invoice e-mail, then gives the outbox its normal first attempt. */
-export async function sendInvoiceMail(db: Db, shopId: string, invoiceId: string, toEmail: string, message: string | undefined, now: Date, settings: MailSettings, send: typeof fetch = fetch) {
+export async function sendInvoiceMail(db: Db, shopId: string, invoiceId: string, toEmail: string, message: string | undefined, now: Date, settings: MailSettings, maxPerShopPerDay: number, send: typeof fetch = fetch) {
   const [invoice, config] = await Promise.all([invoiceDetail(db, shopId, invoiceId), invoiceMailSettings(db, shopId)]);
   if (!invoice || !invoice.clientId || invoice.creditOf || !config) throw new Error("AK_INVOICE_UNKNOWN");
   if (!invoice.client?.email && !toEmail) throw new Error("AK_INVOICE_RECIPIENT");
@@ -127,6 +127,7 @@ export async function sendInvoiceMail(db: Db, shopId: string, invoiceId: string,
     locale,
     expiresAt: addDays(now, config.shop.linkDays),
     createdAt: now,
+    maxPerShopPerDay,
     subject: rendered.subject,
     html: rendered.html,
     text: rendered.text,

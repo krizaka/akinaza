@@ -179,12 +179,6 @@
       "invoices": {
         "caption": "Invoices"
       },
-      "invoiceMail": {
-        "title": "Invoice e-mail platform limits",
-        "limit": "Maximum sends per shop per day",
-        "domain": "Allowed sender domain",
-        "save": "Save platform settings"
-      },
       "users": {
         "caption": "Accounts"
       },

@@ -5,7 +5,7 @@ import { and, desc, eq, isNull, sql } from "drizzle-orm";
 
 import type { Db } from "./client";
 import { ShopError } from "./errors";
-import { clients, invoiceDeliveries, invoices, invoiceMailPlatformSettings, mailOutbox, payments, shopMedia, shops } from "./schema";
+import { clients, invoiceDeliveries, invoices, mailOutbox, payments, shopMedia, shops } from "./schema";
 import { invoiceDetail } from "./shop-ops";
 
 export const invoiceTokenHash = (token: string) => createHash("sha256").update(token).digest("hex");
@@ -19,6 +19,8 @@ export interface InvoiceDeliveryMail {
   locale: "fr" | "en";
   expiresAt: Date;
   createdAt: Date;
+  /** The platform limit (`limits.invoiceEmailsPerShopPerDay`, a setting the administrator changes): sends per shop per UTC day. */
+  maxPerShopPerDay: number;
   subject: string;
   html: string;
   text: string;
@@ -37,7 +39,6 @@ export async function enqueueInvoiceDelivery(db: Db, shopId: string, invoiceId: 
     if (invoice.erasedAt) throw new ShopError("AK_CLIENT_UNREACHABLE", "AK_CLIENT_UNREACHABLE");
     if (!mail.toEmail.trim()) throw new ShopError("AK_INVOICE_RECIPIENT", "AK_INVOICE_RECIPIENT");
 
-    const [settings] = await tx.select({ maxPerShopPerDay: invoiceMailPlatformSettings.maxPerShopPerDay }).from(invoiceMailPlatformSettings).where(eq(invoiceMailPlatformSettings.id, "global"));
     const dayStart = new Date(Date.UTC(mail.createdAt.getUTCFullYear(), mail.createdAt.getUTCMonth(), mail.createdAt.getUTCDate()));
     const dayEnd = addDays(dayStart, 1);
     const count = await tx.execute(sql`
@@ -46,7 +47,7 @@ export async function enqueueInvoiceDelivery(db: Db, shopId: string, invoiceId: 
        WHERE i.shop_id = ${shopId}
          AND d.created_at >= ${dayStart.toISOString()}::timestamptz
          AND d.created_at < ${dayEnd.toISOString()}::timestamptz`);
-    if ((count.rows[0] as { count: number }).count >= (settings?.maxPerShopPerDay ?? 50)) throw new ShopError("AK_INVOICE_SEND_LIMIT", "AK_INVOICE_SEND_LIMIT");
+    if ((count.rows[0] as { count: number }).count >= mail.maxPerShopPerDay) throw new ShopError("AK_INVOICE_SEND_LIMIT", "AK_INVOICE_SEND_LIMIT");
 
     const [delivery] = await tx
       .insert(invoiceDeliveries)
@@ -158,10 +159,9 @@ export async function invoiceForClientAccount(db: Db, accountId: string, invoice
 }
 
 export async function invoiceMailSettings(db: Db, shopId: string) {
-  const [[shop], [platform], [logo]] = await Promise.all([
+  const [[shop], [logo]] = await Promise.all([
     db.select({ message: shops.invoiceMailMessage, fromName: shops.invoiceMailFromName, copy: shops.invoiceMailCopy, linkDays: shops.invoiceLinkDays, publicEmail: shops.publicEmail }).from(shops).where(eq(shops.id, shopId)),
-    db.select().from(invoiceMailPlatformSettings).where(eq(invoiceMailPlatformSettings.id, "global")),
     db.select({ url: shopMedia.url }).from(shopMedia).where(and(eq(shopMedia.shopId, shopId), eq(shopMedia.role, "cover"))).limit(1),
   ]);
-  return shop ? { shop, platform: platform ?? { maxPerShopPerDay: 50, allowedSenderDomain: null }, logo: logo?.url ?? null } : null;
+  return shop ? { shop, logo: logo?.url ?? null } : null;
 }
