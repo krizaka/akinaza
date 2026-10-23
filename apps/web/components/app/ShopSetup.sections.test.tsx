@@ -1,28 +1,16 @@
 import { defaultShopPageConfig } from "@akinaza/db";
-import { KrizakaQueryProvider } from "@krizaka/query";
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import { I18nProvider, VocabularyProvider } from "@/lib/i18n-client";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import { renderIn } from "@/lib/test-i18n";
 
 import { type SetupData, ShopSetupView } from "./ShopSetup";
 
 vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app/s1/shop", useSearchParams: () => new URLSearchParams() }));
 
-const MESSAGES = { en: { console: en.console }, fr: { console: fr.console } } as const;
 const page: NonNullable<SetupData["page"]> = { name: "Atelier Boréal", legalName: "Atelier Boréal inc.", address: "1234 rue Secrète, Montréal", slug: "atelier-boreal", ownerName: "Éric", taglineFr: "Du bon travail", taglineEn: "Good work", published: false, area: "Montréal", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "", businessType: "professional" };
 const data = (over: Partial<SetupData> = {}): SetupData => ({ page, shopId: "s1", pageConfig: defaultShopPageConfig(), publicUrl: "https://www.akinaza.com/en/s/atelier-boreal", zones: [], services: [], media: { cover: null, gallery: [] }, windows: [], daysOff: [], rules: { cancellationHours: 24, bookingHorizonDays: 30, slotStepMinutes: 30, minNoticeMinutes: 0, reportLinkDays: 30, paymentTermsDays: 30 }, ...over });
-const render = (d: SetupData, tab: Parameters<typeof ShopSetupView>[0]["tab"], locale: "en" | "fr" = "en") =>
-  renderToStaticMarkup(
-    <I18nProvider locale={locale} messages={MESSAGES[locale] as never}>
-      <KrizakaQueryProvider>
-        <VocabularyProvider type="professional"><ShopSetupView data={d} tab={tab} /></VocabularyProvider>
-      </KrizakaQueryProvider>
-    </I18nProvider>,
-  );
+const render = (d: SetupData, tab: Parameters<typeof ShopSetupView>[0]["tab"], locale: "en" | "fr" = "en") => renderIn(locale, "professional", <ShopSetupView data={d} tab={tab} />);
 const text = (h: string) => h.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ");
 
 describe("« My shop page » in sections (#265)", () => {

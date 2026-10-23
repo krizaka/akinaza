@@ -278,5 +278,5 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     for (let i = 0; i < 125 && last.status !== 429; i += 1) last = await call(slots, "GET", path, { params: { slug: `pattes-${stamp}` } });
     expect(last.status).toBe(429);
     expect(last.res.headers.get("retry-after")).toMatch(/^\d+$/);
-  });
+  }, 30_000); // up to 125 calls against the database: slow on a busy CI runner
 });

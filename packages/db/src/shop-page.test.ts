@@ -36,3 +36,16 @@ describe("the owner's storefront configuration", () => {
     await expect(saveShopPageConfig(t.db, shop.shopId, { ...config, logoUrl: "http://cdn.example/logo.png" })).rejects.toThrow();
   });
 });
+
+describe("the street address is private (#265)", () => {
+  it("never leaves the public read of a shop: neither the address nor the legal name", async () => {
+    const s = await walkerShop(t.db, "addr");
+    const page = await publicShop(t.db, "pattes-addr");
+    expect(page).not.toBeNull();
+    const json = JSON.stringify(page);
+    expect(json).not.toContain("2000 rue Notre-Dame");
+    expect(json).not.toContain("legalName");
+    expect(Object.keys(page!.shop)).not.toContain("address");
+    expect(s.shopId).toBe(page!.shop.id);
+  });
+});
