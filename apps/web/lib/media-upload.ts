@@ -27,6 +27,13 @@ const purposeDirectory: Record<MediaPurpose, string> = {
   gallery: "gallery",
 };
 
+/** The purposes an administrator can switch off (`features.shop*`): the server refuses an upload for what is off, whatever the browser shows. */
+export const PURPOSE_FEATURE = {
+  wall: "features.shopWall",
+  reels: "features.shopReels",
+  announcements: "features.shopAnnouncements",
+} as const satisfies Partial<Record<MediaPurpose, `features.${string}`>>;
+
 export function mediaPrefix(shopId: string, purpose: MediaPurpose): string {
   return `user/akinaza/shops/${shopId}/${purposeDirectory[purpose]}/`;
 }
