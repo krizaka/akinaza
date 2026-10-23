@@ -4,9 +4,10 @@
 // The script knows the setting by its kind only (it imports no application code: the app's registry pulls the whole domain in), so the value is validated
 // by shape here and by the full registry when the app reads it.
 //
-//   DATABASE_URL=… pnpm --filter @akinaza/web exec tsx scripts/set-setting.mjs <key> <json-value> [--kind flag|choice|subset|integer] [--actor <label>]
+//   DATABASE_URL=… pnpm --filter @akinaza/web exec tsx scripts/set-setting.mjs <key> <json-value> [--kind flag|choice|subset|integer] [--actor <e-mail or label>]
 //   e.g.  … set-setting.mjs features.storefrontTemplates true
 //         … set-setting.mjs storefront.templates.offered '["salon-carte","pets-histoire"]' --kind subset
+// The audit names the actor: an e-mail of an account is attributed to it; any other label is recorded without an account, as the app's own system actions are.
 import { pg, poolConfig } from "@akinaza/db";
 import { choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, subset } from "@krizaka/settings";
 
@@ -51,8 +52,9 @@ const pool = new pg.Pool(poolConfig(url, process.env.DATABASE_CA_CERT, 2));
 try {
   const registry = defineSettings({ [key]: definitionFor(kind, value) });
   const service = postgresSettings(registry, { query: async (sql, params) => (await pool.query(sql, params)).rows, clock: () => performance.now() });
-  await service.set({ id: "script", label: actor }, { scope: "global", id: "" }, key, value, new Date());
-  console.log(`set-setting: ${key} = ${raw} (${kind})`);
+  const account = actor.includes("@") ? (await pool.query("SELECT id FROM accounts WHERE email = $1", [actor.trim().toLowerCase()])).rows[0] : undefined;
+  await service.set({ id: account?.id ?? null, label: actor }, { scope: "global", id: "" }, key, value, new Date());
+  console.log(`set-setting: ${key} = ${raw} (${kind}, by ${account ? "the account " + actor : actor + ", no account"})`);
 } finally {
   await pool.end();
 }
