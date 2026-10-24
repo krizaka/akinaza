@@ -1,4 +1,5 @@
 import { shopDay } from "@akinaza/db";
+import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -27,6 +28,7 @@ export default async function NewInvoice({ params }: { params: Promise<{ locale:
       <Link className="text-fg-accent underline" href={shopRoutes(locale, shop.id).invoices}>
         ← {t.back}
       </Link>
+      <PageHeader title={t.new.title} />
       <InvoiceForm locale={locale} data={{ today, ...choices }} />
     </div>
   );

@@ -7,6 +7,7 @@ import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
 import { AlertDialog } from "@krizaka/ui/dialog";
 import { createKrizakaForm } from "@krizaka/ui/form";
+import { PageHeader } from "@krizaka/ui/page-header";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -42,7 +43,7 @@ export function ClientHome({ files }: { files: ClientFileView[] }) {
   const { say } = useSay();
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="font-display text-2xl font-bold text-fg">{say("client.title")}</h1>
+      <PageHeader title={say("client.title")} />
       {files.length === 0 ? <p className="text-fg-secondary">{say("client.none")}</p> : null}
       {files.map((f) => (
         <VocabularyProvider key={f.client.id} type={f.client.businessType}>

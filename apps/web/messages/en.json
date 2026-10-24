@@ -150,21 +150,22 @@
       "theme": "Theme",
       "signOut": "Sign out",
       "account": "Account",
-      "settings": "Settings",
+      "settings": "My account",
       "today": "Today",
       "profile": "Profile",
       "users": "People",
-      "shops": "Shops",
+      "shops": "Your shops",
       "invoices": "Invoices",
       "ledger": "Tax ledger",
       "operations": "Operations",
       "audit": "Audit log",
       "bookings": "My bookings",
       "clients": "Clients",
-      "shop": "My shop page",
-      "books": "Your books",
+      "shop": "Shop",
+      "books": "Books",
       "team": "Team",
-      "shopSwitcher": "Switch shop"
+      "shopSwitcher": "Switch shop",
+      "newInvoice": "New invoice"
     },
     "admin": {
       "health": "Health",
@@ -382,6 +383,7 @@
       "later": "Later days",
       "goToday": "Today",
       "stats": {
+        "title": "The day in figures",
         "appointments": "Appointments",
         "expected": "Expected revenue",
         "withTaxes": "GST and QST included",
@@ -414,7 +416,11 @@
         "clientFile": "Open the client file"
       },
       "offToday": "Off today: {names}.",
-      "offUntil": "{name} (until {until})"
+      "offUntil": "{name} (until {until})",
+      "brief": {
+        "see": "See the point ({count})",
+        "dismiss": "Put the point aside"
+      }
     },
     "account": {
       "forgot": {
@@ -485,6 +491,7 @@
       "previous": "Previous day",
       "next": "Next day",
       "today": "Today",
+      "dog": "One dog",
       "dogs": "{count} dogs",
       "dogsOf": "{count} of {max} dogs",
       "owner": "Owner: {name}",

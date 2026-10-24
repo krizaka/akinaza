@@ -15,7 +15,7 @@ const DOG_WORDS = {
 };
 
 /** What only a pet-care shop reaches (its dependants, its visit reports, the proposed images and the templates of the pets trade): the other business types never show these. */
-const PET_ONLY = /^(defaultMedia\.pets\.|templates\.pets-|clients\.(dogs|kinds|sizes|profile|vet|emergency)|book\.(dogTitle|dogName|breed|size|temperament|temperamentHint|vet\w*|emergency\w*|addDog|addAnother|needDog|dogs|dogsHint|access\w*)|walker\.(dogs|dogsOf|reveal|hide|noNotes|notesTitle|reportTitle|note|notePlaceholder|photo\w*|save|saved|send|sendAgain|sentOn|sentNow|queued|failed)|report\.|meta\.report|client\.dogsTitle|errors\.(VISIT_NOT_DONE|NO_CONSENT|CLIENT_UNREACHABLE|BOOKING_OWNERSHIP|DEPENDANTS_REQUIRED|ACCESS_\w+|PHOTO_\w+|REPORT_\w+))/;
+const PET_ONLY = /^(defaultMedia\.pets\.|templates\.pets-|clients\.(dogs|kinds|sizes|profile|vet|emergency)|book\.(dogTitle|dogName|breed|size|temperament|temperamentHint|vet\w*|emergency\w*|addDog|addAnother|needDog|dogs|dogsHint|access\w*)|walker\.(dog|dogs|dogsOf|reveal|hide|noNotes|notesTitle|reportTitle|note|notePlaceholder|photo\w*|save|saved|send|sendAgain|sentOn|sentNow|queued|failed)|report\.|meta\.report|client\.dogsTitle|errors\.(VISIT_NOT_DONE|NO_CONSENT|CLIENT_UNREACHABLE|BOOKING_OWNERSHIP|DEPENDANTS_REQUIRED|ACCESS_\w+|PHOTO_\w+|REPORT_\w+))/;
 /** Not the signed-in screens of a shop: the marketing site, the legal text and the administration. */
 /** The pickers name the other type and the pets trade by design; « walk-in » is the salon's word for a client without an appointment. */
 const NAMES_THE_OTHER_TYPE = /^(shopSetup\.page\.businessTypes\.pets|shopSetup\.defaults\.types\.pets|today\.walkIn)$/;
