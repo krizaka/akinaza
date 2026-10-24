@@ -58,7 +58,8 @@ describe("the account's other sections", () => {
 
 describe("the profile (docs/ux/2026-10-full-review.md K6): picture, name, e-mail ✓, member since, role", () => {
   const base: ProfileView = { id: "a-1", email: "lea@example.test", name: "Léa Tremblay", avatarSeed: "3", emailVerified: true, pendingEmail: null, memberSince: "Member since October 2026", role: "Owner at Pattes de Saint-Henri" };
-  const heading = (html: string) => html.match(/<h[2-4][^>]*>([\s\S]*?)<\/h[2-4]>/g)?.map((h) => h.replace(/<[^>]*>/g, "").trim()) ?? [];
+  /** The text of each h2–h4: its text nodes joined (no tag stripping). */
+  const heading = (html: string) => html.match(/<h[2-4][^>]*>[\s\S]*?<\/h[2-4]>/g)?.map((h) => (h.match(/>([^<]*)</g) ?? []).map((n) => n.slice(1, -1)).join("").trim()) ?? [];
 
   it("heads the identity card with the name, the verified e-mail on its own line, since when, and a name field and the picture choice", () => {
     const html = around(<ProfileSettings profile={base} />);

@@ -8,7 +8,7 @@ import { ProfileFrame } from "./ProfileFrame";
 
 type Props = Parameters<typeof ProfileFrame>[0];
 const html = (props: Partial<Props> = {}) => renderToStaticMarkup(<ProfileFrame locale="fr" current="profile" account={{ name: null }} {...props}>contenu</ProfileFrame>);
-const h1 = (page: string) => page.match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1]?.replace(/<[^>]*>/g, "").trim();
+const h1 = (page: string) => (page.match(/<h1[^>]*>[\s\S]*?<\/h1>/)?.[0].match(/>([^<]*)</g) ?? []).map((n) => n.slice(1, -1)).join("").trim();
 
 describe("the account frame (docs/ux/2026-10-full-review.md K6)", () => {
   it("names the owner's role « Propriétaire » in French", () => {

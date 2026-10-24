@@ -1,10 +1,8 @@
-import { AkinazaLogo } from "@krizaka/ui";
 import { Alert } from "@krizaka/ui/alert";
-import { AuthLayout } from "@krizaka/ui/auth-layout";
-import { Mascot } from "@krizaka/ui/mascots";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { AccountAuthPage } from "@/components/account/AccountAuthPage";
 import { ResetForm } from "@/components/account/AccountForms";
 import { asLocale, getDictionary } from "@/lib/i18n";
 
@@ -22,15 +20,8 @@ export default async function ResetPasswordPage({ params, searchParams }: { para
   const { token } = await searchParams;
   const signInHref = `/${locale}/sign-in`;
   return (
-    <AuthLayout
-      brand={
-        <Link href={`/${locale}`} className="inline-flex items-center gap-2">
-          <AkinazaLogo size={28} /> Akinaza
-        </Link>
-      }
-      promise={t.signIn.promise}
-      aside={<Mascot bird="beaver" mood="welcome" size={72} />}
-      asideFooter={t.signIn.asideFooter}
+    <AccountAuthPage
+      locale={locale}
       title={t.account.reset.title}
       footer={
         <Link className="font-semibold text-fg-accent" href={signInHref}>
@@ -39,6 +30,6 @@ export default async function ResetPasswordPage({ params, searchParams }: { para
       }
     >
       {token ? <ResetForm token={token} signInHref={`/${locale}/forgot-password`} /> : <Alert tone="danger">{t.account.reset.missing}</Alert>}
-    </AuthLayout>
+    </AccountAuthPage>
   );
 }
