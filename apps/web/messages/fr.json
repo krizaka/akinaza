@@ -150,21 +150,22 @@
       "theme": "Thème",
       "signOut": "Se déconnecter",
       "account": "Compte",
-      "settings": "Réglages",
+      "settings": "Mon compte",
       "today": "Aujourd'hui",
       "profile": "Profil",
       "users": "Personnes",
-      "shops": "Commerces",
+      "shops": "Vos boutiques",
       "invoices": "Factures",
       "ledger": "Grand livre",
       "operations": "Exploitation",
       "audit": "Journal d'audit",
       "bookings": "Mes réservations",
       "clients": "Clients",
-      "shop": "Ma page boutique",
-      "books": "Vos livres",
+      "shop": "Boutique",
+      "books": "Livres",
       "team": "Équipe",
-      "shopSwitcher": "Changer de boutique"
+      "shopSwitcher": "Changer de boutique",
+      "newInvoice": "Nouvelle facture"
     },
     "admin": {
       "health": "Santé",
@@ -382,6 +383,7 @@
       "later": "Jours suivants",
       "goToday": "Aujourd'hui",
       "stats": {
+        "title": "La journée en chiffres",
         "appointments": "Rendez-vous",
         "expected": "Revenu attendu",
         "withTaxes": "TPS et TVQ incluses",
@@ -414,7 +416,11 @@
         "clientFile": "Ouvrir la fiche client"
       },
       "offToday": "En congé aujourd'hui : {names}.",
-      "offUntil": "{name} (jusqu'au {until})"
+      "offUntil": "{name} (jusqu'au {until})",
+      "brief": {
+        "see": "Voir le point ({count})",
+        "dismiss": "Mettre le point de côté"
+      }
     },
     "account": {
       "forgot": {
@@ -485,6 +491,7 @@
       "previous": "Jour précédent",
       "next": "Jour suivant",
       "today": "Aujourd'hui",
+      "dog": "Un chien",
       "dogs": "{count} chiens",
       "dogsOf": "{count} de {max} chiens",
       "owner": "Propriétaire : {name}",

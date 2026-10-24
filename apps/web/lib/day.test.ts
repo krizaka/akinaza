@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { AppointmentStatus, daySummary, isIsoDay, shiftDay, stripWindow } from "./day";
+import { AppointmentStatus, daySummary, dayView, isIsoDay, shiftDay, stripWindow } from "./day";
 
 const at = (id: string, hour: number, status: AppointmentStatus, priceCents = 10_000, category: "standard" | "exempt" = "standard") => ({
   id,
@@ -55,5 +55,15 @@ describe("daySummary", () => {
 
   it("is empty on a free day", () => {
     expect(daySummary([], true, now)).toEqual({ count: 0, expectedCents: 0, next: null });
+  });
+});
+
+describe("who reads the day how (docs/ux/2026-10-full-review.md B1)", () => {
+  it("gives the owner and a manager the agenda in every trade, and a dog walker's staff their cards", () => {
+    expect(dayView("owner", true)).toBe("agenda");
+    expect(dayView("manager", true)).toBe("agenda");
+    expect(dayView("owner", false)).toBe("agenda");
+    expect(dayView("staff", true)).toBe("cards");
+    expect(dayView("staff", false)).toBe("agenda");
   });
 });

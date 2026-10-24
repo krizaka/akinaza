@@ -1,10 +1,11 @@
 import { bookingPreselect, slugSchema } from "@akinaza/core";
 import { clientFilesOf, dependantsOf, publicShop } from "@akinaza/db";
+import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
-import { AppFrame } from "@/components/app/AppFrame";
 import { BookingFlow } from "@/components/app/BookingFlow";
+import { SpaceChrome } from "@/components/app/SpaceChrome";
 import { pageSession } from "@/lib/access";
 import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";
@@ -32,9 +33,9 @@ export default async function BookPage({ params, searchParams }: { params: Promi
   const dogs = file ? await dependantsOf(db(), file.id) : [];
   const t = consoleFor(locale, page.shop.businessType).book;
   return (
-    <AppFrame locale={locale} email={session.account.email} base={accountRoutes(locale).home} items={["bookings", "profile"]}>
+    <SpaceChrome locale={locale} account={session.account} member={null}>
       <div className="flex flex-col gap-4">
-        <h1 className="font-display text-2xl font-bold text-fg">{format(t.title, { shop: page.shop.name })}</h1>
+        <PageHeader title={format(t.title, { shop: page.shop.name })} />
         <VocabularyProvider type={page.shop.businessType}>
         <BookingFlow
           data={{
@@ -51,6 +52,6 @@ export default async function BookPage({ params, searchParams }: { params: Promi
         />
         </VocabularyProvider>
       </div>
-    </AppFrame>
+    </SpaceChrome>
   );
 }

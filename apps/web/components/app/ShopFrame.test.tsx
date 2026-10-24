@@ -1,0 +1,80 @@
+import { KrizakaQueryProvider } from "@krizaka/query";
+import { renderToStaticMarkup } from "react-dom/server";
+import { describe, expect, it, vi } from "vitest";
+
+import { ShopFrame, type ShopFrameProps } from "./ShopFrame";
+
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }), usePathname: () => "/fr/app/s-1/aujourdhui" }));
+vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
+vi.mock("@/lib/i18n-client", () => ({ useSay: () => ({ say: (key: string, vars?: Record<string, string>) => (vars ? `${key} ${Object.values(vars).join(" ")}` : key), locale: "fr" }) }));
+
+const shop = "/fr/app/s-1";
+const OWNER: ShopFrameProps = {
+  locale: "fr",
+  account: { email: "lea@example.test", name: "Léa" },
+  places: [
+    { key: "today", href: `${shop}/aujourdhui` },
+    { key: "clients", href: `${shop}/clients` },
+    { key: "invoices", href: `${shop}/invoices` },
+    { key: "books", href: `${shop}/books` },
+    { key: "shop", href: `${shop}/shop` },
+  ],
+  shop: { current: { id: "s-1", name: "Pattes de Saint-Henri" }, others: [], addHref: `${shop}/shop/new` },
+  newInvoiceHref: `${shop}/invoices/new`,
+  dev: true,
+  home: "/fr/app",
+  profileHref: "/fr/app/profile",
+  children: <p>page</p>,
+};
+const render = (props: ShopFrameProps) => renderToStaticMarkup(<KrizakaQueryProvider><ShopFrame {...props} /></KrizakaQueryProvider>);
+const railItems = (html: string) => html.match(/<a[^>]*data-rail-item[^>]*>/g) ?? [];
+
+describe("the owner's frame (docs/ux/2026-10-full-review.md § 4.1): where you work on the rail, who you are under the avatar", () => {
+  const html = render(OWNER);
+
+  it("has the five destinations on the rail, the day marked as the current one, and nothing about the account there", () => {
+    const items = railItems(html);
+    expect(items).toHaveLength(5);
+    expect(items.map((a) => a.match(/aria-label="([^"]+)"/)![1])).toEqual(["shell.today", "shell.clients", "shell.invoices", "shell.books", "shell.shop"]);
+    expect(items[0]).toContain('aria-current="page"');
+    expect(html).not.toContain("shell.profile");
+    expect(html).not.toContain("shell.team");
+  });
+
+  it("names the product and the shop in the header, with the DEV chip of a deployment kept out of search engines", () => {
+    const chip = html.match(/<[^>]*data-testid="shop-chip"[^>]*>[\s\S]*?Pattes de Saint-Henri/);
+    expect(chip).not.toBeNull();
+    expect(html).toContain(">Akinaza<");
+    expect(html).toMatch(/data-testid="app-version"[^>]*>shell\.dev</);
+  });
+
+  it("carries the one primary action, « Nouvelle facture », and the account menu in the header, once, at every width", () => {
+    expect(html.match(/data-testid="primary-action"/g)).toHaveLength(1);
+    expect(html).toMatch(/data-testid="primary-action"[^>]*>[\s\S]*?shell\.newInvoice/);
+    expect(html.match(/aria-label="shell\.account"/g)).toHaveLength(1);
+    expect(html.indexOf('data-testid="account-menu-header"')).toBeLessThan(html.indexOf('aria-label="shell.account"'));
+  });
+
+  it("leaves the page's h1 to the page: the frame renders none", () => {
+    expect(html).not.toMatch(/<h1[\s>]/);
+    expect(html).toContain('<main id="content"');
+  });
+});
+
+describe("the same frame for other roles and for a client", () => {
+  it("shows no primary action to a staff member, whose rail is the day alone", () => {
+    const html = render({ ...OWNER, places: [{ key: "today", href: `${shop}/aujourdhui` }], newInvoiceHref: null, shop: { current: { id: "s-1", name: "Pattes de Saint-Henri" }, others: [], addHref: null } });
+    expect(railItems(html)).toHaveLength(1);
+    expect(html).not.toContain('data-testid="primary-action"');
+    expect(html).toMatch(/data-testid="shop-chip"[^>]*>Pattes de Saint-Henri</);
+  });
+
+  it("gives a client their bookings and the account menu, no shop chip, no invoice", () => {
+    const html = render({ ...OWNER, places: [{ key: "bookings", href: "/fr/app" }], shop: undefined, newInvoiceHref: null, dev: false });
+    expect(railItems(html).map((a) => a.match(/aria-label="([^"]+)"/)![1])).toEqual(["shell.bookings"]);
+    expect(html).not.toContain("shop-chip");
+    expect(html).not.toContain("primary-action");
+    expect(html).not.toContain("app-version");
+    expect(html.match(/aria-label="shell\.account"/g)).toHaveLength(1);
+  });
+});
