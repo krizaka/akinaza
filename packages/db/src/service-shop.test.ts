@@ -204,7 +204,7 @@ describe("the business type (the vocabulary, krizaka/akinaza#117)", () => {
     await book(new Date("2026-10-20T15:00:00Z"));
     const rows = await t.db.select().from(dependants).where(eq(dependants.clientId, s.client.clientId));
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ kind: "other", name: "Café du Parc inc." });
+    expect(rows[0]).toMatchObject({ kind: "other", name: "Studio Lumen inc." });
   });
 
   it("a pet-care shop still needs a dog", async () => {

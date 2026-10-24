@@ -92,8 +92,8 @@ export const WORDS = {
 };
 
 const T = {
-  en: { period: "2026-Q3", client: "Client", service: "Service", quantity: "Quantity", other: "Other line (description)", price: "Unit price", submit: "Issue the invoice", open: /^Open /, dev: /Software development/, consulting: /Consulting and architecture/, support: /Support and maintenance/, workshop: /Scoping workshop/, nord: /Nord Studio/, cafe: /Café du Parc/, books: /^Your books$/ },
-  fr: { period: "2026-Q3", client: "Client", service: "Service", quantity: "Quantité", other: "Autre ligne (description)", price: "Prix unitaire", submit: "Émettre la facture", open: /^Ouvrir /, dev: /Développement logiciel/, consulting: /Conseil et architecture/, support: /Soutien et maintenance/, workshop: /Atelier de cadrage/, nord: /Nord Studio/, cafe: /Café du Parc/, books: /^Vos livres$/ },
+  en: { period: "2026-Q3", client: "Client", service: "Service", quantity: "Quantity", other: "Other line (description)", price: "Unit price", submit: "Issue the invoice", open: /^Open /, dev: /Software development/, consulting: /Consulting and architecture/, support: /Support and maintenance/, workshop: /Scoping workshop/, nord: /Nord Studio/, lumen: /Studio Lumen/, books: /^Your books$/ },
+  fr: { period: "2026-Q3", client: "Client", service: "Service", quantity: "Quantité", other: "Autre ligne (description)", price: "Prix unitaire", submit: "Émettre la facture", open: /^Ouvrir /, dev: /Développement logiciel/, consulting: /Conseil et architecture/, support: /Soutien et maintenance/, workshop: /Atelier de cadrage/, nord: /Nord Studio/, lumen: /Studio Lumen/, books: /^Vos livres$/ },
 }[locale];
 
 /** Chooses the option of a native select whose text matches. */
@@ -176,7 +176,7 @@ await clip("invoice", async ({ take, page, go, glide }) => {
   take.beat("form");
   await page.waitForTimeout(900);
   // English: the English-speaking client, 7.5 h of consulting and a workshop; French: the French-speaking client, 7,5 h of development and the support plan.
-  await choose(page.getByLabel(T.client, { exact: true }), english ? T.nord : T.cafe);
+  await choose(page.getByLabel(T.client, { exact: true }), english ? T.nord : T.lumen);
   await page.waitForTimeout(500);
   await choose(page.getByLabel(new RegExp(`^${T.service} 1`)), english ? T.consulting : T.dev);
   await page.getByLabel(T.quantity).nth(0).fill(english ? "7.5" : "7,5");

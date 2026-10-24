@@ -1,10 +1,10 @@
 import { applyRate, GST, localDay, QST } from "@akinaza/core";
 import { addMonths } from "date-fns";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import type { Db } from "./client";
 import { organizeOver, SHOP_AVATAR_SEEDS } from "./organize";
-import { accounts, invoices, shops } from "./schema";
+import { accounts, clients, dependants, invoices, shops } from "./schema";
 import { addWindow, joinShop, saveService, saveShopPage, shopOfOwner, shopsOfOwner } from "./service-shop";
 import { issueInvoice, recordExpense } from "./shop-ops";
 
@@ -40,7 +40,7 @@ export const KRIZAKA = {
   ],
   hours: [1, 2, 3, 4, 5].map((weekday) => ({ weekday, startsAt: "09:00", endsAt: "17:00" })),
   clients: [
-    { email: "contact.cafedupark@akinaza.test", name: "Café du Parc inc. (démo)", phone: "514-555-0111", language: "fr" as const },
+    { email: "contact.studiolumen@akinaza.test", name: "Studio Lumen inc. (démo)", phone: "514-555-0111", language: "fr" as const },
     { email: "contact.atelierboreal@akinaza.test", name: "Atelier Boréal inc. (démo)", phone: "514-555-0112", language: "fr" as const },
     { email: "contact.nordstudio@akinaza.test", name: "Nord Studio Montréal Ltd. (demo)", phone: "514-555-0113", language: "en" as const },
   ],
@@ -56,9 +56,29 @@ export const KRIZAKA_SECOND = {
 /** The persona's accounts in the order the seed expects them: Éric (the owner) first, then one contact per client. */
 export const KRIZAKA_EMAILS = ["eric.krizaka@akinaza.test", ...KRIZAKA.clients.map((c) => c.email)] as const;
 
+/**
+ * Demo clients renamed since a deployment was seeded: the same account, client file and invoices (their ids and numbers stay),
+ * under the new name. « Café du Parc » became « Studio Lumen »: Akinaza serves no café, restaurant or bar (AGENTS § 2, #326).
+ */
+export const KRIZAKA_RENAMED_CLIENTS = [
+  { from: { email: "contact.cafedupark@akinaza.test", name: "Café du Parc inc. (démo)" }, to: KRIZAKA.clients[0]! },
+] as const;
+
+/** Renames the former demo clients in place (idempotent): run before the persona's accounts are created again. */
+export async function renameFormerClients(db: Db): Promise<void> {
+  for (const { from, to } of KRIZAKA_RENAMED_CLIENTS) {
+    await db.transaction(async (tx) => {
+      const [taken] = await tx.select({ id: accounts.id }).from(accounts).where(eq(accounts.email, to.email));
+      if (!taken) await tx.update(accounts).set({ email: to.email }).where(eq(accounts.email, from.email));
+      const files = await tx.update(clients).set({ email: to.email, fullName: to.name }).where(and(eq(clients.email, from.email), eq(clients.fullName, from.name))).returning({ id: clients.id });
+      for (const f of files) await tx.update(dependants).set({ name: to.name }).where(and(eq(dependants.clientId, f.id), eq(dependants.name, from.name)));
+    });
+  }
+}
+
 /** Plausible monthly hours (demo amounts), by client and month back: enough variety to make the books worth reading. */
 const HOURS: Record<string, [string, number][][]> = {
-  "Café du Parc inc. (démo)": [[["dev", 24], ["support", 1]], [["dev", 32], ["support", 1]], [["dev", 18], ["support", 1]]],
+  "Studio Lumen inc. (démo)": [[["dev", 24], ["support", 1]], [["dev", 32], ["support", 1]], [["dev", 18], ["support", 1]]],
   "Atelier Boréal inc. (démo)": [[["design", 20]], [["design", 14], ["workshop", 1]], [["design", 26]]],
   "Nord Studio Montréal Ltd. (demo)": [[["consulting", 8]], [["consulting", 12], ["dev", 10]], [["consulting", 6]]],
 };
@@ -89,6 +109,7 @@ async function seedBooks(db: Db, shopId: string, clientIds: Record<string, { id:
 
 /** Seeds the Krizaka demo business for the owner account (created beforehand). Returns whether it was created now. */
 export async function seedKrizaka(db: Db, now: Date): Promise<{ shopId: string; created: boolean }> {
+  await renameFormerClients(db);
   const [owner] = await db.select().from(accounts).where(eq(accounts.email, KRIZAKA_EMAILS[0]));
   if (!owner) throw new Error(`no account ${KRIZAKA_EMAILS[0]}: create the accounts first`);
   const existing = await shopOfOwner(db, owner.id);

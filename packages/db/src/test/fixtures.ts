@@ -63,6 +63,6 @@ export async function studioShop(db: Db, tag = "a") {
   for (const weekday of [1, 2, 3, 4, 5]) await addWindow(db, shopId, { weekday, startsAt: "09:00", endsAt: "17:00" });
   await saveShopPage(db, owner.id, { ...page, published: true });
   const acc = await account(db, `contact-${tag}@example.test`);
-  const { clientId } = await joinShop(db, acc.id, acc.email, shopId, { fullName: "Café du Parc inc.", phone: "514-555-0111", language: "fr", consentService: true });
+  const { clientId } = await joinShop(db, acc.id, acc.email, shopId, { fullName: "Studio Lumen inc.", phone: "514-555-0111", language: "fr", consentService: true });
   return { owner, shopId, hour, client: { account: acc, clientId } };
 }
