@@ -1,13 +1,15 @@
 // @template: app-dashboard
 import { localDay, visitMinutes, vocabularyOf } from "@akinaza/core";
 import { dayVisits, listInvoices, offOn, shopDay, type ShopRole } from "@akinaza/db";
+import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 
-import { MondayBrief } from "@/components/app/MondayBrief";
+import { BriefBanner } from "@/components/app/BriefBanner";
 import { TodayDay } from "@/components/app/TodayDay";
 import { TodayInvoices } from "@/components/app/TodayInvoices";
-import { WalkerDay } from "@/components/app/WalkerDay";
+import { type DayVisitView, WalkerDay } from "@/components/app/WalkerDay";
 import { loadShopBrief } from "@/lib/brief";
+import { dayView } from "@/lib/day";
 import { db } from "@/lib/db";
 import { formatLongDay } from "@/lib/format";
 import { asLocale, format, getDictionary, type Locale } from "@/lib/i18n";
@@ -24,34 +26,60 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return { title: getDictionary(asLocale((await params).locale)).console.meta.today };
 }
 
+const withMinutes = (v: Omit<DayVisitView, "minutes">): DayVisitView => ({ ...v, minutes: v.checkedInAt && v.checkedOutAt ? visitMinutes(new Date(v.checkedInAt), new Date(v.checkedOutAt)) : null });
+
 /**
- * A shop's day. A dog walker's day is built around the walk (check-in, the report); every other business reads its day as an
- * agenda. The shop is the address's: a deep link opens it whatever the cookie remembers.
+ * A shop's day (docs/ux/2026-10-full-review.md § 4.2, decided on #289): the owner and a manager read the agenda in every trade
+ * — the figures, the rows, the « now » line, a side sheet with the appointment (for a walk: the dogs, the owners, the report)
+ * — with the Monday brief announced above it and the last invoices beside. A dog walker's staff keep the card view built for a
+ * phone in the street. The shop is the address's: a deep link opens it whatever the cookie remembers.
  */
 export default async function Today({ params, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ day?: string; appointment?: string }> }) {
   const { locale: raw, shop: shopId } = await params;
   const locale = asLocale(raw);
   const { session, shop, role } = await memberShop(shopId, "agenda");
   const query = await searchParams;
-  const day = vocabularyOf(shop.businessType).dependants ? <ServiceDay locale={locale} shop={shop} day={query.day} /> : <ShopToday locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} />;
-  const allowInvoices = may(role, "invoices");
-  const invoices = allowInvoices ? await listInvoices(db(), shop.id) : [];
-  // The Monday brief, for whoever runs the shop (owner, manager): the money and the clients are theirs to see.
+  const { dependants } = vocabularyOf(shop.businessType);
+  if (dayView(role, dependants) === "cards") return <StaffDay locale={locale} shop={shop} day={query.day} />;
+  // The invoices beside the day, for who may see them (the owner, a manager): never loaded for anyone else.
+  const invoices = may(role, "invoices") ? await listInvoices(db(), shop.id) : null;
+  return <OwnerDay locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} dependants={dependants} invoices={invoices} today={localDay(new Date(), shop.timezone)} />;
+}
+
+/** The agenda day of the owner (and a manager), for every trade; a staff member of another trade sees their own appointments here. */
+type Invoices = Awaited<ReturnType<typeof listInvoices>>;
+
+async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants, invoices, today }: { locale: Locale; shop: MemberShop; role: ShopRole; staffAccountId: string | undefined; query: { day?: string; appointment?: string }; dependants: boolean; /** The last invoices, or null for who may not see them. */ invoices: Invoices | null; /** The shop's today, for the invoices' state. */ today: string }) {
+  const t = getDictionary(locale).console;
+  const routes = shopRoutes(locale, shop.id);
+  const view = await todayView(shop, { day: query.day, staffAccountId });
+  // Who is off that day (akinaza#208): a name and the last day of their time off, never the reason.
+  const [off, brief, visits] = await Promise.all([
+    offOn(db(), shop.id, view.day),
+    may(role, "reports") ? loadShopBrief(shop, new Date()) : null,
+    dependants ? dayVisits(db(), shop.id, view.day) : [],
+  ]);
+  const offLine = off.length ? format(t.today.offToday, { names: off.map((o) => format(t.today.offUntil, { name: o.name, until: formatLongDay(o.until, locale) })).join(", ") }) : null;
   return (
-    <div className="flex flex-col gap-6">
-      {may(role, "reports") ? <Brief shop={shop} /> : null}
-      {day}
-      {allowInvoices ? <TodayInvoices invoices={invoices} locale={locale} shopId={shop.id} today={localDay(new Date(), shop.timezone)} /> : null}
-    </div>
+    <TodayDay
+      appointments={view.appointments}
+      shop={view.shop}
+      day={view.day}
+      today={view.today}
+      nowIso={new Date().toISOString()}
+      selectedId={query.appointment ?? null}
+      allow={{ clients: may(role, "clients"), revenue: invoices !== null }}
+      title={t.meta.today}
+      description={[formatLongDay(view.day, locale), offLine].filter(Boolean).join(" · ")}
+      visits={dependants ? Object.fromEntries(visits.map((v) => [v.appointmentId, withMinutes(v)])) : undefined}
+      banner={brief ? <BriefBanner count={brief.items.length} href={routes.brief} /> : null}
+      aside={invoices ? <TodayInvoices invoices={invoices} locale={locale} shopId={shop.id} today={today} /> : null}
+    />
   );
 }
 
-async function Brief({ shop }: { shop: MemberShop }) {
-  const brief = await loadShopBrief(shop, new Date());
-  return <MondayBrief items={brief.items.map((i) => ({ id: i.id, kind: i.kind, subject: i.subject, figures: { ...i.figures }, assumptions: [...i.assumptions] }))} done={brief.done} services={brief.services} publicPage={brief.publicPage} />;
-}
-
-async function ServiceDay({ locale, shop, day: requested }: { locale: "en" | "fr"; shop: MemberShop; day: string | undefined }) {
+/** The walker's day on a phone: one card per walk, the check-in the biggest thing on it (docs/UX_DECISIONS.md § 4). */
+async function StaffDay({ locale, shop, day: requested }: { locale: Locale; shop: MemberShop; day: string | undefined }) {
   const t = consoleFor(locale, shop.businessType);
   const routes = shopRoutes(locale, shop.id);
   const today = await shopDay(db(), shop.id, new Date());
@@ -62,39 +90,10 @@ async function ServiceDay({ locale, shop, day: requested }: { locale: "en" | "fr
     d.setUTCDate(d.getUTCDate() + n);
     return routes.today(d.toISOString().slice(0, 10));
   };
-  const lang = locale === "fr" ? "fr-CA" : "en-CA";
   return (
     <div className="flex flex-col gap-4">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-2xl font-bold text-fg">{shop.name}</h1>
-        <p className="text-fg-secondary">{format(t.walker.dayLine, { date: new Date(`${day}T12:00:00Z`).toLocaleDateString(lang, { dateStyle: "full", timeZone: "UTC" }), count: visits.length })}</p>
-      </header>
-      <WalkerDay
-        visits={visits.map((v) => ({ ...v, minutes: v.checkedInAt && v.checkedOutAt ? visitMinutes(new Date(v.checkedInAt), new Date(v.checkedOutAt)) : null }))}
-        timeZone={shop.timezone}
-        nav={{ prev: step(-1), next: step(1), today: routes.today(), isToday: day === today }}
-      />
-    </div>
-  );
-}
-
-/**
- * The agenda day: the strip of days, the three figures of the day and its appointments. The day and the open appointment are
- * in the address, so a link, back and refresh all land on the same screen. A staff member sees their own appointments.
- */
-async function ShopToday({ locale, shop, role, staffAccountId, query }: { locale: Locale; shop: MemberShop; role: ShopRole; staffAccountId: string | undefined; query: { day?: string; appointment?: string } }) {
-  const view = await todayView(shop, { day: query.day, staffAccountId });
-  // Who is off that day (akinaza#208): a name and the last day of their time off, never the reason.
-  const off = await offOn(db(), shop.id, view.day);
-  const t = getDictionary(locale).console.today;
-  return (
-    <div className="flex flex-col gap-5">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-2xl font-bold text-fg">{view.shop.name}</h1>
-        <p className="text-fg-secondary">{formatLongDay(view.day, locale)}</p>
-        {off.length ? <p className="text-sm text-fg-secondary">{format(t.offToday, { names: off.map((o) => format(t.offUntil, { name: o.name, until: formatLongDay(o.until, locale) })).join(", ") })}</p> : null}
-      </header>
-      <TodayDay appointments={view.appointments} shop={view.shop} day={view.day} today={view.today} nowIso={new Date().toISOString()} selectedId={query.appointment ?? null} allow={{ clients: may(role, "clients"), revenue: may(role, "invoices") }} />
+      <PageHeader title={t.meta.today} description={format(t.walker.dayLine, { date: formatLongDay(day, locale), count: visits.length })} />
+      <WalkerDay visits={visits.map(withMinutes)} timeZone={shop.timezone} nav={{ prev: step(-1), next: step(1), today: routes.today(), isToday: day === today }} />
     </div>
   );
 }

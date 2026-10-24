@@ -3,6 +3,7 @@
 import { krizakaFetch } from "@krizaka/query";
 import { Alert } from "@krizaka/ui/alert";
 import { Card } from "@krizaka/ui/card";
+import { PageHeader } from "@krizaka/ui/page-header";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,11 +35,8 @@ export function NewShop({ locale, backHref }: { locale: RouteLocale; backHref: s
   });
   return (
     <div className="flex flex-col gap-4">
-      <header className="flex flex-col gap-2">
-        <h1 className="font-display text-2xl font-bold text-fg">{say("shopSetup.addShop.title")}</h1>
-        <p className="text-fg-secondary">{say("shopSetup.addShop.lead")}</p>
-        <p className="text-sm"><Link className="font-semibold text-fg-accent underline" href={backHref}>{say("shopSetup.addShop.back")}</Link></p>
-      </header>
+      <PageHeader title={say("shopSetup.addShop.title")} description={say("shopSetup.addShop.lead")} />
+      <p className="text-sm"><Link className="font-semibold text-fg-accent underline" href={backHref}>{say("shopSetup.addShop.back")}</Link></p>
       <Card.Root className="p-4">
         <form.Form aria-label={say("shopSetup.addShop.title")} className="grid gap-4 sm:grid-cols-2">
           <IdentityFields form={form} say={say} withAddress />

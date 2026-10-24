@@ -1,8 +1,7 @@
 import { listInvoices, type ShopRole } from "@akinaza/db";
-import { Children, isValidElement, type ReactElement } from "react";
+import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { TodayInvoices } from "@/components/app/TodayInvoices";
 import { db } from "@/lib/db";
 import { memberShop } from "@/lib/member-shop";
 
@@ -24,8 +23,8 @@ describe("Today invoice permissions", () => {
       shop: { id: "s1", businessType, timezone: "America/Toronto" },
       role,
     } as Awaited<ReturnType<typeof memberShop>>);
-    const result = await Today({ params: Promise.resolve({ locale: "en", shop: "s1" }), searchParams: Promise.resolve({ day: "2026-09-01" }) });
-    return Children.toArray(result.props.children).filter(isValidElement) as ReactElement[];
+    // The page decides who sees the invoices and returns the day's element with them (or null): nothing below it is rendered here.
+    return (await Today({ params: Promise.resolve({ locale: "en", shop: "s1" }), searchParams: Promise.resolve({ day: "2026-09-01" }) })) as ReactElement<{ invoices?: unknown[] | null; today?: string }>;
   };
 
   it.each([
@@ -37,15 +36,15 @@ describe("Today invoice permissions", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-10-23T02:00:00Z"));
     vi.mocked(listInvoices).mockResolvedValue([]);
-    const children = await page(role, businessType);
+    const day = await page(role, businessType);
     expect(memberShop).toHaveBeenCalledWith("s1", "agenda");
     expect(listInvoices).toHaveBeenCalledExactlyOnceWith(db(), "s1");
-    expect(children.find((child) => child.type === TodayInvoices)?.props).toMatchObject({ invoices: [], shopId: "s1", today: "2026-10-22" });
+    expect(day.props).toMatchObject({ invoices: [], today: "2026-10-22" });
   });
 
   it.each(["professional", "pets"])("does not load or show invoices to staff in a %s shop", async (businessType) => {
-    const children = await page("staff", businessType);
+    const day = await page("staff", businessType);
     expect(listInvoices).not.toHaveBeenCalled();
-    expect(children.some((child) => child.type === TodayInvoices)).toBe(false);
+    expect(day.props.invoices ?? null).toBeNull();
   });
 });

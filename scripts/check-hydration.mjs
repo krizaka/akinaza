@@ -19,6 +19,7 @@ const SETTLE_MS = 800;
 export const VIEWPORTS = [
   { width: 1440, height: 900 },
   { width: 390, height: 844 },
+  { width: 360, height: 780 },
 ];
 
 /** Signed out: the home, the legal page, the auth pages, the three demo storefronts and the walker's, a service, the two 404s. */
@@ -46,6 +47,13 @@ export const ACCOUNT_PAGES = ["/app/profile", "/app/profile/security"];
 
 /** The first record a list links (`<list>/<id>`), never its creation page (`<list>/new`) nor another list: the detail page to crawl. */
 export const firstRecord = (hrefs, listPath) => hrefs.find((href) => typeof href === "string" && href.startsWith(`${listPath}/`) && !/\/new(\?.*)?$/.test(href) && !href.slice(listPath.length + 1).includes("/")) ?? null;
+
+/** What every page owes besides one rendering: exactly one `h1` (the page's, never the frame's) and no horizontal overflow. */
+const audit = (page) => page.evaluate(() => ({ h1: document.querySelectorAll("h1").length, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth }));
+const judge = (report, { h1, overflow }) => {
+  if (h1 !== 1) report("h1", `${h1} on the page (one expected)`);
+  if (overflow) report("overflow", "the page scrolls sideways");
+};
 
 /** What React says when the server and the browser disagree (the minified codes in production, the sentences in development). */
 export const isHydrationError = (text) => /Minified React error #(418|419|420|421|422|423|424|425)\b|Hydration failed|hydrated but some attributes|did not match|Text content does not match|There was an error while hydrating/i.test(text);
@@ -92,6 +100,7 @@ async function crawl(browser, { base, paths, theme, account, problems, visited, 
       expected404 = path.endsWith("/nope");
       const response = await page.goto(`${base}${path}`, { waitUntil: "load" });
       await page.waitForTimeout(SETTLE_MS);
+      judge(report, await audit(page));
       const status = response?.status() ?? 0;
       const final = new URL(page.url()).pathname;
       visited.push({ path, final, status });
@@ -110,6 +119,7 @@ async function crawl(browser, { base, paths, theme, account, problems, visited, 
       expected404 = false;
       await page.goto(`${base}${href}`, { waitUntil: "load" });
       await page.waitForTimeout(SETTLE_MS);
+      judge(report, await audit(page));
       visited.push({ path: href, final: new URL(page.url()).pathname, status: 200, from: list });
     }
   }

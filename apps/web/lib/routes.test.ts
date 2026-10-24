@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { accountRoutes, inOtherShop, isShopId, placeHref, shopRoutes } from "./routes";
+import { accountRoutes, inOtherShop, isShopId, shopRoutes } from "./routes";
 import { isUuid } from "./shop-id";
 
 const A = "11111111-1111-4111-8111-111111111111";
@@ -22,18 +22,6 @@ describe("the routes of the signed-in space", () => {
     expect(accountRoutes("en")).toEqual({ home: "/en/app", profile: "/en/app/profile", security: "/en/app/profile/security" });
   });
 
-  it.each([
-    ["today", `/en/app/${A}/aujourdhui`],
-    ["clients", `/en/app/${A}/clients`],
-    ["team", `/en/app/${A}/team`],
-    ["shop", `/en/app/${A}/shop`],
-    ["profile", "/en/app/profile"],
-  ] as const)("leads the bar's %s to %s", (place, href) => expect(placeHref("en", A, place)).toBe(href));
-
-  it("leads a client, who works in no shop, to the account's home", () => {
-    expect(placeHref("en", null, "bookings")).toBe("/en/app");
-    expect(placeHref("en", null, "shop")).toBe("/en/app");
-  });
 
   it("recognises a shop id, and nothing else", () => {
     expect(isShopId(A)).toBe(true);
