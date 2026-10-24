@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { config, proxy } from "../proxy";
+import { LOCALE_HEADER } from "./locale-negotiation";
 
 const get = (path: string) => proxy(new NextRequest(`https://dev.akinaza.com${path}`, { headers: { host: "dev.akinaza.com" } }));
 
@@ -74,5 +75,42 @@ describe("www.akinaza.com is public, dev.akinaza.com leaves search (epic krizaka
   it("admin stays closed on every response", () => {
     setup();
     expect(as("admin.akinaza.com", "/en").headers.get("x-robots-tag")).toBe("noindex, nofollow");
+  });
+});
+
+describe("the language of the address reaches the pages (the 404 has no params)", () => {
+  it("/fr/nope carries fr, /nope carries the visitor's choice", () => {
+    const fr = proxy(new NextRequest("https://www.akinaza.com/fr/nope", { headers: { host: "www.akinaza.com", "accept-language": "en" } }));
+    expect(fr.headers.get(`x-middleware-request-${LOCALE_HEADER}`)).toBe("fr");
+    const en = proxy(new NextRequest("https://www.akinaza.com/en/nope", { headers: { host: "www.akinaza.com" } }));
+    expect(en.headers.get(`x-middleware-request-${LOCALE_HEADER}`)).toBe("en");
+  });
+});
+
+describe("the matcher lets a page with a dot in its address through, so its 404 is in the visitor's language (#300 review)", () => {
+  // Next runs the proxy only where the matcher says: this is that same pattern, tested as a regular expression.
+  const pageMatcher = new RegExp(`^${config.matcher[0]}$`);
+
+  it("runs for /fr/missing.html and for the other addresses that are pages", () => {
+    expect(pageMatcher.test("/fr/missing.html")).toBe(true);
+    expect(pageMatcher.test("/fr/sign-in")).toBe(true);
+    // a dot inside a page address is still a page: the proxy keeps the host isolation (admin.* serves only the console) for it
+    expect(pageMatcher.test("/en/app/shop.v2")).toBe(true);
+    expect(pageMatcher.test("/fr/app.v2/shop")).toBe(true);
+  });
+
+  it("still skips the API, Next's assets and the static files", () => {
+    expect(pageMatcher.test("/api/me")).toBe(false);
+    expect(pageMatcher.test("/_next/static/chunks/app.js")).toBe(false);
+    expect(pageMatcher.test("/_next/image?url=x")).toBe(false);
+    expect(pageMatcher.test("/favicon.ico")).toBe(false);
+    expect(pageMatcher.test("/og.png")).toBe(false);
+    expect(pageMatcher.test("/fonts/inter.woff2")).toBe(false);
+    // The maplibre worker is a dotted file that the map loads from its own route (ZoneMap): it must bypass the proxy as before.
+    expect(pageMatcher.test("/maplibre/maplibre-gl-worker.mjs")).toBe(false);
+    // The basemap's tiles (PMTiles) and glyphs (protobuf) under /maps/v1, rewritten to the media CDN, are static files: never a page, never a locale redirect.
+    expect(pageMatcher.test("/maps/v1/tiles/12/2048/1360.pbf")).toBe(false);
+    expect(pageMatcher.test("/maps/v1/fonts/Noto Sans Regular/0-255.pbf")).toBe(false);
+    expect(pageMatcher.test("/maps/v1/tiles/quebec-20261012.pmtiles")).toBe(false);
   });
 });

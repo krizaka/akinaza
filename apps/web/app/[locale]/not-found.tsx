@@ -1,20 +1,10 @@
-import { ErrorPage } from "@krizaka/ui/error-page";
-import { Mascot } from "@krizaka/ui/mascots";
-import Link from "next/link";
+import { headers } from "next/headers";
 
-/** A page that does not exist (or that this person may not see): the same answer, in both languages. */
-export default function NotFound() {
-  return (
-    <ErrorPage
-      code="404"
-      mascot={<Mascot bird="beaver" mood="empty" size={96} />}
-      title="Not found · Introuvable"
-      text="This page does not exist, or is not yours. · Cette page n'existe pas, ou n'est pas à vous."
-      actions={
-        <Link href="/" className="font-semibold text-fg-accent underline">
-          Akinaza
-        </Link>
-      }
-    />
-  );
+import { NotFoundPage } from "@/components/NotFoundPage";
+import { asLocale } from "@/lib/i18n";
+import { LOCALE_HEADER } from "@/lib/locale-negotiation";
+
+/** A missing page inside a language segment: the same 404 as an unknown address, in the address's language (proxy.ts sets it). */
+export default async function NotFound() {
+  return <NotFoundPage locale={asLocale((await headers()).get(LOCALE_HEADER) ?? "")} />;
 }

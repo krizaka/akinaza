@@ -4,6 +4,7 @@ import { krizakaFetch, QueryClient, QueryClientProvider, useMutation, useQuery, 
 import { Button } from "@krizaka/ui/button";
 import { ProductBarActions } from "@krizaka/ui/nav-bar";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { type AccountMenuWords,AkinazaAccountMenu } from "@/components/account/AkinazaAccountMenu";
 import { type Me, meSchema } from "@/lib/me";
@@ -28,17 +29,28 @@ export interface BarWords extends AccountMenuWords {
   openApp: string;
 }
 
+/**
+ * Once the sign-out request settles: the bar is the signed-out one, and the page's server components render again (the hero follows
+ * the session), so the route is refreshed too — the query cache alone leaves the server-rendered hero on its old state.
+ */
+export function settleSignOut(queryClient: Pick<QueryClient, "setQueryData">, router: { refresh: () => void }, signupOpen: boolean): void {
+  queryClient.setQueryData(ME_KEY, { ...SIGNED_OUT, signupOpen });
+  router.refresh();
+}
+
 /** The bar's actions for a state we know: pure, so each state is tested without a network. */
 export function BarActionsView({ me, locale, words, placement, onSignOut }: { me: Me; locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel"; onSignOut: () => void }) {
   if (me.signedIn && me.account) {
     return (
       <>
-        <Button asChild variant="primary" size={placement === "bar" ? "sm" : "md"} className={placement === "bar" ? "ml-1 hidden font-bold md:inline-flex" : "mt-2 font-bold"}>
-          <Link href={`/${locale}/app`}>{words.openApp}</Link>
-        </Button>
-        {placement === "bar" ? (
-          <AkinazaAccountMenu locale={locale} name={me.account.name} email={me.account.email} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} words={words} onSignOut={onSignOut} />
-        ) : null}
+        {/* The bar has the account menu only (one entry, no second « Open the app »); the phone's panel has no menu, so it keeps the action. */}
+        {placement === "panel" ? (
+          <Button asChild variant="primary" size="md" className="mt-2 font-bold">
+            <Link href={`/${locale}/app`}>{words.openApp}</Link>
+          </Button>
+        ) : (
+          <AkinazaAccountMenu locale={locale} name={me.account.name} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} words={words} onSignOut={onSignOut} />
+        )}
       </>
     );
   }
@@ -47,10 +59,11 @@ export function BarActionsView({ me, locale, words, placement, onSignOut }: { me
 
 function Island({ locale, words, placement }: { locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel" }) {
   const queryClient = useQueryClient();
+  const router = useRouter();
   const { data } = useQuery({ queryKey: ME_KEY, queryFn: () => krizakaFetch("/api/me", { schema: meSchema }) });
   const signOut = useMutation({
     mutationFn: () => krizakaFetch("/api/auth/sign-out", { method: "POST" }),
-    onSettled: () => queryClient.setQueryData(ME_KEY, { ...SIGNED_OUT, signupOpen: data?.signupOpen ?? false }),
+    onSettled: () => settleSignOut(queryClient, router, data?.signupOpen ?? false),
   });
   // Until the answer comes the bar is the signed-out one: the public page stays static and never waits for the session.
   return <BarActionsView me={data ?? SIGNED_OUT} locale={locale} words={words} placement={placement} onSignOut={() => signOut.mutate()} />;

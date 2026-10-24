@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
-import { BarActionsView, type BarWords } from "./BarSession";
+import { BarActionsView, type BarWords, settleSignOut } from "./BarSession";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => "/en" }));
 
@@ -28,18 +28,23 @@ describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
     expect(html).toContain('href="/en/sign-up"');
   });
 
-  it("signed in: « Open the app » into the app and the avatar menu, not « Sign in »", () => {
+  it("signed in: the avatar menu is the one entry (no second « Open the app »), never « Sign in »", () => {
     const html = render({ signedIn: true, signupOpen: false, account: { name: "Camille", email: "camille@example.com", avatarSeed: null } });
-    expect(text(html)).toContain("Open the app");
-    expect(html).toContain('href="/en/app"');
     expect(html).toContain('aria-label="Account"');
+    expect(text(html)).not.toContain("Open the app");
     expect(text(html)).not.toContain("Sign in");
+  });
+
+  it("signed in: the bar never prints an e-mail", () => {
+    const html = render({ signedIn: true, signupOpen: false, account: { name: "Camille", email: "camille@example.com", avatarSeed: null } });
+    expect(html).not.toContain("camille@example.com");
   });
 
   it("the avatar menu is in the bar at every width (never inside the phone's panel), « Open the app » also in the panel", () => {
     const me = { signedIn: true, signupOpen: false, account: { name: "Camille", email: "camille@example.com", avatarSeed: null } };
     const bar = render(me, "en", "bar");
     expect(bar).toContain('aria-label="Account"');
+    expect(bar).not.toContain("camille@example.com");
     expect(bar.match(/<[^>]*aria-label="Account"[^>]*>/)![0]).not.toMatch(/class="[^"]*(^|[\s"])(max-\w+:)?hidden\b/);
     const panel = render(me, "en", "panel");
     expect(panel).not.toContain('aria-label="Account"');
@@ -56,5 +61,15 @@ describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
   it("no « Talk to us » word is left in the bar's catalogue", () => {
     expect(Object.keys(en.chrome)).not.toContain("talk");
     expect(Object.keys(fr.chrome)).not.toContain("talk");
+  });
+
+  it("after a sign-out the bar is the signed-out one AND the page's server components render again, so the hero follows the session (#300 review)", () => {
+    const calls: string[] = [];
+    const queryClient = { setQueryData: vi.fn((_key: unknown, value: unknown): void => void calls.push(`data:${JSON.stringify(value)}`)) };
+    const router = { refresh: vi.fn(() => calls.push("refresh")) };
+    settleSignOut(queryClient as unknown as Parameters<typeof settleSignOut>[0], router, true);
+    expect(queryClient.setQueryData).toHaveBeenCalledWith(["me"], { signedIn: false, signupOpen: true });
+    expect(router.refresh).toHaveBeenCalledTimes(1);
+    expect(calls).toEqual(['data:{"signedIn":false,"signupOpen":true}', "refresh"]);
   });
 });

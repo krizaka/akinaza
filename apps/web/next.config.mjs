@@ -46,6 +46,8 @@ const nextConfig = {
   // The monorepo root: the standalone server then carries @akinaza/core and the hoisted dependencies.
   outputFileTracingRoot: fileURLToPath(new URL("../..", import.meta.url)),
   reactStrictMode: true,
+  // The 404 of an unknown address is branded too: app/global-not-found.tsx (it bypasses the [locale] layout).
+  experimental: { globalNotFound: true },
   poweredByHeader: false,
   env: { NEXT_PUBLIC_APP_VERSION: appVersion },
   transpilePackages: ["@akinaza/core", "@akinaza/db"],
