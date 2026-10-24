@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { CLIENT_PLACES, placeHrefFor, placesFor } from "./app-nav";
+import { CLIENT_PLACES, headerActionFits, placeHrefFor, placesFor } from "./app-nav";
 
 describe("the rail of each role (docs/ux/2026-10-full-review.md § 4.1): five destinations at most, the account never among them", () => {
   it.each([
@@ -18,10 +18,15 @@ describe("the rail of each role (docs/ux/2026-10-full-review.md § 4.1): five de
     expect(CLIENT_PLACES).toEqual(["bookings"]);
   });
 
-  it("leads « Boutique » to the page editor for who may set the shop up, and to the team for who may only see the team", () => {
-    expect(placeHrefFor("fr", { shopId: "s-1", role: "owner" }, "shop")).toBe("/fr/app/s-1/shop");
-    expect(placeHrefFor("fr", { shopId: "s-1", role: "manager" }, "shop")).toBe("/fr/app/s-1/team");
+  it("leads « Boutique » to its hub's first section: the page for who may set the shop up, the team for who may only see the team", () => {
+    expect(placeHrefFor("fr", { shopId: "s-1", role: "owner" }, "shop")).toBe("/fr/app/s-1/boutique/page");
+    expect(placeHrefFor("fr", { shopId: "s-1", role: "manager" }, "shop")).toBe("/fr/app/s-1/boutique/team");
     expect(placeHrefFor("fr", { shopId: "s-1", role: "owner" }, "today")).toBe("/fr/app/s-1/aujourdhui");
     expect(placeHrefFor("en", null, "bookings")).toBe("/en/app");
+  });
+
+  it("the frame's « Nouvelle facture » yields on the settings hub and on an invoice's own screens, and stays on the lists", () => {
+    for (const path of ["/fr/app/s-1/aujourdhui", "/fr/app/s-1/invoices", "/fr/app/s-1/clients"]) expect(headerActionFits(path), path).toBe(true);
+    for (const path of ["/fr/app/s-1/boutique", "/fr/app/s-1/boutique/page", "/fr/app/s-1/boutique/team", "/fr/app/s-1/invoices/new", "/fr/app/s-1/invoices/abc123", "/fr/app/s-1/invoices/abc123/correct"]) expect(headerActionFits(path), path).toBe(false);
   });
 });

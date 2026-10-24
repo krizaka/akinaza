@@ -234,3 +234,15 @@ and the account menu (Mon compte · Langue · Thème · Se déconnecter). The ac
 count, or that scrolls sideways down to 360 px. « Équipe », the languages and the invoice e-mails join « Boutique » as sections of
 its hub (K4); until then « Boutique » opens the page editor (or the team, for who may only see it) and the editor links the team.
 Decided in docs/ux/2026-10-full-review.md § 4.1 (validated on #289); the administration keeps `AppFrame`.
+
+## Boutique: one hub for what configures the shop (UX review 2026-10, K4)
+
+« Ma page boutique », the languages, the team and the invoice e-mails are sections of **Boutique**, one hub on `SettingsLayout`
+(`components/boutique/BoutiqueHub.tsx`, `lib/boutique.ts`): the shop's name, its status and its public address on top, then the
+sections grouped — « Votre page » (the seven sections of the page, one save each, and the languages) and « Votre activité » (the
+team, the invoice e-mails, the shops). Each section is its own address (`/app/<shop>/boutique/<section>`, the page's section in
+`?tab=`); the navigation shows only what the role may open, from `packages/db/src/roles.ts` (`BOUTIQUE_NEEDS`): an owner sees all
+of it, a manager the team, a staff member no Boutique at all. The seven sections are no longer a row of tabs. The invoice e-mail
+defaults leave the invoices list for the hub (the list keeps the default message it sends with). Old addresses (`/shop`,
+`/shop/languages`, `/team`) answer 308 to their section. « Nouvelle facture » yields on the hub and on an invoice's own screens
+(detail, correction, new): those keep their own primary action (one primary per screen).

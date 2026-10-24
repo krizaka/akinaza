@@ -3,22 +3,19 @@
 import type { BusinessType } from "@akinaza/core";
 import type { ShopPageConfig, ShopPageSection } from "@akinaza/db";
 import { Alert } from "@krizaka/ui/alert";
-import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
 import { Checkbox } from "@krizaka/ui/checkbox";
 import { createKrizakaForm } from "@krizaka/ui/form";
 import { PageHeader } from "@krizaka/ui/page-header";
-import { Tabs } from "@krizaka/ui/tabs";
-import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
 
 import { ProposedImages, type ProposedImagesData } from "@/components/app/ProposedImages";
 import { ContactSection, IdentitySection, PublishSection, TextsSection } from "@/components/app/ShopPageSections";
 import { useCall } from "@/components/app/useCall";
+import { type PageTab } from "@/lib/boutique";
 import { useSay, useVocabulary } from "@/lib/i18n-client";
-import { shopRoutes } from "@/lib/routes";
 import { shrinkImage, STOREFRONT_LONG_SIDE } from "@/lib/shrink-image";
 import { type GalleryLine, galleryText, joinLines, keepExtras, parseGallery, splitLines } from "@/lib/storefront-form";
 
@@ -41,54 +38,38 @@ export interface SetupData {
 const WEEK = [1, 2, 3, 4, 5, 6, 0] as const;
 const money = (cents: number, locale: string) => new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(cents / 100);
 
-const TABS = ["identity", "texts", "contact", "offer", "media", "look", "publish"] as const;
-
-/** « Ma page boutique », in sections: the tab is in the address (`?tab=`), each section saves on its own, the published status stays in the header. */
-export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /** The section open when the address names none (`?tab=`). */ tab?: (typeof TABS)[number] }) {
-  const { say, locale } = useSay();
+/**
+ * « Ma page boutique » (K4): the section the hub opens, one at a time. The section is named by the hub's navigation (`?tab=`), never a
+ * row of tabs; each section saves on its own. The shop's name, its status and its public link are the hub's header, not this one.
+ */
+export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /** The section the hub opens (`?tab=`). */ tab?: PageTab }) {
+  const { say } = useSay();
+  if (!data.page || !data.shopId) return <IdentitySection page={data.page} />;
+  const body: Record<PageTab, React.ReactNode> = {
+    identity: <IdentitySection page={data.page} />,
+    texts: <TextsSection page={data.page} shopId={data.shopId} />,
+    contact: <ContactSection page={data.page} />,
+    offer: (
+      <div className="grid gap-4 lg:grid-cols-2">
+        <ZonesCard zones={data.zones} />
+        <ServicesCard services={data.services} />
+        <HoursCard windows={data.windows} daysOff={data.daysOff} />
+        {data.rules ? <RulesCard rules={data.rules} /> : null}
+      </div>
+    ),
+    media: (
+      <div className="grid gap-4 lg:grid-cols-2">
+        <MediaCard media={data.media} />
+        {data.proposed ? <ProposedImages data={data.proposed} /> : null}
+      </div>
+    ),
+    look: <ShopPageCard shopId={data.shopId} publicUrl={data.publicUrl} config={data.pageConfig} />,
+    publish: <PublishSection page={data.page} publicUrl={data.publicUrl} />,
+  };
   return (
-    <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <PageHeader title={say("shopSetup.title")} description={say("shopSetup.intro")} actions={data.page ? <Badge tone={data.page.published ? "success" : "neutral"}>{say(data.page.published ? "shopSetup.published" : "shopSetup.notPublished")}</Badge> : null} />
-        <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-          {data.publicUrl && data.page?.published ? (
-            <span>
-              <a className="font-semibold text-fg-accent underline" href={data.publicUrl}>{say("shopSetup.viewPage")}</a> <span className="font-mono text-xs text-fg-muted">{data.publicUrl}</span>
-            </span>
-          ) : null}
-          {data.shopId ? <Link className="font-semibold text-fg-accent underline" href={shopRoutes(locale, data.shopId).team}>{say("team.title")}</Link> : null}
-          {data.shopId ? <Link className="font-semibold text-fg-accent underline" href={`${shopRoutes(locale, data.shopId).setup}/new`}>{say("shopSetup.addShop.link")}</Link> : null}
-        </p>
-      </header>
-      {data.page && data.shopId ? (
-        <Tabs.Root className="min-w-0" routeKey="tab" routeValues={TABS} defaultValue={tab}>
-          <Tabs.List aria-label={say("shopSetup.sections.label")} className="max-w-full overflow-x-auto">
-            {TABS.map((tab) => <Tabs.Trigger key={tab} value={tab}>{say(`shopSetup.sections.tabs.${tab}`)}</Tabs.Trigger>)}
-          </Tabs.List>
-          <Tabs.Content value="identity" className="pt-4"><IdentitySection page={data.page} /></Tabs.Content>
-          <Tabs.Content value="texts" className="pt-4"><TextsSection page={data.page} shopId={data.shopId} /></Tabs.Content>
-          <Tabs.Content value="contact" className="pt-4"><ContactSection page={data.page} /></Tabs.Content>
-          <Tabs.Content value="offer" className="pt-4">
-            <div className="grid gap-4 lg:grid-cols-2">
-              <ZonesCard zones={data.zones} />
-              <ServicesCard services={data.services} />
-              <HoursCard windows={data.windows} daysOff={data.daysOff} />
-              {data.rules ? <RulesCard rules={data.rules} /> : null}
-            </div>
-          </Tabs.Content>
-          <Tabs.Content value="media" className="grid gap-4 pt-4 lg:grid-cols-2">
-            <MediaCard media={data.media} />
-            {data.proposed ? <ProposedImages data={data.proposed} /> : null}
-          </Tabs.Content>
-          <Tabs.Content value="look" className="grid gap-4 pt-4 lg:grid-cols-2">
-            <ShopPageCard shopId={data.shopId} publicUrl={data.publicUrl} config={data.pageConfig} />
-            <LanguagesLink shopId={data.shopId} />
-          </Tabs.Content>
-          <Tabs.Content value="publish" className="pt-4"><PublishSection page={data.page} publicUrl={data.publicUrl} /></Tabs.Content>
-        </Tabs.Root>
-      ) : (
-        <IdentitySection page={data.page} />
-      )}
+    <div className="flex flex-col gap-4">
+      <PageHeader title={say(`shopSetup.sections.tabs.${tab}`)} />
+      {body[tab]}
     </div>
   );
 }
@@ -516,18 +497,6 @@ function RulesCard({ rules }: { rules: NonNullable<SetupData["rules"]> }) {
           </form.Submit>
         </div>
       </form.Form>
-    </Card.Root>
-  );
-}
-
-/** The way into the shop page's languages (#258). */
-function LanguagesLink({ shopId }: { shopId: string }) {
-  const { say, locale } = useSay();
-  return (
-    <Card.Root className="flex flex-col gap-2 p-4">
-      <h2 className="font-display text-lg font-bold text-fg">{say("shopLanguages.title")}</h2>
-      <p className="m-0 text-fg-secondary">{say("shopLanguages.intro")}</p>
-      <Link className="font-semibold text-fg-accent underline" href={`${shopRoutes(locale, shopId).setup}/languages`}>{say("shopLanguages.open")}</Link>
     </Card.Root>
   );
 }

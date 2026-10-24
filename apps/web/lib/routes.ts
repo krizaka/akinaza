@@ -29,8 +29,14 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
     invoiceCorrect: (id: string) => `${root}/invoices/${id}/correct`,
     newInvoice: `${root}/invoices/new`,
     books: (period?: string) => `${root}/books${query({ period })}`,
-    team: `${root}/team`,
-    setup: `${root}/shop`,
+    /** Boutique (K4): one hub on SettingsLayout, one address per section; `?tab=` names the section of the page. */
+    boutique: (section?: string, tab?: string) => `${root}/boutique${section ? `/${section}` : ""}${query({ tab })}`,
+    /** Boutique › Équipe. */
+    team: `${root}/boutique/team`,
+    /** Boutique › Page, the first section of the hub (« Ma page boutique »). */
+    setup: `${root}/boutique/page`,
+    /** Boutique › Shops: « Add a shop » (one more shop under the same account). */
+    addShop: `${root}/shop/new`,
     /** An API address of the shop's space, for the shop of the page: the routes pick the shop with `?shopId=`. */
     api: (path: string) => `${path}${path.includes("?") ? "&" : "?"}shopId=${shopId}`,
   };
