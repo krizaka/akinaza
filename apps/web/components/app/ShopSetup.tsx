@@ -109,6 +109,12 @@ function ShopPageCard({ shopId, publicUrl, config: initial }: { shopId: string; 
   const { say, locale } = useSay();
   const call = useCall();
   const [config, setConfig] = useState(initial);
+  // A route refresh (a template applied elsewhere in the page) hands a new configuration: the card takes it over, or it would post its old order back.
+  const [synced, setSynced] = useState(initial);
+  if (synced !== initial) {
+    setSynced(initial);
+    setConfig(initial);
+  }
   const [saved, setSaved] = useState(false);
   const save = async (next: ShopPageConfig) => {
     setSaved(false);

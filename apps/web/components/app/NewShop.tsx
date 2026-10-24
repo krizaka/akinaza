@@ -7,13 +7,14 @@ import { Card } from "@krizaka/ui/card";
 import { Field, Select } from "@krizaka/ui/field";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { rememberShop } from "@/app/actions/remember-shop";
 import { IdentityFields, identityForm } from "@/components/app/ShopPageSections";
 import { PLAIN_PAGE, TemplateChoiceGrid } from "@/components/app/TemplateChoiceGrid";
 import { errorKey } from "@/lib/client";
 import { useSay } from "@/lib/i18n-client";
+import { setUpNewShop } from "@/lib/new-shop-setup";
 import { type RouteLocale, shopRoutes } from "@/lib/routes";
 import type { TemplateChoices } from "@/lib/template-choices";
 
@@ -31,6 +32,8 @@ export function NewShop({ locale, backHref, offers = null }: { locale: RouteLoca
   const [problem, setProblem] = useState<string | null>(null);
   const [trade, setTrade] = useState<ShopType>("consulting");
   const [template, setTemplate] = useState<string>(offers?.consulting.preselected ?? PLAIN_PAGE);
+  /** The shop made by a first attempt: a retry after a failed setup reuses it (#291 review). */
+  const made = useRef<{ shopId: string | null }>({ shopId: null });
   const choices = offers?.[trade] ?? null;
   const form = identityForm.useForm({
     i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale: uiLocale },
@@ -38,15 +41,19 @@ export function NewShop({ locale, backHref, offers = null }: { locale: RouteLoca
       setProblem(null);
       try {
         const page = { ...values, ...(offers ? { businessType: businessTypeOf(trade) } : {}), taglineFr: "", taglineEn: "", published: false };
-        const created = (await krizakaFetch("/api/walker/shop?additional=1", { method: "POST", json: page })) as { shopId: string };
-        const shop = encodeURIComponent(created.shopId);
-        if (offers) {
-          await krizakaFetch(`/api/walker/shop-page?shopId=${shop}`, { method: "POST", json: { shopType: trade } });
-          const chosen = choices?.choices.find((t) => t.id === template);
-          if (chosen) await krizakaFetch(`/api/walker/shop-page/template?shopId=${shop}`, { method: "POST", json: { templateId: chosen.id, templateVersion: chosen.version } });
-        }
-        await rememberShop(created.shopId);
-        router.push(shopRoutes(locale, created.shopId).setup);
+        const shopId = await setUpNewShop(
+          made.current,
+          async () => ((await krizakaFetch("/api/walker/shop?additional=1", { method: "POST", json: page })) as { shopId: string }).shopId,
+          async (id) => {
+            if (!offers) return;
+            const shop = encodeURIComponent(id);
+            await krizakaFetch(`/api/walker/shop-page?shopId=${shop}`, { method: "POST", json: { shopType: trade } });
+            const chosen = choices?.choices.find((t) => t.id === template);
+            if (chosen) await krizakaFetch(`/api/walker/shop-page/template?shopId=${shop}`, { method: "POST", json: { templateId: chosen.id, templateVersion: chosen.version } });
+          },
+        );
+        await rememberShop(shopId);
+        router.push(shopRoutes(locale, shopId).setup);
         router.refresh();
       } catch (error) {
         setProblem(say(`errors.${errorKey(error)}`));

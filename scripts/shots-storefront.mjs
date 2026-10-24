@@ -62,6 +62,7 @@ async function main() {
   const env = {
     ...process.env,
     DATABASE_URL,
+    DATABASE_DIRECT_URL: "", // migrations prefer the direct URL when set: empty, they run on the container
     APP_PUBLIC_URL: BASE,
     AUTH_SESSION_SECRET: crypto.randomBytes(36).toString("base64url"),
     APP_DATA_ENCRYPTION_KEY: crypto.randomBytes(32).toString("base64"),
