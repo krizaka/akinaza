@@ -11,8 +11,8 @@ export function avatarOf(account: { id: string; avatarSeed?: string | null }) {
   return isTone(chosen) ? ({ brand: "akinaza", tone: chosen } as const) : ({ brand: "akinaza", seed: account.id } as const);
 }
 
-/** The id of the picker's option that is in force: the chosen tone, else the first (what the account shows is derived, the picker needs a value). */
+/** The id of the picker's option that is in force: the chosen tone, else "" — no option is checked while the picture is the derived one. */
 export function avatarChoice(account: { avatarSeed?: string | null }): string {
   const chosen = Number(account.avatarSeed);
-  return String(isTone(chosen) ? chosen : AVATAR_TONES[0]);
+  return isTone(chosen) ? String(chosen) : "";
 }

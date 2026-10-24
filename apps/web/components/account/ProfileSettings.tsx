@@ -92,10 +92,10 @@ function EmailChange({ pending }: { pending: string | null }) {
  */
 export function ProfileSettings({ profile }: { profile: ProfileView }) {
   const { say } = useSay();
-  const form = useSectionDraft({ name: profile.name ?? "", avatar: avatarChoice(profile) }, (values) => patchProfile({ name: values.name.trim() || null, avatarSeed: values.avatar }));
+  const form = useSectionDraft({ name: profile.name ?? "", avatar: avatarChoice(profile) }, (values) => patchProfile({ name: values.name.trim() || null, avatarSeed: values.avatar || null }));
   const shown = { id: profile.id, avatarSeed: form.draft.avatar };
   return (
-    <SettingsSection variant="flat" title={say("account.profile.sections.profile")} description={say("account.profile.description")} save={form.save}>
+    <SettingsSection variant="flat" title={say("account.profile.sections.profile")} description={say("account.profile.profileDescription")} save={form.save}>
       <SettingsRow
         label={
           <AccountProfileCard

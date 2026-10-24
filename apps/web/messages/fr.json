@@ -461,6 +461,7 @@
         "title": "Votre profil",
         "accountTitle": "Mon compte",
         "description": "Votre profil, vos préférences, votre sécurité et vos données.",
+        "profileDescription": "Votre nom et votre image, tels que votre équipe les voit.",
         "avatar": "Photo de profil",
         "email": "Courriel",
         "language": "Langue",

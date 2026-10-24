@@ -8,8 +8,8 @@ describe("the account's avatar", () => {
     expect(avatarChoice({ avatarSeed: "4" })).toBe("4");
   });
 
-  it.each([null, undefined, "", "9", "x"])("derives one from the id when the seed is %j", (seed) => {
+  it.each([null, undefined, "", "9", "x"])("derives one from the id when the seed is %j, and the picker checks none (it would claim a choice never made)", (seed) => {
     expect(avatarOf({ id: "a", avatarSeed: seed })).toEqual({ brand: "akinaza", seed: "a" });
-    expect(avatarChoice({ avatarSeed: seed })).toBe("1");
+    expect(avatarChoice({ avatarSeed: seed })).toBe("");
   });
 });

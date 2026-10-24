@@ -77,6 +77,14 @@ describe("the profile (docs/ux/2026-10-full-review.md K6): picture, name, e-mail
     expect(heading(html).some((h) => h.includes("@"))).toBe(false);
   });
 
+  it("checks no picture while the account wears the derived one, and gives the section its own line", () => {
+    const html = around(<ProfileSettings profile={{ ...base, avatarSeed: null }} />);
+    expect(html).not.toMatch(/role="radio"[^>]*aria-checked="true"/);
+    expect(around(<ProfileSettings profile={base} />)).toMatch(/role="radio"[^>]*aria-checked="true"/);
+    expect(text(html)).toContain(en.console.account.profile.profileDescription);
+    expect(text(html)).not.toContain(en.console.account.profile.description);
+  });
+
   it.each([
     ["the owner", "Owner at Pattes de Saint-Henri"],
     ["a staff member", "Staff at Pattes de Saint-Henri"],

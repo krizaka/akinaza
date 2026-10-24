@@ -461,6 +461,7 @@
         "title": "Your profile",
         "accountTitle": "My account",
         "description": "Your profile, your preferences, your security and your data.",
+        "profileDescription": "Your name and your picture, as your team sees them.",
         "avatar": "Profile picture",
         "email": "E-mail",
         "language": "Language",
