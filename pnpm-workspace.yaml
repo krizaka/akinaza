@@ -1,9 +1,6 @@
 packages:
   - "apps/*"
   - "packages/*"
-  # The Expo app joins the workspace in the mobile phase (A5): installing React Native on every CI run before then costs
-  # minutes for nothing it tests.
-  - "!apps/mobile"
 onlyBuiltDependencies:
   - esbuild
   - sharp

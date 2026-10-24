@@ -38,6 +38,9 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
   Each text is translated automatically through Orazaka (the `TranslationPort`, the Studio `text-translation`), stored with its status (`auto` or
   `edited`), its run and the version of its source, and edited by the owner on « Langues de votre page »; an edited text is never overwritten, a changed
   source flags the translation « à revoir ». Admin: `features.storefrontTranslation` (off until the Studio is wired) and `limits.translationsPerShopPerDay`.
+- **Proposed images** — no section of a shop page is ever empty: each trade (salon, coaching, workshop, cleaning, pets, consulting) has neutral default
+  photos, a cover with its silent loop and service images on the media CDN (`site/products/akinaza/defaults/`, named by `apps/web/lib/default-media.manifest.json`).
+  The owner picks them in « Images proposées » or turns them off; a slot they filled is never replaced; the administrator chooses which trades are offered.
 - **Live storefront** — team states and free times refresh from the shop's slots channel while the page is visible.
   SSE carries only a slots-changed signal, never booking details; without it, the visit-time render remains.
   Audited database settings in the admin configuration control `realtime.storefront.enabled` (default `true`),

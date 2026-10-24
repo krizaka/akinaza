@@ -231,9 +231,20 @@ export const shopPage = pgTable(
     shopId: uuid("shop_id").primaryKey().references(() => shops.id, { onDelete: "cascade" }),
     sections: jsonb("sections").$type<{ id: string; visible: boolean }[]>().notNull().default(sql`'[{"id":"services","visible":true},{"id":"team","visible":true},{"id":"hours","visible":true},{"id":"zones","visible":true},{"id":"gallery","visible":true},{"id":"wall","visible":true},{"id":"reels","visible":true},{"id":"announcements","visible":true},{"id":"reviews","visible":true},{"id":"follow","visible":true}]'::jsonb`),
     logoUrl: text("logo_url"),
+    /** The trade the owner chose (picks the default images); null = from the business type. */
+    shopType: text("shop_type", { enum: ["salon", "coaching", "workshop", "cleaning", "pets", "consulting"] }),
+    /** Whether the page shows the proposed images where the owner has none. */
+    useDefaults: boolean("use_defaults").notNull().default(true),
+    /** The template the owner applied (#261): id and version; null = today's page. */
+    templateId: text("template_id"),
+    templateVersion: integer("template_version"),
+    /** The owner reordered or hid sections by hand: a template asks before replacing it. */
+    sectionsCustom: boolean("sections_custom").notNull().default(false),
+    /** The owner's text-style overrides per role (title, body, price). */
+    style: jsonb("style").$type<Record<string, unknown>>().notNull().default(sql`'{}'::jsonb`),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
+  (t) => [check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
 );
 
 /** The languages the owner turned on for the shop page (#258): the language the owner writes in and the ones offered. No row = French source, French and English. */

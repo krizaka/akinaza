@@ -67,3 +67,9 @@ export function statusWord(a: { status: AppointmentStatus; checkedInAt?: string 
 
 /** The tone of a status chip and of the agenda's dot. The word carries the meaning, the colour only repeats it. */
 export const STATUS_TONE = { booked: "neutral", inProgress: "accent", done: "success", cancelled: "neutral", noShow: "warning" } as const satisfies Record<StatusWord, string>;
+
+/**
+ * How a role reads the day (docs/ux/2026-10-full-review.md B1, decided on #289): the owner and a manager read the agenda in every
+ * trade; a staff member of a trade with dependants (a dog walker) keeps the card view built for a phone in the street.
+ */
+export const dayView = (role: "owner" | "manager" | "staff", dependants: boolean): "agenda" | "cards" => (role === "staff" && dependants ? "cards" : "agenda");

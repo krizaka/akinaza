@@ -1,4 +1,5 @@
-import type { PublicShop, ShopPageConfig } from "@akinaza/db";
+import { TEMPLATES } from "@akinaza/core";
+import { DEFAULT_SHOP_PAGE_SECTIONS, type PublicShop, sectionsFromTemplate, type ShopPageConfig } from "@akinaza/db";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
@@ -143,5 +144,78 @@ describe("the storefront renders from the shop's data — a dog walker, in Frenc
   it("has its gallery", () => {
     expect(html).toContain('id="gallery"');
     expect(html).toContain("Après la sortie");
+  });
+});
+
+describe("the trade's proposed pictures on the public page (#267)", () => {
+  const defaults = {
+    cover: null,
+    gallery: [1, 2].map((n) => ({ id: `salon-gallery-${n}`, altKey: `defaultMedia.salon.gallery.${n}`, src: `https://cdn.test/g${n}.webp`, sources: [], width: 960, height: 720 })),
+    service: [],
+  };
+
+  it("are headed as pictures of the trade with a note, never as « Photos de {shop} »", () => {
+    const html = renderToStaticMarkup(<Storefront locale="fr" view={buildStorefront({ page: salon, locale: "fr", now: NOW, defaults })} />);
+    expect(html).toContain("Images du métier");
+    expect(html).toContain("Images d&#x27;illustration, pas celles de cette boutique");
+    expect(html).not.toContain("Photos de Salon Laurier");
+    expect(html).toContain("https://cdn.test/g1.webp");
+  });
+
+  it("the shop's own photos keep their heading", () => {
+    const html = renderToStaticMarkup(<Storefront locale="fr" view={buildStorefront({ page: walker, locale: "fr", now: NOW, defaults })} />);
+    expect(html).toContain("Photos de Pattes de Saint-Henri");
+    expect(html).not.toContain("Images du métier");
+  });
+});
+
+describe("`trust` is a section like the others, and a template changes only order, variants and hue (#261, step 3)", () => {
+  const order = (html: string, ids: string[]) => ids.map((id) => [id, html.indexOf(`id="${id}"`)] as const).filter(([, at]) => at >= 0).sort((a, b) => a[1] - b[1]).map(([id]) => id);
+
+  it("a shop with no template draws exactly the order it always had: the story and contact right before the photos", () => {
+    const html = render(walker, "en");
+    expect(order(html, ["services", "hours", "zones", "trust", "gallery"])).toEqual(["services", "hours", "zones", "trust", "gallery"]);
+    expect(html).not.toContain("data-template");
+    expect(html).not.toContain("data-hue");
+  });
+
+  it("hiding `trust` hides the story and contact; moving it moves them", () => {
+    const sections = [...buildStorefront({ page: walker, locale: "en", now: NOW }).sections];
+    const withoutTrust = { ...walker, pageConfig: { logoUrl: null, sections: sections.map((s) => (s.id === "trust" ? { ...s, visible: false } : s)) } } as PublicShop;
+    expect(render(withoutTrust, "en")).not.toContain('id="trust"');
+    const first = { ...walker, pageConfig: { logoUrl: null, sections: [sections.find((s) => s.id === "trust")!, ...sections.filter((s) => s.id !== "trust")] } } as PublicShop;
+    expect(order(render(first, "en"), ["trust", "services", "gallery"])[0]).toBe("trust");
+  });
+
+  it("every template, applied, puts its sections in its order and marks the page with its id and hue", () => {
+    for (const template of TEMPLATES) {
+      const sections = sectionsFromTemplate(template, DEFAULT_SHOP_PAGE_SECTIONS);
+      const page = { ...walker, pageConfig: { logoUrl: null, sections, templateId: template.id, templateVersion: template.version } } as PublicShop;
+      const view = buildStorefront({ page, locale: "en", now: NOW });
+      expect(view.sections.map((s) => s.id).slice(0, template.sections.length), template.id).toEqual(template.sections.map((s) => s.id));
+      expect(view.template).toMatchObject({ id: template.id, version: 1, layout: template.layout, hue: template.hue });
+      const html = renderToStaticMarkup(<Storefront locale="en" view={view} />);
+      expect(html).toContain(`data-template="${template.id}"`);
+      expect(html.includes("data-hue=")).toBe(template.hue !== "brand-akinaza");
+    }
+  });
+
+  it("a story-first template puts the story before the services; a menu-first one lists the services in a single column", () => {
+    const apply = (id: string) => {
+      const template = TEMPLATES.find((t) => t.id === id)!;
+      const page = { ...walker, pageConfig: { logoUrl: null, sections: sectionsFromTemplate(template, DEFAULT_SHOP_PAGE_SECTIONS), templateId: id, templateVersion: 1 } } as PublicShop;
+      return render(page, "en");
+    };
+    expect(order(apply("pets-histoire"), ["trust", "services"])).toEqual(["trust", "services"]);
+    expect(order(apply("pets-vitrine"), ["trust", "services"])).toEqual(["services", "trust"]);
+    expect(apply("salon-carte")).toMatch(/--kz-cards-min:\s*420px/);
+    expect(apply("salon-vitrine")).toMatch(/--kz-cards-min:\s*250px/);
+  });
+
+  it("an id the catalogue does not hold draws the plain page, never a broken one", () => {
+    const page = { ...walker, pageConfig: { logoUrl: null, sections: buildStorefront({ page: walker, locale: "en", now: NOW }).sections, templateId: "gone-away", templateVersion: 3 } } as PublicShop;
+    const html = render(page, "en");
+    expect(html).not.toContain("data-template");
+    expect(html).toContain('id="services"');
   });
 });

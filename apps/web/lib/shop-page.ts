@@ -1,19 +1,28 @@
 import { slugSchema } from "@akinaza/core";
 import { currentSlugOf, publicShop } from "@akinaza/db";
 import { permanentRedirect } from "next/navigation";
+import { cache } from "react";
 
 import { db } from "@/lib/db";
 
-/** A published shop by its address; null when the address is malformed or there is none (the page answers 404). */
-export async function loadPublicShop(slug: string) {
+/**
+ * A published shop by its address; null when the address is malformed or there is none (the page answers 404). Read once per
+ * request: the storefront's layout asks it to answer 404 before anything streams, the page and `generateMetadata` ask it again.
+ */
+export const loadPublicShop = cache(async (slug: string) => {
   const parsed = slugSchema.safeParse(slug);
   return parsed.success ? publicShop(db(), parsed.data) : null;
-}
+});
+
+/** The current slug a former address leads to, or null; once per request like `loadPublicShop`. */
+const currentSlugOfFormer = cache(async (slug: string) => {
+  const parsed = slugSchema.safeParse(slug);
+  return parsed.success ? currentSlugOf(db(), parsed.data) : null;
+});
 
 /** The address a former slug now leads to, `/{locale}/s/{current}{rest}`, or null (#77: printed links never break). */
 export async function movedShopPath(locale: string, slug: string, rest = ""): Promise<string | null> {
-  const parsed = slugSchema.safeParse(slug);
-  const current = parsed.success ? await currentSlugOf(db(), parsed.data) : null;
+  const current = await currentSlugOfFormer(slug);
   return current ? `/${locale}/s/${current}${rest}` : null;
 }
 

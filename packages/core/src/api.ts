@@ -72,3 +72,15 @@ export const shopAnswer = z.object({
 export type ShopAnswer = z.infer<typeof shopAnswer>;
 
 export const issuedInvoice = z.object({ id: z.string(), number: z.string().or(z.number()), subtotalCents: z.number(), gstCents: z.number(), qstCents: z.number(), totalCents: z.number() });
+
+/**
+ * Who is looking (`GET /api/me`): the public pages' bar and the apps' header read it. A hint only, never an authorisation:
+ * every page and route checks the real session. Signed out is a 200 with `signedIn: false`, not a 401.
+ */
+export const meAnswer = z.object({
+  signedIn: z.boolean(),
+  /** Whether sign-up is open (`AUTH_SIGNUP_ENABLED`): « Try Akinaza » is the primary action only then. */
+  signupOpen: z.boolean(),
+  account: z.object({ name: z.string().nullable(), email: z.string(), avatarSeed: z.string().nullable() }).optional(),
+});
+export type MeAnswer = z.infer<typeof meAnswer>;

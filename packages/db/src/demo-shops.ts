@@ -1,8 +1,9 @@
-import type { ShopRules } from "@akinaza/core";
+import type { ShopRules, ShopType } from "@akinaza/core";
 import { and, eq } from "drizzle-orm";
 
 import type { Db } from "./client";
 import { accounts, services as servicesTable, shops, staff as staffTable } from "./schema";
+import { saveShopPageConfig, shopPageConfigOf } from "./shop-page";
 import { addStaff, addWindow, saveRules, type ServiceInput, saveService, saveShopMedia, saveShopPage, shopOfOwner } from "./service-shop";
 
 /**
@@ -22,6 +23,8 @@ export interface DemoShop {
   team: { name: string; hours: { weekday: number; startsAt: string; endsAt: string }[] }[];
   services: (ServiceInput & { descriptionFr: string; descriptionEn: string; includedFr: string[]; includedEn: string[] })[];
   rules: Partial<ShopRules>;
+  /** The trade, which picks the default images the page shows where the shop has none (#267). */
+  shopType: ShopType;
   cover?: { url: string; altFr: string; altEn: string };
 }
 
@@ -52,8 +55,8 @@ export const DEMO_SHOPS: DemoShop[] = [
       { nameFr: "Couleur complète", nameEn: "Full colour", durationMinutes: 150, priceCents: 16_000, capacity: 1, priceVaries: true, descriptionFr: "Une longue séance : le prix dépend de la longueur et de la densité, confirmé à la consultation.", descriptionEn: "A long session: the price depends on length and density, confirmed at the consultation.", includedFr: ["Consultation couleur", "Application", "Soin", "Brushing"], includedEn: ["Colour consultation", "Application", "Treatment", "Blow-dry"] },
       { nameFr: "Balayage", nameEn: "Balayage", durationMinutes: 180, priceCents: 22_000, capacity: 1, priceVaries: true, descriptionFr: "Éclaircissement progressif, pour un résultat naturel.", descriptionEn: "Gradual lightening for a natural result.", includedFr: ["Consultation couleur", "Balayage", "Soin", "Coiffage"], includedEn: ["Colour consultation", "Balayage", "Treatment", "Styling"] },
     ],
+    shopType: "salon",
     rules: { cancellationHours: 24, bookingHorizonDays: 60, slotStepMinutes: 30, minNoticeMinutes: 120 },
-    cover: { url: "https://krizaka-assets.b-cdn.net/site/products/orazaka/gallery/mtl-ruelle.021f8cb018.webp", altFr: "Une ruelle de quartier sous la pluie.", altEn: "A neighbourhood alley in the rain." },
   },
   {
     ownerEmail: "ines.encrevive@akinaza.test",
@@ -78,6 +81,7 @@ export const DEMO_SHOPS: DemoShop[] = [
       { nameFr: "Séance de tatouage (4 h)", nameEn: "Tattoo session (4 h)", durationMinutes: 240, priceCents: 48_000, capacity: 1, priceVaries: true, descriptionFr: "Une longue séance pour un motif plus grand. Le prix final est confirmé au dessin.", descriptionEn: "A long session for a larger design. The final price is confirmed at the drawing.", includedFr: ["Dessin", "Tatouage", "Soins après"], includedEn: ["Drawing", "Tattoo", "Aftercare"] },
       { nameFr: "Séance photo portrait (60 min)", nameEn: "Portrait photo session (60 min)", durationMinutes: 60, priceCents: 18_000, capacity: 1, descriptionFr: "Un portrait en studio, lumière naturelle et artificielle.", descriptionEn: "A studio portrait, natural and studio light.", includedFr: ["Séance en studio", "10 photos retouchées", "Galerie en ligne"], includedEn: ["Studio session", "10 retouched photos", "Online gallery"] },
     ],
+    shopType: "workshop",
     rules: { cancellationHours: 48, bookingHorizonDays: 90, slotStepMinutes: 30, minNoticeMinutes: 1_440 },
   },
   {
@@ -98,6 +102,7 @@ export const DEMO_SHOPS: DemoShop[] = [
       { nameFr: "Séance de travail (1 h)", nameEn: "Working session (1 h)", durationMinutes: 60, priceCents: 15_000, capacity: 1, descriptionFr: "Une heure de travail ensemble, avec un compte rendu écrit.", descriptionEn: "One hour of work together, with a written summary.", includedFr: ["Séance en visio ou en personne", "Compte rendu écrit"], includedEn: ["Video or in-person session", "Written summary"] },
       { nameFr: "Bloc de 3 heures", nameEn: "3-hour block", durationMinutes: 180, priceCents: 40_000, capacity: 1, descriptionFr: "Un bloc d'un seul tenant pour un atelier ou un plan d'action.", descriptionEn: "One uninterrupted block for a workshop or an action plan.", includedFr: ["Atelier ou plan d'action", "Compte rendu écrit"], includedEn: ["Workshop or action plan", "Written summary"] },
     ],
+    shopType: "consulting",
     rules: { cancellationHours: 24, bookingHorizonDays: 60, slotStepMinutes: 30, minNoticeMinutes: 1_440 },
   },
 ];
@@ -109,12 +114,21 @@ async function ensureOwner(db: Db, email: string): Promise<string> {
   return row!.id;
 }
 
+/** The demo's trade, once: a shop that already chose one keeps it. */
+async function keepType(db: Db, shopId: string, shopType: ShopType): Promise<void> {
+  const config = await shopPageConfigOf(db, shopId);
+  if (!config.shopType) await saveShopPageConfig(db, shopId, { ...config, shopType });
+}
+
 /** Seeds (or refreshes) one demo shop through the product's operations. Idempotent per owner: a second run changes nothing it already holds. */
 export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string; created: boolean }> {
   const ownerId = await ensureOwner(db, demo.ownerEmail);
   const page = { ...demo.shop, businessType: "professional" as const, taglineFr: demo.taglineFr, taglineEn: demo.taglineEn, ...demo.profile };
   const existing = await shopOfOwner(db, ownerId);
-  if (existing) return { shopId: existing.id, created: false };
+  if (existing) {
+    await keepType(db, existing.id, demo.shopType);
+    return { shopId: existing.id, created: false };
+  }
   const { shopId } = await saveShopPage(db, ownerId, { ...page, published: false });
   const [owner, ...others] = demo.team;
   for (const w of owner!.hours) await addWindow(db, shopId, w);
@@ -129,6 +143,7 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
   await saveRules(db, shopId, { cancellationHours: 24, bookingHorizonDays: 60, slotStepMinutes: 30, minNoticeMinutes: 120, reportLinkDays: 30, paymentTermsDays: current!.paymentTermsDays, ...demo.rules });
   if (demo.cover) await saveShopMedia(db, shopId, { cover: { ...demo.cover } });
   await saveShopPage(db, ownerId, { ...page, published: true });
+  await keepType(db, shopId, demo.shopType);
   return { shopId, created: true };
 }
 

@@ -1,6 +1,7 @@
 // @template: app-dashboard
 import { prepareShopReturn, shopDay } from "@akinaza/db";
 import { ChipLink } from "@krizaka/ui/chip-link";
+import { PageHeader } from "@krizaka/ui/page-header";
 import { Stat, StatGrid } from "@krizaka/ui/stat";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -39,10 +40,7 @@ export default async function Books({ params, searchParams }: { params: Promise<
   ] as const;
   return (
     <div className="flex flex-col gap-5">
-      <header className="flex flex-col gap-1">
-        <h1 className="font-display text-2xl font-bold text-fg">{t.title}</h1>
-        <p className="text-fg-secondary">{format(t.period, { from: formatLongDay(period.start, locale), to: formatLongDay(period.end, locale) })}</p>
-      </header>
+      <PageHeader title={t.title} description={format(t.period, { from: formatLongDay(period.start, locale), to: formatLongDay(period.end, locale) })} />
       <nav aria-label={t.periodNav} className="flex flex-wrap gap-2">
         {periodChoices(today).map((p) => (
           <ChipLink key={p.id} asChild selected={p.id === period.id} current={p.id === period.id ? "page" : undefined}>

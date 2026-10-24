@@ -1,6 +1,7 @@
 // @template: app-list-detail
 import { localDay } from "@akinaza/core";
 import { SHOP_ROLES, shopStaff, teamTimeOff } from "@akinaza/db";
+import { PageHeader } from "@krizaka/ui/page-header";
 
 import { TeamPanel } from "@/components/app/TeamPanel";
 import { TimeOffCard } from "@/components/app/TimeOffCard";
@@ -24,7 +25,7 @@ export default async function Team({ params }: { params: Promise<{ locale: strin
   const manages = SHOP_ROLES.manages[role];
   return (
     <div className="flex flex-col gap-5">
-      <h1 className="font-display text-2xl font-bold text-fg">{getDictionary(locale).console.team.title}</h1>
+      <PageHeader title={getDictionary(locale).console.team.title} />
       <TeamPanel
         timeZone={shop.timezone}
         assignable={[...manages]}

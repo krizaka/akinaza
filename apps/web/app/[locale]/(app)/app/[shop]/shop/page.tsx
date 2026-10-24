@@ -1,8 +1,11 @@
+import { shopTypeOf } from "@akinaza/core";
 import { defaultShopPageConfig, loadShop, shopMediaOf, shopPageConfigOf } from "@akinaza/db";
 import type { Metadata } from "next";
 
 import { type SetupData, ShopSetupView } from "@/components/app/ShopSetup";
 import { db } from "@/lib/db";
+import { proposalsFor } from "@/lib/default-media-proposals";
+import { defaultMediaSettings } from "@/lib/default-media-settings";
 import { readEnv } from "@/lib/env";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
@@ -21,10 +24,13 @@ export default async function ShopSetupPage({ params }: { params: Promise<{ loca
   const locale = asLocale(rawLocale);
   const { shop } = await memberShop(shopId, "settings");
   const base = readEnv().APP_PUBLIC_URL;
-  if (!shop) return <ShopSetupView data={{ page: null, shopId: null, pageConfig: defaultShopPageConfig(), publicUrl: null, zones: [], services: [], windows: [], daysOff: [], rules: null, media: { cover: null, gallery: [] } }} />;
+  if (!shop) return <ShopSetupView data={{ page: null, shopId: null, pageConfig: defaultShopPageConfig(), publicUrl: null, zones: [], services: [], windows: [], daysOff: [], rules: null, media: { cover: null, gallery: [] }, proposed: null }} />;
   const setup = await loadShop(db(), shop);
   const [media, pageConfig] = await Promise.all([shopMediaOf(db(), shop.id), shopPageConfigOf(db(), shop.id)]);
+  const rules = await defaultMediaSettings();
+  const proposed = rules.enabled ? { config: pageConfig, shopType: shopTypeOf(shop.businessType, pageConfig.shopType), proposals: proposalsFor(rules.types), media: { cover: media.cover ? line(media.cover) : null, gallery: media.gallery.map(line) } } : null;
   const data: SetupData = {
+    proposed,
     shopId: shop.id,
     pageConfig,
     page: { name: shop.name, legalName: shop.legalName, address: shop.address, slug: shop.slug ?? "", ownerName: setup.staff.name, taglineFr: shop.taglineFr ?? "", taglineEn: shop.taglineEn ?? "", published: shop.published, area: shop.area ?? "", bioFr: shop.bioFr ?? "", bioEn: shop.bioEn ?? "", publicPhone: shop.publicPhone ?? "", publicEmail: shop.publicEmail ?? "", seatUnitFr: shop.seatUnitFr ?? "", seatUnitEn: shop.seatUnitEn ?? "", businessType: shop.businessType },

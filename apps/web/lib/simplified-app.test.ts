@@ -20,11 +20,11 @@ describe("the owner's app keeps only what the job needs (krizaka/akinaza#161)", 
     expect(read("next.config.mjs")).toContain('source: "/:locale(en|fr)/app/connections"');
   });
 
-  it("invoices: the list is the screen, with one primary action to a route of its own for the form", () => {
+  it("invoices: the list is the screen; the one primary action, « Nouvelle facture », is the frame's (docs/ux/2026-10-full-review.md A3) and leads to a route of its own", () => {
     const list = read(`${SHOP}/invoices/page.tsx`);
     expect(list).not.toContain("InvoiceForm");
-    expect((list.match(/variant="primary"/g) ?? []).length).toBe(1);
-    expect(list).toContain("newInvoice");
+    expect(list).not.toContain('variant="primary"');
+    expect(read("components/app/SpaceChrome.tsx")).toContain("newInvoiceHref");
     expect(existsSync(join(ROOT, `${SHOP}/invoices/new/page.tsx`))).toBe(true);
   });
 

@@ -15,6 +15,7 @@
     "dev:check": "turbo run lint typecheck test --filter='...[origin/main]' && vitest run",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "check:overflow": "node scripts/check-overflow.mjs",
+    "check:hydration": "node scripts/check-hydration.mjs",
     "seo:check": "node scripts/check-seo-family.mjs --base http://localhost:3000 --host https://www.akinaza.com --types WebSite,SoftwareApplication",
     "e2e:admin": "node scripts/e2e-admin.mjs",
     "lint:sg": "node scripts/sg-ratchet.mjs",

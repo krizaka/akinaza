@@ -23,8 +23,19 @@ import type { StorefrontView } from "@/lib/storefront";
  * who works here, the hours, the areas on a map, who you will meet and the rules, a look inside, the way in.
  * Every section exists only when the shop has what it shows — a salon has no map, a new shop no gallery.
  */
+/** A proposed image on a service card: AVIF or WebP at the widths it needs, in a box of its own ratio (no layout shift). */
+function ServiceImageView({ image }: { image: NonNullable<StorefrontView["services"][number]["image"]> }) {
+  return (
+    <picture>
+      {image.sources.map((source) => <source key={source.type} type={source.type} srcSet={source.srcSet} sizes="(min-width: 64rem) 22rem, 90vw" />)}
+      <img src={image.src} alt={image.alt} width={image.width} height={image.height} loading="lazy" decoding="async" className="aspect-[3/2] w-full object-cover" />
+    </picture>
+  );
+}
+
 export function Storefront({ view, locale }: { view: StorefrontView; locale: Locale }) {
   const t = translator(locale);
+  const galleryLabel = view.galleryIllustrative ? t("console.shopPage.galleryIllustrativeLabel") : t("console.shopPage.galleryLabel", { shop: view.name });
   const book = (
     <>
       <ButtonLink href={view.bookHref} size="lg" variant="primary" className="hidden md:inline-flex">
@@ -35,8 +46,8 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
   const sections: Record<(typeof view.sections)[number]["id"], ReactNode> = {
     services: view.services.length ? (
       <Section id="services" title={t("console.shopPage.servicesTitle")} lead={t("console.shopPage.servicesLead")} reveal>
-        <CardGrid min={250} fit="fit" as="ul" aria-label={t("console.shopPage.servicesLabel")}>
-          {view.services.map((s) => <ServiceCard key={s.id} name={s.name} price={s.price} priceFrom={s.priceFrom ?? undefined} duration={s.duration} capacity={s.capacity ?? undefined} description={s.description ?? undefined} included={s.included} tag={s.tag ?? undefined} actionLabel={t("console.shopPage.choose")} href={s.href} linkAs={Link} />)}
+        <CardGrid min={view.template?.variants.services === "list" ? 420 : 250} fit="fit" as="ul" aria-label={t("console.shopPage.servicesLabel")}>
+          {view.services.map((s) => <ServiceCard key={s.id} name={s.name} price={s.price} priceFrom={s.priceFrom ?? undefined} duration={s.duration} capacity={s.capacity ?? undefined} description={s.description ?? undefined} included={s.included} tag={s.tag ?? undefined} actionLabel={t("console.shopPage.choose")} href={s.href} linkAs={Link} media={s.image ? <ServiceImageView image={s.image} /> : undefined} />)}
         </CardGrid>
       </Section>
     ) : null,
@@ -53,14 +64,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]"><ul className="m-0 flex list-none flex-wrap gap-2 p-0">{view.zones.map((z) => <li key={z.id}><Badge tone="accent" size="md">{z.name}</Badge></li>)}</ul><ZoneMap map={view.map} label={t("console.shopPage.mapLabel")} locale={locale} /></div>
       </Section>
     ) : null,
-    gallery: view.gallery.length ? <Section id="gallery" divider title={t("console.shopPage.galleryLabel", { shop: view.name })} reveal><MediaGallery label={t("console.shopPage.galleryLabel", { shop: view.name })} items={view.gallery} /></Section> : null,
-    wall: view.preparedSections.wall ? <Section id="wall" divider title={t("console.shopPage.wallTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
-    reels: view.preparedSections.reels ? <Section id="reels" divider title={t("console.shopPage.reelsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
-    announcements: view.preparedSections.announcements ? <Section id="announcements" divider title={t("console.shopPage.announcementsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
-    reviews: view.preparedSections.reviews ? <Section id="reviews" divider title={t("console.shopPage.reviewsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
-    follow: view.preparedSections.follow ? <Section id="follow" divider title={t("console.shopPage.followTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
-  };
-  const trust = (
+    trust: (
     <Section id="trust" divider title={view.about ? t("console.shopPage.about") : t("console.shopPage.good")} reveal>
       <div className={view.about || view.contact ? "grid items-start gap-6 lg:grid-cols-2" : "max-w-2xl"}>
         {view.about || view.contact ? (
@@ -72,9 +76,21 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
         <div className="rounded-xl border border-border-default bg-surface-1 p-5"><DescriptionList layout="inline" items={view.policies.map((p) => ({ id: p.id, term: p.term, details: p.value }))} /></div>
       </div>
     </Section>
-  );
+    ),
+    // The trade's proposed pictures (#267) are said to be illustrations, never « Photos de {shop} ».
+    gallery: view.gallery.length ? (
+      <Section id="gallery" divider title={galleryLabel} lead={view.galleryIllustrative ? t("console.shopPage.galleryIllustrativeNote") : undefined} reveal>
+        <MediaGallery label={galleryLabel} items={view.gallery} />
+      </Section>
+    ) : null,
+    wall: view.preparedSections.wall ? <Section id="wall" divider title={t("console.shopPage.wallTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+    reels: view.preparedSections.reels ? <Section id="reels" divider title={t("console.shopPage.reelsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+    announcements: view.preparedSections.announcements ? <Section id="announcements" divider title={t("console.shopPage.announcementsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+    reviews: view.preparedSections.reviews ? <Section id="reviews" divider title={t("console.shopPage.reviewsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+    follow: view.preparedSections.follow ? <Section id="follow" divider title={t("console.shopPage.followTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+  };
   return (
-    <main id="content">
+    <main id="content" data-template={view.template?.id} data-hue={view.template && view.template.hue !== "brand-akinaza" ? view.template.hue : undefined}>
       <CoverHero
         cover={view.cover ?? undefined}
         title={view.name}
@@ -103,9 +119,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
         actions={book}
       />
 
-      {view.sections.map(({ id, visible }) => id === "gallery"
-        ? <Fragment key={id}>{trust}{visible ? sections[id] : null}</Fragment>
-        : visible ? <Fragment key={id}>{sections[id]}</Fragment> : null)}
+      {view.sections.map(({ id, visible }) => (visible ? <Fragment key={id}>{sections[id]}</Fragment> : null))}
 
       <Section spacing="lg">
         <CtaPanel title={t("console.shopPage.closingTitle")} body={t("console.shopPage.closingBody")} reveal>

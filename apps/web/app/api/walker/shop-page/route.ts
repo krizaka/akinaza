@@ -1,4 +1,4 @@
-import { saveShopPageConfig, shopPageConfigOf, shopPageConfigSchema } from "@akinaza/db";
+import { saveShopPageConfig, shopPageConfigOf, shopPageSaveSchema } from "@akinaza/db";
 
 import { requireOwner } from "@/lib/access";
 import { db } from "@/lib/db";
@@ -10,7 +10,8 @@ export const dynamic = "force-dynamic";
 export function POST(req: Request) {
   return handle(async () => {
     const { shop } = await requireOwner(req);
-    const config = await readJson(req, shopPageConfigSchema);
+    // Any part of the configuration: what the call does not name stays as it was.
+    const config = await readJson(req, shopPageSaveSchema);
     const current = await shopPageConfigOf(db(), shop.id);
     if (config.logoUrl && config.logoUrl !== current.logoUrl) {
       const storage = mediaSettings();
@@ -19,6 +20,6 @@ export function POST(req: Request) {
       if (!/^[a-f0-9]{16}\.(jpg|png|webp)$/.test(filename)) throw refuse(400, "BAD_REQUEST", "Logo must be uploaded through the storefront media endpoint");
     }
     await saveShopPageConfig(db(), shop.id, config);
-    return Response.json(config);
+    return Response.json(await shopPageConfigOf(db(), shop.id));
   });
 }

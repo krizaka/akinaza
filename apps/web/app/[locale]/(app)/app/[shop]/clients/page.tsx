@@ -1,5 +1,6 @@
 // @template: app-list-detail
 import { clientOverview } from "@akinaza/db";
+import { PageHeader } from "@krizaka/ui/page-header";
 
 import { ClientsTable } from "@/components/app/ClientsTable";
 import { db } from "@/lib/db";
@@ -19,7 +20,7 @@ export default async function Clients({ params }: { params: Promise<{ locale: st
   const clients = await clientOverview(db(), shop.id, new Date());
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="font-display text-2xl font-bold text-fg">{getDictionary(locale).console.clients.title}</h1>
+      <PageHeader title={getDictionary(locale).console.clients.title} />
       {clients.length === 0 ? <p className="text-fg-secondary">{getDictionary(locale).console.clients.none}</p> : <ClientsTable clients={clients} timeZone={shop.timezone} />}
     </div>
   );
