@@ -41,7 +41,7 @@ describe.runIf(enabled)("a services business issues an invoice over HTTP", () =>
     ids.service = (await call(services, "/api/walker/services", { token: sessions.owner, json: { nameFr: "Développement (à l'heure)", nameEn: "Development (hourly)", durationMinutes: 60, priceCents: 15_000, capacity: 1 } })).body.id;
     await query("UPDATE shops SET registrant = true, gst_number = '123456789RT0001', qst_number = '1234567890TQ0001' WHERE slug = $1", [`studio-${stamp}`]);
     const [{ id: shopId } = { id: "" }] = await query<{ id: string }>("SELECT id FROM shops WHERE slug = $1", [`studio-${stamp}`]);
-    ids.clientFile = (await call(join, "/api/me/join", { token: sessions.client, json: { shopId, fullName: "Café du Parc inc. (démo)", phone: "514-555-0100", language: "fr", consentService: true } })).body.clientId;
+    ids.clientFile = (await call(join, "/api/me/join", { token: sessions.client, json: { shopId, fullName: "Studio Lumen inc. (démo)", phone: "514-555-0100", language: "fr", consentService: true } })).body.clientId;
   });
   beforeEach(() => resetRateLimits());
   afterAll(async () => {

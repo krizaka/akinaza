@@ -1,9 +1,9 @@
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { accounts, invoices, shops } from "./schema";
+import { accounts, clients, dependants, invoices, shops } from "./schema";
 import { organizeOver } from "./organize";
-import { KRIZAKA, KRIZAKA_EMAILS, seedKrizaka } from "./seed-krizaka";
+import { KRIZAKA, KRIZAKA_EMAILS, KRIZAKA_RENAMED_CLIENTS, renameFormerClients, seedKrizaka } from "./seed-krizaka";
 import { invoiceDetail, listInvoices, prepareShopReturn } from "./shop-ops";
 import { publicShop, shopsOfOwner } from "./service-shop";
 import { freshDatabase } from "./test/db";
@@ -82,5 +82,27 @@ describe("Krizaka, a software studio, as Akinaza's first client (demo data, clea
     const again = await seedKrizaka(t.db, NOW);
     expect(again.created).toBe(false);
     expect((await t.db.select().from(invoices).where(eq(invoices.shopId, shop!.id))).length).toBe(before);
+  });
+  it("renames a former demo client in place: same account, same client file, same invoices and numbers (#326)", async () => {
+    const [shop] = await t.db.select().from(shops).where(eq(shops.slug, "krizaka-demo"));
+    const { from, to } = KRIZAKA_RENAMED_CLIENTS[0]!;
+    // The database as it was before the rename: the café's account and client file, its invoices already issued.
+    await t.db.update(accounts).set({ email: from.email }).where(eq(accounts.email, to.email));
+    await t.db.update(clients).set({ email: from.email, fullName: from.name }).where(eq(clients.email, to.email));
+    const [file] = await t.db.select().from(clients).where(eq(clients.email, from.email));
+    await t.db.insert(dependants).values({ shopId: shop!.id, clientId: file!.id, kind: "other", name: from.name });
+    const before = (await t.db.select({ id: invoices.id, number: invoices.number, clientId: invoices.clientId }).from(invoices).where(eq(invoices.shopId, shop!.id))).sort((a, b) => a.id.localeCompare(b.id));
+
+    await renameFormerClients(t.db);
+    await renameFormerClients(t.db); // idempotent
+    await seedKrizaka(t.db, NOW);
+
+    expect(await t.db.select().from(accounts).where(eq(accounts.email, from.email))).toHaveLength(0);
+    const renamed = await t.db.select().from(clients).where(eq(clients.id, file!.id));
+    expect(renamed[0]).toMatchObject({ fullName: to.name, email: to.email });
+    expect((await t.db.select().from(dependants).where(eq(dependants.clientId, file!.id))).every((d) => d.name === to.name)).toBe(true);
+    expect((await shopClients(t.db, shop!.id)).map((c) => c.fullName).sort()).toEqual(KRIZAKA.clients.map((c) => c.name).sort());
+    const after = (await t.db.select({ id: invoices.id, number: invoices.number, clientId: invoices.clientId }).from(invoices).where(eq(invoices.shopId, shop!.id))).sort((a, b) => a.id.localeCompare(b.id));
+    expect(after).toEqual(before);
   });
 });

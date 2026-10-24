@@ -266,3 +266,12 @@ the requests and the Loi 25 card. One primary per screen: « Réserver chez … 
 secondary. Empty, it is the `EmptyState` with the beaver (asked at 120 px; the block draws its icon slot at 24 px until krizaka-ui#623) and what will fill it. Another client's ids answer 404 on every
 `/api/me/**` route (`app/api/client-isolation.integration.test.ts`), including a booking that names another file's dog (it was a
 403 that confirmed the dog exists).
+
+## The demo's client is a service business, never a café (Phase 2, D0)
+
+The Krizaka persona's first client was « Café du Parc inc. (démo) »: a business Akinaza does not serve (a café, a restaurant, a
+bar or a bakery bills through a sales recording module certified by Revenu Québec, AGENTS § 2). It is now **« Studio Lumen inc.
+(démo) »**, the client of the direction's mockups (`docs/design/2026-10-direction.md`). A deployment already seeded is renamed in
+place by the idempotent seed (`renameFormerClients`, `KRIZAKA_RENAMED_CLIENTS`): the same account, client file and invoices, so no
+invoice number changes. `packages/db/src/demo-names.test.ts` refuses a café, restaurant, bar, bistro, brasserie or bakery (FR/EN)
+among the shops and clients of every demo seed (`seed-krizaka`, `seed-walker`, `demo-shops`).
