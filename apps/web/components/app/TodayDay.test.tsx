@@ -1,107 +1,79 @@
-import { KrizakaQueryProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import { I18nProvider } from "@/lib/i18n-client";
-import type { TodayAppointment } from "@/lib/today";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import { shopRoutes } from "@/lib/routes";
 
-import { ShopSession } from "./ShopSession";
 import { TodayDay, type TodayDayProps } from "./TodayDay";
+import type { DayVisitView } from "./VisitDetail";
 
-vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app" }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }), usePathname: () => "/fr/app/s-1/aujourdhui" }));
+vi.mock("@/lib/i18n-client", () => ({
+  useSay: () => ({ say: (key: string, vars?: Record<string, string | number>) => (vars ? `${key} ${Object.values(vars).join(" ")}` : key), locale: "fr" }),
+  useVocabulary: () => ({ type: "pets", dependants: true, visitReports: true }),
+}));
+vi.mock("@/components/app/ShopSession", () => ({ useShopRoutes: () => shopRoutes("fr", "s-1") }));
+vi.mock("@/components/app/useCall", () => ({ useCall: () => ({ run: vi.fn(), pending: false, problem: null }) }));
+vi.mock("@/components/app/AccessNotes", () => ({ AccessNotes: () => null }));
 
-const MESSAGES = { en: { console: en.console }, fr: { console: fr.console } } as const;
-const readable = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ");
-
-const appointment = (id: string, hour: number, patch: Partial<TodayAppointment> = {}): TodayAppointment => ({
-  id,
-  startsAt: `2026-10-22T${hour + 4}:00:00.000Z`,
-  endsAt: `2026-10-22T${hour + 4}:45:00.000Z`,
-  staff: "Camille",
-  service: { fr: "Coupe", en: "Haircut" },
-  clientId: `c-${id}`,
-  client: `Client ${id}`,
+const walk: DayVisitView = {
+  appointmentId: "a-1",
+  startsAt: "2026-10-23T18:00:00.000Z",
+  endsAt: "2026-10-23T19:00:00.000Z",
   status: "booked",
+  service: { fr: "Promenade en groupe 60 min", en: "Group walk 60 min", capacity: 5 },
+  zone: "Saint-Henri",
   checkedInAt: null,
-  priceCents: 4_500,
-  category: "standard",
-  ...patch,
-});
-
-const day: TodayDayProps = {
-  appointments: [appointment("a", 9, { status: "done" }), appointment("b", 11), appointment("c", 14, { client: null, clientId: null })],
-  shop: { timezone: "America/Toronto", registrant: true },
-  day: "2026-10-22",
-  today: "2026-10-22",
-  nowIso: "2026-10-22T14:30:00.000Z",
-  selectedId: null,
-  allow: { clients: true, revenue: true },
+  checkedOutAt: null,
+  minutes: null,
+  bookings: [
+    { bookingId: "b-1", clientId: "c-1", clientName: "Sofia Rossi", clientPhone: "514-555-0142", dependant: { name: "Rex", kind: "dog", profile: { breed: "Labrador", size: "large" } }, hasAccessNotes: true, report: null },
+    { bookingId: "b-2", clientId: "c-2", clientName: "Jordan Lee", clientPhone: null, dependant: { name: "Miso", kind: "dog", profile: {} }, hasAccessNotes: false, report: null },
+  ],
 };
 
-const render = (props: Partial<TodayDayProps> = {}, locale: "en" | "fr" = "en") =>
-  readable(
-    renderToStaticMarkup(
-      <I18nProvider locale={locale} messages={MESSAGES[locale] as never}>
-        <KrizakaQueryProvider>
-          <ShopSession locale="en" shopId="s1" remembered><TodayDay {...day} {...props} /></ShopSession>
-        </KrizakaQueryProvider>
-      </I18nProvider>,
-    ),
-  );
+const base: TodayDayProps = {
+  appointments: [{ id: "a-1", startsAt: walk.startsAt, endsAt: walk.endsAt, staff: "Léa", service: { fr: walk.service.fr, en: walk.service.en }, clientId: "c-1", client: "Sofia Rossi", status: "booked", checkedInAt: null, priceCents: 3_500, category: "standard" }],
+  shop: { timezone: "America/Toronto", registrant: true },
+  day: "2026-10-23",
+  today: "2026-10-23",
+  nowIso: "2026-10-23T17:30:00.000Z",
+  selectedId: null,
+  allow: { clients: true, revenue: true },
+  title: "Aujourd'hui",
+  description: "vendredi 23 octobre 2026",
+  visits: { "a-1": walk },
+};
+const render = (props: Partial<TodayDayProps>) => renderToStaticMarkup(<TodayDay {...base} {...props} />);
+const text = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/&#x27;/g, "'").replace(/\s+/g, " ");
 
-describe("the owner's day", () => {
-  it("lists the appointments in time order with the « now » line between the past and the next", () => {
-    const text = render();
-    expect(text.indexOf("Client a")).toBeLessThan(text.indexOf("Now · 10:30"));
-    expect(text.indexOf("Now · 10:30")).toBeLessThan(text.lastIndexOf("Client b"));
-    expect(text.lastIndexOf("Client b")).toBeLessThan(text.lastIndexOf("Walk-in"));
+describe("the owner's day as an agenda, for a dog walker too (docs/ux/2026-10-full-review.md B1–B5)", () => {
+  it("reads a walk by its service and its dogs, with the page's one h1, the figures and the « now » line", () => {
+    const html = render({});
+    expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
+    expect(text(html)).toContain("Aujourd'hui");
+    expect(text(html)).toContain("Promenade en groupe 60 min");
+    expect(text(html)).toContain("walker.dogs 2 · Léa");
+    expect(text(render({ visits: { "a-1": { ...walk, bookings: walk.bookings.slice(0, 1) } } }))).toContain("walker.dog · Léa");
+    expect(text(html)).toContain("today.stats.title");
+    expect(text(html)).toContain("today.now");
+    expect(text(html)).toContain("Sofia Rossi"); // the next client
   });
 
-  it("draws no « now » line on another day, and says the day is free when nothing is booked", () => {
-    expect(render({ day: "2026-10-23" })).not.toContain("Now ·");
-    const free = render({ appointments: [], day: "2026-10-23" });
-    expect(free).toContain("No appointment on this day.");
+  it("opens an appointment from the address: each row links to ?appointment=<id>", () => {
+    expect(render({})).toContain('href="/fr/app/s-1/aujourdhui?appointment=a-1"');
   });
 
-  it("shows three figures: appointments, what the day bills with taxes, and the next client", () => {
-    const text = render();
-    expect(text).toContain("Appointments 3");
-    expect(text).toContain("GST and QST included");
-    // 3 × 45.00 = 135.00 plus 5 % and 9.975 %.
-    expect(text).toContain("$155.22");
-    expect(text).toMatch(/Next client Client b 11:00/);
+  it("announces the brief under the heading and keeps the invoices beside the agenda, which then takes two columns", () => {
+    const html = render({ banner: <p data-testid="banner">the point</p>, aside: <section data-testid="aside">invoices</section> });
+    expect(html.indexOf('data-testid="banner"')).toBeLessThan(html.indexOf("today.agendaLabel"));
+    expect(html.indexOf("today.agendaLabel")).toBeLessThan(html.indexOf('data-testid="aside"'));
+    expect(html).not.toContain('data-span="full" aria-labelledby');
   });
 
-  it("offers Start on a booked visit, Finish once it began, and nothing on a done one", () => {
-    const text = render({ appointments: [appointment("a", 9, { status: "done" }), appointment("b", 11, { checkedInAt: "2026-10-22T15:00:00.000Z" }), appointment("c", 14)] });
-    expect(text.match(/Start/g)).toHaveLength(1);
-    expect(text.match(/Finish/g)).toHaveLength(1);
-    expect(text).toContain("In progress");
-  });
-
-  it("makes each row an address of its own, so the open appointment is in the URL", () => {
-    const html = renderToStaticMarkup(
-      <I18nProvider locale="en" messages={MESSAGES.en as never}>
-        <KrizakaQueryProvider>
-          <ShopSession locale="en" shopId="s1" remembered><TodayDay {...day} /></ShopSession>
-        </KrizakaQueryProvider>
-      </I18nProvider>,
-    );
-    expect(html).toContain('href="/en/app?appointment=b"');
-  });
-
-  it("shows a staff member the agenda without the day's revenue", () => {
-    const text = render({ allow: { clients: false, revenue: false } });
-    expect(text).not.toContain("Expected revenue");
-    expect(text).toContain("Appointments 3");
-  });
-
-  it("speaks French with the French money", () => {
-    const text = render({}, "fr");
-    expect(text).toContain("Revenu attendu");
-    expect(text).toMatch(/155,22\s?\$/);
+  it("shows the empty day with the beaver and no invoices widget when there are none", () => {
+    const html = render({ appointments: [], visits: {}, aside: null });
+    expect(text(html)).toContain("today.noneTitle");
+    expect(text(html)).toContain("today.none ");
+    expect(text(html)).not.toContain("today.statuses.booked");
   });
 });

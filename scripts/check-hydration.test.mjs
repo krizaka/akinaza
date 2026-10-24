@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { ACCOUNT_PAGES, BROWSER, firstRecord, isHydrationError, OWNER_PAGES, PUBLIC_PAGES, THEMES, VIEWPORTS } from "./check-hydration.mjs";
+import { ACCOUNT_PAGES, BROWSER, detailPagesFor, firstRecord, isHydrationError, OWNER_PAGES, PUBLIC_PAGES, THEMES, VIEWPORTS } from "./check-hydration.mjs";
 
 describe("the hydration crawl (one rendering for the server and the browser, K0)", () => {
   it("hydrates in a visitor's browser — Montréal's clock and the product's first language — never the server's UTC", () => {
@@ -48,5 +48,18 @@ describe("the hydration crawl (one rendering for the server and the browser, K0)
     const source = readFileSync(new URL("./check-hydration.mjs", import.meta.url), "utf8");
     for (const needle of ['arg("timezone", BROWSER.timezoneId)', 'arg("locale", BROWSER.locale)', "expected404 ? status !== 404 : status >= 400"]) expect(source).toContain(needle);
     expect(PUBLIC_PAGES.filter((p) => p.endsWith("/nope"))).toEqual(["/fr/s/nope", "/fr/nope"]);
+  });
+
+  it("crawls the correction screen of the first invoice too, and the page of a client's file as it is", () => {
+    const shop = "/fr/app/0b1c";
+    expect(detailPagesFor(`${shop}/invoices`, `${shop}/invoices/i-1`)).toEqual([`${shop}/invoices/i-1`, `${shop}/invoices/i-1/correct`]);
+    expect(detailPagesFor(`${shop}/clients`, `${shop}/clients/c-9`)).toEqual([`${shop}/clients/c-9`]);
+  });
+
+  it("owes the client with no file and the correction screen a page heading of their own (the frame renders none)", () => {
+    const acct = readFileSync(new URL("../apps/web/app/[locale]/(app)/app/(account)/page.tsx", import.meta.url), "utf8");
+    const correct = readFileSync(new URL("../apps/web/app/[locale]/(app)/app/[shop]/invoices/[id]/correct/page.tsx", import.meta.url), "utf8");
+    expect(acct).toMatch(/if \(files\.length === 0\) \{[\s\S]*<PageHeader/);
+    expect(correct).toContain("<PageHeader");
   });
 });

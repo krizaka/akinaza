@@ -19,6 +19,8 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
   return {
     root,
     today: (day?: string, appointment?: string) => `${root}/aujourdhui${query({ day, appointment })}`,
+    /** « Le point du lundi » in full; Today only announces it. */
+    brief: `${root}/brief`,
     clients: `${root}/clients`,
     client: (id: string) => `${root}/clients/${id}`,
     invoices: `${root}/invoices`,
