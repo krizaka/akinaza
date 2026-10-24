@@ -790,6 +790,31 @@
         }
       }
     },
+    "boutique": {
+      "title": "Votre boutique",
+      "navLabel": "Sections de votre boutique",
+      "groups": {
+        "page": "Votre page",
+        "business": "Votre activité"
+      },
+      "sections": {
+        "languages": "Langues",
+        "team": "Équipe",
+        "invoices": "Courriels de facture",
+        "shops": "Vos boutiques"
+      },
+      "invoices": {
+        "title": "Courriels de facture",
+        "lead": "Le message et l'expéditeur des factures que vous envoyez aux clients, et la durée de leur lien."
+      },
+      "shops": {
+        "title": "Vos boutiques",
+        "lead": "Les boutiques où vous travaillez. Chacune a sa propre page et sa propre équipe.",
+        "current": "Cette boutique",
+        "open": "Ouvrir cette boutique",
+        "add": "Ajouter une boutique"
+      }
+    },
     "shopPage": {
       "notFound": "Cette page n'existe pas.",
       "signInToBook": "Se connecter pour réserver",
@@ -1315,7 +1340,8 @@
         "reasonHint": "Visible par l'équipe seulement, jamais par les clients.",
         "add": "Ajouter le congé",
         "remove": "Retirer le congé de {name} ({when})",
-        "range": "du {from} au {to}"
+        "range": "du {from} au {to}",
+        "order": "La date de fin est avant la date de début."
       }
     },
     "brief": {

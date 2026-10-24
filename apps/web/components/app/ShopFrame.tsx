@@ -13,7 +13,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { AkinazaAccountMenu } from "@/components/account/AkinazaAccountMenu";
 import { type ChipShop, ShopChip } from "@/components/app/ShopChip";
-import type { AppPlace } from "@/lib/app-nav";
+import { type AppPlace, headerActionFits } from "@/lib/app-nav";
 import { useSay } from "@/lib/i18n-client";
 
 const VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "";
@@ -105,7 +105,7 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, dev =
           }
           actions={
             <>
-              {newInvoiceHref ? (
+              {newInvoiceHref && headerActionFits(path) ? (
                 <Button asChild variant="primary" shape="cut" size="sm" className="font-bold">
                   <Link href={newInvoiceHref} aria-label={say("shell.newInvoice")} data-testid="primary-action">
                     <PlusIcon size={16} strokeWidth={2.5} aria-hidden />

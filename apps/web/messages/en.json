@@ -790,6 +790,31 @@
         }
       }
     },
+    "boutique": {
+      "title": "Your shop",
+      "navLabel": "Sections of your shop",
+      "groups": {
+        "page": "Your page",
+        "business": "Your activity"
+      },
+      "sections": {
+        "languages": "Languages",
+        "team": "Team",
+        "invoices": "Invoice e-mails",
+        "shops": "Your shops"
+      },
+      "invoices": {
+        "title": "Invoice e-mails",
+        "lead": "The message and the sender of the invoices you send to clients, and how long their link stays open."
+      },
+      "shops": {
+        "title": "Your shops",
+        "lead": "The shops you work in. Each has its own page and its own team.",
+        "current": "This shop",
+        "open": "Open this shop",
+        "add": "Add a shop"
+      }
+    },
     "shopPage": {
       "notFound": "This page does not exist.",
       "signInToBook": "Sign in to book",
@@ -1315,7 +1340,8 @@
         "reasonHint": "Seen by the team only, never by clients.",
         "add": "Add time off",
         "remove": "Remove {name}'s time off ({when})",
-        "range": "from {from} to {to}"
+        "range": "from {from} to {to}",
+        "order": "The end date is before the start date."
       }
     },
     "brief": {

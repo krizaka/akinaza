@@ -4,7 +4,6 @@ import { listInvoices } from "@akinaza/db";
 import { invoiceMailSettings } from "@akinaza/db";
 import { PageHeader } from "@krizaka/ui/page-header";
 
-import { InvoiceMailSettings } from "@/components/app/InvoiceMailSettings";
 import { InvoicesTable } from "@/components/app/InvoicesTable";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
@@ -19,7 +18,7 @@ export const generateMetadata = titleOf("invoices");
 export default async function Invoices({ params }: { params: Promise<{ locale: string; shop: string }> }) {
   const { locale: rawLocale, shop: shopId } = await params;
   const locale = asLocale(rawLocale);
-  const { shop, role } = await memberShop(shopId, "invoices");
+  const { shop } = await memberShop(shopId, "invoices");
   const t = getDictionary(locale).console.invoices;
   const issued = await listInvoices(db(), shop.id);
   const mail = await invoiceMailSettings(db(), shop.id);
@@ -37,7 +36,6 @@ export default async function Invoices({ params }: { params: Promise<{ locale: s
           />
         )}
       </section>
-      {role === "owner" && mail ? <InvoiceMailSettings initial={mail.shop} /> : null}
     </div>
   );
 }
