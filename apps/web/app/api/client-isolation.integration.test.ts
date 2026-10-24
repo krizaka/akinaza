@@ -5,7 +5,6 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 
 import { db, migrate, pool, query } from "@/lib/db";
 import { resetRateLimits } from "@/lib/rate-limit";
-import { createSession, SESSION_COOKIE } from "@/lib/session";
 
 import { GET as calendar } from "./me/bookings/[id]/calendar/route";
 import { POST as book } from "./me/bookings/route";
@@ -14,13 +13,9 @@ import { GET as exportData } from "./me/export/route";
 import { POST as join } from "./me/join/route";
 import { POST as saveRequest } from "./me/requests/route";
 import { GET as slots } from "./shops/[slug]/slots/route";
+import { apiCall, type Handler, openBookableShop, testAccount } from "./test-api";
 import { POST as saveReport } from "./walker/bookings/[id]/report/route";
-import { POST as hours } from "./walker/hours/route";
 import { POST as invoices } from "./walker/invoices/route";
-import { POST as rules } from "./walker/rules/route";
-import { POST as services } from "./walker/services/route";
-import { POST as shop } from "./walker/shop/route";
-import { POST as zones } from "./walker/zones/route";
 
 /**
  * Client isolation (K7): a client sees only their own bookings, invoices and files, at every shop they deal with — and nothing tells
@@ -31,7 +26,6 @@ import { POST as zones } from "./walker/zones/route";
  */
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 
-type Handler = (req: Request, ctx: { params: Promise<Record<string, string>> }) => Promise<Response>;
 const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
 const routeModules = import.meta.glob<Record<string, unknown>>("./me/**/route.ts");
 const routeSources = import.meta.glob<string>("./me/**/route.ts", { query: "?raw", import: "default", eager: true });
@@ -80,18 +74,8 @@ describe.runIf(enabled)("a client reaches only their own records (K7)", () => {
   const ids = {} as Ids & { invoice: string; aliceAccount: string; bobAccount: string };
   const tokens = {} as Record<"alice" | "bob", string>;
 
-  const call = async (handler: Handler, method: string, ask: Ask & { token?: string }) => {
-    const headers: Record<string, string> = {};
-    if (ask.token) headers.cookie = `${SESSION_COOKIE}=${ask.token}`;
-    if (ask.json !== undefined) headers["content-type"] = "application/json";
-    const res = await handler(new Request(`http://localhost${ask.path}`, { method, headers, body: ask.json !== undefined ? JSON.stringify(ask.json) : ask.form }), { params: Promise.resolve(ask.params ?? {}) });
-    return { status: res.status, body: (res.headers.get("content-type") ?? "").includes("json") ? await res.json() : null };
-  };
-  const account = async (label: string) => {
-    const email = `${label}-${stamp}@akinaza.test`;
-    const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [email]);
-    return { id: row!.id, email, token: (await createSession(row!.id, { ip: null, userAgent: "vitest" })).token };
-  };
+  const call = (handler: Handler, method: string, { path, ...opts }: Ask & { token?: string }) => apiCall(handler, method, path, opts);
+  const account = (label: string) => testAccount(label, stamp);
 
   beforeAll(async () => {
     vi.stubEnv("REALTIME_BUS", "memory");
@@ -100,13 +84,8 @@ describe.runIf(enabled)("a client reaches only their own records (K7)", () => {
     Object.assign(tokens, { alice: alice.token, bob: bob.token });
     Object.assign(ids, { aliceAccount: alice.id, bobAccount: bob.id, bobEmail: bob.email });
     const asOwner = { token: owner.token };
-    const page = { name: "Atelier Isolé", legalName: "Atelier Isolé", address: "2000 rue Notre-Dame O., Montréal QC", slug: `iso-${stamp}`, ownerName: "Owner", taglineFr: "Quartier", published: false };
-    await call(shop as Handler, "POST", { ...asOwner, path: "/api/walker/shop", json: page });
-    ids.zone = (await call(zones as Handler, "POST", { ...asOwner, path: "/api/walker/zones", json: { name: "Zone" } })).body.id;
-    ids.service = (await call(services as Handler, "POST", { ...asOwner, path: "/api/walker/services", json: { nameFr: "Promenade", nameEn: "Walk", durationMinutes: 60, priceCents: 3000, capacity: 1 } })).body.id;
-    for (const weekday of [0, 1, 2, 3, 4, 5, 6]) await call(hours as Handler, "POST", { ...asOwner, path: "/api/walker/hours", json: { weekday, startsAt: "08:00", endsAt: "20:00" } });
-    await call(rules as Handler, "POST", { ...asOwner, path: "/api/walker/rules", json: { cancellationHours: 2, bookingHorizonDays: 30, slotStepMinutes: 30, minNoticeMinutes: 0, reportLinkDays: 30, paymentTermsDays: 30 } });
-    const { shopId } = (await call(shop as Handler, "POST", { ...asOwner, path: "/api/walker/shop", json: { ...page, published: true } })).body;
+    const { shopId, zone, service } = await openBookableShop(owner.token, "Atelier Isolé", `iso-${stamp}`);
+    Object.assign(ids, { zone, service });
     const joinAs = async (token: string, fullName: string) => (await call(join as Handler, "POST", { token, path: "/api/me/join", json: { shopId, fullName, phone: "514-555-0100", language: "fr", consentService: true } })).body.clientId as string;
     ids.alice = await joinAs(alice.token, "Alice Gagnon");
     ids.bob = await joinAs(bob.token, "Bob Tremblay");
