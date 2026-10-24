@@ -15,7 +15,8 @@ import { useSay } from "@/lib/i18n-client";
 
 const forgot = createKrizakaForm({ schema: z.object({ email: z.string().trim().min(1).email() }), defaultValues: { email: "" } });
 
-export function ForgotForm() {
+/** `minutes`: how long the link lives, the administrator's setting read by the page. */
+export function ForgotForm({ minutes }: { minutes: number }) {
   const { say, locale } = useSay();
   const [sent, setSent] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
@@ -32,7 +33,7 @@ export function ForgotForm() {
       }
     },
   });
-  if (sent) return <Alert tone="success">{say("account.forgot.sent")}</Alert>;
+  if (sent) return <Alert tone="success">{say("account.forgot.sent", { minutes })}</Alert>;
   return (
     <form.Form aria-label={say("account.forgot.title")} className="flex flex-col gap-4">
       <form.TextField name="email" label={say("account.forgot.email")} type="email" autoComplete="username" />

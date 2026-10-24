@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { migrationPoolConfig, poolConfig } from "./db";
+import { migrationPoolConfig, poolConfig, transactionOn } from "./db";
 
 describe("the pool", () => {
   it("verifies TLS against the cluster's CA, never blindly", () => {
@@ -24,5 +24,45 @@ describe("the pool", () => {
 
   it("refuses to start without a URL", () => {
     expect(() => poolConfig({})).toThrow(/DATABASE_URL/);
+  });
+});
+
+describe("one transaction", () => {
+  const fake = (fail: { at?: string } = {}) => {
+    const said: string[] = [];
+    let released = 0;
+    const client = {
+      query: async (text: string) => {
+        said.push(text);
+        if (text === fail.at) throw new Error(`${text} failed`);
+        return { rows: [{ text }] };
+      },
+      release: () => void released++,
+    };
+    return { said, released: () => released, pool: { connect: async () => client } };
+  };
+
+  it("commits what the work did, on one connection given back after", async () => {
+    const f = fake();
+    expect(await transactionOn(f.pool, async (run) => (await run("SELECT 1"))[0])).toEqual({ text: "SELECT 1" });
+    expect(f.said).toEqual(["BEGIN", "SELECT 1", "COMMIT"]);
+    expect(f.released()).toBe(1);
+  });
+
+  it("rolls back when the work throws, and rethrows that very error", async () => {
+    const f = fake();
+    const boom = new Error("boom");
+    await expect(transactionOn(f.pool, async () => Promise.reject(boom))).rejects.toBe(boom);
+    expect(f.said).toEqual(["BEGIN", "ROLLBACK"]);
+    expect(f.released()).toBe(1);
+  });
+
+  it("never lets a failed ROLLBACK hide why the work failed: the original error comes first", async () => {
+    const f = fake({ at: "ROLLBACK" });
+    const boom = new Error("boom");
+    const error = await transactionOn(f.pool, async () => Promise.reject(boom)).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(AggregateError);
+    expect((error as AggregateError).errors[0]).toBe(boom);
+    expect(f.released()).toBe(1);
   });
 });

@@ -432,7 +432,7 @@
         "description": "Enter the e-mail of your account. If it exists, we send a link to choose a new password.",
         "email": "E-mail",
         "submit": "Send the link",
-        "sent": "If an account exists for this address, a link is on its way. It is valid for 30 minutes.",
+        "sent": "If an account exists for this address, a link is on its way. It is valid for {minutes} minutes.",
         "back": "Back to sign-in"
       },
       "reset": {
@@ -459,11 +459,14 @@
       },
       "profile": {
         "title": "Your profile",
-        "description": "Your account, its language and its password.",
+        "accountTitle": "My account",
+        "description": "Your profile, your preferences, your security and your data.",
+        "profileDescription": "Your name and your picture, as your team sees them.",
         "avatar": "Profile picture",
         "email": "E-mail",
         "language": "Language",
         "role": "Role",
+        "roleIn": "{role} at {shop}",
         "roleUser": "Member",
         "roleAdmin": "Administrator",
         "lastSeen": "Last seen",
@@ -475,7 +478,10 @@
         "sectionsLabel": "Account sections",
         "sections": {
           "profile": "Profile",
-          "security": "Security"
+          "preferences": "Preferences",
+          "security": "Security",
+          "subscription": "Subscription",
+          "data": "My data"
         },
         "shopRoles": {
           "owner": "Owner",
@@ -486,7 +492,93 @@
       "nav": {
         "profile": "Profile",
         "change": "Change"
-      }
+      },
+      "save": {
+        "save": "Save",
+        "saving": "Saving…",
+        "saved": "Saved",
+        "error": "Could not save. Try again.",
+        "undo": "Undo",
+        "discard": "Discard changes"
+      },
+      "name": {
+        "label": "Name",
+        "hint": "Shown in the account menu and to your team.",
+        "missing": "No name yet"
+      },
+      "avatar": {
+        "label": "Picture",
+        "hint": "One of Akinaza's pictures.",
+        "tone": "Picture {tone}"
+      },
+      "email": {
+        "label": "E-mail",
+        "hint": "Where we write to you and where you sign in.",
+        "verified": "Verified",
+        "unverified": "Not verified",
+        "change": "Change the address",
+        "new": "New address",
+        "password": "Your password",
+        "send": "Send the link",
+        "cancel": "Cancel",
+        "pending": "A link was sent to {email}. The address changes when you open it."
+      },
+      "preferences": {
+        "description": "How Akinaza speaks and looks for you.",
+        "languageHint": "The language of the app and of the e-mails.",
+        "theme": "Theme",
+        "themes": {
+          "light": {
+            "title": "Light",
+            "hint": "Always the light theme."
+          },
+          "dark": {
+            "title": "Dark",
+            "hint": "Always the dark theme."
+          },
+          "system": {
+            "title": "Like my device",
+            "hint": "Follows your device's setting."
+          }
+        }
+      },
+      "sessions": {
+        "title": "Where you are signed in",
+        "description": "Every browser signed in to this account.",
+        "thisOne": "This device",
+        "unknownDevice": "Unknown device",
+        "since": "since {date}",
+        "signOutOthers": "Sign out the {count} others",
+        "confirm": "Sign them out?"
+      },
+      "subscription": {
+        "title": "Subscription",
+        "description": "Your plan and its invoices.",
+        "status": "Status",
+        "active": "Active",
+        "none": "No subscription",
+        "renews": "Renews on",
+        "manage": "Manage",
+        "manageHint": "Change the card, read the invoices or cancel, on the payment page.",
+        "portal": "Open the payment page",
+        "founder": "The founder offer",
+        "founderHint": "{price} a month, taxes extra.",
+        "choose": "Choose this offer",
+        "unavailable": "No plan is on sale yet."
+      },
+      "data": {
+        "title": "Your data",
+        "description": "What Akinaza keeps about you, and your right to it.",
+        "export": "Export",
+        "exportHint": "Everything held about this account, as one file.",
+        "download": "Download",
+        "deleteTitle": "Delete the account",
+        "deleteHint": "Your client files are erased first. A shop's books are kept: the law requires it.",
+        "confirmPassword": "Your password",
+        "delete": "Delete my account",
+        "deleteConfirm": "Delete for good?"
+      },
+      "memberSince": "Member since {month}"
     },
     "walker": {
       "title": "Today's walks",

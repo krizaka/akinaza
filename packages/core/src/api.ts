@@ -81,6 +81,7 @@ export const meAnswer = z.object({
   signedIn: z.boolean(),
   /** Whether sign-up is open (`AUTH_SIGNUP_ENABLED`): « Try Akinaza » is the primary action only then. */
   signupOpen: z.boolean(),
-  account: z.object({ name: z.string().nullable(), email: z.string(), avatarSeed: z.string().nullable() }).optional(),
+  /** `id` draws the same default picture as the app's header when no tone was chosen. */
+  account: z.object({ id: z.string().optional(), name: z.string().nullable(), email: z.string(), avatarSeed: z.string().nullable() }).optional(),
 });
 export type MeAnswer = z.infer<typeof meAnswer>;

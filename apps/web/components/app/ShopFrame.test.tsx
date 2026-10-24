@@ -102,3 +102,28 @@ describe("the same frame for other roles and for a client", () => {
     expect(html.match(/aria-label="shell\.account"/g)).toHaveLength(1);
   });
 });
+
+describe("the account under the avatar (docs/ux/2026-10-full-review.md K6)", () => {
+  const trigger = (html: string) => html.match(/<button[^>]*aria-label="shell\.account"[^>]*>[\s\S]*?<\/button>/)?.[0] ?? "";
+
+  it("shows the name in the header once the person has set it", () => {
+    expect(trigger(render(OWNER))).toContain("Léa");
+  });
+
+  it("prints no e-mail in the header while there is no name", () => {
+    const html = render({ ...OWNER, account: { id: "a-1", email: "lea@example.test", name: null } });
+    expect(trigger(html)).not.toBe("");
+    expect(html).not.toContain("lea@example.test");
+  });
+
+  it("draws the same default picture as the profile: the chosen tone, else the account's own", async () => {
+    const { avatarOf } = await import("@/lib/avatar");
+    expect(avatarOf({ id: "a-1", avatarSeed: "4" })).toEqual({ brand: "akinaza", tone: 4 });
+    expect(avatarOf({ id: "a-1", avatarSeed: null })).toEqual({ brand: "akinaza", seed: "a-1" });
+  });
+
+  it("reaches the account through the menu only: « Mon compte » leads to the profile, the rail does not", () => {
+    const html = render(OWNER);
+    expect(railItems(html).some((a) => a.includes('href="/fr/app/profile"'))).toBe(false);
+  });
+});

@@ -432,7 +432,7 @@
         "description": "Entrez le courriel de votre compte. S'il existe, nous envoyons un lien pour choisir un nouveau mot de passe.",
         "email": "Courriel",
         "submit": "Envoyer le lien",
-        "sent": "Si un compte existe pour cette adresse, un lien est en route. Il est valide 30 minutes.",
+        "sent": "Si un compte existe pour cette adresse, un lien est en route. Il est valide {minutes} minutes.",
         "back": "Retour à la connexion"
       },
       "reset": {
@@ -459,11 +459,14 @@
       },
       "profile": {
         "title": "Votre profil",
-        "description": "Votre compte, sa langue et son mot de passe.",
+        "accountTitle": "Mon compte",
+        "description": "Votre profil, vos préférences, votre sécurité et vos données.",
+        "profileDescription": "Votre nom et votre image, tels que votre équipe les voit.",
         "avatar": "Photo de profil",
         "email": "Courriel",
         "language": "Langue",
         "role": "Rôle",
+        "roleIn": "{role} chez {shop}",
         "roleUser": "Membre",
         "roleAdmin": "Administrateur",
         "lastSeen": "Dernière visite",
@@ -475,7 +478,10 @@
         "sectionsLabel": "Sections du compte",
         "sections": {
           "profile": "Profil",
-          "security": "Sécurité"
+          "preferences": "Préférences",
+          "security": "Sécurité",
+          "subscription": "Abonnement",
+          "data": "Mes données"
         },
         "shopRoles": {
           "owner": "Propriétaire",
@@ -486,7 +492,93 @@
       "nav": {
         "profile": "Profil",
         "change": "Modifier"
-      }
+      },
+      "save": {
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "saved": "Enregistré",
+        "error": "Impossible d'enregistrer. Réessayez.",
+        "undo": "Annuler",
+        "discard": "Rétablir"
+      },
+      "name": {
+        "label": "Nom",
+        "hint": "Affiché dans le menu du compte et à votre équipe.",
+        "missing": "Pas encore de nom"
+      },
+      "avatar": {
+        "label": "Image",
+        "hint": "Une des images d'Akinaza.",
+        "tone": "Image {tone}"
+      },
+      "email": {
+        "label": "Courriel",
+        "hint": "Où nous vous écrivons et avec lequel vous vous connectez.",
+        "verified": "Vérifié",
+        "unverified": "Non vérifié",
+        "change": "Changer d'adresse",
+        "new": "Nouvelle adresse",
+        "password": "Votre mot de passe",
+        "send": "Envoyer le lien",
+        "cancel": "Annuler",
+        "pending": "Un lien a été envoyé à {email}. L'adresse change quand vous l'ouvrez."
+      },
+      "preferences": {
+        "description": "La façon dont Akinaza vous parle et s'affiche.",
+        "languageHint": "La langue de l'application et des courriels.",
+        "theme": "Thème",
+        "themes": {
+          "light": {
+            "title": "Clair",
+            "hint": "Toujours le thème clair."
+          },
+          "dark": {
+            "title": "Sombre",
+            "hint": "Toujours le thème sombre."
+          },
+          "system": {
+            "title": "Comme mon appareil",
+            "hint": "Suit le réglage de votre appareil."
+          }
+        }
+      },
+      "sessions": {
+        "title": "Où vous êtes connecté",
+        "description": "Chaque navigateur connecté à ce compte.",
+        "thisOne": "Cet appareil",
+        "unknownDevice": "Appareil inconnu",
+        "since": "depuis le {date}",
+        "signOutOthers": "Déconnecter les {count} autres",
+        "confirm": "Les déconnecter ?"
+      },
+      "subscription": {
+        "title": "Abonnement",
+        "description": "Votre forfait et ses factures.",
+        "status": "Statut",
+        "active": "Actif",
+        "none": "Aucun abonnement",
+        "renews": "Renouvelé le",
+        "manage": "Gérer",
+        "manageHint": "Changer de carte, lire les factures ou résilier, sur la page de paiement.",
+        "portal": "Ouvrir la page de paiement",
+        "founder": "L'offre fondateur",
+        "founderHint": "{price} par mois, taxes en sus.",
+        "choose": "Choisir cette offre",
+        "unavailable": "Aucun forfait n'est en vente pour l'instant."
+      },
+      "data": {
+        "title": "Vos données",
+        "description": "Ce qu'Akinaza conserve sur vous, et votre droit d'y accéder.",
+        "export": "Exporter",
+        "exportHint": "Tout ce qui est conservé sur ce compte, en un seul fichier.",
+        "download": "Télécharger",
+        "deleteTitle": "Supprimer le compte",
+        "deleteHint": "Vos fiches clients sont effacées d'abord. Les livres d'une boutique sont conservés : la loi l'exige.",
+        "confirmPassword": "Votre mot de passe",
+        "delete": "Supprimer mon compte",
+        "deleteConfirm": "Supprimer pour de bon ?"
+      },
+      "memberSince": "Membre depuis {month}"
     },
     "walker": {
       "title": "Les promenades du jour",
