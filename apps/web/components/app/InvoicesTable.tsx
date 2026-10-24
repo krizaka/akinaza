@@ -119,7 +119,7 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
           {amounts.map(([term, cents]) => (
             <div key={term} className="flex justify-between gap-3">
               <dt className="text-fg-secondary">{term}</dt>
-              <dd className="font-mono text-fg">{formatMoney(cents, locale)}</dd>
+              <dd className="tabular-nums text-fg">{formatMoney(cents, locale)}</dd>
             </div>
           ))}
         </dl>
