@@ -11,9 +11,9 @@ export const generateMetadata = titleOf("profile");
 /** My data (Loi 25): the export of everything held, and the deletion of the account. */
 export default async function MyData({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
-  const { profile } = await accountPage();
+  const { profile, sections } = await accountPage();
   return (
-    <ProfileFrame locale={locale} current="data" account={profile}>
+    <ProfileFrame locale={locale} current="data" account={profile} sections={sections}>
       <DataPanel signInHref={`/${locale}/sign-in`} />
     </ProfileFrame>
   );

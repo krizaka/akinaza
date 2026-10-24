@@ -1,3 +1,5 @@
+import { formatDate as intlDate, getDateTimeFormat } from "@krizaka/intl";
+
 /** The BCP 47 tag the shop's money, dates and times are written in: Canadian English or Canadian French. */
 export const INTL_LOCALE = { en: "en-CA", fr: "fr-CA" } as const;
 
@@ -17,5 +19,10 @@ export function formatTime(iso: string, locale: FormatLocale, timeZone: string):
 }
 
 export function formatDate(iso: string, locale: FormatLocale, timeZone: string): string {
-  return new Date(iso).toLocaleDateString(INTL_LOCALE[locale], { dateStyle: "medium", timeZone });
+  return intlDate(iso, { locale: INTL_LOCALE[locale], style: "medium", timeZone });
+}
+
+/** « October 2026 » / « octobre 2026 »: the month an instant falls in, in a time zone (an account's « member since »). */
+export function formatMonth(instant: Date | string, locale: FormatLocale, timeZone: string): string {
+  return getDateTimeFormat(INTL_LOCALE[locale], { month: "long", year: "numeric", timeZone }).format(new Date(instant));
 }

@@ -459,11 +459,13 @@
       },
       "profile": {
         "title": "Your profile",
-        "description": "Your account, its language and its password.",
+        "accountTitle": "My account",
+        "description": "Your profile, your preferences, your security and your data.",
         "avatar": "Profile picture",
         "email": "E-mail",
         "language": "Language",
         "role": "Role",
+        "roleIn": "{role} at {shop}",
         "roleUser": "Member",
         "roleAdmin": "Administrator",
         "lastSeen": "Last seen",
@@ -500,7 +502,8 @@
       },
       "name": {
         "label": "Name",
-        "hint": "Shown in the account menu and to your team."
+        "hint": "Shown in the account menu and to your team.",
+        "missing": "No name yet"
       },
       "avatar": {
         "label": "Picture",
@@ -573,7 +576,8 @@
         "confirmPassword": "Your password",
         "delete": "Delete my account",
         "deleteConfirm": "Delete for good?"
-      }
+      },
+      "memberSince": "Member since {month}"
     },
     "walker": {
       "title": "Today's walks",

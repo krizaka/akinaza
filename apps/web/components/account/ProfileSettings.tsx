@@ -21,8 +21,10 @@ export interface ProfileView {
   avatarSeed: string | null;
   emailVerified: boolean;
   pendingEmail: string | null;
-  /** « Member since October 2026 », formatted on the server in the viewer's language. */
-  memberSince: string;
+  /** « Membre depuis octobre 2026 », formatted on the server in the viewer's language; null when the date is unknown. */
+  memberSince: string | null;
+  /** « Propriétaire chez Pattes de Saint-Henri », « Employé chez … », « Membre »: what this account is, read only. */
+  role: string;
 }
 
 const patchProfile = (body: Record<string, unknown>) => krizakaFetch("/api/me/profile", { method: "PATCH", json: body }).then(() => undefined);
@@ -84,7 +86,10 @@ function EmailChange({ pending }: { pending: string | null }) {
   );
 }
 
-/** The profile: who you are (name, picture) and the address, each with its own place; one save for the name and the picture. */
+/**
+ * The profile: who you are (name, picture) and the address, each with its own place; one save for the name and the picture.
+ * The identity card's heading is the name — « Pas encore de nom » until there is one, never the address, which has its own line.
+ */
 export function ProfileSettings({ profile }: { profile: ProfileView }) {
   const { say } = useSay();
   const form = useSectionDraft({ name: profile.name ?? "", avatar: avatarChoice(profile) }, (values) => patchProfile({ name: values.name.trim() || null, avatarSeed: values.avatar }));
@@ -95,12 +100,12 @@ export function ProfileSettings({ profile }: { profile: ProfileView }) {
         label={
           <AccountProfileCard
             compact
-            name={form.draft.name || profile.email}
+            name={form.draft.name.trim() || say("account.name.missing")}
             email={profile.email}
             verified={profile.emailVerified}
             verifiedLabel={say("account.email.verified")}
             unverifiedLabel={say("account.email.unverified")}
-            memberSince={profile.memberSince}
+            memberSince={profile.memberSince ?? undefined}
             avatar={{ defaultAvatar: avatarOf(shown) }}
           />
         }
@@ -119,6 +124,11 @@ export function ProfileSettings({ profile }: { profile: ProfileView }) {
       </SettingsRow>
       <SettingsRow label={say("account.email.label")} description={say("account.email.hint")}>
         <EmailChange pending={profile.pendingEmail} />
+      </SettingsRow>
+      <SettingsRow label={say("account.profile.role")}>
+        <span className="text-sm text-fg-secondary" data-testid="account-role">
+          {profile.role}
+        </span>
       </SettingsRow>
     </SettingsSection>
   );

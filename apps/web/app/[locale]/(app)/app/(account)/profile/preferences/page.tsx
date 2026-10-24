@@ -11,9 +11,9 @@ export const generateMetadata = titleOf("profile");
 /** Language and theme. */
 export default async function Preferences({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
-  const { profile } = await accountPage();
+  const { profile, sections } = await accountPage();
   return (
-    <ProfileFrame locale={locale} current="preferences" account={profile}>
+    <ProfileFrame locale={locale} current="preferences" account={profile} sections={sections}>
       <PreferencesSettings preferences={{ locale: profile.locale, theme: profile.theme }} />
     </ProfileFrame>
   );

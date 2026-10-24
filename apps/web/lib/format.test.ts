@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatDate, formatLongDay, formatMoney, formatTime } from "./format";
+import { formatDate, formatLongDay, formatMoney, formatMonth, formatTime } from "./format";
 
 describe("format", () => {
   it("writes money in Canadian dollars, in the language's habit", () => {
@@ -16,5 +16,10 @@ describe("format", () => {
 
   it("dates an instant on the shop's calendar, not the machine's", () => {
     expect(formatDate("2026-10-23T02:00:00Z", "en", "America/Toronto")).toBe("Oct 22, 2026");
+  });
+
+  it("names the month an account was opened in Montréal, not in UTC", () => {
+    expect(formatMonth("2026-11-01T02:00:00Z", "en", "America/Montreal")).toBe("October 2026");
+    expect(formatMonth("2026-11-01T02:00:00Z", "fr", "America/Montreal")).toBe("octobre 2026");
   });
 });

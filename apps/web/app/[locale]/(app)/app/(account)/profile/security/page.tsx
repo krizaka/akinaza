@@ -17,10 +17,10 @@ export const generateMetadata = titleOf("profile");
 export default async function Security({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale).console.account.profile;
-  const { session, profile } = await accountPage();
+  const { session, profile, sections } = await accountPage();
   const sessions = await accounts().sessions(session.account.id, systemClock.now(), session.id);
   return (
-    <ProfileFrame locale={locale} current="security" account={profile}>
+    <ProfileFrame locale={locale} current="security" account={profile} sections={sections}>
       <SettingsSection variant="flat" title={t.passwordTitle}>
         <ChangePasswordForm />
       </SettingsSection>

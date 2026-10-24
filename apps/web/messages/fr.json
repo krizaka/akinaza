@@ -459,11 +459,13 @@
       },
       "profile": {
         "title": "Votre profil",
-        "description": "Votre compte, sa langue et son mot de passe.",
+        "accountTitle": "Mon compte",
+        "description": "Votre profil, vos préférences, votre sécurité et vos données.",
         "avatar": "Photo de profil",
         "email": "Courriel",
         "language": "Langue",
         "role": "Rôle",
+        "roleIn": "{role} chez {shop}",
         "roleUser": "Membre",
         "roleAdmin": "Administrateur",
         "lastSeen": "Dernière visite",
@@ -500,7 +502,8 @@
       },
       "name": {
         "label": "Nom",
-        "hint": "Affiché dans le menu du compte et à votre équipe."
+        "hint": "Affiché dans le menu du compte et à votre équipe.",
+        "missing": "Pas encore de nom"
       },
       "avatar": {
         "label": "Image",
@@ -573,7 +576,8 @@
         "confirmPassword": "Votre mot de passe",
         "delete": "Supprimer mon compte",
         "deleteConfirm": "Supprimer pour de bon ?"
-      }
+      },
+      "memberSince": "Membre depuis {month}"
     },
     "walker": {
       "title": "Les promenades du jour",

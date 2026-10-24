@@ -13,7 +13,7 @@ const ask = (cookie?: string) => GET(new Request("http://localhost/api/me", { he
 
 describe("GET /api/me, the public bar's hint", () => {
   beforeEach(() => {
-    vi.mocked(accounts).mockReturnValue({ profile: vi.fn(async () => ({ name: "Camille", email: "camille@example.com", avatarSeed: "s3" })) } as never);
+    vi.mocked(accounts).mockReturnValue({ profile: vi.fn(async () => ({ id: "a-1", name: "Camille", email: "camille@example.com", avatarSeed: "s3" })) } as never);
   });
   afterEach(() => {
     vi.clearAllMocks();
@@ -38,7 +38,7 @@ describe("GET /api/me, the public bar's hint", () => {
   it("signed in: the name, e-mail and avatar seed for the bar - and only those", async () => {
     vi.mocked(resolveSession).mockResolvedValue({ id: "sess", account: { id: "a1", email: "camille@example.com", role: "USER", locale: "fr" } });
     const body = await (await ask(`akinaza_session=${TOKEN}`)).json();
-    expect(body).toEqual({ signedIn: true, signupOpen: false, account: { name: "Camille", email: "camille@example.com", avatarSeed: "s3" } });
+    expect(body).toEqual({ signedIn: true, signupOpen: false, account: { id: "a-1", name: "Camille", email: "camille@example.com", avatarSeed: "s3" } });
   });
 
   it("tells whether sign-up is open from the deployment's own flag, never a constant", async () => {

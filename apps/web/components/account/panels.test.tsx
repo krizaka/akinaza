@@ -6,6 +6,7 @@ import { I18nProvider } from "@/lib/i18n-client";
 import en from "@/messages/en.json";
 
 import { DataPanel } from "./DataPanel";
+import { ProfileSettings, type ProfileView } from "./ProfileSettings";
 import { SessionsPanel } from "./SessionsPanel";
 import { SubscriptionPanel } from "./SubscriptionPanel";
 
@@ -52,5 +53,35 @@ describe("the account's other sections", () => {
     const page = text(around(<SubscriptionPanel subscription={subscription} />));
     for (const word of shown) expect(page).toContain(word);
     for (const word of hidden) expect(page).not.toContain(word);
+  });
+});
+
+describe("the profile (docs/ux/2026-10-full-review.md K6): picture, name, e-mail ✓, member since, role", () => {
+  const base: ProfileView = { id: "a-1", email: "lea@example.test", name: "Léa Tremblay", avatarSeed: "3", emailVerified: true, pendingEmail: null, memberSince: "Member since October 2026", role: "Owner at Pattes de Saint-Henri" };
+  const heading = (html: string) => html.match(/<h[2-4][^>]*>([\s\S]*?)<\/h[2-4]>/g)?.map((h) => h.replace(/<[^>]*>/g, "").trim()) ?? [];
+
+  it("heads the identity card with the name, the verified e-mail on its own line, since when, and a name field and the picture choice", () => {
+    const html = around(<ProfileSettings profile={base} />);
+    const page = text(html);
+    expect(heading(html)).toContain("Léa Tremblay");
+    expect(page).toContain("lea@example.test");
+    expect(page).toContain("Verified");
+    expect(page).toContain("Member since October 2026");
+    expect(html).toMatch(/<input[^>]*id="account-name"[^>]*value="Léa Tremblay"/);
+    expect(html).toContain('role="radiogroup"');
+  });
+
+  it("never heads the card with the e-mail when there is no name yet", () => {
+    const html = around(<ProfileSettings profile={{ ...base, name: null }} />);
+    expect(heading(html)).toContain("No name yet");
+    expect(heading(html).some((h) => h.includes("@"))).toBe(false);
+  });
+
+  it.each([
+    ["the owner", "Owner at Pattes de Saint-Henri"],
+    ["a staff member", "Staff at Pattes de Saint-Henri"],
+  ])("says the role of %s, read only", (_who, role) => {
+    const html = around(<ProfileSettings profile={{ ...base, role }} />);
+    expect(html).toMatch(new RegExp(`data-testid="account-role"[^>]*>${role}<`));
   });
 });

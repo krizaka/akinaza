@@ -24,7 +24,7 @@ export async function SpaceChrome({ locale, account, member, children }: { local
   return (
     <ShopFrame
       locale={locale}
-      account={{ email: account.email, name: profile.name, avatarSeed: profile.avatarSeed }}
+      account={{ id: account.id, email: account.email, name: profile.name, avatarSeed: profile.avatarSeed }}
       places={places.map((place) => ({ key: place, href: placeHrefFor(locale, membership, place), also: place === "shop" && routes ? [routes.team] : undefined }))}
       shop={member && routes ? { current: { id: member.shop.id, name: member.shop.name }, others: shops.filter((s) => s.id !== member.shop.id).map((s) => ({ id: s.id, name: s.name })), addHref: may(member.role, "settings") ? `${routes.setup}/new` : null } : undefined}
       newInvoiceHref={member && routes && may(member.role, "invoices") ? routes.newInvoice : null}
