@@ -4,7 +4,8 @@ import { describe, expect, it, vi } from "vitest";
 
 import { ShopFrame, type ShopFrameProps } from "./ShopFrame";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }), usePathname: () => "/fr/app/s-1/aujourdhui" }));
+const where = vi.hoisted(() => ({ path: "/fr/app/s-1/aujourdhui" }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }), usePathname: () => where.path }));
 vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
 vi.mock("@/lib/i18n-client", () => ({ useSay: () => ({ say: (key: string, vars?: Record<string, string>) => (vars ? `${key} ${Object.values(vars).join(" ")}` : key), locale: "fr" }) }));
 
@@ -53,6 +54,29 @@ describe("the owner's frame (docs/ux/2026-10-full-review.md § 4.1): where you w
     expect(html).toMatch(/data-testid="primary-action"[^>]*>[\s\S]*?shell\.newInvoice/);
     expect(html.match(/aria-label="shell\.account"/g)).toHaveLength(1);
     expect(html.indexOf('data-testid="account-menu-header"')).toBeLessThan(html.indexOf('aria-label="shell.account"'));
+  });
+
+  it("keeps the rail's « Boutique » current on the team screen, which is a sibling route of the shop's setup", () => {
+    where.path = "/fr/app/s-1/team";
+    try {
+      const items = railItems(render({ ...OWNER, places: [...OWNER.places.slice(0, 4), { key: "shop", href: `${shop}/shop`, also: [`${shop}/team`] }] }));
+      expect(items[4]).toContain('aria-current="page"');
+      expect(items[0]).not.toContain('aria-current="page"');
+    } finally {
+      where.path = "/fr/app/s-1/aujourdhui";
+    }
+  });
+
+  it("yields the header's « Nouvelle facture » on the invoice forms, which carry their own primary submit", () => {
+    for (const path of ["/fr/app/s-1/invoices/new", "/fr/app/s-1/invoices/0b1c-2d3e/correct"]) {
+      where.path = path;
+      try {
+        expect(render(OWNER)).not.toContain('data-testid="primary-action"');
+      } finally {
+        where.path = "/fr/app/s-1/aujourdhui";
+      }
+    }
+    expect(render(OWNER)).toContain('data-testid="primary-action"');
   });
 
   it("leaves the page's h1 to the page: the frame renders none", () => {

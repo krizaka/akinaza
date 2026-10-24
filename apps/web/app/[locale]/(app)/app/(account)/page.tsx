@@ -1,6 +1,7 @@
 import { clientBookings, clientFilesOf, clientInvoices, clientRequestsOf, dependantsOf, publicShop } from "@akinaza/db";
 import { EmptyState } from "@krizaka/ui/empty-state";
 import { Mascot } from "@krizaka/ui/mascots";
+import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -33,7 +34,12 @@ async function ClientSpace({ locale, accountId }: { locale: "en" | "fr"; account
   const files = await clientFilesOf(db(), accountId);
   if (files.length === 0) {
     const t = getDictionary(locale).console.client;
-    return <EmptyState icon={<Mascot bird="beaver" mood="empty" size={72} />} title={t.title} description={t.none} />;
+    return (
+      <div className="flex flex-col gap-4">
+        <PageHeader title={t.title} />
+        <EmptyState icon={<Mascot bird="beaver" mood="empty" size={72} />} title={t.title} description={t.none} />
+      </div>
+    );
   }
   const now = new Date().toISOString();
   return (

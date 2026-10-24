@@ -48,6 +48,9 @@ export const ACCOUNT_PAGES = ["/app/profile", "/app/profile/security"];
 /** The first record a list links (`<list>/<id>`), never its creation page (`<list>/new`) nor another list: the detail page to crawl. */
 export const firstRecord = (hrefs, listPath) => hrefs.find((href) => typeof href === "string" && href.startsWith(`${listPath}/`) && !/\/new(\?.*)?$/.test(href) && !href.slice(listPath.length + 1).includes("/")) ?? null;
 
+/** The pages a list's first record opens: the record, and for an invoice its correction screen (« Modifier », #207). */
+export const detailPagesFor = (list, href) => (list.endsWith("/invoices") ? [href, `${href}/correct`] : [href]);
+
 /** What every page owes besides one rendering: exactly one `h1` (the page's, never the frame's) and no horizontal overflow. */
 const audit = (page) => page.evaluate(() => ({ h1: document.querySelectorAll("h1").length, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth }));
 const judge = (report, { h1, overflow }) => {
@@ -114,13 +117,15 @@ async function crawl(browser, { base, paths, theme, account, problems, visited, 
       }
     }
     // The detail pages found on this pass.
-    for (const [list, href] of Object.entries(links)) {
-      current = `${account?.role ?? ""} ${href.replace(/^.*\/app\/[^/]+/, "")} (from ${list}) @${viewport.width} ${theme}`;
-      expected404 = false;
-      await page.goto(`${base}${href}`, { waitUntil: "load" });
-      await page.waitForTimeout(SETTLE_MS);
-      judge(report, await audit(page));
-      visited.push({ path: href, final: new URL(page.url()).pathname, status: 200, from: list });
+    for (const [list, record] of Object.entries(links)) {
+      for (const href of detailPagesFor(list, record)) {
+        current = `${account?.role ?? ""} ${href.replace(/^.*\/app\/[^/]+/, "")} (from ${list}) @${viewport.width} ${theme}`;
+        expected404 = false;
+        await page.goto(`${base}${href}`, { waitUntil: "load" });
+        await page.waitForTimeout(SETTLE_MS);
+        judge(report, await audit(page));
+        visited.push({ path: href, final: new URL(page.url()).pathname, status: 200, from: list });
+      }
     }
   }
   await context.close();

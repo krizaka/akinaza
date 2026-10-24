@@ -23,7 +23,7 @@ export interface ShopFrameProps {
   locale: "en" | "fr";
   account: { email: string; name?: string | null; avatarSeed?: string | null };
   /** The rail's destinations, in the order of the day, each with where it leads: five at most (a phone's tab bar). */
-  places: readonly { key: AppPlace; href: string }[];
+  places: readonly { key: AppPlace; href: string; /** Other addresses the place is the current one for (« Boutique » also at the team). */ also?: readonly string[] }[];
   /** The shop the frame is about and the others the account works in; none for a client. */
   shop?: { current: ChipShop; others: ChipShop[]; addHref: string | null };
   /** The app's one primary action, « Nouvelle facture », for who may issue invoices. */
@@ -82,8 +82,8 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, dev =
         expandable
         expandLabels={[say("shell.expand"), say("shell.collapse")]}
       >
-        {places.map(({ key, href }) => (
-          <RailNav.Item key={key} asChild icon={ICONS[key]} label={say(`shell.${key}`)} current={isCurrent(href)}>
+        {places.map(({ key, href, also }) => (
+          <RailNav.Item key={key} asChild icon={ICONS[key]} label={say(`shell.${key}`)} current={isCurrent(href) || (also ?? []).some(isCurrent)}>
             <Link href={href} />
           </RailNav.Item>
         ))}
