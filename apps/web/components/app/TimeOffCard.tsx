@@ -4,6 +4,7 @@ import { Alert } from "@krizaka/ui/alert";
 import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
 import { createKrizakaForm } from "@krizaka/ui/form";
+import { useState } from "react";
 import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
@@ -16,6 +17,9 @@ export interface TimeOffData {
 }
 
 const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+/** A date range reads from its first day to its last: `YYYY-MM-DD` compares as text. An empty end is not judged here (the form asks for it). */
+export const timeOffOrderOk = (from: string, to: string): boolean => !from || !to || to >= from;
+
 const timeOffForm = createKrizakaForm({
   // A reversed range is refused by the server (AK_TIME_OFF_ORDER), in the shop's words.
   schema: z.object({ staffId: z.string().min(1), from: day, to: day, reason: z.string().trim().max(120) }),
@@ -26,11 +30,14 @@ const timeOffForm = createKrizakaForm({
 export function TimeOffCard({ data }: { data: TimeOffData }) {
   const { say, locale } = useSay();
   const call = useCall();
+  const [reversed, setReversed] = useState(false);
   const i18n = { t: (key: string, vars?: Readonly<Record<string, string | number | boolean | Date | null | undefined>>) => say(key, vars as Record<string, string | number> | undefined), locale };
   const form = timeOffForm.useForm({
     i18n,
     defaultValues: { staffId: data.staff[0]?.id ?? "", from: "", to: "", reason: "" },
     onSubmit: async (values) => {
+      setReversed(!timeOffOrderOk(values.from, values.to));
+      if (!timeOffOrderOk(values.from, values.to)) return;
       if ((await call.run("/api/walker/time-off", { json: { staffId: values.staffId, from: values.from, to: values.to, reason: values.reason || undefined } })) !== null) form.reset();
     },
   });
@@ -66,6 +73,7 @@ export function TimeOffCard({ data }: { data: TimeOffData }) {
           <form.TextField name="reason" label={say("team.timeOff.reason")} hint={say("team.timeOff.reasonHint")} />
         </div>
         <div className="col-span-2 flex flex-col gap-3">
+          {reversed ? <Alert tone="danger">{say("team.timeOff.order")}</Alert> : null}
           {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
           <form.Submit size="md" variant="secondary" className="w-full sm:w-auto sm:self-start">
             {say("team.timeOff.add")}

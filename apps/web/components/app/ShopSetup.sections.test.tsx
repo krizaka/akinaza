@@ -14,11 +14,12 @@ const render = (d: SetupData, tab: Parameters<typeof ShopSetupView>[0]["tab"], l
 const text = (h: string) => h.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ");
 
 describe("« My shop page » in sections (#265)", () => {
-  it("lists the sections as tabs, the published status and « Add a shop » in the header", () => {
-    const t = text(render(data(), "identity"));
-    for (const tab of ["Identity", "Your page", "Contact and place", "What you offer", "Photos and video", "Look", "Publish"]) expect(t).toContain(tab);
-    expect(t).toContain("Not published");
-    expect(t).toContain("Add a shop");
+  it("renders the section the hub opens, under its own title, and no tab strip: the hub's navigation names the sections", () => {
+    const html = render(data(), "identity");
+    expect(text(html)).toContain("Identity");
+    expect(html).not.toContain('role="tablist"');
+    expect(text(html)).not.toContain("Publish");
+    expect(text(render(data(), "publish"))).toContain("Publish the page");
   });
 
   it("identity holds only who the shop is; the other fields live in their own section", () => {
@@ -65,6 +66,6 @@ describe("« My shop page » in sections (#265)", () => {
 
   it("speaks French", () => {
     const t = text(render(data(), "contact", "fr"));
-    for (const word of ["Contact et lieu", "jamais affichée sur votre page publique", "Ajouter une boutique"]) expect(t).toContain(word);
+    for (const word of ["Contact et lieu", "jamais affichée sur votre page publique"]) expect(t).toContain(word);
   });
 });

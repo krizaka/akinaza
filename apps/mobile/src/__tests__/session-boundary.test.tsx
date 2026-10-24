@@ -1,6 +1,6 @@
 import { createQueryClient, KrizakaQueryProvider, type QueryClient } from "@krizaka/query";
 import { ThemeProvider } from "@krizaka/ui/native";
-import { act, render, screen } from "@testing-library/react-native";
+import { act, cleanup, render, screen } from "@testing-library/react-native";
 import * as React from "react";
 
 import { I18nProvider } from "@/i18n";
@@ -42,9 +42,18 @@ const wrap = (client: QueryClient, session: ReturnType<typeof fakeSession>, node
 );
 
 describe("one account's data never shows to the next", () => {
+  // Each test's client is emptied after its screens are unmounted. Its garbage collection is off (`gcTime: Infinity`): a 5-minute
+  // timer per query would otherwise outlive the suite and keep Jest alive. The cache is emptied by the boundary and the teardown.
+  const clients: QueryClient[] = [];
+  afterEach(() => {
+    cleanup();
+    for (const client of clients.splice(0)) client.clear();
+  });
+
   it("drops the previous account from the header when the session changes, even when the next account's refresh fails", async () => {
     // The root layout's client: errors stay in the query (`throwOnError={false}`), nothing is retried here, nothing is fresh.
-    const client = createQueryClient({ staleTime: 0, maxRetries: 0, throwOnError: false });
+    const client = createQueryClient({ staleTime: 0, maxRetries: 0, throwOnError: false, defaultOptions: { queries: { gcTime: Infinity } } });
+    clients.push(client);
     const session = fakeSession();
     // Mira's identity is cached; every refresh fails (the phone is offline): Query keeps her beside the error.
     client.setQueryData(["akinaza", "me"], { name: "Mira Lavoie", email: "mira@example.test", avatarSeed: null });

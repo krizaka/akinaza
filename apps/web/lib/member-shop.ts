@@ -1,5 +1,4 @@
-import { SHOP_ROLES, shopOfMember, type ShopPermission, type ShopRole, shopsOfMember } from "@akinaza/db";
-import { can } from "@krizaka/auth";
+import { shopOfMember, type ShopPermission, shopsOfMember } from "@akinaza/db";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 
@@ -7,6 +6,7 @@ import { pageSession } from "./access";
 import { SHOP_COOKIE } from "./current-shop";
 import { db } from "./db";
 import { isShopId } from "./shop-id";
+import { may } from "./shop-permissions";
 
 /** The shop a person works in when no address names one: the last they worked in (the cookie), else their default. Null when they belong to none. */
 export async function lastMember(accountId: string) {
@@ -24,7 +24,7 @@ export async function memberOf(accountId: string, shopId: string) {
 export const shopsOf = (accountId: string) => shopsOfMember(db(), accountId);
 
 /** What a role may do: the table is `SHOP_ROLES`, never a check on a role name. */
-export const may = (role: ShopRole, permission: ShopPermission) => can(SHOP_ROLES, role, permission);
+export { may };
 
 /**
  * The page's shop, named by its address, for a member who may do `permission` there. The address wins over the cookie. 404 for a shop
