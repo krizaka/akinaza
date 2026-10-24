@@ -1,7 +1,7 @@
 import type { ShopPermission, ShopRole } from "@akinaza/db";
 
-import { may } from "./member-shop";
 import { accountRoutes, type RouteLocale, shopRoutes } from "./routes";
+import { may } from "./shop-permissions";
 
 /**
  * The five destinations of a shop's space (docs/ux/2026-10-full-review.md § 4.1): where you work is on the rail, who you are is
