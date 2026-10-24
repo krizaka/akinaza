@@ -93,7 +93,6 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
 
   it("runs for /fr/missing.html and for the other addresses that are pages", () => {
     expect(pageMatcher.test("/fr/missing.html")).toBe(true);
-    expect(pageMatcher.test("/en/app/shop.v2")).toBe(true);
     expect(pageMatcher.test("/fr/sign-in")).toBe(true);
   });
 
@@ -104,5 +103,8 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
     expect(pageMatcher.test("/favicon.ico")).toBe(false);
     expect(pageMatcher.test("/og.png")).toBe(false);
     expect(pageMatcher.test("/fonts/inter.woff2")).toBe(false);
+    // The maplibre worker is a dotted file that the map loads from its own route (ZoneMap): it must bypass the proxy as before.
+    expect(pageMatcher.test("/maplibre/maplibre-gl-worker.mjs")).toBe(false);
+    expect(pageMatcher.test("/fr/app.v2/shop")).toBe(false); // a dot in a directory: as before, not a page
   });
 });
