@@ -40,7 +40,11 @@
   "landing": {
     "title": "Your appointments, invoices and taxes, sorted.",
     "lead": "Clients book, you invoice, your tax figures are ready. In French and in English.",
-    "talk": "Talk to us about Akinaza",
+    "actions": {
+      "openShop": "Open my shop",
+      "tryDemo": "Try the demo shop",
+      "signIn": "Sign in"
+    },
     "status": {
       "development": "In development: sign-up is closed while we build it with the first shops.",
       "preview": "Dev preview: sign-up is closed, access by invitation."
@@ -60,7 +64,7 @@
       ],
       "cta": "Subscribe to the founder offer",
       "note": "You pay on Stripe's secure page, and you manage or cancel your subscription there. Already a member? Sign in first.",
-      "talk": "Talk to us first"
+      "talk": "Contact us first"
     },
     "screens": {
       "book": {
@@ -122,7 +126,7 @@
       "submit": "Sign in",
       "closedTitle": "Sign-up is closed.",
       "closed": "Akinaza is in development; accounts are created by our team.",
-      "contact": "Talk to us",
+      "contact": "Contact us",
       "legalPrefix": "By signing in you accept the ",
       "privacy": "privacy notice",
       "forgot": "Forgot your password?"
@@ -450,7 +454,7 @@
         "submit": "Create my account",
         "closedTitle": "Sign-up is closed.",
         "closed": "Akinaza is in development; accounts are created by our team.",
-        "contact": "Talk to us",
+        "contact": "Contact us",
         "back": "Back to sign-in"
       },
       "profile": {
@@ -788,6 +792,31 @@
           "pets": "Pet care",
           "consulting": "Professional services"
         }
+      }
+    },
+    "boutique": {
+      "title": "Your shop",
+      "navLabel": "Sections of your shop",
+      "groups": {
+        "page": "Your page",
+        "business": "Your activity"
+      },
+      "sections": {
+        "languages": "Languages",
+        "team": "Team",
+        "invoices": "Invoice e-mails",
+        "shops": "Your shops"
+      },
+      "invoices": {
+        "title": "Invoice e-mails",
+        "lead": "The message and the sender of the invoices you send to clients, and how long their link stays open."
+      },
+      "shops": {
+        "title": "Your shops",
+        "lead": "The shops you work in. Each has its own page and its own team.",
+        "current": "This shop",
+        "open": "Open this shop",
+        "add": "Add a shop"
       }
     },
     "shopPage": {
@@ -1315,7 +1344,8 @@
         "reasonHint": "Seen by the team only, never by clients.",
         "add": "Add time off",
         "remove": "Remove {name}'s time off ({when})",
-        "range": "from {from} to {to}"
+        "range": "from {from} to {to}",
+        "order": "The end date is before the start date."
       }
     },
     "brief": {
@@ -1688,5 +1718,10 @@
         "intent": "Approach and cases first."
       }
     }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "This page does not exist, or is not yours.",
+    "home": "Back to Akinaza"
   }
 }

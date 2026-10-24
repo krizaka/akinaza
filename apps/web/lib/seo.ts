@@ -76,7 +76,7 @@ export function llmsText(): string {
 
 - [${en.meta.siteName}](${SITE_URL}/en) · [Akinaza (fr)](${SITE_URL}/fr): what it does and how
 - [${en.privacy.title}](${SITE_URL}/en/privacy) · [${getDictionary("fr").privacy.title} (fr)](${SITE_URL}/fr/privacy)
-- [Talk to us about Akinaza](${KRIZAKA_URL}/contact?topic=akinaza): the one way to reach the team
+- [Contact Akinaza](${KRIZAKA_URL}/contact?topic=akinaza): the one way to reach the team
 
 ## Source
 

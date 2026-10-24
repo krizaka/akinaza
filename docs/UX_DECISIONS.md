@@ -222,6 +222,14 @@ Feedback: the pinned Discussion of the repository.
   rendered and uploaded by hand (`scripts/default-media/`), with its alt texts to write in both languages.
 - **Signal we are wrong**: owners keep the defaults for months, or clients ask whether the photos are of the shop.
 
+## The hero follows the session, the 404 is ours (krizaka/akinaza#285, #299)
+
+- **Decision**: the hero's action is the session's: signed out « Try the demo shop » with « Sign in » beside it; signed in « Open my shop » into the owner's app. The public bar shows the account menu alone when signed in (no second « Open the app »), never an e-mail. « Talk to us » leaves the public pages; contact lives in the footer. An unknown address answers a branded 404 in the language of its address (`global-not-found`), and the sign-in offers « Forgot your password? ».
+- **Problem**: a signed-in owner was pitched to a stranger (« Talk to us »), the bar repeated « Open the app » beside the avatar, the sign-in never showed the reset link, and an unknown address got Next's default 404.
+- **Principle**: the app first, never a sales call (krizaka-ui#505); one way in per state.
+- **Refused**: a client-side swap of the action (it would flash the signed-out one); a second « Open the app » in the bar.
+- **Cost**: the home is rendered per request (it reads the session); the 404 reads the language from the address through a header the proxy sets.
+- **Signal we are wrong**: signed-in owners do not use the hero's « Open my shop », or the demo shop's visitors leave at the hero.
 ## The frame: where you work on the rail, who you are under the avatar (UX review 2026-10, K1)
 
 The signed-in space is the family's frame (`RailNav` + `AppHeader` of @krizaka/ui, `components/app/ShopFrame.tsx`): a rail of
@@ -234,3 +242,15 @@ and the account menu (Mon compte · Langue · Thème · Se déconnecter). The ac
 count, or that scrolls sideways down to 360 px. « Équipe », the languages and the invoice e-mails join « Boutique » as sections of
 its hub (K4); until then « Boutique » opens the page editor (or the team, for who may only see it) and the editor links the team.
 Decided in docs/ux/2026-10-full-review.md § 4.1 (validated on #289); the administration keeps `AppFrame`.
+
+## Boutique: one hub for what configures the shop (UX review 2026-10, K4)
+
+« Ma page boutique », the languages, the team and the invoice e-mails are sections of **Boutique**, one hub on `SettingsLayout`
+(`components/boutique/BoutiqueHub.tsx`, `lib/boutique.ts`): the shop's name, its status and its public address on top, then the
+sections grouped — « Votre page » (the seven sections of the page, one save each, and the languages) and « Votre activité » (the
+team, the invoice e-mails, the shops). Each section is its own address (`/app/<shop>/boutique/<section>`, the page's section in
+`?tab=`); the navigation shows only what the role may open, from `packages/db/src/roles.ts` (`BOUTIQUE_NEEDS`): an owner sees all
+of it, a manager the team, a staff member no Boutique at all. The seven sections are no longer a row of tabs. The invoice e-mail
+defaults leave the invoices list for the hub (the list keeps the default message it sends with). Old addresses (`/shop`,
+`/shop/languages`, `/team`) answer 308 to their section. « Nouvelle facture » yields on the hub and on an invoice's own screens
+(detail, correction, new): those keep their own primary action (one primary per screen).

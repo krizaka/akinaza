@@ -40,7 +40,11 @@
   "landing": {
     "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
     "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",
-    "talk": "Parler d'Akinaza avec nous",
+    "actions": {
+      "openShop": "Ouvrir ma boutique",
+      "tryDemo": "Essayer la boutique démo",
+      "signIn": "Se connecter"
+    },
     "status": {
       "development": "En développement : les inscriptions sont fermées pendant que nous le bâtissons avec les premiers commerces.",
       "preview": "Aperçu de développement : inscriptions fermées, accès sur invitation."
@@ -60,7 +64,7 @@
       ],
       "cta": "Profiter de l’offre fondateur",
       "note": "Vous payez sur la page sécurisée de Stripe, et vous y gérez ou annulez votre abonnement. Déjà membre ? Connectez-vous d’abord.",
-      "talk": "Nous parler d’abord"
+      "talk": "Écrivez-nous d’abord"
     },
     "screens": {
       "book": {
@@ -790,6 +794,31 @@
         }
       }
     },
+    "boutique": {
+      "title": "Votre boutique",
+      "navLabel": "Sections de votre boutique",
+      "groups": {
+        "page": "Votre page",
+        "business": "Votre activité"
+      },
+      "sections": {
+        "languages": "Langues",
+        "team": "Équipe",
+        "invoices": "Courriels de facture",
+        "shops": "Vos boutiques"
+      },
+      "invoices": {
+        "title": "Courriels de facture",
+        "lead": "Le message et l'expéditeur des factures que vous envoyez aux clients, et la durée de leur lien."
+      },
+      "shops": {
+        "title": "Vos boutiques",
+        "lead": "Les boutiques où vous travaillez. Chacune a sa propre page et sa propre équipe.",
+        "current": "Cette boutique",
+        "open": "Ouvrir cette boutique",
+        "add": "Ajouter une boutique"
+      }
+    },
     "shopPage": {
       "notFound": "Cette page n'existe pas.",
       "signInToBook": "Se connecter pour réserver",
@@ -1315,7 +1344,8 @@
         "reasonHint": "Visible par l'équipe seulement, jamais par les clients.",
         "add": "Ajouter le congé",
         "remove": "Retirer le congé de {name} ({when})",
-        "range": "du {from} au {to}"
+        "range": "du {from} au {to}",
+        "order": "La date de fin est avant la date de début."
       }
     },
     "brief": {
@@ -1688,5 +1718,10 @@
         "intent": "La démarche et les cas d'abord."
       }
     }
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "text": "Cette page n’existe pas, ou n’est pas à vous.",
+    "home": "Retour à Akinaza"
   }
 }
