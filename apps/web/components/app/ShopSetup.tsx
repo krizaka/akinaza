@@ -16,11 +16,13 @@ import { z } from "zod";
 
 import { ProposedImages, type ProposedImagesData } from "@/components/app/ProposedImages";
 import { ContactSection, IdentitySection, PublishSection, TextsSection } from "@/components/app/ShopPageSections";
+import { TemplatePicker } from "@/components/app/TemplatePicker";
 import { useCall } from "@/components/app/useCall";
 import { useSay, useVocabulary } from "@/lib/i18n-client";
 import { shopRoutes } from "@/lib/routes";
 import { shrinkImage, STOREFRONT_LONG_SIDE } from "@/lib/shrink-image";
 import { type GalleryLine, galleryText, joinLines, keepExtras, parseGallery, splitLines } from "@/lib/storefront-form";
+import type { TemplateChoices } from "@/lib/template-choices";
 
 /** What the setup page needs, plain (the server picks it from the shop). */
 export interface SetupData {
@@ -35,6 +37,8 @@ export interface SetupData {
   daysOff: { id: string; onDate: string; reason: string | null }[];
   /** The proposed images (#267): null when the administrator has switched them off. */
   proposed: ProposedImagesData | null;
+  /** The page templates of the shop's trade (#261): null while the administrator's switch is off. */
+  templates: TemplateChoices | null;
   rules: { cancellationHours: number; bookingHorizonDays: number; slotStepMinutes: number; minNoticeMinutes: number; reportLinkDays: number; paymentTermsDays: number } | null;
 }
 
@@ -81,6 +85,7 @@ export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /**
             {data.proposed ? <ProposedImages data={data.proposed} /> : null}
           </Tabs.Content>
           <Tabs.Content value="look" className="grid gap-4 pt-4 lg:grid-cols-2">
+            {data.templates ? <TemplatePicker data={data.templates} shopId={data.shopId} /> : null}
             <ShopPageCard shopId={data.shopId} publicUrl={data.publicUrl} config={data.pageConfig} />
             <LanguagesLink shopId={data.shopId} />
           </Tabs.Content>
@@ -102,6 +107,12 @@ function ShopPageCard({ shopId, publicUrl, config: initial }: { shopId: string; 
   const { say, locale } = useSay();
   const call = useCall();
   const [config, setConfig] = useState(initial);
+  // A route refresh (a template applied elsewhere in the page) hands a new configuration: the card takes it over, or it would post its old order back.
+  const [synced, setSynced] = useState(initial);
+  if (synced !== initial) {
+    setSynced(initial);
+    setConfig(initial);
+  }
   const [saved, setSaved] = useState(false);
   const save = async (next: ShopPageConfig) => {
     setSaved(false);

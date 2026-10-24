@@ -222,6 +222,39 @@ Feedback: the pinned Discussion of the repository.
   rendered and uploaded by hand (`scripts/default-media/`), with its alt texts to write in both languages.
 - **Signal we are wrong**: owners keep the defaults for months, or clients ask whether the photos are of the shop.
 
+## A template is picked, then the page stays the owner's (krizaka/akinaza#261, step 4)
+
+- **Decision**: « Modèle de page » sits inside « Apparence » / « Look », above the sections: the trade's templates as tiles
+  with a tiny preview (the hero, the sections in the template's order, its hue and paper), the applied one marked « Your
+  template », the administrator's default « Suggested » and chosen when none is applied. Applying replaces the section order
+  with the template's — unless the owner reordered or hid sections by hand: then two buttons ask « keep my order » or « use
+  its order », never a silent replacement. At shop creation the trade is asked (it stands for the business type) and its
+  default template is preselected beside « Plain page »; it applies only because the owner keeps it chosen.
+- **Problem**: a finished page suited to the trade should be one choice away, without a page builder and without losing
+  what an owner already arranged.
+- **Principle**: recognition over recall and user control (Nielsen): see the shape before choosing; nothing the owner wrote,
+  uploaded or ordered changes behind their back.
+- **Refused**: a second tab for templates; mixing templates; a template that carries texts or photos; applying the
+  administrator's default to an existing shop; a full page render inside the picker (the preview is a schema, the real page is
+  one click away).
+- **Cost**: the preview is schematic; a template chosen at creation can only be undone from « Look »; the trade replaces the
+  coarser business type question only when templates are offered.
+- **Signal we are wrong**: owners open the public page to see what a tile means, or lose track of which template they are on.
+
+## A template improves by version; the owner updates when they choose (krizaka/akinaza#261, step 5)
+
+- **Decision**: a template that improves ships as a new version beside the old one; a shop keeps the version it applied, and
+  its page does not move. In « Apparence » the applied tile says « Update available », with what changes in one line and an
+  « Update to version N » action — the same « keep my order » question when the owner arranged the sections by hand.
+  Switching templates, like updating, changes only the order, the variants and the hue: texts, photos, services and
+  translations are untouched.
+- **Problem**: improving a template must never redraw a page its owner considers done, nor lose what they wrote.
+- **Principle**: visibility of system status and user control (Nielsen): the change is announced, previewed, and taken only
+  by the owner's hand.
+- **Refused**: silent upgrades; a template that carries content; removing an old version while a shop still uses it.
+- **Cost**: the catalogue grows with every version; an owner may stay on an old look for a long time.
+- **Signal we are wrong**: most shops never update, or ask why their page looks older than the demo.
+
 ## The frame: where you work on the rail, who you are under the avatar (UX review 2026-10, K1)
 
 The signed-in space is the family's frame (`RailNav` + `AppHeader` of @krizaka/ui, `components/app/ShopFrame.tsx`): a rail of

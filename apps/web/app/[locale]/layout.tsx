@@ -1,5 +1,6 @@
 import "../globals.css";
 import "@krizaka/ui/blocks.css";
+import "@krizaka/ui/story.css"; // the story pieces the storefront work draws: the template picker's tiles (ChoiceGrid)
 
 import { MotionObserver } from "@krizaka/ui/motion";
 import { ThemeProvider, ThemeScript } from "@krizaka/ui/theme";

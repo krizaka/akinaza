@@ -6,6 +6,7 @@ import type { Db } from "./client";
 import { accounts, clients, invoices, services, shops, shopZones } from "./schema";
 import { issueInvoice, recordExpense } from "./shop-ops";
 import { addDependant, addWindow, addZone, bookVisit, joinShop, listSlots, saveShopMedia, saveShopPage, saveService, setAccessNotes, shopOfOwner } from "./service-shop";
+import { applyTemplate, shopPageConfigOf } from "./shop-page";
 import { checkIn, checkOut, saveReport } from "./visits";
 
 /**
@@ -15,6 +16,8 @@ import { checkIn, checkOut, saveReport } from "./visits";
  */
 export const SAINT_HENRI = {
   shop: { name: "Pattes de Saint-Henri", legalName: "Pattes de Saint-Henri (démo)", address: "2000 rue Notre-Dame O., Montréal QC H3J 1N4", slug: "pattes-saint-henri", ownerName: "Léa", businessType: "pets" as const },
+  /** The template of her trade the page wears (#261, step 6), applied once. */
+  template: "pets-histoire",
   taglineFr: "Des promenades de quartier, avec une photo et un mot après chaque sortie.",
   taglineEn: "Neighbourhood dog walks, with a photo and a note after every outing.",
   /** What the storefront shows beyond the tagline: the locality, the bio (it says the shop is a demo), how to reach the shop. */
@@ -102,6 +105,7 @@ export const SAINT_HENRI_EMAILS = ["lea.beaulieu@akinaza.test", ...SAINT_HENRI.c
 /** The storefront's words, places and photos of the persona: idempotent, so a shop seeded before them gains them on the next run. */
 export async function enrichSaintHenri(db: Db, ownerId: string, shopId: string): Promise<void> {
   const shop = (await db.select().from(shops).where(eq(shops.id, shopId)))[0]!;
+  if (!(await shopPageConfigOf(db, shopId)).templateId) await applyTemplate(db, shopId, { templateId: SAINT_HENRI.template, keepOrder: false });
   const owner = { name: shop.name, legalName: shop.legalName, address: shop.address, slug: shop.slug ?? SAINT_HENRI.shop.slug, ownerName: SAINT_HENRI.shop.ownerName, businessType: SAINT_HENRI.shop.businessType, published: shop.published };
   await saveShopPage(db, ownerId, { ...owner, taglineFr: SAINT_HENRI.taglineFr, taglineEn: SAINT_HENRI.taglineEn, ...SAINT_HENRI.profile });
   for (const [name, place] of Object.entries(SAINT_HENRI.zonePlaces)) await db.update(shopZones).set(place).where(and(eq(shopZones.shopId, shopId), eq(shopZones.name, name)));

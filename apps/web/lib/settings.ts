@@ -56,7 +56,7 @@ export const SETTINGS = {
   "features.defaultMedia": flag("features", true, GLOBAL_ONLY),
   "storefront.defaultMedia.types": subset("storefront", ["salon", "coaching", "workshop", "cleaning", "pets", "consulting"] as const, ["salon", "coaching", "workshop", "cleaning", "pets", "consulting"], GLOBAL_ONLY),
   // The storefront templates (#261): the switch (off until the picker ships), the templates offered, and the one preselected for each trade (it never applies by itself).
-  "features.storefrontTemplates": flag("features", false, GLOBAL_ONLY),
+  "features.storefrontTemplates": flag("features", true, GLOBAL_ONLY),
   "storefront.templates.offered": subset("storefront", TEMPLATE_IDS, [...TEMPLATE_IDS], GLOBAL_ONLY),
   "storefront.templates.default.salon": defaultTemplate("salon"),
   "storefront.templates.default.coaching": defaultTemplate("coaching"),

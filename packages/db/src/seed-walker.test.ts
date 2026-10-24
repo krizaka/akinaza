@@ -6,6 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { prepareShopReturn } from "./shop-ops";
 import { accounts } from "./schema";
 import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri } from "./seed-walker";
+import { shopPageConfigOf } from "./shop-page";
 import { listSlots, publicShop, revealAccessNotes, shopOfOwner } from "./service-shop";
 import { freshDatabase } from "./test/db";
 import { clientBookings, dayVisits, shopClients } from "./visits";
@@ -52,6 +53,16 @@ describe("the Saint-Henri walker persona", () => {
     expect(joinable).toMatchObject({ seatsLeft: 3, capacity: 5 });
     const day = await dayVisits(t.db, shop.id, joinable!.startsAt.toISOString().slice(0, 10));
     expect(day[0]!.bookings.map((b) => b.dependant.name).sort((a, b) => a.localeCompare(b))).toEqual(["Érable", "Luna"]);
+  });
+
+  it("wears the story template of her trade, applied once by the seed (#261, step 6)", async () => {
+    const shop = (await shopOfOwner(t.db, (await t.db.select().from(accounts).where(eq(accounts.email, SAINT_HENRI_EMAILS[0])))[0]!.id))!;
+    const config = await shopPageConfigOf(t.db, shop.id);
+    expect(SAINT_HENRI.template).toBe("pets-histoire");
+    expect(config).toMatchObject({ templateId: "pets-histoire", templateVersion: 1, sectionsCustom: false });
+    expect(config.sections[0]!.id).toBe("trust"); // the story first
+    await seedSaintHenri(t.db, randomBytes(32), NOW);
+    expect((await shopPageConfigOf(t.db, shop.id)).templateId).toBe("pets-histoire");
   });
 
   it("is idempotent, and its clients and dogs never mix with another walker's", async () => {
