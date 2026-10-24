@@ -2,23 +2,18 @@ import { randomUUID } from "node:crypto";
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { migrate, pool, query } from "@/lib/db";
+import { migrate, query } from "@/lib/db";
 import { resetRateLimits } from "@/lib/rate-limit";
-import { createSession, SESSION_COOKIE } from "@/lib/session";
 
 import { POST as book } from "./me/bookings/route";
 import { POST as join } from "./me/join/route";
 import { GET as slots } from "./shops/[slug]/slots/route";
+import { apiCall, type CallOptions, closeSuite, type Handler, handlersOf, METHODS, openBookableShop, testAccount, testShopPage } from "./test-api";
 import { POST as saveReport } from "./walker/bookings/[id]/report/route";
-import { POST as hours } from "./walker/hours/route";
 import { POST as invoices } from "./walker/invoices/route";
-import { POST as rules } from "./walker/rules/route";
-import { POST as services } from "./walker/services/route";
 import { POST as shop } from "./walker/shop/route";
 import { POST as invite } from "./walker/team/invitations/route";
 import { POST as hook } from "./walker/webhooks/route";
-import { POST as zones } from "./walker/zones/route";
-
 /**
  * Tenant isolation, over the whole walker surface (#247). A member of shop B never reaches shop A's data, and nothing tells them it exists:
  * every refusal is a 404 (never a 403, which would confirm the resource). Two sweeps walk EVERY `app/api/walker/**` route, so a new
@@ -29,8 +24,6 @@ import { POST as zones } from "./walker/zones/route";
  */
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 
-type Handler = (req: Request, ctx: { params: Promise<Record<string, string>> }) => Promise<Response>;
-const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
 const routeModules = import.meta.glob<Record<string, unknown>>("./walker/**/route.ts");
 const routeSources = import.meta.glob<string>("./walker/**/route.ts", { query: "?raw", import: "default", eager: true });
 
@@ -54,33 +47,19 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
   const tokens = {} as Record<"a" | "b" | "client", string>;
   const ids = {} as { shopA: string; shopB: string; zone: string; service: string; hour: string; client: string; appointment: string; booking: string; invoice: string; webhook: string; invitation: string; staff: string; collection: string; tag: string };
 
-  const call = async (handler: Handler, method: string, path: string, opts: { token?: string; json?: unknown; form?: FormData; params?: Record<string, string> } = {}) => {
-    const headers: Record<string, string> = {};
-    if (opts.token) headers.cookie = `${SESSION_COOKIE}=${opts.token}`;
-    if (opts.json !== undefined) headers["content-type"] = "application/json";
-    const res = await handler(new Request(`http://localhost${path}`, { method, headers, body: opts.json !== undefined ? JSON.stringify(opts.json) : opts.form }), { params: Promise.resolve(opts.params ?? {}) });
-    const type = res.headers.get("content-type") ?? "";
-    return { status: res.status, body: type.includes("json") ? await res.json() : null };
-  };
-  const account = async (label: string) => {
-    const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [`${label}-${stamp}@akinaza.test`]);
-    return { id: row!.id, token: (await createSession(row!.id, { ip: null, userAgent: "vitest" })).token };
-  };
-  const page = (name: string, slug: string) => ({ name, legalName: name, address: "2000 rue Notre-Dame O., Montréal QC", slug, ownerName: "Owner", taglineFr: "Quartier", published: false });
+  const call = (handler: Handler, method: string, path: string, opts: CallOptions = {}) => apiCall(handler, method, path, opts);
+  const account = (label: string) => testAccount(label, stamp);
+  const page = testShopPage;
 
   beforeAll(async () => {
     vi.stubEnv("REALTIME_BUS", "memory");
     await migrate();
     const [a, b, c] = [await account("owner-a"), await account("owner-b"), await account("client")];
     Object.assign(tokens, { a: a.token, b: b.token, client: c.token });
-    ids.shopA = (await call(shop as Handler, "POST", "/api/walker/shop", { token: a.token, json: page("Atelier A", `a-${stamp}`) })).body.shopId;
+    const opened = await openBookableShop(a.token, "Atelier A", `a-${stamp}`);
+    Object.assign(ids, { shopA: opened.shopId, zone: opened.zone, service: opened.service, hour: opened.hour });
     ids.shopB = (await call(shop as Handler, "POST", "/api/walker/shop", { token: b.token, json: page("Atelier B", `b-${stamp}`) })).body.shopId;
     const asA = { token: a.token };
-    ids.zone = (await call(zones as Handler, "POST", "/api/walker/zones", { ...asA, json: { name: "Zone A" } })).body.id;
-    ids.service = (await call(services as Handler, "POST", "/api/walker/services", { ...asA, json: { nameFr: "Coupe", nameEn: "Cut", durationMinutes: 60, priceCents: 3000, capacity: 1 } })).body.id;
-    for (const weekday of [0, 1, 2, 3, 4, 5, 6]) ids.hour = (await call(hours as Handler, "POST", "/api/walker/hours", { ...asA, json: { weekday, startsAt: "08:00", endsAt: "20:00" } })).body.id;
-    await call(rules as Handler, "POST", "/api/walker/rules", { ...asA, json: { cancellationHours: 2, bookingHorizonDays: 30, slotStepMinutes: 30, minNoticeMinutes: 0, reportLinkDays: 30, paymentTermsDays: 30 } });
-    await call(shop as Handler, "POST", "/api/walker/shop", { ...asA, json: { ...page("Atelier A", `a-${stamp}`), published: true } });
     ids.client = (await call(join as Handler, "POST", "/api/me/join", { token: c.token, json: { shopId: ids.shopA, fullName: "Camille Tremblay", phone: "514-555-0100", language: "fr", consentService: true } })).body.clientId;
     const offered = await call(slots as Handler, "GET", `/api/shops/a-${stamp}/slots?serviceId=${ids.service}&zoneId=${ids.zone}`, { params: { slug: `a-${stamp}` } });
     const booked = await call(book as Handler, "POST", "/api/me/bookings", { token: c.token, json: { clientId: ids.client, serviceId: ids.service, zoneId: ids.zone, dependantIds: [], startsAt: offered.body.slots[0].startsAt } });
@@ -97,17 +76,9 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     ids.tag = (await query<{ id: string }>("SELECT id FROM tags WHERE owner_id = $1 LIMIT 1", [a.id]))[0]?.id ?? randomUUID();
   });
   beforeEach(() => resetRateLimits());
-  afterAll(async () => {
-    // Shops stay (the ledger and the consents are written once); only the accounts go.
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
-    vi.unstubAllEnvs();
-    await pool().end();
-  });
+  afterAll(() => closeSuite(stamp));
 
-  const exportsOf = async (file: string) => {
-    const mod = await routeModules[file]!();
-    return METHODS.filter((m) => typeof mod[m] === "function").map((method) => ({ method, handler: mod[method] as Handler }));
-  };
+  const exportsOf = (file: string) => handlersOf(routeModules[file]!);
 
   it("finds the whole walker surface (a guard against an empty sweep)", () => {
     expect(ROUTES.length).toBeGreaterThan(35);

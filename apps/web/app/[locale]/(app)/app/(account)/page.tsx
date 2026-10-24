@@ -1,7 +1,4 @@
 import { clientBookings, clientFilesOf, clientInvoices, clientRequestsOf, dependantsOf, publicShop } from "@akinaza/db";
-import { EmptyState } from "@krizaka/ui/empty-state";
-import { Mascot } from "@krizaka/ui/mascots";
-import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -20,27 +17,18 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 /**
  * A bare `/app`: someone who works in a shop goes to the last one they worked in (the address of a shop always wins over this);
- * a client lands on their bookings.
+ * a client lands on their bookings — only their own files, at every shop they deal with (`clientFilesOf` keys on the account).
  */
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
   const { account } = (await pageSession())!;
   const member = await lastMember(account.id);
   if (member) redirect(shopRoutes(locale, member.shop.id).today());
-  return <ClientSpace locale={locale} accountId={account.id} />;
+  return <ClientSpace accountId={account.id} />;
 }
 
-async function ClientSpace({ locale, accountId }: { locale: "en" | "fr"; accountId: string }) {
+async function ClientSpace({ accountId }: { accountId: string }) {
   const files = await clientFilesOf(db(), accountId);
-  if (files.length === 0) {
-    const t = getDictionary(locale).console.client;
-    return (
-      <div className="flex flex-col gap-4">
-        <PageHeader title={t.title} />
-        <EmptyState icon={<Mascot bird="beaver" mood="empty" size={72} />} title={t.title} description={t.none} />
-      </div>
-    );
-  }
   const now = new Date().toISOString();
   return (
     <ClientHome

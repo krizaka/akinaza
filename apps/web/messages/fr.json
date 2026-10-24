@@ -865,6 +865,12 @@
         "back": "Retour à votre page boutique",
         "submit": "Créer la boutique"
       },
+      "openShop": {
+        "title": "Ouvrir une boutique",
+        "lead": "Votre propre boutique, avec sa page, ses réservations et ses factures. Elle commence non publiée : vous la publiez quand elle est prête.",
+        "back": "Retour à mes réservations",
+        "submit": "Créer la boutique"
+      },
       "defaults": {
         "title": "Images proposées",
         "lead": "Pas encore de photo ? Choisissez des images qui conviennent à votre métier. Ce sont des images neutres, pas votre boutique : remplacez-les par les vôtres dès que possible.",
@@ -1022,7 +1028,9 @@
     },
     "client": {
       "title": "Mes réservations",
-      "none": "Aucune réservation pour l'instant. Ouvrez la page d'une boutique et réservez à partir de là.",
+      "emptyTitle": "Aucune réservation pour l'instant",
+      "emptyLead": "Ouvrez la page d'une boutique et réservez à partir de là : vos réservations, vos factures et vos dossiers s'affichent ici.",
+      "openShop": "Ouvrir une boutique",
       "upcoming": "À venir",
       "past": "Passées",
       "invoiceTitle": "Factures",

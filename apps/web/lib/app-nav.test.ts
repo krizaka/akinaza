@@ -18,6 +18,11 @@ describe("the rail of each role (docs/ux/2026-10-full-review.md § 4.1): five de
     expect(CLIENT_PLACES).toEqual(["bookings"]);
   });
 
+  it("never shows a client a « boutique » place: opening a shop is an action of their page, not a destination (K7)", () => {
+    expect(CLIENT_PLACES).not.toContain("shop");
+    expect(CLIENT_PLACES.map((place) => placeHrefFor("fr", null, place))).toEqual(["/fr/app"]);
+  });
+
   it("leads « Boutique » to its hub's first section: the page for who may set the shop up, the team for who may only see the team", () => {
     expect(placeHrefFor("fr", { shopId: "s-1", role: "owner" }, "shop")).toBe("/fr/app/s-1/boutique/page");
     expect(placeHrefFor("fr", { shopId: "s-1", role: "manager" }, "shop")).toBe("/fr/app/s-1/boutique/team");

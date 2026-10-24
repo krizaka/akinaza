@@ -254,3 +254,15 @@ of it, a manager the team, a staff member no Boutique at all. The seven sections
 defaults leave the invoices list for the hub (the list keeps the default message it sends with). Old addresses (`/shop`,
 `/shop/languages`, `/team`) answer 308 to their section. « Nouvelle facture » yields on the hub and on an invoice's own screens
 (detail, correction, new): those keep their own primary action (one primary per screen).
+
+## The client space: « Mes réservations », opening a shop as an action (UX review 2026-10, K7)
+
+Someone who works in no shop (a client) gets the same frame around **their own** records: the rail has one place, « Mes
+réservations » (`CLIENT_PLACES`), and the account stays under the avatar like everyone's (« Mon compte » is never in both, K1). No
+« boutique » place and no « Votre boutique » words: « Ouvrir une boutique » is a secondary action of the page header, leading to
+`/app/open-shop` (the « Ajouter une boutique » form in a client's words; the shop starts unpublished). The page lists, per shop the
+client deals with, the bookings (upcoming, past, the reports), the invoices (at the account's own address `/app/invoices/<id>`),
+the requests and the Loi 25 card. One primary per screen: « Réserver chez … » of the first shop with a page; the others are
+secondary. Empty, it is the `EmptyState` with the beaver (asked at 120 px; the block draws its icon slot at 24 px until krizaka-ui#623) and what will fill it. Another client's ids answer 404 on every
+`/api/me/**` route (`app/api/client-isolation.integration.test.ts`), including a booking that names another file's dog (it was a
+403 that confirmed the dog exists).
