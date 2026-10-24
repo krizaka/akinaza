@@ -6,8 +6,11 @@ import { migrate, pool, query } from "@/lib/db";
 import { hashPassword } from "@/lib/password";
 import { resetRateLimits } from "@/lib/rate-limit";
 import { createSession, SESSION_COOKIE } from "@/lib/session";
+import { appSettings } from "@/lib/settings";
 
 import { POST as confirmEmail } from "./auth/confirm-email/route";
+import { POST as forgotPassword } from "./auth/password/forgot/route";
+import { POST as resetPassword } from "./auth/password/reset/route";
 import { GET as exportAccount } from "./me/account-export/route";
 import { POST as deleteAccount } from "./me/delete/route";
 import { POST as changeEmail } from "./me/email/route";
@@ -76,6 +79,27 @@ describe.runIf(enabled)("the account baseline over HTTP", () => {
     expect((await call(confirmEmail, "POST", "/api/auth/confirm-email", { json: { token } })).status).toBe(200);
     expect((await call(getProfile, "GET", "/api/me/profile", { cookie: a.token })).body.profile).toMatchObject({ email: next, emailVerified: true, pendingEmail: null });
     expect((await call(confirmEmail, "POST", "/api/auth/confirm-email", { json: { token } })).status).toBe(400);
+  });
+
+  it("resets a forgotten password by a mailed link whose lifetime is the setting, used once even when two tries race", async () => {
+    const a = await account("reset");
+    const admin = { id: null, label: "vitest" };
+    await appSettings().set(admin, { scope: "global", id: "" }, "auth.passwordResetTtlMinutes", 45, new Date());
+    try {
+      expect((await call(forgotPassword, "POST", "/api/auth/password/forgot", { json: { email: `nobody-${stamp}@akinaza.test` } })).status).toBe(202);
+      expect((await call(forgotPassword, "POST", "/api/auth/password/forgot", { json: { email: a.email } })).status).toBe(202);
+      const [mail] = await query<{ body_text: string; template: string }>("SELECT body_text, template FROM mail_outbox WHERE to_email = $1 ORDER BY created_at DESC LIMIT 1", [a.email]);
+      expect(mail!.template).toBe("password-reset");
+      expect(mail!.body_text).toContain("45 min");
+      const [link] = await query<{ minutes: number }>("SELECT round(extract(epoch FROM expires_at - created_at) / 60)::int AS minutes FROM password_resets WHERE account_id = $1 AND used_at IS NULL", [a.id]);
+      expect(link!.minutes).toBe(45);
+      const token = /token=(ae1\.[A-Za-z0-9_-]+)/.exec(decodeURIComponent(mail!.body_text))![1]!;
+      const tries = await Promise.all([1, 2].map(() => call(resetPassword, "POST", "/api/auth/password/reset", { json: { token, password: "a-brand-new-password" } })));
+      expect(tries.map((t) => t.status).sort()).toEqual([200, 400]);
+      expect((await call(listSessions, "GET", "/api/me/sessions", { cookie: a.token })).status).toBe(401);
+    } finally {
+      await appSettings().reset(admin, { scope: "global", id: "" }, "auth.passwordResetTtlMinutes", new Date());
+    }
   });
 
   it("lists the sign-ins, signs the others out, and changing the password does the same", async () => {

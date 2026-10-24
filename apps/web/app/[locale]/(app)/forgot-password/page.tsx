@@ -4,6 +4,7 @@ import { Mascot } from "@krizaka/ui/mascots";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { passwordResetTtlMinutes } from "@/app/accounts";
 import { ForgotForm } from "@/components/account/AccountForms";
 import { asLocale, getDictionary } from "@/lib/i18n";
 
@@ -36,7 +37,7 @@ export default async function ForgotPasswordPage({ params }: { params: Promise<{
         </Link>
       }
     >
-      <ForgotForm />
+      <ForgotForm minutes={await passwordResetTtlMinutes()} />
     </AuthLayout>
   );
 }

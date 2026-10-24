@@ -432,7 +432,7 @@
         "description": "Enter the e-mail of your account. If it exists, we send a link to choose a new password.",
         "email": "E-mail",
         "submit": "Send the link",
-        "sent": "If an account exists for this address, a link is on its way. It is valid for 30 minutes.",
+        "sent": "If an account exists for this address, a link is on its way. It is valid for {minutes} minutes.",
         "back": "Back to sign-in"
       },
       "reset": {

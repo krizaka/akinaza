@@ -2,7 +2,7 @@ import { enqueueMail, exportClient } from "@akinaza/db";
 import { AccountError, postgresAccounts } from "@krizaka/auth";
 
 import { requireSession } from "./access";
-import { db, query } from "./db";
+import { db, query, transaction } from "./db";
 import { handle, refuse } from "./http";
 import { hashPassword, verifyPassword } from "./password";
 import { limit } from "./rate-limit";
@@ -10,22 +10,28 @@ import { type Session, tokenHash } from "./session";
 
 const escapeHtml = (text: string) => text.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
+/** The outbox's name of a mail of the account block: the reset link goes to `/reset-password`, the address change to `/confirm-email`. */
+export const accountMailTemplate = (text: string): "password-reset" | "email-change" => (/\/reset-password\?token=/.test(text) ? "password-reset" : "email-change");
+
 /**
  * The account of an Akinaza member (`@krizaka/auth`, the shared block Yomizaka's contract came from): over this app's own
- * PostgreSQL, its password hashing and its session token hash. The e-mail that carries a change link is queued in the outbox; it
- * leaves when a mail provider is configured, the flag and the link work the same.
+ * PostgreSQL, its password hashing and its session token hash. The mails it sends (an address change, a password reset) are
+ * queued in the outbox; they leave when a mail provider is configured. `passwordResetTtlMinutes` comes from the settings
+ * (`auth.passwordResetTtlMinutes`), never from here.
  */
-export const accountsAt = (baseUrl: string) =>
+export const accountsAt = (baseUrl: string, options: { passwordResetTtlMinutes?: number } = {}) =>
   postgresAccounts({
     query: async (sql, params) => query(sql, params) as never,
+    transaction: (work) => transaction((run) => work(run as never)),
     mail: async (mail) => {
-      await enqueueMail(db(), { to: mail.to, locale: mail.locale, template: "email-change", subject: mail.subject, text: mail.text, html: `<p>${escapeHtml(mail.text).replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>")}</p>` });
+      await enqueueMail(db(), { to: mail.to, locale: mail.locale, template: accountMailTemplate(mail.text), subject: mail.subject, text: mail.text, html: `<p>${escapeHtml(mail.text).replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>")}</p>` });
     },
     baseUrl,
     product: "Akinaza",
     tokenPrefix: "ae",
     passwords: { hash: hashPassword, verify: verifyPassword },
     tokenHash: (token) => tokenHash(token),
+    passwordResetTtlMinutes: options.passwordResetTtlMinutes,
   });
 
 /** One account action: signed in, rate-limited (reads far looser than changes), run, answered as JSON (never cached). A refusal of the module is its stable `{ code }` answer. */

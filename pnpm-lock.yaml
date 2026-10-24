@@ -142,8 +142,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(vitest@4.1.11(@types/node@24.19.2)(jsdom@26.1.0)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
       '@krizaka/auth':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: 0.5.0
+        version: 0.5.0
       '@krizaka/brief':
         specifier: 0.1.0
         version: 0.1.0
@@ -156,6 +156,9 @@ importers:
       '@krizaka/icons':
         specifier: ^0.7.0
         version: 0.7.0(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react@19.3.1)
+      '@krizaka/intl':
+        specifier: 0.3.0
+        version: 0.3.0
       '@krizaka/payments':
         specifier: 0.1.0
         version: 0.1.0
@@ -307,8 +310,8 @@ importers:
         specifier: 0.1.0
         version: 0.1.0(vitest@4.1.11(@types/node@24.19.2)(jsdom@26.1.0)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
       '@krizaka/auth':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: 0.5.0
+        version: 0.5.0
       '@krizaka/organize':
         specifier: 0.3.0
         version: 0.3.0
@@ -1900,8 +1903,8 @@ packages:
       react:
         optional: true
 
-  '@krizaka/auth@0.3.0':
-    resolution: {integrity: sha512-Cq40fWK3VLgYEAMCApJznbgeXI3A6WfeL8NP45DfZQBUdPbHCgBxIFDDxeC0+JqbADPIgGIAXIJMBwq7RCWLVA==}
+  '@krizaka/auth@0.5.0':
+    resolution: {integrity: sha512-s3y2XI1LnEj7r2Vhj+cGYa24D9LWJz9icOaBGTVLcqsQvL8h4xAQXytp2Or7RGFTti52nR8tClY4TcxcxHv/PA==}
     engines: {node: '>=22'}
 
   '@krizaka/brief@0.1.0':
@@ -1961,6 +1964,10 @@ packages:
 
   '@krizaka/intl@0.2.1':
     resolution: {integrity: sha512-vZWoRmptN0/Ac1rUZ3BiOdXXGOkxBAq2yYDe9tMOpPNhi8kKP/L8NCptokshBjKPmEZxq9lJ55MoAabTL+WbBw==}
+    engines: {node: '>=22'}
+
+  '@krizaka/intl@0.3.0':
+    resolution: {integrity: sha512-O6WO2KcsErEcBHk3tSIdlyA700+UOt4jlQRRHgKKVzJ+OlQvsaPKC4wKJmskWfCzV/OhmYxFJbRvOUhzxDRbqg==}
     engines: {node: '>=22'}
 
   '@krizaka/organize@0.3.0':
@@ -9809,7 +9816,7 @@ snapshots:
     optionalDependencies:
       react: 19.3.1
 
-  '@krizaka/auth@0.3.0':
+  '@krizaka/auth@0.5.0':
     dependencies:
       date-fns: 4.4.0
 
@@ -9861,6 +9868,8 @@ snapshots:
       react-native-svg: 15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)
 
   '@krizaka/intl@0.2.1': {}
+
+  '@krizaka/intl@0.3.0': {}
 
   '@krizaka/organize@0.3.0': {}
 
@@ -11046,9 +11055,7 @@ snapshots:
       metro-runtime: 0.87.1
     transitivePeerDependencies:
       - '@babel/core'
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   '@react-native/normalize-colors@0.88.0': {}
 

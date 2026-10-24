@@ -432,7 +432,7 @@
         "description": "Entrez le courriel de votre compte. S'il existe, nous envoyons un lien pour choisir un nouveau mot de passe.",
         "email": "Courriel",
         "submit": "Envoyer le lien",
-        "sent": "Si un compte existe pour cette adresse, un lien est en route. Il est valide 30 minutes.",
+        "sent": "Si un compte existe pour cette adresse, un lien est en route. Il est valide {minutes} minutes.",
         "back": "Retour à la connexion"
       },
       "reset": {
