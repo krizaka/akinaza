@@ -16,11 +16,13 @@ It builds on, and never contradicts:
 Captures and mockups are on Bunny, never in the repository:
 `https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/` (`audit/`, `mockups/` for direction A and `mockups-b/` for direction B). The demo persona is **Éric**, the owner of
 « Krizaka (démo) » (a professional-services shop: fictional clients, demo amounts, fake tax numbers), and one of his clients
-(Café du Parc inc., démo) for the client space.
+(the seed's « Café du Parc inc., démo ») for the client space. **The seed's client is a café, which Akinaza does not serve** (Québec requires a certified sales recording module for cafés, restaurants and bars, AGENTS § 2): every mockup uses a service business instead (« Studio Lumen inc. (démo) »), and the seed is renamed in Phase 2 (D0).
 
 ---
 
 ## 0. The direction in six decisions
+
+> **Chosen (Oussama, 2026-10-24): direction B, refined as B2 (§ 4c).** The six decisions below stand; B2 changes how the screens look and are built.
 
 1. **One product register, two places for art.** The owner app, the staff's phone, the client space, the account, the sign-in, the
    phone app and the Mac app are plain Krizaka UI in Akinaza's forest green. The artistic notebook lives on the shop's public
@@ -271,7 +273,7 @@ What B does differently:
   numbers of the notes column, the figure that asks for action (« à facturer », « à encaisser », the due date) and the count of
   the bulk bar. It is never a button and never a status.
 - **A confident type scale.** The `h1` is a sentence that answers the screen's question, at `display-xl` on a desktop and
-  `display-lg` on a phone (« Café du Parc arrive à 14 h. », « 3 clients, 8 008,00 $ à encaisser. »). The figures are large
+  `display-lg` on a phone (« Studio Lumen arrive à 14 h. », « 3 clients, 8 008,00 $ à encaisser. »). The figures are large
   and tabular. Section titles are 24 px and bold.
 - **The Cahier's organising ideas, visible.** Each screen is numbered sections (`01 La journée · 02 Les rendez-vous ·
   03 À encaisser`). A **notes column** on the right, with a copper rule, carries numbered notes. They explain a figure (¹ next to
@@ -279,7 +281,7 @@ What B does differently:
   phone, the numbers sit inline and the notes come last.
 - **The beaver carries a meaning.** It appears only on good news that closes a loop: « aucune facture en retard » on Today, and
   « facture émise » after issuing, at 72 px, `success`. It never appears on a working list.
-- **The next move leads.** On Today the primary action is the next appointment (« Commencer avec Café du Parc », then
+- **The next move leads.** On Today the primary action is the next appointment (« Commencer avec Studio Lumen », then
   « Terminer le rendez-vous »), and the header's « Nouvelle facture » becomes secondary. On the bulk bar, the suggested tag is
   the primary.
 - **Motion on state changes,** from `@krizaka/ui/motion.css` as it ships. The row that changed plays `data-kz-arrive` under
@@ -298,7 +300,7 @@ What B does differently:
 
 | Screen | The change | Desktop dark | Phone light |
 | :-- | :-- | :-- | :-- |
-| Aujourd'hui | « Commencer » on Café du Parc: the row turns « En cours · depuis 14 h 02 » and washes once, the status rings, the headline becomes « Café du Parc est avec vous. » | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-after-desktop-dark.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-after-phone-light.png) |
+| Aujourd'hui | « Commencer » on Studio Lumen: the row turns « En cours · depuis 14 h 02 » and washes once, the status rings, the headline becomes « Studio Lumen est avec vous. » | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-after-desktop-dark.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-after-phone-light.png) |
 | Clients | « Ajouter « Relance novembre » » on two clients: the bar gives way to a success alert with « Annuler », and the two rows wash once with their new copper tag | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-after-desktop-dark.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-after-phone-light.png) |
 | A client | « Garder la note »: the note arrives at the top of the column (slide in), and the button rings | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-after-desktop-dark.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-after-phone-light.png) |
 | New invoice | « Émettre la facture »: the number KZ-00023 and the beaver arrive, « Envoyer à Atelier Boréal » rings as the next primary | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-after-desktop-dark.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-after-phone-light.png) |
@@ -313,6 +315,39 @@ What B does differently:
 | **Reversible?** | yes | yes: B is A plus a composition layer; going back is removing it |
 
 Both stay plain Krizaka UI by the 2026-10-22 decision. B brings the Cahier's organisation, not its look.
+
+## 4c. Direction B2: the chosen direction, refined (mockups)
+
+**Decision by Oussama (2026-10-24, on #325): direction B, with refinements.** B2 is the direction this document now
+proposes; A and B stay above as the record of the choice. Same rule: published @krizaka/ui 3.53 and @krizaka/charts 0.6
+blocks and the tokens only, and what a block lacks is a filed krizaka-ui issue (the list below), never a copy.
+
+| Refinement asked | What B2 does | Blocks used · upstream issue |
+| :-- | :-- | :-- |
+| « Aujourd'hui » too ugly: no date strip, **the date on the right**, more information, charts and quick access | The headline and the next move on the left, « Semaine 43 · jeudi 22 octobre » with ‹ Calendrier › on the right. A **quick-access row** (Nouvelle facture, Facturer the done appointment, Relancer an invoice due soon, Ma page publique). 01 the agenda; 02 « L'activité, 30 jours » with the **7 / 30 / 90 j switch**, three **figure tiles with sparklines** (facturé, rendez-vous, panier moyen) and a bar chart of the week; on the side 03 « À encaisser » with the **balance meter** and the beaver when nothing is late, « À faire » (three next actions, including the T3 return to prepare before 31 October) and the notes | `Agenda`, `KpiStat`, `BarChart`, `Meter`, `Tabs segmented`, `NextActions` · krizaka-ui#649, #653 |
+| **A ⌘K search** in the top bar; navigation revisited | The family top bar: search (« Rechercher un client, une facture… » ⌘K) opening the palette (clients, invoices, actions), the language « fr », messages, notifications with a count, the avatar **with the name**. The rail shows its labels on a desktop, badges (3 rendez-vous, 3 à payer), and a « Raccourcis » group | `AppHeader`, `CommandDialog`, `Kbd`, `RailNav` · krizaka-ui#647 |
+| **Binder tab dividers** for organisation | Clients: coloured intercalaires per tag (Tous · Entreprise · Soutien mensuel · En anglais · + Intercalaire). A client's file: Résumé · Factures · Visites · Notes. The colour is the tag's marker; no paper | `Tabs` + a local top edge in the mockup · krizaka-ui#648 (and #627) |
+| **Reuse**: Orochia's top bar, the org avatar set and banner, Orazaka's Studios catalogue and Credits & usage, the nicer primaries | The top bar above; the client's **profile banner** with the family avatar; Clients as the catalogue pattern (plan strip with a meter, search, filter chips with counts, rows with a status and an action « Facturer »); the usage panel on Today; the **hero primary** (brand gradient green → copper, sheen, chamfer) once per page | `Meter`, `Chip`, `DataTable`, `Button variant="gradient" shimmer` · krizaka-ui#650, #652, #598 |
+| **Pages on the templates** | Today = Operate · dashboard; Clients = Operate · catalogue; a client = Show · detail; new invoice = Act · form. What each template lacks is listed in krizaka-ui#653, recorded with the #622 audit; what Orochia and Orazaka have is extracted per #515 | krizaka-ui#653, #622, #515 |
+| No café or restaurant as a customer | The demo client « Studio Lumen inc. (démo) » replaces the seed's café in every mockup (A, B and B2) | the seed, D0 |
+
+| Screen | Desktop dark | Desktop light | Phone dark | Phone light | Motion frames (state change) |
+| :-- | :-- | :-- | :-- | :-- | :-- |
+| **Aujourd'hui** | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/today-desktop-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/today-desktop-light.png) | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/today-phone-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/today-phone-light.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/today-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/today-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/today-after-desktop-dark.png) · phone: [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/today-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/today-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/today-after-phone-light.png) |
+| **Clients, with the bulk bar** | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/clients-desktop-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/clients-desktop-light.png) | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/clients-phone-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/clients-phone-light.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/clients-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/clients-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/clients-after-desktop-dark.png) · phone: [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/clients-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/clients-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/clients-after-phone-light.png) |
+| **A client** | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/client-desktop-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/client-desktop-light.png) | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/client-phone-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/client-phone-light.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/client-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/client-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/client-after-desktop-dark.png) · phone: [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/client-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/client-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/client-after-phone-light.png) |
+| **New invoice** | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/invoice-new-desktop-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/invoice-new-desktop-light.png) | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/invoice-new-phone-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/invoice-new-phone-light.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/invoice-new-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/invoice-new-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/invoice-new-after-desktop-dark.png) · phone: [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/invoice-new-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/invoice-new-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/frames/invoice-new-after-phone-light.png) |
+| **⌘K search** (open) | [desktop dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/today-search-desktop-dark.png) | — | — | [phone light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b2/today-search-phone-light.png) | — |
+
+The state changes are those of § 4b, on the B2 frame: « Commencer » on Today, the bulk tag on Clients, « Garder la note » on a
+client, « Émettre la facture ». Their motion is `@krizaka/ui/motion.css` as it ships (`data-kz-arrive` with
+`data-kz-arrival="flash"`, `data-kz-status="success"`).
+
+**What the mockups showed** and the issues carry: `KpiStat` prints « CA$10,295.70 » and « vs previous period » on a French page
+without a provider (krizaka-ui#649); the phone's tab bar covers a StickyAction (#630); the bar chart is legible on a desktop, but on a
+phone a list of five days reads better (a template note in #653). Messages and notifications are the family's slots: Akinaza
+shows a count only for what it really sends (new bookings, invoices viewed, through krizaka-ts#60 when it lands), and the messages
+slot renders only once Akinaza has conversations.
 
 ## 5. What we stop or change (anti-rework)
 
@@ -347,6 +382,12 @@ Nothing here changes the storefront's Cahier plan (#304 → #318). The direction
 | krizaka-ui | [#629](https://github.com/krizaka/krizaka-ui/issues/629) form `LineItems` + `TotalsSummary` (web + native) | New invoice |
 | krizaka-ui | [#630](https://github.com/krizaka/krizaka-ui/issues/630) rail-nav task mode: the tab bar yields to a StickyAction | New invoice on a phone |
 | krizaka-ui | [#631](https://github.com/krizaka/krizaka-ui/issues/631) StatGrid inline, Widget plain, the all-zero day | Today |
+| krizaka-ui | [#647](https://github.com/krizaka/krizaka-ui/issues/647) the family top bar (⌘K, language, messages, notifications, name), RailNav shortcuts | B2 |
+| krizaka-ui | [#648](https://github.com/krizaka/krizaka-ui/issues/648) Tabs `binder` dividers | B2, § 3 |
+| krizaka-ui | [#649](https://github.com/krizaka/krizaka-ui/issues/649) UsagePanel from Orazaka's Credits & usage; charts' French defaults | B2 Today |
+| krizaka-ui | [#650](https://github.com/krizaka/krizaka-ui/issues/650) ProfileBanner from Orochia | B2 client |
+| krizaka-ui | [#652](https://github.com/krizaka/krizaka-ui/issues/652) the hero primary | B2 |
+| krizaka-ui | [#653](https://github.com/krizaka/krizaka-ui/issues/653) the templates Operate, Show and Act gain what B2 needs (with #622; extraction per #515, both commented) | B2 |
 | krizaka-motion | [#57](https://github.com/krizaka/krizaka-motion/issues/57) the product register | § 2.3 |
 | krizaka-ts | [#89, comment](https://github.com/krizaka/krizaka-ts/issues/89#issuecomment-6388320567): derived status sets, shop-scoped tags, no ledger bulk action | § 3 (a requirement on the ADR, not a new issue) |
 
@@ -364,16 +405,18 @@ the bricks it names.
 
 | # | Slice | Scope | Needs |
 | :-- | :-- | :-- | :-- |
+| D0 | **Demo data without a café** | Rename the Krizaka persona's client « Café du Parc inc. (démo) » to a service business (« Studio Lumen inc. (démo) ») in `seed-krizaka.ts`, the QA account names and the captures; a test that no demo client or shop name is a café, restaurant, bar or bakery | none |
 | D1 | **Type register** | Adopt the brand-level font switch; `h1` at 700; tabular digits on every amount | krizaka-ui#626 |
+| D1b | **The B2 frame** | The family top bar (⌘K search and palette over clients, invoices and actions; language; notifications; the avatar with the name), the rail with labels, badges and shortcuts, the hero primary; one primary per screen, and on Aujourd'hui the next appointment (UX_DECISIONS updated) | krizaka-ui#647, #652 |
 | D2 | **Factures: the list and an invoice** (K3) | French chrome, fixed columns (the number narrow, the client wide, no « Mois »), the derived state as a chip with tone, overdue first; the invoice on `DetailLayout` (the number as `h1`, the state chip, « Envoyer la facture » as primary, « Modifier » and « Imprimer » secondary, an aside with deliveries and the chain) | krizaka-ui#595 |
 | D3 | **Nouvelle facture** | `LineItems` + `TotalsSummary`, numbered steps, the total in view, `StickyAction` in task mode, fr-CA money; prefilled from « Facturer ce client » and from a finished appointment (`?client=&service=&quantity=`) | krizaka-ui#629, #630, #596 |
-| D4 | **Aujourd'hui** | Figures without a frame (one line on a phone), the all-zero day as its empty state, closed days marked, « La journée facturera », « Facturer » on a finished row, « Le mot du jour » as a header action when #317 lands | krizaka-ui#631, #628, #623 |
-| D5 | **Clients and a client** (K3b) | Search, filter, folio; the file on `DetailLayout` with the margin (contact, consents, signed notes), dates on one line, the invoices' derived states | krizaka-ui#628 |
+| D4 | **Aujourd'hui (B2)** | On the Operate · dashboard template: the headline and the next move, the date on the right (no date strip), the quick-access row, the agenda, « L'activité » with the 7/30/90 switch and figure tiles, « À encaisser » with the balance meter, « À faire », the notes; the all-zero day as its empty state; « Le mot du jour » as a header action when #317 lands | krizaka-ui#649, #653, #628, #631, #623 |
+| D5 | **Clients and a client** (K3b, B2) | Clients on the catalogue template (plan strip, search, filter chips with counts, rows with a state and « Facturer »); the file on Show · detail with the profile banner, the binder sections and the notes column; dates on one line, the invoices' derived states | krizaka-ui#650, #653, #628 (binder dividers wait for #648 and D10) |
 | D6 | **States sweep** | `loading.tsx` per owner route in the page's boxes (CLS test), the beaver's empty states at 120 px, errors in place with « Réessayer », Boutique's `h1` (« Boutique ») with the section as `h2` | krizaka-ui#623 |
 | D7 | **Client space** (#323, widened) | Requests folded, invoices as rows with their state, one « Mes données » | none |
 | D8 | **Phone app parity** (#168) | The five tabs, Calendar into Aujourd'hui, the agenda and day strip native, the quick invoice on `LineItems` native, the three states, no locale ternary; simulator captures as Éric | krizaka-ui#628, #629, #275, #580 |
 | D9 | **Mac menu** (#79 reshaped) | ⌘1–⌘5 in the rail's order and words | none |
-| D10 | **Organise** | Tags on clients and invoices, saved views on Clients and Factures, bulk tag/untag/export; the admin's default tag set per trade | krizaka-ts#89 « validé » and its Yomizaka pilot, krizaka-ui#627 |
+| D10 | **Organise** | Tags on clients and invoices, saved views on Clients and Factures, the binder dividers per tag, bulk tag/untag/export; the admin's default tag set per trade | krizaka-ts#89 « validé » and its Yomizaka pilot, krizaka-ui#627, #648 |
 | D11 | **Product motion** | The realtime row wash on Aujourd'hui and Factures; insert and remove | krizaka-motion#57 |
 
 ---
