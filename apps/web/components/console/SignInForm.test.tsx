@@ -18,4 +18,10 @@ describe("sign-in offers the password reset, in both languages (krizaka/akinaza#
     expect(html).toContain('href="/en/forgot-password"');
     expect(html).toContain("Forgot your password?");
   });
+
+  it("the administration's sign-in offers no reset link: its recovery page is not on the administration host (#300 review)", () => {
+    const html = renderIn("fr", "professional", <SignInForm next="/fr" forgotPassword={false} />);
+    expect(html).not.toContain("forgot-password");
+    expect(html).not.toContain("Mot de passe oublié ?");
+  });
 });

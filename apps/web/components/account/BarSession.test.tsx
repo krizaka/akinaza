@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
-import { BarActionsView, type BarWords } from "./BarSession";
+import { BarActionsView, type BarWords, settleSignOut } from "./BarSession";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => "/en" }));
 
@@ -61,5 +61,15 @@ describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
   it("no « Talk to us » word is left in the bar's catalogue", () => {
     expect(Object.keys(en.chrome)).not.toContain("talk");
     expect(Object.keys(fr.chrome)).not.toContain("talk");
+  });
+
+  it("after a sign-out the bar is the signed-out one AND the page's server components render again, so the hero follows the session (#300 review)", () => {
+    const calls: string[] = [];
+    const queryClient = { setQueryData: vi.fn((_key: unknown, value: unknown): void => void calls.push(`data:${JSON.stringify(value)}`)) };
+    const router = { refresh: vi.fn(() => calls.push("refresh")) };
+    settleSignOut(queryClient as unknown as Parameters<typeof settleSignOut>[0], router, true);
+    expect(queryClient.setQueryData).toHaveBeenCalledWith(["me"], { signedIn: false, signupOpen: true });
+    expect(router.refresh).toHaveBeenCalledTimes(1);
+    expect(calls).toEqual(['data:{"signedIn":false,"signupOpen":true}', "refresh"]);
   });
 });

@@ -86,3 +86,23 @@ describe("the language of the address reaches the pages (the 404 has no params)"
     expect(en.headers.get(`x-middleware-request-${LOCALE_HEADER}`)).toBe("en");
   });
 });
+
+describe("the matcher lets a page with a dot in its address through, so its 404 is in the visitor's language (#300 review)", () => {
+  // Next runs the proxy only where the matcher says: this is that same pattern, tested as a regular expression.
+  const pageMatcher = new RegExp(`^${config.matcher[0]}$`);
+
+  it("runs for /fr/missing.html and for the other addresses that are pages", () => {
+    expect(pageMatcher.test("/fr/missing.html")).toBe(true);
+    expect(pageMatcher.test("/en/app/shop.v2")).toBe(true);
+    expect(pageMatcher.test("/fr/sign-in")).toBe(true);
+  });
+
+  it("still skips the API, Next's assets and the static files", () => {
+    expect(pageMatcher.test("/api/me")).toBe(false);
+    expect(pageMatcher.test("/_next/static/chunks/app.js")).toBe(false);
+    expect(pageMatcher.test("/_next/image?url=x")).toBe(false);
+    expect(pageMatcher.test("/favicon.ico")).toBe(false);
+    expect(pageMatcher.test("/og.png")).toBe(false);
+    expect(pageMatcher.test("/fonts/inter.woff2")).toBe(false);
+  });
+});
