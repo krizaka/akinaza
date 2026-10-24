@@ -2,7 +2,9 @@
  * What the HTTP integration tests share: calling a route handler as someone, a throwaway account with a session, and a shop
  * open for booking (a zone, a service, every day's hours, the rules, published). Test-only; never imported by the app.
  */
-import { query } from "@/lib/db";
+import { vi } from "vitest";
+
+import { pool, query } from "@/lib/db";
 import { createSession, SESSION_COOKIE } from "@/lib/session";
 
 import { POST as hours } from "./walker/hours/route";
@@ -44,4 +46,21 @@ export async function openBookableShop(token: string, name: string, slug: string
   await apiCall(rules, "POST", "/api/walker/rules", { ...as, json: { cancellationHours: 2, bookingHorizonDays: 30, slotStepMinutes: 30, minNoticeMinutes: 0, reportLinkDays: 30, paymentTermsDays: 30 } });
   await apiCall(shop, "POST", "/api/walker/shop", { ...as, json: { ...testShopPage(name, slug), published: true } });
   return { shopId, zone, service, hour };
+}
+
+/** The HTTP verbs a route file may export. */
+export const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
+export type Method = (typeof METHODS)[number];
+
+/** The handlers a route module exports, by verb (`load` is one entry of an `import.meta.glob`). */
+export async function handlersOf(load: () => Promise<Record<string, unknown>>): Promise<{ method: Method; handler: Handler }[]> {
+  const mod = await load();
+  return METHODS.filter((m) => typeof mod[m] === "function").map((method) => ({ method, handler: mod[method] as Handler }));
+}
+
+/** The end of a suite: its accounts go (shops stay: the ledger and the consents are written once), the env and the pool close. */
+export async function closeSuite(stamp: string) {
+  await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+  vi.unstubAllEnvs();
+  await pool().end();
 }

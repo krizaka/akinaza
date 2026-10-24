@@ -2,13 +2,13 @@ import { randomUUID } from "node:crypto";
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { migrate, pool, query } from "@/lib/db";
+import { migrate, query } from "@/lib/db";
 import { resetRateLimits } from "@/lib/rate-limit";
 
 import { POST as book } from "./me/bookings/route";
 import { POST as join } from "./me/join/route";
 import { GET as slots } from "./shops/[slug]/slots/route";
-import { apiCall, type CallOptions, type Handler, openBookableShop, testAccount, testShopPage } from "./test-api";
+import { apiCall, type CallOptions, closeSuite, type Handler, handlersOf, METHODS, openBookableShop, testAccount, testShopPage } from "./test-api";
 import { POST as saveReport } from "./walker/bookings/[id]/report/route";
 import { POST as invoices } from "./walker/invoices/route";
 import { POST as shop } from "./walker/shop/route";
@@ -24,7 +24,6 @@ import { POST as hook } from "./walker/webhooks/route";
  */
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 
-const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
 const routeModules = import.meta.glob<Record<string, unknown>>("./walker/**/route.ts");
 const routeSources = import.meta.glob<string>("./walker/**/route.ts", { query: "?raw", import: "default", eager: true });
 
@@ -77,17 +76,9 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     ids.tag = (await query<{ id: string }>("SELECT id FROM tags WHERE owner_id = $1 LIMIT 1", [a.id]))[0]?.id ?? randomUUID();
   });
   beforeEach(() => resetRateLimits());
-  afterAll(async () => {
-    // Shops stay (the ledger and the consents are written once); only the accounts go.
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
-    vi.unstubAllEnvs();
-    await pool().end();
-  });
+  afterAll(() => closeSuite(stamp));
 
-  const exportsOf = async (file: string) => {
-    const mod = await routeModules[file]!();
-    return METHODS.filter((m) => typeof mod[m] === "function").map((method) => ({ method, handler: mod[method] as Handler }));
-  };
+  const exportsOf = (file: string) => handlersOf(routeModules[file]!);
 
   it("finds the whole walker surface (a guard against an empty sweep)", () => {
     expect(ROUTES.length).toBeGreaterThan(35);

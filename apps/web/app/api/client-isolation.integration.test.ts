@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { clientFilesOf, invoiceForClientAccount } from "@akinaza/db";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { db, migrate, pool, query } from "@/lib/db";
+import { db, migrate, query } from "@/lib/db";
 import { resetRateLimits } from "@/lib/rate-limit";
 
 import { GET as calendar } from "./me/bookings/[id]/calendar/route";
@@ -13,7 +13,7 @@ import { GET as exportData } from "./me/export/route";
 import { POST as join } from "./me/join/route";
 import { POST as saveRequest } from "./me/requests/route";
 import { GET as slots } from "./shops/[slug]/slots/route";
-import { apiCall, type Handler, openBookableShop, testAccount } from "./test-api";
+import { apiCall, closeSuite, type Handler, handlersOf, type Method, openBookableShop, testAccount } from "./test-api";
 import { POST as saveReport } from "./walker/bookings/[id]/report/route";
 import { POST as invoices } from "./walker/invoices/route";
 
@@ -26,7 +26,6 @@ import { POST as invoices } from "./walker/invoices/route";
  */
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 
-const METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"] as const;
 const routeModules = import.meta.glob<Record<string, unknown>>("./me/**/route.ts");
 const routeSources = import.meta.glob<string>("./me/**/route.ts", { query: "?raw", import: "default", eager: true });
 const addressOf = (file: string) => `/api/me${file.slice("./me".length, -"/route.ts".length)}`;
@@ -43,7 +42,7 @@ const ACCOUNT_OWNED: Record<string, string> = {
 type Ids = { alice: string; bob: string; booking: string; report: string; request: string; dog: string; service: string; zone: string; startsAt: string; bobEmail: string };
 type Ask = { path: string; params?: Record<string, string>; json?: unknown; form?: FormData };
 /** Every client route, as Bob asking for Alice's records. `refused` is a status that answers before any lookup, for a foreign and an unknown id alike. */
-const RESOURCES: { method: (typeof METHODS)[number]; address: string; ask: (ids: Ids) => Ask; refused?: number; why?: string }[] = [
+const RESOURCES: { method: Method; address: string; ask: (ids: Ids) => Ask; refused?: number; why?: string }[] = [
   { method: "GET", address: "/api/me/export", ask: (i) => ({ path: `/api/me/export?clientId=${i.alice}` }) },
   { method: "POST", address: "/api/me/erase", ask: (i) => ({ path: "/api/me/erase", json: { clientId: i.alice, confirmEmail: i.bobEmail } }) },
   { method: "POST", address: "/api/me/access-notes", ask: (i) => ({ path: "/api/me/access-notes", json: { clientId: i.alice, notes: "Code 1234" } }) },
@@ -102,16 +101,9 @@ describe.runIf(enabled)("a client reaches only their own records (K7)", () => {
     ids.request = (await call(saveRequest as Handler, "POST", { token: alice.token, path: "/api/me/requests", json: { clientId: ids.alice, serviceId: ids.service, title: "Comme d'habitude" } })).body.id;
   });
   beforeEach(() => resetRateLimits());
-  afterAll(async () => {
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
-    vi.unstubAllEnvs();
-    await pool().end();
-  });
+  afterAll(() => closeSuite(stamp));
 
-  const exportsOf = async (file: string) => {
-    const mod = await routeModules[file]!();
-    return METHODS.filter((m) => typeof mod[m] === "function").map((method) => ({ method, handler: mod[method] as Handler }));
-  };
+  const exportsOf = (file: string) => handlersOf(routeModules[file]!);
 
   it("builds a fixture where Alice has every kind of record (the sweep would pass on an empty one otherwise)", () => {
     for (const key of ["alice", "bob", "booking", "dog", "invoice", "request"] as const) expect(ids[key], key).toMatch(/^[0-9a-f-]{36}$/);
