@@ -94,6 +94,9 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
   it("runs for /fr/missing.html and for the other addresses that are pages", () => {
     expect(pageMatcher.test("/fr/missing.html")).toBe(true);
     expect(pageMatcher.test("/fr/sign-in")).toBe(true);
+    // a dot inside a page address is still a page: the proxy keeps the host isolation (admin.* serves only the console) for it
+    expect(pageMatcher.test("/en/app/shop.v2")).toBe(true);
+    expect(pageMatcher.test("/fr/app.v2/shop")).toBe(true);
   });
 
   it("still skips the API, Next's assets and the static files", () => {
@@ -105,6 +108,5 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
     expect(pageMatcher.test("/fonts/inter.woff2")).toBe(false);
     // The maplibre worker is a dotted file that the map loads from its own route (ZoneMap): it must bypass the proxy as before.
     expect(pageMatcher.test("/maplibre/maplibre-gl-worker.mjs")).toBe(false);
-    expect(pageMatcher.test("/fr/app.v2/shop")).toBe(false); // a dot in a directory: as before, not a page
   });
 });
