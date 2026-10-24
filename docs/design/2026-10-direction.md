@@ -14,7 +14,7 @@ It builds on, and never contradicts:
 - the workspace ADR krizaka/krizaka-ts#89 (tags, status sets, saved views, bulk actions).
 
 Captures and mockups are on Bunny, never in the repository:
-`https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/` (`audit/` and `mockups/`). The demo persona is **Éric**, the owner of
+`https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/` (`audit/`, `mockups/` for direction A and `mockups-b/` for direction B). The demo persona is **Éric**, the owner of
 « Krizaka (démo) » (a professional-services shop: fictional clients, demo amounts, fake tax numbers), and one of his clients
 (Café du Parc inc., démo) for the client space.
 
@@ -232,7 +232,7 @@ Akinaza adopts #89 **after Yomizaka** (the pilot), with its one API. The require
 
 ---
 
-## 4. The key screens (mockups)
+## 4. The key screens: direction A, refined (mockups)
 
 Composed **only from published @krizaka/ui 3.53 blocks** (`RailNav`, `AppHeader`, `DashboardLayout`, `DayStrip`, `StatGrid`,
 `Agenda`, `DataTable` with `selectable`, `FilterBar`, `Chip`, `DetailLayout`, `DescriptionList`, `Field`, `StickyAction`,
@@ -257,6 +257,62 @@ What the mockups also showed, and where it goes: at 360 px the agenda still cuts
 for a three-figure list (accepted for now, revisit with #397).
 
 ---
+
+## 4b. The key screens: direction B, bolder (mockups)
+
+Asked in the CTO's review of #325: the same four screens, bolder, so that Oussama chooses on pictures. They use the same rule:
+**only published @krizaka/ui 3.53 blocks and the tokens**. The copper is `--kz-accent-2` through the preset's `text-accent-2` and
+`border-accent-2`. The type uses the `display-lg` and `display-xl` roles. The motion is `@krizaka/ui/motion.css`. There is no
+paper, no grid, no serif, no stamp and no tape.
+
+What B does differently:
+
+- **The copper is the second accent.** It sets the eyebrow over each `h1`, the section numbers (`01`, `02`, `03`), the rule and
+  numbers of the notes column, the figure that asks for action (« à facturer », « à encaisser », the due date) and the count of
+  the bulk bar. It is never a button and never a status.
+- **A confident type scale.** The `h1` is a sentence that answers the screen's question, at `display-xl` on a desktop and
+  `display-lg` on a phone (« Café du Parc arrive à 14 h. », « 3 clients, 8 008,00 $ à encaisser. »). The figures are large
+  and tabular. Section titles are 24 px and bold.
+- **The Cahier's organising ideas, visible.** Each screen is numbered sections (`01 La journée · 02 Les rendez-vous ·
+  03 À encaisser`). A **notes column** on the right, with a copper rule, carries numbered notes. They explain a figure (¹ next to
+  « à facturer »), keep the owner's signed notes, and state a rule (« une action groupée ne touche jamais les factures »). On a
+  phone, the numbers sit inline and the notes come last.
+- **The beaver carries a meaning.** It appears only on good news that closes a loop: « aucune facture en retard » on Today, and
+  « facture émise » after issuing, at 72 px, `success`. It never appears on a working list.
+- **The next move leads.** On Today the primary action is the next appointment (« Commencer avec Café du Parc », then
+  « Terminer le rendez-vous »), and the header's « Nouvelle facture » becomes secondary. On the bulk bar, the suggested tag is
+  the primary.
+- **Motion on state changes,** from `@krizaka/ui/motion.css` as it ships. The row that changed plays `data-kz-arrive` under
+  `data-kz-arrival="flash"`: an accent wash that fades, about 1 s. The control that succeeded plays `data-kz-status="success"`:
+  a ring of the success colour, 0.9 s. Both use `--kz-ease`, transforms and colour only, and rest done under reduced motion.
+  The **mid** frame below is the motion frozen at about 35 % of its run.
+
+| Screen | Desktop dark | Desktop light | Phone dark | Phone light | What it says |
+| :-- | :-- | :-- | :-- | :-- | :-- |
+| **Aujourd'hui** | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/today-desktop-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/today-desktop-light.png) | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/today-phone-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/today-phone-light.png) | The headline is the next client. Three large figures, the copper one explained by note ¹. The agenda. « À encaisser » with the beaver when nothing is late. |
+| **Clients, with the bulk bar** | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/clients-desktop-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/clients-desktop-light.png) | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/clients-phone-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/clients-phone-light.png) | « 3 clients, 8 008,00 $ à encaisser. » Views, then the list. The bar has a copper border and a copper count, and the suggested tag as its primary. |
+| **A client** | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/client-desktop-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/client-desktop-light.png) | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/client-phone-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/client-phone-light.png) | The name at `display-xl`. 01 L'argent (the amount due in copper), 02 Les factures, 03 Les visites. Notes and « Ajouter une note » in the column. |
+| **New invoice** | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/invoice-new-desktop-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/invoice-new-desktop-light.png) | [dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/invoice-new-phone-dark.png) | [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/invoice-new-phone-light.png) | 01 Pour qui ? · 02 Quoi ? · 03 Quand ? The total at `display-md` in view. After issuing: the number, the beaver and « Envoyer à Atelier Boréal ». |
+
+**The state changes, frame by frame** (`mockups-b/frames/`):
+
+| Screen | The change | Desktop dark | Phone light |
+| :-- | :-- | :-- | :-- |
+| Aujourd'hui | « Commencer » on Café du Parc: the row turns « En cours · depuis 14 h 02 » and washes once, the status rings, the headline becomes « Café du Parc est avec vous. » | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-after-desktop-dark.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/today-after-phone-light.png) |
+| Clients | « Ajouter « Relance novembre » » on two clients: the bar gives way to a success alert with « Annuler », and the two rows wash once with their new copper tag | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-after-desktop-dark.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/clients-after-phone-light.png) |
+| A client | « Garder la note »: the note arrives at the top of the column (slide in), and the button rings | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-after-desktop-dark.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/client-after-phone-light.png) |
+| New invoice | « Émettre la facture »: the number KZ-00023 and the beaver arrive, « Envoyer à Atelier Boréal » rings as the next primary | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-before-desktop-dark.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-mid-desktop-dark.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-after-desktop-dark.png) | [before](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-before-phone-light.png) · [mid](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-mid-phone-light.png) · [after](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups-b/frames/invoice-new-after-phone-light.png) |
+
+### A or B
+
+| | A, refined | B, bolder |
+| :-- | :-- | :-- |
+| **What changes on screen** | Today's app, tidied: the same layouts with fixed widths, the owner's words, the three states and the organise pieces | A, plus a sentence as `h1`, large figures, copper section numbers and notes column, the beaver on two good-news moments, the next move as primary, motion on every state change |
+| **Phase 2 cost** | The cut of § 7 as written (D1–D11) | The same cut, plus: a `Section`/notes-column composition in krizaka-ui (or `DetailLayout`'s aside reused), a headline string per screen and state in both languages (about 12 new message pairs per screen), the motion attributes on four screens (the primitives already ship, so krizaka-motion#57 shrinks to its documentation), and one more contrast test (copper text on surfaces 0 to 2). About two more slices: a « B frame » slice before D2, and its adoption in D2 to D5. |
+| **Risk** | It reads as « the current app, tidied »: low brand presence, and « moderniser » may still be judged under-delivered | Errata 2 moves: on Today the primary becomes the next appointment, not « Nouvelle facture » (a revision of UX_DECISIONS needed). A sentence headline must stay true in every state and trade (empty day, walk-ins, a pets shop's « promenade »), so more copy to test. Copper text must keep 4.5:1 in both themes. A notes column costs width under 1 280 px. Too much motion if more than one change plays at once (rule: one wash per action). |
+| **Reversible?** | yes | yes: B is A plus a composition layer; going back is removing it |
+
+Both stay plain Krizaka UI by the 2026-10-22 decision. B brings the Cahier's organisation, not its look.
 
 ## 5. What we stop or change (anti-rework)
 
