@@ -108,5 +108,8 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
     expect(pageMatcher.test("/fonts/inter.woff2")).toBe(false);
     // The maplibre worker is a dotted file that the map loads from its own route (ZoneMap): it must bypass the proxy as before.
     expect(pageMatcher.test("/maplibre/maplibre-gl-worker.mjs")).toBe(false);
+    // The basemap's tiles and glyphs (/maps/v1, rewritten to the media CDN) are protobuf files: never a page, never a locale redirect.
+    expect(pageMatcher.test("/maps/v1/tiles/12/2048/1360.pbf")).toBe(false);
+    expect(pageMatcher.test("/maps/v1/fonts/Noto Sans Regular/0-255.pbf")).toBe(false);
   });
 });
