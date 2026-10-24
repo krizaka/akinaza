@@ -58,8 +58,11 @@ describe("the hydration crawl (one rendering for the server and the browser, K0)
 
   it("owes the client with no file and the correction screen a page heading of their own (the frame renders none)", () => {
     const acct = readFileSync(new URL("../apps/web/app/[locale]/(app)/app/(account)/page.tsx", import.meta.url), "utf8");
+    const home = readFileSync(new URL("../apps/web/components/app/ClientHome.tsx", import.meta.url), "utf8");
     const correct = readFileSync(new URL("../apps/web/app/[locale]/(app)/app/[shop]/invoices/[id]/correct/page.tsx", import.meta.url), "utf8");
-    expect(acct).toMatch(/if \(files\.length === 0\) \{[\s\S]*<PageHeader/);
+    // The client space (K7) renders its heading before the empty state, with or without a file (ClientHome.test.tsx counts the h1).
+    expect(acct).toContain("<ClientHome");
+    expect(home).toMatch(/<PageHeader[\s\S]*files\.length === 0 \? <EmptyState/);
     expect(correct).toContain("<PageHeader");
   });
 });

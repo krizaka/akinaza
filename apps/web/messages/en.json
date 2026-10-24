@@ -865,6 +865,12 @@
         "back": "Back to your shop page",
         "submit": "Create the shop"
       },
+      "openShop": {
+        "title": "Open a shop",
+        "lead": "Your own shop, with its page, its bookings and its invoices. It starts unpublished: you publish it when it is ready.",
+        "back": "Back to my bookings",
+        "submit": "Create the shop"
+      },
       "defaults": {
         "title": "Proposed images",
         "lead": "No photo yet? Choose images that suit your trade. They are neutral pictures, not your shop: replace them with your own when you can.",
@@ -1022,7 +1028,9 @@
     },
     "client": {
       "title": "My bookings",
-      "none": "No booking yet. Open the page of a shop and book from there.",
+      "emptyTitle": "No booking yet",
+      "emptyLead": "Open the page of a shop and book from there: your bookings, your invoices and your files show here.",
+      "openShop": "Open a shop",
       "upcoming": "Upcoming",
       "past": "Past",
       "invoiceTitle": "Invoices",

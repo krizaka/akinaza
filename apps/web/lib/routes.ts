@@ -51,6 +51,10 @@ export type AccountSection = (typeof ACCOUNT_SECTIONS)[number];
 export const accountRoutes = (locale: RouteLocale) => ({
   home: `/${locale}/app`,
   profile: `/${locale}/app/profile`,
+  /** « Ouvrir une boutique »: a client's first shop — an action of the client space, never a place on the rail (K7). */
+  openShop: `/${locale}/app/open-shop`,
+  /** One of the client's own invoices, whichever shop issued it. */
+  invoice: (id: string) => `/${locale}/app/invoices/${id}`,
   /** One section of the account: the first is the profile itself, the others are below it. */
   section: (id: AccountSection) => (id === "profile" ? `/${locale}/app/profile` : `/${locale}/app/profile/${id}`),
 });

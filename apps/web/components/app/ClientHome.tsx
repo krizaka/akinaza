@@ -1,12 +1,15 @@
 "use client";
 
 import type { BusinessType } from "@akinaza/core";
+import { formatDate } from "@krizaka/intl";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
 import { AlertDialog } from "@krizaka/ui/dialog";
+import { EmptyState } from "@krizaka/ui/empty-state";
 import { createKrizakaForm } from "@krizaka/ui/form";
+import { Mascot } from "@krizaka/ui/mascots";
 import { PageHeader } from "@krizaka/ui/page-header";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,7 +18,9 @@ import { z } from "zod";
 
 import { RequestsCard,type RequestsData } from "@/components/app/RequestsCard";
 import { useCall } from "@/components/app/useCall";
+import { formatMoney, INTL_LOCALE } from "@/lib/format";
 import { useSay, useVocabulary, VocabularyProvider } from "@/lib/i18n-client";
+import { accountRoutes } from "@/lib/routes";
 
 export interface ClientFileView {
   client: { id: string; fullName: string; shopName: string; shopSlug: string | null; businessType: BusinessType };
@@ -38,35 +43,46 @@ export interface ClientFileView {
   timeZone: string;
 }
 
-/** The client's space: bookings (cancel, read the report), their dogs, and their rights over their data (Loi 25). */
+/**
+ * The client's space (K7): « Mes réservations », their bookings at every shop they deal with (cancel, read the report), their
+ * invoices, their requests and their rights over their data (Loi 25). The screen's one primary action is booking again at the
+ * first shop; « Ouvrir une boutique » is an action of the page, never a place on the rail.
+ */
 export function ClientHome({ files }: { files: ClientFileView[] }) {
-  const { say } = useSay();
+  const { say, locale } = useSay();
+  const primaryAt = files.findIndex((f) => f.client.shopSlug !== null);
   return (
     <div className="flex flex-col gap-8">
-      <PageHeader title={say("client.title")} />
-      {files.length === 0 ? <p className="text-fg-secondary">{say("client.none")}</p> : null}
-      {files.map((f) => (
+      <PageHeader
+        title={say("client.title")}
+        actions={
+          <Button asChild size="md" variant="secondary" className="w-full sm:w-auto">
+            <Link href={accountRoutes(locale).openShop}>{say("client.openShop")}</Link>
+          </Button>
+        }
+      />
+      {files.length === 0 ? <EmptyState icon={<Mascot bird="beaver" mood="empty" size={120} />} title={say("client.emptyTitle")} description={say("client.emptyLead")} /> : null}
+      {files.map((f, at) => (
         <VocabularyProvider key={f.client.id} type={f.client.businessType}>
-          <FileSection file={f} />
+          <FileSection file={f} primary={at === primaryAt} />
         </VocabularyProvider>
       ))}
     </div>
   );
 }
 
-function FileSection({ file }: { file: ClientFileView }) {
+function FileSection({ file, primary }: { file: ClientFileView; /** Whether « Réserver chez … » is the screen's primary action (one per screen). */ primary: boolean }) {
   const { say, locale } = useSay();
   const { dependants } = useVocabulary();
-  const lang = locale === "fr" ? "fr-CA" : "en-CA";
-  const when = (iso: string) => new Date(iso).toLocaleString(lang, { dateStyle: "full", timeStyle: "short", timeZone: file.timeZone });
+  const when = (iso: string) => formatDate(iso, { locale: INTL_LOCALE[locale], style: "long", timeStyle: "short", timeZone: file.timeZone });
   const upcoming = file.bookings.filter((b) => b.status === "booked" && b.visitStatus === "booked" && b.startsAt >= file.now).sort((a, b) => a.startsAt.localeCompare(b.startsAt));
   const past = file.bookings.filter((b) => !upcoming.includes(b));
   return (
     <section className="flex flex-col gap-4" aria-label={file.client.shopName}>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="font-display text-xl font-bold text-fg">{file.client.shopName}</h2>
+        <h2 className="min-w-0 break-words font-display text-xl font-bold text-fg">{file.client.shopName}</h2>
         {file.client.shopSlug ? (
-          <Button asChild size="md" variant="primary">
+          <Button asChild size="md" variant={primary ? "primary" : "secondary"} className="w-full sm:w-auto">
             <Link href={`/${locale}/s/${file.client.shopSlug}/book`}>{say("client.bookAgain", { shop: file.client.shopName })}</Link>
           </Button>
         ) : null}
@@ -79,8 +95,8 @@ function FileSection({ file }: { file: ClientFileView }) {
           <ul className="flex flex-col gap-2">
             {file.invoices.map((invoice) => (
               <li key={invoice.id}>
-                <Link className="text-fg-accent underline" href={`/${locale}/app/invoices/${invoice.id}`}>
-                  {say("client.invoiceOpen", { number: invoice.number })} · {new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(invoice.totalCents / 100)}
+                <Link className="text-fg-accent underline" href={accountRoutes(locale).invoice(invoice.id)}>
+                  {say("client.invoiceOpen", { number: invoice.number })} · {formatMoney(invoice.totalCents, locale)}
                 </Link>
               </li>
             ))}
@@ -115,7 +131,7 @@ function BookingList({ title, items, file, when, cancellable = false }: { title:
                   <p className="font-semibold text-fg">
                     {b.dependantName} · {when(b.startsAt)}
                   </p>
-                  <p className="text-sm text-fg-secondary">{say("client.line", { service: b.service[locale], zone: b.zone ?? "—" })}</p>
+                  <p className="text-sm text-fg-secondary">{b.zone ? say("client.line", { service: b.service[locale], zone: b.zone }) : b.service[locale]}</p>
                 </div>
                 {b.status === "cancelled" ? <Badge tone="neutral">{say("client.cancelled")}</Badge> : null}
                 {cancellable ? (
@@ -172,12 +188,12 @@ function PrivacyCard({ file }: { file: ClientFileView }) {
       <h3 className="font-display text-base font-bold text-fg">{say("client.privacyTitle")}</h3>
       <p className="mb-3 text-sm text-fg-secondary">{say("client.privacyIntro", { shop: file.client.shopName })}</p>
       <div className="flex flex-wrap gap-2">
-        <Button asChild size="md" variant="secondary">
+        <Button asChild size="md" variant="secondary" className="w-full sm:w-auto">
           <a href={`/api/me/export?clientId=${file.client.id}`} download>
             {say("client.export")}
           </a>
         </Button>
-        <Button size="md" variant="danger" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+        <Button size="md" variant="danger" className="h-auto min-h-11 w-full whitespace-normal sm:w-auto" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
           {say("client.erase", { shop: file.client.shopName })}
         </Button>
       </div>
