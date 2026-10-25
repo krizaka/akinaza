@@ -1,4 +1,5 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, normalize, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -14,7 +15,18 @@ const WEB = fileURLToPath(new URL("..", import.meta.url));
 const SOURCES = ["app", "components", "lib"].flatMap((dir) =>
   (readdirSync(join(WEB, dir), { recursive: true }) as string[]).filter((f) => /\.(ts|tsx)$/.test(f) && !/\.test\./.test(f)).map((f) => join(WEB, dir, f)),
 );
-const isClient = (file: string) => /^\s*(\/\/[^\n]*\n|\/\*[\s\S]*?\*\/\s*)*\s*["']use client["']/.test(readFileSync(file, "utf8"));
+/** The file opens with `"use client"`, after any comments (read without a backtracking pattern). */
+const isClient = (file: string) => {
+  let rest = readFileSync(file, "utf8").trimStart();
+  for (;;) {
+    const close = rest.startsWith("//") ? "\n" : rest.startsWith("/*") ? "*/" : null;
+    if (close === null) break;
+    const at = rest.indexOf(close);
+    if (at < 0) return false;
+    rest = rest.slice(at + close.length).trimStart();
+  }
+  return /^["']use client["']/.test(rest);
+};
 const resolve = (spec: string, from: string) => {
   const base = spec.startsWith("@/") ? join(WEB, spec.slice(2)) : spec.startsWith(".") ? normalize(join(dirname(from), spec)) : null;
   return base ? [".tsx", ".ts", "/index.tsx", "/index.ts"].map((ext) => base + ext).find(existsSync) : undefined;
@@ -36,6 +48,15 @@ export function boundaryViolations(files: readonly string[]): string[] {
   }
   return found;
 }
+
+describe("the rule itself (a rule-test): it sees a value crossing the boundary", () => {
+  it("flags a constant and a function a server file imports from a client module, not a component or a type", () => {
+    const dir = mkdtempSync(join(tmpdir(), "boundary-"));
+    writeFileSync(join(dir, "client.tsx"), '// a comment\n"use client";\nexport const TONE = {};\nexport const readTab = () => 1;\nexport function Panel() { return null; }\n');
+    writeFileSync(join(dir, "server.tsx"), 'import { Panel, readTab, TONE, type Other } from "./client";\n');
+    expect(boundaryViolations([join(dir, "server.tsx")]).map((v) => v.split(" imports ")[1]!.split(" ")[0])).toEqual(["readTab", "TONE"]);
+  });
+});
 
 describe("the client boundary: a server file takes only components and types from a « use client » module", () => {
   it("holds across app/, components/ and lib/", () => {
