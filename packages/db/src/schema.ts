@@ -140,6 +140,8 @@ export const shops = pgTable(
     description: text("description"),
     avatar: jsonb("avatar"),
     collectionId: uuid("collection_id"),
+    /** When the shop received its default tag set (migration 0034, akinaza#337): once, so a deleted tag is not brought back. */
+    organizedAt: timestamp("organized_at", { withTimezone: true }),
     createdAt: created(),
   },
   (t) => [

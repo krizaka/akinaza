@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { createDb, type Db, migrate as migrateSchema, pg, poolConfig as dbPoolConfig } from "@akinaza/db";
+import { createDb, type Db, migrate as migrateSchema, pg, poolConfig as dbPoolConfig, transactionOn, type TransactionPool } from "@akinaza/db";
 
 import { readEnv } from "./env";
 
@@ -31,36 +31,10 @@ export async function query<T extends pg.QueryResultRow = pg.QueryResultRow>(tex
   return result.rows;
 }
 
-/** What a transaction needs from the pool: one connection, given back after. */
-export interface TransactionPool {
-  connect(): Promise<{ query: (text: string, values?: unknown[]) => Promise<{ rows: unknown[] }>; release: () => void }>;
-}
-
-/**
- * Runs `work` in one transaction on one connection: COMMIT when it returns, ROLLBACK when it throws. A failed ROLLBACK never
- * hides why the work failed: the original error comes first in an `AggregateError`.
- */
-export async function transactionOn<T>(source: TransactionPool, work: (run: <R = Record<string, unknown>>(text: string, values?: unknown[]) => Promise<R[]>) => Promise<T>): Promise<T> {
-  const client = await source.connect();
-  try {
-    await client.query("BEGIN");
-    const out = await work(async (text, values) => (await client.query(text, values)).rows as never);
-    await client.query("COMMIT");
-    return out;
-  } catch (error) {
-    try {
-      await client.query("ROLLBACK");
-    } catch (rollback) {
-      throw new AggregateError([error, rollback], "The transaction failed and could not be rolled back");
-    }
-    throw error;
-  } finally {
-    client.release();
-  }
-}
-
 /** A transaction on this process's pool. */
 export const transaction = <T>(work: Parameters<typeof transactionOn<T>>[1]) => transactionOn(pool() as unknown as TransactionPool, work);
+
+export { transactionOn, type TransactionPool };
 
 /**
  * The versioned migrations of @akinaza/db (packages/db/drizzle), applied at start under an advisory lock. Resolved

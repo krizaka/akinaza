@@ -8,9 +8,11 @@ import { createSession, SESSION_COOKIE } from "@/lib/session";
 
 import { POST as acceptInvite } from "./auth/accept-invite/route";
 import { GET as accessNotes } from "./walker/clients/[id]/access-notes/route";
+import { GET as clientTags } from "./walker/clients/tags/route";
 import { POST as dayOff } from "./walker/days-off/route";
 import { POST as hours } from "./walker/hours/route";
 import { POST as invoices } from "./walker/invoices/route";
+import { GET as invoiceViews } from "./walker/invoices/views/route";
 import { POST as rules } from "./walker/rules/route";
 import { POST as services } from "./walker/services/route";
 import { POST as saveShop } from "./walker/shop/route";
@@ -87,13 +89,15 @@ describe.runIf(enabled)("roles of a shop over HTTP", () => {
     ["schedule: days off", dayOff, "POST", "/api/walker/days-off", {}],
     ["schedule: team time off", timeOff, "POST", "/api/walker/time-off", {}],
     ["invoices", invoices, "POST", "/api/walker/invoices", {}],
+    ["clients: tags", clientTags, "GET", "/api/walker/clients/tags", undefined],
+    ["invoices: saved views", invoiceViews, "GET", "/api/walker/invoices/views", undefined],
     ["team", teamOf, "GET", "/api/walker/team", undefined],
     ["access notes", accessNotes, "GET", `/api/walker/clients/${UUID}/access-notes`, undefined, { id: UUID }],
     ["check-in", checkIn, "POST", `/api/walker/visits/${UUID}/check-in`, {}, { id: UUID }],
   ];
   const allowed: Record<string, string[]> = {
     owner: probes.map((p) => p[0]),
-    manager: ["catalogue: zones", "catalogue: services", "schedule: hours", "schedule: days off", "schedule: team time off", "invoices", "team", "access notes", "check-in"],
+    manager: ["catalogue: zones", "catalogue: services", "schedule: hours", "schedule: days off", "schedule: team time off", "invoices", "clients: tags", "invoices: saved views", "team", "access notes", "check-in"],
     staff: ["access notes", "check-in"],
   };
   describe.each(["owner", "manager", "staff"])("%s", (role) => {

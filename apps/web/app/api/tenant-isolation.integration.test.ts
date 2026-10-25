@@ -10,7 +10,11 @@ import { POST as join } from "./me/join/route";
 import { GET as slots } from "./shops/[slug]/slots/route";
 import { apiCall, type CallOptions, closeSuite, type Handler, handlersOf, METHODS, openBookableShop, testAccount, testShopPage } from "./test-api";
 import { POST as saveReport } from "./walker/bookings/[id]/report/route";
+import { POST as clientTag } from "./walker/clients/tags/route";
+import { POST as clientView } from "./walker/clients/views/route";
 import { POST as invoices } from "./walker/invoices/route";
+import { POST as invoiceTag } from "./walker/invoices/tags/route";
+import { POST as invoiceView } from "./walker/invoices/views/route";
 import { POST as shop } from "./walker/shop/route";
 import { POST as invite } from "./walker/team/invitations/route";
 import { POST as hook } from "./walker/webhooks/route";
@@ -32,7 +36,7 @@ const addressOf = (file: string) => `/api/walker${file.slice("./walker".length, 
 const ROUTES = Object.keys(routeModules).map((file) => ({ file, address: addressOf(file), source: routeSources[file]! })).sort((a, b) => a.address.localeCompare(b.address));
 
 /** What a route does with the shop: through a shop guard (membership sweep), or about the session's own items (collections, tags, shops). */
-const SHOP_GUARD = /require(Shop|Owner|ShopClient)\b|visitRoute|teamRoute/;
+const SHOP_GUARD = /require(Shop|Owner|ShopClient)\b|visitRoute|teamRoute|organizeApi/;
 const SESSION_OWNED = new Set(["/api/walker/shop-collections", "/api/walker/shop-collections/[id]", "/api/walker/shop-tags", "/api/walker/shop-tags/[id]", "/api/walker/shops", "/api/walker/shops/[id]", "/api/walker/shops/[id]/default", "/api/walker/shop"]);
 
 /** An address with its dynamic segments filled (`values` for the named ones, else a fresh UUID or a day) - and the same as route params. */
@@ -45,7 +49,7 @@ const at = (address: string, values: Record<string, string> = {}) => {
 describe.runIf(enabled)("tenant isolation over the walker surface", () => {
   const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   const tokens = {} as Record<"a" | "b" | "client", string>;
-  const ids = {} as { shopA: string; shopB: string; zone: string; service: string; hour: string; client: string; appointment: string; booking: string; invoice: string; webhook: string; invitation: string; staff: string; collection: string; tag: string };
+  const ids = {} as { shopA: string; shopB: string; zone: string; service: string; hour: string; client: string; appointment: string; booking: string; invoice: string; webhook: string; invitation: string; staff: string; collection: string; tag: string; clientTag: string; invoiceTag: string; clientView: string; invoiceView: string };
 
   const call = (handler: Handler, method: string, path: string, opts: CallOptions = {}) => apiCall(handler, method, path, opts);
   const account = (label: string) => testAccount(label, stamp);
@@ -69,6 +73,11 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     note.set("note", "Belle promenade");
     await call(saveReport as Handler, "POST", `/api/walker/bookings/${ids.booking}/report`, { ...asA, params: { id: ids.booking }, form: note });
     ids.invoice = (await call(invoices as Handler, "POST", "/api/walker/invoices", { ...asA, json: { clientId: ids.client, language: "fr", issuedOn: "2026-10-23", lines: [{ description: "Coupe", unitPriceCents: 3000, quantity: 1 }] } })).body.id;
+    // the shop's tags and saved views (akinaza#337): shop A's, which shop B's owner must never reach
+    ids.clientTag = (await call(clientTag as Handler, "POST", "/api/walker/clients/tags", { ...asA, json: { name: "Privé A", marker: "red" } })).body.tag.id;
+    ids.invoiceTag = (await call(invoiceTag as Handler, "POST", "/api/walker/invoices/tags", { ...asA, json: { name: "Privé A", marker: "red" } })).body.tag.id;
+    ids.clientView = (await call(clientView as Handler, "POST", "/api/walker/clients/views", { ...asA, json: { name: "Vue A", filters: { tags: [ids.clientTag] }, shared: true } })).body.view.id;
+    ids.invoiceView = (await call(invoiceView as Handler, "POST", "/api/walker/invoices/views", { ...asA, json: { name: "Vue A", filters: { status: ["overdue"] }, shared: true } })).body.view.id;
     ids.webhook = (await call(hook as Handler, "POST", "/api/walker/webhooks", { ...asA, json: { url: "https://hooks.example.com/a", events: ["booking.created"] } })).body.endpoint.id;
     ids.invitation = (await call(invite as Handler, "POST", "/api/walker/team/invitations", { ...asA, json: { email: `invitee-${stamp}@example.com`, role: "staff" } })).body.invitation?.id ?? randomUUID();
     [ids.staff] = (await query<{ id: string }>("SELECT id FROM staff WHERE shop_id = $1 LIMIT 1", [ids.shopA])).map((r) => r.id);
@@ -134,6 +143,14 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     { address: "/api/walker/webhooks/[id]/rotate", method: "POST", params: () => ({ id: ids.webhook }) },
     { address: "/api/walker/webhooks/[id]/deliveries", method: "GET", params: () => ({ id: ids.webhook }) },
     { address: "/api/walker/zones/[id]", method: "DELETE", params: () => ({ id: ids.zone }), idempotent: true, intact: async () => expect(await query("SELECT 1 FROM shop_zones WHERE id = $1 AND active", [ids.zone])).toHaveLength(1) },
+    { address: "/api/walker/clients/tags/[id]", method: "PATCH", params: () => ({ id: ids.clientTag }), json: () => ({ name: "Pris" }) },
+    { address: "/api/walker/clients/tags/[id]", method: "DELETE", params: () => ({ id: ids.clientTag }), intact: async () => expect(await query("SELECT 1 FROM organize.tag WHERE id = $1", [ids.clientTag])).toHaveLength(1) },
+    { address: "/api/walker/clients/views/[id]", method: "PATCH", params: () => ({ id: ids.clientView }), json: () => ({ name: "Pris" }) },
+    { address: "/api/walker/clients/views/[id]", method: "DELETE", params: () => ({ id: ids.clientView }), intact: async () => expect(await query("SELECT 1 FROM organize.view WHERE id = $1", [ids.clientView])).toHaveLength(1) },
+    { address: "/api/walker/invoices/tags/[id]", method: "PATCH", params: () => ({ id: ids.invoiceTag }), json: () => ({ name: "Pris" }) },
+    { address: "/api/walker/invoices/tags/[id]", method: "DELETE", params: () => ({ id: ids.invoiceTag }), intact: async () => expect(await query("SELECT 1 FROM organize.tag WHERE id = $1", [ids.invoiceTag])).toHaveLength(1) },
+    { address: "/api/walker/invoices/views/[id]", method: "PATCH", params: () => ({ id: ids.invoiceView }), json: () => ({ name: "Pris" }) },
+    { address: "/api/walker/invoices/views/[id]", method: "DELETE", params: () => ({ id: ids.invoiceView }), intact: async () => expect(await query("SELECT 1 FROM organize.view WHERE id = $1", [ids.invoiceView])).toHaveLength(1) },
     { address: "/api/walker/shops/[id]", method: "PATCH", params: () => ({ id: ids.shopA }), json: () => ({ name: "Pris" }) },
     { address: "/api/walker/shops/[id]/default", method: "POST", params: () => ({ id: ids.shopA }) },
     { address: "/api/walker/shop-collections/[id]", method: "PATCH", params: () => ({ id: ids.collection }), json: () => ({ name: "Pris" }) },
