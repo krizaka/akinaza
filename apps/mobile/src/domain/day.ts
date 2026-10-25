@@ -1,3 +1,5 @@
+import { localDay } from "@krizaka/intl";
+
 /** A local day (`2026-10-20`) and its neighbours: the owner's day screen steps through them, and the URL keeps the one shown. */
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -6,7 +8,7 @@ export const isDay = (value: string | undefined): value is string => !!value && 
 export function shiftDay(day: string, by: number): string {
   const date = new Date(`${day}T00:00:00Z`);
   date.setUTCDate(date.getUTCDate() + by);
-  return date.toISOString().slice(0, 10);
+  return localDay(date, "UTC");
 }
 
 /** `13:00` of an instant, in the shop's time zone (the answers carry instants; the screen draws the owner's clock). */

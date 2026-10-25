@@ -18,6 +18,7 @@
     "no-status-move": 0,
     "no-ts-enum": 0,
     "no-types-at-package-root": 0,
-    "no-unjustified-numeric-export": 3
+    "no-unjustified-numeric-export": 3,
+    "no-utc-day-slice": 0
   }
 }

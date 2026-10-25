@@ -108,3 +108,7 @@ describe("Aujourd'hui's headline (D4): true in every state, in the trade's words
     expect(say(dayHeadline([], now, false))).toEqual({ key: "today.headline.otherDayEmpty", vars: {} });
   });
 });
+
+describe("shiftDay is calendar arithmetic, never the machine's zone (akinaza#320)", () => {
+  it.each([["2026-03-08", 1, "2026-03-09"], ["2026-11-01", 1, "2026-11-02"], ["2026-12-31", 1, "2027-01-01"], ["2028-03-01", -1, "2028-02-29"], ["2026-10-24", -3, "2026-10-21"]])("%s %i -> %s", (day, by, want) => expect(shiftDay(day, by)).toBe(want));
+});

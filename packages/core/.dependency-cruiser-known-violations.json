@@ -1,0 +1,128 @@
+[
+  {
+    "type": "dependency",
+    "from": "src/brief/gaps.ts",
+    "to": "../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/index.cjs",
+    "unresolvedTo": "date-fns",
+    "dependencyTypes": [
+      "npm",
+      "import"
+    ],
+    "rule": {
+      "severity": "error",
+      "name": "krizaka-first-dates"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "src/figures/actions.ts",
+    "to": "../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/index.cjs",
+    "unresolvedTo": "date-fns",
+    "dependencyTypes": [
+      "npm",
+      "import"
+    ],
+    "rule": {
+      "severity": "error",
+      "name": "krizaka-first-dates"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "src/figures/figures.ts",
+    "to": "../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/index.cjs",
+    "unresolvedTo": "date-fns",
+    "dependencyTypes": [
+      "npm",
+      "import"
+    ],
+    "rule": {
+      "severity": "error",
+      "name": "krizaka-first-dates"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "src/figures/period.ts",
+    "to": "../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/index.cjs",
+    "unresolvedTo": "date-fns",
+    "dependencyTypes": [
+      "npm",
+      "import"
+    ],
+    "rule": {
+      "severity": "error",
+      "name": "krizaka-first-dates"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "src/service-shop.ts",
+    "to": "../../node_modules/.pnpm/@date-fns+tz@1.5.0/node_modules/@date-fns/tz/index.cjs",
+    "unresolvedTo": "@date-fns/tz",
+    "dependencyTypes": [
+      "npm",
+      "import"
+    ],
+    "rule": {
+      "severity": "error",
+      "name": "krizaka-first-dates"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "src/service-shop.ts",
+    "to": "../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/index.cjs",
+    "unresolvedTo": "date-fns",
+    "dependencyTypes": [
+      "npm",
+      "import"
+    ],
+    "rule": {
+      "severity": "error",
+      "name": "krizaka-first-dates"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "src/storefront.ts",
+    "to": "../../node_modules/.pnpm/@date-fns+tz@1.5.0/node_modules/@date-fns/tz/index.cjs",
+    "unresolvedTo": "@date-fns/tz",
+    "dependencyTypes": [
+      "npm",
+      "import"
+    ],
+    "rule": {
+      "severity": "error",
+      "name": "krizaka-first-dates"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "src/storefront.ts",
+    "to": "../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/index.cjs",
+    "unresolvedTo": "date-fns",
+    "dependencyTypes": [
+      "npm",
+      "import"
+    ],
+    "rule": {
+      "severity": "error",
+      "name": "krizaka-first-dates"
+    }
+  },
+  {
+    "type": "dependency",
+    "from": "src/time-off.ts",
+    "to": "../../node_modules/.pnpm/date-fns@4.4.0/node_modules/date-fns/index.cjs",
+    "unresolvedTo": "date-fns",
+    "dependencyTypes": [
+      "npm",
+      "import"
+    ],
+    "rule": {
+      "severity": "error",
+      "name": "krizaka-first-dates"
+    }
+  }
+]

@@ -1,4 +1,5 @@
 import { type InvoiceLine, previewTotals } from "@akinaza/client";
+import { localDay } from "@akinaza/core";
 import { useMutation, useQuery, useQueryClient } from "@krizaka/query";
 import { Button, Card, Chip, Header, Screen, TextField, Txt } from "@krizaka/ui/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -8,7 +9,6 @@ import { View } from "react-native";
 import { akinaza, queries } from "@/config";
 import { routes } from "@/domain/links";
 import { dollars } from "@/domain/money";
-import { localDay } from "@akinaza/core";
 import { parseQuantity } from "@/domain/quantity";
 import { useI18n } from "@/i18n";
 import { useLocale } from "@/use-locale";

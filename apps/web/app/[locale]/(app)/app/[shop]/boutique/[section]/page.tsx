@@ -62,7 +62,7 @@ async function PageSection({ locale, shopId, tab }: { locale: RouteLocale; shopI
 /** Boutique › Langues: the languages on, each text in each of them (#258). */
 async function LanguagesSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
   const { shop } = await memberShop(shopId, "settings");
-  const [rows, rules, used] = await Promise.all([translationRows(db(), shop.id), translationRules(), translationRunsOn(db(), shop.id, new Date().toISOString().slice(0, 10))]);
+  const [rows, rules, used] = await Promise.all([translationRows(db(), shop.id), translationRules(), translationRunsOn(db(), shop.id, localDay(new Date(), shop.timezone))]);
   const data: LanguagesData = { source: rows.source as "fr" | "en", enabled: rows.enabled, allowed: rules.allowed, translationOn: rules.enabled, dailyLimit: rules.dailyLimit, usedToday: used, fields: rows.fields, setupHref: shopRoutes(locale, shop.id).setup };
   return <ShopLanguages data={data} />;
 }
