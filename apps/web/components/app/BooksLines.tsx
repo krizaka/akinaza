@@ -40,7 +40,7 @@ export function BooksLines({ lines }: { lines: BooksLineView[] }) {
                       <span>
                         <Badge tone={s.kind === "invoice" ? "accent" : "neutral"}>{say(`books.kinds.${s.kind}`)}</Badge> {s.label}
                       </span>
-                      <span className="font-mono">{formatMoney(s.amountCents, locale)}</span>
+                      <span className="tabular-nums">{formatMoney(s.amountCents, locale)}</span>
                     </li>
                   ))}
                 </ul>
@@ -49,7 +49,7 @@ export function BooksLines({ lines }: { lines: BooksLineView[] }) {
           </div>
         ),
       },
-      { id: "amount", header: say("books.table.amount"), align: "end", value: (r) => r.amountCents, cell: (r) => <span className="font-mono font-semibold">{formatMoney(r.amountCents, locale)}</span> },
+      { id: "amount", header: say("books.table.amount"), align: "end", value: (r) => r.amountCents, cell: (r) => <span className="font-semibold tabular-nums">{formatMoney(r.amountCents, locale)}</span> },
     ],
     [say, locale],
   );

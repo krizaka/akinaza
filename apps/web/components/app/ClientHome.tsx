@@ -95,7 +95,7 @@ function FileSection({ file, primary }: { file: ClientFileView; /** Whether « R
           <ul className="flex flex-col gap-2">
             {file.invoices.map((invoice) => (
               <li key={invoice.id}>
-                <Link className="text-fg-accent underline" href={accountRoutes(locale).invoice(invoice.id)}>
+                <Link className="tabular-nums text-fg-accent underline" href={accountRoutes(locale).invoice(invoice.id)}>
                   {say("client.invoiceOpen", { number: invoice.number })} · {formatMoney(invoice.totalCents, locale)}
                 </Link>
               </li>

@@ -72,8 +72,8 @@ export function InvoiceDocument({ invoice, locale, backHref, heading: Heading = 
         {invoice.lines.map((l) => (
           <li key={l.id} className="grid grid-cols-[1fr_auto] gap-x-4 py-2">
             <span className="text-fg">{l.description}</span>
-            <span className="text-right font-mono text-fg">{money(l.amountCents)}</span>
-            <span className="text-sm text-fg-muted">
+            <span className="text-right tabular-nums text-fg">{money(l.amountCents)}</span>
+            <span className="text-sm tabular-nums text-fg-muted">
               {t.quantity} {formatQuantity(l.quantityHundredths / 100, invoice.language)} × {money(l.unitPriceCents)}
             </span>
           </li>
@@ -81,13 +81,13 @@ export function InvoiceDocument({ invoice, locale, backHref, heading: Heading = 
       </ul>
       <dl className="ml-auto grid w-full max-w-xs grid-cols-[1fr_auto] gap-x-4 gap-y-1 text-sm">
         <dt className="text-fg-secondary">{t.subtotal}</dt>
-        <dd className="text-right font-mono">{money(invoice.subtotalCents)}</dd>
+        <dd className="text-right tabular-nums">{money(invoice.subtotalCents)}</dd>
         <dt className="text-fg-secondary">{t.gst}</dt>
-        <dd className="text-right font-mono">{money(invoice.gstCents)}</dd>
+        <dd className="text-right tabular-nums">{money(invoice.gstCents)}</dd>
         <dt className="text-fg-secondary">{t.qst}</dt>
-        <dd className="text-right font-mono">{money(invoice.qstCents)}</dd>
+        <dd className="text-right tabular-nums">{money(invoice.qstCents)}</dd>
         <dt className="border-t border-border-default pt-1 font-semibold text-fg">{t.total}</dt>
-        <dd className="border-t border-border-default pt-1 text-right font-mono font-semibold text-fg">{money(invoice.totalCents)}</dd>
+        <dd className="border-t border-border-default pt-1 text-right tabular-nums font-semibold text-fg">{money(invoice.totalCents)}</dd>
       </dl>
       <p className="text-xs text-fg-muted">{t.footer}</p>
     </article>

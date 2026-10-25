@@ -37,7 +37,7 @@ export function TodayInvoices({ invoices, locale, shopId, today }: { invoices: I
               <p className="break-words text-fg-secondary">{invoice.client ?? t.invoices.list.noClient}</p>
             </div>
             <div className="flex flex-col items-end">
-              <span className="font-mono tabular-nums text-fg">{formatMoney(invoice.totalCents, locale)}</span>
+              <span className="tabular-nums text-fg">{formatMoney(invoice.totalCents, locale)}</span>
               <span className="text-xs text-fg-secondary">{t.invoices.state[invoice.state]}</span>
             </div>
           </li>

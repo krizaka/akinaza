@@ -408,7 +408,7 @@ function HoursCard({ windows, daysOff }: { windows: SetupData["windows"]; daysOf
           {[...windows].sort((a, b) => WEEK.indexOf(a.weekday as never) - WEEK.indexOf(b.weekday as never) || a.startsAt.localeCompare(b.startsAt)).map((w) => (
             <li key={w.id} className="flex items-center justify-between gap-3 py-1.5 text-sm">
               <span className="text-fg">
-                {dayName(w.weekday)} <span className="font-mono text-fg-secondary">{w.startsAt.slice(0, 5)}–{w.endsAt.slice(0, 5)}</span>
+                {dayName(w.weekday)} <span className="tabular-nums text-fg-secondary">{w.startsAt.slice(0, 5)}–{w.endsAt.slice(0, 5)}</span>
               </span>
               <Button size="sm" variant="ghost" aria-label={say("shopSetup.hours.remove", { day: dayName(w.weekday), from: w.startsAt.slice(0, 5), to: w.endsAt.slice(0, 5) })} onClick={() => call.run(`/api/walker/hours/${w.id}`, { method: "DELETE" })}>
                 ×
@@ -436,7 +436,7 @@ function HoursCard({ windows, daysOff }: { windows: SetupData["windows"]; daysOf
         <ul className="mb-3 flex flex-wrap gap-2">
           {daysOff.map((d) => (
             <li key={d.id} className="inline-flex items-center gap-1 rounded-sm border border-border-default bg-surface-2 py-1 pl-3 pr-1 text-sm text-fg">
-              <span className="font-mono">{d.onDate}</span>
+              <span className="tabular-nums">{d.onDate}</span>
               {d.reason ? <span className="text-fg-secondary">· {d.reason}</span> : null}
               <Button size="sm" variant="ghost" shape="pill" aria-label={say("shopSetup.hours.dayOffRemove", { day: d.onDate })} onClick={() => call.run(`/api/walker/days-off/${d.onDate}`, { method: "DELETE" })}>
                 ×

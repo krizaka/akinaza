@@ -20,8 +20,8 @@ export function InvoicePublicDocument({ invoice, locale, today, token }: { invoi
       <section className="rounded-lg border border-border-default bg-surface-1 p-5" aria-label={t.payment}>
         <h2 className="font-display text-lg font-bold text-fg">{t.payment}</h2>
         <dl className="mt-2 grid grid-cols-2 gap-2 text-sm">
-          <dt className="text-fg-secondary">{t.received}</dt><dd className="text-right font-mono text-fg">{money.format(invoice.paidCents / 100)}</dd>
-          <dt className="text-fg-secondary">{t.balance}</dt><dd className="text-right font-mono font-semibold text-fg">{money.format(balance / 100)}</dd>
+          <dt className="text-fg-secondary">{t.received}</dt><dd className="text-right tabular-nums text-fg">{money.format(invoice.paidCents / 100)}</dd>
+          <dt className="text-fg-secondary">{t.balance}</dt><dd className="text-right font-semibold tabular-nums text-fg">{money.format(balance / 100)}</dd>
           <dt className="text-fg-secondary">{t.state}</dt><dd className="text-right text-fg">{t.states[state]}</dd>
         </dl>
         <p className="mt-3 text-sm text-fg-secondary">{invoice.termsDays === 0 ? t.payOnReceipt : invoice.termsDays ? format(t.terms, { days: invoice.termsDays }) : t.noTerms}</p>

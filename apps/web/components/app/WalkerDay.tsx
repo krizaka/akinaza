@@ -47,7 +47,7 @@ function VisitCard({ visit, timeZone }: { visit: DayVisitView; timeZone: string 
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 id={`visit-${visit.appointmentId}`} className="font-display text-lg font-bold text-fg">
-            <span className="font-mono">
+            <span className="tabular-nums">
               {formatTime(visit.startsAt, locale, timeZone)}–{formatTime(visit.endsAt, locale, timeZone)}
             </span>{" "}
             · {visit.service[locale]}

@@ -207,7 +207,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
                   items={[
                     { term: say("today.detail.service"), details: open.appointment.service[locale] },
                     { term: say("today.detail.with"), details: open.appointment.staff },
-                    { term: say("today.detail.price"), details: <span className="font-mono">{formatMoney(open.appointment.priceCents, locale)}</span> },
+                    { term: say("today.detail.price"), details: <span className="tabular-nums">{formatMoney(open.appointment.priceCents, locale)}</span> },
                     { term: say("today.detail.status"), details: say(`today.statuses.${statusWord(open.appointment)}`) },
                   ]}
                 />

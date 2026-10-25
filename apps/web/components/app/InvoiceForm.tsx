@@ -55,7 +55,7 @@ function Step({ n, title, children }: { n: string; title: string; children: Reac
   return (
     <section className="flex flex-col gap-3" aria-label={title}>
       <h2 className="flex items-baseline gap-3 text-lg font-semibold text-fg">
-        <span className="font-mono text-sm tabular-nums text-fg-accent">{n}</span>
+        <span className="text-sm font-semibold tabular-nums text-fg-accent">{n}</span>
         {title}
       </h2>
       {children}

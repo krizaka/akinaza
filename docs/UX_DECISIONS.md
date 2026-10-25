@@ -341,3 +341,14 @@ among the shops and clients of every demo seed (`seed-krizaka`, `seed-walker`, `
   until krizaka-ui#630 gives the rail a task mode; the submit is drawn twice (aside, sticky), one per width, and the crawl
   counts the primary in view.
 - **Signal we are wrong**: owners issue then correct right away (#207), or abandon the form on a phone.
+
+## The product register: the sans, the h1 at 700, tabular digits (Phase 2, D1)
+
+`/app` draws in Krizaka UI's product register (direction § 2.4): the sans for everything, the system code mono only for
+identifiers (invoice numbers, FPZ-500 line numbers, tax numbers, links), tabular digits on every amount and time. The faces come
+from @krizaka/ui's product surface (`data-surface="product"` on the root; its `blocks.css` sets display to the sans and mono to
+`ui-monospace`), until krizaka-ui#626 moves them into the brand tokens: no Young Serif, Courier Prime or Cahier pen is loaded by
+`/app` (measured on Factures, an invoice, Livres and Aujourd'hui). The page `h1` is at 700 — `PageHeader` draws 900 — through one
+local rule in `app/globals.css`, to remove with krizaka-ui#655. Amounts that were in the mono (the invoice's lines and totals,
+Livres' lines, an appointment's price, the paid and balance of the public invoice) are in the sans with `tabular-nums`; the tables'
+number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `components/app/product-register.test.tsx`.
