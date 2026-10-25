@@ -1273,7 +1273,8 @@
         "cash": "cash",
         "card": "card",
         "transfer": "transfer"
-      }
+      },
+      "eyebrow": "Invoice"
     },
     "invoiceDoc": {
       "title": "Invoice / Facture",

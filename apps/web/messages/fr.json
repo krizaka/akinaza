@@ -1273,7 +1273,8 @@
         "cash": "comptant",
         "card": "carte",
         "transfer": "virement"
-      }
+      },
+      "eyebrow": "Facture"
     },
     "invoiceDoc": {
       "title": "Facture / Invoice",

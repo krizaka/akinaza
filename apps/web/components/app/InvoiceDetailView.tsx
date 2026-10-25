@@ -44,7 +44,7 @@ export function InvoiceDetailView({ invoice, deliveries, locale, routes, today, 
   return (
     <DetailLayout
       back={<Link href={routes.invoices}>{t.invoices.title}</Link>}
-      eyebrow={invoice.creditOf ? t.invoiceDoc.credit : t.invoiceDoc.title}
+      eyebrow={invoice.creditOf ? t.invoices.list.credit : t.invoices.eyebrow}
       title={<span className="font-mono tabular-nums">{invoice.number}</span>}
       status={
         <Badge tone={STATE_TONE[state]} data-state={state}>
