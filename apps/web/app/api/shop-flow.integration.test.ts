@@ -113,7 +113,8 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     const raw = await query<{ access_notes_enc: string }>("SELECT access_notes_enc FROM clients WHERE id = $1", [ids.clientFile]);
     expect(raw[0]!.access_notes_enc).toMatch(/^v1\./);
     expect(raw[0]!.access_notes_enc).not.toContain("4821");
-    const start = offered.body.slots[0].startsAt;
+    // A slot an hour ahead at least: the first one offered can start before the booking reaches the server.
+    const start = offered.body.slots.find((slot: { startsAt: string }) => new Date(slot.startsAt) > addHours(new Date(), 1)).startsAt;
     const hook = await call(addHook, "POST", "/api/walker/webhooks", { token: walker, json: { url: "https://hooks.example.com/bookings", events: ["booking.created"] } });
     expect(hook.status).toBe(201);
     const booked = await call(book, "POST", "/api/me/bookings", { token: client, json: { clientId: ids.clientFile, serviceId: ids.solo, zoneId: ids.stHenri, dependantIds: [ids.dog], startsAt: start } });
@@ -210,7 +211,9 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
       seen.push({ url, auth: (init.headers as Record<string, string>).Authorization!, body: init.body as URLSearchParams });
       return new Response("{}", { status: 200 });
     }) as unknown as typeof fetch;
-    const stillPending = await flushOutbox(db(), new Date(), mailgun, ok);
+    // Only this journey's mails: CI's database is shared by the integration files running in parallel (akinaza#341).
+    const ours = (await query<{ id: string }>("SELECT id FROM mail_outbox WHERE related_id = $1 AND status = 'pending'", [ids.report])).map((m) => m.id);
+    const stillPending = await flushOutbox(db(), new Date(), mailgun, ok, { ids: ours });
     expect(stillPending.sent).toBeGreaterThanOrEqual(1); // the earlier, unconfigured mail goes out now
     seen.length = 0;
     const sent = await sendWalkReport(db(), (await query<{ id: string }>("SELECT id FROM shops WHERE slug = $1", [`pattes-${stamp}`]))[0]!.id, ids.booking!, new Date(), mailgun, ok);
@@ -232,7 +235,7 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     for (let i = 0; i < 5; i++) statuses.push((await sendWalkReport(db(), shopId, ids.booking!, new Date(), mailgun, down)).status);
     expect(statuses).toEqual(["pending", "pending", "pending", "pending", "pending"]); // each send is a new mail with its first attempt
     const failing = await query<{ id: string }>("SELECT id FROM mail_outbox WHERE related_id = $1 AND status = 'pending'", [ids.report]);
-    for (let i = 0; i < 4; i++) await flushOutbox(db(), new Date(), mailgun, down);
+    for (let i = 0; i < 4; i++) await flushOutbox(db(), new Date(), mailgun, down, { ids: failing.map((m) => m.id) });
     expect(await query("SELECT 1 FROM mail_outbox WHERE related_id = $1 AND status = 'failed'", [ids.report])).toHaveLength(failing.length);
     // The last successful link is gone with the failed sends' rotation; take a good one again.
     ids.token = undefined;

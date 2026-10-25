@@ -10,6 +10,8 @@ import { join } from "node:path";
 
 import { chromium } from "playwright-core";
 
+/** After `load`, the time fonts and images take to lay the page out. */
+const SETTLE_MS = 600;
 export const WIDTHS = [360, 390, 430, 768, 1024, 1440];
 export const THEMES = ["dark", "light"];
 export const PAGES = ["/en", "/fr", "/en/privacy", "/fr/privacy", "/en/changelog", "/fr/changelog", "/en/sign-in", "/fr/sign-in"];
@@ -38,7 +40,9 @@ export async function check({ base, shots }) {
       for (const width of WIDTHS) {
         await page.setViewportSize({ width, height: 900 });
         current = `${path} @${width} ${theme}`;
-        const response = await page.goto(`${base}${path}`, { waitUntil: "networkidle" });
+        // `load`, then the time the layout takes to settle: a looping video keeps the network busy, so « idle » may never come (akinaza#341).
+        const response = await page.goto(`${base}${path}`, { waitUntil: "load" });
+        await page.waitForTimeout(SETTLE_MS);
         if (!response || response.status() >= 400) problems.push(`${current}: HTTP ${response?.status() ?? "none"}`);
         const empty = await page.evaluate(() => document.querySelector("main")?.innerText.trim().length === 0);
         if (empty) problems.push(`${current}: empty <main>`);
