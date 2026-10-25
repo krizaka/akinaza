@@ -1,4 +1,5 @@
 import { invoiceTotals, type TaxCategory } from "@akinaza/core";
+import { localDay } from "@krizaka/intl";
 
 /** The strip shows a few days before the chosen one, so « yesterday » is one tap away; it stays put while the chosen day is inside it. */
 const DAYS_BEFORE = 3;
@@ -17,7 +18,7 @@ export function isIsoDay(value: string | undefined): value is string {
 }
 
 export function shiftDay(day: string, days: number): string {
-  return new Date(Date.parse(`${day}T00:00:00Z`) + days * MS_PER_DAY).toISOString().slice(0, 10);
+  return localDay(Date.parse(`${day}T00:00:00Z`) + days * MS_PER_DAY, "UTC");
 }
 
 /** The first day of the strip around `day`: anchored on today while the chosen day is in its reach, on the chosen day otherwise. */

@@ -1,5 +1,6 @@
 import { saveShopLanguages, translationRunsOn } from "@akinaza/db";
 import { translationRows } from "@akinaza/db";
+import { localDay } from "@krizaka/intl";
 import { z } from "zod";
 
 import { requireOwner } from "@/lib/access";
@@ -18,7 +19,7 @@ export function GET(req: Request) {
     const { shop } = await requireOwner(req);
     const rules = await translationRules();
     const rows = await translationRows(db(), shop.id);
-    const today = new Date().toISOString().slice(0, 10);
+    const today = localDay(new Date(), shop.timezone);
     return Response.json({ ...rows, allowed: rules.allowed, translationOn: rules.enabled, dailyLimit: rules.dailyLimit, usedToday: await translationRunsOn(db(), shop.id, today) }, { headers: { "Cache-Control": "private, no-store" } });
   });
 }

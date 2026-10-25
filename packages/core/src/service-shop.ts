@@ -95,7 +95,8 @@ export function localInstant(day: string, minutes: number, timezone: string): Da
 }
 
 /** The local day (`YYYY-MM-DD`) an instant falls in, in the shop's zone. */
-export const localDay = (instant: Date, timezone: string): string => format(new TZDate(instant, timezone), "yyyy-MM-dd");
+/** The calendar day of an instant in a zone: `@krizaka/intl`'s, one function for the family. */
+export { localDay } from "@krizaka/intl";
 
 /** The weekday (0 = Sunday) of a local day. */
 export function weekdayOf(day: string): number {

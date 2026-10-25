@@ -1,0 +1,17 @@
+id: no-utc-day-slice
+language: Tsx
+severity: error
+message: "`toISOString().slice(0, 10)` is the UTC day, not the shop's calendar day: in Montréal after 19:00 or 20:00 it is already tomorrow. Use `localDay(instant, timeZone)` from `@krizaka/intl` (the shop's zone, `shopDay` on the server)."
+note: "akinaza#320, yomizaka#309: a day is read in the zone it is lived in. The clock is passed in, so the day is testable."
+rule:
+  pattern: $X.toISOString().slice(0, 10)
+ignores:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/dist/**"
+  - "**/*.test.ts"
+  - "**/__tests__/**"
+  - "**/tests/**"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+  - "**/*.spec.tsx"

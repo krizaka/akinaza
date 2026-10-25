@@ -3,7 +3,7 @@ import { TabBar } from "@krizaka/ui/native";
 import { Tabs, useRouter } from "expo-router";
 import * as React from "react";
 
-import { TABS, type TabName } from "@/domain/links";
+import { type TabName,TABS } from "@/domain/links";
 import { useI18n } from "@/i18n";
 import { useLocale } from "@/use-locale";
 import { useShop } from "@/use-shop";

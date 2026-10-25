@@ -1,3 +1,4 @@
+import { localDay } from "@krizaka/intl";
 import { eq } from "drizzle-orm";
 
 import type { Db } from "./client";
@@ -42,7 +43,7 @@ export async function seedDemoShop(db: Db, ownerEmail: string, now = new Date())
     await recordConsent(db, c.id, "reminders", c.email !== null, "2026-10-15");
   }
   // Today, from 9:00 in Montréal (13:00 UTC in daylight time — the shop's zone decides what "today" is).
-  const day = now.toISOString().slice(0, 10);
+  const day = localDay(now, "America/Toronto");
   const slot = (h: number, m = 0) => new Date(`${day}T${String(h + 4).padStart(2, "0")}:${String(m).padStart(2, "0")}:00Z`);
   const todays = [
     { staffId: julie!.id, serviceId: cut!.id, clientId: people[0]!.id, startsAt: slot(9, 30) },

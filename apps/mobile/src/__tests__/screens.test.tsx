@@ -5,12 +5,12 @@ import * as React from "react";
 
 import { I18nProvider } from "@/i18n";
 
-import Home from "../../app/[locale]/app/index";
+import Today from "../../app/[locale]/app/[shop]/aujourdhui";
 import Books from "../../app/[locale]/app/[shop]/books";
 import Boutique from "../../app/[locale]/app/[shop]/boutique";
 import Clients from "../../app/[locale]/app/[shop]/clients";
 import Invoices from "../../app/[locale]/app/[shop]/invoices/index";
-import Today from "../../app/[locale]/app/[shop]/aujourdhui";
+import Home from "../../app/[locale]/app/index";
 
 const SHOP = "6f1d2c3b-4a5e-4f60-8a7b-9c0d1e2f3a4b";
 

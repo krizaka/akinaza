@@ -8,7 +8,7 @@ import { BriefBanner } from "@/components/app/BriefBanner";
 import { TodayDay } from "@/components/app/TodayDay";
 import { type DayVisitView, WalkerDay } from "@/components/app/WalkerDay";
 import { loadShopBrief } from "@/lib/brief";
-import { dayView } from "@/lib/day";
+import { dayView, shiftDay } from "@/lib/day";
 import { db } from "@/lib/db";
 import { formatLongDay } from "@/lib/format";
 import { asLocale, format, getDictionary, type Locale } from "@/lib/i18n";
@@ -92,11 +92,7 @@ async function StaffDay({ locale, shop, day: requested }: { locale: Locale; shop
   const today = await shopDay(db(), shop.id, new Date());
   const day = requested && /^\d{4}-\d{2}-\d{2}$/.test(requested) ? requested : today;
   const visits = await dayVisits(db(), shop.id, day);
-  const step = (n: number) => {
-    const d = new Date(`${day}T12:00:00Z`);
-    d.setUTCDate(d.getUTCDate() + n);
-    return routes.today(d.toISOString().slice(0, 10));
-  };
+  const step = (n: number) => routes.today(shiftDay(day, n));
   return (
     <div className="flex flex-col gap-4">
       <PageHeader title={t.meta.today} description={format(t.walker.dayLine, { date: formatLongDay(day, locale), count: visits.length })} />

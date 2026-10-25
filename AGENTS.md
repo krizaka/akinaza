@@ -137,6 +137,7 @@ with a message and, where safe, a `fix:`; written for Tsx and `.ts` is parsed as
 | `no-locale-ternary` | a text chosen with a locale ternary (`locale === "fr" ? a.nameFr : a.nameEn`, `isFr ? …`): a message (`say`) or the pair indexed by the locale, `{ fr, en }[locale]`; a choice between two locale tags (`"fr-CA" : "en-CA"`) is allowed |
 | `no-hand-made-nav`, `no-hand-made-language-switch` | a navigation bar that is not `NavBar` of @krizaka/ui (own Radix NavigationMenu, a local `NavBar`/`TopNav`), a hand-made language switch (`hrefLang` in a component, a row of `aria-pressed={locale === …}` buttons): use `NavBar` and `NavBar.Language` (« Navigation in the family », ui.krizaka.com) |
 | `no-status-move` | `ws.status.move(…)`: Akinaza has no editable status set; an invoice's state is derived from the ledger, so a « bulk paid » must not exist (akinaza#337) |
+| `no-utc-day-slice` | `x.toISOString().slice(0, 10)`: that is the UTC day, not the shop's (in Montréal after 19:00 it is tomorrow). `localDay(instant, timeZone)` of `@krizaka/intl` (`shopDay` on the server) |
 
 - **Run**: `npm run lint` runs everything (it includes `ast-grep test` and the ratchet). `npx ast-grep scan` lists the
   violations with their message; `npm run lint:sg:test` runs the rule tests.
@@ -145,6 +146,7 @@ with a message and, where safe, a `fix:`; written for Tsx and `.ts` is parsed as
   `npm run sg:ratchet:update` (it never raises a count and records a new rule at its current count). A new rule is
   added with its test in `rule-tests/` and its baseline in the same pull request. The script is identical in every
   Krizaka TypeScript repository (keep the copies identical; its unit test is `scripts/sg-ratchet.test.mjs`).
+- **Imports** (`.dependency-cruiser.cjs`, the shared preset of `@krizaka/config`, run by `pnpm run lint:deps` / `scripts/deps.mjs`, one run per workspace): « Krizaka first » (`date-fns` is refused in apps; the existing uses are in each workspace's `.dependency-cruiser-known-violations.json`, which only shrinks: `node scripts/deps.mjs update`), no cycle, no unresolvable import, no devDependency in production code. A new workspace is added to `WORKSPACES` (a test fails otherwise).
 - **Codemods**: `npm run sg:fix` applies the `fix:` of the rules (`ast-grep scan --update-all`) and adds the date-fns import;
   behaviour is identical — run `npm run lint && npm test` after, and land the result in a small pull request.
 - A rule is never silenced to get a PR green; fix the code, or (a business parameter that is a technical fact) justify it with `// @fixed:`.
