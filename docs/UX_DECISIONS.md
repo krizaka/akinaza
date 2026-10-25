@@ -319,3 +319,25 @@ among the shops and clients of every demo seed (`seed-krizaka`, `seed-walker`, `
 - **Cost**: twenty-six table messages to keep in two languages until krizaka-ui#595 lands; the list no longer sorts by issue date
   by default (overdue first), the header still sorts.
 - **Signal we are wrong**: owners sort by date first every time, or look for the month filter.
+
+## Nouvelle facture: lines added and removed, the total in view, numbered steps (Phase 2, D3, #330)
+
+- **Decision**: the form asks in three numbered steps — **01 Pour qui ?** (a client file, or none), **02 Quoi ?** (lines added
+  and removed: a service of the shop at its price, or « Autre » with its words and price; a quantity to the hundredth, typed
+  with a comma or a point), **03 Quand ?** (today, under the shop's terms; the number is given at issue). The total is in view:
+  beside the form from `lg` (a 20 rem aside), in a `StickyAction` above the phone's tab bar below it — and it is **the server's
+  own computation** (`draftPreview` calls `invoiceTotals` of @akinaza/core: GST and QST once on the taxable total, half away from
+  zero), in fr-CA or en-CA money from integer cents. The address prefills it: « Facturer ce client » on a client's file
+  (`?client=`) and « Facturer ce rendez-vous » on a finished appointment's sheet (`?client=&service=&quantity=1`); a client or
+  a service of another shop answers 404. Issued, the invoice opens with « Facture KZ-… émise » and the beaver (`success`), and
+  « Envoyer la facture » is its primary (D2).
+- **Problem**: three fixed service slots and one « other line », no total before issuing, the date and the number unsaid, and
+  no way to bill the client or the appointment one was looking at.
+- **Principle**: visibility of system status and error prevention (Nielsen): the owner sees what the client will pay before it
+  is in the ledger, and the total cannot differ from the issued one.
+- **Refused**: a local `LineItems` / `TotalsSummary` (krizaka-ui#629 brings them; the lines are the form's `FieldArray` until
+  then); a client-side tax rule of its own; editing the date or the number here.
+- **Cost**: the sticky action clears the tab bar by its known height (`STICKY_CLEARS_TAB_BAR`, 3.5 rem plus the safe area)
+  until krizaka-ui#630 gives the rail a task mode; the submit is drawn twice (aside, sticky), one per width, and the crawl
+  counts the primary in view.
+- **Signal we are wrong**: owners issue then correct right away (#207), or abandon the form on a phone.

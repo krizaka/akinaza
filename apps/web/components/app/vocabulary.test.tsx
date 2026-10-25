@@ -76,6 +76,13 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
     expect(text).not.toMatch(/Animal|Chien|Dog|Access notes|Notes d'accès/);
   });
 
+  it("bills the client from their file when the role may invoice (« Facturer ce client », D3)", () => {
+    const file = { client: { id: "c-9", fullName: "Studio Lumen inc.", phone: null, email: null, language: "fr" as const, notes: null, hasAccessNotes: false, since: "2026-01-01T12:00:00.000Z" }, dependants: [], visits: [], invoices: [] };
+    const html = renderIn("fr", "professional", <ShopSession locale="fr" shopId="s1" remembered><ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" mayInvoice /></ShopSession>);
+    expect(html).toMatch(/href="\/fr\/app\/s1\/invoices\/new\?client=c-9"[^>]*>[\s\S]*?Facturer ce client/);
+    expect(renderIn("fr", "professional", <ShopSession locale="fr" shopId="s1" remembered><ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>)).not.toContain("Facturer ce client");
+  });
+
   it("a client's space speaks each shop's own words", () => {
     const file = (shopName: string, businessType: BusinessType): ClientFileView => ({ client: { id: shopName, fullName: "Jordan", shopName, shopSlug: shopName.toLowerCase(), businessType }, dogs: businessType === "pets" ? [{ id: "d", name: "Luna", breed: null }] : [], bookings: [], requests: { clientId: shopName, shopSlug: shopName.toLowerCase(), requests: [], catalogue: null }, now: "2026-10-20T00:00:00Z", timeZone: "America/Toronto" });
     const html = around(locale, "pets", <ClientHome files={[file("Studio", "professional"), file("Pattes", "pets")]} />);

@@ -21,6 +21,7 @@ import { type DayVisitView, VisitBookings, VisitProgress } from "@/components/ap
 import { AppointmentStatus, daySummary, STATUS_TONE, statusWord, stripWindow } from "@/lib/day";
 import { formatMoney, formatTime } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import type { ShopRoutes } from "@/lib/routes";
 import type { TodayAppointment } from "@/lib/today";
 
 type Row = AgendaItem & { appointment: TodayAppointment; visit: DayVisitView | null };
@@ -36,6 +37,12 @@ function VisitAction({ appointment }: { appointment: TodayAppointment }) {
       {say(appointment.checkedInAt ? "today.finish" : "today.start")}
     </Button>
   );
+}
+
+/** « Facturer ce rendez-vous » (D3): a finished appointment opens « Nouvelle facture » with its client, its service and one unit. */
+export function billAppointmentHref(a: TodayAppointment, routes: Pick<ShopRoutes, "newInvoiceFor">, mayInvoice: boolean): string | null {
+  if (!mayInvoice || a.status !== AppointmentStatus.Done) return null;
+  return routes.newInvoiceFor({ client: a.clientId ?? undefined, service: a.serviceId, quantity: "1" });
 }
 
 export interface TodayDayProps {
@@ -107,6 +114,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
     };
   });
   const open = rows.find((r) => r.id === selectedId) ?? null;
+  const billing = open ? billAppointmentHref(open.appointment, routes, newInvoiceHref !== null) : null;
   // The day's one primary (D1b): open the next appointment; when nobody comes next, a new invoice. The frame's header yields here.
   const next = summary.next;
   const primary = next ? (
@@ -207,6 +215,11 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
             </Dialog.Body>
             <Dialog.Footer>
               {open.visit ? null : <VisitAction appointment={open.appointment} />}
+              {billing ? (
+                <Button asChild variant="secondary">
+                  <Link href={billing}>{say("today.detail.bill")}</Link>
+                </Button>
+              ) : null}
               {allow.clients && open.appointment.clientId ? (
                 <Button asChild variant="secondary">
                   <Link href={routes.client(open.appointment.clientId)}>{say("today.detail.clientFile")}</Link>

@@ -434,7 +434,8 @@
         "with": "Avec",
         "price": "Prix",
         "status": "Statut",
-        "clientFile": "Ouvrir la fiche client"
+        "clientFile": "Ouvrir la fiche client",
+        "bill": "Facturer ce rendez-vous"
       },
       "offToday": "En congé aujourd'hui : {names}.",
       "offUntil": "{name} (jusqu'au {until})",
@@ -684,7 +685,8 @@
         "price": "Prix",
         "number": "Numéro",
         "total": "Total",
-        "credit": "Note de crédit"
+        "credit": "Note de crédit",
+        "bill": "Facturer ce client"
       },
       "requests": {
         "title": "Ses demandes gardées",
@@ -1176,14 +1178,24 @@
         "title": "Nouvelle facture",
         "client": "Client",
         "noClient": "Sans fiche client",
-        "service": "Service {n}",
-        "noService": "—",
+        "steps": {
+          "who": "Pour qui ?",
+          "what": "Quoi ?",
+          "when": "Quand ?"
+        },
+        "line": "Ligne {n}",
+        "service": "Service",
+        "freeLine": "Autre (à décrire)",
+        "description": "Description",
+        "unitPrice": "Prix unitaire",
         "quantity": "Quantité",
-        "customDescription": "Autre ligne (description)",
-        "customPrice": "Prix unitaire",
-        "customQuantity": "Quantité de l'autre ligne",
+        "addLine": "Ajouter une ligne",
+        "removeLine": "Retirer la ligne {n}",
+        "when": "Datée d’aujourd’hui, le {date}. L’échéance suit vos conditions de paiement, et le numéro est donné à l’émission.",
+        "totals": "Total de la facture",
+        "totalPending": "Ajoutez une ligne pour voir le total.",
         "submit": "Émettre la facture",
-        "needLine": "Choisissez au moins un service, ou écrivez une ligne avec son prix."
+        "needLine": "Choisissez un service, ou écrivez une ligne avec son prix."
       },
       "list": {
         "title": "Factures émises",
@@ -1274,7 +1286,11 @@
         "card": "carte",
         "transfer": "virement"
       },
-      "eyebrow": "Facture"
+      "eyebrow": "Facture",
+      "issued": {
+        "title": "Facture {number} émise",
+        "next": "Envoyez-la à votre client : elle s’ouvre dans sa langue."
+      }
     },
     "invoiceDoc": {
       "title": "Facture / Invoice",

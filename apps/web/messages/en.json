@@ -434,7 +434,8 @@
         "with": "With",
         "price": "Price",
         "status": "Status",
-        "clientFile": "Open the client file"
+        "clientFile": "Open the client file",
+        "bill": "Bill this appointment"
       },
       "offToday": "Off today: {names}.",
       "offUntil": "{name} (until {until})",
@@ -684,7 +685,8 @@
         "price": "Price",
         "number": "Number",
         "total": "Total",
-        "credit": "Credit note"
+        "credit": "Credit note",
+        "bill": "Bill this client"
       },
       "requests": {
         "title": "Their kept requests",
@@ -1176,14 +1178,24 @@
         "title": "New invoice",
         "client": "Client",
         "noClient": "No client file",
-        "service": "Service {n}",
-        "noService": "—",
+        "steps": {
+          "who": "Who for?",
+          "what": "What?",
+          "when": "When?"
+        },
+        "line": "Line {n}",
+        "service": "Service",
+        "freeLine": "Other (describe it)",
+        "description": "Description",
+        "unitPrice": "Unit price",
         "quantity": "Quantity",
-        "customDescription": "Other line (description)",
-        "customPrice": "Unit price",
-        "customQuantity": "Quantity of the other line",
+        "addLine": "Add a line",
+        "removeLine": "Remove line {n}",
+        "when": "Dated today, {date}. The due date follows your payment terms, and the number is given at issue.",
+        "totals": "Invoice total",
+        "totalPending": "Add a line to see the total.",
         "submit": "Issue the invoice",
-        "needLine": "Choose at least one service or write a line with its price."
+        "needLine": "Choose a service, or write a line with its price."
       },
       "list": {
         "title": "Issued invoices",
@@ -1274,7 +1286,11 @@
         "card": "card",
         "transfer": "transfer"
       },
-      "eyebrow": "Invoice"
+      "eyebrow": "Invoice",
+      "issued": {
+        "title": "Invoice {number} issued",
+        "next": "Send it to your client: it opens in their language."
+      }
     },
     "invoiceDoc": {
       "title": "Invoice / Facture",

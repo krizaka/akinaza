@@ -15,6 +15,8 @@ export interface TodayAppointment {
   endsAt: string;
   staff: string;
   service: { fr: string; en: string };
+  /** The service booked: a finished appointment is billed with it (« Facturer ce rendez-vous », D3). */
+  serviceId: string;
   clientId: string | null;
   client: string | null;
   status: AppointmentStatus;
@@ -59,6 +61,7 @@ export async function todayView(shop: { id: string; name: string; registrant: bo
       endsAt: new Date(r.end).toISOString(),
       staff: r.staff,
       service: { fr: r.nameFr, en: r.nameEn },
+      serviceId: r.a.serviceId,
       clientId: r.clientId,
       client: r.client,
       status: r.a.status,
