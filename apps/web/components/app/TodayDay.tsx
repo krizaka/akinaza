@@ -16,7 +16,7 @@ import { Meter } from "@krizaka/ui/meter";
 import { getISOWeek } from "date-fns";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { SectionError } from "@/components/app/SectionError";
 import { useShopRoutes } from "@/components/app/ShopSession";
@@ -31,14 +31,19 @@ import type { TodayAppointment } from "@/lib/today";
 
 type Row = AgendaItem & { appointment: TodayAppointment; visit: DayVisitView | null };
 
-/** The next step of a visit, one quiet button: start it, then finish it (the same calls as the walker's day). */
+/**
+ * The next step of a visit, one quiet button: start it, then finish it (the same calls as the walker's day). The step that
+ * succeeded rings once on the button (`data-kz-status="success"`, motion.css, D11); nothing rings on the page's arrival.
+ */
 function VisitAction({ appointment }: { appointment: TodayAppointment }) {
   const { say } = useSay();
   const call = useCall();
+  const [succeeded, setSucceeded] = useState(false);
   if (appointment.status !== AppointmentStatus.Booked) return null;
   const step = appointment.checkedInAt ? "check-out" : "check-in";
+  const run = async () => setSucceeded((await call.run(`/api/walker/visits/${appointment.id}/${step}`)) !== null);
   return (
-    <Button size="sm" variant="ghost" loading={call.pending} onClick={() => call.run(`/api/walker/visits/${appointment.id}/${step}`)}>
+    <Button size="sm" variant="ghost" loading={call.pending} data-kz-status={succeeded ? "success" : undefined} onClick={run}>
       {say(appointment.checkedInAt ? "today.finish" : "today.start")}
     </Button>
   );
@@ -201,6 +206,8 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
         }
       >
         <Widget span={3} title={say("today.agendaLabel")} id="agenda">
+          {/* TODO(krizaka-ui#680): a changed appointment washes once when `Agenda` can mark its row (`data-kz-arrive` on the `li`);
+              until then only the step that succeeded rings (VisitAction). */}
           <Agenda
             items={rows}
             aria-label={say("today.agendaLabel")}

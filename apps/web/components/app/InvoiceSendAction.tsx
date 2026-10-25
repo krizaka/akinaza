@@ -17,7 +17,8 @@ const sendInvoiceForm = createKrizakaForm({
 
 /**
  * « Envoyer la facture »: a button opening the sending form in a dialog (the address, an optional message). On the invoice's
- * page it is the screen's one primary (`primary`, the hero primary); in a list's row it is a quiet secondary.
+ * page it is the screen's one primary (`primary`, the hero primary); in a list's row it is a quiet secondary. Once sent, the
+ * button rings once (`data-kz-status="success"`, motion.css, D11).
  */
 export function InvoiceSendAction({ invoiceId, email, defaultMessage = "", primary = false }: { invoiceId: string; email: string | null; defaultMessage?: string; primary?: boolean }) {
   const { say, locale } = useSay();
@@ -48,11 +49,11 @@ export function InvoiceSendAction({ invoiceId, email, defaultMessage = "", prima
       >
         <Dialog.Trigger asChild>
           {primary ? (
-            <Button size="md" variant="gradient" className="font-bold" data-primary>
+            <Button size="md" variant="gradient" className="font-bold" data-primary data-kz-status={sent ? "success" : undefined}>
               {say("invoices.send.open")}
             </Button>
           ) : (
-            <Button size="sm" variant="secondary">
+            <Button size="sm" variant="secondary" data-kz-status={sent ? "success" : undefined}>
               {say("invoices.send.open")}
             </Button>
           )}
