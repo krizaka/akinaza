@@ -1,8 +1,11 @@
-# The first screen opens: maestro test .maestro/smoke.yaml (a simulator with the app installed).
+# The first screen opens: maestro test .maestro/smoke.yaml (a simulator with the app installed). Runs in CI (mobile-e2e.yml).
 appId: com.krizaka.akinaza
+tags:
+  - ci
 ---
 - launchApp:
     clearState: true
 # Signed out, the app opens on sign-in (in either language): its e-mail field.
 - assertVisible:
     id: "email"
+- takeScreenshot: smoke-sign-in

@@ -1,0 +1,24 @@
+# Shared step (in shared/, so `maestro test .maestro` does not run it as a flow): signs in as the demo shop's owner when the
+# sign-in screen is there. PERSONA_EMAIL / PERSONA_PASSWORD come from the environment (mobile-e2e.yml in CI, -e locally),
+# never from this file.
+appId: com.krizaka.akinaza
+---
+- runFlow:
+    when:
+      visible:
+        id: email
+    commands:
+      - tapOn:
+          id: email
+      - inputText: ${PERSONA_EMAIL}
+      - hideKeyboard
+      - tapOn:
+          id: password
+      - inputText: ${PERSONA_PASSWORD}
+      - hideKeyboard
+      - tapOn:
+          id: submit
+- extendedWaitUntil:
+    notVisible:
+      id: submit
+    timeout: 30000
