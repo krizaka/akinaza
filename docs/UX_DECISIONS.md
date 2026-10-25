@@ -431,6 +431,20 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Cost**: the client's invoice rows read the payments and the superseding notes (`clientInvoices`), one sub-query each.
 - **Signal we are wrong**: clients write to the shop to ask whether an invoice is paid, or erase a file while looking for the copy.
 
+## The Mac menu is the rail (Phase 2, D9, #336)
+
+- **Decision**: the « Aller » menu lists the web rail's five places, in its order and words, in the Mac's language: ⌘1 Aujourd'hui ·
+  ⌘2 Clients · ⌘3 Factures · ⌘4 Livres · ⌘5 Boutique (Today · Clients · Invoices · Books · Shop). Each opens the web's address of the
+  shop on screen — Boutique is `/boutique`, the hub — else the web's short address. A test of the web reads the Mac's table and
+  refuses an address that is not a live page (`lib/app-addresses.test.ts`). The point of sale of #79 is out: Akinaza serves
+  service businesses, the POS stays a stub.
+- **Problem**: the menu kept the order of an older rail (Factures before Clients) and the word « Commerce »; ⌘5 opened
+  `/fr/app/<shop>/shop`, the address « Ma page boutique » had before K4, kept only as a redirect.
+- **Principle**: consistency (the same five places, the same order and the same digits on every surface).
+- **Refused**: a menu of its own for the Mac; a countertop/POS mode (restaurants, cafés and bars are excluded by law, AGENTS § 2).
+- **Cost**: a web test that reads a Rust table.
+- **Signal we are wrong**: owners press ⌘3 for Clients by habit of the old menu.
+
 ## Motion in the product register: a changed row washes once (Phase 2, D11, #338)
 
 - **Decision**: on Factures, a row whose state, payments or amount changed since the page's previous read — a payment recorded
