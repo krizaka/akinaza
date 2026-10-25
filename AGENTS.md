@@ -49,7 +49,7 @@
   deferred constraint trigger); a correction is a credit note. An AI's figures are reconciled against the ledger and every
   difference is shown — never silently adopted.
 - **Restaurants, cafés, bars and bakeries are excluded** (a sales recording system certified MEV-WEB is required in Québec): the database refuses those shop kinds. Akinaza targets service businesses only.
-  The point of sale stays a stub behind `APP_POS_ENABLED`. **Subscription payments (the founder offer, 39 $ CAD/month) go through a payments port** (`apps/web/lib/payments`, ADR-003): the vendor is configuration (`PAYMENTS_PROVIDER`), the price is data at the vendor, the webhook is verified and idempotent; the offer shows only when `APP_FOUNDER_OFFER_ENABLED`. No merchant payment (the shop's own sales) is wired.
+  The point of sale stays a stub behind `APP_POS_ENABLED`. **Subscription payments (the founder offer, 39 $ CAD/month plus taxes, the first 20 businesses by the setting `plans.founder.limit`; the regular plan, 49 $ plus taxes, is in the catalogue and not shown; prices in `apps/web/lib/pricing.ts`; never a fee on transactions) go through a payments port** (`apps/web/lib/payments`, ADR-003): the vendor is configuration (`PAYMENTS_PROVIDER`), the price is data at the vendor, the webhook is verified and idempotent; the offer shows only when `APP_FOUNDER_OFFER_ENABLED`. No merchant payment (the shop's own sales) is wired.
 - **Loi 25 by design.** Data in Canada, encrypted at rest (the managed database's volumes); consent per purpose, never
   pre-ticked, append-only; erasure blanks every personal field and keeps the invoices tax law requires (six years). The
   Loi 25 pack of Orazaka (orazaka-packs#14) is reused for the consent texts and the incident register when it lands.

@@ -54,17 +54,21 @@
       "caption": "The real app, one take, October 19, 2026. No real person."
     },
     "founder": {
-      "title": "Founder offer: {price} a month, setup included",
-      "lead": "A limited offer for the first shops. Akinaza is an early product: we build it with you, and we set your shop up with you at no extra cost.",
+      "title": "Founder offer: {price} a month plus taxes, setup included",
+      "lead": "A limited offer for the first businesses. Akinaza is an early product: we build it with you, and we set your shop up with you at no extra cost.",
       "points": [
         "{price} per month, plus GST and QST, as long as you stay",
         "Setup included: your services, your hours, your first invoices",
         "Cancel any time from your billing page, in two clicks",
-        "Limited to the first shops we welcome"
+        "Limited to the first {limit} businesses we welcome"
       ],
       "cta": "Subscribe to the founder offer",
       "note": "You pay on Stripe's secure page, and you manage or cancel your subscription there. Already a member? Sign in first.",
-      "talk": "Contact us first"
+      "talk": "Contact us first",
+      "full": {
+        "title": "The founder offer is complete",
+        "lead": "The first {limit} businesses have joined. Write to us and we will tell you what comes next."
+      }
     },
     "screens": {
       "book": {
@@ -462,6 +466,7 @@
       "TRANSLATION_LIMIT": "You have used today's translations. Try again tomorrow.",
       "TRANSLATION_UNAVAILABLE": "Automatic translation is not available right now.",
       "FEATURE_OFF": "This feature is switched off.",
+      "FOUNDER_OFFER_FULL": "The founder offer is complete.",
       "SHOP_LIMIT": "You have reached the number of shops allowed.",
       "SECTIONS_CUSTOM": "Choose whether to keep your section order or use the template's.",
       "TEMPLATE_UNKNOWN": "That template is not available.",
@@ -719,7 +724,8 @@
         "manageHint": "Change the card, read the invoices or cancel, on the payment page.",
         "portal": "Open the payment page",
         "founder": "The founder offer",
-        "founderHint": "{price} a month, taxes extra.",
+        "founderHint": "{price} a month, plus taxes.",
+      "offerFull": "The founder offer is complete: the first businesses have joined, and it is no longer offered.",
         "choose": "Choose this offer",
         "unavailable": "No plan is on sale yet."
       },

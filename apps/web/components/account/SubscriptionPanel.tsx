@@ -18,6 +18,8 @@ export interface SubscriptionView {
   hasCustomer: boolean;
   /** The founder offer is on sale, with its price as the processor states it. */
   offer: { price: string } | null;
+  /** The founder offer is complete (its limit is reached) and this account is not a founder: it is no longer offered. */
+  offerFull?: boolean;
 }
 
 /** The subscription: its state, the founder offer when it is on sale, and the hosted page where it is managed, its invoices read and it is cancelled. */
@@ -52,7 +54,8 @@ export function SubscriptionPanel({ subscription }: { subscription: Subscription
           </Button>
         </SettingsRow>
       ) : null}
-      {!subscription.active && !subscription.offer && !subscription.hasCustomer ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.unavailable")}</p> : null}
+      {!subscription.active && subscription.offerFull ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.offerFull")}</p> : null}
+      {!subscription.active && !subscription.offer && !subscription.offerFull && !subscription.hasCustomer ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.unavailable")}</p> : null}
       {problem ? <Alert tone="danger">{problem}</Alert> : null}
     </SettingsSection>
   );

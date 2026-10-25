@@ -38,8 +38,8 @@ describe("the price is the processor's, formatted with the locale", () => {
     const p = port(async () => FOUNDER_PRICE);
     const enCopy = await founderPrice(p, "en");
     const frCopy = await founderPrice(p, "fr");
-    expect(format(en.landing.founder.title, enCopy!)).toBe("Founder offer: $39 a month, setup included");
-    expect(format(fr.landing.founder.title, frCopy!).replace(/\s/g, " ")).toBe("Offre fondateur : 39 $ par mois, mise en route incluse");
+    expect(format(en.landing.founder.title, enCopy!)).toBe("Founder offer: $39 a month plus taxes, setup included");
+    expect(format(fr.landing.founder.title, frCopy!).replace(/\s/g, " ")).toBe("Offre fondateur : 39 $ par mois plus taxes, mise en route incluse");
   });
   it("follows the processor when the price changes", async () => {
     expect((await founderPrice(port(async () => ({ ...FOUNDER_PRICE, amount: 4900 })), "en"))?.price).toBe("$49");
@@ -48,7 +48,7 @@ describe("the price is the processor's, formatted with the locale", () => {
     expect(await founderPrice(null, "en")).toBeNull();
     expect(await founderPrice(port(async () => { throw new Error("down"); }), "fr")).toBeNull();
   });
-  it("the catalogue (data for the setup) sells the founder offer at 3900 cents, tax exclusive", () => {
+  it("the catalogue (data for the setup) sells the founder offer at 3900 cents, tax exclusive (lib/pricing.test.ts holds the whole grid)", () => {
     const catalogue = JSON.parse(read("../../payments/catalogue.json"));
     expect(catalogue.plans[0]).toMatchObject({ lookupKey: "akinaza_founder_monthly_cad", amount: 3900, currency: "cad", interval: "month" });
   });

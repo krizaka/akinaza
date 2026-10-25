@@ -54,17 +54,21 @@
       "caption": "La vraie application, une seule prise, le 19 octobre 2026. Aucune personne réelle."
     },
     "founder": {
-      "title": "Offre fondateur : {price} par mois, mise en route incluse",
-      "lead": "Une offre limitée pour les premiers commerces. Akinaza est un produit à ses débuts : nous le construisons avec vous et nous installons votre commerce avec vous, sans frais de plus.",
+      "title": "Offre fondateur : {price} par mois plus taxes, mise en route incluse",
+      "lead": "Une offre limitée pour les premières entreprises. Akinaza est un produit à ses débuts : nous le construisons avec vous et nous installons votre commerce avec vous, sans frais de plus.",
       "points": [
         "{price} par mois, plus TPS et TVQ, tant que vous restez",
         "Mise en route incluse : vos services, vos heures, vos premières factures",
         "Annulez en tout temps depuis votre page de facturation, en deux clics",
-        "Limitée aux premiers commerces que nous accueillons"
+        "Limitée aux {limit} premières entreprises que nous accueillons"
       ],
       "cta": "Profiter de l’offre fondateur",
       "note": "Vous payez sur la page sécurisée de Stripe, et vous y gérez ou annulez votre abonnement. Déjà membre ? Connectez-vous d’abord.",
-      "talk": "Écrivez-nous d’abord"
+      "talk": "Écrivez-nous d’abord",
+      "full": {
+        "title": "L’offre fondateur est complète",
+        "lead": "Les {limit} premières entreprises sont à bord. Écrivez-nous et nous vous dirons la suite."
+      }
     },
     "screens": {
       "book": {
@@ -462,6 +466,7 @@
       "TRANSLATION_LIMIT": "Vous avez utilisé les traductions du jour. Réessayez demain.",
       "TRANSLATION_UNAVAILABLE": "La traduction automatique n'est pas disponible pour le moment.",
       "FEATURE_OFF": "Cette fonction est désactivée.",
+      "FOUNDER_OFFER_FULL": "L’offre fondateur est complète.",
       "SHOP_LIMIT": "Vous avez atteint le nombre de boutiques permis.",
       "SECTIONS_CUSTOM": "Choisissez de garder votre ordre de sections ou celui du modèle.",
       "TEMPLATE_UNKNOWN": "Ce modèle n'est pas disponible.",
@@ -719,7 +724,8 @@
         "manageHint": "Changer de carte, lire les factures ou résilier, sur la page de paiement.",
         "portal": "Ouvrir la page de paiement",
         "founder": "L'offre fondateur",
-        "founderHint": "{price} par mois, taxes en sus.",
+        "founderHint": "{price} par mois, plus taxes.",
+      "offerFull": "L’offre fondateur est complète : les premières entreprises sont à bord, elle n’est plus offerte.",
         "choose": "Choisir cette offre",
         "unavailable": "Aucun forfait n'est en vente pour l'instant."
       },

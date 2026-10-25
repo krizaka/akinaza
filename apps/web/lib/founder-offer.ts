@@ -1,6 +1,7 @@
 import { formatPrice, type PaymentsPort } from "@krizaka/payments";
 
 import { FOUNDER } from "./payments/config";
+import { appSettings } from "./settings";
 
 export type FounderOfferCopy = { price: string };
 
@@ -16,3 +17,6 @@ export async function founderPrice(port: PaymentsPort | null, locale: "en" | "fr
     return null;
   }
 }
+
+/** How many businesses the founder offer is offered to: the administrator's setting `plans.founder.limit` (default 20). */
+export const founderLimit = (): Promise<number> => appSettings().get("plans.founder.limit");
