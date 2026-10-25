@@ -1,7 +1,9 @@
 import { invoiceState } from "@akinaza/core";
 import type { invoiceDeliveryHistory } from "@akinaza/db";
+import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { DetailLayout } from "@krizaka/ui/detail-layout";
+import { Mascot } from "@krizaka/ui/mascots";
 import Link from "next/link";
 
 import { InvoiceDeliveryHistory } from "@/components/app/InvoiceDeliveryHistory";
@@ -23,6 +25,8 @@ export interface InvoiceDetailViewProps {
   today: string;
   /** The message the shop sends with its invoices (Boutique › invoice e-mails). */
   defaultMessage?: string;
+  /** Just issued (`?issued=1`, D3): the number said with the beaver, « Envoyer » as the next step. */
+  issued?: boolean;
 }
 
 /**
@@ -30,7 +34,7 @@ export interface InvoiceDetailViewProps {
  * the ledger received) as a chip, « Envoyer la facture » the one primary with « Modifier » and « Imprimer » beside it; the aside
  * holds the deliveries and the chain (what it replaces, what replaced or cancelled it). The document keeps its own language.
  */
-export function InvoiceDetailView({ invoice, deliveries, locale, routes, today, defaultMessage }: InvoiceDetailViewProps) {
+export function InvoiceDetailView({ invoice, deliveries, locale, routes, today, defaultMessage, issued = false }: InvoiceDetailViewProps) {
   const t = getDictionary(locale).console;
   const state = invoiceState({ totalCents: invoice.totalCents, paidCents: invoice.paidCents, dueOn: invoice.dueOn, isCredit: invoice.creditOf !== null, superseded: Boolean(invoice.replacedBy ?? invoice.creditedBy) }, today);
   // An invoice that still stands can be corrected (#207); a credit note or an already credited invoice cannot.
@@ -83,6 +87,11 @@ export function InvoiceDetailView({ invoice, deliveries, locale, routes, today, 
         </div>
       }
     >
+      {issued ? (
+        <Alert tone="success" className="mb-4" icon={<Mascot bird="beaver" mood="success" size={48} />} title={format(t.invoices.issued.title, { number: invoice.number })}>
+          {invoice.clientId ? t.invoices.issued.next : null}
+        </Alert>
+      ) : null}
       <InvoiceDocument invoice={invoice} locale={locale} heading="h2" />
     </DetailLayout>
   );

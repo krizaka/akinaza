@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { shopRoutes } from "@/lib/routes";
 
-import { TodayDay, type TodayDayProps } from "./TodayDay";
+import { billAppointmentHref, TodayDay, type TodayDayProps } from "./TodayDay";
 import type { DayVisitView } from "./VisitDetail";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }), usePathname: () => "/fr/app/s-1/aujourdhui" }));
@@ -32,7 +32,7 @@ const walk: DayVisitView = {
 };
 
 const base: TodayDayProps = {
-  appointments: [{ id: "a-1", startsAt: walk.startsAt, endsAt: walk.endsAt, staff: "Léa", service: { fr: walk.service.fr, en: walk.service.en }, clientId: "c-1", client: "Sofia Rossi", status: "booked", checkedInAt: null, priceCents: 3_500, category: "standard" }],
+  appointments: [{ id: "a-1", startsAt: walk.startsAt, endsAt: walk.endsAt, staff: "Léa", service: { fr: walk.service.fr, en: walk.service.en }, serviceId: "s-walk", clientId: "c-1", client: "Sofia Rossi", status: "booked", checkedInAt: null, priceCents: 3_500, category: "standard" }],
   shop: { timezone: "America/Toronto", registrant: true },
   day: "2026-10-23",
   today: "2026-10-23",
@@ -94,5 +94,16 @@ describe("the day's one primary (D1b): the next appointment, else a new invoice"
     expect(others).toEqual([]);
     expect(primary).toContain('href="/fr/app/s-1/invoices/new"');
     expect(primaries(render({ appointments: [], newInvoiceHref: null }))).toEqual([]);
+  });
+});
+
+describe("a finished appointment is billed from its sheet (D3)", () => {
+  const routes = shopRoutes("fr", "s-1");
+  it("offers « Facturer ce rendez-vous », prefilled with the client, the service and one unit, to who may invoice", () => {
+    const done = { ...base.appointments[0]!, status: "done" as const };
+    expect(billAppointmentHref(done, routes, true)).toBe("/fr/app/s-1/invoices/new?client=c-1&service=s-walk&quantity=1");
+    expect(billAppointmentHref({ ...done, clientId: null }, routes, true)).toBe("/fr/app/s-1/invoices/new?service=s-walk&quantity=1");
+    expect(billAppointmentHref(done, routes, false)).toBeNull();
+    expect(billAppointmentHref(base.appointments[0]!, routes, true)).toBeNull();
   });
 });

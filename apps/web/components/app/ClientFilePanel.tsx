@@ -10,6 +10,7 @@ import { useMemo } from "react";
 import { ClientAvatar } from "@/components/app/ClientsTable";
 import { AccessNotesFor, DependantsList } from "@/components/app/DependantsList";
 import { useShopRoutes } from "@/components/app/ShopSession";
+import { ButtonLink } from "@/components/ButtonLink";
 import { AppointmentStatus, STATUS_TONE } from "@/lib/day";
 import { formatDate, formatMoney, formatTime } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
@@ -22,10 +23,12 @@ export interface ClientFilePanelProps {
   timeZone: string;
   /** The server's clock: « next » and « last » are the same on both sides of the page. */
   nowIso: string;
+  /** The role may issue invoices: « Facturer ce client » opens « Nouvelle facture » with this client chosen (D3). */
+  mayInvoice?: boolean;
 }
 
 /** A client's file: who they are, four figures, then their visits, their invoices, their notes. */
-export function ClientFilePanel({ file, timeZone, nowIso }: ClientFilePanelProps) {
+export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false }: ClientFilePanelProps) {
   const { say, locale } = useSay();
   const routes = useShopRoutes();
   const { client } = file;
@@ -70,9 +73,9 @@ export function ClientFilePanel({ file, timeZone, nowIso }: ClientFilePanelProps
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex items-center gap-4">
+      <header className="flex flex-wrap items-center gap-4">
         <ClientAvatar name={client.fullName} size="lg" />
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className="truncate font-display text-2xl font-bold text-fg">{client.fullName}</h1>
           <p className="text-sm text-fg-secondary">
             {client.phone ? (
@@ -89,6 +92,11 @@ export function ClientFilePanel({ file, timeZone, nowIso }: ClientFilePanelProps
           </p>
           <p className="text-xs text-fg-muted">{say("clients.file.since", { date: formatDate(client.since, locale, timeZone) })}</p>
         </div>
+        {mayInvoice ? (
+          <ButtonLink href={routes.newInvoiceFor({ client: client.id })} variant="secondary" size="md">
+            {say("clients.file.bill")}
+          </ButtonLink>
+        ) : null}
       </header>
 
       <StatGrid>

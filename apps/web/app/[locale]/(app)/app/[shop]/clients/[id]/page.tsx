@@ -9,7 +9,7 @@ import { ClientNav } from "@/components/app/ClientNav";
 import { ClientRequestsPanel } from "@/components/app/ClientRequestsPanel";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
-import { memberShop } from "@/lib/member-shop";
+import { may, memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
 import { isUuid } from "@/lib/shop-id";
@@ -23,7 +23,7 @@ export default async function ClientPage({ params }: { params: Promise<{ locale:
   const { locale: rawLocale, shop: shopId, id } = await params;
   const locale = asLocale(rawLocale);
   const t = getDictionary(locale).console.clients;
-  const { shop } = await memberShop(shopId, "clients");
+  const { shop, role } = await memberShop(shopId, "clients");
   if (!isUuid(id)) notFound();
   const now = new Date();
   const [file, overview] = await Promise.all([clientFile(db(), shop.id, id), clientOverview(db(), shop.id, now)]);
@@ -42,7 +42,7 @@ export default async function ClientPage({ params }: { params: Promise<{ locale:
       }
       detail={
         <div className="flex flex-col gap-5">
-          <ClientFilePanel file={file} timeZone={shop.timezone} nowIso={now.toISOString()} />
+          <ClientFilePanel file={file} timeZone={shop.timezone} nowIso={now.toISOString()} mayInvoice={may(role, "invoices")} />
           <ClientRequestsPanel requests={requests.map((r) => ({ id: r.id, title: r.title, note: r.note, service: { fr: r.serviceNameFr, en: r.serviceNameEn }, staffName: r.staffName, files: r.files }))} />
         </div>
       }

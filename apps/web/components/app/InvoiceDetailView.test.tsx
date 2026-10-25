@@ -79,4 +79,13 @@ describe("an invoice on DetailLayout (D2, review K3)", () => {
     expect(text).toContain("Print");
     expect(text).toContain("Conditions de paiement");
   });
+
+  it("after issuing, says the number with the beaver (success), and « Envoyer » stays the next primary (D3)", () => {
+    const html = render({ invoice: invoice({ clientId: "c1" }), issued: true });
+    expect(readable(html)).toContain("Facture KZ-00004 émise");
+    const before = html.slice(0, html.indexOf("émise"));
+    expect(before.lastIndexOf("<svg")).toBeGreaterThan(before.lastIndexOf("</h1>")); // the beaver, drawn in the alert
+    expect(html.match(/data-primary/g)).toHaveLength(1);
+    expect(readable(render())).not.toContain("émise");
+  });
 });

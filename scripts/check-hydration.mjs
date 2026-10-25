@@ -63,8 +63,8 @@ export const primaryProblem = (path, count) => {
   return null;
 };
 
-/** What every page owes besides one rendering: exactly one `h1` (the page's, never the frame's), one primary at most, no horizontal overflow. */
-const audit = (page) => page.evaluate(() => ({ h1: document.querySelectorAll("h1").length, primary: document.querySelectorAll("[data-primary]").length, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth }));
+/** What every page owes besides one rendering: exactly one `h1` (the page's, never the frame's), one primary in view at most (a form may draw its submit once per width: the aside, the sticky action), no horizontal overflow. */
+const audit = (page) => page.evaluate(() => ({ h1: document.querySelectorAll("h1").length, primary: [...document.querySelectorAll("[data-primary]")].filter((e) => e.checkVisibility()).length, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth }));
 const judge = (report, { h1, primary, overflow }, path) => {
   if (h1 !== 1) report("h1", `${h1} on the page (one expected)`);
   const tooMany = primaryProblem(path, primary);

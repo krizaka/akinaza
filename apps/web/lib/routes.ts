@@ -28,6 +28,8 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
     /** « Modifier » (#207): the replacement of an issued invoice, prefilled. */
     invoiceCorrect: (id: string) => `${root}/invoices/${id}/correct`,
     newInvoice: `${root}/invoices/new`,
+    /** « Nouvelle facture » prefilled (D3): « Facturer ce client », a finished appointment's service and quantity. */
+    newInvoiceFor: (prefill: { client?: string; service?: string; quantity?: string }) => `${root}/invoices/new${query(prefill)}`,
     books: (period?: string) => `${root}/books${query({ period })}`,
     /** Boutique (K4): one hub on SettingsLayout, one address per section; `?tab=` names the section of the page. */
     boutique: (section?: string, tab?: string) => `${root}/boutique${section ? `/${section}` : ""}${query({ tab })}`,
