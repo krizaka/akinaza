@@ -390,7 +390,11 @@
       "FEATURE_OFF": "Cette fonction est désactivée.",
       "SHOP_LIMIT": "Vous avez atteint le nombre de boutiques permis.",
       "SECTIONS_CUSTOM": "Choisissez de garder votre ordre de sections ou celui du modèle.",
-      "TEMPLATE_UNKNOWN": "Ce modèle n'est pas disponible."
+      "TEMPLATE_UNKNOWN": "Ce modèle n'est pas disponible.",
+      "NAME_TAKEN": "Ce nom est déjà utilisé.",
+      "TAG_LIMIT": "La boutique a atteint sa limite d'étiquettes.",
+      "TOO_MANY": "200 lignes au plus à la fois.",
+      "STATUS_DERIVED": "L'état d'une facture suit ses paiements : on ne le change pas à la main."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -740,7 +744,8 @@
           "notes": "Notes"
         },
         "addNote": "Ajouter une note",
-        "saveNote": "Garder la note"
+        "saveNote": "Garder la note",
+        "eyebrow": "Client"
       },
       "requests": {
         "title": "Ses demandes gardées",
@@ -1976,6 +1981,54 @@
       },
       "retry": "Réessayer",
       "loading": "Chargement…"
+    },
+    "organize": {
+      "close": "Fermer",
+      "columns": {
+        "tags": "Étiquettes"
+      },
+      "binder": {
+        "label": "Étiquettes",
+        "all": "Tous",
+        "add": "Nouvelle étiquette"
+      },
+      "newTag": {
+        "title": "Nouvelle étiquette",
+        "hint": "Un nom et un repère de couleur. L'étiquette appartient à la boutique : le propriétaire et le gérant peuvent l'ajouter et la renommer.",
+        "name": "Nom",
+        "marker": "Repère de couleur",
+        "create": "Créer l'étiquette"
+      },
+      "markers": {
+        "blue": "Bleu",
+        "green": "Vert",
+        "amber": "Ambre",
+        "red": "Rouge",
+        "violet": "Violet",
+        "gray": "Gris"
+      },
+      "views": {
+        "label": "Vues",
+        "save": "Enregistrer cette vue",
+        "saveTitle": "Enregistrer cette vue",
+        "saveHint": "La vue garde les étiquettes, les dates et la recherche en cours. Son adresse est la même sur tous vos appareils.",
+        "name": "Nom de la vue",
+        "shared": "Partager avec l'équipe",
+        "remove": "Supprimer cette vue",
+        "clear": "Effacer les filtres"
+      },
+      "selection": {
+        "tag": "Ajouter une étiquette",
+        "untag": "Retirer une étiquette",
+        "tooMany": "On peut étiqueter 200 lignes au plus à la fois.",
+        "label": "Sélection",
+        "count": "{count} sélectionnée(s)"
+      },
+      "file": {
+        "tags": "Étiquettes",
+        "none": "Aucune étiquette",
+        "edit": "Modifier les étiquettes"
+      }
     }
   },
   "notFound": {

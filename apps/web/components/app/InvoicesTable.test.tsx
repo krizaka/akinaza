@@ -12,7 +12,7 @@ import { type InvoiceRowView, InvoicesTable } from "./InvoicesTable";
 import { ShopSession } from "./ShopSession";
 
 vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/fr/app" }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/fr/app", useSearchParams: () => new URLSearchParams() }));
 
 const MESSAGES = { en: { console: en.console }, fr: { console: fr.console } } as const;
 const readable = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ");
@@ -44,6 +44,34 @@ const markup = (locale: "en" | "fr") =>
       </I18nProvider>,
     );
 const render = (locale: "en" | "fr") => readable(markup(locale));
+
+const organize = { kind: "invoice" as const, canWrite: true, tags: [{ id: "t1", name: "À relancer", marker: "amber" as const }], counts: { t1: 2 }, views: { system: [{ key: "overdue", label: { fr: "En retard", en: "Overdue" }, filters: { status: ["overdue"] } }], workspace: [], mine: [] }, filters: {}, view: null };
+const organised = () =>
+  renderToStaticMarkup(
+    <I18nProvider locale="fr" messages={MESSAGES.fr as never}>
+      <KrizakaQueryProvider>
+        <ShopSession locale="fr" shopId="s1" remembered>
+          <InvoicesTable invoices={rows} today="2026-10-23" organize={organize} tagsByInvoice={{ "i-A-0002": organize.tags }} />
+        </ShopSession>
+      </KrizakaQueryProvider>
+    </I18nProvider>,
+  );
+
+describe("the invoices list organised (akinaza#337)", () => {
+  it("draws the tags' dividers with their counts, the tags on the rows and the system views as links holding the filters", () => {
+    const html = organised();
+    expect(readable(html)).toMatch(/Tous[\s\S]*À relancer\s*2/);
+    expect(html).toContain('data-tag-marker="amber"');
+    expect(html).toContain('href="/fr/app?tags=t1"');
+    expect(html).toContain("status=overdue");
+    expect(html).toContain("view=overdue");
+  });
+
+  it("offers no way to move an invoice's state by hand: it is derived from the ledger", () => {
+    const text = readable(organised());
+    expect(text).not.toMatch(/Marquer (comme )?pay|Mark (as )?paid/i);
+  });
+});
 
 describe("the invoices list (akinaza#218)", () => {
   it("says where each invoice stands, in the shop's words", () => {

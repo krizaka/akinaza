@@ -13,34 +13,32 @@ import { usePathname, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import { ClientAvatar, type ClientRowView } from "@/components/app/ClientsTable";
+import { SelectionTags, TagBinder, TagChips, ViewsBar } from "@/components/app/organize";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { ButtonLink } from "@/components/ButtonLink";
 import { CLIENT_FILTERS, type ClientsQuery, clientsView } from "@/lib/clients-view";
 import { formatDate, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import { listHref, type OrganizeData, type TagLite } from "@/lib/organize-view";
 import { useTableLabels } from "@/lib/table-labels";
 
-/** The address of the list for a query: an empty search and « all » leave no parameter. */
-const href = (pathname: string, { q, filter }: ClientsQuery) => {
-  const params = new URLSearchParams();
-  if (q) params.set("q", q);
-  if (filter !== "all") params.set("filter", filter);
-  const query = params.toString();
-  return query ? `${pathname}?${query}` : pathname;
-};
+/** The address of the list for a query: an empty search and « all » leave no parameter; the tags, dates and view in force stay (the URL is the state). */
+const hrefOf = (organize: OrganizeData) => (pathname: string, { q, filter }: ClientsQuery) =>
+  listHref(pathname, { ...organize.filters, q: undefined }, organize.view, { q: q || undefined, filter: filter === "all" ? undefined : filter });
 
 /**
  * Clients on the catalogue template (D5, review K3b): the plan strip (how many, what they owe, a meter of who is up to date),
  * the search and the filter chips with their counts — all in the address —, then the rows with their state and « Facturer »;
- * selected rows can be exported (the bulk actions of tags wait for D10). A name opens the client's file.
+ * the tags are the binder's dividers, the views are links (akinaza#337); selected rows are tagged, untagged (at most 200) or exported. A name opens the client's file.
  */
-export function ClientsCatalogue({ clients, query, timeZone }: { clients: ClientRowView[]; query: ClientsQuery; timeZone: string }) {
+export function ClientsCatalogue({ clients, query, timeZone, organize, tagsByClient }: { clients: ClientRowView[]; query: ClientsQuery; timeZone: string; organize: OrganizeData; tagsByClient: Record<string, TagLite[]> }) {
   const { say, locale } = useSay();
   const routes = useShopRoutes();
   const router = useRouter();
   const pathname = usePathname() ?? routes.clients;
   const labels = useTableLabels();
   const [selected, setSelected] = useState<string[]>([]);
+  const href = hrefOf(organize);
   const view = useMemo(() => clientsView(clients, query), [clients, query]);
   const columns = useMemo<DataTableColumn<ClientRowView>[]>(() => {
     const day = (iso: string | null) => (iso ? formatDate(iso, locale, timeZone) : say("clients.never"));
@@ -61,6 +59,7 @@ export function ClientsCatalogue({ clients, query, timeZone }: { clients: Client
         ),
         subtitle: (c) => c.email ?? c.phone ?? "",
       },
+      { id: "tags", header: say("organize.columns.tags"), priority: 2, value: (c) => (tagsByClient[c.id] ?? []).map((t) => t.name).join(", "), cell: (c) => <TagChips tags={tagsByClient[c.id]} /> },
       {
         id: "state",
         header: say("clients.columns.state"),
@@ -83,7 +82,7 @@ export function ClientsCatalogue({ clients, query, timeZone }: { clients: Client
         ),
       },
     ];
-  }, [say, locale, timeZone, routes]);
+  }, [say, locale, timeZone, routes, tagsByClient]);
   const exportSelection = () => {
     const rows = view.rows.filter((r) => selected.includes(r.id));
     const csv = dataTableCsv(rows, [
@@ -111,6 +110,8 @@ export function ClientsCatalogue({ clients, query, timeZone }: { clients: Client
           <Meter label={say("clients.strip.upToDate", { count: view.strip.upToDate, total: view.strip.count })} value={view.strip.upToDate} max={Math.max(view.strip.count, 1)} valueText={say("clients.strip.upToDate", { count: view.strip.upToDate, total: view.strip.count })} />
         </div>
       </section>
+      <TagBinder organize={organize} path={pathname} own={{ q: query.q || undefined, filter: query.filter === "all" ? undefined : query.filter }} />
+      <ViewsBar organize={organize} path={pathname} own={{ q: query.q || undefined, filter: query.filter === "all" ? undefined : query.filter }} />
       <div className="flex flex-col gap-3">
         <SearchField label={say("clients.search")} placeholder={say("clients.searchPlaceholder")} defaultValue={query.q} debounce={250} onSearch={(q) => router.replace(href(pathname, { ...query, q: q.trim() }), { scroll: false })} clearLabel={say("clients.clear")} shortcut={false} />
         <ul className="flex flex-wrap gap-2" aria-label={say("clients.filters")}>
@@ -128,9 +129,12 @@ export function ClientsCatalogue({ clients, query, timeZone }: { clients: Client
       {selected.length ? (
         <div role="region" aria-label={say("clients.selection.label")} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-strong bg-surface-2 px-4 py-2">
           <p className="text-sm font-semibold text-fg">{say("clients.selection.count", { count: selected.length })}</p>
-          <Button variant="secondary" size="sm" onClick={exportSelection}>
-            {say("clients.selection.export")}
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <SelectionTags organize={organize} selected={selected} onDone={() => setSelected([])} />
+            <Button variant="secondary" size="sm" onClick={exportSelection}>
+              {say("clients.selection.export")}
+            </Button>
+          </div>
         </div>
       ) : null}
       <DataTable

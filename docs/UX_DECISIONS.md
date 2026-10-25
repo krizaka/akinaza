@@ -478,3 +478,22 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
   the quick invoice and the day wait for krizaka-ui#629 (native `LineItems`/`TotalsSummary`) and #628 (native `Agenda`).
 - **Cost**: the day's answer names its shop and time zone; one more walker route.
 - **Signal we are wrong**: owners look for the calendar as a tab, or open the web for the books on their phone.
+
+## D10 — The shop organises its clients and invoices (akinaza#337)
+
+- **Decision**: tags belong to **the shop** (owner and manager write them, a client never sees them), with a colour marker of the closed
+  palette (a dot, never the only signal: the name is always there). A shop starts with the administrator's default tag set for its
+  trade and language, seeded once (a deleted tag does not come back). **The binder's dividers are the tags** (`Tabs.Nav
+  variant="binder"`): « Tous » and one divider per tag with its count, the address is the state (`?tags=`), so a divider is a link and
+  back/forward and a shared link keep it. **Saved views** are links too — the administrator's (« À encaisser », « En retard »,
+  « Payées »), the shop's shared ones and mine — and « Enregistrer cette vue » appears when the filters in force are not one of them.
+  **The selection bar tags and untags** (at most 200, one call, one audit line per row) next to the export. The client's file opens on
+  the **profile banner** and carries its tags beside the contact, editable by those who write tags.
+- **Problem**: a growing list of clients and invoices with no way to group, find or triage them, and no way to come back to « the
+  late ones » in one tap.
+- **Principle**: the URL is the state; recognition rather than recall; the colour is never the only signal.
+- **Refused**: **a bulk status on invoices** (and any hand-set status): an invoice's state is derived from the ledger (paid, partial,
+  overdue…), so « mark as paid » would lie — a payment is recorded as a payment. A tag colour picked freely (hex): a closed palette
+  keeps both themes legible. Per-user private tags: a shop's vocabulary is shared.
+- **Cost**: local wrappers (`TagChip`, the views bar, the selection tags) until krizaka-ui#627 and #690 ship — deleted the day they land.
+- **Signal we are wrong**: owners ask for « mark as paid » on a selection, or never use a tag.

@@ -3,16 +3,17 @@
 import { invoiceState, remainingCents } from "@akinaza/core";
 import type { ClientFile, ClientNote } from "@akinaza/db";
 import { Badge } from "@krizaka/ui/badge";
-import { ChipLink } from "@krizaka/ui/chip-link";
 import { DataTable, type DataTableColumn } from "@krizaka/ui/data-table";
 import { DetailLayout } from "@krizaka/ui/detail-layout";
 import { Stat, StatGrid } from "@krizaka/ui/stat";
+import { Tabs } from "@krizaka/ui/tabs";
 import Link from "next/link";
 import { useMemo } from "react";
 
 import { ClientNotes } from "@/components/app/ClientNotes";
 import { ClientAvatar } from "@/components/app/ClientsTable";
 import { AccessNotesFor, DependantsList } from "@/components/app/DependantsList";
+import { TagChips, TagsEditor } from "@/components/app/organize";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { ButtonLink } from "@/components/ButtonLink";
 import { CLIENT_FILE_TABS, type ClientFileTab } from "@/lib/clients-view";
@@ -20,6 +21,7 @@ import { AppointmentStatus, STATUS_TONE } from "@/lib/day";
 import { formatDate, formatMoney, formatTime } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
 import { STATE_TONE } from "@/lib/invoice-tone";
+import type { OrganizeData, TagLite } from "@/lib/organize-view";
 import { useTableLabels } from "@/lib/table-labels";
 
 type Visit = ClientFile["visits"][number];
@@ -38,17 +40,20 @@ export interface ClientFilePanelProps {
   tab: ClientFileTab;
   /** The shop's calendar day: an invoice's derived state (`invoiceState`). */
   today: string;
+  /** The shop's tags and who may write them (akinaza#337), and the ones this client wears. */
+  organize?: OrganizeData;
+  tags?: TagLite[];
 }
 
 
 /**
  * A client's file on Show · detail (D5, review K3b): the name as the page's `h1` with the avatar and the state (what they still
- * owe), the contact on one line, « Facturer ce client »; the binder's sections in the address (Résumé · Factures · Visites ·
- * Notes); the signed notes in the side column (under the content on a phone). Each invoice wears the list's state.
+ * owe) on the profile banner (krizaka-ui#650), the contact and the client's tags on one line, « Facturer ce client »; the binder's dividers
+ * in the address (Résumé · Factures · Visites · Notes, `Tabs.Nav variant="binder"`, krizaka-ui#648); the signed notes in the side column (under the content on a phone). Each invoice wears the list's state.
  */
 const standing = (i: Bill) => ({ totalCents: i.totalCents, paidCents: i.paidCents, dueOn: i.dueOn, isCredit: i.creditOf !== null, superseded: i.superseded });
 
-export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, notes, tab, today }: ClientFilePanelProps) {
+export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, notes, tab, today, organize, tags = [] }: ClientFilePanelProps) {
   const { say, locale } = useSay();
   const routes = useShopRoutes();
   const labels = useTableLabels();
@@ -123,6 +128,8 @@ export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, no
   const notesColumn = <ClientNotes clientId={client.id} notes={notes} timeZone={timeZone} />;
   return (
     <DetailLayout
+      cover
+      eyebrow={say("clients.file.eyebrow")}
       media={<ClientAvatar name={client.fullName} size="lg" />}
       title={client.fullName}
       status={owed > 0 ? <Badge tone="warning">{say("clients.state.owes", { amount: formatMoney(owed, locale) })}</Badge> : <Badge tone="success">{say("clients.state.upToDate")}</Badge>}
@@ -134,6 +141,12 @@ export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, no
               {part}
             </span>
           ))}
+          {tags.length || organize?.canWrite ? (
+            <span className="flex flex-wrap items-center gap-2" aria-label={say("organize.file.tags")}>
+              <TagChips tags={tags} />
+              {organize ? <TagsEditor organize={organize} entityId={client.id} worn={tags} /> : null}
+            </span>
+          ) : null}
         </span>
       }
       actions={
@@ -144,15 +157,13 @@ export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, no
         ) : null
       }
       tabs={
-        <ul className="flex flex-wrap gap-2" aria-label={say("clients.file.sections")}>
+        <Tabs.Nav label={say("clients.file.sections")} variant="binder" current={tabHref(tab)}>
           {CLIENT_FILE_TABS.map((t) => (
-            <li key={t}>
-              <ChipLink selected={t === tab} asChild>
-                <Link href={tabHref(t)} scroll={false}>{say(`clients.file.tabs.${t}`)}</Link>
-              </ChipLink>
-            </li>
+            <Tabs.NavLink key={t} href={tabHref(t)} exact hue={t === "summary" ? "accent" : "neutral"} count={t === "invoices" ? file.invoices.length : t === "visits" ? file.visits.length : t === "notes" ? notes.length : undefined}>
+              {say(`clients.file.tabs.${t}`)}
+            </Tabs.NavLink>
           ))}
-        </ul>
+        </Tabs.Nav>
       }
       aside={tab === "notes" ? undefined : notesColumn}
     >
