@@ -103,4 +103,11 @@ describe("Factures in French (D2, review K3): the chrome, the columns, the deriv
     const order = [...markup("fr").matchAll(/data-invoice="i-(A-\d+)"/g)].map((m) => m[1]);
     expect(order[0]).toBe("A-0002");
   });
+
+  it("washes a changed row once (D11): the list is a flash arrival, and nothing washes on the page's arrival", () => {
+    const html = markup("fr");
+    expect(html).toMatch(/<div[^>]*data-kz-arrival="flash"/);
+    expect(html).not.toContain("data-kz-arrive=");
+  });
 });
+

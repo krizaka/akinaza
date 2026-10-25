@@ -11,6 +11,7 @@ import { useMemo } from "react";
 import { InvoiceSendAction } from "@/components/app/InvoiceSendAction";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
+import { useWash } from "@/components/app/useWash";
 import { ButtonLink } from "@/components/ButtonLink";
 import { formatDate, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
@@ -59,6 +60,8 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
   const call = useCall();
   const labels = useTableLabels();
   const ordered = useMemo(() => byUrgency(invoices, today), [invoices, today]);
+  // D11: a row whose state, payments or amount changed since the page's previous read washes once (nothing on arrival).
+  const wash = useWash(ordered, (i) => i.id, (i) => `${invoiceState(standing(i), today)}:${i.paidCents}:${i.totalCents}`);
   const columns = useMemo<DataTableColumn<InvoiceRowView>[]>(() => {
     const day = (d: string) => formatDate(`${d}T12:00:00Z`, locale, "UTC");
     return [
@@ -72,7 +75,7 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
         filter: "text",
         value: (i) => i.number,
         cell: (i) => (
-          <Link className="font-mono font-semibold text-fg-accent underline" href={routes.invoice(i.id)} aria-label={say("invoices.list.open", { number: i.number })}>
+          <Link className="font-mono font-semibold text-fg-accent underline" href={routes.invoice(i.id)} aria-label={say("invoices.list.open", { number: i.number })} {...wash(i.id)}>
             {i.number}
           </Link>
         ),
@@ -100,7 +103,7 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
       { id: "total", header: say("invoices.table.total"), type: "number", sortable: true, value: (i) => i.totalCents, cell: (i) => formatMoney(i.totalCents, locale) },
       { id: "remaining", header: say("invoices.table.remaining"), type: "number", sortable: true, priority: 3, hideable: true, value: (i) => remainingCents(standing(i)), cell: (i) => formatMoney(remainingCents(standing(i)), locale) },
     ];
-  }, [say, locale, routes, today]);
+  }, [say, locale, routes, today, wash]);
 
   const detail = (i: InvoiceRowView) => {
     const state = invoiceState(standing(i), today);
@@ -147,24 +150,27 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
   };
 
   return (
-    <DataTable
-      caption={say("invoices.list.title")}
-      rows={ordered}
-      columns={columns}
-      labels={labels}
-      density="compact"
-      getRowId={(i) => i.id}
-      rowLabel={(i) => i.number}
-      renderDetail={detail}
-      toolbar={
-        <div className="flex flex-col gap-3">
-          <DataTableFilters />
-          <div className="flex justify-end gap-2">
-            <DataTableColumnsMenu />
-            <DataTableExport filename={say("invoices.list.exportFile", { day: today })} />
+    // A changed row's cell carries `data-kz-arrive`: motion.css washes its row (`tr:has(…)`) once, an accent that fades.
+    <div data-kz-arrival="flash">
+      <DataTable
+        caption={say("invoices.list.title")}
+        rows={ordered}
+        columns={columns}
+        labels={labels}
+        density="compact"
+        getRowId={(i) => i.id}
+        rowLabel={(i) => i.number}
+        renderDetail={detail}
+        toolbar={
+          <div className="flex flex-col gap-3">
+            <DataTableFilters />
+            <div className="flex justify-end gap-2">
+              <DataTableColumnsMenu />
+              <DataTableExport filename={say("invoices.list.exportFile", { day: today })} />
+            </div>
           </div>
-        </div>
-      }
-    />
+        }
+      />
+    </div>
   );
 }
