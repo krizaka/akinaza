@@ -23,6 +23,6 @@ describe("a tab's header", () => {
     expect(screen.getAllByText("Aujourd'hui").length).toBeGreaterThan(0);
     const account = await screen.findByRole("button", { name: "Votre compte : Mira Tremblay" });
     await fireEvent.press(account);
-    expect(mockNavigate).toHaveBeenCalledWith("/fr/app/settings");
+    expect(mockNavigate).toHaveBeenCalledWith("/fr/app/profile");
   });
 });
