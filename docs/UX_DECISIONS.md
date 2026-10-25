@@ -297,3 +297,25 @@ among the shops and clients of every demo seed (`seed-krizaka`, `seed-walker`, `
   conversations; a « Raccourcis » group on the rail before `RailNav` has groups (krizaka-ui#647).
 - **Cost**: one more query per page for the counts; the search reads at most five of each kind (the list is « see all »).
 - **Signal we are wrong**: owners keep opening Clients to find one by name, or ignore the next-appointment action.
+
+## Factures and an invoice: French chrome, fixed columns, the derived state, DetailLayout (Phase 2, D2, #329, review K3)
+
+- **Decision**: the list speaks the screen's language to the last word: every label of @krizaka/ui's `DataTable` comes from the
+  messages (`lib/table-labels.ts`, `table.*`) until krizaka-ui#595 localises them. The number column is narrow (132 px) and the
+  client wide (240 px at least); the « Mois » column is gone (the issue date says it, and the state is the filter that matters);
+  `density="compact"` on a desktop. The state is derived, never set: `invoiceState` (due, partial, overdue, paid, credit,
+  cancelled) as a chip with its tone, and **the overdue first**, then the newest (`byUrgency`). An invoice is a `DetailLayout`:
+  its **number is the `h1`**, the state chip beside it (the same `invoiceState`, now that `invoiceDetail` reads what was received),
+  « **Envoyer la facture** » the one primary (its form in a dialog), « Modifier » and « Imprimer » secondary; the aside holds the
+  deliveries and the chain. Money is integer cents through @krizaka/intl's `formatMoney` everywhere (`lib/format.ts`,
+  `InvoiceDocument`): a float throws.
+- **Problem**: a French list printed « Filter the table », « 5 rows », « Columns »; the number was as wide as the client; the
+  overdue invoices were mixed with the paid ones; the invoice page had « Facture » as its title, its actions above the document
+  and the send form unfolding in the page.
+- **Principle**: match between the system and the real world, and recognition over recall (Nielsen): the state the owner acts
+  on comes first and reads the same on the list and the page.
+- **Refused**: a status the owner moves by hand (it comes from the ledger, § 3 of the direction); a local table translation in
+  @krizaka/ui's place (the labels are passed through its own `labels` prop).
+- **Cost**: twenty-six table messages to keep in two languages until krizaka-ui#595 lands; the list no longer sorts by issue date
+  by default (overdue first), the header still sorts.
+- **Signal we are wrong**: owners sort by date first every time, or look for the month filter.

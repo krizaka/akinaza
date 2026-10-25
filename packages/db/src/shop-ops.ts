@@ -232,5 +232,7 @@ export async function invoiceDetail(db: Db | Tx, shopId: string, invoiceId: stri
     db.select(ref).from(invoices).where(eq(invoices.replaces, invoice.id)).limit(1),
     db.select(ref).from(invoices).where(eq(invoices.creditOf, invoice.id)).limit(1),
   ]);
-  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, termsDays: invoice.termsDays, dueOn: invoice.dueOn, language: invoice.language, clientId: invoice.clientId, creditOf: invoice.creditOf, replaces: orNull(replaces), replacedBy: orNull(replacedBy), creditedBy: orNull(creditedBy), subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
+  // What was received against it: the invoice's page shows the list's state (`invoiceState`, D2).
+  const [{ paidCents } = { paidCents: 0 }] = (await db.execute(sql`SELECT coalesce(sum(amount_cents), 0)::int AS "paidCents" FROM payments WHERE invoice_id = ${invoice.id}`)).rows as { paidCents: number }[];
+  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, termsDays: invoice.termsDays, dueOn: invoice.dueOn, language: invoice.language, clientId: invoice.clientId, creditOf: invoice.creditOf, replaces: orNull(replaces), replacedBy: orNull(replacedBy), creditedBy: orNull(creditedBy), subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, paidCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
 }

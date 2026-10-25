@@ -229,3 +229,14 @@ describe("the migration that makes quantities fractional keeps every existing in
     }
   });
 });
+
+describe("an invoice's page reads what was received against it (D2: its state from the ledger)", () => {
+  it("gives the detail its paid amount, so the page's chip is the list's invoiceState", async () => {
+    const { recordPayment } = await import("./invoice-payments");
+    const s = await salon(t.db);
+    const { invoice } = await issueShopInvoice(t.db, s.shop.id, { clientId: s.client.id, language: "fr", issuedOn: "2026-10-21", lines: [{ serviceId: s.services.cut.id, quantity: 1 }] });
+    expect((await invoiceDetail(t.db, s.shop.id, invoice.id))!.paidCents).toBe(0);
+    await recordPayment(t.db, s.shop.id, invoice.id, { method: "cash", amountCents: 1_000 }, new Date("2026-10-22T15:00:00Z"));
+    expect((await invoiceDetail(t.db, s.shop.id, invoice.id))!.paidCents).toBe(1_000);
+  });
+});

@@ -1,12 +1,13 @@
-import { formatDate as intlDate, getDateTimeFormat } from "@krizaka/intl";
+import { formatDate as intlDate, formatMoney as intlMoney, getDateTimeFormat } from "@krizaka/intl";
 
 /** The BCP 47 tag the shop's money, dates and times are written in: Canadian English or Canadian French. */
 export const INTL_LOCALE = { en: "en-CA", fr: "fr-CA" } as const;
 
 export type FormatLocale = keyof typeof INTL_LOCALE;
 
+/** Integer cents in Canadian dollars, in the language's habit (« 123,45 $ », « $123.45 »); a float throws (@krizaka/intl). */
 export function formatMoney(cents: number, locale: FormatLocale): string {
-  return new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: "CAD" }).format(cents / 100);
+  return intlMoney(cents, { currency: "CAD", locale: INTL_LOCALE[locale] });
 }
 
 /** « Thursday, October 22, 2026 » for a `YYYY-MM-DD` day, whatever the machine's zone. */
