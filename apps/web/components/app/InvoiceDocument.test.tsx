@@ -1,7 +1,8 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { InvoiceDocument, type InvoiceView } from "./InvoiceDocument";
+import { invoice } from "./invoice-fixture";
+import { InvoiceDocument } from "./InvoiceDocument";
 
 /** The plain text of the markup, one line per block: what a PDF text layer or a screen reader gives. */
 const textOf = (html: string) =>
@@ -14,29 +15,6 @@ const textOf = (html: string) =>
 
 /** QC-INV-008 of Yomizaka's qc-invoice ruleset (orazaka-packs, document-validation): a payment-terms mention. Kept here as the guard that the document says it. */
 const QC_INV_008 = /(?:conditions?\s+de\s+paiement|modalit[ée]s?\s+de\s+paiement|payable\s+(?:dans|sous|au\s+plus|[àa]\s+\d|[àa]\s+r[ée]ception|d[èe]s|le\b)|\bnet\s*\d+|[ée]ch[ée]ance|payment\s+terms|due\s+(?:date|on|upon))/i;
-
-const invoice = (over: Partial<InvoiceView> = {}): InvoiceView => ({
-  id: "i1",
-  number: "KZ-00004",
-  clientId: null,
-  replaces: null,
-  replacedBy: null,
-  creditedBy: null,
-  issuedOn: "2026-10-21",
-  termsDays: 30,
-  dueOn: "2026-11-20",
-  language: "fr",
-  creditOf: null,
-  subtotalCents: 530_000,
-  gstCents: 26_500,
-  qstCents: 52_868,
-  totalCents: 609_368,
-  paidCents: 0,
-  client: { fullName: "Studio Lumen inc. (démo)", email: "contact.studiolumen@akinaza.test", phone: "514-555-0111" },
-  shop: { name: "Technologies Krizaka", legalName: "Technologies Krizaka inc. (démo)", address: "1 rue Exemple, Montréal QC", timezone: "America/Toronto", registrant: true, gstNumber: "123456789RT0001", qstNumber: "1234567890TQ0001", publicEmail: null },
-  lines: [{ id: "l1", invoiceId: "i1", position: 1, description: "Développement logiciel / Software development", quantityHundredths: 1_000, unitPriceCents: 15_000, discountCents: 0, taxCategory: "standard", amountCents: 150_000 }],
-  ...over,
-});
 
 describe("the invoice document says when it is due and under which terms", () => {
   it("French: the terms and the due date, in the language of the invoice", () => {
