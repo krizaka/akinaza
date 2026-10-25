@@ -1,12 +1,11 @@
 // @template: app-dashboard
-import { localDay, visitMinutes, vocabularyOf } from "@akinaza/core";
-import { dayVisits, listInvoices, offOn, shopDay, type ShopRole } from "@akinaza/db";
+import { BOARD_PERIODS, type BoardPeriod, localDay, visitMinutes, vocabularyOf } from "@akinaza/core";
+import { dayVisits, offOn, shopDay, type ShopRole, todayBoard } from "@akinaza/db";
 import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 
 import { BriefBanner } from "@/components/app/BriefBanner";
 import { TodayDay } from "@/components/app/TodayDay";
-import { TodayInvoices } from "@/components/app/TodayInvoices";
 import { type DayVisitView, WalkerDay } from "@/components/app/WalkerDay";
 import { loadShopBrief } from "@/lib/brief";
 import { dayView } from "@/lib/day";
@@ -34,22 +33,22 @@ const withMinutes = (v: Omit<DayVisitView, "minutes">): DayVisitView => ({ ...v,
  * — with the Monday brief announced above it and the last invoices beside. A dog walker's staff keep the card view built for a
  * phone in the street. The shop is the address's: a deep link opens it whatever the cookie remembers.
  */
-export default async function Today({ params, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ day?: string; appointment?: string }> }) {
+export default async function Today({ params, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ day?: string; appointment?: string; period?: string }> }) {
   const { locale: raw, shop: shopId } = await params;
   const locale = asLocale(raw);
   const { session, shop, role } = await memberShop(shopId, "agenda");
   const query = await searchParams;
   const { dependants } = vocabularyOf(shop.businessType);
   if (dayView(role, dependants) === "cards") return <StaffDay locale={locale} shop={shop} day={query.day} />;
-  // The invoices beside the day, for who may see them (the owner, a manager): never loaded for anyone else.
-  const invoices = may(role, "invoices") ? await listInvoices(db(), shop.id) : null;
-  return <OwnerDay locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} dependants={dependants} invoices={invoices} today={localDay(new Date(), shop.timezone)} />;
+  const today = localDay(new Date(), shop.timezone);
+  const period: BoardPeriod = BOARD_PERIODS.find((p) => String(p) === query.period) ?? BOARD_PERIODS[0];
+  // The board (the binder, the activity, « À encaisser ») is the shop's money: loaded only for who may see the invoices.
+  const board = may(role, "invoices") ? await todayBoard(db(), shop.id, { day: today, period }) : null;
+  return <OwnerDay locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} dependants={dependants} board={board} period={period} />;
 }
 
 /** The agenda day of the owner (and a manager), for every trade; a staff member of another trade sees their own appointments here. */
-type Invoices = Awaited<ReturnType<typeof listInvoices>>;
-
-async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants, invoices, today }: { locale: Locale; shop: MemberShop; role: ShopRole; staffAccountId: string | undefined; query: { day?: string; appointment?: string }; dependants: boolean; /** The last invoices, or null for who may not see them. */ invoices: Invoices | null; /** The shop's today, for the invoices' state. */ today: string }) {
+async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants, board, period }: { locale: Locale; shop: MemberShop; role: ShopRole; staffAccountId: string | undefined; query: { day?: string; appointment?: string }; dependants: boolean; /** Null for who may not see the shop's money. */ board: Awaited<ReturnType<typeof todayBoard>> | null; period: BoardPeriod }) {
   const t = getDictionary(locale).console;
   const routes = shopRoutes(locale, shop.id);
   const view = await todayView(shop, { day: query.day, staffAccountId });
@@ -68,13 +67,16 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
       today={view.today}
       nowIso={new Date().toISOString()}
       selectedId={query.appointment ?? null}
-      allow={{ clients: may(role, "clients"), revenue: invoices !== null }}
+      allow={{ clients: may(role, "clients"), revenue: board !== null }}
       title={t.meta.today}
-      description={[formatLongDay(view.day, locale), offLine].filter(Boolean).join(" · ")}
+      description={offLine ?? ""}
+      dependants={dependants}
+      board={board}
+      period={period}
+      publicPageHref={shop.published && shop.slug ? `/${locale}/s/${shop.slug}` : null}
       visits={dependants ? Object.fromEntries(visits.map((v) => [v.appointmentId, withMinutes(v)])) : undefined}
       banner={brief ? <BriefBanner count={brief.items.length} href={routes.brief} /> : null}
-      aside={invoices ? <TodayInvoices invoices={invoices} locale={locale} shopId={shop.id} today={today} /> : null}
-      newInvoiceHref={invoices ? routes.newInvoice : null}
+      newInvoiceHref={board ? routes.newInvoice : null}
     />
   );
 }

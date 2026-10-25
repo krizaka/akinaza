@@ -124,6 +124,8 @@ const iso = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
  */
 export const invoiceInputSchema = z.object({
   clientId: z.string().uuid().nullish(),
+  /** The finished appointment it bills (« Facturer ce rendez-vous », D3/D4): Aujourd'hui's « À facturer » no longer counts it. */
+  appointmentId: z.string().uuid().nullish(),
   language: z.enum(["fr", "en"]),
   issuedOn: iso,
   /** The payment terms in days (0 = due on receipt); omitted = the shop's own. */
@@ -151,6 +153,10 @@ export async function issueShopInvoice(db: Db | Tx, shopId: string, raw: Invoice
     const [client] = await db.select({ id: clients.id }).from(clients).where(and(eq(clients.id, input.clientId), eq(clients.shopId, shopId)));
     if (!client) throw new ShopError("AK_CLIENT_UNKNOWN", `AK_CLIENT_UNKNOWN: ${input.clientId}`);
   }
+  if (input.appointmentId) {
+    const [appointment] = await db.select({ id: appointments.id }).from(appointments).where(and(eq(appointments.id, input.appointmentId), eq(appointments.shopId, shopId)));
+    if (!appointment) throw new ShopError("AK_APPOINTMENT_UNKNOWN", `AK_APPOINTMENT_UNKNOWN: ${input.appointmentId}`);
+  }
   const lines: LineInput[] = [];
   for (const l of input.lines) {
     if (l.serviceId) {
@@ -162,7 +168,7 @@ export async function issueShopInvoice(db: Db | Tx, shopId: string, raw: Invoice
       lines.push({ description: l.description!, quantity: l.quantity, unitPriceCents: l.unitPriceCents, category: l.category ?? "standard" });
     }
   }
-  return issueInvoice(db, { shopId, clientId: input.clientId ?? null, language: input.language, issuedOn: input.issuedOn, termsDays: input.termsDays ?? null, lines, replaces: link.replaces ?? null });
+  return issueInvoice(db, { shopId, clientId: input.clientId ?? null, appointmentId: input.appointmentId ?? null, language: input.language, issuedOn: input.issuedOn, termsDays: input.termsDays ?? null, lines, replaces: link.replaces ?? null });
 }
 
 /**

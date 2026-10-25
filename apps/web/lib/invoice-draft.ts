@@ -56,11 +56,13 @@ export function draftPreview(lines: readonly DraftLine[], services: readonly Dra
  * a service that is not the shop's is not found — the page answers 404, as for any resource of another shop.
  */
 export function prefillDraft(
-  query: { client?: string; service?: string; quantity?: string },
+  query: { client?: string; service?: string; quantity?: string; appointment?: string },
   choices: { clients: readonly { id: string }[]; services: readonly { id: string }[] },
-): { found: false } | { found: true; clientId: string; lines: DraftLine[] } {
+): { found: false } | { found: true; clientId: string; lines: DraftLine[]; appointmentId: string | null } {
   if (query.client && !choices.clients.some((c) => c.id === query.client)) return { found: false };
   if (query.service && !choices.services.some((s) => s.id === query.service)) return { found: false };
   const quantity = query.quantity && parseQuantity(query.quantity) !== null ? query.quantity : "1";
-  return { found: true, clientId: query.client ?? "", lines: [emptyLine("l0", query.service ?? choices.services[0]?.id ?? "", quantity)] };
+  // The appointment it bills: checked at issue (another shop's is refused there, AK_APPOINTMENT_UNKNOWN).
+  const appointmentId = query.appointment && /^[0-9a-f-]{36}$/i.test(query.appointment) ? query.appointment : null;
+  return { found: true, clientId: query.client ?? "", appointmentId, lines: [emptyLine("l0", query.service ?? choices.services[0]?.id ?? "", quantity)] };
 }

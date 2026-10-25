@@ -443,7 +443,48 @@
         "see": "Voir le point ({count})",
         "dismiss": "Mettre le point de côté"
       },
-      "nextPrimary": "Prochain : {client} à {time}"
+      "nextPrimary": "Prochain : {client} à {time}",
+      "headline": {
+        "empty": "Rien de prévu aujourd’hui.",
+        "otherDay": "{count} rendez-vous ce jour-là.",
+        "otherDayEmpty": "Rien de prévu ce jour-là.",
+        "done": "Journée terminée : {count} rendez-vous faits.",
+        "next": "{client} arrive à {at}.",
+        "nextWalkIn": "Un client sans rendez-vous à {at}.",
+        "nextService": "{service} à {at}.",
+        "inProgress": "Avec {client} jusqu’à {at}.",
+        "inProgressWalkIn": "Un client sans rendez-vous jusqu’à {at}.",
+        "inProgressService": "{service} en cours jusqu’à {at}."
+      },
+      "week": "Semaine {week} · {date}",
+      "calendar": "Calendrier",
+      "binder": {
+        "title": "Le classeur",
+        "appointments": "Rendez-vous {count}",
+        "toBill": "À facturer {count}",
+        "toCollect": "À encaisser {count}",
+        "week": "Cette semaine {count}"
+      },
+      "quick": {
+        "title": "Accès rapide",
+        "bill": "Facturer {client}",
+        "chase": "Relancer la facture {number}",
+        "page": "Ma page publique"
+      },
+      "activity": {
+        "title": "L’activité",
+        "period": "Période",
+        "days": "{days} j",
+        "invoiced": "Facturé",
+        "collected": "Encaissé",
+        "appointments": "Rendez-vous faits"
+      },
+      "balance": {
+        "title": "À encaisser",
+        "owed": "Reste dû : {amount}",
+        "overdue": "Dont {amount} en retard",
+        "noneLate": "Rien en retard."
+      }
     },
     "account": {
       "forgot": {
