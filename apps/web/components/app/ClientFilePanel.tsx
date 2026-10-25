@@ -119,7 +119,7 @@ export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, no
       </a>
     ) : null,
     client.email ? (
-      <a key="email" className="text-fg-accent underline" href={`mailto:${client.email}`}>
+      <a key="email" className="break-all text-fg-accent underline" href={`mailto:${client.email}`}>
         {client.email}
       </a>
     ) : null,
