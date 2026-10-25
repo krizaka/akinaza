@@ -1,0 +1,151 @@
+"use client";
+
+import { Badge } from "@krizaka/ui/badge";
+import { Button } from "@krizaka/ui/button";
+import { ChipLink } from "@krizaka/ui/chip-link";
+import { DataTable, type DataTableColumn, dataTableCsv } from "@krizaka/ui/data-table";
+import { EmptyState } from "@krizaka/ui/empty-state";
+import { Mascot } from "@krizaka/ui/mascots";
+import { Meter } from "@krizaka/ui/meter";
+import { SearchField } from "@krizaka/ui/search-field";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
+
+import { ClientAvatar, type ClientRowView } from "@/components/app/ClientsTable";
+import { useShopRoutes } from "@/components/app/ShopSession";
+import { ButtonLink } from "@/components/ButtonLink";
+import { CLIENT_FILTERS, type ClientsQuery, clientsView } from "@/lib/clients-view";
+import { formatDate, formatMoney } from "@/lib/format";
+import { useSay } from "@/lib/i18n-client";
+import { useTableLabels } from "@/lib/table-labels";
+
+/** The address of the list for a query: an empty search and « all » leave no parameter. */
+const href = (pathname: string, { q, filter }: ClientsQuery) => {
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (filter !== "all") params.set("filter", filter);
+  const query = params.toString();
+  return query ? `${pathname}?${query}` : pathname;
+};
+
+/**
+ * Clients on the catalogue template (D5, review K3b): the plan strip (how many, what they owe, a meter of who is up to date),
+ * the search and the filter chips with their counts — all in the address —, then the rows with their state and « Facturer »;
+ * selected rows can be exported (the bulk actions of tags wait for D10). A name opens the client's file.
+ */
+export function ClientsCatalogue({ clients, query, timeZone }: { clients: ClientRowView[]; query: ClientsQuery; timeZone: string }) {
+  const { say, locale } = useSay();
+  const routes = useShopRoutes();
+  const router = useRouter();
+  const pathname = usePathname() ?? routes.clients;
+  const labels = useTableLabels();
+  const [selected, setSelected] = useState<string[]>([]);
+  const view = useMemo(() => clientsView(clients, query), [clients, query]);
+  const columns = useMemo<DataTableColumn<ClientRowView>[]>(() => {
+    const day = (iso: string | null) => (iso ? formatDate(iso, locale, timeZone) : say("clients.never"));
+    return [
+      {
+        id: "client",
+        header: say("clients.columns.client"),
+        type: "title",
+        card: "title",
+        sortable: true,
+        minWidth: 220,
+        value: (c) => c.fullName,
+        cell: (c) => (
+          <Link href={routes.client(c.id)} className="flex items-center gap-3 font-semibold text-fg hover:underline">
+            <ClientAvatar name={c.fullName} />
+            {c.fullName}
+          </Link>
+        ),
+        subtitle: (c) => c.email ?? c.phone ?? "",
+      },
+      {
+        id: "state",
+        header: say("clients.columns.state"),
+        type: "status",
+        value: (c) => c.owedCents,
+        cell: (c) => (c.owedCents > 0 ? <Badge tone="warning">{say("clients.state.owes", { amount: formatMoney(c.owedCents, locale) })}</Badge> : <Badge tone="success">{say("clients.state.upToDate")}</Badge>),
+      },
+      { id: "visits", header: say("clients.columns.visits"), type: "number", sortable: true, priority: 3, value: (c) => c.visits },
+      { id: "last", header: say("clients.columns.last"), sortable: true, priority: 2, nowrap: true, value: (c) => c.lastVisitAt ?? "", cell: (c) => day(c.lastVisitAt) },
+      { id: "next", header: say("clients.columns.next"), sortable: true, priority: 2, nowrap: true, value: (c) => c.nextVisitAt ?? "", cell: (c) => day(c.nextVisitAt) },
+      {
+        id: "bill",
+        header: say("clients.columns.bill"),
+        headerHidden: true,
+        hideable: false,
+        cell: (c) => (
+          <ButtonLink href={routes.newInvoiceFor({ client: c.id })} variant="secondary" size="sm">
+            {say("clients.file.bill")}
+          </ButtonLink>
+        ),
+      },
+    ];
+  }, [say, locale, timeZone, routes]);
+  const exportSelection = () => {
+    const rows = view.rows.filter((r) => selected.includes(r.id));
+    const csv = dataTableCsv(rows, [
+      { id: "client", header: say("clients.columns.client"), value: (c) => c.fullName },
+      { id: "email", header: say("clients.columns.email"), value: (c) => c.email ?? "" },
+      { id: "owed", header: say("clients.columns.owed"), value: (c) => formatMoney(c.owedCents, locale) },
+    ]);
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const a = Object.assign(document.createElement("a"), { href: url, download: say("clients.exportFile") });
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  return (
+    <div className="flex flex-col gap-5">
+      <section aria-label={say("clients.strip.label")} className="grid gap-4 rounded-xl border border-border-default bg-surface-1 p-4 sm:grid-cols-[auto_auto_minmax(12rem,1fr)] sm:items-center sm:gap-8">
+        <p className="text-sm text-fg-secondary">
+          <span className="block text-xl font-bold tabular-nums text-fg">{say("clients.strip.count", { count: view.strip.count })}</span>
+        </p>
+        <p className="text-sm text-fg-secondary">
+          {say("clients.strip.owedLabel")}
+          <span className="block text-xl font-bold tabular-nums text-fg">{formatMoney(view.strip.owedCents, locale)}</span>
+        </p>
+        <div className="flex flex-col gap-1">
+          <p className="text-sm text-fg-secondary">{say("clients.strip.upToDate", { count: view.strip.upToDate, total: view.strip.count })}</p>
+          <Meter label={say("clients.strip.upToDate", { count: view.strip.upToDate, total: view.strip.count })} value={view.strip.upToDate} max={Math.max(view.strip.count, 1)} valueText={say("clients.strip.upToDate", { count: view.strip.upToDate, total: view.strip.count })} />
+        </div>
+      </section>
+      <div className="flex flex-col gap-3">
+        <SearchField label={say("clients.search")} placeholder={say("clients.searchPlaceholder")} defaultValue={query.q} debounce={250} onSearch={(q) => router.replace(href(pathname, { ...query, q: q.trim() }), { scroll: false })} clearLabel={say("clients.clear")} shortcut={false} />
+        <ul className="flex flex-wrap gap-2" aria-label={say("clients.filters")}>
+          {CLIENT_FILTERS.map((f) => (
+            <li key={f}>
+              <ChipLink selected={f === query.filter} asChild>
+                <Link href={href(pathname, { ...query, filter: f })} scroll={false}>
+                  {say(`clients.filter.${f}`)} <span className="tabular-nums">{view.counts[f]}</span>
+                </Link>
+              </ChipLink>
+            </li>
+          ))}
+        </ul>
+      </div>
+      {selected.length ? (
+        <div role="region" aria-label={say("clients.selection.label")} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-strong bg-surface-2 px-4 py-2">
+          <p className="text-sm font-semibold text-fg">{say("clients.selection.count", { count: selected.length })}</p>
+          <Button variant="secondary" size="sm" onClick={exportSelection}>
+            {say("clients.selection.export")}
+          </Button>
+        </div>
+      ) : null}
+      <DataTable
+        caption={say("clients.caption")}
+        rows={view.rows}
+        columns={columns}
+        labels={labels}
+        getRowId={(c) => c.id}
+        rowLabel={(c) => c.fullName}
+        selectable
+        selected={selected}
+        onSelectedChange={setSelected}
+        defaultSort={{ column: "client", direction: "ascending" }}
+        empty={<EmptyState icon={<Mascot bird="beaver" mood="thinking" size={120} />} title={say("clients.noMatch")} action={<ButtonLink href={href(pathname, { q: "", filter: "all" })} variant="secondary" size="sm">{say("clients.clear")}</ButtonLink>} />}
+      />
+    </div>
+  );
+}

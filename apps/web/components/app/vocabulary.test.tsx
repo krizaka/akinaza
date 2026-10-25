@@ -70,7 +70,7 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
       visits: [],
       invoices: [],
     };
-    const text = readable(around(locale, "professional", <ShopSession locale="en" shopId="s1" remembered><ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>));
+    const text = readable(around(locale, "professional", <ShopSession locale="en" shopId="s1" remembered><ClientFilePanel file={file} notes={[]} tab="summary" today="2026-10-22" timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>));
     expect(text).toContain("Studio Lumen inc.");
     expect(text).not.toMatch(DOG_WORDS[locale]);
     expect(text).not.toMatch(/Animal|Chien|Dog|Access notes|Notes d'accès/);
@@ -78,9 +78,9 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
 
   it("bills the client from their file when the role may invoice (« Facturer ce client », D3)", () => {
     const file = { client: { id: "c-9", fullName: "Studio Lumen inc.", phone: null, email: null, language: "fr" as const, notes: null, hasAccessNotes: false, since: "2026-01-01T12:00:00.000Z" }, dependants: [], visits: [], invoices: [] };
-    const html = renderIn("fr", "professional", <ShopSession locale="fr" shopId="s1" remembered><ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" mayInvoice /></ShopSession>);
+    const html = renderIn("fr", "professional", <ShopSession locale="fr" shopId="s1" remembered><ClientFilePanel file={file} notes={[]} tab="summary" today="2026-10-22" timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" mayInvoice /></ShopSession>);
     expect(html).toMatch(/href="\/fr\/app\/s1\/invoices\/new\?client=c-9"[^>]*>[\s\S]*?Facturer ce client/);
-    expect(renderIn("fr", "professional", <ShopSession locale="fr" shopId="s1" remembered><ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>)).not.toContain("Facturer ce client");
+    expect(renderIn("fr", "professional", <ShopSession locale="fr" shopId="s1" remembered><ClientFilePanel file={file} notes={[]} tab="summary" today="2026-10-22" timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>)).not.toContain("Facturer ce client");
   });
 
   it("a client's space speaks each shop's own words", () => {
@@ -100,7 +100,7 @@ describe("a pet-care shop keeps its words", () => {
       visits: [],
       invoices: [],
     };
-    const text = readable(around("en", "pets", <ShopSession locale="en" shopId="s1" remembered><ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>));
+    const text = readable(around("en", "pets", <ShopSession locale="en" shopId="s1" remembered><ClientFilePanel file={file} notes={[]} tab="summary" today="2026-10-22" timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>));
     expect(text).toMatch(/Rex/);
     expect(text).toMatch(/Labrador · large/);
   });

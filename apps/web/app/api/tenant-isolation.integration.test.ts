@@ -118,6 +118,7 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     // 409 AK_NO_REPORT: the lookup is scoped to the caller's shop, so another shop's report is "no report" - the answer of an unknown id.
     { address: "/api/walker/bookings/[id]/report/send", method: "POST", params: () => ({ id: ids.booking }), refused: 409 },
     { address: "/api/walker/clients/[id]/access-notes", method: "GET", params: () => ({ id: ids.client }) },
+    { address: "/api/walker/clients/[id]/notes", method: "POST", params: () => ({ id: ids.client }), json: () => ({ body: "x" }), intact: async () => expect(await query("SELECT 1 FROM client_notes WHERE client_id = $1", [ids.client])).toHaveLength(0) },
     { address: "/api/walker/hours/[id]", method: "DELETE", params: () => ({ id: ids.hour }), idempotent: true, intact: async () => expect(await query("SELECT 1 FROM schedules WHERE id = $1", [ids.hour])).toHaveLength(1) },
     { address: "/api/walker/invoices/[id]/payments", method: "POST", params: () => ({ id: ids.invoice }), json: () => ({ amountCents: 100, method: "cash", receivedOn: "2026-10-23" }) },
     { address: "/api/walker/invoices/[id]/replace", method: "POST", params: () => ({ id: ids.invoice }), json: () => ({ language: "fr", issuedOn: "2026-10-23", lines: [{ description: "x", unitPriceCents: 100, quantity: 1 }] }) },

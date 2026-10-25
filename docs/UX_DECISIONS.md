@@ -377,3 +377,22 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
   are removed); the binder is chips until krizaka-ui#648 ships the binder tabs; `@krizaka/ui` moves to 3.54 and `@krizaka/charts`
   0.6 joins for the sparklines.
 - **Signal we are wrong**: owners still open Factures first thing in the morning, or never change the period.
+
+## Clients on the catalogue, a client's file on Show · detail with signed notes (Phase 2, D5, #332, review K3b)
+
+- **Decision**: Clients opens on a **plan strip** — how many clients, what they owe, a `Meter` of who is up to date — then the
+  search (name, e-mail or phone, accents ignored) and the filter chips **Tous · Reste dû · À venir**, each with its count on the
+  whole shop; both are in the address (`?q=&filter=`). Each row says the client's state (« Reste dû 31,74 $ » or « À jour ») and
+  carries « Facturer »; selected rows can be exported (CSV) — tags and the other bulk actions wait for D10 (krizaka-ts#89). A file
+  is a `DetailLayout`: the name as the `h1` with the avatar and the state, the contact and « client depuis » on one line,
+  « Facturer ce client »; the binder's sections **Résumé · Factures · Visites · Notes** in the address (`?tab=`), chips until
+  krizaka-ui#648; each invoice wears the list's derived state. **Signed notes** (`client_notes`, the shop's own): the words, the
+  author's name and the day on one line, newest first, « Ajouter une note » in the side column (under the content on a phone);
+  erasing the client (Loi 25) deletes them.
+- **Problem**: a client was a row with spent and visits; nothing said who owes, the file stacked every section, and a note was one
+  free text with no author or date.
+- **Principle**: recognition over recall and visibility of system status (Nielsen); a note is accountable when it is signed.
+- **Refused**: a profile banner drawn here (krizaka-ui#650 extracts Orochia's); tags before D10; editing or deleting a note (a
+  note is kept as written; a new note corrects it).
+- **Cost**: one table and its migration (`0032_client_notes`); the old single « notes » field stays read-only in Résumé.
+- **Signal we are wrong**: owners keep their notes elsewhere, or ask to edit a note.

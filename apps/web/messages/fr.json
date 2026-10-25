@@ -709,7 +709,11 @@
         "visits": "Visites",
         "last": "Dernière visite",
         "next": "Prochaine visite",
-        "spent": "Total dépensé"
+        "spent": "Total dépensé",
+        "state": "État",
+        "bill": "Facturer",
+        "email": "Courriel",
+        "owed": "Reste dû"
       },
       "file": {
         "since": "Client depuis le {date}",
@@ -727,14 +731,49 @@
         "number": "Numéro",
         "total": "Total",
         "credit": "Note de crédit",
-        "bill": "Facturer ce client"
+        "bill": "Facturer ce client",
+        "sections": "Les sections du dossier",
+        "tabs": {
+          "summary": "Résumé",
+          "invoices": "Factures",
+          "visits": "Visites",
+          "notes": "Notes"
+        },
+        "addNote": "Ajouter une note",
+        "saveNote": "Garder la note"
       },
       "requests": {
         "title": "Ses demandes gardées",
         "lead": "Ce que la personne demande d'habitude, avec ses photos ou documents : pour préparer la visite.",
         "photo": "Photo {n}",
         "pdf": "Document {n}"
-      }
+      },
+      "state": {
+        "owes": "Reste dû {amount}",
+        "upToDate": "À jour"
+      },
+      "strip": {
+        "label": "Vos clients en bref",
+        "count": "{count} clients",
+        "owedLabel": "À encaisser",
+        "upToDate": "{count} sur {total} à jour"
+      },
+      "search": "Rechercher un client",
+      "searchPlaceholder": "Nom, courriel ou téléphone",
+      "clear": "Tout afficher",
+      "filters": "Filtrer les clients",
+      "filter": {
+        "all": "Tous",
+        "due": "Reste dû",
+        "upcoming": "À venir"
+      },
+      "selection": {
+        "label": "Sélection",
+        "count": "{count} sélectionnés",
+        "export": "Exporter la sélection (CSV)"
+      },
+      "exportFile": "clients.csv",
+      "noMatch": "Aucun client ne correspond."
     },
     "shopSetup": {
       "title": "Votre page boutique",
