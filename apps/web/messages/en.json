@@ -390,7 +390,11 @@
       "FEATURE_OFF": "This feature is switched off.",
       "SHOP_LIMIT": "You have reached the number of shops allowed.",
       "SECTIONS_CUSTOM": "Choose whether to keep your section order or use the template's.",
-      "TEMPLATE_UNKNOWN": "That template is not available."
+      "TEMPLATE_UNKNOWN": "That template is not available.",
+      "NAME_TAKEN": "This name is already used.",
+      "TAG_LIMIT": "The shop has reached its limit of tags.",
+      "TOO_MANY": "At most 200 rows at a time.",
+      "STATUS_DERIVED": "An invoice's state follows its payments: it cannot be changed by hand."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -740,7 +744,8 @@
           "notes": "Notes"
         },
         "addNote": "Add a note",
-        "saveNote": "Keep the note"
+        "saveNote": "Keep the note",
+        "eyebrow": "Client"
       },
       "requests": {
         "title": "Their kept requests",
@@ -1976,6 +1981,54 @@
       },
       "retry": "Try again",
       "loading": "Loading…"
+    },
+    "organize": {
+      "close": "Close",
+      "columns": {
+        "tags": "Tags"
+      },
+      "binder": {
+        "label": "Tags",
+        "all": "All",
+        "add": "New tag"
+      },
+      "newTag": {
+        "title": "New tag",
+        "hint": "A name and a colour marker. The tag belongs to the shop: the owner and the manager can add and rename it.",
+        "name": "Name",
+        "marker": "Colour marker",
+        "create": "Create the tag"
+      },
+      "markers": {
+        "blue": "Blue",
+        "green": "Green",
+        "amber": "Amber",
+        "red": "Red",
+        "violet": "Violet",
+        "gray": "Gray"
+      },
+      "views": {
+        "label": "Views",
+        "save": "Save this view",
+        "saveTitle": "Save this view",
+        "saveHint": "The view keeps the tags, the dates and the search in force. Its address is the same on every device.",
+        "name": "Name of the view",
+        "shared": "Share with the team",
+        "remove": "Delete this view",
+        "clear": "Clear the filters"
+      },
+      "selection": {
+        "tag": "Add a tag",
+        "untag": "Remove a tag",
+        "tooMany": "At most 200 rows can be tagged at once.",
+        "label": "Selection",
+        "count": "{count} selected"
+      },
+      "file": {
+        "tags": "Tags",
+        "none": "No tag yet",
+        "edit": "Edit the tags"
+      }
     }
   },
   "notFound": {

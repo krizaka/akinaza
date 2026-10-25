@@ -232,6 +232,20 @@
       "when": 1795000001000,
       "tag": "0032_client_notes",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1795000002000,
+      "tag": "0033_workspace",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1795000003000,
+      "tag": "0034_shop_organized",
+      "breakpoints": true
     }
   ]
 }

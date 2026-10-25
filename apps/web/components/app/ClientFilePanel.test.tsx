@@ -55,4 +55,19 @@ describe("a client's file on Show · detail (D5)", () => {
   it("writes the dates on one line", () => {
     expect(render({ tab: "visits" })).toMatch(/whitespace-nowrap[^>]*>[^<]*19 oct\. 2026/);
   });
+
+  it("wears the client's tags with their markers beside the contact, and a way to edit them for those who write tags (akinaza#337)", () => {
+    const organize = { kind: "client" as const, canWrite: true, tags: [{ id: "t1", name: "Fidèle", marker: "green" as const }, { id: "t2", name: "Entreprise", marker: "violet" as const }], counts: {}, views: { system: [], workspace: [], mine: [] }, filters: {}, view: null };
+    const html = render({ organize, tags: [organize.tags[0]!] });
+    expect(readable(html)).toContain("Fidèle");
+    expect(html).toContain('data-tag-marker="green"');
+    expect(readable(html)).toContain("Modifier les étiquettes");
+    expect(readable(render({ organize: { ...organize, canWrite: false }, tags: [organize.tags[0]!] }))).not.toContain("Modifier les étiquettes");
+  });
+
+  it("opens on the profile banner (krizaka-ui#650) and draws the sections as the binder's dividers", () => {
+    const html = render();
+    expect(html).toMatch(/Client<\/[a-z]+>/);
+    expect(html).toMatch(/data-variant="binder"|kz-tabs-binder|binder/);
+  });
 });

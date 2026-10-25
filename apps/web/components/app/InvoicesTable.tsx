@@ -6,9 +6,11 @@ import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
 import { DataTable, type DataTableColumn, DataTableColumnsMenu, DataTableExport, DataTableFilters } from "@krizaka/ui/data-table";
 import Link from "next/link";
-import { useMemo } from "react";
+import { usePathname } from "next/navigation";
+import { useMemo, useState } from "react";
 
 import { InvoiceSendAction } from "@/components/app/InvoiceSendAction";
+import { SelectionTags, TagBinder, TagChips, ViewsBar } from "@/components/app/organize";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
 import { useWash } from "@/components/app/useWash";
@@ -16,6 +18,7 @@ import { ButtonLink } from "@/components/ButtonLink";
 import { formatDate, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
 import { STATE_TONE } from "@/lib/invoice-tone";
+import type { OrganizeData, TagLite } from "@/lib/organize-view";
 import { useTableLabels } from "@/lib/table-labels";
 
 export interface InvoiceRowView {
@@ -54,7 +57,9 @@ const QUICK_METHODS = ["cash", "card", "transfer"] as const;
  * filtered by state, exported as CSV, each unfolding its amounts and its quick actions — open, edit (#207), cash the balance.
  * A card per invoice on a phone.
  */
-export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoices: InvoiceRowView[]; today: string; defaultMessage?: string }) {
+export function InvoicesTable({ invoices, today, defaultMessage = "", organize, tagsByInvoice = {} }: { invoices: InvoiceRowView[]; today: string; defaultMessage?: string; organize?: OrganizeData; tagsByInvoice?: Record<string, TagLite[]> }) {
+  const pathname = usePathname() ?? "";
+  const [selected, setSelected] = useState<string[]>([]);
   const { say, locale } = useSay();
   const routes = useShopRoutes();
   const call = useCall();
@@ -98,12 +103,13 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
           );
         },
       },
+      ...(organize ? [{ id: "tags", header: say("organize.columns.tags"), priority: 2 as const, value: (i: InvoiceRowView) => (tagsByInvoice[i.id] ?? []).map((t) => t.name).join(", "), cell: (i: InvoiceRowView) => <TagChips tags={tagsByInvoice[i.id]} /> }] : []),
       { id: "issued", header: say("invoices.table.issued"), sortable: true, priority: 2, value: (i) => i.issuedOn, cell: (i) => day(i.issuedOn) },
       { id: "due", header: say("invoices.table.due"), priority: 3, hideable: true, value: (i) => i.dueOn ?? "", cell: (i) => (i.dueOn ? day(i.dueOn) : "—") },
       { id: "total", header: say("invoices.table.total"), type: "number", sortable: true, value: (i) => i.totalCents, cell: (i) => formatMoney(i.totalCents, locale) },
       { id: "remaining", header: say("invoices.table.remaining"), type: "number", sortable: true, priority: 3, hideable: true, value: (i) => remainingCents(standing(i)), cell: (i) => formatMoney(remainingCents(standing(i)), locale) },
     ];
-  }, [say, locale, routes, today, wash]);
+  }, [say, locale, routes, today, wash, organize, tagsByInvoice]);
 
   const detail = (i: InvoiceRowView) => {
     const state = invoiceState(standing(i), today);
@@ -151,8 +157,23 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
 
   return (
     // A changed row's cell carries `data-kz-arrive`: motion.css washes its row (`tr:has(…)`) once, an accent that fades.
-    <div data-kz-arrival="flash">
+    <div data-kz-arrival="flash" className="flex flex-col gap-4">
+      {organize ? (
+        <>
+          <TagBinder organize={organize} path={pathname} />
+          <ViewsBar organize={organize} path={pathname} />
+          {selected.length ? (
+            <div role="region" aria-label={say("organize.selection.label")} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-strong bg-surface-2 px-4 py-2">
+              <p className="text-sm font-semibold text-fg">{say("organize.selection.count", { count: selected.length })}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <SelectionTags organize={organize} selected={selected} onDone={() => setSelected([])} />
+              </div>
+            </div>
+          ) : null}
+        </>
+      ) : null}
       <DataTable
+        {...(organize ? { selectable: true, selected, onSelectedChange: setSelected } : {})}
         caption={say("invoices.list.title")}
         rows={ordered}
         columns={columns}

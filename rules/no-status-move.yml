@@ -1,0 +1,12 @@
+id: no-status-move
+language: Tsx
+severity: error
+message: "No `status.move(…)`: Akinaza has no editable status set. An invoice's state is DERIVED from the ledger (`invoiceState`), so a « bulk paid » must not exist (akinaza#337, krizaka-ts ADR-003). A real editable set needs a product decision and its own tests first."
+rule:
+  pattern: $WS.status.move($$$ARGS)
+ignores:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/dist/**"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
