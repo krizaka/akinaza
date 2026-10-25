@@ -4,13 +4,15 @@
 
 use url::Url;
 
-/// The menu's sections: the id the menu sends, the shop page's segment, the short address's segment.
+/// The menu's sections, in the web rail's order (D9): the id the menu sends, the shop page's segment (`shopRoutes` of the web),
+/// the short address's segment (the web's `(legacy)` pages, which open the shop last worked in). Checked against the web's
+/// pages by `apps/web/lib/app-addresses.test.ts`.
 pub const SECTIONS: [(&str, &str, &str); 5] = [
     ("section.today", "aujourdhui", ""),
+    ("section.clients", "clients", "clients"),
     ("section.invoices", "invoices", "invoices"),
     ("section.books", "books", "books"),
-    ("section.clients", "clients", "clients"),
-    ("section.shop", "shop", "shop"),
+    ("section.shop", "boutique", "shop"),
 ];
 
 fn is_shop_id(segment: &str) -> bool {
@@ -80,5 +82,24 @@ mod tests {
     fn knows_only_its_sections_and_a_real_base() {
         assert!(section_url(BASE, None, "fr", "section.admin").is_none());
         assert!(section_url("not a url", None, "fr", "section.today").is_none());
+    }
+
+    #[test]
+    fn each_section_opens_the_rail_s_address_in_both_languages() {
+        for locale in ["fr", "en"] {
+            let here = Url::parse(&format!("{BASE}/{locale}/app/{SHOP}/clients")).unwrap();
+            let at = |section: &str| section_url(BASE, Some(&here), "fr", section).unwrap().path().to_string();
+            assert_eq!(
+                ["section.today", "section.clients", "section.invoices", "section.books", "section.shop"].map(at),
+                ["aujourdhui", "clients", "invoices", "books", "boutique"].map(|s| format!("/{locale}/app/{SHOP}/{s}")),
+                "{locale}: in a shop, the web's shopRoutes"
+            );
+            let short = |section: &str| section_url(BASE, None, locale, section).unwrap().path().to_string();
+            assert_eq!(
+                ["section.today", "section.clients", "section.invoices", "section.books", "section.shop"].map(short),
+                ["", "/clients", "/invoices", "/books", "/shop"].map(|s| format!("/{locale}/app{s}")),
+                "{locale}: without a shop, the web's short addresses"
+            );
+        }
     }
 }

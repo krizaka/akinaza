@@ -414,6 +414,37 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Cost**: the skeletons follow the pages' structure by hand: a page that changes its boxes changes its skeleton.
 - **Signal we are wrong**: owners reload by hand after a failed section, or the crawl reports a shift.
 
+## The client space: invoices as rows, the request form folded, one « Mes données » (Phase 2, D7, #334)
+
+- **Decision**: each shop's **invoices are rows** (`List` of @krizaka/ui): the number, the day it was issued, its state derived
+  from the ledger in the owner list's words and tone (`invoiceState`, `STATE_TONE`: Payée, En retard, À payer…) and its amount,
+  the whole row opening the invoice. **The request form is folded** behind « Garder une demande » (a secondary that opens it in
+  place, closed again once the request is kept), and « Reprendre » is a secondary: the screen keeps its one primary (« Réserver chez
+  … » at the first shop). **« Mes données (Loi 25) » appears once, at the end**: a row per shop with its download, then
+  « Effacer un dossier » in a block of its own — the danger is never beside the copy; each erasure speaks its shop's vocabulary.
+- **Problem**: ten raw links (« Ouvrir la facture KZ-00022 · 310,43 $ ») with no state; an open form and a Loi 25 card per shop,
+  the erase button beside the download; « Reprendre » a second primary.
+- **Principle**: recognition rather than recall (the state on the row), progressive disclosure (the form on demand), error
+  prevention (the irreversible action apart from the frequent one).
+- **Refused**: a `DataTable` here (a client reads three to ten invoices, no filter or column to choose); a confirmation dialog for
+  the download.
+- **Cost**: the client's invoice rows read the payments and the superseding notes (`clientInvoices`), one sub-query each.
+- **Signal we are wrong**: clients write to the shop to ask whether an invoice is paid, or erase a file while looking for the copy.
+
+## The Mac menu is the rail (Phase 2, D9, #336)
+
+- **Decision**: the « Aller » menu lists the web rail's five places, in its order and words, in the Mac's language: ⌘1 Aujourd'hui ·
+  ⌘2 Clients · ⌘3 Factures · ⌘4 Livres · ⌘5 Boutique (Today · Clients · Invoices · Books · Shop). Each opens the web's address of the
+  shop on screen — Boutique is `/boutique`, the hub — else the web's short address. A test of the web reads the Mac's table and
+  refuses an address that is not a live page (`lib/app-addresses.test.ts`). The point of sale of #79 is out: Akinaza serves
+  service businesses, the POS stays a stub.
+- **Problem**: the menu kept the order of an older rail (Factures before Clients) and the word « Commerce »; ⌘5 opened
+  `/fr/app/<shop>/shop`, the address « Ma page boutique » had before K4, kept only as a redirect.
+- **Principle**: consistency (the same five places, the same order and the same digits on every surface).
+- **Refused**: a menu of its own for the Mac; a countertop/POS mode (restaurants, cafés and bars are excluded by law, AGENTS § 2).
+- **Cost**: a web test that reads a Rust table.
+- **Signal we are wrong**: owners press ⌘3 for Clients by habit of the old menu.
+
 ## The phone app: the web's five places at the web's addresses (Phase 2, D8, #335)
 
 - **Decision**: the tab bar is the web rail — **Aujourd'hui · Clients · Factures · Livres · Boutique**, in its order, words and

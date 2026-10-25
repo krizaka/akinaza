@@ -29,9 +29,10 @@ const file = (shopName: string, slug: string | null, id = slug ?? "x"): ClientFi
   bookings: [
     { bookingId: `b-${id}`, status: "booked", visitStatus: "booked", startsAt: "2026-11-03T14:00:00.000Z", service: { fr: "Promenade", en: "Walk" }, zone: "Saint-Henri", dependantName: "Biscuit", report: null },
   ],
-  invoices: [{ id: `i-${id}`, number: "2026-0007", issuedOn: "2026-10-20", totalCents: 3449, shopName }],
+  invoices: [{ id: `i-${id}`, number: "2026-0007", issuedOn: "2026-10-20", dueOn: "2026-11-19", totalCents: 3449, paidCents: 0, creditOf: null, superseded: false }],
   requests: { clientId: `c-${id}`, shopSlug: slug, requests: [], catalogue: null },
   now: "2026-10-24T12:00:00.000Z",
+  today: "2026-10-24",
   timeZone: "America/Toronto",
 });
 
@@ -92,5 +93,50 @@ describe("the client space (K7, docs/ux/2026-10-full-review.md H2)", () => {
     const erase = html.match(/<button[^>]*class="([^"]*)"[^>]*>Effacer mon dossier chez Toilettage/)![1]!.split(" ");
     for (const rule of ["whitespace-normal", "w-full", "sm:w-auto"]) expect(erase).toContain(rule);
     for (const label of ["Réserver chez Toilettage", "Ouvrir une boutique"]) expect(html).toMatch(new RegExp(`<a[^>]*class="[^"]*w-full sm:w-auto[^"]*"[^>]*>${label}`));
+  });
+
+  it("lists the invoices as rows with their derived state and amount — never a raw « Ouvrir la facture » link (D7)", () => {
+    const f = file("Studio Lumen inc. (démo)", "lumen");
+    const html = render([
+      {
+        ...f,
+        invoices: [
+          { id: "i-paid", number: "KZ-00021", issuedOn: "2026-09-02", dueOn: "2026-10-02", totalCents: 31_043, paidCents: 31_043, creditOf: null, superseded: false },
+          { id: "i-late", number: "KZ-00022", issuedOn: "2026-09-10", dueOn: "2026-10-10", totalCents: 11_498, paidCents: 0, creditOf: null, superseded: false },
+          { id: "i-due", number: "KZ-00023", issuedOn: "2026-10-20", dueOn: "2026-11-19", totalCents: 3_449, paidCents: 0, creditOf: null, superseded: false },
+        ],
+      },
+    ]);
+    expect(text(html)).not.toMatch(/Ouvrir la facture/);
+    expect([...html.matchAll(/data-state="(credit|cancelled|paid|partial|overdue|due)"/g)].map((m) => m[1])).toEqual(["paid", "overdue", "due"]);
+    for (const [label, state] of [["Payée", "paid"], ["En retard", "overdue"], ["À payer", "due"]]) expect(html).toMatch(new RegExp(`data-state="${state}"[^>]*>${label}<`));
+    expect(html).toContain('href="/fr/app/invoices/i-late"');
+    expect(text(html)).toMatch(/KZ-00022 .*114,98/);
+  });
+
+  it("folds the request form behind « Garder une demande », a secondary that opens it in place; renewing is never a second primary", () => {
+    const f = file("Studio Lumen inc. (démo)", "lumen");
+    const request = { id: "r1", title: "Coupe et balayage", note: null, serviceId: "s1", serviceNameFr: "Coupe", serviceNameEn: "Cut", staffId: null, staffName: null, zoneId: null, files: [] };
+    const html = render([{ ...f, requests: { ...f.requests, requests: [request], catalogue: { services: [{ id: "s1", nameFr: "Coupe", nameEn: "Cut" }], staff: [] } } }]);
+    expect(html).not.toMatch(/<form[^>]*aria-label="Garder cette demande"/);
+    expect(html).toMatch(/<button[^>]*aria-expanded="false"[^>]*data-variant="secondary"[^>]*>Garder une demande<|<button[^>]*data-variant="secondary"[^>]*aria-expanded="false"[^>]*>Garder une demande</);
+    expect(buttons(html).filter((b) => b.variant === "primary").map((b) => b.label)).toEqual(["Réserver chez Studio Lumen inc. (démo)"]);
+    expect(buttons(html)).toContainEqual({ variant: "secondary", label: "Reprendre" });
+  });
+
+  it("gathers the data of every shop in one « Mes données » section at the end, a row per shop, « Effacer » away from the download", () => {
+    const html = render([file("Pattes de Saint-Henri", "pattes"), file("Salon Rosemont", "rosemont")]);
+    expect(html.match(/>Mes données \(Loi 25\)</g)).toHaveLength(1);
+    const section = html.slice(html.indexOf(">Mes données (Loi 25)<"));
+    expect(section).not.toContain("Réserver chez");
+    const downloads = [...section.matchAll(/href="\/api\/me\/export\?clientId=(c-\w+)"/g)].map((m) => m[1]);
+    expect(downloads).toEqual(["c-pattes", "c-rosemont"]);
+    const lastDownload = section.lastIndexOf("/api/me/export");
+    const firstErase = section.indexOf(">Effacer mon dossier chez");
+    expect(firstErase).toBeGreaterThan(lastDownload);
+    expect(section.slice(lastDownload, firstErase)).toMatch(/<h3[^>]*>Effacer un dossier<\/h3>/);
+    expect(section.match(/>Effacer mon dossier chez /g)).toHaveLength(2);
+    // A short word on the row, so a long shop name keeps its room at 360 px; the full sentence for a screen reader.
+    expect(section).toMatch(/<a[^>]*aria-label="Télécharger mes données chez Salon Rosemont"[^>]*>Télécharger<\/a>/);
   });
 });

@@ -22,9 +22,9 @@
       "title": "Go",
       "items": [
         { "id": "section.today", "label": "Today", "accelerator": "CmdOrCtrl+1" },
-        { "id": "section.invoices", "label": "Invoices", "accelerator": "CmdOrCtrl+2" },
-        { "id": "section.books", "label": "Books", "accelerator": "CmdOrCtrl+3" },
-        { "id": "section.clients", "label": "Clients", "accelerator": "CmdOrCtrl+4" },
+        { "id": "section.clients", "label": "Clients", "accelerator": "CmdOrCtrl+2" },
+        { "id": "section.invoices", "label": "Invoices", "accelerator": "CmdOrCtrl+3" },
+        { "id": "section.books", "label": "Books", "accelerator": "CmdOrCtrl+4" },
         { "id": "section.shop", "label": "Shop", "accelerator": "CmdOrCtrl+5" }
       ]
     },
