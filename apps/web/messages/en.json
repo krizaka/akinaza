@@ -1059,7 +1059,11 @@
         "lead": "Another shop under the same account, with its own page. It starts unpublished.",
         "link": "Add a shop",
         "back": "Back to your shop page",
-        "submit": "Create the shop"
+        "submit": "Create the shop",
+        "trade": "Your trade",
+        "tradeHint": "It picks the words of your pages, the proposed images and the templates.",
+        "template": "Page template",
+        "templateHint": "Suggested for your trade; you can change it later in « Look »."
       },
       "openShop": {
         "title": "Open a shop",
@@ -1086,6 +1090,32 @@
           "pets": "Pet care",
           "consulting": "Professional services"
         }
+      },
+      "templates": {
+        "title": "Page template",
+        "lead": "A template sets the order and the look of your sections. Your texts, photos and translations stay yours.",
+        "label": "Templates for your trade",
+        "current": "Your template",
+        "suggested": "Suggested",
+        "none": "Plain page",
+        "noneIntent": "Today's page, section by section, no template.",
+        "noneOffered": "No template is offered for your trade yet.",
+        "layouts": {
+          "vitrine": "Showcase",
+          "carte": "Menu",
+          "histoire": "Story"
+        },
+        "use": "Use this template",
+        "useKeepOrder": "Use it, keep my order",
+        "useTemplateOrder": "Use it with its order",
+        "customNote": "Your page has its own section order. Say whether to keep it.",
+        "isCurrent": "This is your page's template.",
+        "applied": "Template applied.",
+        "updateAvailable": "Update available",
+        "updateLead": "Version {version} of this template is out: a new look, the same content. Your page keeps its version until you update.",
+        "update": "Update to version {version}",
+        "updateKeepOrder": "Update, keep my order",
+        "updateTemplateOrder": "Update with its order"
       }
     },
     "boutique": {

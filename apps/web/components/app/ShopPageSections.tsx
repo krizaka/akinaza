@@ -77,11 +77,12 @@ export const identityForm = createKrizakaForm({
 });
 
 /** The fields that say who a shop is: shared by the identity section and « Add a shop ». */
-export function IdentityFields({ form, say, withAddress = false }: { form: ReturnType<typeof identityForm.useForm>; say: ReturnType<typeof useSay>["say"]; withAddress?: boolean }) {
+/** `withBusinessType` false: the trade asked beside the form stands for it (« Add a shop » with templates, #261). */
+export function IdentityFields({ form, say, withAddress = false, withBusinessType = true }: { form: ReturnType<typeof identityForm.useForm>; say: ReturnType<typeof useSay>["say"]; withAddress?: boolean; withBusinessType?: boolean }) {
   return (
     <>
       <form.TextField name="name" label={say("shopSetup.page.name")} autoComplete="organization" />
-      <form.Select name="businessType" label={say("shopSetup.page.businessType")} hint={say("shopSetup.page.businessTypeHint")} options={BUSINESS_TYPES.map((type) => ({ value: type, label: say(`shopSetup.page.businessTypes.${type}`) }))} />
+      {withBusinessType ? <form.Select name="businessType" label={say("shopSetup.page.businessType")} hint={say("shopSetup.page.businessTypeHint")} options={BUSINESS_TYPES.map((type) => ({ value: type, label: say(`shopSetup.page.businessTypes.${type}`) }))} /> : null}
       <form.TextField name="legalName" label={say("shopSetup.page.legalName")} hint={say("shopSetup.sections.identity.legalHint")} />
       <form.TextField name="ownerName" label={say("shopSetup.page.ownerName")} autoComplete="given-name" />
       {withAddress ? (

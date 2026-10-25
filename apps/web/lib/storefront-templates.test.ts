@@ -19,9 +19,9 @@ describe("the templates speak both languages (#261)", () => {
 });
 
 describe("the administrator's side of the templates (#261)", () => {
-  it("holds a switch (off until the picker ships), the offered templates, and one preselected template per trade, all global", async () => {
+  it("holds a switch (on since the picker ships, step 6), the offered templates, and one preselected template per trade, all global", async () => {
     const { SETTINGS } = await import("./settings");
-    expect(SETTINGS["features.storefrontTemplates"]).toMatchObject({ default: false, scopes: ["global"] });
+    expect(SETTINGS["features.storefrontTemplates"]).toMatchObject({ default: true, scopes: ["global"] });
     expect(SETTINGS["storefront.templates.offered"]).toMatchObject({ default: TEMPLATES.map((t) => t.id), scopes: ["global"] });
     for (const type of SHOP_TYPES) {
       const def = SETTINGS[`storefront.templates.default.${type}` as keyof typeof SETTINGS] as unknown as { default: string; scopes: string[]; schema: { safeParse: (v: unknown) => { success: boolean } } };

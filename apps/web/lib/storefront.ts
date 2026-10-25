@@ -1,4 +1,4 @@
-import { bookingPreselect, localDay, MEMBER_STATE, type MemberDay, memberStateAt, openStatus, resolveTemplate, weekdayOf, weekSchedule } from "@akinaza/core";
+import { bookingPreselect, localDay, MEMBER_STATE, type MemberDay, memberStateAt, openStatus, resolveTemplate, type Template, weekdayOf, weekSchedule } from "@akinaza/core";
 import type { PublicMedia, PublicShop } from "@akinaza/db";
 
 import type { DefaultImage, ResolvedDefaults } from "@/lib/default-media";
@@ -144,7 +144,7 @@ function memberView(member: { id: string; name: string }, day: MemberDay | undef
   return { id: member.id, name: member.name, state: label, free: state.kind === MEMBER_STATE.free };
 }
 
-export function buildStorefront(input: { page: PublicShop; locale: Locale; /** The language of the shop's own texts when it is not the product's (a Spanish page); defaults to `locale`. */ contentLocale?: PageLocale; /** The proposed images of the shop's type, when the page shows them (#267): used where the owner has none. */ defaults?: ResolvedDefaults; now: Date; teamDay?: ReadonlyMap<string, MemberDay>; enabledUpcomingSections?: Partial<Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>> }): StorefrontView {
+export function buildStorefront(input: { page: PublicShop; locale: Locale; /** The language of the shop's own texts when it is not the product's (a Spanish page); defaults to `locale`. */ contentLocale?: PageLocale; /** The proposed images of the shop's type, when the page shows them (#267): used where the owner has none. */ defaults?: ResolvedDefaults; /** The templates catalogue (the published one by default; tests hand one with several versions). */ catalogue?: readonly Template[]; now: Date; teamDay?: ReadonlyMap<string, MemberDay>; enabledUpcomingSections?: Partial<Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>> }): StorefrontView {
   const { page, locale, now } = input;
   const t = translator(locale);
   const timezone = page.shop.timezone;
@@ -228,7 +228,7 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; /** T
   const pageSections = page.pageConfig?.sections ?? ["services", "team", "hours", "zones", "trust", "gallery", "wall", "reels", "announcements", "reviews", "follow"].map((id) => ({ id, visible: true }));
   const enabled = input.enabledUpcomingSections ?? {};
   // A shop that never applied a template (or whose template the catalogue no longer holds) renders exactly as it always did.
-  const appliedTemplate = resolveTemplate({ templateId: page.pageConfig?.templateId, templateVersion: page.pageConfig?.templateVersion });
+  const appliedTemplate = resolveTemplate({ templateId: page.pageConfig?.templateId, templateVersion: page.pageConfig?.templateVersion }, input.catalogue);
   const preparedSections = { wall: enabled.wall ?? false, reels: enabled.reels ?? false, announcements: enabled.announcements ?? false, reviews: enabled.reviews ?? false, follow: enabled.follow ?? false };
 
   return {
