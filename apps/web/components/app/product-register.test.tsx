@@ -21,9 +21,10 @@ vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.reso
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/fr/app" }));
 
 /**
- * The product register (krizaka/akinaza#327, direction § 2.4): the sans for everything, a code mono only for identifiers, the
- * page h1 at 700, tabular digits on every amount. Until krizaka-ui#626 moves it into the brand tokens, the register comes from
- * @krizaka/ui's product surface (`data-surface="product"` on the root, blocks.css), which this test reads as shipped.
+ * The product register (krizaka/akinaza#327 and #352, ADR-006): Plus Jakarta Sans for titles (`--kz-font-product-display`, from
+ * @krizaka/fonts ≥ 0.5), the text sans for the rest, a code mono only for identifiers, tabular digits on every amount. The
+ * register comes from @krizaka/ui's product surface (`data-surface="product"` on the root, blocks.css 3.55), which this test
+ * reads as shipped; the app keeps no local rule for it.
  */
 const require = createRequire(import.meta.url);
 const read = (spec: string) => readFileSync(require.resolve(spec), "utf8");
@@ -43,20 +44,24 @@ describe("the faces of the product register", () => {
     expect(source("../../app/[locale]/layout.tsx")).toContain('import "@krizaka/ui/blocks.css"');
   });
 
-  it("resolves the display role to the sans and the mono role to a code mono, never a Cahier face", () => {
+  it("resolves the display role to Plus Jakarta Sans and the mono role to a code mono, never a Cahier face", () => {
     const blocks = read("@krizaka/ui/blocks.css");
-    expect(productSurfaceValue(blocks, "--kz-font-display")).toBe("var(--kz-font-sans)");
+    expect(blocks.replace(/\/\*[\s\S]*?\*\//g, "")).toMatch(/--kz-font-display:\s*var\(--kz-font-product-display\)/);
+    expect(read("@krizaka/tokens/tokens.css")).toMatch(/--kz-font-product-display:\s*"Plus Jakarta Sans"/);
+    expect(read("@krizaka/fonts/css")).toContain('font-family: "Plus Jakarta Sans"');
     const mono = productSurfaceValue(blocks, "--kz-font-mono")!;
     expect(mono).toMatch(/^ui-monospace\b/);
     expect(mono).not.toMatch(CAHIER_FACES);
     expect(read("@krizaka/tokens/brands/akinaza.css")).not.toMatch(CAHIER_FACES);
   });
 
-  it("draws PageHeader's h1 in the display role, at 700", () => {
+  it("draws PageHeader's h1 in the display role, its weight from the register (no local h1 rule)", () => {
     const html = renderToStaticMarkup(<PageHeader title="Factures" />);
     expect(html).toMatch(/<h1 class="[^"]*\bfont-display\b/);
     const globals = source("../../app/globals.css");
-    expect(globals).toMatch(/\[data-surface="product"\]\s+h1\s*\{[^}]*font-weight:\s*700;/);
+    expect(globals).not.toMatch(/h1\s*\{[^}]*font-weight/);
+    expect(globals).toContain("@krizaka/fonts/css");
+    expect(globals + source("../../app/[locale]/layout.tsx")).not.toMatch(/next\/font\/google|fonts\.googleapis/);
   });
 
   it("names no Cahier face in the app's own code", () => {
