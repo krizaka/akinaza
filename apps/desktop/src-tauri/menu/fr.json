@@ -22,10 +22,10 @@
       "title": "Aller",
       "items": [
         { "id": "section.today", "label": "Aujourd'hui", "accelerator": "CmdOrCtrl+1" },
-        { "id": "section.invoices", "label": "Factures", "accelerator": "CmdOrCtrl+2" },
-        { "id": "section.books", "label": "Livres", "accelerator": "CmdOrCtrl+3" },
-        { "id": "section.clients", "label": "Clients", "accelerator": "CmdOrCtrl+4" },
-        { "id": "section.shop", "label": "Commerce", "accelerator": "CmdOrCtrl+5" }
+        { "id": "section.clients", "label": "Clients", "accelerator": "CmdOrCtrl+2" },
+        { "id": "section.invoices", "label": "Factures", "accelerator": "CmdOrCtrl+3" },
+        { "id": "section.books", "label": "Livres", "accelerator": "CmdOrCtrl+4" },
+        { "id": "section.shop", "label": "Boutique", "accelerator": "CmdOrCtrl+5" }
       ]
     },
     {
