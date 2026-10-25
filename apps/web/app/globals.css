@@ -7,6 +7,7 @@
 @import "@krizaka/fonts/css";     /* the faces of @krizaka/fonts, Plus Jakarta Sans (--kz-font-product-display) for the product register's titles */
 @import "@krizaka/ui/tailwind.css";
 @import "@krizaka/tokens/brands/akinaza.css";
+@import "@krizaka/tokens/appearance.css";  /* the optional surface sets (Blueprint, Carbone) and the density of the Appearance block (ADR-006 §4) */
 
 html {
   overflow-x: hidden;
@@ -52,26 +53,3 @@ body {
   }
 }
 
-/* The tag markers (krizaka-ui#627 ships the closed palette as --kz-tag-<name>): until then, aliases of the roles that exist, so a marker is a
-   name in the database and a hue here. Remove with krizaka-ui#627. */
-:root {
-  --kz-tag-blue: var(--kz-info);
-  --kz-tag-green: var(--kz-success);
-  --kz-tag-amber: var(--kz-warning);
-  --kz-tag-red: var(--kz-danger);
-  --kz-tag-violet: color-mix(in srgb, var(--kz-info) 55%, var(--kz-danger));
-  --kz-tag-gray: var(--kz-text-muted);
-}
-[data-tag-marker] {
-  display: inline-block;
-  flex: none;
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 9999px;
-  background: var(--kz-tag-gray);
-}
-[data-tag-marker="blue"] { background: var(--kz-tag-blue); }
-[data-tag-marker="green"] { background: var(--kz-tag-green); }
-[data-tag-marker="amber"] { background: var(--kz-tag-amber); }
-[data-tag-marker="red"] { background: var(--kz-tag-red); }
-[data-tag-marker="violet"] { background: var(--kz-tag-violet); }

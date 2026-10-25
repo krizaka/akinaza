@@ -5,6 +5,7 @@ import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
 import { DataTable, type DataTableColumn, DataTableColumnsMenu, DataTableExport, DataTableFilters } from "@krizaka/ui/data-table";
+import { StatusChip } from "@krizaka/ui/status-chip";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -96,7 +97,12 @@ export function InvoicesTable({ invoices, today, defaultMessage = "", organize, 
         value: (i) => invoiceState(standing(i), today),
         cell: (i) => {
           const state = invoiceState(standing(i), today);
-          return (
+          // The derived state as the package's chip over the administrator's status set (read-only: no `onMove`, the ledger moves it).
+          return organize?.status ? (
+            <span data-invoice={i.id} data-state={state}>
+              <StatusChip set={organize.status} state={state} role="owner" locale={locale} />
+            </span>
+          ) : (
             <Badge tone={STATE_TONE[state]} data-invoice={i.id} data-state={state}>
               {say(`invoices.state.${state}`)}
             </Badge>
@@ -162,18 +168,18 @@ export function InvoicesTable({ invoices, today, defaultMessage = "", organize, 
         <>
           <TagBinder organize={organize} path={pathname} />
           <ViewsBar organize={organize} path={pathname} />
-          {selected.length ? (
-            <div role="region" aria-label={say("organize.selection.label")} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-strong bg-surface-2 px-4 py-2">
-              <p className="text-sm font-semibold text-fg">{say("organize.selection.count", { count: selected.length })}</p>
-              <div className="flex flex-wrap items-center gap-2">
-                <SelectionTags organize={organize} selected={selected} onDone={() => setSelected([])} />
-              </div>
-            </div>
-          ) : null}
         </>
       ) : null}
       <DataTable
-        {...(organize ? { selectable: true, selected, onSelectedChange: setSelected } : {})}
+        {...(organize
+          ? {
+              selectable: true,
+              selected,
+              onSelectedChange: setSelected,
+              bulkMax: 200,
+              bulkActions: ({ clear }: { clear: () => void }) => <SelectionTags organize={organize} selected={selected} onDone={clear} />,
+            }
+          : {})}
         caption={say("invoices.list.title")}
         rows={ordered}
         columns={columns}

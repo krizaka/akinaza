@@ -27,6 +27,7 @@ export async function organizeData(shopId: string, kind: WorkspaceKind, session:
     views,
     filters,
     view,
+    status: config?.config.status ?? null,
   };
   return { data, ids: ids === null ? null : new Set(ids) };
 }

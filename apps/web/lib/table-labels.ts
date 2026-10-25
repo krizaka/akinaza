@@ -32,6 +32,12 @@ export function useTableLabels(): DataTableLabels {
       columns: say("table.columns"),
       showMore: (name) => say("table.showMore", { name }),
       export: say("table.export"),
+      selection: {
+        bar: say("table.selection.bar"),
+        selected: (count) => say("table.selection.selected", { count }),
+        clear: say("table.selection.clear"),
+        tooMany: (max) => say("table.selection.tooMany", { max }),
+      },
       pagination: {
         nav: say("table.pagination.nav"),
         previous: say("table.pagination.previous"),

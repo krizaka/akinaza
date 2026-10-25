@@ -186,7 +186,8 @@
       "badges": {
         "today": "rendez-vous aujourd’hui : {count}",
         "toCollect": "à encaisser : {count}"
-      }
+      },
+      "organize": "Étiquettes et vues"
     },
     "admin": {
       "health": "Santé",
@@ -301,6 +302,79 @@
         "monthMismatches": "Mois où le grand livre diffère des factures",
         "shopsWithoutTaxNumbers": "Commerces inscrits sans numéro de TPS ou de TVQ",
         "refusedSignIns": "Connexions refusées, 24 h"
+      },
+      "organize": {
+        "title": "Étiquettes et vues",
+        "lead": "Les réglages par défaut de chaque boutique : qui gère les étiquettes, celles qui sont proposées selon le métier, et les états d'une facture. La base de données fait foi ; chaque enregistrement est versionné et consigné.",
+        "kind": {
+          "client": "Clients",
+          "invoice": "Factures"
+        },
+        "none": "Pas encore de réglage enregistré : il apparaît dès qu'une boutique ouvre cette liste.",
+        "variant": "Jeu d'étiquettes",
+        "variantHint": "Un jeu par métier et par langue (« _en » pour l'anglais).",
+        "save": "Enregistrer",
+        "saved": "Enregistré.",
+        "roles": {
+          "owner": "Propriétaire",
+          "manager": "Gérant",
+          "staff": "Employé"
+        },
+        "tags": {
+          "presets": "Étiquettes proposées",
+          "name": "Nom de l'étiquette {position}",
+          "marker": "Couleur de l'étiquette {name}",
+          "moveUp": "Monter {name}",
+          "moveDown": "Descendre {name}",
+          "remove": "Retirer {name}",
+          "drag": "Déplacer {name}",
+          "add": "Nouvelle étiquette",
+          "addButton": "Ajouter",
+          "duplicate": "Une autre étiquette porte ce nom",
+          "empty": "Aucune étiquette proposée",
+          "writers": "Qui gère les étiquettes",
+          "writersHint": "Ces rôles créent, renomment, retirent et attribuent les étiquettes.",
+          "userTags": "Chacun peut ajouter ses propres étiquettes",
+          "userTagsHint": "En plus de celles proposées ici.",
+          "max": "Nombre maximal d'étiquettes",
+          "maxHint": "Par type, de 1 à 200.",
+          "problems": "À corriger avant d'enregistrer"
+        },
+        "status": {
+          "languageFr": "français",
+          "languageEn": "anglais",
+          "stateLabel": "Libellé ({language}) de l'état {position}",
+          "tone": "Ton de l'état {position}",
+          "tones": {
+            "neutral": "Neutre",
+            "accent": "Accent",
+            "success": "Succès",
+            "warning": "Attention",
+            "danger": "Danger"
+          },
+          "final": "L'état {position} est final",
+          "finalHint": "Un état final n'a pas de sortie.",
+          "initial": "L'état {position} est l'état initial",
+          "initialNotFinal": "L'état initial n'est jamais final.",
+          "states": "États, dans l'ordre de la colonne",
+          "addState": "Ajouter un état",
+          "newState": "Nouvel état",
+          "moves": "Passages",
+          "movesHint": "Choisissez un passage pour dire qui peut le faire, s'il demande une confirmation et les raisons proposées.",
+          "from": "Passages depuis {name}",
+          "noWayOut": "Final : pas de sortie",
+          "move": "De {from} à {to} : {roles}",
+          "none": "personne",
+          "moveDetail": "Passage de {from} à {to}",
+          "roles": "Rôles qui peuvent faire ce passage",
+          "confirm": "Demander un second appui",
+          "reasons": "Raisons proposées",
+          "addReason": "Ajouter une raison",
+          "reasonLabel": "Raison {position} ({language})",
+          "removeReason": "Retirer la raison {position}",
+          "derived": "Dérivé : Akinaza calcule cet état, personne ne le change.",
+          "problems": "À corriger avant d'enregistrer"
+        }
       }
     },
     "errors": {
@@ -590,7 +664,6 @@
       "preferences": {
         "description": "La façon dont Akinaza vous parle et s'affiche.",
         "languageHint": "La langue de l'application et des courriels.",
-        "theme": "Thème",
         "themes": {
           "light": {
             "title": "Clair",
@@ -603,7 +676,27 @@
           "system": {
             "title": "Comme mon appareil",
             "hint": "Suit le réglage de votre appareil."
+          },
+          "blueprint": {
+            "title": "Plan marine",
+            "hint": "Un sombre marine, toujours sombre."
+          },
+          "carbone": {
+            "title": "Carbone",
+            "hint": "Un quasi-noir, toujours sombre."
           }
+        },
+        "appearance": {
+          "theme": "Thème",
+          "themeHint": "L'allure de l'espace de travail. « Comme mon appareil » suit le réglage de votre appareil.",
+          "density": "Densité",
+          "densityHint": "Ce qui tient dans un écran.",
+          "language": "Langue",
+          "languageHint": "La langue de l'application et des courriels."
+        },
+        "densities": {
+          "standard": "Standard",
+          "compact": "Compacte"
         }
       },
       "sessions": {
@@ -773,8 +866,6 @@
         "upcoming": "À venir"
       },
       "selection": {
-        "label": "Sélection",
-        "count": "{count} sélectionnés",
         "export": "Exporter la sélection (CSV)"
       },
       "exportFile": "clients.csv",
@@ -1129,7 +1220,13 @@
       "accessSave": "Enregistrer les notes",
       "accessSaved": "Notes enregistrées (chiffrées).",
       "needDog": "Ajoutez d'abord votre chien.",
-      "addAnother": "Ajouter un autre chien"
+      "addAnother": "Ajouter un autre chien",
+      "parts": {
+        "morning": "Matin",
+        "afternoon": "Après-midi",
+        "evening": "Soir"
+      },
+      "footer": "Heures de {zone}"
     },
     "client": {
       "title": "Mes réservations",
@@ -1522,7 +1619,16 @@
       "bookAnother": "Réserver une autre heure",
       "callShop": "Appeler le {phone}",
       "directions": "Adresse",
-      "loading": "Chargement"
+      "loading": "Chargement",
+      "parts": {
+        "morning": "Matin",
+        "afternoon": "Après-midi",
+        "evening": "Soir"
+      },
+      "timesFooter": "Heures de {zone}",
+      "weekPrevious": "Semaine précédente",
+      "weekToday": "Cette semaine",
+      "weekNext": "Semaine suivante"
     },
     "team": {
       "title": "Votre équipe",
@@ -1972,6 +2078,12 @@
         "page": "Page {page}",
         "compact": "Page {page} sur {pageCount}",
         "pageSize": "Lignes par page"
+      },
+      "selection": {
+        "bar": "Actions sur la sélection",
+        "selected": "{count} sélectionnée(s)",
+        "clear": "Désélectionner",
+        "tooMany": "{max} lignes au plus à la fois"
       }
     },
     "states": {
@@ -2019,15 +2131,29 @@
       },
       "selection": {
         "tag": "Ajouter une étiquette",
-        "untag": "Retirer une étiquette",
-        "tooMany": "On peut étiqueter 200 lignes au plus à la fois.",
-        "label": "Sélection",
-        "count": "{count} sélectionnée(s)"
+        "untag": "Retirer une étiquette"
       },
       "file": {
         "tags": "Étiquettes",
         "none": "Aucune étiquette",
-        "edit": "Modifier les étiquettes"
+        "edit": "Modifier les étiquettes",
+        "add": "Ajouter une étiquette",
+        "placeholder": "Nom de l'étiquette",
+        "create": "Créer « {name} »",
+        "markerLabel": "Couleur de la nouvelle étiquette",
+        "empty": "Aucune étiquette de ce nom"
+      },
+      "savedViews": {
+        "system": "Vues proposées",
+        "workspace": "Vues de l'équipe",
+        "mine": "Mes vues",
+        "menu": "Vue : {current}",
+        "none": "Toutes",
+        "modified": "modifiée",
+        "confirm": "Enregistrer",
+        "cancel": "Annuler",
+        "rename": "Renommer",
+        "actions": "Actions de la vue {label}"
       }
     }
   },

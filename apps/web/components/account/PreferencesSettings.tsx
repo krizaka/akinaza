@@ -1,17 +1,16 @@
 "use client";
 
 import { krizakaFetch } from "@krizaka/query";
-import { ChoiceCards, LanguagePicker } from "@krizaka/ui/account-settings";
-import { SettingsRow, SettingsSection } from "@krizaka/ui/settings-layout";
-import { type Mode, useTheme } from "@krizaka/ui/theme";
+import { appearance } from "@krizaka/tokens";
+import { AppearanceSettings, type ThemeCardOption } from "@krizaka/ui/account-settings";
+import { SettingsSection } from "@krizaka/ui/settings-layout";
+import { useAppearance } from "@krizaka/ui/theme";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 
 import { useSay } from "@/lib/i18n-client";
 import { accountRoutes } from "@/lib/routes";
 
-import { useSectionDraft } from "./useSectionDraft";
-
-const MODES: readonly Mode[] = ["light", "dark", "system"];
 const LANGUAGES = [
   { code: "fr", name: "Français" },
   { code: "en", name: "English" },
@@ -19,32 +18,59 @@ const LANGUAGES = [
 
 export interface PreferencesView {
   locale: "en" | "fr";
-  theme: Mode | null;
 }
 
-/** Language and theme: saved on the account, applied at once on this device. A new language reloads the page in it. */
+/** What the account keeps of a theme: the mode (a surface set is dark). The set itself, the density and the accent stay on this device. */
+const modeOf = (themeId: string): "light" | "dark" | "system" => (themeId === "light" || themeId === "system" ? themeId : "dark");
+
+/**
+ * Appearance (ADR-006 §4, krizaka-ui#657): the package's `AppearanceSettings` over `useAppearance()`. The theme set is the product register's —
+ * System, Light, Dark and the optional Blueprint and Carbone surfaces, never the Cahier papers (those are the public shop pages'). A choice
+ * applies at once; the mode is saved on the account, the language reloads the page in it. Akinaza keeps its own accent (no accent row), and no sound.
+ */
 export function PreferencesSettings({ preferences }: { preferences: PreferencesView }) {
   const { say } = useSay();
   const router = useRouter();
-  const { setMode } = useTheme();
-  const form = useSectionDraft({ locale: preferences.locale, theme: preferences.theme ?? "system" }, async (values) => {
-    await krizakaFetch("/api/me/profile", { method: "PATCH", json: { locale: values.locale, theme: values.theme } });
-    setMode(values.theme);
-    if (values.locale !== preferences.locale) router.replace(accountRoutes(values.locale).section("preferences"));
-  });
+  const state = useAppearance();
+  const themes = useMemo<ThemeCardOption[]>(() => {
+    const light = appearance.themes.find((t) => t.id === "light")?.preview;
+    const dark = appearance.themes.find((t) => t.id === "dark")?.preview;
+    return appearance.themes.map((t) => ({
+      id: t.id,
+      label: say(`account.preferences.themes.${t.id}.title`),
+      description: say(`account.preferences.themes.${t.id}.hint`),
+      preview: t.preview,
+      ...(t.id === "system" && light && dark ? { halves: [light, dark] as const } : {}),
+    }));
+  }, [say]);
+  const save = (patch: { locale?: string; theme?: string }) => krizakaFetch("/api/me/profile", { method: "PATCH", json: patch });
   return (
-    <SettingsSection variant="flat" title={say("account.profile.sections.preferences")} description={say("account.preferences.description")} save={form.save}>
-      <SettingsRow label={say("account.profile.language")} description={say("account.preferences.languageHint")}>
-        <LanguagePicker showLabel={false} label={say("account.profile.language")} value={form.draft.locale} languages={LANGUAGES} onValueChange={(locale) => form.set({ locale: locale as "en" | "fr" })} />
-      </SettingsRow>
-      <div className="py-4">
-        <ChoiceCards
-          label={say("account.preferences.theme")}
-          value={form.draft.theme}
-          onValueChange={(theme) => form.set({ theme: theme as Mode })}
-          options={MODES.map((mode) => ({ id: mode, title: say(`account.preferences.themes.${mode}.title`), description: say(`account.preferences.themes.${mode}.hint`) }))}
-        />
-      </div>
+    <SettingsSection variant="flat" title={say("account.profile.sections.preferences")} description={say("account.preferences.description")}>
+      <AppearanceSettings
+        themes={themes}
+        theme={state.themeId}
+        onThemeChange={(id) => {
+          state.setThemeId(id);
+          void save({ theme: modeOf(id) });
+        }}
+        densities={appearance.densities.map((value) => ({ value, label: say(`account.preferences.densities.${value}`) }))}
+        density={state.density}
+        onDensityChange={state.setDensity}
+        languages={LANGUAGES}
+        language={preferences.locale}
+        onLanguageChange={async (code) => {
+          await save({ locale: code });
+          if (code !== preferences.locale) router.replace(accountRoutes(code as "en" | "fr").section("preferences"));
+        }}
+        labels={{
+          theme: say("account.preferences.appearance.theme"),
+          themeHint: say("account.preferences.appearance.themeHint"),
+          density: say("account.preferences.appearance.density"),
+          densityHint: say("account.preferences.appearance.densityHint"),
+          language: say("account.preferences.appearance.language"),
+          languageHint: say("account.preferences.appearance.languageHint"),
+        }}
+      />
     </SettingsSection>
   );
 }

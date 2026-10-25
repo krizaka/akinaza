@@ -1,4 +1,4 @@
-import type { SavedView, SystemView, ViewFilters, WorkspaceTag } from "@krizaka/organize";
+import type { SavedView, StatusSet, SystemView, ViewFilters, WorkspaceTag } from "@krizaka/organize";
 import { viewSearch } from "@krizaka/organize/contract";
 
 /** What a list of clients or invoices needs to draw its tags, its binder dividers and its views (akinaza#337). Plain data: it crosses to the client. */
@@ -13,6 +13,8 @@ export interface OrganizeData {
   /** The filters in force (from the address) and the view they came from. */
   filters: ViewFilters;
   view: string | null;
+  /** The kind's status set (the administrator's): an invoice's derived state is drawn by the package's `StatusChip` over it. */
+  status?: StatusSet | null;
 }
 
 export type TagLite = OrganizeData["tags"][number];

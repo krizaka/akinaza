@@ -60,7 +60,7 @@ describe("a client's file on Show · detail (D5)", () => {
     const organize = { kind: "client" as const, canWrite: true, tags: [{ id: "t1", name: "Fidèle", marker: "green" as const }, { id: "t2", name: "Entreprise", marker: "violet" as const }], counts: {}, views: { system: [], workspace: [], mine: [] }, filters: {}, view: null };
     const html = render({ organize, tags: [organize.tags[0]!] });
     expect(readable(html)).toContain("Fidèle");
-    expect(html).toContain('data-tag-marker="green"');
+    expect(html).toContain('data-marker="green"');
     expect(readable(html)).toContain("Modifier les étiquettes");
     expect(readable(render({ organize: { ...organize, canWrite: false }, tags: [organize.tags[0]!] }))).not.toContain("Modifier les étiquettes");
   });
