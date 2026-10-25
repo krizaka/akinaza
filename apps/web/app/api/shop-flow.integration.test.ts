@@ -47,6 +47,23 @@ async function call(handler: unknown, method: string, path: string, opts: { toke
   return { status: res.status, body: type.includes("json") ? await res.json() : null, res };
 }
 
+/**
+ * Whether a webhook payload carries something of the client's (their phone, their name, a name field). akinaza#341: the
+ * journey once checked `/514/` on the whole JSON, which a random UUID (`…f514…`) matches about one run in ten — the booking
+ * step then failed and the four steps after it with it.
+ */
+const leaksClient = (payload: unknown) => /514-555-0100|Camille|Tremblay|Chien|"(fullName|phone|email)"/.test(JSON.stringify(payload));
+
+describe("the journey's privacy check reads the client's data, never a UUID's digits (akinaza#341)", () => {
+  it("passes a payload of ids, even one whose UUID holds « 514 »", () => {
+    expect(leaksClient({ appointmentId: "3f8ae756-47dd-4206-b741-4c6a6f514cf2", shopId: "74f669e4-9848-4507-9403-f2514bb0aa11" })).toBe(false);
+  });
+
+  it("catches the client's phone, name or a personal field", () => {
+    for (const payload of [{ note: "514-555-0100" }, { who: "Camille Tremblay" }, { fullName: "x" }, { phone: "x" }]) expect(leaksClient(payload), JSON.stringify(payload)).toBe(true);
+  });
+});
+
 describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
   // Unique across test files run in parallel: two files starting in the same millisecond collided on accounts_email_unique.
   const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
@@ -123,7 +140,7 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     const told = await query<{ payload: Record<string, unknown> }>("SELECT payload FROM webhook_deliveries WHERE endpoint_id = $1", [hook.body.endpoint.id]);
     expect(told).toHaveLength(1);
     expect(told[0]!.payload).toMatchObject({ appointmentId: booked.body.appointmentId, shopId: ids.shop, serviceId: ids.solo });
-    expect(JSON.stringify(told[0]!.payload)).not.toMatch(/514|Chien|fullName/);
+    expect(leaksClient(told[0]!.payload)).toBe(false);
     ids.booking = booked.body.bookingIds[0];
     ids.visit = booked.body.appointmentId;
     expect((await call(book, "POST", "/api/me/bookings", { token: client, json: { clientId: ids.clientFile, serviceId: ids.solo, zoneId: ids.stHenri, dependantIds: [ids.dog], startsAt: start } })).body).toMatchObject({ code: "SLOT_UNAVAILABLE" });

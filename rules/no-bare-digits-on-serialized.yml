@@ -1,0 +1,11 @@
+id: no-bare-digits-on-serialized
+language: Tsx
+severity: error
+message: "A bare run of digits checked against serialized data (`JSON.stringify(...)` with `/514/`) matches random ids (a UUID holds « 514 » about one run in ten): check the field or the full value (akinaza#341)."
+rule:
+  pattern: expect(JSON.stringify($$$A)).not.toMatch($R)
+constraints:
+  R:
+    regex: "^/(?:[^/]*\\|)?[0-9]+(?:\\|[^/]*)?/[a-z]*$"
+ignores:
+  - "**/node_modules/**"
