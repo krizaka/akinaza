@@ -22,6 +22,8 @@ const OWNER: ShopFrameProps = {
   ],
   shop: { current: { id: "s-1", name: "Pattes de Saint-Henri" }, others: [], addHref: `${shop}/shop/new` },
   newInvoiceHref: `${shop}/invoices/new`,
+  search: true,
+  counts: { today: 3, toCollect: 2 },
   dev: true,
   home: "/fr/app",
   profileHref: "/fr/app/profile",
@@ -36,7 +38,7 @@ describe("the owner's frame (docs/ux/2026-10-full-review.md § 4.1): where you w
   it("has the five destinations on the rail, the day marked as the current one, and nothing about the account there", () => {
     const items = railItems(html);
     expect(items).toHaveLength(5);
-    expect(items.map((a) => a.match(/aria-label="([^"]+)"/)![1])).toEqual(["shell.today", "shell.clients", "shell.invoices", "shell.books", "shell.shop"]);
+    expect(items.map((a) => a.match(/aria-label="([^",]+)/)![1])).toEqual(["shell.today", "shell.clients", "shell.invoices", "shell.books", "shell.shop"]);
     expect(items[0]).toContain('aria-current="page"');
     expect(html).not.toContain("shell.profile");
     expect(html).not.toContain("shell.team");
@@ -49,11 +51,22 @@ describe("the owner's frame (docs/ux/2026-10-full-review.md § 4.1): where you w
     expect(html).toMatch(/data-testid="app-version"[^>]*>shell\.dev</);
   });
 
-  it("carries the one primary action, « Nouvelle facture », and the account menu in the header, once, at every width", () => {
-    expect(html.match(/data-testid="primary-action"/g)).toHaveLength(1);
-    expect(html).toMatch(/data-testid="primary-action"[^>]*>[\s\S]*?shell\.newInvoice/);
-    expect(html.match(/aria-label="shell\.account"/g)).toHaveLength(1);
-    expect(html.indexOf('data-testid="account-menu-header"')).toBeLessThan(html.indexOf('aria-label="shell.account"'));
+  it("carries the one primary action, « Nouvelle facture », on the lists, with the account menu in the header, once, at every width", () => {
+    where.path = "/fr/app/s-1/invoices";
+    try {
+      const list = render(OWNER);
+      expect(list.match(/data-primary/g)).toHaveLength(1);
+      expect(list).toMatch(/data-testid="primary-action"[^>]*>[\s\S]*?shell\.newInvoice/);
+      expect(list.match(/aria-label="shell\.account"/g)).toHaveLength(1);
+      expect(list.indexOf('data-testid="account-menu-header"')).toBeLessThan(list.indexOf('aria-label="shell.account"'));
+    } finally {
+      where.path = "/fr/app/s-1/aujourdhui";
+    }
+  });
+
+  it("yields « Nouvelle facture » on Aujourd'hui, whose primary is the next appointment (D1b)", () => {
+    expect(html).not.toContain("data-primary");
+    expect(html).not.toContain('data-testid="primary-action"');
   });
 
   it("keeps the rail's « Boutique » current on the team screen, which is a sibling route of the shop's setup", () => {
@@ -76,12 +89,50 @@ describe("the owner's frame (docs/ux/2026-10-full-review.md § 4.1): where you w
         where.path = "/fr/app/s-1/aujourdhui";
       }
     }
-    expect(render(OWNER)).toContain('data-testid="primary-action"');
+    where.path = "/fr/app/s-1/clients";
+    try {
+      expect(render(OWNER)).toContain('data-testid="primary-action"');
+    } finally {
+      where.path = "/fr/app/s-1/aujourdhui";
+    }
   });
 
   it("leaves the page's h1 to the page: the frame renders none", () => {
     expect(html).not.toMatch(/<h1[\s>]/);
     expect(html).toContain('<main id="content"');
+  });
+});
+
+describe("the B2 frame (D1b): the search, the language, the rail with its words and its counts", () => {
+  const html = render(OWNER);
+
+  it("opens the search from the header, with its ⌘K hint and the shortcut said to assistive technology", () => {
+    const trigger = html.match(/<button[^>]*data-testid="search-trigger"[^>]*>[\s\S]*?<\/button>/)?.[0] ?? "";
+    expect(trigger).toContain('aria-label="shell.search.open"');
+    expect(trigger).toContain('aria-keyshortcuts="Meta+K Control+K"');
+    expect(trigger).toContain("<kbd");
+    expect(trigger).toContain("shell.search.placeholder");
+  });
+
+  it("offers no search to who may open neither clients nor invoices", () => {
+    expect(render({ ...OWNER, search: false })).not.toContain("search-trigger");
+  });
+
+  it("shows the language in the header from a tablet up (the account menu carries it on a phone)", () => {
+    expect(html).toMatch(/class="hidden sm:block" data-testid="header-language"><div[\s\S]*?shell\.language/);
+  });
+
+  it("shows the rail's words on a desktop and counts on the day and the invoices, said in words", () => {
+    expect(html).toContain("data-expanded");
+    const items = railItems(html);
+    expect(items[0]).toContain('aria-label="shell.today, shell.badges.today 3"');
+    expect(items[2]).toContain('aria-label="shell.invoices, shell.badges.toCollect 2"');
+    expect(items[1]).not.toContain("shell.badges");
+  });
+
+  it("draws no badge for a zero", () => {
+    const items = railItems(render({ ...OWNER, counts: { today: 0, toCollect: 0 } }));
+    expect(items.some((a) => a.includes("shell.badges"))).toBe(false);
   });
 });
 

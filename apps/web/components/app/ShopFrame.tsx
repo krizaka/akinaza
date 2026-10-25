@@ -6,6 +6,7 @@ import { AkinazaLogo } from "@krizaka/ui";
 import { AppHeader } from "@krizaka/ui/app-header";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
+import { languagesFor,LanguageSwitch } from "@krizaka/ui/language-switch";
 import { RailNav } from "@krizaka/ui/rail-nav";
 import { SkipLink } from "@krizaka/ui/skip-link";
 import Link from "next/link";
@@ -13,8 +14,10 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { AkinazaAccountMenu } from "@/components/account/AkinazaAccountMenu";
 import { type ChipShop, ShopChip } from "@/components/app/ShopChip";
-import { type AppPlace, headerActionFits } from "@/lib/app-nav";
+import { ShopSearch } from "@/components/app/ShopSearch";
+import { type AppPlace, screenPrimary } from "@/lib/app-nav";
 import { useSay } from "@/lib/i18n-client";
+import type { PaletteItem } from "@/lib/palette";
 
 const VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "";
 const ICONS: Record<AppPlace, React.ReactNode> = { today: <ClockIcon />, clients: <UsersIcon />, invoices: <BillingIcon />, books: <BookmarkIcon />, shop: <HomeIcon />, bookings: <CalendarIcon /> };
@@ -26,8 +29,12 @@ export interface ShopFrameProps {
   places: readonly { key: AppPlace; href: string; /** Other addresses the place is the current one for (« Boutique » also at the team). */ also?: readonly string[] }[];
   /** The shop the frame is about and the others the account works in; none for a client. */
   shop?: { current: ChipShop; others: ChipShop[]; addHref: string | null };
-  /** The app's one primary action, « Nouvelle facture », for who may issue invoices. */
+  /** The lists' primary action, « Nouvelle facture », for who may issue invoices (it yields where the page holds its own). */
   newInvoiceHref?: string | null;
+  /** The header's search (⌘K) over the shop's clients and invoices, for who may open one of them. */
+  search?: boolean;
+  /** The rail's counts: the day's appointments, the invoices still to collect (none drawn for a zero). */
+  counts?: { today?: number; toCollect?: number };
   /** A deployment kept out of search engines says so in the header (from the `sm` breakpoint: a phone keeps the room for the shop). */
   dev?: boolean;
   home: string;
@@ -38,10 +45,11 @@ export interface ShopFrameProps {
 /**
  * The signed-in frame of the shop's space (docs/ux/2026-10-full-review.md § 4.1, the family's rule): where you work is on the rail
  * — five destinations, icons on a desktop, the tab bar on a phone — and who you are is under the avatar, in the header, at every
- * width. The header names the product and the shop, carries the DEV chip and the one primary action; the page's `h1` is in the
+ * width. The header names the product and the shop, carries the search (⌘K), the language, the DEV chip and the lists' primary
+ * action (the hero primary: the brand's gradient), which yields where the page holds its own (`screenPrimary`); the page's `h1` is in the
  * content (`PageHeader`), never here. The administration keeps `AppFrame` (admin.akinaza.com).
  */
-export function ShopFrame({ locale, account, places, shop, newInvoiceHref, dev = false, home, profileHref, children }: ShopFrameProps) {
+export function ShopFrame({ locale, account, places, shop, newInvoiceHref, search = false, counts = {}, dev = false, home, profileHref, children }: ShopFrameProps) {
   const { say } = useSay();
   const router = useRouter();
   const path = usePathname() ?? "";
@@ -56,6 +64,15 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, dev =
     const pathname = to.split("?")[0]!;
     return path === pathname || path.startsWith(`${pathname}/`);
   };
+  // A count on the day and on the invoices, said in words with the place's name; nothing for a zero.
+  const badgeOf = (key: AppPlace) => {
+    const n = key === "today" ? counts.today : key === "invoices" ? counts.toCollect : undefined;
+    return n ? { badge: n, badgeLabel: say(key === "today" ? "shell.badges.today" : "shell.badges.toCollect", { count: n }) } : {};
+  };
+  const actions: PaletteItem[] = [
+    ...(newInvoiceHref ? [{ id: "action:new-invoice", group: "actions" as const, label: say("shell.newInvoice"), href: newInvoiceHref }] : []),
+    ...places.map(({ key, href }) => ({ id: `place:${key}`, group: "actions" as const, label: say(`shell.${key}`), href })),
+  ];
   const menu = (
     <AkinazaAccountMenu
       locale={locale}
@@ -81,10 +98,11 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, dev =
           </Link>
         }
         expandable
+        defaultExpanded
         expandLabels={[say("shell.expand"), say("shell.collapse")]}
       >
         {places.map(({ key, href, also }) => (
-          <RailNav.Item key={key} asChild icon={ICONS[key]} label={say(`shell.${key}`)} current={isCurrent(href) || (also ?? []).some(isCurrent)}>
+          <RailNav.Item key={key} asChild icon={ICONS[key]} label={say(`shell.${key}`)} current={isCurrent(href) || (also ?? []).some(isCurrent)} {...badgeOf(key)}>
             <Link href={href} />
           </RailNav.Item>
         ))}
@@ -106,9 +124,13 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, dev =
           }
           actions={
             <>
-              {newInvoiceHref && headerActionFits(path) ? (
-                <Button asChild variant="primary" shape="cut" size="sm" className="font-bold">
-                  <Link href={newInvoiceHref} aria-label={say("shell.newInvoice")} data-testid="primary-action">
+              {search && shop ? <ShopSearch locale={locale} shopId={shop.current.id} actions={actions} /> : null}
+              <div className="hidden sm:block" data-testid="header-language">
+                <LanguageSwitch label={say("shell.language")} current={locale} languages={languagesFor(path)} linkAs={Link} />
+              </div>
+              {newInvoiceHref && screenPrimary(path) === "header" ? (
+                <Button asChild variant="gradient" size="sm" className="font-bold">
+                  <Link href={newInvoiceHref} aria-label={say("shell.newInvoice")} data-testid="primary-action" data-primary>
                     <PlusIcon size={16} strokeWidth={2.5} aria-hidden />
                     <span className="hidden sm:inline">{say("shell.newInvoice")}</span>
                   </Link>

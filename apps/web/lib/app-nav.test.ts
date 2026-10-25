@@ -1,6 +1,9 @@
+import { readdirSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
 import { describe, expect, it } from "vitest";
 
-import { CLIENT_PLACES, headerActionFits, placeHrefFor, placesFor } from "./app-nav";
+import { CLIENT_PLACES, placeHrefFor, placesFor, screenPrimary } from "./app-nav";
 
 describe("the rail of each role (docs/ux/2026-10-full-review.md § 4.1): five destinations at most, the account never among them", () => {
   it.each([
@@ -29,9 +32,47 @@ describe("the rail of each role (docs/ux/2026-10-full-review.md § 4.1): five de
     expect(placeHrefFor("fr", { shopId: "s-1", role: "owner" }, "today")).toBe("/fr/app/s-1/aujourdhui");
     expect(placeHrefFor("en", null, "bookings")).toBe("/en/app");
   });
+});
 
-  it("the frame's « Nouvelle facture » yields on the settings hub and on an invoice's own screens, and stays on the lists", () => {
-    for (const path of ["/fr/app/s-1/aujourdhui", "/fr/app/s-1/invoices", "/fr/app/s-1/clients"]) expect(headerActionFits(path), path).toBe(true);
-    for (const path of ["/fr/app/s-1/boutique", "/fr/app/s-1/boutique/page", "/fr/app/s-1/boutique/team", "/fr/app/s-1/invoices/new", "/fr/app/s-1/invoices/abc123", "/fr/app/s-1/invoices/abc123/correct"]) expect(headerActionFits(path), path).toBe(false);
+/**
+ * One primary per screen (errata 2 of docs/ux/2026-10-full-review.md, revised in D1b): who carries it on each owner route. The
+ * header's « Nouvelle facture » on the lists; the page's own on the day (the next appointment), the hub (its section's save) and an
+ * invoice's screens (send, correct, issue). Every page of the shop's space is in this table (« moved »: an old address that answers 308): a new one must say who holds its primary.
+ */
+const OWNER_SCREENS: Record<string, "header" | "page" | "moved"> = {
+  "aujourdhui": "page",
+  "books": "header",
+  "boutique": "page",
+  "boutique/[section]": "page",
+  "brief": "header",
+  "clients": "header",
+  "clients/[id]": "header",
+  "invoices": "header",
+  "invoices/[id]": "page",
+  "invoices/[id]/correct": "page",
+  "invoices/new": "page",
+  "shop": "moved",
+  "shop/languages": "moved",
+  "shop/new": "page",
+  "team": "moved",
+};
+
+const SHOP_SPACE = fileURLToPath(new URL("../app/[locale]/(app)/app/[shop]/", import.meta.url));
+const ownerRoutes = (): string[] =>
+  (readdirSync(SHOP_SPACE, { recursive: true }) as string[]).filter((f) => f.endsWith("page.tsx")).map((f) => f.replace(/\\/g, "/").replace(/\/?page\.tsx$/, ""));
+const sample = (route: string) => `/fr/app/s-1/${route.replace("[id]", "abc123").replace("[section]", "page")}`;
+
+describe("one primary per screen: the header's « Nouvelle facture » or the page's own, never both", () => {
+  it("every page of the shop's space says who holds its primary", () => {
+    expect(ownerRoutes().sort()).toEqual(Object.keys(OWNER_SCREENS).sort());
+  });
+
+  it.each(Object.entries(OWNER_SCREENS).filter(([, owner]) => owner !== "moved"))("%s: the %s", (route, owner) => {
+    expect(screenPrimary(sample(route))).toBe(owner);
+  });
+
+  it("gives the day its own primary, the next appointment: the header yields on Aujourd'hui", () => {
+    expect(screenPrimary("/fr/app/s-1/aujourdhui")).toBe("page");
+    expect(screenPrimary("/en/app/s-1/aujourdhui?day=2026-10-23")).toBe("page");
   });
 });

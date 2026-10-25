@@ -275,3 +275,25 @@ bar or a bakery bills through a sales recording module certified by Revenu Québ
 place by the idempotent seed (`renameFormerClients`, `KRIZAKA_RENAMED_CLIENTS`): the same account, client file and invoices, so no
 invoice number changes. `packages/db/src/demo-names.test.ts` refuses a café, restaurant, bar, bistro, brasserie or bakery (FR/EN)
 among the shops and clients of every demo seed (`seed-krizaka`, `seed-walker`, `demo-shops`).
+
+## The B2 frame: search with ⌘K, the rail's words and counts, one primary per screen (Phase 2, D1b, #328)
+
+- **Decision**: the header is the family's top bar as @krizaka/ui ships it today (`AppHeader` + `CommandDialog` + `Kbd` +
+  `LanguageSwitch`): « Rechercher un client, une facture… » with ⌘K (Ctrl+K) opens a palette over the shop's own client files and
+  invoices (`/api/walker/search`, `searchShop`: the shop is the guard's, another shop's id is a 404) and the actions (« Nouvelle
+  facture », the five places); Enter opens, Escape closes and gives the focus back. On a phone the search is the magnifier alone and
+  the language stays in the account menu. The rail shows its words on a desktop (`defaultExpanded`) and two counts said in words:
+  the day's appointments on Aujourd'hui, the invoices still to collect on Factures (`frameCounts`, the list's `invoiceState`); a
+  zero draws nothing. **One primary per screen**, the hero primary (`Button variant="gradient"`): the header's « Nouvelle facture »
+  on the lists; on **Aujourd'hui the next appointment** (« Prochain : Studio Lumen inc. à 10 h 00 », opening its sheet), « Nouvelle
+  facture » there only when nobody comes next; an invoice's screens keep « Envoyer la facture » or their submit. `screenPrimary`
+  decides, a test lists every owner route, and the crawl (`check-hydration.mjs`) refuses two `[data-primary]` on any page and none
+  on the day, the lists and an invoice.
+- **Problem**: no way to reach a client or an invoice without walking the lists; icons alone on a desktop rail; Today's primary was
+  « Nouvelle facture » while the owner's next move is the next client.
+- **Principle**: recognition over recall (Nielsen) and one obvious next step per screen.
+- **Refused**: a local top bar or palette (krizaka-ui#640 and #647 extract the family's; until then Akinaza composes the released
+  pieces); a notifications bell with a count before Akinaza sends anything to count (krizaka-ts#60); a messages slot without
+  conversations; a « Raccourcis » group on the rail before `RailNav` has groups (krizaka-ui#647).
+- **Cost**: one more query per page for the counts; the search reads at most five of each kind (the list is « see all »).
+- **Signal we are wrong**: owners keep opening Clients to find one by name, or ignore the next-appointment action.

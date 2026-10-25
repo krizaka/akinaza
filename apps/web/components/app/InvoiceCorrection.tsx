@@ -82,7 +82,7 @@ export function InvoiceCorrection({ original, lines, today }: { original: { id: 
         {needLine ? <Alert tone="danger">{say("invoices.new.needLine")}</Alert> : null}
         {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
         <div>
-          <form.Submit size="md" variant="primary" className="w-full sm:w-auto">
+          <form.Submit size="md" variant="gradient" className="w-full font-bold sm:w-auto" data-primary>
             {say("invoices.correct.submit")}
           </form.Submit>
         </div>

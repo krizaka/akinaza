@@ -34,7 +34,9 @@ export function placeHrefFor(locale: RouteLocale, member: { shopId: string; role
 }
 
 /**
- * The frame's one primary action, « Nouvelle facture », is for the screens that have no primary of their own (the list, Today). The
- * settings hub, and an invoice's own screens (its detail, its correction, the new invoice), keep their own action: the header yields.
+ * Who holds a screen's one primary action (errata 2 of docs/ux/2026-10-full-review.md, revised in D1b): the frame's « Nouvelle
+ * facture » on the lists, the page's own on the day (the next appointment), the Boutique hub (its section's save), an invoice's
+ * screens (send, correct, issue) and a new shop. The header yields wherever the page holds it: never two primaries.
  */
-export const headerActionFits = (pathname: string): boolean => !/\/boutique(\/|$)/.test(pathname) && !/\/invoices\/[^/]+/.test(pathname);
+const PAGE_HOLDS_PRIMARY = /\/app\/[^/]+\/(aujourdhui|boutique|invoices\/[^/?]+|shop\/new)(\/|\?|$)/;
+export const screenPrimary = (pathname: string): "header" | "page" => (PAGE_HOLDS_PRIMARY.test(pathname) ? "page" : "header");

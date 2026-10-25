@@ -169,7 +169,24 @@
       "books": "Books",
       "team": "Team",
       "shopSwitcher": "Switch shop",
-      "newInvoice": "New invoice"
+      "newInvoice": "New invoice",
+      "search": {
+        "open": "Search clients and invoices",
+        "placeholder": "Search a client, an invoice…",
+        "label": "Search",
+        "results": "Results",
+        "none": "Nothing in this shop matches.",
+        "loading": "Searching…",
+        "groups": {
+          "actions": "Actions",
+          "clients": "Clients",
+          "invoices": "Invoices"
+        }
+      },
+      "badges": {
+        "today": "appointments today: {count}",
+        "toCollect": "to collect: {count}"
+      }
     },
     "admin": {
       "health": "Health",
@@ -424,7 +441,8 @@
       "brief": {
         "see": "See the point ({count})",
         "dismiss": "Put the point aside"
-      }
+      },
+      "nextPrimary": "Next: {client} at {time}"
     },
     "account": {
       "forgot": {

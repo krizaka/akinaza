@@ -169,7 +169,24 @@
       "books": "Livres",
       "team": "Équipe",
       "shopSwitcher": "Changer de boutique",
-      "newInvoice": "Nouvelle facture"
+      "newInvoice": "Nouvelle facture",
+      "search": {
+        "open": "Rechercher un client, une facture",
+        "placeholder": "Rechercher un client, une facture…",
+        "label": "Recherche",
+        "results": "Résultats",
+        "none": "Rien ne correspond dans cette boutique.",
+        "loading": "Recherche…",
+        "groups": {
+          "actions": "Actions",
+          "clients": "Clients",
+          "invoices": "Factures"
+        }
+      },
+      "badges": {
+        "today": "rendez-vous aujourd’hui : {count}",
+        "toCollect": "à encaisser : {count}"
+      }
     },
     "admin": {
       "health": "Santé",
@@ -424,7 +441,8 @@
       "brief": {
         "see": "Voir le point ({count})",
         "dismiss": "Mettre le point de côté"
-      }
+      },
+      "nextPrimary": "Prochain : {client} à {time}"
     },
     "account": {
       "forgot": {

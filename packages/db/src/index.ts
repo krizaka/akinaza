@@ -22,3 +22,4 @@ export { briefActionsOf, briefMailShops, briefSnapshot, claimBriefAction, claimB
 export * from "./shop-translations";
 export * from "./translate-shop";
 export * from "./translation-port";
+export * from "./shop-search";

@@ -77,3 +77,22 @@ describe("the owner's day as an agenda, for a dog walker too (docs/ux/2026-10-fu
     expect(text(html)).not.toContain("today.statuses.booked");
   });
 });
+
+describe("the day's one primary (D1b): the next appointment, else a new invoice", () => {
+  const primaries = (html: string) => html.match(/<a[^>]*data-primary[^>]*>[\s\S]*?<\/a>/g) ?? [];
+
+  it("opens the next appointment, named by its client and its time", () => {
+    const [primary, ...others] = primaries(render({ newInvoiceHref: "/fr/app/s-1/invoices/new" }));
+    expect(others).toEqual([]);
+    expect(primary).toContain('href="/fr/app/s-1/aujourdhui?appointment=a-1"');
+    expect(text(primary!)).toContain("today.nextPrimary Sofia Rossi");
+  });
+
+  it("offers « Nouvelle facture » when nobody comes next, to who may issue invoices, and nothing to who may not", () => {
+    const done = { ...base.appointments[0]!, status: "done" as const };
+    const [primary, ...others] = primaries(render({ appointments: [done], newInvoiceHref: "/fr/app/s-1/invoices/new" }));
+    expect(others).toEqual([]);
+    expect(primary).toContain('href="/fr/app/s-1/invoices/new"');
+    expect(primaries(render({ appointments: [], newInvoiceHref: null }))).toEqual([]);
+  });
+});

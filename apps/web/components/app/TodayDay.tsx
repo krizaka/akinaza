@@ -57,6 +57,8 @@ export interface TodayDayProps {
   banner?: React.ReactNode;
   /** Beside the agenda on a desktop, under it on a phone: the last invoices (a `Widget`). */
   aside?: React.ReactNode;
+  /** « Nouvelle facture », the day's primary when nobody comes next, for who may issue invoices. */
+  newInvoiceHref?: string | null;
 }
 
 /**
@@ -65,7 +67,7 @@ export interface TodayDayProps {
  * the dogs, the owners, the access notes, the start and the end, the report. The day (`?day=`) and the open appointment
  * (`?appointment=`) are in the address.
  */
-export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, allow, title, description, visits, banner, aside }: TodayDayProps) {
+export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, allow, title, description, visits, banner, aside, newInvoiceHref = null }: TodayDayProps) {
   const { say, locale } = useSay();
   const router = useRouter();
   const routes = useShopRoutes();
@@ -105,12 +107,28 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
     };
   });
   const open = rows.find((r) => r.id === selectedId) ?? null;
+  // The day's one primary (D1b): open the next appointment; when nobody comes next, a new invoice. The frame's header yields here.
+  const next = summary.next;
+  const primary = next ? (
+    <Button asChild variant="gradient" size="md" className="font-bold">
+      <Link href={address({ appointment: next.id })} data-primary scroll={false}>
+        {say("today.nextPrimary", { client: next.client ?? say("today.walkIn"), time: time(next.startsAt) })}
+      </Link>
+    </Button>
+  ) : newInvoiceHref ? (
+    <Button asChild variant="gradient" size="md" className="font-bold">
+      <Link href={newInvoiceHref} data-primary>
+        {say("shell.newInvoice")}
+      </Link>
+    </Button>
+  ) : null;
 
   return (
     <>
       <DashboardLayout
         title={title}
         description={description}
+        actions={primary}
         toolbar={
           <div className="flex w-full min-w-0 flex-col gap-3">
             {banner}
