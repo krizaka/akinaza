@@ -76,6 +76,13 @@ describe("a times step", () => {
     expect(step.days[0]!.slots[0]!.href).toBe("/fr/s/cedre-ciseaux/book?service=cut&staff=m&start=2026-10-20T13%3A00%3A00.000Z");
     expect(step.who).toBe("Avec Maëlle");
   });
+  it("also groups each day's times by part of the day on the shop's clock, and says which clock (SlotPicker groups, krizaka-ui#672)", () => {
+    const step = timesStep({ page, locale: "en", now: NOW, serviceId: "cut", staffId: "m", slots: [slot("2026-10-20T13:00:00Z"), slot("2026-10-20T19:30:00Z"), slot("2026-10-20T23:00:00Z")] })!;
+    expect(step.days[0]!.groups.map((g) => [g.id, g.label, g.slots.length])).toEqual([["morning", "Morning", 1], ["afternoon", "Afternoon", 1], ["evening", "Evening", 1]]);
+    expect(step.days[0]!.groups[0]!.slots[0]!.href).toBe(step.days[0]!.slots[0]!.href);
+    expect(step.footer).toBe(`Times in ${page.shop.timezone}`);
+    expect(timesStep({ page, locale: "fr", now: NOW, serviceId: "cut", staffId: "m", slots: [slot("2026-10-20T13:00:00Z")] })!.days[0]!.groups[0]!.label).toBe("Matin");
+  });
   it("for anyone, no person is named in the link; a lone worker is not named at all", () => {
     const any = timesStep({ page, locale: "en", now: NOW, serviceId: "cut", staffId: null, slots: [slot("2026-10-20T13:00:00Z")] })!;
     expect(any.days[0]!.slots[0]!.href).not.toContain("staff=");

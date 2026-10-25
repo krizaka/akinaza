@@ -7,14 +7,17 @@ import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
 import { Checkbox } from "@krizaka/ui/checkbox";
 import { createKrizakaForm } from "@krizaka/ui/form";
+import { type PickerDay, SlotPicker } from "@krizaka/ui/slot-picker";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
 import { bookingDefaults } from "@/lib/booking-defaults";
+import { shiftDay } from "@/lib/day";
 import { useSay, useVocabulary } from "@/lib/i18n-client";
+import { groupByPart, hourIn, mondayOf, weekDays } from "@/lib/slot-weeks";
 
 export interface BookingData {
   shop: { id: string; name: string; slug: string };
@@ -229,7 +232,7 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
         <form.Watch name="serviceId">
           {(serviceId) => (
             <form.Watch name="zoneId">
-              {(zoneId) => <form.Field name="startsAt">{(field) => <SlotPicker slug={data.shop.slug} staffId={data.staffId} serviceId={serviceId as string} zoneId={(zoneId as string) || null} timeZone={data.timeZone} value={field.value as string} onPick={field.setValue} error={field.error} />}</form.Field>}
+              {(zoneId) => <form.Field name="startsAt">{(field) => <BookingSlots slug={data.shop.slug} staffId={data.staffId} serviceId={serviceId as string} zoneId={(zoneId as string) || null} timeZone={data.timeZone} value={field.value as string} onPick={field.setValue} error={field.error} />}</form.Field>}
             </form.Watch>
           )}
         </form.Watch>
@@ -242,42 +245,70 @@ function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
   );
 }
 
-function SlotPicker({ slug, staffId, serviceId, zoneId, timeZone, value, onPick, error }: { slug: string; staffId: string | null; serviceId: string; zoneId: string | null; timeZone: string; value: string; onPick: (v: string) => void; error: string | undefined }) {
+/** How many weeks ahead the arrows go (the engine answers an empty week with the empty line). */
+const WEEKS_AHEAD = 8; // @fixed: the booking page's horizon of browsing; the engine decides what is really free
+
+/**
+ * The times of a service, by week and by part of the day: the package's `SlotPicker` (krizaka-ui#672) over the engine's slots of that
+ * week (`from`). The chosen time is the form's value; a time carried from the shop page that is no longer free is dropped.
+ */
+function BookingSlots({ slug, staffId, serviceId, zoneId, timeZone, value, onPick, error }: { slug: string; staffId: string | null; serviceId: string; zoneId: string | null; timeZone: string; value: string; onPick: (v: string) => void; error: string | undefined }) {
   const { say, locale } = useSay();
+  const lang = locale === "fr" ? "fr-CA" : "en-CA";
+  const todayWeek = useMemo(() => mondayOf(new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date())), [timeZone]);
+  // A time carried from the shop page opens on its own week.
+  const [week, setWeek] = useState(() => (value ? mondayOf(new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date(value))) : todayWeek));
   const slots = useQuery({
-    queryKey: ["slots", slug, serviceId, zoneId, staffId],
+    queryKey: ["slots", slug, serviceId, zoneId, staffId, week],
     enabled: !!serviceId,
-    queryFn: () => krizakaFetch(`/api/shops/${slug}/slots`, { query: { serviceId, zoneId, staffId } }) as Promise<{ slots: SlotView[] }>,
+    queryFn: () => krizakaFetch(`/api/shops/${slug}/slots`, { query: { serviceId, zoneId, staffId, from: week } }) as Promise<{ slots: SlotView[] }>,
   });
   // A time carried from the shop page that is no longer free (someone booked it meanwhile) is dropped, never submitted.
   const offered = slots.data?.slots;
   useEffect(() => {
     if (offered && value && !offered.some((s) => s.startsAt === value)) onPick("");
   }, [offered, value, onPick]);
-  const lang = locale === "fr" ? "fr-CA" : "en-CA";
-  const dayKey = (iso: string) => new Date(iso).toLocaleDateString(lang, { weekday: "long", day: "numeric", month: "long", timeZone });
-  const groups = new Map<string, SlotView[]>();
-  for (const s of slots.data?.slots ?? []) groups.set(dayKey(s.startsAt), [...(groups.get(dayKey(s.startsAt)) ?? []), s]);
+  const days = useMemo<PickerDay[]>(() => {
+    const inWeek = new Set(weekDays(week));
+    const dayOf = (iso: string) => new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date(iso));
+    const byDay = new Map<string, SlotView[]>();
+    for (const s of offered ?? []) {
+      const day = dayOf(s.startsAt);
+      if (inWeek.has(day)) byDay.set(day, [...(byDay.get(day) ?? []), s]);
+    }
+    const pick = (s: SlotView) => ({
+      id: s.startsAt,
+      label: new Date(s.startsAt).toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit", timeZone }),
+      ...(s.joins ? { note: say("book.seats", { left: s.seatsLeft, max: s.capacity }) } : {}),
+    });
+    return [...byDay.entries()].map(([day, list]) => ({
+      id: day,
+      label: new Intl.DateTimeFormat(lang, { timeZone: "UTC", weekday: "short" }).format(new Date(`${day}T12:00:00Z`)),
+      sub: new Intl.DateTimeFormat(lang, { timeZone: "UTC", day: "numeric", month: "short" }).format(new Date(`${day}T12:00:00Z`)),
+      groups: groupByPart(list, (s) => hourIn(new Date(s.startsAt), timeZone)).map((g) => ({ id: g.part, label: say(`book.parts.${g.part}`), slots: g.items.map(pick) })),
+    }));
+  }, [offered, week, timeZone, lang, say]);
+  const part = new Intl.DateTimeFormat(lang, { timeZone: "UTC", day: "numeric", month: "short" });
   return (
-    <fieldset className="flex flex-col gap-3">
-      <legend className="mb-1 text-sm font-medium text-fg">{say("book.slots")}</legend>
+    <div className="flex flex-col gap-2">
       {slots.isPending ? <p className="text-fg-secondary">{say("book.slotsLoading")}</p> : null}
-      {slots.data && groups.size === 0 ? <p className="text-fg-secondary">{say("book.slotsNone")}</p> : null}
-      {[...groups.entries()].slice(0, 7).map(([day, list]) => (
-        <div key={day} className="flex flex-col gap-2">
-          <p className="text-sm font-semibold text-fg first-letter:uppercase">{day}</p>
-          <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={day}>
-            {list.map((s) => (
-              <Button key={s.startsAt} type="button" role="radio" aria-checked={value === s.startsAt} size="md" variant={value === s.startsAt ? "primary" : "secondary"} onClick={() => onPick(s.startsAt)}>
-                {new Date(s.startsAt).toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit", timeZone })}
-                {s.joins ? <span className="ml-2 text-xs opacity-80">{say("book.seats", { left: s.seatsLeft, max: s.capacity })}</span> : null}
-              </Button>
-            ))}
-          </div>
-        </div>
-      ))}
+      <SlotPicker
+        days={days}
+        label={say("book.slots")}
+        emptyLabel={say("book.slotsNone")}
+        value={value || null}
+        onValueChange={onPick}
+        week={week}
+        onWeekChange={setWeek}
+        minWeek={todayWeek}
+        maxWeek={shiftDay(todayWeek, 7 * WEEKS_AHEAD)}
+        todayWeek={todayWeek}
+        weekLabel={`${part.format(new Date(`${week}T12:00:00Z`))} – ${part.format(new Date(`${shiftDay(week, 6)}T12:00:00Z`))}`}
+        weekButtons={{ previous: say("journey.weekPrevious"), today: say("journey.weekToday"), next: say("journey.weekNext") }}
+        footer={say("book.footer", { zone: timeZone })}
+      />
       {error ? <p className="text-sm text-danger">{error}</p> : null}
-    </fieldset>
+    </div>
   );
 }
 

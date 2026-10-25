@@ -61,10 +61,25 @@ describe("the invoices list organised (akinaza#337)", () => {
   it("draws the tags' dividers with their counts, the tags on the rows and the system views as links holding the filters", () => {
     const html = organised();
     expect(readable(html)).toMatch(/Tous[\s\S]*À relancer\s*2/);
-    expect(html).toContain('data-tag-marker="amber"');
+    expect(html).toContain('data-marker="amber"');
     expect(html).toContain('href="/fr/app?tags=t1"');
     expect(html).toContain("status=overdue");
     expect(html).toContain("view=overdue");
+  });
+
+  it("draws the derived state with the package's StatusChip over the administrator's status set, read-only (krizaka-ui#627)", () => {
+    const status = { key: "invoice_state", label: { fr: "État", en: "State" }, mode: "derived" as const, states: [{ key: "paid", label: { fr: "Payée", en: "Paid" }, tone: "success" as const }, { key: "overdue", label: { fr: "En retard", en: "Overdue" }, tone: "danger" as const }, { key: "due", label: { fr: "À payer", en: "Due" }, tone: "neutral" as const }, { key: "partial", label: { fr: "Payée en partie", en: "Partly paid" }, tone: "accent" as const }, { key: "cancelled", label: { fr: "Annulée", en: "Cancelled" }, tone: "neutral" as const }, { key: "credit", label: { fr: "Note de crédit", en: "Credit note" }, tone: "neutral" as const }], transitions: [] };
+    const html = renderToStaticMarkup(
+      <I18nProvider locale="fr" messages={MESSAGES.fr as never}>
+        <KrizakaQueryProvider>
+          <ShopSession locale="fr" shopId="s1" remembered>
+            <InvoicesTable invoices={rows} today="2026-10-23" organize={{ ...organize, status }} />
+          </ShopSession>
+        </KrizakaQueryProvider>
+      </I18nProvider>,
+    );
+    expect(html).toMatch(/data-invoice="i-A-0002" data-state="overdue"[^>]*>[\s\S]*?En retard/);
+    expect(html).not.toMatch(/<button[^>]*aria-label="[^"]*statut/i);
   });
 
   it("offers no way to move an invoice's state by hand: it is derived from the ledger", () => {

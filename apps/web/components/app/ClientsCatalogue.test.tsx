@@ -53,7 +53,7 @@ describe("Clients on the catalogue template (D5)", () => {
 
   it("shows a client's tags on its row with their marker, and the owner's « new tag » divider", () => {
     const html = render();
-    expect(html).toContain('data-tag-marker="green"');
+    expect(html).toContain('data-marker="green"');
     expect(readable(html)).toContain("Nouvelle étiquette");
     expect(readable(render(undefined, { canWrite: false }))).not.toContain("Nouvelle étiquette");
   });
