@@ -385,8 +385,10 @@ export async function enqueueMail(db: Db, mail: OutgoingMail): Promise<string> {
   return row!.id;
 }
 
-export async function pendingMail(db: Db, limit = 20) {
-  return db.select().from(mailOutbox).where(eq(mailOutbox.status, "pending")).orderBy(asc(mailOutbox.createdAt)).limit(limit);
+/** The oldest pending mails; `scope.ids` keeps only those (a test flushes what it queued, never another file's: akinaza#341). */
+export async function pendingMail(db: Db, limit = 20, scope: { ids?: readonly string[] } = {}) {
+  const pending = eq(mailOutbox.status, "pending");
+  return db.select().from(mailOutbox).where(scope.ids ? and(pending, inArray(mailOutbox.id, [...scope.ids])) : pending).orderBy(asc(mailOutbox.createdAt)).limit(limit);
 }
 
 export async function markMailSent(db: Db, id: string, at: Date): Promise<void> {

@@ -1,0 +1,24 @@
+# The five tabs of the shop (D8), signed in as the demo shop's owner: maestro test .maestro/tabs.yaml -e PERSONA_EMAIL=… -e PERSONA_PASSWORD=…
+# (a simulator with the app installed and a dev backend with the demo shop; in CI mobile-e2e.yml makes both, the login never comes from this file).
+appId: com.krizaka.akinaza
+tags:
+  - ci
+---
+- launchApp:
+    clearState: true
+- runFlow: shared/sign-in.yaml
+# The web rail's places, in its order: Aujourd'hui · Clients · Factures · Livres · Boutique.
+- assertVisible: "Aujourd'hui|Today"
+- takeScreenshot: tab-aujourdhui
+- tapOn: "Clients"
+- assertVisible: "Chercher un client|Find a client"
+- takeScreenshot: tab-clients
+- tapOn: "Factures|Invoices"
+- assertVisible: "Nouvelle facture|New invoice"
+- takeScreenshot: tab-factures
+- tapOn: "Livres|Books"
+- assertVisible: "TPS nette|Net GST"
+- takeScreenshot: tab-livres
+- tapOn: "Boutique|Shop"
+- assertVisible: "Services"
+- takeScreenshot: tab-boutique

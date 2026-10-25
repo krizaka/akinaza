@@ -19,3 +19,12 @@ export function negotiateLocale(cookie: string | undefined, acceptLanguage: stri
   const asksEnglish = tags.some((t) => t === "en" || t.startsWith("en-"));
   return asksEnglish && !asksFrench ? "en" : FALLBACK_LOCALE;
 }
+
+/** The request header the proxy sets with the language of the address, read by the 404 pages (which have no params). */
+export const LOCALE_HEADER = "x-akinaza-locale";
+
+/** The language of a page's address: its `/en` or `/fr` segment, else the visitor's choice. Never the cookie's stale value. */
+export function pageLocaleOf(pathname: string, chosen: SiteLocale): SiteLocale {
+  const segment = pathname.split("/")[1];
+  return segment === "en" || segment === "fr" ? segment : chosen;
+}

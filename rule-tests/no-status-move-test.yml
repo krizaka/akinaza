@@ -1,0 +1,9 @@
+id: no-status-move
+valid:
+  - |
+    await ws.tags.apply(shopId, actor, "invoice", { ids, add: [tag] });
+  - |
+    const set = ws.status.of(shopId, "invoice", ids);
+invalid:
+  - |
+    await ws.status.move(shopId, actor, "invoice", { ids, to: "paid" });

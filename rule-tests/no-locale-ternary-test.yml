@@ -1,0 +1,17 @@
+id: no-locale-ternary
+valid:
+  - |
+    const name = { fr: s.nameFr, en: s.nameEn }[locale];
+  - |
+    const lang = locale === "fr" ? "fr-CA" : "en-CA";
+  - |
+    const label = say("client.requests.open");
+invalid:
+  - |
+    const name = locale === "fr" ? s.nameFr : s.nameEn;
+  - |
+    const name = account.locale === "fr" ? booking.service.nameFr : booking.service.nameEn;
+  - |
+    const pick = (fr, en) => (locale === "fr" ? fr : en) || null;
+  - |
+    const title = isFr ? "Bonjour" : "Hello";

@@ -8,7 +8,7 @@
 //   DATABASE_URL=… DATABASE_CA_CERT=… QA_KRIZAKA_PASSWORD=… QA_CLIENTS_PASSWORD=… \
 //     pnpm --filter @akinaza/web exec tsx scripts/seed-krizaka.mjs
 import { createDb, pg, poolConfig } from "@akinaza/db";
-import { KRIZAKA_EMAILS, seedKrizaka } from "@akinaza/db/seed-krizaka";
+import { KRIZAKA_EMAILS, renameFormerClients, seedKrizaka } from "@akinaza/db/seed-krizaka";
 
 import { hashPassword } from "./qa-accounts.mjs";
 
@@ -23,6 +23,7 @@ async function main() {
   const clientsPassword = need("QA_CLIENTS_PASSWORD", 12);
   const pool = new pg.Pool(poolConfig(need("DATABASE_URL"), process.env.DATABASE_CA_CERT, 2));
   try {
+    await renameFormerClients(createDb(pool)); // a renamed client keeps its account, its file and its invoices (#326)
     for (const email of KRIZAKA_EMAILS) {
       const password = email === KRIZAKA_EMAILS[0] ? ownerPassword : clientsPassword;
       await pool.query(

@@ -1,4 +1,5 @@
 import { invoiceDetail, shopDay } from "@akinaza/db";
+import { PageHeader } from "@krizaka/ui/page-header";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
@@ -31,6 +32,7 @@ export default async function CorrectInvoicePage({ params }: { params: Promise<{
       <Link className="text-fg-accent underline" href={routes.invoice(invoice.id)}>
         ← {format(t.back, { number: invoice.number })}
       </Link>
+      <PageHeader title={format(t.title, { number: invoice.number })} />
       <InvoiceCorrection
         original={{ id: invoice.id, number: invoice.number, clientId: invoice.clientId, language: invoice.language, termsDays: invoice.termsDays }}
         lines={invoice.lines.map((l) => ({ description: l.description, quantity: String(l.quantityHundredths / 100), unitPriceCents: l.unitPriceCents, category: l.taxCategory }))}

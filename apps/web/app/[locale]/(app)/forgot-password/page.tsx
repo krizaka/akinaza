@@ -1,9 +1,8 @@
-import { AkinazaLogo } from "@krizaka/ui";
-import { AuthLayout } from "@krizaka/ui/auth-layout";
-import { Mascot } from "@krizaka/ui/mascots";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { passwordResetTtlMinutes } from "@/app/accounts";
+import { AccountAuthPage } from "@/components/account/AccountAuthPage";
 import { ForgotForm } from "@/components/account/AccountForms";
 import { asLocale, getDictionary } from "@/lib/i18n";
 
@@ -19,15 +18,8 @@ export default async function ForgotPasswordPage({ params }: { params: Promise<{
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale).console;
   return (
-    <AuthLayout
-      brand={
-        <Link href={`/${locale}`} className="inline-flex items-center gap-2">
-          <AkinazaLogo size={28} /> Akinaza
-        </Link>
-      }
-      promise={t.signIn.promise}
-      aside={<Mascot bird="beaver" mood="welcome" size={72} />}
-      asideFooter={t.signIn.asideFooter}
+    <AccountAuthPage
+      locale={locale}
       title={t.account.forgot.title}
       description={t.account.forgot.description}
       footer={
@@ -36,7 +28,7 @@ export default async function ForgotPasswordPage({ params }: { params: Promise<{
         </Link>
       }
     >
-      <ForgotForm />
-    </AuthLayout>
+      <ForgotForm minutes={await passwordResetTtlMinutes()} />
+    </AccountAuthPage>
   );
 }

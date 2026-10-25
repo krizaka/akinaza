@@ -1,0 +1,11 @@
+# Factures (D8): the shop's invoices and the screen's one primary action, a new invoice.
+appId: com.krizaka.akinaza
+tags:
+  - ci
+---
+- launchApp:
+    clearState: true
+- runFlow: shared/sign-in.yaml
+- tapOn: "Factures|Invoices"
+- assertVisible: "Nouvelle facture|New invoice"
+- takeScreenshot: factures

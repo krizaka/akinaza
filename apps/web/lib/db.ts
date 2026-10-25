@@ -1,6 +1,6 @@
 import path from "node:path";
 
-import { createDb, type Db, migrate as migrateSchema, pg, poolConfig as dbPoolConfig } from "@akinaza/db";
+import { createDb, type Db, migrate as migrateSchema, pg, poolConfig as dbPoolConfig, transactionOn, type TransactionPool } from "@akinaza/db";
 
 import { readEnv } from "./env";
 
@@ -30,6 +30,11 @@ export async function query<T extends pg.QueryResultRow = pg.QueryResultRow>(tex
   const result = await pool().query<T>(text, values);
   return result.rows;
 }
+
+/** A transaction on this process's pool. */
+export const transaction = <T>(work: Parameters<typeof transactionOn<T>>[1]) => transactionOn(pool() as unknown as TransactionPool, work);
+
+export { transactionOn, type TransactionPool };
 
 /**
  * The versioned migrations of @akinaza/db (packages/db/drizzle), applied at start under an advisory lock. Resolved

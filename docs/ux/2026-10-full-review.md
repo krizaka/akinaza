@@ -516,6 +516,6 @@ at the same base.
 
 ## Errata (from the review of this document, 2026-10-23): these override the sections above
 1. **Staff destinations follow `packages/db/src/roles.ts`.** A staff member's rail shows only what their role allows: no client files, no team administration, no scheduling unless granted. A test renders the rail per role.
-2. **One primary per screen, not one per app.** « Nouvelle facture » is the primary on Today and Factures. A detail or form screen has its own primary (« Envoyer la facture », « Émettre la facture »), and the header action yields to it there.
+2. **One primary per screen, not one per app.** « Nouvelle facture » is the primary on Factures and the other lists. *(Revised in D1b, #328: on Today the primary is the next appointment, and « Nouvelle facture » only when nobody comes next; the header yields there.)* A detail or form screen has its own primary (« Envoyer la facture », « Émettre la facture »), and the header action yields to it there.
 3. **Order.** K1 does not link or redirect to the Boutique hub until K4 ships it: K1 keeps today's routes for those items. K3 moves the invoice-e-mail settings only once K4 exists; until then they stay where they are.
 4. **Clients.** The owner-facing Clients targets (search and filter, the empty state, the visit-column priorities, the client-file figures) become slice **K3b**, after K3, using the same blocks (`FilterBar`, `DataTable`, `empty-state`). K7 stays the client's own space.

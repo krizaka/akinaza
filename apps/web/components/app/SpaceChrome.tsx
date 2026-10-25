@@ -1,8 +1,10 @@
-import type { ShopRole } from "@akinaza/db";
+import { frameCounts, shopDay, type ShopRole } from "@akinaza/db";
 
 import { accounts } from "@/app/accounts";
 import { ShopFrame } from "@/components/app/ShopFrame";
+import { agendaScope } from "@/lib/access";
 import { CLIENT_PLACES, placeHrefFor, placesFor } from "@/lib/app-nav";
+import { db } from "@/lib/db";
 import { VocabularyProvider } from "@/lib/i18n-client";
 import { indexable } from "@/lib/indexing";
 import { may, shopsOf } from "@/lib/member-shop";
@@ -12,7 +14,8 @@ type Membership = { shop: { id: string; name: string; businessType: Parameters<t
 
 /**
  * The frame of the signed-in space: the rail shows what the role may open, each place leads into the shop in use, the header
- * names that shop (and lists the others), carries the one primary action for who may issue invoices, and the account menu.
+ * names that shop (and lists the others), carries the search (⌘K), the lists' primary action for who may issue invoices, and the
+ * account menu; the rail counts the day's appointments and the invoices to collect.
  * A client (no shop) gets the same frame around their bookings.
  */
 export async function SpaceChrome({ locale, account, member, children }: { locale: RouteLocale; account: { id: string; email: string }; member: Membership; children: React.ReactNode }) {
@@ -21,13 +24,17 @@ export async function SpaceChrome({ locale, account, member, children }: { local
   const places = member ? placesFor(member.role) : [...CLIENT_PLACES];
   const membership = member ? { shopId: member.shop.id, role: member.role } : null;
   const routes = member ? shopRoutes(locale, member.shop.id) : null;
+  // The rail's counts: the day's appointments (a staff member's own), the invoices to collect for who may see them.
+  const counts = member ? await frameCounts(db(), member.shop.id, { day: await shopDay(db(), member.shop.id, new Date()), ...agendaScope(member.role, account.id) }) : null;
   return (
     <ShopFrame
       locale={locale}
-      account={{ email: account.email, name: profile.name, avatarSeed: profile.avatarSeed }}
-      places={places.map((place) => ({ key: place, href: placeHrefFor(locale, membership, place) }))}
+      account={{ id: account.id, email: account.email, name: profile.name, avatarSeed: profile.avatarSeed }}
+      places={places.map((place) => ({ key: place, href: placeHrefFor(locale, membership, place), also: place === "shop" && routes ? [routes.team] : undefined }))}
       shop={member && routes ? { current: { id: member.shop.id, name: member.shop.name }, others: shops.filter((s) => s.id !== member.shop.id).map((s) => ({ id: s.id, name: s.name })), addHref: may(member.role, "settings") ? `${routes.setup}/new` : null } : undefined}
       newInvoiceHref={member && routes && may(member.role, "invoices") ? routes.newInvoice : null}
+      search={member ? may(member.role, "clients") || may(member.role, "invoices") : false}
+      counts={counts && member ? { today: counts.appointments, toCollect: may(member.role, "invoices") ? counts.toCollect : undefined } : undefined}
       dev={!indexable()}
       home={accountRoutes(locale).home}
       profileHref={accountRoutes(locale).profile}

@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { shopRoutes } from "@/lib/routes";
 
-import { TodayDay, type TodayDayProps } from "./TodayDay";
+import { billAppointmentHref, TodayDay, type TodayDayProps } from "./TodayDay";
 import type { DayVisitView } from "./VisitDetail";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }), usePathname: () => "/fr/app/s-1/aujourdhui" }));
@@ -32,7 +32,7 @@ const walk: DayVisitView = {
 };
 
 const base: TodayDayProps = {
-  appointments: [{ id: "a-1", startsAt: walk.startsAt, endsAt: walk.endsAt, staff: "Léa", service: { fr: walk.service.fr, en: walk.service.en }, clientId: "c-1", client: "Sofia Rossi", status: "booked", checkedInAt: null, priceCents: 3_500, category: "standard" }],
+  appointments: [{ id: "a-1", startsAt: walk.startsAt, endsAt: walk.endsAt, staff: "Léa", service: { fr: walk.service.fr, en: walk.service.en }, serviceId: "s-walk", clientId: "c-1", client: "Sofia Rossi", status: "booked", checkedInAt: null, priceCents: 3_500, category: "standard" }],
   shop: { timezone: "America/Toronto", registrant: true },
   day: "2026-10-23",
   today: "2026-10-23",
@@ -42,38 +42,130 @@ const base: TodayDayProps = {
   title: "Aujourd'hui",
   description: "vendredi 23 octobre 2026",
   visits: { "a-1": walk },
+  dependants: true,
+  board: null,
+  period: 7,
 };
 const render = (props: Partial<TodayDayProps>) => renderToStaticMarkup(<TodayDay {...base} {...props} />);
 const text = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/&#x27;/g, "'").replace(/\s+/g, " ");
 
-describe("the owner's day as an agenda, for a dog walker too (docs/ux/2026-10-full-review.md B1–B5)", () => {
-  it("reads a walk by its service and its dogs, with the page's one h1, the figures and the « now » line", () => {
-    const html = render({});
-    expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
-    expect(text(html)).toContain("Aujourd'hui");
-    expect(text(html)).toContain("Promenade en groupe 60 min");
-    expect(text(html)).toContain("walker.dogs 2 · Léa");
-    expect(text(render({ visits: { "a-1": { ...walk, bookings: walk.bookings.slice(0, 1) } } }))).toContain("walker.dog · Léa");
-    expect(text(html)).toContain("today.stats.title");
-    expect(text(html)).toContain("today.now");
-    expect(text(html)).toContain("Sofia Rossi"); // the next client
+const board: NonNullable<TodayDayProps["board"]> = {
+  week: 11,
+  toBill: [{ appointmentId: "a-9", clientId: "c-9", client: "Studio Lumen inc.", serviceId: "s-walk", startsAt: "2026-10-22T14:00:00.000Z" }],
+  activity: { days: ["2026-10-21", "2026-10-22", "2026-10-23"], invoicedCents: [0, 5_174, 10_000], collectedCents: [0, 2_000, 0], appointments: [1, 2, 0] },
+  balance: { owedCents: 3_174, overdueCents: 3_174, count: 1, overdueCount: 1 },
+  chase: { id: "i-4", number: "KZ-00004", client: "Studio Lumen inc.", dueOn: "2026-10-19", remainingCents: 3_174, overdue: true },
+};
+
+describe("Aujourd'hui on the home grammar (D4): the headline, the date on the right, the binder, two columns", () => {
+  it("makes the headline the page's one h1, true to the day (the pets shop reads its walk)", () => {
+    const html = render({ board });
+    const h1 = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/g) ?? [];
+    expect(h1).toHaveLength(1);
+    expect(text(h1[0]!)).toContain("today.headline.nextService Promenade en groupe 60 min");
+    expect(text(render({ board, dependants: false }).match(/<h1[^>]*>[\s\S]*?<\/h1>/)![0])).toContain("today.headline.next Sofia Rossi");
+  });
+
+  it("puts the date on the right with the previous and next day, and draws no strip of days", () => {
+    const html = render({ board });
+    expect(html).not.toContain("today.dayStrip");
+    expect(html).toContain('href="/fr/app/s-1/aujourdhui?day=2026-10-22"');
+    expect(html).toContain('href="/fr/app/s-1/aujourdhui?day=2026-10-24"');
+    expect(text(html)).toMatch(/today\.week 43/);
+  });
+
+  it("opens « Le classeur » under the heading: Rendez-vous · À facturer · À encaisser · Cette semaine, with their counts", () => {
+    const t = text(render({ board }));
+    for (const part of ["today.binder.appointments 1", "today.binder.toBill 1", "today.binder.toCollect 1", "today.binder.week 11"]) expect(t).toContain(part);
+    expect(t.indexOf("today.binder.title")).toBeLessThan(t.indexOf("today.agendaLabel"));
+  });
+
+  it("holds quick access, the activity and « À encaisser » in the side column, after the agenda", () => {
+    const html = render({ board, publicPageHref: "/fr/s/demo" });
+    const t = text(html);
+    expect(t.indexOf("today.agendaLabel")).toBeLessThan(t.indexOf("today.quick.title"));
+    expect(html).toContain('href="/fr/app/s-1/invoices/new?client=c-9&amp;service=s-walk&amp;quantity=1&amp;appointment=a-9"');
+    expect(html).toContain('href="/fr/app/s-1/invoices/i-4"');
+    expect(html).toContain('href="/fr/s/demo"');
+    for (const part of ["today.activity.invoiced", "today.activity.collected", "today.activity.appointments"]) expect(t).toContain(part);
+    expect(html).toContain("today.balance.overdue");
+  });
+
+  it("keeps the period in the address: 7, 30 or 90 days, the current one marked", () => {
+    const html = render({ board, period: 30 });
+    for (const p of [30, 90]) expect(html).toContain(`href="/fr/app/s-1/aujourdhui?period=${p}"`);
+    expect(html).toContain('href="/fr/app/s-1/aujourdhui"'); // 7 days, the default: no parameter
+    expect(html).toMatch(/aria-current="page"[^>]*href="\/fr\/app\/s-1\/aujourdhui\?period=30"|href="\/fr\/app\/s-1\/aujourdhui\?period=30"[^>]*aria-current="page"/);
+  });
+
+  it("says nothing is late with the beaver when the balance has no overdue invoice", () => {
+    const calm = { ...board, balance: { owedCents: 1_000, overdueCents: 0, count: 1, overdueCount: 0 }, chase: null };
+    expect(text(render({ board: calm }))).toContain("today.balance.noneLate");
+  });
+
+  it("shows an all-zero day as its empty state, not a row of zeros", () => {
+    const zero = { week: 0, toBill: [], activity: { days: ["2026-10-23"], invoicedCents: [0], collectedCents: [0], appointments: [0] }, balance: { owedCents: 0, overdueCents: 0, count: 0, overdueCount: 0 }, chase: null };
+    const html = render({ appointments: [], visits: {}, board: zero });
+    const t = text(html);
+    expect(t).toContain("today.noneTitle");
+    expect(t).not.toContain("today.activity.invoiced");
+    expect(t).not.toContain("today.binder.title");
   });
 
   it("opens an appointment from the address: each row links to ?appointment=<id>", () => {
-    expect(render({})).toContain('href="/fr/app/s-1/aujourdhui?appointment=a-1"');
+    expect(render({ board })).toContain('href="/fr/app/s-1/aujourdhui?appointment=a-1"');
   });
 
-  it("announces the brief under the heading and keeps the invoices beside the agenda, which then takes two columns", () => {
-    const html = render({ banner: <p data-testid="banner">the point</p>, aside: <section data-testid="aside">invoices</section> });
-    expect(html.indexOf('data-testid="banner"')).toBeLessThan(html.indexOf("today.agendaLabel"));
-    expect(html.indexOf("today.agendaLabel")).toBeLessThan(html.indexOf('data-testid="aside"'));
-    expect(html).not.toContain('data-span="full" aria-labelledby');
-  });
-
-  it("shows the empty day with the beaver and no invoices widget when there are none", () => {
-    const html = render({ appointments: [], visits: {}, aside: null });
-    expect(text(html)).toContain("today.noneTitle");
-    expect(text(html)).toContain("today.none ");
-    expect(text(html)).not.toContain("today.statuses.booked");
+  it("shows no money to who may not see it: no activity, no balance", () => {
+    const t = text(render({ board: null }));
+    expect(t).not.toContain("today.activity.title");
+    expect(t).not.toContain("today.balance.title");
   });
 });
+
+describe("the day's one primary (D1b): the next appointment, else a new invoice", () => {
+  const primaries = (html: string) => html.match(/<a[^>]*data-primary[^>]*>[\s\S]*?<\/a>/g) ?? [];
+
+  it("opens the next appointment, named by its client and its time", () => {
+    const [primary, ...others] = primaries(render({ newInvoiceHref: "/fr/app/s-1/invoices/new" }));
+    expect(others).toEqual([]);
+    expect(primary).toContain('href="/fr/app/s-1/aujourdhui?appointment=a-1"');
+    expect(text(primary!)).toContain("today.nextPrimary Sofia Rossi");
+  });
+
+  it("offers « Nouvelle facture » when nobody comes next, to who may issue invoices, and nothing to who may not", () => {
+    const done = { ...base.appointments[0]!, status: "done" as const };
+    const [primary, ...others] = primaries(render({ appointments: [done], newInvoiceHref: "/fr/app/s-1/invoices/new" }));
+    expect(others).toEqual([]);
+    expect(primary).toContain('href="/fr/app/s-1/invoices/new"');
+    expect(primaries(render({ appointments: [], newInvoiceHref: null }))).toEqual([]);
+  });
+});
+
+describe("a finished appointment is billed from its sheet (D3)", () => {
+  const routes = shopRoutes("fr", "s-1");
+  it("offers « Facturer ce rendez-vous », prefilled with the client, the service and one unit, to who may invoice", () => {
+    const done = { ...base.appointments[0]!, status: "done" as const };
+    expect(billAppointmentHref(done, routes, true)).toBe("/fr/app/s-1/invoices/new?client=c-1&service=s-walk&quantity=1&appointment=a-1");
+    expect(billAppointmentHref({ ...done, clientId: null }, routes, true)).toBe("/fr/app/s-1/invoices/new?service=s-walk&quantity=1&appointment=a-1");
+    expect(billAppointmentHref(done, routes, false)).toBeNull();
+    expect(billAppointmentHref(base.appointments[0]!, routes, true)).toBeNull();
+  });
+});
+
+describe("a failing section of the day (D6): an alert in place, the rest renders", () => {
+  it("says the side column could not load, with « Réessayer », and keeps the agenda", () => {
+    const t = text(render({ board: null, boardFailed: true }));
+    expect(t).toContain("states.error.title");
+    expect(t).toContain("states.retry");
+    expect(t).toContain("today.agendaLabel");
+  });
+
+  it("moves nothing on the page's arrival (D11): no row washes, no control rings, until an action succeeds", () => {
+    const html = render({});
+    expect(html).toContain("Sofia Rossi");
+    expect(html).not.toContain("data-kz-arrive=");
+    expect(html).not.toContain("data-kz-status=");
+  });
+});
+

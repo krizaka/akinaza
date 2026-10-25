@@ -52,11 +52,11 @@ function SectionCard({ title, lead, badge, children }: { title: string; lead: st
 }
 
 /** The foot of a section's form: what the save answered, then its one button. */
-function SectionFooter({ s, Submit }: { s: ReturnType<typeof useSectionSave>; Submit: React.ComponentType<{ size?: "md"; className?: string; children: React.ReactNode }> }) {
+function SectionFooter({ s, Submit }: { s: ReturnType<typeof useSectionSave>; Submit: React.ComponentType<{ size?: "md"; className?: string; "data-primary"?: boolean; children: React.ReactNode }> }) {
   return (
     <div className="flex flex-col gap-3 sm:col-span-2">
       <SectionStatus s={s} />
-      <Submit size="md" className="w-full sm:w-auto sm:self-start">{s.say("shopSetup.sections.save")}</Submit>
+      <Submit size="md" className="w-full sm:w-auto sm:self-start" data-primary>{s.say("shopSetup.sections.save")}</Submit>
     </div>
   );
 }

@@ -1,0 +1,10 @@
+id: no-hand-ms-days
+snapshots:
+  "const a = 14 * 24 * 60 * 60 * 1000;\n":
+    fixed: |
+      const a = hoursToMilliseconds(14 * 24);
+    labels:
+    - source: 14 * 24 * 60 * 60 * 1000
+      style: primary
+      start: 10
+      end: 34

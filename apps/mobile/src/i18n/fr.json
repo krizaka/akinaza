@@ -7,10 +7,10 @@
   "tabs": {
     "label": "Navigation principale",
     "today": "Aujourd'hui",
-    "calendar": "Calendrier",
     "invoices": "Factures",
     "clients": "Clients",
-    "settings": "Réglages"
+    "books": "Livres",
+    "boutique": "Boutique"
   },
   "common": {
     "retry": "Réessayer",
@@ -40,15 +40,10 @@
     "out": "Terminée à {time}",
     "previous": "Jour précédent",
     "next": "Jour suivant",
-    "call": "Appeler {name}"
-  },
-  "calendar": {
-    "title": "Calendrier",
-    "previous": "Mois précédent",
-    "next": "Mois suivant",
-    "visits": "{count} visites",
-    "bookings": "{count} réservations",
-    "empty": "Rien de prévu ce mois-ci."
+    "call": "Appeler {name}",
+    "strip": "Jour affiché",
+    "marked": "des rendez-vous",
+    "emptyLead": "Les rendez-vous réservés s'affichent ici, jour par jour."
   },
   "invoices": {
     "title": "Factures",
@@ -68,7 +63,8 @@
     "issued": "Facture {number} émise : {total}.",
     "failed": "La facture n'a pas pu être émise.",
     "lines": "Lignes",
-    "smallSupplier": "Petit fournisseur : sans taxes."
+    "smallSupplier": "Petit fournisseur : sans taxes.",
+    "emptyLead": "Une facture émise ici ou sur le Web s'affiche dans cette liste."
   },
   "clients": {
     "title": "Clients",
@@ -76,7 +72,8 @@
     "clear": "Effacer",
     "empty": "Aucun client.",
     "dependants": "{count} bêtes",
-    "invoice": "Facturer"
+    "invoice": "Facturer",
+    "emptyLead": "Un client qui réserve, ou que vous ajoutez sur le Web, a son dossier ici."
   },
   "settings": {
     "title": "Réglages",
@@ -93,5 +90,29 @@
   "account": {
     "open": "Votre compte",
     "openNamed": "Votre compte : {name}"
+  },
+  "books": {
+    "title": "Livres",
+    "period": "Du {from} au {to}",
+    "periods": "Période",
+    "gst": "TPS nette",
+    "qst": "TVQ nette",
+    "remit": "À remettre",
+    "claim": "À réclamer",
+    "zero": "Rien à remettre",
+    "lead": "Akinaza prépare les chiffres de votre déclaration de TPS/TVQ; vous la vérifiez et la produisez vous-même.",
+    "web": "Voir le détail des lignes sur le Web"
+  },
+  "boutique": {
+    "title": "Boutique",
+    "services": "Services",
+    "noServices": "Aucun service pour l'instant.",
+    "registrant": "Inscrite aux taxes (TPS/TVQ)",
+    "smallSupplier": "Petit fournisseur : pas de taxes",
+    "terms": "Paiement à {days} jours",
+    "edit": "Modifier la boutique sur le Web"
+  },
+  "profile": {
+    "title": "Profil"
   }
 }

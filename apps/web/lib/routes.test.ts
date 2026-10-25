@@ -19,7 +19,14 @@ describe("the routes of the signed-in space", () => {
   });
 
   it("keeps the account's pages out of any shop", () => {
-    expect(accountRoutes("en")).toEqual({ home: "/en/app", profile: "/en/app/profile", security: "/en/app/profile/security" });
+    const r = accountRoutes("en");
+    expect([r.home, r.profile, r.section("profile"), r.section("data")]).toEqual(["/en/app", "/en/app/profile", "/en/app/profile", "/en/app/profile/data"]);
+  });
+
+  it("keeps the client's own pages there too: opening a first shop and an invoice of any shop they deal with (K7)", () => {
+    const r = accountRoutes("fr");
+    expect([r.openShop, r.invoice("i-1")]).toEqual(["/fr/app/open-shop", "/fr/app/invoices/i-1"]);
+    expect(isShopId("open-shop")).toBe(false);
   });
 
 

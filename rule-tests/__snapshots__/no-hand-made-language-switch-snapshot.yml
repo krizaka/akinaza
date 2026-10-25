@@ -1,0 +1,28 @@
+id: no-hand-made-language-switch
+snapshots:
+  "const x = <Link href=\"/en\" hrefLang=\"en\">English</Link>;\n":
+    labels:
+    - source: hrefLang="en"
+      style: primary
+      start: 27
+      end: 40
+    - source: hrefLang
+      style: secondary
+      start: 27
+      end: 35
+  "const x = <a href={other.href} hrefLang={other.code} lang={other.code}>{other.name}</a>;\n":
+    labels:
+    - source: hrefLang={other.code}
+      style: primary
+      start: 31
+      end: 52
+    - source: hrefLang
+      style: secondary
+      start: 31
+      end: 39
+  "const x = <button type=\"button\" aria-pressed={locale === code} onClick={() => setLocale(code)}>{label}</button>;\n":
+    labels:
+    - source: aria-pressed={locale === code}
+      style: primary
+      start: 32
+      end: 62

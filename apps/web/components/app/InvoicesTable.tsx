@@ -1,19 +1,25 @@
 "use client";
 
-import { INVOICE_STATE, type InvoiceState, invoiceState, remainingCents } from "@akinaza/core";
+import { INVOICE_STATE, invoiceState, remainingCents } from "@akinaza/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
 import { DataTable, type DataTableColumn, DataTableColumnsMenu, DataTableExport, DataTableFilters } from "@krizaka/ui/data-table";
 import Link from "next/link";
-import { useMemo } from "react";
+import { usePathname } from "next/navigation";
+import { useMemo, useState } from "react";
 
 import { InvoiceSendAction } from "@/components/app/InvoiceSendAction";
+import { SelectionTags, TagBinder, TagChips, ViewsBar } from "@/components/app/organize";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
+import { useWash } from "@/components/app/useWash";
 import { ButtonLink } from "@/components/ButtonLink";
-import { formatDate, formatMoney, INTL_LOCALE } from "@/lib/format";
+import { formatDate, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import { STATE_TONE } from "@/lib/invoice-tone";
+import type { OrganizeData, TagLite } from "@/lib/organize-view";
+import { useTableLabels } from "@/lib/table-labels";
 
 export interface InvoiceRowView {
   id: string;
@@ -34,41 +40,53 @@ export interface InvoiceRowView {
   superseded: boolean;
 }
 
-const STATE_TONE: Record<InvoiceState, "neutral" | "success" | "warning" | "danger" | "accent"> = { credit: "warning", cancelled: "neutral", paid: "success", partial: "accent", overdue: "danger", due: "neutral" };
 const standing = (i: InvoiceRowView) => ({ totalCents: i.totalCents, paidCents: i.paidCents, dueOn: i.dueOn, isCredit: !!i.creditOf, superseded: i.superseded });
+
+/** The order of the list (D2): the overdue first — what to chase —, then the newest. */
+export function byUrgency<T extends InvoiceRowView>(invoices: readonly T[], today: string): T[] {
+  const overdue = (i: T) => (invoiceState(standing(i), today) === INVOICE_STATE.overdue ? 0 : 1);
+  return [...invoices].sort((a, b) => overdue(a) - overdue(b) || b.issuedOn.localeCompare(a.issuedOn) || b.number.localeCompare(a.number));
+}
 
 /** The ways a balance is cashed in one tap from the list (the invoice page records any other). */
 const QUICK_METHODS = ["cash", "card", "transfer"] as const;
 
 /**
- * The issued invoices (akinaza#218): searched by number and client, filtered by state and month, exported as CSV, each
- * unfolding its amounts and its quick actions — open, edit (#207), cash the balance. A card per invoice on a phone.
+ * The issued invoices (akinaza#218, D2): in the screen's words (`useTableLabels`), the number narrow and the client wide, the
+ * state derived from the ledger (`invoiceState`) as a chip with its tone, the overdue first; searched by number and client,
+ * filtered by state, exported as CSV, each unfolding its amounts and its quick actions — open, edit (#207), cash the balance.
+ * A card per invoice on a phone.
  */
-export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoices: InvoiceRowView[]; today: string; defaultMessage?: string }) {
+export function InvoicesTable({ invoices, today, defaultMessage = "", organize, tagsByInvoice = {} }: { invoices: InvoiceRowView[]; today: string; defaultMessage?: string; organize?: OrganizeData; tagsByInvoice?: Record<string, TagLite[]> }) {
+  const pathname = usePathname() ?? "";
+  const [selected, setSelected] = useState<string[]>([]);
   const { say, locale } = useSay();
   const routes = useShopRoutes();
   const call = useCall();
+  const labels = useTableLabels();
+  const ordered = useMemo(() => byUrgency(invoices, today), [invoices, today]);
+  // D11: a row whose state, payments or amount changed since the page's previous read washes once (nothing on arrival).
+  const wash = useWash(ordered, (i) => i.id, (i) => `${invoiceState(standing(i), today)}:${i.paidCents}:${i.totalCents}`);
   const columns = useMemo<DataTableColumn<InvoiceRowView>[]>(() => {
     const day = (d: string) => formatDate(`${d}T12:00:00Z`, locale, "UTC");
-    const month = (d: string) => new Date(`${d.slice(0, 7)}-15T12:00:00Z`).toLocaleDateString(INTL_LOCALE[locale], { month: "long", year: "numeric", timeZone: "UTC" });
-    const months = [...new Set(invoices.map((i) => i.issuedOn.slice(0, 7)))].sort().reverse();
     return [
       {
         id: "number",
         header: say("invoices.table.number"),
         type: "title",
         card: "title",
+        width: 132,
         sortable: true,
         filter: "text",
         value: (i) => i.number,
         cell: (i) => (
-          <Link className="font-mono font-semibold text-fg-accent underline" href={routes.invoice(i.id)} aria-label={say("invoices.list.open", { number: i.number })}>
+          <Link className="font-mono font-semibold text-fg-accent underline" href={routes.invoice(i.id)} aria-label={say("invoices.list.open", { number: i.number })} {...wash(i.id)}>
             {i.number}
           </Link>
         ),
         subtitle: (i) => (i.creditOf ? say("invoices.list.credit") : i.language.toUpperCase()),
       },
-      { id: "client", header: say("invoices.table.client"), sortable: true, filter: "text", value: (i) => i.client ?? "", cell: (i) => i.client ?? say("invoices.list.noClient") },
+      { id: "client", header: say("invoices.table.client"), sortable: true, filter: "text", minWidth: 240, value: (i) => i.client ?? "", cell: (i) => i.client ?? say("invoices.list.noClient") },
       {
         id: "state",
         header: say("invoices.table.state"),
@@ -78,16 +96,20 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
         value: (i) => invoiceState(standing(i), today),
         cell: (i) => {
           const state = invoiceState(standing(i), today);
-          return <Badge tone={STATE_TONE[state]}>{say(`invoices.state.${state}`)}</Badge>;
+          return (
+            <Badge tone={STATE_TONE[state]} data-invoice={i.id} data-state={state}>
+              {say(`invoices.state.${state}`)}
+            </Badge>
+          );
         },
       },
-      { id: "month", header: say("invoices.table.month"), filter: "facet", hideable: true, priority: 4, options: months.map((m) => ({ value: m, label: month(m) })), value: (i) => i.issuedOn.slice(0, 7), cell: (i) => month(i.issuedOn) },
+      ...(organize ? [{ id: "tags", header: say("organize.columns.tags"), priority: 2 as const, value: (i: InvoiceRowView) => (tagsByInvoice[i.id] ?? []).map((t) => t.name).join(", "), cell: (i: InvoiceRowView) => <TagChips tags={tagsByInvoice[i.id]} /> }] : []),
       { id: "issued", header: say("invoices.table.issued"), sortable: true, priority: 2, value: (i) => i.issuedOn, cell: (i) => day(i.issuedOn) },
       { id: "due", header: say("invoices.table.due"), priority: 3, hideable: true, value: (i) => i.dueOn ?? "", cell: (i) => (i.dueOn ? day(i.dueOn) : "—") },
       { id: "total", header: say("invoices.table.total"), type: "number", sortable: true, value: (i) => i.totalCents, cell: (i) => formatMoney(i.totalCents, locale) },
       { id: "remaining", header: say("invoices.table.remaining"), type: "number", sortable: true, priority: 3, hideable: true, value: (i) => remainingCents(standing(i)), cell: (i) => formatMoney(remainingCents(standing(i)), locale) },
     ];
-  }, [say, locale, routes, today, invoices]);
+  }, [say, locale, routes, today, wash, organize, tagsByInvoice]);
 
   const detail = (i: InvoiceRowView) => {
     const state = invoiceState(standing(i), today);
@@ -106,7 +128,7 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
           {amounts.map(([term, cents]) => (
             <div key={term} className="flex justify-between gap-3">
               <dt className="text-fg-secondary">{term}</dt>
-              <dd className="font-mono text-fg">{formatMoney(cents, locale)}</dd>
+              <dd className="tabular-nums text-fg">{formatMoney(cents, locale)}</dd>
             </div>
           ))}
         </dl>
@@ -134,23 +156,42 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
   };
 
   return (
-    <DataTable
-      caption={say("invoices.list.title")}
-      rows={invoices}
-      columns={columns}
-      getRowId={(i) => i.id}
-      rowLabel={(i) => i.number}
-      defaultSort={{ column: "issued", direction: "descending" }}
-      renderDetail={detail}
-      toolbar={
-        <div className="flex flex-col gap-3">
-          <DataTableFilters />
-          <div className="flex justify-end gap-2">
-            <DataTableColumnsMenu />
-            <DataTableExport filename={say("invoices.list.exportFile", { day: today })} />
+    // A changed row's cell carries `data-kz-arrive`: motion.css washes its row (`tr:has(…)`) once, an accent that fades.
+    <div data-kz-arrival="flash" className="flex flex-col gap-4">
+      {organize ? (
+        <>
+          <TagBinder organize={organize} path={pathname} />
+          <ViewsBar organize={organize} path={pathname} />
+          {selected.length ? (
+            <div role="region" aria-label={say("organize.selection.label")} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-strong bg-surface-2 px-4 py-2">
+              <p className="text-sm font-semibold text-fg">{say("organize.selection.count", { count: selected.length })}</p>
+              <div className="flex flex-wrap items-center gap-2">
+                <SelectionTags organize={organize} selected={selected} onDone={() => setSelected([])} />
+              </div>
+            </div>
+          ) : null}
+        </>
+      ) : null}
+      <DataTable
+        {...(organize ? { selectable: true, selected, onSelectedChange: setSelected } : {})}
+        caption={say("invoices.list.title")}
+        rows={ordered}
+        columns={columns}
+        labels={labels}
+        density="compact"
+        getRowId={(i) => i.id}
+        rowLabel={(i) => i.number}
+        renderDetail={detail}
+        toolbar={
+          <div className="flex flex-col gap-3">
+            <DataTableFilters />
+            <div className="flex justify-end gap-2">
+              <DataTableColumnsMenu />
+              <DataTableExport filename={say("invoices.list.exportFile", { day: today })} />
+            </div>
           </div>
-        </div>
-      }
-    />
+        }
+      />
+    </div>
   );
 }

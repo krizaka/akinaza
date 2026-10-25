@@ -140,6 +140,8 @@ export const shops = pgTable(
     description: text("description"),
     avatar: jsonb("avatar"),
     collectionId: uuid("collection_id"),
+    /** When the shop received its default tag set (migration 0034, akinaza#337): once, so a deleted tag is not brought back. */
+    organizedAt: timestamp("organized_at", { withTimezone: true }),
     createdAt: created(),
   },
   (t) => [
@@ -652,6 +654,24 @@ export const clientRequests = pgTable(
     createdAt: created(),
   },
   (t) => [index("client_requests_client").on(t.clientId)],
+);
+
+/**
+ * A signed note on a client file (D5): who wrote it (the account and the name it showed then), when, and the words. The shop's
+ * own; erasing the client (Loi 25) deletes them.
+ */
+export const clientNotes = pgTable(
+  "client_notes",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    clientId: uuid("client_id").notNull().references(() => clients.id, { onDelete: "cascade" }),
+    authorAccountId: uuid("author_account_id").references(() => accounts.id, { onDelete: "set null" }),
+    authorName: text("author_name").notNull(),
+    body: text("body").notNull(),
+    createdAt: created(),
+  },
+  (t) => [index("client_notes_shop_client").on(t.shopId, t.clientId, t.createdAt), check("client_notes_body", sql`length(btrim(${t.body})) BETWEEN 1 AND 2000`)],
 );
 
 /** A file attached to a request: its CDN address on the media storage, its kind and size — never the bytes. */

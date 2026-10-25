@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { ACCOUNT_PAGES, BROWSER, firstRecord, isHydrationError, OWNER_PAGES, PUBLIC_PAGES, THEMES, VIEWPORTS } from "./check-hydration.mjs";
+import { ACCOUNT_PAGES, BROWSER, detailPagesFor, firstRecord, isHydrationError, OWNER_PAGES, primaryProblem, PUBLIC_PAGES, shiftProblem, THEMES, VIEWPORTS } from "./check-hydration.mjs";
 
 describe("the hydration crawl (one rendering for the server and the browser, K0)", () => {
   it("hydrates in a visitor's browser — Montréal's clock and the product's first language — never the server's UTC", () => {
@@ -48,5 +48,48 @@ describe("the hydration crawl (one rendering for the server and the browser, K0)
     const source = readFileSync(new URL("./check-hydration.mjs", import.meta.url), "utf8");
     for (const needle of ['arg("timezone", BROWSER.timezoneId)', 'arg("locale", BROWSER.locale)', "expected404 ? status !== 404 : status >= 400"]) expect(source).toContain(needle);
     expect(PUBLIC_PAGES.filter((p) => p.endsWith("/nope"))).toEqual(["/fr/s/nope", "/fr/nope"]);
+  });
+
+  it("crawls the correction screen of the first invoice too, and the page of a client's file as it is", () => {
+    const shop = "/fr/app/0b1c";
+    expect(detailPagesFor(`${shop}/invoices`, `${shop}/invoices/i-1`)).toEqual([`${shop}/invoices/i-1`, `${shop}/invoices/i-1/correct`]);
+    expect(detailPagesFor(`${shop}/clients`, `${shop}/clients/c-9`)).toEqual([`${shop}/clients/c-9`]);
+  });
+
+  it("owes the client with no file and the correction screen a page heading of their own (the frame renders none)", () => {
+    const acct = readFileSync(new URL("../apps/web/app/[locale]/(app)/app/(account)/page.tsx", import.meta.url), "utf8");
+    const home = readFileSync(new URL("../apps/web/components/app/ClientHome.tsx", import.meta.url), "utf8");
+    const correct = readFileSync(new URL("../apps/web/app/[locale]/(app)/app/[shop]/invoices/[id]/correct/page.tsx", import.meta.url), "utf8");
+    // The client space (K7) renders its heading before the empty state, with or without a file (ClientHome.test.tsx counts the h1).
+    expect(acct).toContain("<ClientHome");
+    expect(home).toMatch(/<PageHeader[\s\S]*files\.length === 0 \? <EmptyState/);
+    expect(correct).toContain("<PageHeader");
+  });
+});
+
+describe("one primary per screen, crawled on every owner page (D1b)", () => {
+  it("wants exactly one on the day, the lists and an invoice's screens", () => {
+    for (const path of ["/fr/app/s-1/aujourdhui", "/fr/app/s-1/clients", "/fr/app/s-1/clients/c-1", "/fr/app/s-1/invoices", "/fr/app/s-1/invoices/new", "/fr/app/s-1/invoices/i-1", "/fr/app/s-1/invoices/i-1/correct", "/en/app/s-1/books"]) {
+      expect(primaryProblem(path, 1), path).toBeNull();
+      expect(primaryProblem(path, 0), path).toMatch(/one expected/);
+      expect(primaryProblem(path, 2), path).toMatch(/one at most/);
+    }
+  });
+
+  it("allows none where there is nothing to do, never two", () => {
+    for (const path of ["/fr/app/s-1/boutique/team", "/fr/app/profile", "/fr/s/pattes-saint-henri"]) {
+      expect(primaryProblem(path, 0), path).toBeNull();
+      expect(primaryProblem(path, 2), path).toMatch(/one at most/);
+    }
+  });
+});
+
+describe("no shift between loading and loaded (D6)", () => {
+  it("holds the day, Clients and Factures under a CLS of 0.01, and leaves the other pages to the browser", () => {
+    for (const path of ["/fr/app/s-1/aujourdhui", "/fr/app/s-1/clients", "/en/app/s-1/invoices"]) {
+      expect(shiftProblem(path, 0), path).toBeNull();
+      expect(shiftProblem(path, 0.02), path).toMatch(/layout shift 0\.020/);
+    }
+    expect(shiftProblem("/fr/s/pattes-saint-henri", 0.3)).toBeNull();
   });
 });

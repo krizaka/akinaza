@@ -1,0 +1,38 @@
+id: no-unjustified-numeric-export
+snapshots:
+  "export const MIN_PRICE = 100;\n":
+    labels:
+    - source: export const MIN_PRICE = 100;
+      style: primary
+      start: 0
+      end: 29
+    - source: "100"
+      style: secondary
+      start: 25
+      end: 28
+    - source: MIN_PRICE = 100
+      style: secondary
+      start: 13
+      end: 28
+    - source: const MIN_PRICE = 100;
+      style: secondary
+      start: 7
+      end: 29
+  "export const WINDOW = 60 * 60 * 1000;\n":
+    labels:
+    - source: export const WINDOW = 60 * 60 * 1000;
+      style: primary
+      start: 0
+      end: 37
+    - source: 60 * 60 * 1000
+      style: secondary
+      start: 22
+      end: 36
+    - source: WINDOW = 60 * 60 * 1000
+      style: secondary
+      start: 13
+      end: 36
+    - source: const WINDOW = 60 * 60 * 1000;
+      style: secondary
+      start: 7
+      end: 37

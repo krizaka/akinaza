@@ -28,7 +28,7 @@ export default async function AdminSignIn({ params }: { params: Promise<{ locale
       title={t.title}
       description={t.description}
     >
-      <SignInForm next={`/${locale}`} />
+      <SignInForm next={`/${locale}`} forgotPassword={false} />
     </AuthLayout>
   );
 }

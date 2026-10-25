@@ -40,7 +40,11 @@
   "landing": {
     "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
     "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",
-    "talk": "Parler d'Akinaza avec nous",
+    "actions": {
+      "openShop": "Ouvrir ma boutique",
+      "tryDemo": "Essayer la boutique démo",
+      "signIn": "Se connecter"
+    },
     "status": {
       "development": "En développement : les inscriptions sont fermées pendant que nous le bâtissons avec les premiers commerces.",
       "preview": "Aperçu de développement : inscriptions fermées, accès sur invitation."
@@ -60,7 +64,7 @@
       ],
       "cta": "Profiter de l’offre fondateur",
       "note": "Vous payez sur la page sécurisée de Stripe, et vous y gérez ou annulez votre abonnement. Déjà membre ? Connectez-vous d’abord.",
-      "talk": "Nous parler d’abord"
+      "talk": "Écrivez-nous d’abord"
     },
     "screens": {
       "book": {
@@ -165,7 +169,24 @@
       "books": "Livres",
       "team": "Équipe",
       "shopSwitcher": "Changer de boutique",
-      "newInvoice": "Nouvelle facture"
+      "newInvoice": "Nouvelle facture",
+      "search": {
+        "open": "Rechercher un client, une facture",
+        "placeholder": "Rechercher un client, une facture…",
+        "label": "Recherche",
+        "results": "Résultats",
+        "none": "Rien ne correspond dans cette boutique.",
+        "loading": "Recherche…",
+        "groups": {
+          "actions": "Actions",
+          "clients": "Clients",
+          "invoices": "Factures"
+        }
+      },
+      "badges": {
+        "today": "rendez-vous aujourd’hui : {count}",
+        "toCollect": "à encaisser : {count}"
+      }
     },
     "admin": {
       "health": "Santé",
@@ -369,7 +390,11 @@
       "FEATURE_OFF": "Cette fonction est désactivée.",
       "SHOP_LIMIT": "Vous avez atteint le nombre de boutiques permis.",
       "SECTIONS_CUSTOM": "Choisissez de garder votre ordre de sections ou celui du modèle.",
-      "TEMPLATE_UNKNOWN": "Ce modèle n'est pas disponible."
+      "TEMPLATE_UNKNOWN": "Ce modèle n'est pas disponible.",
+      "NAME_TAKEN": "Ce nom est déjà utilisé.",
+      "TAG_LIMIT": "La boutique a atteint sa limite d'étiquettes.",
+      "TOO_MANY": "200 lignes au plus à la fois.",
+      "STATUS_DERIVED": "L'état d'une facture suit ses paiements : on ne le change pas à la main."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -413,13 +438,56 @@
         "with": "Avec",
         "price": "Prix",
         "status": "Statut",
-        "clientFile": "Ouvrir la fiche client"
+        "clientFile": "Ouvrir la fiche client",
+        "bill": "Facturer ce rendez-vous"
       },
       "offToday": "En congé aujourd'hui : {names}.",
       "offUntil": "{name} (jusqu'au {until})",
       "brief": {
         "see": "Voir le point ({count})",
         "dismiss": "Mettre le point de côté"
+      },
+      "nextPrimary": "Prochain : {client} à {time}",
+      "headline": {
+        "empty": "Rien de prévu aujourd’hui.",
+        "otherDay": "{count} rendez-vous ce jour-là.",
+        "otherDayEmpty": "Rien de prévu ce jour-là.",
+        "done": "Journée terminée : {count} rendez-vous faits.",
+        "next": "{client} arrive à {at}.",
+        "nextWalkIn": "Un client sans rendez-vous à {at}.",
+        "nextService": "{service} à {at}.",
+        "inProgress": "Avec {client} jusqu’à {at}.",
+        "inProgressWalkIn": "Un client sans rendez-vous jusqu’à {at}.",
+        "inProgressService": "{service} en cours jusqu’à {at}."
+      },
+      "week": "Semaine {week} · {date}",
+      "calendar": "Calendrier",
+      "binder": {
+        "title": "Le classeur",
+        "appointments": "Rendez-vous {count}",
+        "toBill": "À facturer {count}",
+        "toCollect": "À encaisser {count}",
+        "week": "Cette semaine {count}"
+      },
+      "quick": {
+        "title": "Accès rapide",
+        "bill": "Facturer {client}",
+        "chase": "Relancer la facture {number}",
+        "page": "Ma page publique"
+      },
+      "activity": {
+        "title": "L’activité",
+        "period": "Période",
+        "days": "{days} j",
+        "invoiced": "Facturé",
+        "collected": "Encaissé",
+        "appointments": "Rendez-vous faits"
+      },
+      "balance": {
+        "title": "À encaisser",
+        "owed": "Reste dû : {amount}",
+        "overdue": "Dont {amount} en retard",
+        "noneLate": "Rien en retard."
       }
     },
     "account": {
@@ -428,7 +496,7 @@
         "description": "Entrez le courriel de votre compte. S'il existe, nous envoyons un lien pour choisir un nouveau mot de passe.",
         "email": "Courriel",
         "submit": "Envoyer le lien",
-        "sent": "Si un compte existe pour cette adresse, un lien est en route. Il est valide 30 minutes.",
+        "sent": "Si un compte existe pour cette adresse, un lien est en route. Il est valide {minutes} minutes.",
         "back": "Retour à la connexion"
       },
       "reset": {
@@ -455,11 +523,14 @@
       },
       "profile": {
         "title": "Votre profil",
-        "description": "Votre compte, sa langue et son mot de passe.",
+        "accountTitle": "Mon compte",
+        "description": "Votre profil, vos préférences, votre sécurité et vos données.",
+        "profileDescription": "Votre nom et votre image, tels que votre équipe les voit.",
         "avatar": "Photo de profil",
         "email": "Courriel",
         "language": "Langue",
         "role": "Rôle",
+        "roleIn": "{role} chez {shop}",
         "roleUser": "Membre",
         "roleAdmin": "Administrateur",
         "lastSeen": "Dernière visite",
@@ -471,7 +542,10 @@
         "sectionsLabel": "Sections du compte",
         "sections": {
           "profile": "Profil",
-          "security": "Sécurité"
+          "preferences": "Préférences",
+          "security": "Sécurité",
+          "subscription": "Abonnement",
+          "data": "Mes données"
         },
         "shopRoles": {
           "owner": "Propriétaire",
@@ -482,7 +556,93 @@
       "nav": {
         "profile": "Profil",
         "change": "Modifier"
-      }
+      },
+      "save": {
+        "save": "Enregistrer",
+        "saving": "Enregistrement…",
+        "saved": "Enregistré",
+        "error": "Impossible d'enregistrer. Réessayez.",
+        "undo": "Annuler",
+        "discard": "Rétablir"
+      },
+      "name": {
+        "label": "Nom",
+        "hint": "Affiché dans le menu du compte et à votre équipe.",
+        "missing": "Pas encore de nom"
+      },
+      "avatar": {
+        "label": "Image",
+        "hint": "Une des images d'Akinaza.",
+        "tone": "Image {tone}"
+      },
+      "email": {
+        "label": "Courriel",
+        "hint": "Où nous vous écrivons et avec lequel vous vous connectez.",
+        "verified": "Vérifié",
+        "unverified": "Non vérifié",
+        "change": "Changer d'adresse",
+        "new": "Nouvelle adresse",
+        "password": "Votre mot de passe",
+        "send": "Envoyer le lien",
+        "cancel": "Annuler",
+        "pending": "Un lien a été envoyé à {email}. L'adresse change quand vous l'ouvrez."
+      },
+      "preferences": {
+        "description": "La façon dont Akinaza vous parle et s'affiche.",
+        "languageHint": "La langue de l'application et des courriels.",
+        "theme": "Thème",
+        "themes": {
+          "light": {
+            "title": "Clair",
+            "hint": "Toujours le thème clair."
+          },
+          "dark": {
+            "title": "Sombre",
+            "hint": "Toujours le thème sombre."
+          },
+          "system": {
+            "title": "Comme mon appareil",
+            "hint": "Suit le réglage de votre appareil."
+          }
+        }
+      },
+      "sessions": {
+        "title": "Où vous êtes connecté",
+        "description": "Chaque navigateur connecté à ce compte.",
+        "thisOne": "Cet appareil",
+        "unknownDevice": "Appareil inconnu",
+        "since": "depuis le {date}",
+        "signOutOthers": "Déconnecter les {count} autres",
+        "confirm": "Les déconnecter ?"
+      },
+      "subscription": {
+        "title": "Abonnement",
+        "description": "Votre forfait et ses factures.",
+        "status": "Statut",
+        "active": "Actif",
+        "none": "Aucun abonnement",
+        "renews": "Renouvelé le",
+        "manage": "Gérer",
+        "manageHint": "Changer de carte, lire les factures ou résilier, sur la page de paiement.",
+        "portal": "Ouvrir la page de paiement",
+        "founder": "L'offre fondateur",
+        "founderHint": "{price} par mois, taxes en sus.",
+        "choose": "Choisir cette offre",
+        "unavailable": "Aucun forfait n'est en vente pour l'instant."
+      },
+      "data": {
+        "title": "Vos données",
+        "description": "Ce qu'Akinaza conserve sur vous, et votre droit d'y accéder.",
+        "export": "Exporter",
+        "exportHint": "Tout ce qui est conservé sur ce compte, en un seul fichier.",
+        "download": "Télécharger",
+        "deleteTitle": "Supprimer le compte",
+        "deleteHint": "Vos fiches clients sont effacées d'abord. Les livres d'une boutique sont conservés : la loi l'exige.",
+        "confirmPassword": "Votre mot de passe",
+        "delete": "Supprimer mon compte",
+        "deleteConfirm": "Supprimer pour de bon ?"
+      },
+      "memberSince": "Membre depuis {month}"
     },
     "walker": {
       "title": "Les promenades du jour",
@@ -553,7 +713,11 @@
         "visits": "Visites",
         "last": "Dernière visite",
         "next": "Prochaine visite",
-        "spent": "Total dépensé"
+        "spent": "Total dépensé",
+        "state": "État",
+        "bill": "Facturer",
+        "email": "Courriel",
+        "owed": "Reste dû"
       },
       "file": {
         "since": "Client depuis le {date}",
@@ -570,14 +734,51 @@
         "price": "Prix",
         "number": "Numéro",
         "total": "Total",
-        "credit": "Note de crédit"
+        "credit": "Note de crédit",
+        "bill": "Facturer ce client",
+        "sections": "Les sections du dossier",
+        "tabs": {
+          "summary": "Résumé",
+          "invoices": "Factures",
+          "visits": "Visites",
+          "notes": "Notes"
+        },
+        "addNote": "Ajouter une note",
+        "saveNote": "Garder la note",
+        "eyebrow": "Client"
       },
       "requests": {
         "title": "Ses demandes gardées",
         "lead": "Ce que la personne demande d'habitude, avec ses photos ou documents : pour préparer la visite.",
         "photo": "Photo {n}",
         "pdf": "Document {n}"
-      }
+      },
+      "state": {
+        "owes": "Reste dû {amount}",
+        "upToDate": "À jour"
+      },
+      "strip": {
+        "label": "Vos clients en bref",
+        "count": "{count} clients",
+        "owedLabel": "À encaisser",
+        "upToDate": "{count} sur {total} à jour"
+      },
+      "search": "Rechercher un client",
+      "searchPlaceholder": "Nom, courriel ou téléphone",
+      "clear": "Tout afficher",
+      "filters": "Filtrer les clients",
+      "filter": {
+        "all": "Tous",
+        "due": "Reste dû",
+        "upcoming": "À venir"
+      },
+      "selection": {
+        "label": "Sélection",
+        "count": "{count} sélectionnés",
+        "export": "Exporter la sélection (CSV)"
+      },
+      "exportFile": "clients.csv",
+      "noMatch": "Aucun client ne correspond."
     },
     "shopSetup": {
       "title": "Votre page boutique",
@@ -773,6 +974,12 @@
         "template": "Modèle de page",
         "templateHint": "Suggéré pour votre métier ; vous pourrez en changer dans « Apparence »."
       },
+      "openShop": {
+        "title": "Ouvrir une boutique",
+        "lead": "Votre propre boutique, avec sa page, ses réservations et ses factures. Elle commence non publiée : vous la publiez quand elle est prête.",
+        "back": "Retour à mes réservations",
+        "submit": "Créer la boutique"
+      },
       "defaults": {
         "title": "Images proposées",
         "lead": "Pas encore de photo ? Choisissez des images qui conviennent à votre métier. Ce sont des images neutres, pas votre boutique : remplacez-les par les vôtres dès que possible.",
@@ -818,6 +1025,31 @@
         "update": "Mettre à jour vers la version {version}",
         "updateKeepOrder": "Mettre à jour en gardant mon ordre",
         "updateTemplateOrder": "Mettre à jour avec son ordre"
+      }
+    },
+    "boutique": {
+      "title": "Votre boutique",
+      "navLabel": "Sections de votre boutique",
+      "groups": {
+        "page": "Votre page",
+        "business": "Votre activité"
+      },
+      "sections": {
+        "languages": "Langues",
+        "team": "Équipe",
+        "invoices": "Courriels de facture",
+        "shops": "Vos boutiques"
+      },
+      "invoices": {
+        "title": "Courriels de facture",
+        "lead": "Le message et l'expéditeur des factures que vous envoyez aux clients, et la durée de leur lien."
+      },
+      "shops": {
+        "title": "Vos boutiques",
+        "lead": "Les boutiques où vous travaillez. Chacune a sa propre page et sa propre équipe.",
+        "current": "Cette boutique",
+        "open": "Ouvrir cette boutique",
+        "add": "Ajouter une boutique"
       }
     },
     "shopPage": {
@@ -931,12 +1163,13 @@
     },
     "client": {
       "title": "Mes réservations",
-      "none": "Aucune réservation pour l'instant. Ouvrez la page d'une boutique et réservez à partir de là.",
+      "emptyTitle": "Aucune réservation pour l'instant",
+      "emptyLead": "Ouvrez la page d'une boutique et réservez à partir de là : vos réservations, vos factures et vos dossiers s'affichent ici.",
+      "openShop": "Ouvrir une boutique",
       "upcoming": "À venir",
       "past": "Passées",
       "invoiceTitle": "Factures",
-      "invoiceNone": "Aucune facture pour cette boutique.",
-      "invoiceOpen": "Ouvrir la facture {number}",
+      "invoiceIssued": "Émise le {date}",
       "cancel": "Annuler",
       "cancelled": "Annulée",
       "cancelConfirm": "Annuler cette promenade?",
@@ -949,8 +1182,12 @@
       "dogsTitle": "Mes chiens",
       "bookAgain": "Réserver chez {shop}",
       "privacyTitle": "Mes données (Loi 25)",
-      "privacyIntro": "{shop} conserve votre dossier et celui de vos chiens. Vous pouvez en prendre une copie ou le faire effacer.",
+      "dataLead": "Chaque boutique conserve votre dossier. Vous pouvez en prendre une copie ou le faire effacer.",
       "export": "Télécharger mes données",
+      "exportShort": "Télécharger",
+      "exportFor": "Télécharger mes données chez {shop}",
+      "eraseHeading": "Effacer un dossier",
+      "eraseLead": "Une boutique à la fois, pour de bon.",
       "erase": "Effacer mon dossier chez {shop}",
       "eraseTitle": "Effacer votre dossier?",
       "eraseDescription": "Vos coordonnées, vos chiens, les notes et les photos des rapports sont effacés pour de bon. Les factures sont conservées comme la loi l'exige. Saisissez votre courriel pour confirmer.",
@@ -973,7 +1210,8 @@
         "attach": "Joindre une photo ou un PDF",
         "fileImage": "Photo",
         "filePdf": "Document PDF",
-        "fileRemove": "Retirer ce fichier"
+        "fileRemove": "Retirer ce fichier",
+        "open": "Garder une demande"
       }
     },
     "report": {
@@ -1059,14 +1297,24 @@
         "title": "Nouvelle facture",
         "client": "Client",
         "noClient": "Sans fiche client",
-        "service": "Service {n}",
-        "noService": "—",
+        "steps": {
+          "who": "Pour qui ?",
+          "what": "Quoi ?",
+          "when": "Quand ?"
+        },
+        "line": "Ligne {n}",
+        "service": "Service",
+        "freeLine": "Autre (à décrire)",
+        "description": "Description",
+        "unitPrice": "Prix unitaire",
         "quantity": "Quantité",
-        "customDescription": "Autre ligne (description)",
-        "customPrice": "Prix unitaire",
-        "customQuantity": "Quantité de l'autre ligne",
+        "addLine": "Ajouter une ligne",
+        "removeLine": "Retirer la ligne {n}",
+        "when": "Datée d’aujourd’hui, le {date}. L’échéance suit vos conditions de paiement, et le numéro est donné à l’émission.",
+        "totals": "Total de la facture",
+        "totalPending": "Ajoutez une ligne pour voir le total.",
         "submit": "Émettre la facture",
-        "needLine": "Choisissez au moins un service, ou écrivez une ligne avec son prix."
+        "needLine": "Choisissez un service, ou écrivez une ligne avec son prix."
       },
       "list": {
         "title": "Factures émises",
@@ -1076,7 +1324,8 @@
         "noClient": "Sans fiche client",
         "total": "Total {amount}",
         "dueOn": "Échéance le {date}",
-        "exportFile": "factures-{day}.csv"
+        "exportFile": "factures-{day}.csv",
+        "noneHint": "Chaque facture émise s’ajoute ici, avec ce qu’il reste à encaisser."
       },
       "back": "Toutes les factures",
       "table": {
@@ -1087,7 +1336,6 @@
         "kind": "Type",
         "total": "Total",
         "state": "État",
-        "month": "Mois",
         "remaining": "Reste dû"
       },
       "correct": {
@@ -1103,10 +1351,12 @@
       "chain": {
         "replaces": "Remplace la facture {number}",
         "replacedBy": "Remplacée par la facture {number}",
-        "creditedBy": "Annulée par la note de crédit {number}"
+        "creditedBy": "Annulée par la note de crédit {number}",
+        "title": "Factures liées"
       },
       "actions": {
-        "correct": "Modifier"
+        "correct": "Modifier",
+        "print": "Imprimer"
       },
       "state": {
         "credit": "Note de crédit",
@@ -1133,7 +1383,8 @@
         "email": "Courriel du client",
         "message": "Message (facultatif)",
         "submit": "Mettre le courriel en file",
-        "queued": "Le courriel de la facture a été mis en file."
+        "queued": "Le courriel de la facture a été mis en file.",
+        "close": "Fermer"
       },
       "history": {
         "title": "Historique des envois",
@@ -1154,6 +1405,11 @@
         "cash": "comptant",
         "card": "carte",
         "transfer": "virement"
+      },
+      "eyebrow": "Facture",
+      "issued": {
+        "title": "Facture {number} émise",
+        "next": "Envoyez-la à votre client : elle s’ouvre dans sa langue."
       }
     },
     "invoiceDoc": {
@@ -1258,7 +1514,6 @@
         },
         "client": {
           "cancelConfirm": "Annuler ce rendez-vous?",
-          "privacyIntro": "{shop} conserve votre dossier. Vous pouvez en prendre une copie ou le faire effacer.",
           "eraseDescription": "Vos coordonnées et vos réservations sont effacées pour de bon. Les factures sont conservées comme la loi l'exige. Saisissez votre courriel pour confirmer."
         }
       }
@@ -1345,7 +1600,8 @@
         "reasonHint": "Visible par l'équipe seulement, jamais par les clients.",
         "add": "Ajouter le congé",
         "remove": "Retirer le congé de {name} ({when})",
-        "range": "du {from} au {to}"
+        "range": "du {from} au {to}",
+        "order": "La date de fin est avant la date de début."
       }
     },
     "brief": {
@@ -1717,6 +1973,97 @@
         "name": "Mon travail",
         "intent": "La démarche et les cas d'abord."
       }
+    },
+    "table": {
+      "selectAll": "Tout sélectionner",
+      "selectRow": "Sélectionner {name}",
+      "loading": "Chargement",
+      "empty": "Rien à afficher",
+      "details": "Détail",
+      "expandRow": "Voir le détail de {name}",
+      "group": "{value}, {count} lignes",
+      "resize": "Redimensionner {header}",
+      "result": "{count} résultat",
+      "results": "{count} résultats",
+      "filters": "Filtrer la liste",
+      "clearFilters": "Effacer les filtres",
+      "removeFilter": "Retirer {label}",
+      "activeFilter": "{header} : {value}",
+      "search": "Chercher dans {header}",
+      "rangeFrom": "{header} à partir de",
+      "rangeTo": "{header} jusqu’à",
+      "columns": "Colonnes",
+      "showMore": "En savoir plus sur {name}",
+      "export": "Exporter (CSV)",
+      "pagination": {
+        "nav": "Pages",
+        "previous": "Précédente",
+        "next": "Suivante",
+        "page": "Page {page}",
+        "compact": "Page {page} sur {pageCount}",
+        "pageSize": "Lignes par page"
+      }
+    },
+    "states": {
+      "error": {
+        "title": "Cette partie n’a pas pu se charger.",
+        "body": "Le reste de la page fonctionne. Réessayez dans un instant."
+      },
+      "retry": "Réessayer",
+      "loading": "Chargement…"
+    },
+    "organize": {
+      "close": "Fermer",
+      "columns": {
+        "tags": "Étiquettes"
+      },
+      "binder": {
+        "label": "Étiquettes",
+        "all": "Tous",
+        "add": "Nouvelle étiquette"
+      },
+      "newTag": {
+        "title": "Nouvelle étiquette",
+        "hint": "Un nom et un repère de couleur. L'étiquette appartient à la boutique : le propriétaire et le gérant peuvent l'ajouter et la renommer.",
+        "name": "Nom",
+        "marker": "Repère de couleur",
+        "create": "Créer l'étiquette"
+      },
+      "markers": {
+        "blue": "Bleu",
+        "green": "Vert",
+        "amber": "Ambre",
+        "red": "Rouge",
+        "violet": "Violet",
+        "gray": "Gris"
+      },
+      "views": {
+        "label": "Vues",
+        "save": "Enregistrer cette vue",
+        "saveTitle": "Enregistrer cette vue",
+        "saveHint": "La vue garde les étiquettes, les dates et la recherche en cours. Son adresse est la même sur tous vos appareils.",
+        "name": "Nom de la vue",
+        "shared": "Partager avec l'équipe",
+        "remove": "Supprimer cette vue",
+        "clear": "Effacer les filtres"
+      },
+      "selection": {
+        "tag": "Ajouter une étiquette",
+        "untag": "Retirer une étiquette",
+        "tooMany": "On peut étiqueter 200 lignes au plus à la fois.",
+        "label": "Sélection",
+        "count": "{count} sélectionnée(s)"
+      },
+      "file": {
+        "tags": "Étiquettes",
+        "none": "Aucune étiquette",
+        "edit": "Modifier les étiquettes"
+      }
     }
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "text": "Cette page n’existe pas, ou n’est pas à vous.",
+    "home": "Retour à Akinaza"
   }
 }

@@ -1,0 +1,82 @@
+id: no-locale-ternary
+snapshots:
+  "const name = account.locale === \"fr\" ? booking.service.nameFr : booking.service.nameEn;\n":
+    labels:
+    - source: "account.locale === \"fr\" ? booking.service.nameFr : booking.service.nameEn"
+      style: primary
+      start: 13
+      end: 86
+    - source: ===
+      style: secondary
+      start: 28
+      end: 31
+    - source: locale
+      style: secondary
+      start: 21
+      end: 27
+    - source: account.locale
+      style: secondary
+      start: 13
+      end: 27
+    - source: "\"fr\""
+      style: secondary
+      start: 32
+      end: 36
+    - source: account.locale === "fr"
+      style: secondary
+      start: 13
+      end: 36
+  "const name = locale === \"fr\" ? s.nameFr : s.nameEn;\n":
+    labels:
+    - source: "locale === \"fr\" ? s.nameFr : s.nameEn"
+      style: primary
+      start: 13
+      end: 50
+    - source: ===
+      style: secondary
+      start: 20
+      end: 23
+    - source: locale
+      style: secondary
+      start: 13
+      end: 19
+    - source: "\"fr\""
+      style: secondary
+      start: 24
+      end: 28
+    - source: locale === "fr"
+      style: secondary
+      start: 13
+      end: 28
+  "const pick = (fr, en) => (locale === \"fr\" ? fr : en) || null;\n":
+    labels:
+    - source: "locale === \"fr\" ? fr : en"
+      style: primary
+      start: 26
+      end: 51
+    - source: ===
+      style: secondary
+      start: 33
+      end: 36
+    - source: locale
+      style: secondary
+      start: 26
+      end: 32
+    - source: "\"fr\""
+      style: secondary
+      start: 37
+      end: 41
+    - source: locale === "fr"
+      style: secondary
+      start: 26
+      end: 41
+  "const title = isFr ? \"Bonjour\" : \"Hello\";\n":
+    labels:
+    - source: "isFr ? \"Bonjour\" : \"Hello\""
+      style: primary
+      start: 14
+      end: 40
+    - source: isFr
+      style: secondary
+      start: 14
+      end: 18

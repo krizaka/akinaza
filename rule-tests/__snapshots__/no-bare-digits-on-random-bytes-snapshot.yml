@@ -1,0 +1,14 @@
+id: no-bare-digits-on-random-bytes
+snapshots:
+  "expect(raw[0].access_notes_enc).not.toContain('514');\n":
+    labels:
+    - source: expect(raw[0].access_notes_enc).not.toContain('514')
+      style: primary
+      start: 0
+      end: 52
+  "expect(sealed).not.toContain(\"4821\");\n":
+    labels:
+    - source: expect(sealed).not.toContain("4821")
+      style: primary
+      start: 0
+      end: 36

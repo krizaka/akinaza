@@ -34,7 +34,7 @@ export default async function SignInPage({ params, searchParams }: { params: Pro
         </Link>
       }
       promise={t.promise}
-      aside={<Mascot bird="beaver" mood="welcome" size={72} />}
+      aside={<Mascot bird="beaver" mood="welcome" size={160} />}
       asideFooter={t.asideFooter}
       title={t.title}
       description={t.description}

@@ -20,4 +20,10 @@ describe("the total of a quick invoice, before it is issued", () => {
     expect(previewTotals([], [walk], true)).toBeNull();
     expect(previewTotals([{ serviceId: "unknown", quantity: 1 }], [walk], true)).toBeNull();
   });
+
+  it("totals what the server issues on the same known lines (D8; packages/db invoices.test.ts: 16 097 and 5 174 on a real PostgreSQL)", () => {
+    const cut = { description: "Coupe / Haircut", quantity: 1, unitPriceCents: 4_500, category: "standard" as const };
+    expect(previewTotals([cut, { ...cut, description: "Coloration / Colour", unitPriceCents: 9_500 }], [], true)).toMatchObject({ subtotalCents: 14_000, gstCents: 700, qstCents: 1_397, totalCents: 16_097 });
+    expect(previewTotals([cut], [], true)).toMatchObject({ gstCents: 225, qstCents: 449, totalCents: 5_174 });
+  });
 });

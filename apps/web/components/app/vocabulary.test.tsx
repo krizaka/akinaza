@@ -30,7 +30,7 @@ const visit = {
   checkedInAt: "2026-10-20T13:00:00Z",
   checkedOutAt: "2026-10-20T14:00:00Z",
   minutes: 60,
-  bookings: [{ bookingId: "b1", clientId: "c1", clientName: "Café du Parc inc.", clientPhone: "514-555-0111", dependant: { name: "Café du Parc inc.", kind: "other" as const, profile: {} }, hasAccessNotes: false, report: null }],
+  bookings: [{ bookingId: "b1", clientId: "c1", clientName: "Studio Lumen inc.", clientPhone: "514-555-0111", dependant: { name: "Studio Lumen inc.", kind: "other" as const, profile: {} }, hasAccessNotes: false, report: null }],
 };
 const nav = { prev: "/en/app?day=2026-10-19", next: "/en/app?day=2026-10-21", today: "/en/app", isToday: true };
 
@@ -38,7 +38,7 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
   it("the day reads as appointments, with no dog, no report and no access notes", () => {
     const text = readable(around(locale, "professional", <WalkerDay visits={[visit]} timeZone="America/Toronto" nav={nav} />));
     expect(text).not.toMatch(DOG_WORDS[locale]);
-    expect(text).toMatch(locale === "en" ? /Start the appointment|End the appointment|Client: Café du Parc/ : /Commencer le rendez-vous|Terminer le rendez-vous|Client : Café du Parc/);
+    expect(text).toMatch(locale === "en" ? /Start the appointment|End the appointment|Client: Studio Lumen/ : /Commencer le rendez-vous|Terminer le rendez-vous|Client : Studio Lumen/);
   });
 
   it("the day of an empty studio says there is no appointment, not no walk", () => {
@@ -48,7 +48,7 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
   });
 
   it("the booking asks for a service and a time, never for a dog", () => {
-    const data = { shop: { id: "s", name: "Krizaka (démo)", slug: "krizaka-demo" }, services: [{ id: "x", nameFr: "Atelier", nameEn: "Workshop", durationMinutes: 180, priceCents: 60_000, capacity: 1 }], zones: [], client: { id: "c", fullName: "Café du Parc inc." }, dogs: [], preselect: { serviceId: null, zoneId: null, startsAt: null }, timeZone: "America/Toronto", bookingsHref: "/en/app", staffId: null };
+    const data = { shop: { id: "s", name: "Krizaka (démo)", slug: "krizaka-demo" }, services: [{ id: "x", nameFr: "Atelier", nameEn: "Workshop", durationMinutes: 180, priceCents: 60_000, capacity: 1 }], zones: [], client: { id: "c", fullName: "Studio Lumen inc." }, dogs: [], preselect: { serviceId: null, zoneId: null, startsAt: null }, timeZone: "America/Toronto", bookingsHref: "/en/app", staffId: null };
     const text = readable(around(locale, "professional", <BookingFlow data={data} />));
     expect(text).not.toMatch(DOG_WORDS[locale]);
     expect(text).toMatch(locale === "en" ? /Book this appointment/ : /Réserver ce rendez-vous/);
@@ -65,19 +65,26 @@ describe.each(["en", "fr"] as const)("a studio's screens, %s", (locale) => {
 
   it("a client's file shows a client, not a client's dogs", () => {
     const file = {
-      client: { id: "c", fullName: "Café du Parc inc.", phone: "514-555-0111", email: "contact@example.test", language: "fr" as const, notes: null, hasAccessNotes: true, since: "2026-10-01T12:00:00.000Z" },
-      dependants: [{ id: "d", name: "Café du Parc inc.", kind: "other" as const, profile: {} }],
+      client: { id: "c", fullName: "Studio Lumen inc.", phone: "514-555-0111", email: "contact@example.test", language: "fr" as const, notes: null, hasAccessNotes: true, since: "2026-10-01T12:00:00.000Z" },
+      dependants: [{ id: "d", name: "Studio Lumen inc.", kind: "other" as const, profile: {} }],
       visits: [],
       invoices: [],
     };
-    const text = readable(around(locale, "professional", <ShopSession locale="en" shopId="s1" remembered><ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>));
-    expect(text).toContain("Café du Parc inc.");
+    const text = readable(around(locale, "professional", <ShopSession locale="en" shopId="s1" remembered><ClientFilePanel file={file} notes={[]} tab="summary" today="2026-10-22" timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>));
+    expect(text).toContain("Studio Lumen inc.");
     expect(text).not.toMatch(DOG_WORDS[locale]);
     expect(text).not.toMatch(/Animal|Chien|Dog|Access notes|Notes d'accès/);
   });
 
+  it("bills the client from their file when the role may invoice (« Facturer ce client », D3)", () => {
+    const file = { client: { id: "c-9", fullName: "Studio Lumen inc.", phone: null, email: null, language: "fr" as const, notes: null, hasAccessNotes: false, since: "2026-01-01T12:00:00.000Z" }, dependants: [], visits: [], invoices: [] };
+    const html = renderIn("fr", "professional", <ShopSession locale="fr" shopId="s1" remembered><ClientFilePanel file={file} notes={[]} tab="summary" today="2026-10-22" timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" mayInvoice /></ShopSession>);
+    expect(html).toMatch(/href="\/fr\/app\/s1\/invoices\/new\?client=c-9"[^>]*>[\s\S]*?Facturer ce client/);
+    expect(renderIn("fr", "professional", <ShopSession locale="fr" shopId="s1" remembered><ClientFilePanel file={file} notes={[]} tab="summary" today="2026-10-22" timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>)).not.toContain("Facturer ce client");
+  });
+
   it("a client's space speaks each shop's own words", () => {
-    const file = (shopName: string, businessType: BusinessType): ClientFileView => ({ client: { id: shopName, fullName: "Jordan", shopName, shopSlug: shopName.toLowerCase(), businessType }, dogs: businessType === "pets" ? [{ id: "d", name: "Luna", breed: null }] : [], bookings: [], requests: { clientId: shopName, shopSlug: shopName.toLowerCase(), requests: [], catalogue: null }, now: "2026-10-20T00:00:00Z", timeZone: "America/Toronto" });
+    const file = (shopName: string, businessType: BusinessType): ClientFileView => ({ client: { id: shopName, fullName: "Jordan", shopName, shopSlug: shopName.toLowerCase(), businessType }, dogs: businessType === "pets" ? [{ id: "d", name: "Luna", breed: null }] : [], bookings: [], requests: { clientId: shopName, shopSlug: shopName.toLowerCase(), requests: [], catalogue: null }, invoices: [], now: "2026-10-20T00:00:00Z", today: "2026-10-20", timeZone: "America/Toronto" });
     const html = around(locale, "pets", <ClientHome files={[file("Studio", "professional"), file("Pattes", "pets")]} />);
     const [studio, pattes] = html.split(/<section/).slice(1).map(readable);
     expect(studio).not.toMatch(DOG_WORDS[locale]);
@@ -93,7 +100,7 @@ describe("a pet-care shop keeps its words", () => {
       visits: [],
       invoices: [],
     };
-    const text = readable(around("en", "pets", <ShopSession locale="en" shopId="s1" remembered><ClientFilePanel file={file} timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>));
+    const text = readable(around("en", "pets", <ShopSession locale="en" shopId="s1" remembered><ClientFilePanel file={file} notes={[]} tab="summary" today="2026-10-22" timeZone="America/Toronto" nowIso="2026-10-22T15:00:00.000Z" /></ShopSession>));
     expect(text).toMatch(/Rex/);
     expect(text).toMatch(/Labrador · large/);
   });

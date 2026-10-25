@@ -1,13 +1,13 @@
 import type { ShopPermission, ShopRole } from "@akinaza/db";
 
-import { may } from "./member-shop";
 import { accountRoutes, type RouteLocale, shopRoutes } from "./routes";
+import { may } from "./shop-permissions";
 
 /**
  * The five destinations of a shop's space (docs/ux/2026-10-full-review.md § 4.1): where you work is on the rail, who you are is
  * under the avatar — never a place in both. Each place names what it takes to see it: the rail shows what a role may open, nothing
- * else. « Boutique » gathers everything that configures the shop; until its hub exists (K4) it leads to the page editor for who
- * may set the shop up, and to the team for who may only see the team.
+ * else. « Boutique » gathers everything that configures the shop (the hub, lib/boutique): it leads to the page for who may set the
+ * shop up, and to the team for who may only see the team.
  */
 const SHOP_PLACES = [
   { key: "today", needs: ["agenda"] },
@@ -32,3 +32,11 @@ export function placeHrefFor(locale: RouteLocale, member: { shopId: string; role
   const hrefs: Record<Exclude<AppPlace, "bookings">, string> = { today: shop.today(), clients: shop.clients, invoices: shop.invoices, books: shop.books(), shop: may(member.role, "settings") ? shop.setup : shop.team };
   return hrefs[place];
 }
+
+/**
+ * Who holds a screen's one primary action (errata 2 of docs/ux/2026-10-full-review.md, revised in D1b): the frame's « Nouvelle
+ * facture » on the lists, the page's own on the day (the next appointment), the Boutique hub (its section's save), an invoice's
+ * screens (send, correct, issue) and a new shop. The header yields wherever the page holds it: never two primaries.
+ */
+const PAGE_HOLDS_PRIMARY = /\/app\/[^/]+\/(aujourdhui|boutique|invoices\/[^/?]+|shop\/new)(\/|\?|$)/;
+export const screenPrimary = (pathname: string): "header" | "page" => (PAGE_HOLDS_PRIMARY.test(pathname) ? "page" : "header");

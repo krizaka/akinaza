@@ -18,7 +18,7 @@ export function GET(req: Request) {
     const body: Me = { signedIn: !!session, signupOpen: signupEnabled() };
     if (session) {
       const profile = await accounts().profile(session.account.id);
-      body.account = { name: profile.name, email: profile.email, avatarSeed: profile.avatarSeed };
+      body.account = { id: profile.id, name: profile.name, email: profile.email, avatarSeed: profile.avatarSeed };
     }
     return Response.json(body, { headers: { "Cache-Control": "private, no-store", Vary: "Cookie" } });
   });

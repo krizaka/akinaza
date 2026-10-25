@@ -40,7 +40,11 @@
   "landing": {
     "title": "Your appointments, invoices and taxes, sorted.",
     "lead": "Clients book, you invoice, your tax figures are ready. In French and in English.",
-    "talk": "Talk to us about Akinaza",
+    "actions": {
+      "openShop": "Open my shop",
+      "tryDemo": "Try the demo shop",
+      "signIn": "Sign in"
+    },
     "status": {
       "development": "In development: sign-up is closed while we build it with the first shops.",
       "preview": "Dev preview: sign-up is closed, access by invitation."
@@ -60,7 +64,7 @@
       ],
       "cta": "Subscribe to the founder offer",
       "note": "You pay on Stripe's secure page, and you manage or cancel your subscription there. Already a member? Sign in first.",
-      "talk": "Talk to us first"
+      "talk": "Contact us first"
     },
     "screens": {
       "book": {
@@ -122,7 +126,7 @@
       "submit": "Sign in",
       "closedTitle": "Sign-up is closed.",
       "closed": "Akinaza is in development; accounts are created by our team.",
-      "contact": "Talk to us",
+      "contact": "Contact us",
       "legalPrefix": "By signing in you accept the ",
       "privacy": "privacy notice",
       "forgot": "Forgot your password?"
@@ -165,7 +169,24 @@
       "books": "Books",
       "team": "Team",
       "shopSwitcher": "Switch shop",
-      "newInvoice": "New invoice"
+      "newInvoice": "New invoice",
+      "search": {
+        "open": "Search clients and invoices",
+        "placeholder": "Search a client, an invoice…",
+        "label": "Search",
+        "results": "Results",
+        "none": "Nothing in this shop matches.",
+        "loading": "Searching…",
+        "groups": {
+          "actions": "Actions",
+          "clients": "Clients",
+          "invoices": "Invoices"
+        }
+      },
+      "badges": {
+        "today": "appointments today: {count}",
+        "toCollect": "to collect: {count}"
+      }
     },
     "admin": {
       "health": "Health",
@@ -369,7 +390,11 @@
       "FEATURE_OFF": "This feature is switched off.",
       "SHOP_LIMIT": "You have reached the number of shops allowed.",
       "SECTIONS_CUSTOM": "Choose whether to keep your section order or use the template's.",
-      "TEMPLATE_UNKNOWN": "That template is not available."
+      "TEMPLATE_UNKNOWN": "That template is not available.",
+      "NAME_TAKEN": "This name is already used.",
+      "TAG_LIMIT": "The shop has reached its limit of tags.",
+      "TOO_MANY": "At most 200 rows at a time.",
+      "STATUS_DERIVED": "An invoice's state follows its payments: it cannot be changed by hand."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -413,13 +438,56 @@
         "with": "With",
         "price": "Price",
         "status": "Status",
-        "clientFile": "Open the client file"
+        "clientFile": "Open the client file",
+        "bill": "Bill this appointment"
       },
       "offToday": "Off today: {names}.",
       "offUntil": "{name} (until {until})",
       "brief": {
         "see": "See the point ({count})",
         "dismiss": "Put the point aside"
+      },
+      "nextPrimary": "Next: {client} at {time}",
+      "headline": {
+        "empty": "Nothing booked today.",
+        "otherDay": "{count} appointments that day.",
+        "otherDayEmpty": "Nothing booked that day.",
+        "done": "Day done: {count} appointments completed.",
+        "next": "{client} arrives at {at}.",
+        "nextWalkIn": "A walk-in at {at}.",
+        "nextService": "{service} at {at}.",
+        "inProgress": "With {client} until {at}.",
+        "inProgressWalkIn": "A walk-in until {at}.",
+        "inProgressService": "{service} in progress until {at}."
+      },
+      "week": "Week {week} · {date}",
+      "calendar": "Calendar",
+      "binder": {
+        "title": "The binder",
+        "appointments": "Appointments {count}",
+        "toBill": "To bill {count}",
+        "toCollect": "To collect {count}",
+        "week": "This week {count}"
+      },
+      "quick": {
+        "title": "Quick access",
+        "bill": "Bill {client}",
+        "chase": "Chase invoice {number}",
+        "page": "My public page"
+      },
+      "activity": {
+        "title": "Activity",
+        "period": "Period",
+        "days": "{days} d",
+        "invoiced": "Invoiced",
+        "collected": "Collected",
+        "appointments": "Appointments done"
+      },
+      "balance": {
+        "title": "To collect",
+        "owed": "Still owed: {amount}",
+        "overdue": "Of which {amount} overdue",
+        "noneLate": "Nothing overdue."
       }
     },
     "account": {
@@ -428,7 +496,7 @@
         "description": "Enter the e-mail of your account. If it exists, we send a link to choose a new password.",
         "email": "E-mail",
         "submit": "Send the link",
-        "sent": "If an account exists for this address, a link is on its way. It is valid for 30 minutes.",
+        "sent": "If an account exists for this address, a link is on its way. It is valid for {minutes} minutes.",
         "back": "Back to sign-in"
       },
       "reset": {
@@ -450,16 +518,19 @@
         "submit": "Create my account",
         "closedTitle": "Sign-up is closed.",
         "closed": "Akinaza is in development; accounts are created by our team.",
-        "contact": "Talk to us",
+        "contact": "Contact us",
         "back": "Back to sign-in"
       },
       "profile": {
         "title": "Your profile",
-        "description": "Your account, its language and its password.",
+        "accountTitle": "My account",
+        "description": "Your profile, your preferences, your security and your data.",
+        "profileDescription": "Your name and your picture, as your team sees them.",
         "avatar": "Profile picture",
         "email": "E-mail",
         "language": "Language",
         "role": "Role",
+        "roleIn": "{role} at {shop}",
         "roleUser": "Member",
         "roleAdmin": "Administrator",
         "lastSeen": "Last seen",
@@ -471,7 +542,10 @@
         "sectionsLabel": "Account sections",
         "sections": {
           "profile": "Profile",
-          "security": "Security"
+          "preferences": "Preferences",
+          "security": "Security",
+          "subscription": "Subscription",
+          "data": "My data"
         },
         "shopRoles": {
           "owner": "Owner",
@@ -482,7 +556,93 @@
       "nav": {
         "profile": "Profile",
         "change": "Change"
-      }
+      },
+      "save": {
+        "save": "Save",
+        "saving": "Saving…",
+        "saved": "Saved",
+        "error": "Could not save. Try again.",
+        "undo": "Undo",
+        "discard": "Discard changes"
+      },
+      "name": {
+        "label": "Name",
+        "hint": "Shown in the account menu and to your team.",
+        "missing": "No name yet"
+      },
+      "avatar": {
+        "label": "Picture",
+        "hint": "One of Akinaza's pictures.",
+        "tone": "Picture {tone}"
+      },
+      "email": {
+        "label": "E-mail",
+        "hint": "Where we write to you and where you sign in.",
+        "verified": "Verified",
+        "unverified": "Not verified",
+        "change": "Change the address",
+        "new": "New address",
+        "password": "Your password",
+        "send": "Send the link",
+        "cancel": "Cancel",
+        "pending": "A link was sent to {email}. The address changes when you open it."
+      },
+      "preferences": {
+        "description": "How Akinaza speaks and looks for you.",
+        "languageHint": "The language of the app and of the e-mails.",
+        "theme": "Theme",
+        "themes": {
+          "light": {
+            "title": "Light",
+            "hint": "Always the light theme."
+          },
+          "dark": {
+            "title": "Dark",
+            "hint": "Always the dark theme."
+          },
+          "system": {
+            "title": "Like my device",
+            "hint": "Follows your device's setting."
+          }
+        }
+      },
+      "sessions": {
+        "title": "Where you are signed in",
+        "description": "Every browser signed in to this account.",
+        "thisOne": "This device",
+        "unknownDevice": "Unknown device",
+        "since": "since {date}",
+        "signOutOthers": "Sign out the {count} others",
+        "confirm": "Sign them out?"
+      },
+      "subscription": {
+        "title": "Subscription",
+        "description": "Your plan and its invoices.",
+        "status": "Status",
+        "active": "Active",
+        "none": "No subscription",
+        "renews": "Renews on",
+        "manage": "Manage",
+        "manageHint": "Change the card, read the invoices or cancel, on the payment page.",
+        "portal": "Open the payment page",
+        "founder": "The founder offer",
+        "founderHint": "{price} a month, taxes extra.",
+        "choose": "Choose this offer",
+        "unavailable": "No plan is on sale yet."
+      },
+      "data": {
+        "title": "Your data",
+        "description": "What Akinaza keeps about you, and your right to it.",
+        "export": "Export",
+        "exportHint": "Everything held about this account, as one file.",
+        "download": "Download",
+        "deleteTitle": "Delete the account",
+        "deleteHint": "Your client files are erased first. A shop's books are kept: the law requires it.",
+        "confirmPassword": "Your password",
+        "delete": "Delete my account",
+        "deleteConfirm": "Delete for good?"
+      },
+      "memberSince": "Member since {month}"
     },
     "walker": {
       "title": "Today's walks",
@@ -553,7 +713,11 @@
         "visits": "Visits",
         "last": "Last visit",
         "next": "Next visit",
-        "spent": "Total spent"
+        "spent": "Total spent",
+        "state": "State",
+        "bill": "Bill",
+        "email": "E-mail",
+        "owed": "Still owed"
       },
       "file": {
         "since": "Client since {date}",
@@ -570,14 +734,51 @@
         "price": "Price",
         "number": "Number",
         "total": "Total",
-        "credit": "Credit note"
+        "credit": "Credit note",
+        "bill": "Bill this client",
+        "sections": "The file's sections",
+        "tabs": {
+          "summary": "Summary",
+          "invoices": "Invoices",
+          "visits": "Visits",
+          "notes": "Notes"
+        },
+        "addNote": "Add a note",
+        "saveNote": "Keep the note",
+        "eyebrow": "Client"
       },
       "requests": {
         "title": "Their kept requests",
         "lead": "What this person usually asks for, with their photos or documents: to prepare the visit.",
         "photo": "Photo {n}",
         "pdf": "Document {n}"
-      }
+      },
+      "state": {
+        "owes": "Owes {amount}",
+        "upToDate": "Up to date"
+      },
+      "strip": {
+        "label": "Your clients at a glance",
+        "count": "{count} clients",
+        "owedLabel": "To collect",
+        "upToDate": "{count} of {total} up to date"
+      },
+      "search": "Search a client",
+      "searchPlaceholder": "Name, e-mail or phone",
+      "clear": "Show everyone",
+      "filters": "Filter the clients",
+      "filter": {
+        "all": "All",
+        "due": "Still owed",
+        "upcoming": "Coming back"
+      },
+      "selection": {
+        "label": "Selection",
+        "count": "{count} selected",
+        "export": "Export the selection (CSV)"
+      },
+      "exportFile": "clients.csv",
+      "noMatch": "No client matches."
     },
     "shopSetup": {
       "title": "Your shop page",
@@ -773,6 +974,12 @@
         "template": "Page template",
         "templateHint": "Suggested for your trade; you can change it later in « Look »."
       },
+      "openShop": {
+        "title": "Open a shop",
+        "lead": "Your own shop, with its page, its bookings and its invoices. It starts unpublished: you publish it when it is ready.",
+        "back": "Back to my bookings",
+        "submit": "Create the shop"
+      },
       "defaults": {
         "title": "Proposed images",
         "lead": "No photo yet? Choose images that suit your trade. They are neutral pictures, not your shop: replace them with your own when you can.",
@@ -818,6 +1025,31 @@
         "update": "Update to version {version}",
         "updateKeepOrder": "Update, keep my order",
         "updateTemplateOrder": "Update with its order"
+      }
+    },
+    "boutique": {
+      "title": "Your shop",
+      "navLabel": "Sections of your shop",
+      "groups": {
+        "page": "Your page",
+        "business": "Your activity"
+      },
+      "sections": {
+        "languages": "Languages",
+        "team": "Team",
+        "invoices": "Invoice e-mails",
+        "shops": "Your shops"
+      },
+      "invoices": {
+        "title": "Invoice e-mails",
+        "lead": "The message and the sender of the invoices you send to clients, and how long their link stays open."
+      },
+      "shops": {
+        "title": "Your shops",
+        "lead": "The shops you work in. Each has its own page and its own team.",
+        "current": "This shop",
+        "open": "Open this shop",
+        "add": "Add a shop"
       }
     },
     "shopPage": {
@@ -931,12 +1163,13 @@
     },
     "client": {
       "title": "My bookings",
-      "none": "No booking yet. Open the page of a shop and book from there.",
+      "emptyTitle": "No booking yet",
+      "emptyLead": "Open the page of a shop and book from there: your bookings, your invoices and your files show here.",
+      "openShop": "Open a shop",
       "upcoming": "Upcoming",
       "past": "Past",
       "invoiceTitle": "Invoices",
-      "invoiceNone": "No invoice for this shop.",
-      "invoiceOpen": "Open invoice {number}",
+      "invoiceIssued": "Issued {date}",
       "cancel": "Cancel",
       "cancelled": "Cancelled",
       "cancelConfirm": "Cancel this walk?",
@@ -949,8 +1182,12 @@
       "dogsTitle": "My dogs",
       "bookAgain": "Book at {shop}",
       "privacyTitle": "My data (Loi 25)",
-      "privacyIntro": "{shop} keeps your file and your dogs'. You can take a copy or have it erased.",
+      "dataLead": "Each shop keeps your file. Take a copy of it, or have it erased.",
       "export": "Download my data",
+      "exportShort": "Download",
+      "exportFor": "Download my data at {shop}",
+      "eraseHeading": "Erase a file",
+      "eraseLead": "One shop at a time, for good.",
       "erase": "Erase my file at {shop}",
       "eraseTitle": "Erase your file?",
       "eraseDescription": "Your details, your dogs, the notes and photos of the reports are erased for good. Invoices are kept as the law requires. Type your e-mail to confirm.",
@@ -973,7 +1210,8 @@
         "attach": "Attach a photo or a PDF",
         "fileImage": "Photo",
         "filePdf": "PDF document",
-        "fileRemove": "Remove this file"
+        "fileRemove": "Remove this file",
+        "open": "Keep a request"
       }
     },
     "report": {
@@ -1059,14 +1297,24 @@
         "title": "New invoice",
         "client": "Client",
         "noClient": "No client file",
-        "service": "Service {n}",
-        "noService": "—",
+        "steps": {
+          "who": "Who for?",
+          "what": "What?",
+          "when": "When?"
+        },
+        "line": "Line {n}",
+        "service": "Service",
+        "freeLine": "Other (describe it)",
+        "description": "Description",
+        "unitPrice": "Unit price",
         "quantity": "Quantity",
-        "customDescription": "Other line (description)",
-        "customPrice": "Unit price",
-        "customQuantity": "Quantity of the other line",
+        "addLine": "Add a line",
+        "removeLine": "Remove line {n}",
+        "when": "Dated today, {date}. The due date follows your payment terms, and the number is given at issue.",
+        "totals": "Invoice total",
+        "totalPending": "Add a line to see the total.",
         "submit": "Issue the invoice",
-        "needLine": "Choose at least one service or write a line with its price."
+        "needLine": "Choose a service, or write a line with its price."
       },
       "list": {
         "title": "Issued invoices",
@@ -1076,7 +1324,8 @@
         "noClient": "No client file",
         "total": "Total {amount}",
         "dueOn": "Due {date}",
-        "exportFile": "invoices-{day}.csv"
+        "exportFile": "invoices-{day}.csv",
+        "noneHint": "Each invoice you issue lands here, with what is left to collect."
       },
       "back": "All invoices",
       "table": {
@@ -1087,7 +1336,6 @@
         "kind": "Type",
         "total": "Total",
         "state": "State",
-        "month": "Month",
         "remaining": "Balance due"
       },
       "correct": {
@@ -1103,10 +1351,12 @@
       "chain": {
         "replaces": "Replaces invoice {number}",
         "replacedBy": "Replaced by invoice {number}",
-        "creditedBy": "Cancelled by credit note {number}"
+        "creditedBy": "Cancelled by credit note {number}",
+        "title": "Linked invoices"
       },
       "actions": {
-        "correct": "Correct"
+        "correct": "Correct",
+        "print": "Print"
       },
       "state": {
         "credit": "Credit note",
@@ -1133,7 +1383,8 @@
         "email": "Client's e-mail",
         "message": "Message (optional)",
         "submit": "Queue the e-mail",
-        "queued": "The invoice e-mail was queued."
+        "queued": "The invoice e-mail was queued.",
+        "close": "Close"
       },
       "history": {
         "title": "Sending history",
@@ -1154,6 +1405,11 @@
         "cash": "cash",
         "card": "card",
         "transfer": "transfer"
+      },
+      "eyebrow": "Invoice",
+      "issued": {
+        "title": "Invoice {number} issued",
+        "next": "Send it to your client: it opens in their language."
       }
     },
     "invoiceDoc": {
@@ -1258,7 +1514,6 @@
         },
         "client": {
           "cancelConfirm": "Cancel this appointment?",
-          "privacyIntro": "{shop} keeps your file. You can take a copy or have it erased.",
           "eraseDescription": "Your details and your bookings are erased for good. Invoices are kept as the law requires. Type your e-mail to confirm."
         }
       }
@@ -1345,7 +1600,8 @@
         "reasonHint": "Seen by the team only, never by clients.",
         "add": "Add time off",
         "remove": "Remove {name}'s time off ({when})",
-        "range": "from {from} to {to}"
+        "range": "from {from} to {to}",
+        "order": "The end date is before the start date."
       }
     },
     "brief": {
@@ -1717,6 +1973,97 @@
         "name": "My work",
         "intent": "Approach and cases first."
       }
+    },
+    "table": {
+      "selectAll": "Select all rows",
+      "selectRow": "Select {name}",
+      "loading": "Loading",
+      "empty": "Nothing to show",
+      "details": "Details",
+      "expandRow": "Show the details of {name}",
+      "group": "{value}, {count} rows",
+      "resize": "Resize {header}",
+      "result": "{count} result",
+      "results": "{count} results",
+      "filters": "Filter the list",
+      "clearFilters": "Clear the filters",
+      "removeFilter": "Remove {label}",
+      "activeFilter": "{header}: {value}",
+      "search": "Search {header}",
+      "rangeFrom": "{header} from",
+      "rangeTo": "{header} to",
+      "columns": "Columns",
+      "showMore": "More about {name}",
+      "export": "Export (CSV)",
+      "pagination": {
+        "nav": "Pages",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {page}",
+        "compact": "Page {page} of {pageCount}",
+        "pageSize": "Rows per page"
+      }
+    },
+    "states": {
+      "error": {
+        "title": "This part could not load.",
+        "body": "The rest of the page works. Try again in a moment."
+      },
+      "retry": "Try again",
+      "loading": "Loading…"
+    },
+    "organize": {
+      "close": "Close",
+      "columns": {
+        "tags": "Tags"
+      },
+      "binder": {
+        "label": "Tags",
+        "all": "All",
+        "add": "New tag"
+      },
+      "newTag": {
+        "title": "New tag",
+        "hint": "A name and a colour marker. The tag belongs to the shop: the owner and the manager can add and rename it.",
+        "name": "Name",
+        "marker": "Colour marker",
+        "create": "Create the tag"
+      },
+      "markers": {
+        "blue": "Blue",
+        "green": "Green",
+        "amber": "Amber",
+        "red": "Red",
+        "violet": "Violet",
+        "gray": "Gray"
+      },
+      "views": {
+        "label": "Views",
+        "save": "Save this view",
+        "saveTitle": "Save this view",
+        "saveHint": "The view keeps the tags, the dates and the search in force. Its address is the same on every device.",
+        "name": "Name of the view",
+        "shared": "Share with the team",
+        "remove": "Delete this view",
+        "clear": "Clear the filters"
+      },
+      "selection": {
+        "tag": "Add a tag",
+        "untag": "Remove a tag",
+        "tooMany": "At most 200 rows can be tagged at once.",
+        "label": "Selection",
+        "count": "{count} selected"
+      },
+      "file": {
+        "tags": "Tags",
+        "none": "No tag yet",
+        "edit": "Edit the tags"
+      }
     }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "This page does not exist, or is not yours.",
+    "home": "Back to Akinaza"
   }
 }

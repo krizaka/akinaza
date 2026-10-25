@@ -25,9 +25,10 @@ const businessTypeOf = (trade: ShopType) => (trade === "pets" ? ("pets" as const
 /**
  * « Add a shop »: one more shop under the same account, unpublished, then its own setup page opens. The administrator bounds how many.
  * With templates offered (#261): the trade is asked (it stands for the business type) and a template preselected — the administrator's default for the trade —
- * which applies only because the owner keeps it chosen; « Plain page » keeps today's page.
+ * which applies only because the owner keeps it chosen; « Plain page » keeps today's page. `first` is a client opening their first shop (K7): the same form, its own words.
  */
-export function NewShop({ locale, backHref, offers = null }: { locale: RouteLocale; backHref: string; /** The templates of every trade, or null while the administrator's switch is off. */ offers?: Record<ShopType, TemplateChoices> | null }) {
+export function NewShop({ locale, backHref, first = false, offers = null }: { locale: RouteLocale; backHref: string; first?: boolean; /** The templates of every trade, or null while the administrator's switch is off. */ offers?: Record<ShopType, TemplateChoices> | null }) {
+  const words = first ? "shopSetup.openShop" : "shopSetup.addShop";
   const { say, locale: uiLocale } = useSay();
   const router = useRouter();
   const [problem, setProblem] = useState<string | null>(null);
@@ -63,10 +64,10 @@ export function NewShop({ locale, backHref, offers = null }: { locale: RouteLoca
   });
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title={say("shopSetup.addShop.title")} description={say("shopSetup.addShop.lead")} />
-      <p className="text-sm"><Link className="font-semibold text-fg-accent underline" href={backHref}>{say("shopSetup.addShop.back")}</Link></p>
+      <PageHeader title={say(`${words}.title`)} description={say(`${words}.lead`)} />
+      <p className="text-sm"><Link className="font-semibold text-fg-accent underline" href={backHref}>{say(`${words}.back`)}</Link></p>
       <Card.Root className="p-4">
-        <form.Form aria-label={say("shopSetup.addShop.title")} className="grid gap-4 sm:grid-cols-2">
+        <form.Form aria-label={say(`${words}.title`)} className="grid gap-4 sm:grid-cols-2">
           <IdentityFields form={form} say={say} withAddress withBusinessType={!offers} />
           {offers ? (
             <>
@@ -86,7 +87,7 @@ export function NewShop({ locale, backHref, offers = null }: { locale: RouteLoca
           ) : null}
           <div className="flex flex-col gap-3 sm:col-span-2">
             {problem ? <Alert tone="danger">{problem}</Alert> : null}
-            <form.Submit size="md" className="w-full sm:w-auto sm:self-start">{say("shopSetup.addShop.submit")}</form.Submit>
+            <form.Submit size="md" className="w-full sm:w-auto sm:self-start">{say(`${words}.submit`)}</form.Submit>
           </div>
         </form.Form>
       </Card.Root>

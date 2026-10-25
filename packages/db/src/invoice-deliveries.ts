@@ -135,6 +135,8 @@ export async function clientInvoices(db: Db, clientId: string) {
       paidCents: sql<number>`coalesce((SELECT sum(p.amount_cents) FROM payments p WHERE p.invoice_id = ${invoices.id}), 0)::int`,
       creditOf: invoices.creditOf,
       replaces: invoices.replaces,
+      // Whether a credit note or a correction superseded it (#207): the client space derives the state as the list does (D7).
+      superseded: sql<boolean>`EXISTS (SELECT 1 FROM invoices o WHERE o.credit_of = ${invoices.id} OR o.replaces = ${invoices.id})`,
       shopId: invoices.shopId,
       shopName: shops.name,
     })

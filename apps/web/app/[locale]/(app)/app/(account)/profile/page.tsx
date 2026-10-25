@@ -1,27 +1,25 @@
 // @template: app-settings
-import { SettingsRow, SettingsSection } from "@krizaka/ui/settings-layout";
-
 import { ProfileFrame } from "@/components/account/ProfileFrame";
-import { pageSession } from "@/lib/access";
-import { asLocale, getDictionary } from "@/lib/i18n";
-import { lastMember } from "@/lib/member-shop";
+import { ProfileSettings } from "@/components/account/ProfileSettings";
+import { accountPage } from "@/lib/account-page";
+import { accountRoleLine } from "@/lib/account-sections";
+import { formatMonth } from "@/lib/format";
+import { asLocale, format, getDictionary } from "@/lib/i18n";
+import { titleOf } from "@/lib/page-title";
 
-const LANGUAGE_NAME = { en: "English", fr: "Français" } as const;
+export const dynamic = "force-dynamic";
+export const generateMetadata = titleOf("profile");
 
-/** The account: the e-mail, the language, the role. In a shop the role is the one held there (Owner, Manager, Staff); anyone else is a member. */
+/** The account: name, picture, e-mail with its verified state, since when, and the role held in the shop in use. */
 export default async function Profile({ params }: { params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
-  const t = getDictionary(locale).console.account.profile;
-  const { account } = (await pageSession())!;
-  const member = await lastMember(account.id);
-  const role = account.role === "ADMIN" ? t.roleAdmin : member ? t.shopRoles[member.role] : t.roleUser;
+  const t = getDictionary(locale).console.account;
+  const { session, profile, member, sections, openedAt, timeZone } = await accountPage();
+  const role = accountRoleLine(t.profile, { admin: session.account.role === "ADMIN", member });
+  const memberSince = openedAt ? format(t.memberSince, { month: formatMonth(openedAt, locale, timeZone) }) : null;
   return (
-    <ProfileFrame locale={locale} current="profile" account={account}>
-      <SettingsSection variant="flat" title={t.sections.profile} description={t.description}>
-        <SettingsRow label={t.email}>{account.email}</SettingsRow>
-        <SettingsRow label={t.language}>{LANGUAGE_NAME[account.locale]}</SettingsRow>
-        <SettingsRow label={t.role}>{role}</SettingsRow>
-      </SettingsSection>
+    <ProfileFrame locale={locale} current="profile" account={profile} sections={sections}>
+      <ProfileSettings profile={{ ...profile, memberSince, role }} />
     </ProfileFrame>
   );
 }

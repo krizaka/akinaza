@@ -34,6 +34,7 @@ export const TABLE_OWNERSHIP: Readonly<Record<string, TableOwnership>> = {
   brief_actions: shop,
   brief_deliveries: shop,
   clients: shop,
+  client_notes: shop,
   dependants: shop,
   expenses: shop,
   invoices: shop,

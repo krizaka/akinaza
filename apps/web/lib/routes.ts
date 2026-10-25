@@ -28,9 +28,17 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
     /** « Modifier » (#207): the replacement of an issued invoice, prefilled. */
     invoiceCorrect: (id: string) => `${root}/invoices/${id}/correct`,
     newInvoice: `${root}/invoices/new`,
+    /** « Nouvelle facture » prefilled (D3): « Facturer ce client », a finished appointment's service and quantity. */
+    newInvoiceFor: (prefill: { client?: string; service?: string; quantity?: string; appointment?: string }) => `${root}/invoices/new${query(prefill)}`,
     books: (period?: string) => `${root}/books${query({ period })}`,
-    team: `${root}/team`,
-    setup: `${root}/shop`,
+    /** Boutique (K4): one hub on SettingsLayout, one address per section; `?tab=` names the section of the page. */
+    boutique: (section?: string, tab?: string) => `${root}/boutique${section ? `/${section}` : ""}${query({ tab })}`,
+    /** Boutique › Équipe. */
+    team: `${root}/boutique/team`,
+    /** Boutique › Page, the first section of the hub (« Ma page boutique »). */
+    setup: `${root}/boutique/page`,
+    /** Boutique › Shops: « Add a shop » (one more shop under the same account). */
+    addShop: `${root}/shop/new`,
     /** An API address of the shop's space, for the shop of the page: the routes pick the shop with `?shopId=`. */
     api: (path: string) => `${path}${path.includes("?") ? "&" : "?"}shopId=${shopId}`,
   };
@@ -39,7 +47,19 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
 export type ShopRoutes = ReturnType<typeof shopRoutes>;
 
 /** The addresses that belong to the account, not to a shop. */
-export const accountRoutes = (locale: RouteLocale) => ({ home: `/${locale}/app`, profile: `/${locale}/app/profile`, security: `/${locale}/app/profile/security` });
+export const ACCOUNT_SECTIONS = ["profile", "preferences", "security", "subscription", "data"] as const;
+export type AccountSection = (typeof ACCOUNT_SECTIONS)[number];
+
+export const accountRoutes = (locale: RouteLocale) => ({
+  home: `/${locale}/app`,
+  profile: `/${locale}/app/profile`,
+  /** « Ouvrir une boutique »: a client's first shop — an action of the client space, never a place on the rail (K7). */
+  openShop: `/${locale}/app/open-shop`,
+  /** One of the client's own invoices, whichever shop issued it. */
+  invoice: (id: string) => `/${locale}/app/invoices/${id}`,
+  /** One section of the account: the first is the profile itself, the others are below it. */
+  section: (id: AccountSection) => (id === "profile" ? `/${locale}/app/profile` : `/${locale}/app/profile/${id}`),
+});
 
 /** The same page in another shop: only the shop segment changes when the page is not about one record, else the other shop's day. */
 export function inOtherShop(locale: RouteLocale, pathname: string, from: string, to: string): string {

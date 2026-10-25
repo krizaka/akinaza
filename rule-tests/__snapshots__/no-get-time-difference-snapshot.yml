@@ -1,0 +1,10 @@
+id: no-get-time-difference
+snapshots:
+  "const d = a.getTime() - b.getTime();\n":
+    fixed: |
+      const d = differenceInMilliseconds(a, b);
+    labels:
+    - source: a.getTime() - b.getTime()
+      style: primary
+      start: 10
+      end: 35

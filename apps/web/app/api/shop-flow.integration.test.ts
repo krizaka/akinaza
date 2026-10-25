@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID } from "node:crypto";
 
+import { leaksPlaintext } from "@akinaza/db/plaintext-leak";
 import { addHours } from "date-fns";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -46,6 +47,23 @@ async function call(handler: unknown, method: string, path: string, opts: { toke
   const type = res.headers.get("content-type") ?? "";
   return { status: res.status, body: type.includes("json") ? await res.json() : null, res };
 }
+
+/**
+ * Whether a webhook payload carries something of the client's (their phone, their name, a name field). akinaza#341: the
+ * journey once checked `/514/` on the whole JSON, which a random UUID (`…f514…`) matches about one run in ten — the booking
+ * step then failed and the four steps after it with it.
+ */
+const leaksClient = (payload: unknown) => /514-555-0100|Camille|Tremblay|Chien|"(fullName|phone|email)"/.test(JSON.stringify(payload));
+
+describe("the journey's privacy check reads the client's data, never a UUID's digits (akinaza#341)", () => {
+  it("passes a payload of ids, even one whose UUID holds « 514 »", () => {
+    expect(leaksClient({ appointmentId: "3f8ae756-47dd-4206-b741-4c6a6f514cf2", shopId: "74f669e4-9848-4507-9403-f2514bb0aa11" })).toBe(false);
+  });
+
+  it("catches the client's phone, name or a personal field", () => {
+    for (const payload of [{ note: "514-555-0100" }, { who: "Camille Tremblay" }, { fullName: "x" }, { phone: "x" }]) expect(leaksClient(payload), JSON.stringify(payload)).toBe(true);
+  });
+});
 
 describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
   // Unique across test files run in parallel: two files starting in the same millisecond collided on accounts_email_unique.
@@ -112,8 +130,9 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     expect((await call(notes, "POST", "/api/me/access-notes", { token: client, json: { clientId: ids.clientFile, notes: "Code 4821, clé sous le pot" } })).status).toBe(200);
     const raw = await query<{ access_notes_enc: string }>("SELECT access_notes_enc FROM clients WHERE id = $1", [ids.clientFile]);
     expect(raw[0]!.access_notes_enc).toMatch(/^v1\./);
-    expect(raw[0]!.access_notes_enc).not.toContain("4821");
-    const start = offered.body.slots[0].startsAt;
+    expect(leaksPlaintext(raw[0]!.access_notes_enc, "Code 4821, clé sous le pot")).toBe(false);
+    // A slot an hour ahead at least: the first one offered can start before the booking reaches the server.
+    const start = offered.body.slots.find((slot: { startsAt: string }) => new Date(slot.startsAt) > addHours(new Date(), 1)).startsAt;
     const hook = await call(addHook, "POST", "/api/walker/webhooks", { token: walker, json: { url: "https://hooks.example.com/bookings", events: ["booking.created"] } });
     expect(hook.status).toBe(201);
     const booked = await call(book, "POST", "/api/me/bookings", { token: client, json: { clientId: ids.clientFile, serviceId: ids.solo, zoneId: ids.stHenri, dependantIds: [ids.dog], startsAt: start } });
@@ -122,7 +141,7 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     const told = await query<{ payload: Record<string, unknown> }>("SELECT payload FROM webhook_deliveries WHERE endpoint_id = $1", [hook.body.endpoint.id]);
     expect(told).toHaveLength(1);
     expect(told[0]!.payload).toMatchObject({ appointmentId: booked.body.appointmentId, shopId: ids.shop, serviceId: ids.solo });
-    expect(JSON.stringify(told[0]!.payload)).not.toMatch(/514|Chien|fullName/);
+    expect(leaksClient(told[0]!.payload)).toBe(false);
     ids.booking = booked.body.bookingIds[0];
     ids.visit = booked.body.appointmentId;
     expect((await call(book, "POST", "/api/me/bookings", { token: client, json: { clientId: ids.clientFile, serviceId: ids.solo, zoneId: ids.stHenri, dependantIds: [ids.dog], startsAt: start } })).body).toMatchObject({ code: "SLOT_UNAVAILABLE" });
@@ -210,7 +229,9 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
       seen.push({ url, auth: (init.headers as Record<string, string>).Authorization!, body: init.body as URLSearchParams });
       return new Response("{}", { status: 200 });
     }) as unknown as typeof fetch;
-    const stillPending = await flushOutbox(db(), new Date(), mailgun, ok);
+    // Only this journey's mails: CI's database is shared by the integration files running in parallel (akinaza#341).
+    const ours = (await query<{ id: string }>("SELECT id FROM mail_outbox WHERE related_id = $1 AND status = 'pending'", [ids.report])).map((m) => m.id);
+    const stillPending = await flushOutbox(db(), new Date(), mailgun, ok, { ids: ours });
     expect(stillPending.sent).toBeGreaterThanOrEqual(1); // the earlier, unconfigured mail goes out now
     seen.length = 0;
     const sent = await sendWalkReport(db(), (await query<{ id: string }>("SELECT id FROM shops WHERE slug = $1", [`pattes-${stamp}`]))[0]!.id, ids.booking!, new Date(), mailgun, ok);
@@ -232,7 +253,7 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     for (let i = 0; i < 5; i++) statuses.push((await sendWalkReport(db(), shopId, ids.booking!, new Date(), mailgun, down)).status);
     expect(statuses).toEqual(["pending", "pending", "pending", "pending", "pending"]); // each send is a new mail with its first attempt
     const failing = await query<{ id: string }>("SELECT id FROM mail_outbox WHERE related_id = $1 AND status = 'pending'", [ids.report]);
-    for (let i = 0; i < 4; i++) await flushOutbox(db(), new Date(), mailgun, down);
+    for (let i = 0; i < 4; i++) await flushOutbox(db(), new Date(), mailgun, down, { ids: failing.map((m) => m.id) });
     expect(await query("SELECT 1 FROM mail_outbox WHERE related_id = $1 AND status = 'failed'", [ids.report])).toHaveLength(failing.length);
     // The last successful link is gone with the failed sends' rotation; take a good one again.
     ids.token = undefined;

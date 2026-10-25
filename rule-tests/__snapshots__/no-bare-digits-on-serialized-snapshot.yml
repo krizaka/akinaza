@@ -1,0 +1,14 @@
+id: no-bare-digits-on-serialized
+snapshots:
+  "expect(JSON.stringify(body)).not.toMatch(/42/);\n":
+    labels:
+    - source: expect(JSON.stringify(body)).not.toMatch(/42/)
+      style: primary
+      start: 0
+      end: 46
+  "expect(JSON.stringify(told[0].payload)).not.toMatch(/514|Chien|fullName/);\n":
+    labels:
+    - source: expect(JSON.stringify(told[0].payload)).not.toMatch(/514|Chien|fullName/)
+      style: primary
+      start: 0
+      end: 73

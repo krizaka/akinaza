@@ -1,6 +1,7 @@
 import type { invoiceDetail } from "@akinaza/db";
 import Link from "next/link";
 
+import { formatMoney, INTL_LOCALE } from "@/lib/format";
 import { format, getDictionary, type Locale } from "@/lib/i18n";
 import { formatQuantity } from "@/lib/quantity";
 
@@ -12,11 +13,12 @@ export type InvoiceView = NonNullable<Awaited<ReturnType<typeof invoiceDetail>>>
  * is due, its payment terms and due date (krizaka/akinaza#113: a buyer needs them from $500, DORS/91-45 art. 3).
  * Each label and its value are plain text, so the document reads the same as a PDF text layer or a screen reader.
  */
-export function InvoiceDocument({ invoice, locale, backHref }: { invoice: InvoiceView; locale: Locale; backHref?: string }) {
+export function InvoiceDocument({ invoice, locale, backHref, heading: Heading = "h1" }: { invoice: InvoiceView; locale: Locale; backHref?: string; /** `h2` inside a page whose `h1` is the invoice's number (DetailLayout). */ heading?: "h1" | "h2" }) {
   const t = getDictionary(invoice.language).console.invoiceDoc;
   const back = getDictionary(locale).console.invoices.back;
-  const lang = invoice.language === "fr" ? "fr-CA" : "en-CA";
-  const money = (cents: number) => new Intl.NumberFormat(lang, { style: "currency", currency: "CAD" }).format(cents / 100);
+  const lang = INTL_LOCALE[invoice.language];
+  // Integer cents through @krizaka/intl, in the invoice's language (never `cents / 100`).
+  const money = (cents: number) => formatMoney(cents, invoice.language);
   const date = new Date(`${invoice.issuedOn}T12:00:00Z`).toLocaleDateString(lang, { dateStyle: "long", timeZone: "UTC" });
   const due = invoice.dueOn && invoice.termsDays !== null ? new Date(`${invoice.dueOn}T12:00:00Z`).toLocaleDateString(lang, { dateStyle: "long", timeZone: "UTC" }) : null;
   const terms = invoice.termsDays === 0 ? t.termsOnReceipt : invoice.termsDays === 1 ? t.termsNetOne : format(t.termsNet, { days: invoice.termsDays ?? 0 });
@@ -24,9 +26,9 @@ export function InvoiceDocument({ invoice, locale, backHref }: { invoice: Invoic
     <article lang={invoice.language} className="flex max-w-3xl flex-col gap-5 rounded-lg border border-border-default bg-surface-1 p-5 sm:p-8" aria-labelledby="invoice-title">
       {backHref ? <p><Link className="text-sm text-fg-accent underline" href={backHref} lang={locale}>← {back}</Link></p> : null}
       <header className="flex flex-wrap items-start justify-between gap-3">
-        <h1 id="invoice-title" className="font-display text-2xl font-bold text-fg">
+        <Heading id="invoice-title" className="font-display text-2xl font-bold text-fg">
           {invoice.creditOf ? t.credit : t.title}
-        </h1>
+        </Heading>
         <dl className="text-right text-sm text-fg-secondary">
           <dt className="sr-only">{t.number}</dt>
           <dd className="font-mono text-base font-semibold text-fg">{invoice.number}</dd>
@@ -70,8 +72,8 @@ export function InvoiceDocument({ invoice, locale, backHref }: { invoice: Invoic
         {invoice.lines.map((l) => (
           <li key={l.id} className="grid grid-cols-[1fr_auto] gap-x-4 py-2">
             <span className="text-fg">{l.description}</span>
-            <span className="text-right font-mono text-fg">{money(l.amountCents)}</span>
-            <span className="text-sm text-fg-muted">
+            <span className="text-right tabular-nums text-fg">{money(l.amountCents)}</span>
+            <span className="text-sm tabular-nums text-fg-muted">
               {t.quantity} {formatQuantity(l.quantityHundredths / 100, invoice.language)} × {money(l.unitPriceCents)}
             </span>
           </li>
@@ -79,13 +81,13 @@ export function InvoiceDocument({ invoice, locale, backHref }: { invoice: Invoic
       </ul>
       <dl className="ml-auto grid w-full max-w-xs grid-cols-[1fr_auto] gap-x-4 gap-y-1 text-sm">
         <dt className="text-fg-secondary">{t.subtotal}</dt>
-        <dd className="text-right font-mono">{money(invoice.subtotalCents)}</dd>
+        <dd className="text-right tabular-nums">{money(invoice.subtotalCents)}</dd>
         <dt className="text-fg-secondary">{t.gst}</dt>
-        <dd className="text-right font-mono">{money(invoice.gstCents)}</dd>
+        <dd className="text-right tabular-nums">{money(invoice.gstCents)}</dd>
         <dt className="text-fg-secondary">{t.qst}</dt>
-        <dd className="text-right font-mono">{money(invoice.qstCents)}</dd>
+        <dd className="text-right tabular-nums">{money(invoice.qstCents)}</dd>
         <dt className="border-t border-border-default pt-1 font-semibold text-fg">{t.total}</dt>
-        <dd className="border-t border-border-default pt-1 text-right font-mono font-semibold text-fg">{money(invoice.totalCents)}</dd>
+        <dd className="border-t border-border-default pt-1 text-right tabular-nums font-semibold text-fg">{money(invoice.totalCents)}</dd>
       </dl>
       <p className="text-xs text-fg-muted">{t.footer}</p>
     </article>

@@ -48,10 +48,44 @@ export const ACCOUNT_PAGES = ["/app/profile", "/app/profile/security"];
 /** The first record a list links (`<list>/<id>`), never its creation page (`<list>/new`) nor another list: the detail page to crawl. */
 export const firstRecord = (hrefs, listPath) => hrefs.find((href) => typeof href === "string" && href.startsWith(`${listPath}/`) && !/\/new(\?.*)?$/.test(href) && !href.slice(listPath.length + 1).includes("/")) ?? null;
 
-/** What every page owes besides one rendering: exactly one `h1` (the page's, never the frame's) and no horizontal overflow. */
-const audit = (page) => page.evaluate(() => ({ h1: document.querySelectorAll("h1").length, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth }));
-const judge = (report, { h1, overflow }) => {
+/** The pages a list's first record opens: the record, and for an invoice its correction screen (« Modifier », #207). */
+export const detailPagesFor = (list, href) => (list.endsWith("/invoices") ? [href, `${href}/correct`] : [href]);
+
+/**
+ * One primary per screen (D1b, errata 2 of docs/ux/2026-10-full-review.md): never two `[data-primary]` on a page, and exactly one on
+ * the owner's day, lists and invoice screens — the header's « Nouvelle facture » or the page's own (the next appointment, « Envoyer
+ * la facture », the form's submit). A Boutique section holds its save; a page with nothing to do may have none.
+ */
+const ONE_PRIMARY = /\/app\/[^/]+\/(aujourdhui|clients|invoices|books)(\/[^/?]+(\/correct)?)?(\?.*)?$/;
+export const primaryProblem = (path, count) => {
+  if (count > 1) return `${count} primary actions (one at most)`;
+  if (count !== 1 && ONE_PRIMARY.test(path)) return `${count} primary actions (one expected)`;
+  return null;
+};
+
+/**
+ * No shift between the loading state and the loaded page (D6): the day, Clients and Factures draw their loading state in the
+ * page's own boxes, so their layout shift (CLS, without input) stays under 0.01.
+ */
+const STEADY = /\/app\/[^/]+\/(aujourdhui|clients|invoices)(\?.*)?$/;
+export const shiftProblem = (path, cls) => (STEADY.test(path) && cls >= 0.01 ? `layout shift ${cls.toFixed(3)} (under 0.01 expected)` : null);
+
+/** What every page owes besides one rendering: exactly one `h1` (the page's, never the frame's), one primary in view at most (a form may draw its submit once per width: the aside, the sticky action), no horizontal overflow. */
+const audit = (page) => page.evaluate(async () => ({
+  cls: await new Promise((resolve) => {
+    let total = 0;
+    new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) if (!e.hadRecentInput) total += e.value;
+    }).observe({ type: "layout-shift", buffered: true });
+    setTimeout(() => resolve(total), 50);
+  }),
+  h1: document.querySelectorAll("h1").length, primary: [...document.querySelectorAll("[data-primary]")].filter((e) => e.checkVisibility()).length, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth }));
+const judge = (report, { cls, h1, primary, overflow }, path) => {
   if (h1 !== 1) report("h1", `${h1} on the page (one expected)`);
+  const shift = shiftProblem(path, cls);
+  if (shift) report("cls", shift);
+  const tooMany = primaryProblem(path, primary);
+  if (tooMany) report("primary", tooMany);
   if (overflow) report("overflow", "the page scrolls sideways");
 };
 
@@ -100,7 +134,7 @@ async function crawl(browser, { base, paths, theme, account, problems, visited, 
       expected404 = path.endsWith("/nope");
       const response = await page.goto(`${base}${path}`, { waitUntil: "load" });
       await page.waitForTimeout(SETTLE_MS);
-      judge(report, await audit(page));
+      judge(report, await audit(page), new URL(page.url()).pathname);
       const status = response?.status() ?? 0;
       const final = new URL(page.url()).pathname;
       visited.push({ path, final, status });
@@ -114,13 +148,15 @@ async function crawl(browser, { base, paths, theme, account, problems, visited, 
       }
     }
     // The detail pages found on this pass.
-    for (const [list, href] of Object.entries(links)) {
-      current = `${account?.role ?? ""} ${href.replace(/^.*\/app\/[^/]+/, "")} (from ${list}) @${viewport.width} ${theme}`;
-      expected404 = false;
-      await page.goto(`${base}${href}`, { waitUntil: "load" });
-      await page.waitForTimeout(SETTLE_MS);
-      judge(report, await audit(page));
-      visited.push({ path: href, final: new URL(page.url()).pathname, status: 200, from: list });
+    for (const [list, record] of Object.entries(links)) {
+      for (const href of detailPagesFor(list, record)) {
+        current = `${account?.role ?? ""} ${href.replace(/^.*\/app\/[^/]+/, "")} (from ${list}) @${viewport.width} ${theme}`;
+        expected404 = false;
+        await page.goto(`${base}${href}`, { waitUntil: "load" });
+        await page.waitForTimeout(SETTLE_MS);
+        judge(report, await audit(page), new URL(page.url()).pathname);
+        visited.push({ path: href, final: new URL(page.url()).pathname, status: 200, from: list });
+      }
     }
   }
   await context.close();

@@ -1,9 +1,7 @@
-import { AkinazaLogo } from "@krizaka/ui";
-import { AuthLayout } from "@krizaka/ui/auth-layout";
-import { Mascot } from "@krizaka/ui/mascots";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { AccountAuthPage } from "@/components/account/AccountAuthPage";
 import { signupEnabled } from "@/lib/env";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { contactHref } from "@/lib/site";
@@ -24,15 +22,8 @@ export default async function SignUpPage({ params }: { params: Promise<{ locale:
   const t = getDictionary(locale).console;
   const open = signupEnabled();
   return (
-    <AuthLayout
-      brand={
-        <Link href={`/${locale}`} className="inline-flex items-center gap-2">
-          <AkinazaLogo size={28} /> Akinaza
-        </Link>
-      }
-      promise={t.signIn.promise}
-      aside={<Mascot bird="beaver" mood="welcome" size={72} />}
-      asideFooter={t.signIn.asideFooter}
+    <AccountAuthPage
+      locale={locale}
       title={t.account.signUp.title}
       description={open ? t.account.signUp.description : undefined}
       footer={
@@ -52,6 +43,6 @@ export default async function SignUpPage({ params }: { params: Promise<{ locale:
       }
     >
       {open ? <p className="text-sm text-fg-secondary">{t.account.signUp.description}</p> : <Link className="font-semibold text-fg-accent" href={`/${locale}/sign-in`}>{t.account.signUp.back}</Link>}
-    </AuthLayout>
+    </AccountAuthPage>
   );
 }

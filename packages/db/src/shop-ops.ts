@@ -3,7 +3,7 @@ import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { Db, Tx } from "./client";
-import { appointments, bookings, clientConsents, clients, dependants, expenses, invoiceDeliveries, invoiceLines, invoices, mailOutbox, services, shops, taxLedger, visitReports } from "./schema";
+import { appointments, bookings, clientConsents, clientNotes, clients, dependants, expenses, invoiceDeliveries, invoiceLines, invoices, mailOutbox, services, shops, taxLedger, visitReports } from "./schema";
 import { ShopError } from "./errors";
 
 const post = (tx: Tx, shopId: string, entries: LedgerEntry[]) =>
@@ -87,6 +87,8 @@ export async function eraseClient(db: Db, clientId: string, textVersion: string)
     const [row] = await tx.update(clients).set({ fullName: "—", email: null, phone: null, notes: null, accessNotesEnc: null, accountId: null, erasedAt: sql`now()` }).where(and(eq(clients.id, clientId), isNull(clients.erasedAt))).returning({ id: clients.id });
     if (!row) return false;
     await tx.update(dependants).set({ name: "—", profile: {}, erasedAt: sql`now()` }).where(eq(dependants.clientId, clientId));
+    // The shop's notes on the client (D5) are personal information: gone with the file.
+    await tx.delete(clientNotes).where(eq(clientNotes.clientId, clientId));
     const reports = tx.select({ id: visitReports.id }).from(visitReports).innerJoin(bookings, eq(bookings.id, visitReports.bookingId)).where(eq(bookings.clientId, clientId));
     await tx.delete(mailOutbox).where(and(eq(mailOutbox.relatedKind, "visit_report"), inArray(mailOutbox.relatedId, reports)));
     const invoiceIds = tx.select({ id: invoices.id }).from(invoices).where(eq(invoices.clientId, clientId));
@@ -124,6 +126,8 @@ const iso = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
  */
 export const invoiceInputSchema = z.object({
   clientId: z.string().uuid().nullish(),
+  /** The finished appointment it bills (« Facturer ce rendez-vous », D3/D4): Aujourd'hui's « À facturer » no longer counts it. */
+  appointmentId: z.string().uuid().nullish(),
   language: z.enum(["fr", "en"]),
   issuedOn: iso,
   /** The payment terms in days (0 = due on receipt); omitted = the shop's own. */
@@ -151,6 +155,10 @@ export async function issueShopInvoice(db: Db | Tx, shopId: string, raw: Invoice
     const [client] = await db.select({ id: clients.id }).from(clients).where(and(eq(clients.id, input.clientId), eq(clients.shopId, shopId)));
     if (!client) throw new ShopError("AK_CLIENT_UNKNOWN", `AK_CLIENT_UNKNOWN: ${input.clientId}`);
   }
+  if (input.appointmentId) {
+    const [appointment] = await db.select({ id: appointments.id }).from(appointments).where(and(eq(appointments.id, input.appointmentId), eq(appointments.shopId, shopId)));
+    if (!appointment) throw new ShopError("AK_APPOINTMENT_UNKNOWN", `AK_APPOINTMENT_UNKNOWN: ${input.appointmentId}`);
+  }
   const lines: LineInput[] = [];
   for (const l of input.lines) {
     if (l.serviceId) {
@@ -162,7 +170,7 @@ export async function issueShopInvoice(db: Db | Tx, shopId: string, raw: Invoice
       lines.push({ description: l.description!, quantity: l.quantity, unitPriceCents: l.unitPriceCents, category: l.category ?? "standard" });
     }
   }
-  return issueInvoice(db, { shopId, clientId: input.clientId ?? null, language: input.language, issuedOn: input.issuedOn, termsDays: input.termsDays ?? null, lines, replaces: link.replaces ?? null });
+  return issueInvoice(db, { shopId, clientId: input.clientId ?? null, appointmentId: input.appointmentId ?? null, language: input.language, issuedOn: input.issuedOn, termsDays: input.termsDays ?? null, lines, replaces: link.replaces ?? null });
 }
 
 /**
@@ -232,5 +240,7 @@ export async function invoiceDetail(db: Db | Tx, shopId: string, invoiceId: stri
     db.select(ref).from(invoices).where(eq(invoices.replaces, invoice.id)).limit(1),
     db.select(ref).from(invoices).where(eq(invoices.creditOf, invoice.id)).limit(1),
   ]);
-  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, termsDays: invoice.termsDays, dueOn: invoice.dueOn, language: invoice.language, clientId: invoice.clientId, creditOf: invoice.creditOf, replaces: orNull(replaces), replacedBy: orNull(replacedBy), creditedBy: orNull(creditedBy), subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
+  // What was received against it: the invoice's page shows the list's state (`invoiceState`, D2).
+  const [{ paidCents } = { paidCents: 0 }] = (await db.execute(sql`SELECT coalesce(sum(amount_cents), 0)::int AS "paidCents" FROM payments WHERE invoice_id = ${invoice.id}`)).rows as { paidCents: number }[];
+  return { id: invoice.id, number: invoice.number, issuedOn: invoice.issuedOn, termsDays: invoice.termsDays, dueOn: invoice.dueOn, language: invoice.language, clientId: invoice.clientId, creditOf: invoice.creditOf, replaces: orNull(replaces), replacedBy: orNull(replacedBy), creditedBy: orNull(creditedBy), subtotalCents: invoice.subtotalCents, gstCents: invoice.gstCents, qstCents: invoice.qstCents, totalCents: invoice.totalCents, paidCents, client: row.client?.fullName ? row.client : null, shop: row.shop, lines };
 }

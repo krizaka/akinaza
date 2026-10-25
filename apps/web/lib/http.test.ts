@@ -30,6 +30,20 @@ describe("the API's answers", () => {
     expect(ids.size).toBe(5);
   });
 
+  it("answers another client's dependant in a booking as a 404, like an unknown one: never a 403 that confirms it (K7)", async () => {
+    const res = await handle(async () => {
+      throw new ShopError("AK_BOOKING_OWNERSHIP");
+    });
+    expect(res.status).toBe(404);
+  });
+
+  it("answers an invoice naming another shop's appointment as a 404, like an unknown one (D4)", async () => {
+    const res = await handle(async () => {
+      throw new ShopError("AK_APPOINTMENT_UNKNOWN");
+    });
+    expect(res.status).toBe(404);
+  });
+
   it("answers a service-shop refusal with its status and a stable code, never the internals", async () => {
     const res = await handle(async () => {
       throw new ShopError("AK_CANCEL_TOO_LATE");

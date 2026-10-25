@@ -16,18 +16,49 @@ const query = (params: Record<string, string | undefined>) => {
 
 /**
  * Where to go after signing in: the screen a signed-out link asked for, when it is one of the app's own (`/fr/app…`,
- * `/en/app…`, never another host or `//…`), else Today.
+ * `/en/app…`, never another host or `//…`), else the app's first screen.
  */
 export function safeNext(next: string | undefined, locale: Locale): string {
   if (next && /^\/(fr|en)\/app(\/|\?|$)/.test(next) && !next.includes("//") && !next.includes("\\")) return next;
-  return routes.today(locale);
+  return routes.home(locale);
 }
 
+/**
+ * Every screen at the web's address (apps/web `lib/routes.ts`, `shopRoutes`): the shop in the path, the state in the query (D8).
+ * `home` is the app's first screen: it opens the member's shop. The profile is the account's, not a shop's.
+ */
 export const routes = {
-  today: (locale: Locale, date?: string) => `${app(locale)}${query({ date })}`,
-  calendar: (locale: Locale, month?: string) => `${app(locale, "calendar")}${query({ month })}`,
-  invoices: (locale: Locale) => app(locale, "invoices"),
-  newInvoice: (locale: Locale, client?: string) => `${app(locale, "invoices", "new")}${query({ client })}`,
-  clients: (locale: Locale, search?: string) => `${app(locale, "clients")}${query({ q: search })}`,
-  settings: (locale: Locale) => app(locale, "settings"),
+  home: (locale: Locale) => app(locale),
+  today: (locale: Locale, shop: string, day?: string) => `${app(locale, shop, "aujourdhui")}${query({ day })}`,
+  clients: (locale: Locale, shop: string, search?: string) => `${app(locale, shop, "clients")}${query({ q: search })}`,
+  invoices: (locale: Locale, shop: string) => app(locale, shop, "invoices"),
+  newInvoice: (locale: Locale, shop: string, client?: string) => `${app(locale, shop, "invoices", "new")}${query({ client })}`,
+  books: (locale: Locale, shop: string, period?: string) => `${app(locale, shop, "books")}${query({ period })}`,
+  boutique: (locale: Locale, shop: string) => app(locale, shop, "boutique"),
+  profile: (locale: Locale) => app(locale, "profile"),
 } as const;
+
+/** The five places of the shop, in the web rail's order and words (D8): the tab bar is built from it. */
+export const TABS = [
+  { name: "aujourdhui", label: "tabs.today", href: (locale: Locale, shop: string) => routes.today(locale, shop) },
+  { name: "clients", label: "tabs.clients", href: (locale: Locale, shop: string) => routes.clients(locale, shop) },
+  { name: "invoices", label: "tabs.invoices", href: (locale: Locale, shop: string) => routes.invoices(locale, shop) },
+  { name: "books", label: "tabs.books", href: (locale: Locale, shop: string) => routes.books(locale, shop) },
+  { name: "boutique", label: "tabs.boutique", href: (locale: Locale, shop: string) => routes.boutique(locale, shop) },
+] as const;
+export type TabName = (typeof TABS)[number]["name"];
+
+/** The app's addresses before D8 (`/fr/app/calendar`, `/fr/app/settings`…), kept so an old link still lands somewhere true. */
+export const LEGACY = ["calendar", "clients", "invoices", "invoices/new", "settings"] as const;
+export type Legacy = (typeof LEGACY)[number];
+
+export function legacyRoute(locale: Locale, from: Legacy, shop: string): string {
+  const to: Record<Legacy, string> = {
+    calendar: routes.today(locale, shop),
+    clients: routes.clients(locale, shop),
+    invoices: routes.invoices(locale, shop),
+    "invoices/new": routes.newInvoice(locale, shop),
+    settings: routes.profile(locale),
+  };
+  return to[from];
+}

@@ -24,7 +24,7 @@ export function AppHeader({ title }: { title: string }) {
       title={title}
       size="inline"
       actions={
-        <Pressable role="button" aria-label={name ? t("account.openNamed", { name }) : t("account.open")} hitSlop={8} onPress={() => router.navigate(routes.settings(locale) as never)}>
+        <Pressable role="button" aria-label={name ? t("account.openNamed", { name }) : t("account.open")} hitSlop={8} onPress={() => router.navigate(routes.profile(locale) as never)}>
           <Avatar size="sm" defaultAvatar={{ brand: "akinaza", seed: me.data?.avatarSeed ?? me.data?.email ?? "akinaza" }} fallback={name.charAt(0).toUpperCase() || "A"} />
         </Pressable>
       }

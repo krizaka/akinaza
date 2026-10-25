@@ -1,101 +1,178 @@
 "use client";
 
+import { PlusIcon, TrashIcon } from "@krizaka/icons";
 import { Alert } from "@krizaka/ui/alert";
-import { Card } from "@krizaka/ui/card";
-import { createKrizakaForm } from "@krizaka/ui/form";
+import { Button, IconButton } from "@krizaka/ui/button";
+import { createKrizakaForm, useFormValue } from "@krizaka/ui/form";
+import { StickyAction } from "@krizaka/ui/sticky-action";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { z } from "zod";
 
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
+import { formatLongDay, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
-import { parseQuantity, QUANTITY_FIELD } from "@/lib/quantity";
+import { type DraftLine, draftPreview, draftRequestLines, type DraftService, emptyLine } from "@/lib/invoice-draft";
+import { QUANTITY_FIELD } from "@/lib/quantity";
 
 export interface InvoiceFormData {
   /** The shop's today: the date of the invoice. */
   today: string;
+  /** The shop charges the GST and the QST (a small supplier charges none). */
+  registrant: boolean;
   clients: { id: string; fullName: string; language: "fr" | "en" }[];
-  services: { id: string; nameFr: string; nameEn: string; priceCents: number }[];
+  services: DraftService[];
 }
 
-const money = (cents: number, locale: string) => new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(cents / 100);
+export interface InvoiceFormProps {
+  data: InvoiceFormData;
+  locale: "fr" | "en";
+  /** Where the form starts: the client and the lines of its address (« Facturer ce client », a finished appointment). */
+  start: { clientId: string; lines: DraftLine[]; /** The finished appointment it bills, from the address (D4: « À facturer » stops counting it). */ appointmentId?: string | null };
+}
 
-const quantity = QUANTITY_FIELD;
+/**
+ * The phone's tab bar is 3.5 rem plus the safe area (`RailNav`); the sticky total sits above it, never under it, until
+ * krizaka-ui#630 gives the rail a task mode that yields. From `lg` the total is beside the form.
+ */
+export const STICKY_CLEARS_TAB_BAR = "bottom-[calc(3.5rem+env(safe-area-inset-bottom))] md:bottom-0 pb-3 md:block lg:hidden";
+
 const invoiceForm = createKrizakaForm({
   schema: z.object({
     clientId: z.string(),
-    service1: z.string(),
-    quantity1: quantity,
-    service2: z.string(),
-    quantity2: quantity,
-    service3: z.string(),
-    quantity3: quantity,
-    customDescription: z.string().trim().max(200),
-    customPrice: z.number().int().min(0),
-    customQuantity: quantity,
+    lines: z
+      .array(z.object({ key: z.string(), serviceId: z.string(), description: z.string().trim().max(200), quantity: QUANTITY_FIELD, unitPriceCents: z.number().int().min(0) }))
+      .min(1)
+      .max(40),
   }),
-  defaultValues: { clientId: "", service1: "", quantity1: "1", service2: "", quantity2: "1", service3: "", quantity3: "1", customDescription: "", customPrice: 0, customQuantity: "1" },
+  defaultValues: { clientId: "", lines: [emptyLine("l0")] },
 });
 
+type Field = `lines[${number}].${"serviceId" | "description" | "quantity" | "unitPriceCents"}`;
+
+function Step({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
+  return (
+    <section className="flex flex-col gap-3" aria-label={title}>
+      <h2 className="flex items-baseline gap-3 text-lg font-semibold text-fg">
+        <span className="text-sm font-semibold tabular-nums text-fg-accent">{n}</span>
+        {title}
+      </h2>
+      {children}
+    </section>
+  );
+}
+
+/** The total of the lines being typed, as the server will compute it. */
+function Totals({ data }: { data: InvoiceFormData }) {
+  const { say, locale } = useSay();
+  const lines = useFormValue<DraftLine[]>("lines");
+  const totals = draftPreview(lines ?? [], data.services, { registrant: data.registrant });
+  if (!totals) return <p className="text-sm text-fg-secondary">{say("invoices.new.totalPending")}</p>;
+  const rows: [string, number][] = [
+    [say("invoiceDoc.subtotal"), totals.subtotalCents],
+    [say("invoiceDoc.gst"), totals.gstCents],
+    [say("invoiceDoc.qst"), totals.qstCents],
+  ];
+  return (
+    <dl className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 text-sm" aria-live="polite">
+      {rows.map(([term, cents]) => (
+        <div key={term} className="contents">
+          <dt className="text-fg-secondary">{term}</dt>
+          <dd className="text-right tabular-nums text-fg">{formatMoney(cents, locale)}</dd>
+        </div>
+      ))}
+      <dt className="border-t border-border-default pt-1 font-semibold text-fg">{say("invoiceDoc.total")}</dt>
+      <dd className="border-t border-border-default pt-1 text-right text-base font-bold tabular-nums text-fg">{formatMoney(totals.totalCents, locale)}</dd>
+    </dl>
+  );
+}
+
 /**
- * « New invoice »: a client, up to three services of the shop with their quantities (hours, days, packages)
- * and one free line with its own price. The language, the date and the terms are the defaults (the client's language, today, the shop's terms). The server computes the GST and the QST once on the taxable total, to the cent,
- * and posts the ledger in the same transaction; the form only says what to bill.
+ * « Nouvelle facture » (D3): 01 Pour qui ? (a client file, or none), 02 Quoi ? (lines added and removed: a service of the shop
+ * at its price, or free words with their own price, each with its quantity to the hundredth), 03 Quand ? (today, under the
+ * shop's terms; the number is given at issue). The total stays in view — beside the form on a desktop, in a sticky action on a
+ * phone — and is the server's own computation (`draftPreview`). Issued, it opens the invoice, whose next primary is « Envoyer ».
  */
-export function InvoiceForm({ data, locale: base }: { data: InvoiceFormData; locale: "fr" | "en" }) {
+export function InvoiceForm({ data, locale: base, start }: InvoiceFormProps) {
   const { say, locale } = useSay();
   const call = useCall();
   const router = useRouter();
   const routes = useShopRoutes();
   const [needLine, setNeedLine] = useState(false);
+  const keys = useRef(start.lines.length);
   const form = invoiceForm.useForm({
     i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
-    defaultValues: { clientId: "", service1: "", quantity1: "1", service2: "", quantity2: "1", service3: "", quantity3: "1", customDescription: "", customPrice: 0, customQuantity: "1" },
+    defaultValues: { clientId: start.clientId, lines: start.lines },
     onSubmit: async (values) => {
-      const lines: Record<string, unknown>[] = [];
-      for (const n of [1, 2, 3] as const) {
-        const serviceId = values[`service${n}`];
-        const qty = parseQuantity(values[`quantity${n}`]);
-        if (serviceId && qty !== null) lines.push({ serviceId, quantity: qty });
-      }
-      const customQuantity = parseQuantity(values.customQuantity);
-      if (values.customDescription.trim() && customQuantity !== null) lines.push({ description: values.customDescription.trim(), quantity: customQuantity, unitPriceCents: values.customPrice });
+      const lines = draftRequestLines(values.lines);
       setNeedLine(lines.length === 0);
       if (lines.length === 0) return;
       // The invoice is in the client's language (the shop's page language without a client), dated today, under the shop's terms.
       const language = data.clients.find((c) => c.id === values.clientId)?.language ?? base;
-      const done = await call.run<{ id: string }>("/api/walker/invoices", { json: { clientId: values.clientId || null, language, issuedOn: data.today, lines } }, { refresh: false });
-      if (done !== null) router.push(routes.invoice(done.id));
+      const done = await call.run<{ id: string }>("/api/walker/invoices", { json: { clientId: values.clientId || null, appointmentId: start.appointmentId ?? null, language, issuedOn: data.today, lines } }, { refresh: false });
+      if (done !== null) router.push(`${routes.invoice(done.id)}?issued=1`);
     },
   });
-  const serviceOptions = [{ value: "", label: say("invoices.new.noService") }, ...data.services.map((s) => ({ value: s.id, label: `${locale === "fr" ? s.nameFr : s.nameEn} · ${money(s.priceCents, locale)}` }))];
+  const name = (s: { nameFr: string; nameEn: string }) => ({ fr: s.nameFr, en: s.nameEn })[locale];
+  const serviceOptions = [...data.services.map((s) => ({ value: s.id, label: `${name(s)} · ${formatMoney(s.priceCents, locale)}` })), { value: "", label: say("invoices.new.freeLine") }];
+  const submit = (
+    <form.Submit size="lg" variant="gradient" className="w-full font-bold" data-primary>
+      {say("invoices.new.submit")}
+    </form.Submit>
+  );
   return (
-    <Card.Root className="p-4">
-      <h2 className="mb-3 font-display text-base font-bold text-fg">{say("invoices.new.title")}</h2>
-      <form.Form aria-label={say("invoices.new.title")} className="grid gap-3 sm:grid-cols-2">
-        <form.Select name="clientId" className="sm:col-span-2" label={say("invoices.new.client")} options={[{ value: "", label: say("invoices.new.noClient") }, ...data.clients.map((c) => ({ value: c.id, label: c.fullName }))]} />
-        {([1, 2, 3] as const).map((n) => (
-          <div key={n} className="grid gap-3 sm:col-span-2 sm:grid-cols-[1fr_8rem]">
-            <form.Select name={`service${n}`} label={say("invoices.new.service", { n })} options={serviceOptions} />
-            <form.TextField name={`quantity${n}`} label={say("invoices.new.quantity")} inputMode="decimal" />
-          </div>
-        ))}
-        <div className="grid gap-3 sm:col-span-2 sm:grid-cols-[1fr_10rem_8rem]">
-          <form.TextField name="customDescription" label={say("invoices.new.customDescription")} />
-          <form.Money name="customPrice" label={say("invoices.new.customPrice")} currency="CAD" />
-          <form.TextField name="customQuantity" label={say("invoices.new.customQuantity")} inputMode="decimal" />
-        </div>
-        <div className="flex flex-col gap-3 sm:col-span-2">
-          {needLine ? <Alert tone="danger">{say("invoices.new.needLine")}</Alert> : null}
-          {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
-          <div>
-            <form.Submit size="md" variant="primary" className="w-full sm:w-auto">
-              {say("invoices.new.submit")}
-            </form.Submit>
-          </div>
-        </div>
-      </form.Form>
-    </Card.Root>
+    <form.Form aria-label={say("invoices.new.title")} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
+      <div className="flex min-w-0 flex-col gap-8">
+        <Step n="01" title={say("invoices.new.steps.who")}>
+          <form.Select name="clientId" label={say("invoices.new.client")} options={[{ value: "", label: say("invoices.new.noClient") }, ...data.clients.map((c) => ({ value: c.id, label: c.fullName }))]} />
+        </Step>
+        <Step n="02" title={say("invoices.new.steps.what")}>
+          <form.FieldArray name="lines">
+            {(array) => (
+              <div className="flex flex-col gap-4">
+                <ol className="flex flex-col gap-4">
+                  {(array.items as DraftLine[]).map((line, i) => (
+                    <li key={line.key} className="grid gap-3 border-b border-border-subtle pb-4 sm:grid-cols-[minmax(0,1fr)_7rem_auto] sm:items-end" aria-label={say("invoices.new.line", { n: i + 1 })}>
+                      <form.Select name={array.fieldName(i, "serviceId") as Field} label={say("invoices.new.service")} options={serviceOptions} />
+                      <form.TextField name={array.fieldName(i, "quantity") as Field} label={say("invoices.new.quantity")} inputMode="decimal" />
+                      <IconButton type="button" variant="ghost" label={say("invoices.new.removeLine", { n: i + 1 })} disabled={array.items.length === 1} onClick={() => array.remove(i)}>
+                        <TrashIcon size={18} aria-hidden />
+                      </IconButton>
+                      {line.serviceId === "" ? (
+                        <div className="grid gap-3 sm:col-span-3 sm:grid-cols-[minmax(0,1fr)_10rem]">
+                          <form.TextField name={array.fieldName(i, "description") as Field} label={say("invoices.new.description")} />
+                          <form.Money name={array.fieldName(i, "unitPriceCents") as Field} label={say("invoices.new.unitPrice")} currency="CAD" />
+                        </div>
+                      ) : null}
+                    </li>
+                  ))}
+                </ol>
+                <div>
+                  <Button type="button" variant="secondary" size="md" onClick={() => array.push(emptyLine(`l${keys.current++}`, data.services[0]?.id ?? ""))}>
+                    <PlusIcon size={16} aria-hidden />
+                    {say("invoices.new.addLine")}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </form.FieldArray>
+        </Step>
+        <Step n="03" title={say("invoices.new.steps.when")}>
+          <p className="max-w-prose text-fg-secondary">{say("invoices.new.when", { date: formatLongDay(data.today, locale) })}</p>
+        </Step>
+        {needLine ? <Alert tone="danger">{say("invoices.new.needLine")}</Alert> : null}
+        {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
+      </div>
+      <aside className="hidden flex-col gap-4 rounded-lg border border-border-default bg-surface-1 p-5 lg:sticky lg:top-20 lg:flex" aria-label={say("invoices.new.totals")} data-testid="invoice-aside">
+        <h2 className="text-base font-semibold text-fg">{say("invoices.new.totals")}</h2>
+        <Totals data={data} />
+        {submit}
+      </aside>
+      <StickyAction className={STICKY_CLEARS_TAB_BAR} data-testid="invoice-sticky">
+        <Totals data={data} />
+        {submit}
+      </StickyAction>
+    </form.Form>
   );
 }

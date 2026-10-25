@@ -255,6 +255,14 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: the catalogue grows with every version; an owner may stay on an old look for a long time.
 - **Signal we are wrong**: most shops never update, or ask why their page looks older than the demo.
 
+## The hero follows the session, the 404 is ours (krizaka/akinaza#285, #299)
+
+- **Decision**: the hero's action is the session's: signed out « Try the demo shop » with « Sign in » beside it; signed in « Open my shop » into the owner's app. The public bar shows the account menu alone when signed in (no second « Open the app »), never an e-mail. « Talk to us » leaves the public pages; contact lives in the footer. An unknown address answers a branded 404 in the language of its address (`global-not-found`), and the sign-in offers « Forgot your password? ».
+- **Problem**: a signed-in owner was pitched to a stranger (« Talk to us »), the bar repeated « Open the app » beside the avatar, the sign-in never showed the reset link, and an unknown address got Next's default 404.
+- **Principle**: the app first, never a sales call (krizaka-ui#505); one way in per state.
+- **Refused**: a client-side swap of the action (it would flash the signed-out one); a second « Open the app » in the bar.
+- **Cost**: the home is rendered per request (it reads the session); the 404 reads the language from the address through a header the proxy sets.
+- **Signal we are wrong**: signed-in owners do not use the hero's « Open my shop », or the demo shop's visitors leave at the hero.
 ## The frame: where you work on the rail, who you are under the avatar (UX review 2026-10, K1)
 
 The signed-in space is the family's frame (`RailNav` + `AppHeader` of @krizaka/ui, `components/app/ShopFrame.tsx`): a rail of
@@ -267,3 +275,271 @@ and the account menu (Mon compte · Langue · Thème · Se déconnecter). The ac
 count, or that scrolls sideways down to 360 px. « Équipe », the languages and the invoice e-mails join « Boutique » as sections of
 its hub (K4); until then « Boutique » opens the page editor (or the team, for who may only see it) and the editor links the team.
 Decided in docs/ux/2026-10-full-review.md § 4.1 (validated on #289); the administration keeps `AppFrame`.
+
+## Boutique: one hub for what configures the shop (UX review 2026-10, K4)
+
+« Ma page boutique », the languages, the team and the invoice e-mails are sections of **Boutique**, one hub on `SettingsLayout`
+(`components/boutique/BoutiqueHub.tsx`, `lib/boutique.ts`): the shop's name, its status and its public address on top, then the
+sections grouped — « Votre page » (the seven sections of the page, one save each, and the languages) and « Votre activité » (the
+team, the invoice e-mails, the shops). Each section is its own address (`/app/<shop>/boutique/<section>`, the page's section in
+`?tab=`); the navigation shows only what the role may open, from `packages/db/src/roles.ts` (`BOUTIQUE_NEEDS`): an owner sees all
+of it, a manager the team, a staff member no Boutique at all. The seven sections are no longer a row of tabs. The invoice e-mail
+defaults leave the invoices list for the hub (the list keeps the default message it sends with). Old addresses (`/shop`,
+`/shop/languages`, `/team`) answer 308 to their section. « Nouvelle facture » yields on the hub and on an invoice's own screens
+(detail, correction, new): those keep their own primary action (one primary per screen).
+
+## The client space: « Mes réservations », opening a shop as an action (UX review 2026-10, K7)
+
+Someone who works in no shop (a client) gets the same frame around **their own** records: the rail has one place, « Mes
+réservations » (`CLIENT_PLACES`), and the account stays under the avatar like everyone's (« Mon compte » is never in both, K1). No
+« boutique » place and no « Votre boutique » words: « Ouvrir une boutique » is a secondary action of the page header, leading to
+`/app/open-shop` (the « Ajouter une boutique » form in a client's words; the shop starts unpublished). The page lists, per shop the
+client deals with, the bookings (upcoming, past, the reports), the invoices (at the account's own address `/app/invoices/<id>`),
+the requests and the Loi 25 card. One primary per screen: « Réserver chez … » of the first shop with a page; the others are
+secondary. Empty, it is the `EmptyState` with the beaver (asked at 120 px; the block draws its icon slot at 24 px until krizaka-ui#623) and what will fill it. Another client's ids answer 404 on every
+`/api/me/**` route (`app/api/client-isolation.integration.test.ts`), including a booking that names another file's dog (it was a
+403 that confirmed the dog exists).
+
+## The demo's client is a service business, never a café (Phase 2, D0)
+
+The Krizaka persona's first client was « Café du Parc inc. (démo) »: a business Akinaza does not serve (a café, a restaurant, a
+bar or a bakery bills through a sales recording module certified by Revenu Québec, AGENTS § 2). It is now **« Studio Lumen inc.
+(démo) »**, the client of the direction's mockups (`docs/design/2026-10-direction.md`). A deployment already seeded is renamed in
+place by the idempotent seed (`renameFormerClients`, `KRIZAKA_RENAMED_CLIENTS`): the same account, client file and invoices, so no
+invoice number changes. `packages/db/src/demo-names.test.ts` refuses a café, restaurant, bar, bistro, brasserie or bakery (FR/EN)
+among the shops and clients of every demo seed (`seed-krizaka`, `seed-walker`, `demo-shops`).
+
+## The B2 frame: search with ⌘K, the rail's words and counts, one primary per screen (Phase 2, D1b, #328)
+
+- **Decision**: the header is the family's top bar as @krizaka/ui ships it today (`AppHeader` + `CommandDialog` + `Kbd` +
+  `LanguageSwitch`): « Rechercher un client, une facture… » with ⌘K (Ctrl+K) opens a palette over the shop's own client files and
+  invoices (`/api/walker/search`, `searchShop`: the shop is the guard's, another shop's id is a 404) and the actions (« Nouvelle
+  facture », the five places); Enter opens, Escape closes and gives the focus back. On a phone the search is the magnifier alone and
+  the language stays in the account menu. The rail shows its words on a desktop (`defaultExpanded`) and two counts said in words:
+  the day's appointments on Aujourd'hui, the invoices still to collect on Factures (`frameCounts`, the list's `invoiceState`); a
+  zero draws nothing. **One primary per screen**, the hero primary (`Button variant="gradient"`): the header's « Nouvelle facture »
+  on the lists; on **Aujourd'hui the next appointment** (« Prochain : Studio Lumen inc. à 10 h 00 », opening its sheet), « Nouvelle
+  facture » there only when nobody comes next; an invoice's screens keep « Envoyer la facture » or their submit. `screenPrimary`
+  decides, a test lists every owner route, and the crawl (`check-hydration.mjs`) refuses two `[data-primary]` on any page and none
+  on the day, the lists and an invoice.
+- **Problem**: no way to reach a client or an invoice without walking the lists; icons alone on a desktop rail; Today's primary was
+  « Nouvelle facture » while the owner's next move is the next client.
+- **Principle**: recognition over recall (Nielsen) and one obvious next step per screen.
+- **Refused**: a local top bar or palette (krizaka-ui#640 and #647 extract the family's; until then Akinaza composes the released
+  pieces); a notifications bell with a count before Akinaza sends anything to count (krizaka-ts#60); a messages slot without
+  conversations; a « Raccourcis » group on the rail before `RailNav` has groups (krizaka-ui#647).
+- **Cost**: one more query per page for the counts; the search reads at most five of each kind (the list is « see all »).
+- **Signal we are wrong**: owners keep opening Clients to find one by name, or ignore the next-appointment action.
+
+## Factures and an invoice: French chrome, fixed columns, the derived state, DetailLayout (Phase 2, D2, #329, review K3)
+
+- **Decision**: the list speaks the screen's language to the last word: every label of @krizaka/ui's `DataTable` comes from the
+  messages (`lib/table-labels.ts`, `table.*`) until krizaka-ui#595 localises them. The number column is narrow (132 px) and the
+  client wide (240 px at least); the « Mois » column is gone (the issue date says it, and the state is the filter that matters);
+  `density="compact"` on a desktop. The state is derived, never set: `invoiceState` (due, partial, overdue, paid, credit,
+  cancelled) as a chip with its tone, and **the overdue first**, then the newest (`byUrgency`). An invoice is a `DetailLayout`:
+  its **number is the `h1`**, the state chip beside it (the same `invoiceState`, now that `invoiceDetail` reads what was received),
+  « **Envoyer la facture** » the one primary (its form in a dialog), « Modifier » and « Imprimer » secondary; the aside holds the
+  deliveries and the chain. Money is integer cents through @krizaka/intl's `formatMoney` everywhere (`lib/format.ts`,
+  `InvoiceDocument`): a float throws.
+- **Problem**: a French list printed « Filter the table », « 5 rows », « Columns »; the number was as wide as the client; the
+  overdue invoices were mixed with the paid ones; the invoice page had « Facture » as its title, its actions above the document
+  and the send form unfolding in the page.
+- **Principle**: match between the system and the real world, and recognition over recall (Nielsen): the state the owner acts
+  on comes first and reads the same on the list and the page.
+- **Refused**: a status the owner moves by hand (it comes from the ledger, § 3 of the direction); a local table translation in
+  @krizaka/ui's place (the labels are passed through its own `labels` prop).
+- **Cost**: twenty-six table messages to keep in two languages until krizaka-ui#595 lands; the list no longer sorts by issue date
+  by default (overdue first), the header still sorts.
+- **Signal we are wrong**: owners sort by date first every time, or look for the month filter.
+
+## Nouvelle facture: lines added and removed, the total in view, numbered steps (Phase 2, D3, #330)
+
+- **Decision**: the form asks in three numbered steps — **01 Pour qui ?** (a client file, or none), **02 Quoi ?** (lines added
+  and removed: a service of the shop at its price, or « Autre » with its words and price; a quantity to the hundredth, typed
+  with a comma or a point), **03 Quand ?** (today, under the shop's terms; the number is given at issue). The total is in view:
+  beside the form from `lg` (a 20 rem aside), in a `StickyAction` above the phone's tab bar below it — and it is **the server's
+  own computation** (`draftPreview` calls `invoiceTotals` of @akinaza/core: GST and QST once on the taxable total, half away from
+  zero), in fr-CA or en-CA money from integer cents. The address prefills it: « Facturer ce client » on a client's file
+  (`?client=`) and « Facturer ce rendez-vous » on a finished appointment's sheet (`?client=&service=&quantity=1`); a client or
+  a service of another shop answers 404. Issued, the invoice opens with « Facture KZ-… émise » and the beaver (`success`), and
+  « Envoyer la facture » is its primary (D2).
+- **Problem**: three fixed service slots and one « other line », no total before issuing, the date and the number unsaid, and
+  no way to bill the client or the appointment one was looking at.
+- **Principle**: visibility of system status and error prevention (Nielsen): the owner sees what the client will pay before it
+  is in the ledger, and the total cannot differ from the issued one.
+- **Refused**: a local `LineItems` / `TotalsSummary` (krizaka-ui#629 brings them; the lines are the form's `FieldArray` until
+  then); a client-side tax rule of its own; editing the date or the number here.
+- **Cost**: the sticky action clears the tab bar by its known height (`STICKY_CLEARS_TAB_BAR`, 3.5 rem plus the safe area)
+  until krizaka-ui#630 gives the rail a task mode; the submit is drawn twice (aside, sticky), one per width, and the crawl
+  counts the primary in view.
+- **Signal we are wrong**: owners issue then correct right away (#207), or abandon the form on a phone.
+
+## The product register: the sans, the h1 at 700, tabular digits (Phase 2, D1)
+
+`/app` draws in Krizaka UI's product register (direction § 2.4): the sans for everything, the system code mono only for
+identifiers (invoice numbers, FPZ-500 line numbers, tax numbers, links), tabular digits on every amount and time. The faces come
+from @krizaka/ui's product surface (`data-surface="product"` on the root; its `blocks.css` sets display to the sans and mono to
+`ui-monospace`), until krizaka-ui#626 moves them into the brand tokens: no Young Serif, Courier Prime or Cahier pen is loaded by
+`/app` (measured on Factures, an invoice, Livres and Aujourd'hui). The page `h1` is at 700 — `PageHeader` draws 900 — through one
+local rule in `app/globals.css`, to remove with krizaka-ui#655. Amounts that were in the mono (the invoice's lines and totals,
+Livres' lines, an appointment's price, the paid and balance of the public invoice) are in the sans with `tabular-nums`; the tables'
+number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `components/app/product-register.test.tsx`.
+
+## Aujourd'hui on the home grammar: the headline, the binder, two columns (Phase 2, D4, #331)
+
+- **Decision**: the page's `h1` is **the headline**, true to the day (`dayHeadline`): who is with you now and until when, else who
+  comes next and at what time, else « Journée terminée », else « Rien de prévu » — a walk-in said as such, a dog walker's day read
+  by its walks, another day counted. « Aujourd'hui » is the eyebrow; the next appointment is the one primary under it (D1b). The
+  date is on the right (« Semaine 43 · vendredi 23 octobre » with ‹ ›); the strip of days is gone. **« Le classeur »** under the
+  heading: Rendez-vous · À facturer · À encaisser · Cette semaine, with their counts. Two columns on a desktop — the agenda; then
+  **Accès rapide** (Nouvelle facture, Facturer the oldest finished appointment no invoice names yet, Relancer the invoice to chase,
+  Ma page publique), **L'activité** (one row of three figures — facturé, encaissé, rendez-vous faits — with a `Sparkline` each and
+  the 7 / 30 / 90 j switch in the address, `?period=30`) and **À encaisser** (what is owed, a `Meter` of the overdue part, the
+  beaver when nothing is late). One column on a phone, the agenda first. Every figure comes from the bookings, the invoices and
+  the payments (`todayBoard`, integer cents, the shop's calendar days). A day whose figures are all zero shows only its empty state.
+  An invoice now names the appointment it bills (`appointmentId`, refused for another shop's), so « À facturer » goes down when it
+  is billed.
+- **Problem**: the day opened on « Aujourd'hui » and a strip of fourteen days; the figures said nothing about money still owed;
+  the last three invoices beside the agenda (#218) did not say what to do next.
+- **Principle**: visibility of system status and recognition over recall (Nielsen): the first sentence is the day's state, the
+  side column the next moves.
+- **Refused**: a full chart on Aujourd'hui (it belongs to Livres › Rapports, #219); a sixth figure row; « Le mot du jour » as a
+  card (#317 makes it a header action).
+- **Cost**: the « Invoice quick access » card of #218 is replaced by « Accès rapide » and « À encaisser » (its component and test
+  are removed); the binder is chips until krizaka-ui#648 ships the binder tabs; `@krizaka/ui` moves to 3.54 and `@krizaka/charts`
+  0.6 joins for the sparklines.
+- **Signal we are wrong**: owners still open Factures first thing in the morning, or never change the period.
+
+## Clients on the catalogue, a client's file on Show · detail with signed notes (Phase 2, D5, #332, review K3b)
+
+- **Decision**: Clients opens on a **plan strip** — how many clients, what they owe, a `Meter` of who is up to date — then the
+  search (name, e-mail or phone, accents ignored) and the filter chips **Tous · Reste dû · À venir**, each with its count on the
+  whole shop; both are in the address (`?q=&filter=`). Each row says the client's state (« Reste dû 31,74 $ » or « À jour ») and
+  carries « Facturer »; selected rows can be exported (CSV) — tags and the other bulk actions wait for D10 (krizaka-ts#89). A file
+  is a `DetailLayout`: the name as the `h1` with the avatar and the state, the contact and « client depuis » on one line,
+  « Facturer ce client »; the binder's sections **Résumé · Factures · Visites · Notes** in the address (`?tab=`), chips until
+  krizaka-ui#648; each invoice wears the list's derived state. **Signed notes** (`client_notes`, the shop's own): the words, the
+  author's name and the day on one line, newest first, « Ajouter une note » in the side column (under the content on a phone);
+  erasing the client (Loi 25) deletes them.
+- **Problem**: a client was a row with spent and visits; nothing said who owes, the file stacked every section, and a note was one
+  free text with no author or date.
+- **Principle**: recognition over recall and visibility of system status (Nielsen); a note is accountable when it is signed.
+- **Refused**: a profile banner drawn here (krizaka-ui#650 extracts Orochia's); tags before D10; editing or deleting a note (a
+  note is kept as written; a new note corrects it).
+- **Cost**: one table and its migration (`0032_client_notes`); the old single « notes » field stays read-only in Résumé.
+- **Signal we are wrong**: owners keep their notes elsewhere, or ask to edit a note.
+
+## Every owner screen tells its three states: loading, empty, error (Phase 2, D6, #333)
+
+- **Decision**: **loading** — a `loading.tsx` on Aujourd'hui, Clients, a client, Factures, an invoice and Livres draws the page's
+  own boxes (`PageSkeleton`: the day's heading, binder and two columns; a list's heading, strip, filters and rows; a file's
+  header and sections), `aria-busy` and named, never a full-page spinner; the crawl refuses a layout shift of 0.01 or more on the
+  day, Clients and Factures (`shiftProblem` in `check-hydration.mjs`). **Empty** — the beaver at 120 px, what will fill the
+  screen and one way forward (Factures: « Nouvelle facture »; Clients; the day's agenda). **Error** — in place: a section that
+  fails (`settle`) is an `Alert` with « Réessayer » (`SectionError`, the page read again) while the rest renders — Aujourd'hui
+  keeps its agenda when its board fails. **Boutique** names the screen in its one `h1` (« Boutique »); each section's title is an
+  `h2`.
+- **Problem**: a blank screen while the data streamed, a sentence where a list was empty, a failed query blanking the whole page,
+  and Boutique's section title standing as the page's `h1`.
+- **Principle**: visibility of system status and help users recover from errors (Nielsen).
+- **Refused**: a spinner over the page; an error's technical words on screen (`settle` keeps them in the server's log).
+- **Cost**: the skeletons follow the pages' structure by hand: a page that changes its boxes changes its skeleton.
+- **Signal we are wrong**: owners reload by hand after a failed section, or the crawl reports a shift.
+
+## The client space: invoices as rows, the request form folded, one « Mes données » (Phase 2, D7, #334)
+
+- **Decision**: each shop's **invoices are rows** (`List` of @krizaka/ui): the number, the day it was issued, its state derived
+  from the ledger in the owner list's words and tone (`invoiceState`, `STATE_TONE`: Payée, En retard, À payer…) and its amount,
+  the whole row opening the invoice. **The request form is folded** behind « Garder une demande » (a secondary that opens it in
+  place, closed again once the request is kept), and « Reprendre » is a secondary: the screen keeps its one primary (« Réserver chez
+  … » at the first shop). **« Mes données (Loi 25) » appears once, at the end**: a row per shop with its download, then
+  « Effacer un dossier » in a block of its own — the danger is never beside the copy; each erasure speaks its shop's vocabulary.
+- **Problem**: ten raw links (« Ouvrir la facture KZ-00022 · 310,43 $ ») with no state; an open form and a Loi 25 card per shop,
+  the erase button beside the download; « Reprendre » a second primary.
+- **Principle**: recognition rather than recall (the state on the row), progressive disclosure (the form on demand), error
+  prevention (the irreversible action apart from the frequent one).
+- **Refused**: a `DataTable` here (a client reads three to ten invoices, no filter or column to choose); a confirmation dialog for
+  the download.
+- **Cost**: the client's invoice rows read the payments and the superseding notes (`clientInvoices`), one sub-query each.
+- **Signal we are wrong**: clients write to the shop to ask whether an invoice is paid, or erase a file while looking for the copy.
+
+## The Mac menu is the rail (Phase 2, D9, #336)
+
+- **Decision**: the « Aller » menu lists the web rail's five places, in its order and words, in the Mac's language: ⌘1 Aujourd'hui ·
+  ⌘2 Clients · ⌘3 Factures · ⌘4 Livres · ⌘5 Boutique (Today · Clients · Invoices · Books · Shop). Each opens the web's address of the
+  shop on screen — Boutique is `/boutique`, the hub — else the web's short address. A test of the web reads the Mac's table and
+  refuses an address that is not a live page (`lib/app-addresses.test.ts`). The point of sale of #79 is out: Akinaza serves
+  service businesses, the POS stays a stub.
+- **Problem**: the menu kept the order of an older rail (Factures before Clients) and the word « Commerce »; ⌘5 opened
+  `/fr/app/<shop>/shop`, the address « Ma page boutique » had before K4, kept only as a redirect.
+- **Principle**: consistency (the same five places, the same order and the same digits on every surface).
+- **Refused**: a menu of its own for the Mac; a countertop/POS mode (restaurants, cafés and bars are excluded by law, AGENTS § 2).
+- **Cost**: a web test that reads a Rust table.
+- **Signal we are wrong**: owners press ⌘3 for Clients by habit of the old menu.
+
+## Motion in the product register: a changed row washes once (Phase 2, D11, #338)
+
+- **Decision**: on Factures, a row whose state, payments or amount changed since the page's previous read — a payment recorded
+  here or by someone else, a credit note — **washes once** (`data-kz-arrive` in the row, `data-kz-arrival="flash"` on the list:
+  @krizaka/ui motion.css, an accent that fades). The page's arrival washes nothing (`lib/wash.ts`: the first read is the
+  reference). The control that succeeded **rings once** (`data-kz-status="success"`): « Commencer » / « Terminer » on Aujourd'hui,
+  « Envoyer la facture ». Under reduced motion nothing moves and the changed row keeps a **static marker**, an inset accent edge
+  (the one local motion rule, until krizaka-ui#680). Only a background and a ring animate: no layout property (test).
+- **Problem**: after an action or a re-read, nothing said which row had changed; the eye compared the list by itself.
+- **Principle**: visibility of system status, with motion that explains a change and never decorates an arrival.
+- **Refused**: animating every row on arrival; a toast per change; a wash on Aujourd'hui's agenda by a copy of `Agenda` (it waits
+  for krizaka-ui#680, which lets the row carry the marker); the bulk-action wash before D10 (#337, blocked on krizaka-ts#89).
+- **Cost**: the previous read's signatures kept per list (React state); one CSS rule to remove with krizaka-ui#680.
+- **Signal we are wrong**: owners miss a change that washed while they looked away (then a persistent marker), or find the wash
+  distracting on a list that re-reads often.
+
+## The phone app: the web's five places at the web's addresses (Phase 2, D8, #335)
+
+- **Decision**: the tab bar is the web rail — **Aujourd'hui · Clients · Factures · Livres · Boutique**, in its order, words and
+  icons (`TABS` in `src/domain/links.ts`). Every screen lives at the web's address of the shop (`/fr/app/<shop>/aujourdhui?day=`,
+  `/clients?q=`, `/invoices/new?client=`, `/books?period=`, `/boutique`), so a link opens the same place on both; every call names
+  the shop (`?shopId=`) and every cache key carries it. **The calendar folds into Aujourd'hui** as a two-week `DayStrip` with the
+  days that have appointments marked; **the settings move under the avatar** (`/fr/app/profile`, the account's). **Livres** reads
+  the period's GST/QST nets from a new `GET /api/walker/books` (prepared, never filed); **Boutique** shows the shop, its tax status
+  and its services, the long forms staying on the web. Every tab tells its three states (`QueryStates`: the beaver while reading,
+  the error in place with « Réessayer », the empty state with what will fill it). The old addresses still land somewhere true.
+- **Problem**: five tabs that were not the web's (Calendrier and Réglages as places, no Livres, no Boutique), short addresses
+  without the shop, an error as a red sentence over an empty list.
+- **Principle**: consistency and standards (one product, one map), recognition rather than recall.
+- **Refused**: a native Boutique editor (the page, team and hours are a desk's forms); a copy of `LineItems` or `Agenda` here —
+  the quick invoice and the day wait for krizaka-ui#629 (native `LineItems`/`TotalsSummary`) and #628 (native `Agenda`).
+- **Cost**: the day's answer names its shop and time zone; one more walker route.
+- **Signal we are wrong**: owners look for the calendar as a tab, or open the web for the books on their phone.
+
+## D10 — The shop organises its clients and invoices (akinaza#337)
+
+- **Decision**: tags belong to **the shop** (owner and manager write them, a client never sees them), with a colour marker of the closed
+  palette (a dot, never the only signal: the name is always there). A shop starts with the administrator's default tag set for its
+  trade and language, seeded once (a deleted tag does not come back). **The binder's dividers are the tags** (`Tabs.Nav
+  variant="binder"`): « Tous » and one divider per tag with its count, the address is the state (`?tags=`), so a divider is a link and
+  back/forward and a shared link keep it. **Saved views** are links too — the administrator's (« À encaisser », « En retard »,
+  « Payées »), the shop's shared ones and mine — and « Enregistrer cette vue » appears when the filters in force are not one of them.
+  **The selection bar tags and untags** (at most 200, one call, one audit line per row) next to the export. The client's file opens on
+  the **profile banner** and carries its tags beside the contact, editable by those who write tags.
+- **Problem**: a growing list of clients and invoices with no way to group, find or triage them, and no way to come back to « the
+  late ones » in one tap.
+- **Principle**: the URL is the state; recognition rather than recall; the colour is never the only signal.
+- **Refused**: **a bulk status on invoices** (and any hand-set status): an invoice's state is derived from the ledger (paid, partial,
+  overdue…), so « mark as paid » would lie — a payment is recorded as a payment. A tag colour picked freely (hex): a closed palette
+  keeps both themes legible. Per-user private tags: a shop's vocabulary is shared.
+- **Cost**: local wrappers (`TagChip`, the views bar, the selection tags) until krizaka-ui#627 and #690 ship — deleted the day they land.
+- **Signal we are wrong**: owners ask for « mark as paid » on a selection, or never use a tag.
+
+## D12 — The signed-in app wears the product register 2027 (akinaza#352, ADR-006)
+
+- **Decision**: every page roots on `data-surface="product"` and loads `@krizaka/ui/blocks.css`, so the 3.55 register applies without a
+  component change: slate ink, hairlines for cards only and a visible edge on every field (`--kz-border-control`), radius 14 on cards
+  and 8 on controls, the lift on a card that is a link. Titles are Plus Jakarta Sans (`--kz-font-product-display`, from `@krizaka/fonts`
+  0.5, weights 550 to 700); the page title and a figure's value are 700 by the register, so the app keeps no `h1` rule of its own.
+  The public shop pages keep the Cahier paper (ADR-006 §4).
+- **Problem**: the app drew its own `h1` weight and read the older sans-only register.
+- **Principle**: one register for the family's products; a local override is a debt with a name.
+- **Refused**: a local `h1` rule, a copy of the font file, Google Fonts.
+- **Cost**: none in components; the files with a `rounded-*` use the radius roles and follow.
+- **Signal we are wrong**: titles read as a template in the captures; going back is one token (`--kz-font-display: var(--kz-font-sans)`).
