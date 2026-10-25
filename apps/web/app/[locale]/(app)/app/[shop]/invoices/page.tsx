@@ -2,13 +2,17 @@
 import { localDay } from "@akinaza/core";
 import { listInvoices } from "@akinaza/db";
 import { invoiceMailSettings } from "@akinaza/db";
+import { EmptyState } from "@krizaka/ui/empty-state";
+import { Mascot } from "@krizaka/ui/mascots";
 import { PageHeader } from "@krizaka/ui/page-header";
 
 import { InvoicesTable } from "@/components/app/InvoicesTable";
+import { ButtonLink } from "@/components/ButtonLink";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
+import { shopRoutes } from "@/lib/routes";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +31,16 @@ export default async function Invoices({ params }: { params: Promise<{ locale: s
       <PageHeader title={t.title} />
       <section aria-label={t.list.title} className="flex flex-col gap-3">
         {issued.length === 0 ? (
-          <p className="text-fg-secondary">{t.list.none}</p>
+          <EmptyState
+            icon={<Mascot bird="beaver" mood="empty" size={120} />}
+            title={t.list.none}
+            description={t.list.noneHint}
+            action={
+              <ButtonLink href={shopRoutes(locale, shop.id).newInvoice} variant="secondary" size="md">
+                {getDictionary(locale).console.shell.newInvoice}
+              </ButtonLink>
+            }
+          />
         ) : (
           <InvoicesTable
             today={localDay(new Date(), shop.timezone)}

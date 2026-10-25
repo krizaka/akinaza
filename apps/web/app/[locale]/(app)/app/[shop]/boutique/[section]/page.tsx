@@ -73,7 +73,7 @@ async function TeamSection({ locale, shopId }: { locale: RouteLocale; shopId: st
   const manages = SHOP_ROLES.manages[role];
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader title={getDictionary(locale).console.team.title} />
+      <PageHeader as="h2" title={getDictionary(locale).console.team.title} />
       <TeamPanel
         timeZone={shop.timezone}
         assignable={[...manages]}
@@ -92,7 +92,7 @@ async function InvoicesSection({ locale, shopId }: { locale: RouteLocale; shopId
   const mail = await invoiceMailSettings(db(), shop.id);
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader title={t.title} description={t.lead} />
+      <PageHeader as="h2" title={t.title} description={t.lead} />
       {mail ? <InvoiceMailSettings initial={mail.shop} /> : null}
     </div>
   );
@@ -106,7 +106,7 @@ async function ShopsSection({ locale, shopId }: { locale: RouteLocale; shopId: s
   const shops = await shopsOf(account.id);
   return (
     <div className="flex flex-col gap-5">
-      <PageHeader title={t.title} description={t.lead} />
+      <PageHeader as="h2" title={t.title} description={t.lead} />
       <ul className="flex flex-col divide-y divide-border-default rounded-lg border border-border-default">
         {shops.map((s) => (
           <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 p-3">

@@ -1285,7 +1285,8 @@
         "noClient": "No client file",
         "total": "Total {amount}",
         "dueOn": "Due {date}",
-        "exportFile": "invoices-{day}.csv"
+        "exportFile": "invoices-{day}.csv",
+        "noneHint": "Each invoice you issue lands here, with what is left to collect."
       },
       "back": "All invoices",
       "table": {
@@ -1964,6 +1965,14 @@
         "compact": "Page {page} of {pageCount}",
         "pageSize": "Rows per page"
       }
+    },
+    "states": {
+      "error": {
+        "title": "This part could not load.",
+        "body": "The rest of the page works. Try again in a moment."
+      },
+      "retry": "Try again",
+      "loading": "Loading…"
     }
   },
   "notFound": {

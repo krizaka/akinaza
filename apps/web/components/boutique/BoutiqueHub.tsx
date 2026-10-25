@@ -46,7 +46,7 @@ export function BoutiqueHub({ locale, shopId, allowed, current, shop, children }
       nav={groups}
       header={
         <header className="flex min-w-0 flex-col gap-2">
-          <p className="text-sm font-semibold text-fg-secondary">{say("boutique.title")}</p>
+          <h1 className="text-2xl font-bold text-fg">{say("shell.shop")}</h1>
           <p className="break-words font-display text-xl font-bold text-fg">{shop.name}</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
             <Badge tone={shop.published ? "success" : "neutral"}>{say(shop.published ? "shopSetup.published" : "shopSetup.notPublished")}</Badge>

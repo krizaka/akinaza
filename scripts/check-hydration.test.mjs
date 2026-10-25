@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { ACCOUNT_PAGES, BROWSER, detailPagesFor, firstRecord, isHydrationError, OWNER_PAGES, primaryProblem, PUBLIC_PAGES, THEMES, VIEWPORTS } from "./check-hydration.mjs";
+import { ACCOUNT_PAGES, BROWSER, detailPagesFor, firstRecord, isHydrationError, OWNER_PAGES, primaryProblem, PUBLIC_PAGES, shiftProblem, THEMES, VIEWPORTS } from "./check-hydration.mjs";
 
 describe("the hydration crawl (one rendering for the server and the browser, K0)", () => {
   it("hydrates in a visitor's browser — Montréal's clock and the product's first language — never the server's UTC", () => {
@@ -81,5 +81,15 @@ describe("one primary per screen, crawled on every owner page (D1b)", () => {
       expect(primaryProblem(path, 0), path).toBeNull();
       expect(primaryProblem(path, 2), path).toMatch(/one at most/);
     }
+  });
+});
+
+describe("no shift between loading and loaded (D6)", () => {
+  it("holds the day, Clients and Factures under a CLS of 0.01, and leaves the other pages to the browser", () => {
+    for (const path of ["/fr/app/s-1/aujourdhui", "/fr/app/s-1/clients", "/en/app/s-1/invoices"]) {
+      expect(shiftProblem(path, 0), path).toBeNull();
+      expect(shiftProblem(path, 0.02), path).toMatch(/layout shift 0\.020/);
+    }
+    expect(shiftProblem("/fr/s/pattes-saint-henri", 0.3)).toBeNull();
   });
 });

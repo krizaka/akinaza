@@ -396,3 +396,20 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
   note is kept as written; a new note corrects it).
 - **Cost**: one table and its migration (`0032_client_notes`); the old single « notes » field stays read-only in Résumé.
 - **Signal we are wrong**: owners keep their notes elsewhere, or ask to edit a note.
+
+## Every owner screen tells its three states: loading, empty, error (Phase 2, D6, #333)
+
+- **Decision**: **loading** — a `loading.tsx` on Aujourd'hui, Clients, a client, Factures, an invoice and Livres draws the page's
+  own boxes (`PageSkeleton`: the day's heading, binder and two columns; a list's heading, strip, filters and rows; a file's
+  header and sections), `aria-busy` and named, never a full-page spinner; the crawl refuses a layout shift of 0.01 or more on the
+  day, Clients and Factures (`shiftProblem` in `check-hydration.mjs`). **Empty** — the beaver at 120 px, what will fill the
+  screen and one way forward (Factures: « Nouvelle facture »; Clients; the day's agenda). **Error** — in place: a section that
+  fails (`settle`) is an `Alert` with « Réessayer » (`SectionError`, the page read again) while the rest renders — Aujourd'hui
+  keeps its agenda when its board fails. **Boutique** names the screen in its one `h1` (« Boutique »); each section's title is an
+  `h2`.
+- **Problem**: a blank screen while the data streamed, a sentence where a list was empty, a failed query blanking the whole page,
+  and Boutique's section title standing as the page's `h1`.
+- **Principle**: visibility of system status and help users recover from errors (Nielsen).
+- **Refused**: a spinner over the page; an error's technical words on screen (`settle` keeps them in the server's log).
+- **Cost**: the skeletons follow the pages' structure by hand: a page that changes its boxes changes its skeleton.
+- **Signal we are wrong**: owners reload by hand after a failed section, or the crawl reports a shift.

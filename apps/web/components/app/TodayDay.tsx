@@ -18,6 +18,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
 
+import { SectionError } from "@/components/app/SectionError";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
 import { type DayVisitView, VisitBookings, VisitProgress } from "@/components/app/VisitDetail";
@@ -72,6 +73,8 @@ export interface TodayDayProps {
   dependants: boolean;
   /** The binder, the activity and « À encaisser » (`todayBoard`), or null for who may not see the shop's money. */
   board: TodayBoard | null;
+  /** The board failed to load: the side column says so in place, the agenda renders (D6). */
+  boardFailed?: boolean;
   /** The activity's period in days (`?period=`). */
   period: BoardPeriod;
   /** The shop's public page, when it is published (« Ma page publique »). */
@@ -86,7 +89,7 @@ export interface TodayDayProps {
  * the dogs, the owners, the access notes, the start and the end, the report. The day (`?day=`) and the open appointment
  * (`?appointment=`) are in the address.
  */
-export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, allow, title, description, visits, banner, dependants, board, period, publicPageHref = null, newInvoiceHref = null }: TodayDayProps) {
+export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, allow, title, description, visits, banner, dependants, board, boardFailed = false, period, publicPageHref = null, newInvoiceHref = null }: TodayDayProps) {
   const { say, locale } = useSay();
   const router = useRouter();
   const routes = useShopRoutes();
@@ -212,6 +215,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
           />
         </Widget>
         <div className="flex min-w-0 flex-col gap-4 sm:col-span-2 xl:col-span-1">
+          {boardFailed ? <SectionError /> : null}
           {quick.length ? (
             <Widget title={say("today.quick.title")} id="quick-access">
               <ul className="flex flex-col gap-2">

@@ -13,13 +13,13 @@ import { useMemo } from "react";
 import { ClientNotes } from "@/components/app/ClientNotes";
 import { ClientAvatar } from "@/components/app/ClientsTable";
 import { AccessNotesFor, DependantsList } from "@/components/app/DependantsList";
-import { STATE_TONE } from "@/components/app/InvoicesTable";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { ButtonLink } from "@/components/ButtonLink";
 import { CLIENT_FILE_TABS, type ClientFileTab } from "@/lib/clients-view";
 import { AppointmentStatus, STATUS_TONE } from "@/lib/day";
 import { formatDate, formatMoney, formatTime } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import { STATE_TONE } from "@/lib/invoice-tone";
 import { useTableLabels } from "@/lib/table-labels";
 
 type Visit = ClientFile["visits"][number];

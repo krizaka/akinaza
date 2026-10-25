@@ -1285,7 +1285,8 @@
         "noClient": "Sans fiche client",
         "total": "Total {amount}",
         "dueOn": "Échéance le {date}",
-        "exportFile": "factures-{day}.csv"
+        "exportFile": "factures-{day}.csv",
+        "noneHint": "Chaque facture émise s’ajoute ici, avec ce qu’il reste à encaisser."
       },
       "back": "Toutes les factures",
       "table": {
@@ -1964,6 +1965,14 @@
         "compact": "Page {page} sur {pageCount}",
         "pageSize": "Lignes par page"
       }
+    },
+    "states": {
+      "error": {
+        "title": "Cette partie n’a pas pu se charger.",
+        "body": "Le reste de la page fonctionne. Réessayez dans un instant."
+      },
+      "retry": "Réessayer",
+      "loading": "Chargement…"
     }
   },
   "notFound": {
