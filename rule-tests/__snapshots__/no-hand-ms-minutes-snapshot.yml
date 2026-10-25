@@ -1,0 +1,18 @@
+id: no-hand-ms-minutes
+snapshots:
+  "const a = 5 * 60 * 1000;\n":
+    fixed: |
+      const a = minutesToMilliseconds(5);
+    labels:
+    - source: 5 * 60 * 1000
+      style: primary
+      start: 10
+      end: 23
+  "const a = <Poll interval={5 * 60 * 1000} />;\n":
+    fixed: |
+      const a = <Poll interval={minutesToMilliseconds(5)} />;
+    labels:
+    - source: 5 * 60 * 1000
+      style: primary
+      start: 26
+      end: 39

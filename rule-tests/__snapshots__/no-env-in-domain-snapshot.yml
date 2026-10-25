@@ -1,0 +1,16 @@
+id: no-env-in-domain
+snapshots:
+  "import { env } from \"../env\";\n":
+    labels:
+    - source: import { env } from "../env";
+      style: primary
+      start: 0
+      end: 29
+    - source: ../env
+      style: secondary
+      start: 21
+      end: 27
+    - source: ../env
+      style: secondary
+      start: 21
+      end: 27

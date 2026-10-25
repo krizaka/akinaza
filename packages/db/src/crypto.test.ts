@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 
 import { describe, expect, it } from "vitest";
 
+import { leaksPlaintext } from "./plaintext-leak";
 import { DataKeyError, openField, parseDataKey, sealField } from "./crypto";
 
 const key = randomBytes(32);
@@ -10,7 +11,7 @@ describe("field encryption (AES-256-GCM)", () => {
   it("seals into the v1 format and opens back; two seals of one text differ", () => {
     const sealed = sealField("Code 4821, clé sous le pot", key, "client-1");
     expect(sealed).toMatch(/^v1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/);
-    expect(sealed).not.toContain("4821");
+    expect(leaksPlaintext(sealed, "Code 4821, clé sous le pot")).toBe(false);
     expect(openField(sealed, key, "client-1")).toBe("Code 4821, clé sous le pot");
     expect(sealField("x", key, "client-1")).not.toBe(sealField("x", key, "client-1"));
   });

@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { leaksPlaintext } from "./plaintext-leak";
 import { appointments, bookings, clients, dependants, shops } from "./schema";
 import { addDayOff, addDependant, addWindow, akCode, bookVisit, cancelBooking, joinShop, listSlots, publicShop, revealAccessNotes, saveShopPage, setAccessNotes, ShopError } from "./service-shop";
 import { freshDatabase, refusal } from "./test/db";
@@ -163,8 +164,8 @@ describe("access notes (keys, door codes) are encrypted at rest", () => {
     await setAccessNotes(t.db, key, w.camille.clientId, "Code 4821, clé sous le pot de lavande");
     const [row] = await t.db.select().from(clients).where(eq(clients.id, w.camille.clientId));
     expect(row!.accessNotesEnc).toMatch(/^v1\./);
-    expect(JSON.stringify(row)).not.toContain("4821");
-    const rawDump = await t.db.execute(sql`SELECT access_notes_enc FROM clients WHERE access_notes_enc LIKE '%4821%'`);
+    expect(leaksPlaintext(JSON.stringify(row), "Code 4821, clé sous le pot de lavande")).toBe(false);
+    const rawDump = await t.db.execute(sql`SELECT access_notes_enc FROM clients WHERE position(${"Code 4821, clé sous le pot de lavande"} in access_notes_enc) > 0`);
     expect(rawDump.rows).toHaveLength(0);
     expect(await revealAccessNotes(t.db, key, w.camille.clientId)).toBe("Code 4821, clé sous le pot de lavande");
     await expect(revealAccessNotes(t.db, randomBytes(32), w.camille.clientId)).rejects.toThrow();

@@ -1,0 +1,8 @@
+id: no-get-time-arithmetic
+snapshots:
+  "const d = a.getTime() - 5000;\n":
+    labels:
+    - source: a.getTime() - 5000
+      style: primary
+      start: 10
+      end: 28

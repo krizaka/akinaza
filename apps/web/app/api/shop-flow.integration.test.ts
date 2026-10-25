@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID } from "node:crypto";
 
+import { leaksPlaintext } from "@akinaza/db/plaintext-leak";
 import { addHours } from "date-fns";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -129,7 +130,7 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     expect((await call(notes, "POST", "/api/me/access-notes", { token: client, json: { clientId: ids.clientFile, notes: "Code 4821, clé sous le pot" } })).status).toBe(200);
     const raw = await query<{ access_notes_enc: string }>("SELECT access_notes_enc FROM clients WHERE id = $1", [ids.clientFile]);
     expect(raw[0]!.access_notes_enc).toMatch(/^v1\./);
-    expect(raw[0]!.access_notes_enc).not.toContain("4821");
+    expect(leaksPlaintext(raw[0]!.access_notes_enc, "Code 4821, clé sous le pot")).toBe(false);
     // A slot an hour ahead at least: the first one offered can start before the booking reaches the server.
     const start = offered.body.slots.find((slot: { startsAt: string }) => new Date(slot.startsAt) > addHours(new Date(), 1)).startsAt;
     const hook = await call(addHook, "POST", "/api/walker/webhooks", { token: walker, json: { url: "https://hooks.example.com/bookings", events: ["booking.created"] } });

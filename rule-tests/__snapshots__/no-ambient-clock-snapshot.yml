@@ -1,0 +1,14 @@
+id: no-ambient-clock
+snapshots:
+  "const d = new Date();\n":
+    labels:
+    - source: new Date()
+      style: primary
+      start: 10
+      end: 20
+  "const t = Date.now();\n":
+    labels:
+    - source: Date.now()
+      style: primary
+      start: 10
+      end: 20
