@@ -126,8 +126,8 @@ describe("the client space (K7, docs/ux/2026-10-full-review.md H2)", () => {
 
   it("gathers the data of every shop in one « Mes données » section at the end, a row per shop, « Effacer » away from the download", () => {
     const html = render([file("Pattes de Saint-Henri", "pattes"), file("Salon Rosemont", "rosemont")]);
-    expect(html.match(/>Mes données \(Loi 25\)</g)).toHaveLength(1);
-    const section = html.slice(html.indexOf(">Mes données (Loi 25)<"));
+    expect(html.match(/>Mes données</g)).toHaveLength(1);
+    const section = html.slice(html.indexOf(">Mes données<"));
     expect(section).not.toContain("Réserver chez");
     const downloads = [...section.matchAll(/href="\/api\/me\/export\?clientId=(c-\w+)"/g)].map((m) => m[1]);
     expect(downloads).toEqual(["c-pattes", "c-rosemont"]);

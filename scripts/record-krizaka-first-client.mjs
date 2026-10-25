@@ -51,8 +51,8 @@ export const WORDS = {
       fr: "La journée d'Éric parle les mots d'un studio : des rendez-vous et des clients, pas les promenades d'un promeneur de chiens. Le type d'entreprise fixe le vocabulaire, et la page de la boutique le dit.",
     },
     clients: {
-      en: "Three business clients are on file, each with the consent that Loi 25 asks for. Akinaza only prepares taxes; it never files them.",
-      fr: "Trois clients d'affaires sont au dossier, chacun avec le consentement que la Loi 25 exige. Akinaza prépare les taxes; elle ne les produit jamais.",
+      en: "Three business clients are on file, each with a recorded consent. Akinaza only prepares taxes; it never files them.",
+      fr: "Trois clients d'affaires sont au dossier, chacun avec un consentement noté. Akinaza prépare les taxes; elle ne les produit jamais.",
     },
   },
   invoice: {
