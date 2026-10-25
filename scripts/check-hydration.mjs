@@ -51,10 +51,24 @@ export const firstRecord = (hrefs, listPath) => hrefs.find((href) => typeof href
 /** The pages a list's first record opens: the record, and for an invoice its correction screen (« Modifier », #207). */
 export const detailPagesFor = (list, href) => (list.endsWith("/invoices") ? [href, `${href}/correct`] : [href]);
 
-/** What every page owes besides one rendering: exactly one `h1` (the page's, never the frame's) and no horizontal overflow. */
-const audit = (page) => page.evaluate(() => ({ h1: document.querySelectorAll("h1").length, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth }));
-const judge = (report, { h1, overflow }) => {
+/**
+ * One primary per screen (D1b, errata 2 of docs/ux/2026-10-full-review.md): never two `[data-primary]` on a page, and exactly one on
+ * the owner's day, lists and invoice screens — the header's « Nouvelle facture » or the page's own (the next appointment, « Envoyer
+ * la facture », the form's submit). A Boutique section holds its save; a page with nothing to do may have none.
+ */
+const ONE_PRIMARY = /\/app\/[^/]+\/(aujourdhui|clients|invoices|books)(\/[^/?]+(\/correct)?)?(\?.*)?$/;
+export const primaryProblem = (path, count) => {
+  if (count > 1) return `${count} primary actions (one at most)`;
+  if (count !== 1 && ONE_PRIMARY.test(path)) return `${count} primary actions (one expected)`;
+  return null;
+};
+
+/** What every page owes besides one rendering: exactly one `h1` (the page's, never the frame's), one primary at most, no horizontal overflow. */
+const audit = (page) => page.evaluate(() => ({ h1: document.querySelectorAll("h1").length, primary: document.querySelectorAll("[data-primary]").length, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth }));
+const judge = (report, { h1, primary, overflow }, path) => {
   if (h1 !== 1) report("h1", `${h1} on the page (one expected)`);
+  const tooMany = primaryProblem(path, primary);
+  if (tooMany) report("primary", tooMany);
   if (overflow) report("overflow", "the page scrolls sideways");
 };
 
@@ -103,7 +117,7 @@ async function crawl(browser, { base, paths, theme, account, problems, visited, 
       expected404 = path.endsWith("/nope");
       const response = await page.goto(`${base}${path}`, { waitUntil: "load" });
       await page.waitForTimeout(SETTLE_MS);
-      judge(report, await audit(page));
+      judge(report, await audit(page), new URL(page.url()).pathname);
       const status = response?.status() ?? 0;
       const final = new URL(page.url()).pathname;
       visited.push({ path, final, status });
@@ -123,7 +137,7 @@ async function crawl(browser, { base, paths, theme, account, problems, visited, 
         expected404 = false;
         await page.goto(`${base}${href}`, { waitUntil: "load" });
         await page.waitForTimeout(SETTLE_MS);
-        judge(report, await audit(page));
+        judge(report, await audit(page), new URL(page.url()).pathname);
         visited.push({ path: href, final: new URL(page.url()).pathname, status: 200, from: list });
       }
     }

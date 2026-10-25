@@ -35,7 +35,7 @@ export function InvoiceSendAction({ invoiceId, email, defaultMessage = "" }: { i
   return (
     <section className="flex flex-col gap-3">
       <div className="flex flex-wrap gap-2">
-        <Button size="sm" variant="secondary" onClick={() => { setSent(false); setOpen((value) => !value); }}>
+        <Button size="md" variant="gradient" className="font-bold" data-primary onClick={() => { setSent(false); setOpen((value) => !value); }}>
           {say("invoices.send.open")}
         </Button>
       </div>

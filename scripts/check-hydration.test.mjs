@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { ACCOUNT_PAGES, BROWSER, detailPagesFor, firstRecord, isHydrationError, OWNER_PAGES, PUBLIC_PAGES, THEMES, VIEWPORTS } from "./check-hydration.mjs";
+import { ACCOUNT_PAGES, BROWSER, detailPagesFor, firstRecord, isHydrationError, OWNER_PAGES, primaryProblem, PUBLIC_PAGES, THEMES, VIEWPORTS } from "./check-hydration.mjs";
 
 describe("the hydration crawl (one rendering for the server and the browser, K0)", () => {
   it("hydrates in a visitor's browser — Montréal's clock and the product's first language — never the server's UTC", () => {
@@ -64,5 +64,22 @@ describe("the hydration crawl (one rendering for the server and the browser, K0)
     expect(acct).toContain("<ClientHome");
     expect(home).toMatch(/<PageHeader[\s\S]*files\.length === 0 \? <EmptyState/);
     expect(correct).toContain("<PageHeader");
+  });
+});
+
+describe("one primary per screen, crawled on every owner page (D1b)", () => {
+  it("wants exactly one on the day, the lists and an invoice's screens", () => {
+    for (const path of ["/fr/app/s-1/aujourdhui", "/fr/app/s-1/clients", "/fr/app/s-1/clients/c-1", "/fr/app/s-1/invoices", "/fr/app/s-1/invoices/new", "/fr/app/s-1/invoices/i-1", "/fr/app/s-1/invoices/i-1/correct", "/en/app/s-1/books"]) {
+      expect(primaryProblem(path, 1), path).toBeNull();
+      expect(primaryProblem(path, 0), path).toMatch(/one expected/);
+      expect(primaryProblem(path, 2), path).toMatch(/one at most/);
+    }
+  });
+
+  it("allows none where there is nothing to do, never two", () => {
+    for (const path of ["/fr/app/s-1/boutique/team", "/fr/app/profile", "/fr/s/pattes-saint-henri"]) {
+      expect(primaryProblem(path, 0), path).toBeNull();
+      expect(primaryProblem(path, 2), path).toMatch(/one at most/);
+    }
   });
 });

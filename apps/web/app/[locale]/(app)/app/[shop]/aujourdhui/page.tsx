@@ -74,6 +74,7 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
       visits={dependants ? Object.fromEntries(visits.map((v) => [v.appointmentId, withMinutes(v)])) : undefined}
       banner={brief ? <BriefBanner count={brief.items.length} href={routes.brief} /> : null}
       aside={invoices ? <TodayInvoices invoices={invoices} locale={locale} shopId={shop.id} today={today} /> : null}
+      newInvoiceHref={invoices ? routes.newInvoice : null}
     />
   );
 }
