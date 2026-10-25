@@ -1,0 +1,11 @@
+id: no-bare-digits-on-random-bytes
+language: Tsx
+severity: error
+message: "A bare run of digits checked inside ciphertext or other random bytes (`.not.toContain(\"4821\")`, `LIKE '%4821%'`) matches by chance: check the whole plaintext with `leaksPlaintext` (@akinaza/db/plaintext-leak) (akinaza#358)."
+rule:
+  pattern: expect($X).not.toContain($S)
+constraints:
+  S:
+    regex: "^[\"'][0-9]+[\"']$"
+ignores:
+  - "**/node_modules/**"

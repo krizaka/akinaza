@@ -1,0 +1,10 @@
+id: no-hand-ms-one-hour
+snapshots:
+  "const a = 60 * 60 * 1000;\n":
+    fixed: |
+      const a = hoursToMilliseconds(1);
+    labels:
+    - source: 60 * 60 * 1000
+      style: primary
+      start: 10
+      end: 24

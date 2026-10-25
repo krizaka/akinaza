@@ -1,0 +1,8 @@
+id: no-status-move
+snapshots:
+  "await ws.status.move(shopId, actor, \"invoice\", { ids, to: \"paid\" });\n":
+    labels:
+    - source: "ws.status.move(shopId, actor, \"invoice\", { ids, to: \"paid\" })"
+      style: primary
+      start: 6
+      end: 67

@@ -1,0 +1,11 @@
+id: no-bare-digits-on-random-bytes
+valid:
+  - |
+    expect(sealed).not.toContain("Code 4821, clé");
+  - |
+    expect(leaksPlaintext(sealed, secret)).toBe(false);
+invalid:
+  - |
+    expect(sealed).not.toContain("4821");
+  - |
+    expect(raw[0].access_notes_enc).not.toContain('514');

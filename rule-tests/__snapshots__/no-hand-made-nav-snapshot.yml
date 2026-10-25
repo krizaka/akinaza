@@ -1,0 +1,38 @@
+id: no-hand-made-nav
+snapshots:
+  "const TopNav = () => <nav />;\n":
+    labels:
+    - source: TopNav = () => <nav />
+      style: primary
+      start: 6
+      end: 28
+    - source: TopNav
+      style: secondary
+      start: 6
+      end: 12
+  "export function NavBar() { return <nav />; }\n":
+    labels:
+    - source: function NavBar() { return <nav />; }
+      style: primary
+      start: 7
+      end: 44
+    - source: NavBar
+      style: secondary
+      start: 16
+      end: 22
+  "import * as NavigationMenu from \"@radix-ui/react-navigation-menu\";\n":
+    labels:
+    - source: "@radix-ui/react-navigation-menu"
+      style: primary
+      start: 33
+      end: 64
+    - source: import * as NavigationMenu from "@radix-ui/react-navigation-menu";
+      style: secondary
+      start: 0
+      end: 66
+  "import { NavigationMenu } from \"radix-ui\";\n":
+    labels:
+    - source: NavigationMenu
+      style: primary
+      start: 9
+      end: 23

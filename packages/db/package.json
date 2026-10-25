@@ -8,6 +8,7 @@
     ".": "./src/index.ts",
     "./schema": "./src/schema.ts",
     "./roles": "./src/roles.ts",
+    "./plaintext-leak": "./src/plaintext-leak.ts",
     "./seed": "./src/seed.ts",
     "./seed-walker": "./src/seed-walker.ts",
     "./qa-reset-walker": "./src/qa-reset-walker.ts",

@@ -1,0 +1,8 @@
+id: no-ts-enum
+snapshots:
+  "enum Status { Open = \"OPEN\" }\n":
+    labels:
+    - source: enum Status { Open = "OPEN" }
+      style: primary
+      start: 0
+      end: 29

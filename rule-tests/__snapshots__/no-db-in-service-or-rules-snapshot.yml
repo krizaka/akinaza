@@ -1,0 +1,30 @@
+id: no-db-in-service-or-rules
+snapshots:
+  "import { db } from \"@/lib/db\";\n":
+    labels:
+    - source: import { db } from "@/lib/db";
+      style: primary
+      start: 0
+      end: 30
+    - source: "@/lib/db"
+      style: secondary
+      start: 20
+      end: 28
+    - source: "@/lib/db"
+      style: secondary
+      start: 20
+      end: 28
+  "import { eq } from \"drizzle-orm\";\n":
+    labels:
+    - source: import { eq } from "drizzle-orm";
+      style: primary
+      start: 0
+      end: 33
+    - source: drizzle-orm
+      style: secondary
+      start: 20
+      end: 31
+    - source: drizzle-orm
+      style: secondary
+      start: 20
+      end: 31
