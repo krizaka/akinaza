@@ -8,7 +8,7 @@
 # Akinaza
 
 **Run your shop, for less.** The all-in-one for independent Québec shops — hair and beauty salons, studios, consultants, freelancers:
-bookings, client files with Loi 25 consent, bilingual invoices with GST 5 % and QST 9.975 %, a tax ledger, and the
+bookings, client files with consent noted by purpose, bilingual invoices with GST 5 % and QST 9.975 %, a tax ledger, and the
 GST/QST return **prepared** for the merchant to review and file.
 
 [![CI](https://github.com/krizaka/akinaza/actions/workflows/ci.yml/badge.svg)](https://github.com/krizaka/akinaza/actions/workflows/ci.yml)
@@ -16,7 +16,7 @@ GST/QST return **prepared** for the merchant to review and file.
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
 Akinaza (商い *akinai*, trade) is a Krizaka product **in development**: nothing is deployed, sign-up is closed. The
-know-how it shows: **running a shop, for less** — one tool instead of five, data in Canada, Loi 25 by design.
+know-how it shows: **running a shop, for less** — one tool instead of five, bookings to taxes prepared.
 
 ## What is built
 
@@ -50,7 +50,7 @@ know-how it shows: **running a shop, for less** — one tool instead of five, da
   Audited database settings in the admin configuration control `realtime.storefront.enabled` (default `true`),
   `realtime.storefront.heartbeatSeconds` (15; 5–60) and `realtime.storefront.maxStreamsPerPage` (100; 1–1000 concurrent
   streams per shop page per server instance). Streams reconnect within five minutes to reread settings; no rebuild is needed.
-- **Loi 25** — consent per purpose, append-only; erasure blanks personal data and keeps the invoices tax law requires.
+- **Consent and erasure** — consent per purpose, append-only; erasure blanks personal data and keeps the invoices tax law requires.
 - **Accounts** — sign-in, "forgot password" with one-use 30-minute links (the answer is the same for every address), a password change that ends the other sessions, a profile with Krizaka's default picture; registration is built and closed by configuration (`AUTH_SIGNUP_ENABLED`).
 - **Not for restaurants, cafés, bars and bakeries with on-site consumption** — they must use a sales recording system certified MEV-WEB by Revenu Québec; the point of sale is a stub behind
   `APP_POS_ENABLED` until that scope and a payment provider are decided. No payment provider is wired.

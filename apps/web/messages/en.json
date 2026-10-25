@@ -84,7 +84,7 @@
       }
     },
     "trust": {
-      "line": "Data in Canada · Designed for Loi 25 and Loi 96 · Taxes prepared, return filed by you",
+      "line": "Records in a database in Canada · Consent noted by purpose · Taxes prepared, return filed by you",
       "scope": "For studios, salons and the self-employed. Not for restaurants, cafés, bars or bakeries with on-site consumption."
     },
     "visualLabel": "dev.akinaza.com"
@@ -92,11 +92,11 @@
   "privacy": {
     "title": "Privacy",
     "updated": "Updated {date}",
-    "body": "Akinaza is in development: only the accounts our team creates can sign in. A shop's data — its clients, appointments, invoices and tax ledger — is kept in Akinaza's database in Canada, encrypted at rest, visible to that shop only. Client consent is recorded per purpose (Loi 25) and can be withdrawn; a client's personal information can be erased, while the invoices tax law requires are kept. When a merchant asks to prepare a tax return, the period's ledger is sent to Orazaka, Krizaka's engine, over HTTPS; nothing is filed or transmitted to any government. Nothing is sold or shared. To ask a question or have your data removed, use the contact form.",
+    "body": "Akinaza is in development: only the accounts our team creates can sign in. A shop's data — its clients, appointments, invoices and tax ledger — is kept in Akinaza's database in Canada, encrypted at rest, visible to that shop only. Client consent is recorded per purpose and can be withdrawn; a client's personal information can be erased, while the invoices tax law requires are kept. When a merchant asks to prepare a tax return, the period's ledger is sent to Orazaka, Krizaka's engine, over HTTPS; nothing is filed or transmitted to any government. Nothing is sold or shared. To ask a question or have your data removed, use the contact form.",
     "officer": {
       "title": "Privacy officer",
       "role": "Privacy Officer (« Responsable de la protection des renseignements personnels »)",
-      "text": "Under Québec’s Law 25, the person in charge of the protection of personal information is published here. Role: {role}, Technologies Krizaka Inc., Montréal, Québec, Canada. Contact: contact@krizaka.com, to access, correct or erase your information, withdraw a consent or file a complaint; we answer within 30 days."
+      "text": "The person in charge of the protection of personal information is published here. Role: {role}, Technologies Krizaka Inc., Montréal, Québec, Canada. Contact: contact@krizaka.com, to access, correct or erase your information, withdraw a consent or file a complaint; we answer within 30 days."
     }
   },
   "console": {
@@ -117,7 +117,7 @@
       "team": "Team"
     },
     "signIn": {
-      "promise": "Your shop, for less — Loi 25 by design.",
+      "promise": "Your shop, for less — bookings, invoices and taxes in one place.",
       "asideFooter": "Every invoice, to the cent.",
       "title": "Sign in",
       "description": "With the account our team gave you.",
@@ -286,9 +286,9 @@
         "makeUser": "Withdraw administrator role",
         "revokeSessions": "End all sessions",
         "sessionsRevoked": "Sessions ended: {count}.",
-        "exportData": "Export data (Law 25)",
+        "exportData": "Export data",
         "dangerTitle": "Delete this account",
-        "dangerLead": "Law 25 erasure: the account and its sessions are deleted for good. An account that owns a shop cannot be erased here: its invoices and tax ledger are kept for six years by tax law. The audit log keeps the fact, not the person.",
+        "dangerLead": "Erasure: the account and its sessions are deleted for good. An account that owns a shop cannot be erased here: its invoices and tax ledger are kept for six years by tax law. The audit log keeps the fact, not the person.",
         "confirmLabel": "Type the account's e-mail to confirm",
         "deleteAccount": "Delete the account"
       },
@@ -1278,7 +1278,7 @@
       "reportOpen": "Read the report",
       "dogsTitle": "My dogs",
       "bookAgain": "Book at {shop}",
-      "privacyTitle": "My data (Loi 25)",
+      "privacyTitle": "My data",
       "dataLead": "Each shop keeps your file. Take a copy of it, or have it erased.",
       "export": "Download my data",
       "exportShort": "Download",

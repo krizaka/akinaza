@@ -53,10 +53,10 @@ describe("the home is short and concrete", () => {
     expect(productStatus({ criteria: { a: { evidence: null }, b: { na: "x" } } })).toBe("development");
   });
 
-  it("keeps the trust line quiet: Canada, Loi 25 and Loi 96, prepared never filed, and not for restaurants, cafés and bars", () => {
+  it("keeps the trust line quiet: the database in Canada (public-claims.test.ts), consent by purpose, prepared never filed, and not for restaurants, cafés and bars", () => {
     for (const m of [en, fr]) {
-      expect(m.landing.trust.line).toMatch(/Loi 25/);
-      expect(m.landing.trust.line).toMatch(/Loi 96/);
+      expect(m.landing.trust.line).toMatch(/Canada/);
+      expect(m.landing.trust.line).not.toMatch(/Loi 25|Loi 96|Law 25|Law 96/);
       expect(m.landing.trust.scope).toMatch(/restaurants, cafés, bars/);
       expect(JSON.stringify(m.landing)).not.toMatch(/\b(we|on) (file|transmet)|files? (it|your return) for you|transmission électronique|transmet(tons)? à Revenu/i);
       expect(m.landing.screens.books.text).toMatch(/never|jamais|yourself|vous-même|produisez|file the return/i);

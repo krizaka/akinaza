@@ -84,7 +84,7 @@
       }
     },
     "trust": {
-      "line": "Données au Canada · Conçu pour la Loi 25 et la Loi 96 · Taxes préparées, déclaration produite par vous",
+      "line": "Dossiers dans une base de données au Canada · Consentement noté par finalité · Taxes préparées, déclaration produite par vous",
       "scope": "Pour les studios, salons et travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place."
     },
     "visualLabel": "dev.akinaza.com"
@@ -92,11 +92,11 @@
   "privacy": {
     "title": "Confidentialité",
     "updated": "Mis à jour le {date}",
-    "body": "Akinaza est en développement : seuls les comptes créés par notre équipe peuvent se connecter. Les données d'une boutique — ses clients, rendez-vous, factures et registre des taxes — sont gardées dans la base de données d'Akinaza au Canada, chiffrées au repos, visibles de cette boutique seulement. Le consentement des clients est noté par finalité (Loi 25) et peut être retiré ; les renseignements personnels d'un client peuvent être effacés, les factures qu'exige la loi fiscale étant gardées. Quand un commerçant demande de préparer une déclaration, le registre de la période est envoyé à Orazaka, le moteur de Krizaka, par HTTPS ; rien n'est produit ni transmis à un gouvernement. Rien n'est vendu ni partagé. Pour poser une question ou faire supprimer vos données, utilisez le formulaire de contact.",
+    "body": "Akinaza est en développement : seuls les comptes créés par notre équipe peuvent se connecter. Les données d'une boutique — ses clients, rendez-vous, factures et registre des taxes — sont gardées dans la base de données d'Akinaza au Canada, chiffrées au repos, visibles de cette boutique seulement. Le consentement des clients est noté par finalité et peut être retiré ; les renseignements personnels d'un client peuvent être effacés, les factures qu'exige la loi fiscale étant gardées. Quand un commerçant demande de préparer une déclaration, le registre de la période est envoyé à Orazaka, le moteur de Krizaka, par HTTPS ; rien n'est produit ni transmis à un gouvernement. Rien n'est vendu ni partagé. Pour poser une question ou faire supprimer vos données, utilisez le formulaire de contact.",
     "officer": {
       "title": "Responsable de la protection des renseignements personnels",
       "role": "Responsable de la protection des renseignements personnels",
-      "text": "En vertu de la Loi 25 du Québec, la personne responsable de la protection des renseignements personnels est publiée ici. Titre : {role}, Technologies Krizaka Inc., Montréal (Québec), Canada. Contact : contact@krizaka.com, pour accéder à vos renseignements, les corriger ou les effacer, retirer un consentement ou déposer une plainte ; nous répondons dans un délai de 30 jours."
+      "text": "La personne responsable de la protection des renseignements personnels est publiée ici. Titre : {role}, Technologies Krizaka Inc., Montréal (Québec), Canada. Contact : contact@krizaka.com, pour accéder à vos renseignements, les corriger ou les effacer, retirer un consentement ou déposer une plainte ; nous répondons dans un délai de 30 jours."
     }
   },
   "console": {
@@ -117,7 +117,7 @@
       "team": "Équipe"
     },
     "signIn": {
-      "promise": "Votre boutique, pour moins cher — Loi 25 dès la conception.",
+      "promise": "Votre boutique, pour moins cher — réservations, factures et taxes au même endroit.",
       "asideFooter": "Chaque facture, au cent près.",
       "title": "Se connecter",
       "description": "Avec le compte que notre équipe vous a donné.",
@@ -286,9 +286,9 @@
         "makeUser": "Retirer le rôle d'administrateur",
         "revokeSessions": "Terminer toutes les sessions",
         "sessionsRevoked": "Sessions terminées : {count}.",
-        "exportData": "Exporter les données (Loi 25)",
+        "exportData": "Exporter les données",
         "dangerTitle": "Supprimer ce compte",
-        "dangerLead": "Effacement Loi 25 : le compte et ses sessions sont supprimés définitivement. Un compte qui possède un commerce ne peut pas être effacé ici : ses factures et son grand livre des taxes sont conservés six ans par la loi fiscale. Le journal d'audit garde le fait, pas la personne.",
+        "dangerLead": "Effacement : le compte et ses sessions sont supprimés définitivement. Un compte qui possède un commerce ne peut pas être effacé ici : ses factures et son grand livre des taxes sont conservés six ans par la loi fiscale. Le journal d'audit garde le fait, pas la personne.",
         "confirmLabel": "Saisissez le courriel du compte pour confirmer",
         "deleteAccount": "Supprimer le compte"
       },
@@ -1278,7 +1278,7 @@
       "reportOpen": "Lire le rapport",
       "dogsTitle": "Mes chiens",
       "bookAgain": "Réserver chez {shop}",
-      "privacyTitle": "Mes données (Loi 25)",
+      "privacyTitle": "Mes données",
       "dataLead": "Chaque boutique conserve votre dossier. Vous pouvez en prendre une copie ou le faire effacer.",
       "export": "Télécharger mes données",
       "exportShort": "Télécharger",

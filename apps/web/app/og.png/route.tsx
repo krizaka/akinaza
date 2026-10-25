@@ -12,7 +12,7 @@ export function GET() {
           <div style={{ fontSize: 64, fontWeight: 800 }}>Akinaza</div>
         </div>
         <div style={{ fontSize: 48, fontWeight: 700, marginTop: 40 }}>Run your shop, for less.</div>
-        <div style={{ fontSize: 28, marginTop: 20, color: "#a1a1aa" }}>Bookings, bilingual invoices with GST/QST, your tax return prepared — Loi 25 by design.</div>
+        <div style={{ fontSize: 28, marginTop: 20, color: "#a1a1aa" }}>Bookings, bilingual invoices with GST/QST, your tax return prepared.</div>
       </div>
     ),
     { width: 1200, height: 630 },

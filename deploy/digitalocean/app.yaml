@@ -1,7 +1,7 @@
 # akinaza dev — DigitalOcean App Platform (TOR1), smallest instance: dev.akinaza.com. Secrets are DO SECRETs, filled from the
 # maintainer's local secrets store (never committed): each __NAME__ below is replaced by the deploy session, then
 #   doctl apps create --spec <rendered>   (or  doctl apps update <APP_ID> --spec <rendered>).
-# The database is akinaza_db on krizaka-dev-pg behind its PgBouncer pool (transaction mode, size 2); migrations run at start
+# The database is akinaza_db on krizaka-dev-pg (tor1: Toronto, krizaka-infra docs/PLAN.md) behind its PgBouncer pool (transaction mode, size 2); migrations run at start
 # on the direct URL.
 name: akinaza-dev
 region: tor
@@ -110,6 +110,7 @@ services:
         scope: RUN_TIME
         value: do-connecting-ip
       # The media zone of this site on Bunny (akinaza-dev; its own zone, never the krizaka-assets one): the storage key is a SECRET.
+      # The storage endpoint is New York (ny): photos and files are NOT in Canada, so no public text says so (apps/web/lib/public-claims.test.ts).
       - key: MEDIA_STORAGE_API_KEY
         scope: RUN_TIME
         type: SECRET
