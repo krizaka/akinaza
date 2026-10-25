@@ -160,4 +160,12 @@ describe("a failing section of the day (D6): an alert in place, the rest renders
     expect(t).toContain("states.retry");
     expect(t).toContain("today.agendaLabel");
   });
+
+  it("moves nothing on the page's arrival (D11): no row washes, no control rings, until an action succeeds", () => {
+    const html = render({});
+    expect(html).toContain("Sofia Rossi");
+    expect(html).not.toContain("data-kz-arrive=");
+    expect(html).not.toContain("data-kz-status=");
+  });
 });
+

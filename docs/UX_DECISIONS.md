@@ -430,3 +430,19 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
   the download.
 - **Cost**: the client's invoice rows read the payments and the superseding notes (`clientInvoices`), one sub-query each.
 - **Signal we are wrong**: clients write to the shop to ask whether an invoice is paid, or erase a file while looking for the copy.
+
+## Motion in the product register: a changed row washes once (Phase 2, D11, #338)
+
+- **Decision**: on Factures, a row whose state, payments or amount changed since the page's previous read — a payment recorded
+  here or by someone else, a credit note — **washes once** (`data-kz-arrive` in the row, `data-kz-arrival="flash"` on the list:
+  @krizaka/ui motion.css, an accent that fades). The page's arrival washes nothing (`lib/wash.ts`: the first read is the
+  reference). The control that succeeded **rings once** (`data-kz-status="success"`): « Commencer » / « Terminer » on Aujourd'hui,
+  « Envoyer la facture ». Under reduced motion nothing moves and the changed row keeps a **static marker**, an inset accent edge
+  (the one local motion rule, until krizaka-ui#680). Only a background and a ring animate: no layout property (test).
+- **Problem**: after an action or a re-read, nothing said which row had changed; the eye compared the list by itself.
+- **Principle**: visibility of system status, with motion that explains a change and never decorates an arrival.
+- **Refused**: animating every row on arrival; a toast per change; a wash on Aujourd'hui's agenda by a copy of `Agenda` (it waits
+  for krizaka-ui#680, which lets the row carry the marker); the bulk-action wash before D10 (#337, blocked on krizaka-ts#89).
+- **Cost**: the previous read's signatures kept per list (React state); one CSS rule to remove with krizaka-ui#680.
+- **Signal we are wrong**: owners miss a change that washed while they looked away (then a persistent marker), or find the wash
+  distracting on a list that re-reads often.

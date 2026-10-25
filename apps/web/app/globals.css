@@ -22,6 +22,14 @@ body {
   font-weight: 700;
 }
 
+/* A changed row washes once (D11, motion.css `data-kz-arrival="flash"`); under reduced motion it does not move, and keeps a static
+   marker — an inset accent edge, never a layout property. The one local motion rule: remove with krizaka-ui#680. */
+@media (prefers-reduced-motion: reduce) {
+  [data-kz-arrival="flash"] :is([data-kz-arrive], tr:has([data-kz-arrive]), li:has(> [data-kz-arrive])) {
+    box-shadow: inset 3px 0 0 var(--kz-accent);
+  }
+}
+
 @media print {
   @page {
     margin: 16mm;
