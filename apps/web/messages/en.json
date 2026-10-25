@@ -1134,8 +1134,7 @@
       "upcoming": "Upcoming",
       "past": "Past",
       "invoiceTitle": "Invoices",
-      "invoiceNone": "No invoice for this shop.",
-      "invoiceOpen": "Open invoice {number}",
+      "invoiceIssued": "Issued {date}",
       "cancel": "Cancel",
       "cancelled": "Cancelled",
       "cancelConfirm": "Cancel this walk?",
@@ -1148,8 +1147,12 @@
       "dogsTitle": "My dogs",
       "bookAgain": "Book at {shop}",
       "privacyTitle": "My data (Loi 25)",
-      "privacyIntro": "{shop} keeps your file and your dogs'. You can take a copy or have it erased.",
+      "dataLead": "Each shop keeps your file. Take a copy of it, or have it erased.",
       "export": "Download my data",
+      "exportShort": "Download",
+      "exportFor": "Download my data at {shop}",
+      "eraseHeading": "Erase a file",
+      "eraseLead": "One shop at a time, for good.",
       "erase": "Erase my file at {shop}",
       "eraseTitle": "Erase your file?",
       "eraseDescription": "Your details, your dogs, the notes and photos of the reports are erased for good. Invoices are kept as the law requires. Type your e-mail to confirm.",
@@ -1172,7 +1175,8 @@
         "attach": "Attach a photo or a PDF",
         "fileImage": "Photo",
         "filePdf": "PDF document",
-        "fileRemove": "Remove this file"
+        "fileRemove": "Remove this file",
+        "open": "Keep a request"
       }
     },
     "report": {
@@ -1475,7 +1479,6 @@
         },
         "client": {
           "cancelConfirm": "Cancel this appointment?",
-          "privacyIntro": "{shop} keeps your file. You can take a copy or have it erased.",
           "eraseDescription": "Your details and your bookings are erased for good. Invoices are kept as the law requires. Type your e-mail to confirm."
         }
       }
