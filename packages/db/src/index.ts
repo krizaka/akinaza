@@ -23,3 +23,4 @@ export * from "./shop-translations";
 export * from "./translate-shop";
 export * from "./translation-port";
 export * from "./shop-search";
+export * from "./today-board";

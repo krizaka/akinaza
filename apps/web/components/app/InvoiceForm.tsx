@@ -29,7 +29,7 @@ export interface InvoiceFormProps {
   data: InvoiceFormData;
   locale: "fr" | "en";
   /** Where the form starts: the client and the lines of its address (« Facturer ce client », a finished appointment). */
-  start: { clientId: string; lines: DraftLine[] };
+  start: { clientId: string; lines: DraftLine[]; /** The finished appointment it bills, from the address (D4: « À facturer » stops counting it). */ appointmentId?: string | null };
 }
 
 /**
@@ -103,14 +103,14 @@ export function InvoiceForm({ data, locale: base, start }: InvoiceFormProps) {
   const keys = useRef(start.lines.length);
   const form = invoiceForm.useForm({
     i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
-    defaultValues: start,
+    defaultValues: { clientId: start.clientId, lines: start.lines },
     onSubmit: async (values) => {
       const lines = draftRequestLines(values.lines);
       setNeedLine(lines.length === 0);
       if (lines.length === 0) return;
       // The invoice is in the client's language (the shop's page language without a client), dated today, under the shop's terms.
       const language = data.clients.find((c) => c.id === values.clientId)?.language ?? base;
-      const done = await call.run<{ id: string }>("/api/walker/invoices", { json: { clientId: values.clientId || null, language, issuedOn: data.today, lines } }, { refresh: false });
+      const done = await call.run<{ id: string }>("/api/walker/invoices", { json: { clientId: values.clientId || null, appointmentId: start.appointmentId ?? null, language, issuedOn: data.today, lines } }, { refresh: false });
       if (done !== null) router.push(`${routes.invoice(done.id)}?issued=1`);
     },
   });

@@ -352,3 +352,28 @@ from @krizaka/ui's product surface (`data-surface="product"` on the root; its `b
 local rule in `app/globals.css`, to remove with krizaka-ui#655. Amounts that were in the mono (the invoice's lines and totals,
 Livres' lines, an appointment's price, the paid and balance of the public invoice) are in the sans with `tabular-nums`; the tables'
 number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `components/app/product-register.test.tsx`.
+
+## Aujourd'hui on the home grammar: the headline, the binder, two columns (Phase 2, D4, #331)
+
+- **Decision**: the page's `h1` is **the headline**, true to the day (`dayHeadline`): who is with you now and until when, else who
+  comes next and at what time, else « Journée terminée », else « Rien de prévu » — a walk-in said as such, a dog walker's day read
+  by its walks, another day counted. « Aujourd'hui » is the eyebrow; the next appointment is the one primary under it (D1b). The
+  date is on the right (« Semaine 43 · vendredi 23 octobre » with ‹ ›); the strip of days is gone. **« Le classeur »** under the
+  heading: Rendez-vous · À facturer · À encaisser · Cette semaine, with their counts. Two columns on a desktop — the agenda; then
+  **Accès rapide** (Nouvelle facture, Facturer the oldest finished appointment no invoice names yet, Relancer the invoice to chase,
+  Ma page publique), **L'activité** (one row of three figures — facturé, encaissé, rendez-vous faits — with a `Sparkline` each and
+  the 7 / 30 / 90 j switch in the address, `?period=30`) and **À encaisser** (what is owed, a `Meter` of the overdue part, the
+  beaver when nothing is late). One column on a phone, the agenda first. Every figure comes from the bookings, the invoices and
+  the payments (`todayBoard`, integer cents, the shop's calendar days). A day whose figures are all zero shows only its empty state.
+  An invoice now names the appointment it bills (`appointmentId`, refused for another shop's), so « À facturer » goes down when it
+  is billed.
+- **Problem**: the day opened on « Aujourd'hui » and a strip of fourteen days; the figures said nothing about money still owed;
+  the last three invoices beside the agenda (#218) did not say what to do next.
+- **Principle**: visibility of system status and recognition over recall (Nielsen): the first sentence is the day's state, the
+  side column the next moves.
+- **Refused**: a full chart on Aujourd'hui (it belongs to Livres › Rapports, #219); a sixth figure row; « Le mot du jour » as a
+  card (#317 makes it a header action).
+- **Cost**: the « Invoice quick access » card of #218 is replaced by « Accès rapide » and « À encaisser » (its component and test
+  are removed); the binder is chips until krizaka-ui#648 ships the binder tabs; `@krizaka/ui` moves to 3.54 and `@krizaka/charts`
+  0.6 joins for the sparklines.
+- **Signal we are wrong**: owners still open Factures first thing in the morning, or never change the period.

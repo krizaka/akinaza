@@ -443,7 +443,48 @@
         "see": "See the point ({count})",
         "dismiss": "Put the point aside"
       },
-      "nextPrimary": "Next: {client} at {time}"
+      "nextPrimary": "Next: {client} at {time}",
+      "headline": {
+        "empty": "Nothing booked today.",
+        "otherDay": "{count} appointments that day.",
+        "otherDayEmpty": "Nothing booked that day.",
+        "done": "Day done: {count} appointments completed.",
+        "next": "{client} arrives at {at}.",
+        "nextWalkIn": "A walk-in at {at}.",
+        "nextService": "{service} at {at}.",
+        "inProgress": "With {client} until {at}.",
+        "inProgressWalkIn": "A walk-in until {at}.",
+        "inProgressService": "{service} in progress until {at}."
+      },
+      "week": "Week {week} · {date}",
+      "calendar": "Calendar",
+      "binder": {
+        "title": "The binder",
+        "appointments": "Appointments {count}",
+        "toBill": "To bill {count}",
+        "toCollect": "To collect {count}",
+        "week": "This week {count}"
+      },
+      "quick": {
+        "title": "Quick access",
+        "bill": "Bill {client}",
+        "chase": "Chase invoice {number}",
+        "page": "My public page"
+      },
+      "activity": {
+        "title": "Activity",
+        "period": "Period",
+        "days": "{days} d",
+        "invoiced": "Invoiced",
+        "collected": "Collected",
+        "appointments": "Appointments done"
+      },
+      "balance": {
+        "title": "To collect",
+        "owed": "Still owed: {amount}",
+        "overdue": "Of which {amount} overdue",
+        "noneLate": "Nothing overdue."
+      }
     },
     "account": {
       "forgot": {
