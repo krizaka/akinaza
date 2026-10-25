@@ -709,7 +709,11 @@
         "visits": "Visits",
         "last": "Last visit",
         "next": "Next visit",
-        "spent": "Total spent"
+        "spent": "Total spent",
+        "state": "State",
+        "bill": "Bill",
+        "email": "E-mail",
+        "owed": "Still owed"
       },
       "file": {
         "since": "Client since {date}",
@@ -727,14 +731,49 @@
         "number": "Number",
         "total": "Total",
         "credit": "Credit note",
-        "bill": "Bill this client"
+        "bill": "Bill this client",
+        "sections": "The file's sections",
+        "tabs": {
+          "summary": "Summary",
+          "invoices": "Invoices",
+          "visits": "Visits",
+          "notes": "Notes"
+        },
+        "addNote": "Add a note",
+        "saveNote": "Keep the note"
       },
       "requests": {
         "title": "Their kept requests",
         "lead": "What this person usually asks for, with their photos or documents: to prepare the visit.",
         "photo": "Photo {n}",
         "pdf": "Document {n}"
-      }
+      },
+      "state": {
+        "owes": "Owes {amount}",
+        "upToDate": "Up to date"
+      },
+      "strip": {
+        "label": "Your clients at a glance",
+        "count": "{count} clients",
+        "owedLabel": "To collect",
+        "upToDate": "{count} of {total} up to date"
+      },
+      "search": "Search a client",
+      "searchPlaceholder": "Name, e-mail or phone",
+      "clear": "Show everyone",
+      "filters": "Filter the clients",
+      "filter": {
+        "all": "All",
+        "due": "Still owed",
+        "upcoming": "Coming back"
+      },
+      "selection": {
+        "label": "Selection",
+        "count": "{count} selected",
+        "export": "Export the selection (CSV)"
+      },
+      "exportFile": "clients.csv",
+      "noMatch": "No client matches."
     },
     "shopSetup": {
       "title": "Your shop page",

@@ -24,3 +24,4 @@ export * from "./translate-shop";
 export * from "./translation-port";
 export * from "./shop-search";
 export * from "./today-board";
+export * from "./client-notes";
