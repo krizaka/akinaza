@@ -240,8 +240,8 @@ Composed **only from published @krizaka/ui 3.53 blocks** (`RailNav`, `AppHeader`
 `Agenda`, `DataTable` with `selectable`, `FilterBar`, `Chip`, `DetailLayout`, `DescriptionList`, `Field`, `StickyAction`,
 `EmptyState`, `Skeleton`, `Alert`, `Badge`, `Avatar`, `Mascot`), rendered by a throw-away Vite page and photographed at 1440 and
 360 px, dark and light. Demo data of Éric's shop, said as demo on the screens. What does not exist yet carries a green
-« à venir » badge naming its issue. The tag dot and the selection bar are stand-ins (a `Badge` with a dot, a `Card`) until
-krizaka-ui#627 ships.
+« à venir » badge naming its issue. The tag dot and the selection bar are stand-ins (a `Badge` with a dot, a `Card`) that Krizaka UI 3.59 replaced
+(krizaka-ui#627).
 
 Base: `https://krizaka-assets.b-cdn.net/pr-assets/akinaza/324/mockups/`
 

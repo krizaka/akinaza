@@ -32,7 +32,12 @@ export default async function TimesPage({ params, searchParams }: { params: Prom
   return (
     <JourneyFrame locale={locale} path={`/${locale}/s/${slug}/service/${id}/creneau`} back={{ href: step.backHref, label: step.title }} title={t("console.journey.pickTime")} lead={[step.who, t("console.journey.pickTimeLead")].filter(Boolean).join(" · ")}>
       <StorefrontLive slug={slug} enabled={await appSettings().get("realtime.storefront.enabled")} />
-      <ShopSlots days={step.days} label={t("console.shopPage.timesLabel")} emptyLabel={t("console.journey.noTimes")} />
+      <ShopSlots
+        days={step.days}
+        locale={locale}
+        footer={step.footer}
+        labels={{ label: t("console.shopPage.timesLabel"), empty: t("console.journey.noTimes"), previous: t("console.journey.weekPrevious"), today: t("console.journey.weekToday"), next: t("console.journey.weekNext") }}
+      />
       {step.changeHref ? (
         <p className="m-0">
           <Link href={step.changeHref} className="text-sm font-semibold text-fg-accent underline underline-offset-4">

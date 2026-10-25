@@ -3,6 +3,7 @@ import type { BookingDetail, PublicShop, StaffSlot } from "@akinaza/db";
 
 import { type Locale, translator } from "@/lib/i18n";
 import { type Choice, journeyBase, serviceHref, timesHref } from "@/lib/journey-paths";
+import { groupByPart, hourIn } from "@/lib/slot-weeks";
 import { clockLabel } from "@/lib/storefront";
 
 export { type Choice, journeyBase, serviceHref, timesHref };
@@ -81,7 +82,9 @@ export function serviceStep(input: { page: PublicShop; locale: Locale; serviceId
 export interface TimesStep {
   title: string;
   who: string | null;
-  days: { id: string; label: string; sub: string; slots: { id: string; label: string; href: string }[] }[];
+  days: { id: string; label: string; sub: string; slots: { id: string; label: string; href: string }[]; groups: { id: string; label: string; slots: { id: string; label: string; href: string }[] }[] }[];
+  /** The shop's clock, said under the times. */
+  footer: string;
   changeHref: string | null;
   backHref: string;
 }
@@ -101,16 +104,21 @@ export function timesStep(input: { page: PublicShop; locale: Locale; now: Date; 
   return {
     title: locale === "fr" ? service.nameFr : service.nameEn,
     who: person ? t("console.journey.with", { name: person.name }) : page.team.length > 1 ? t("console.journey.anyone") : null,
-    days: groupSlotsByDay(input.slots, timezone, { maxDays: 14, maxPerDay: 12 }).map((d) => ({
-      id: d.day,
-      label: d.day === today ? t("console.shopPage.today") : d.day === tomorrow ? t("console.shopPage.tomorrow") : dayLabel(d.day, locale, "short"),
-      sub: dayMonth(d.day, locale),
-      slots: d.slots.map((s) => ({
+    footer: t("console.journey.timesFooter", { zone: timezone }),
+    days: groupSlotsByDay(input.slots, timezone, { maxDays: 14, maxPerDay: 12 }).map((d) => {
+      const slot = (s: { startsAt: Date }) => ({
         id: s.startsAt.toISOString(),
         label: clock(s.startsAt, timezone, locale),
         href: `${book}?${[`service=${service.id}`, person ? `staff=${person.id}` : "", zoneId ? `zone=${zoneId}` : "", `start=${encodeURIComponent(s.startsAt.toISOString())}`].filter(Boolean).join("&")}`,
-      })),
-    })),
+      });
+      return {
+        id: d.day,
+        label: d.day === today ? t("console.shopPage.today") : d.day === tomorrow ? t("console.shopPage.tomorrow") : dayLabel(d.day, locale, "short"),
+        sub: dayMonth(d.day, locale),
+        slots: d.slots.map(slot),
+        groups: groupByPart(d.slots, (s) => hourIn(s.startsAt, timezone)).map((g) => ({ id: g.part, label: t(`console.journey.parts.${g.part}`), slots: g.items.map(slot) })),
+      };
+    }),
     changeHref: page.team.length > 1 || page.zones.length > 1 ? serviceHref(locale, slugOf(page), service.id, { staffId: person?.id, zoneId }) : null,
     backHref: serviceHref(locale, slugOf(page), service.id, { staffId: person?.id, zoneId }),
   };

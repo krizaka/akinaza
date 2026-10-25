@@ -12,7 +12,7 @@ import { AkinazaAccountMenu } from "@/components/account/AkinazaAccountMenu";
 import { useSay } from "@/lib/i18n-client";
 
 const VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "";
-const ICONS = { today: <ClockIcon />, bookings: <ClockIcon />, clients: <UsersIcon />, shop: <HomeIcon />, books: <BillingIcon />, overview: <HomeIcon />, profile: <UserIcon />, users: <UserIcon />, shops: <UsersIcon />, invoices: <BillingIcon />, team: <UsersIcon />, ledger: <ShieldIcon />, operations: <ServerIcon />, audit: <ClockIcon /> } as const;
+const ICONS = { today: <ClockIcon />, bookings: <ClockIcon />, clients: <UsersIcon />, shop: <HomeIcon />, books: <BillingIcon />, overview: <HomeIcon />, profile: <UserIcon />, users: <UserIcon />, shops: <UsersIcon />, invoices: <BillingIcon />, team: <UsersIcon />, ledger: <ShieldIcon />, operations: <ServerIcon />, audit: <ClockIcon />, organize: <ShieldIcon /> } as const;
 
 /**
  * The signed-in frame (@krizaka/ui AppShell): the shop's space (`/app`) and the administration (admin.akinaza.com)

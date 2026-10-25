@@ -5,7 +5,10 @@ tags:
 ---
 - launchApp:
     clearState: true
-# Signed out, the app opens on sign-in (in either language): its e-mail field.
-- assertVisible:
-    id: "email"
+# Signed out, the app opens on sign-in (in either language): its e-mail field. After clearState a slow emulator paints a blank
+# screen first, so the field is awaited (as shared/sign-in.yaml awaits its submit), not asserted at once.
+- extendedWaitUntil:
+    visible:
+      id: "email"
+    timeout: 30000
 - takeScreenshot: smoke-sign-in

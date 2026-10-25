@@ -45,6 +45,8 @@ export interface DayView {
   label: string;
   sub: string;
   slots: SlotView[];
+  /** The same times by part of the day (morning, afternoon, evening): `SlotPicker` shows them when given. */
+  groups?: { id: string; label: string; slots: SlotView[] }[];
 }
 
 /** What a default image says to a screen reader, in the page's language. */

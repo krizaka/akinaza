@@ -528,7 +528,7 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Refused**: **a bulk status on invoices** (and any hand-set status): an invoice's state is derived from the ledger (paid, partial,
   overdue…), so « mark as paid » would lie — a payment is recorded as a payment. A tag colour picked freely (hex): a closed palette
   keeps both themes legible. Per-user private tags: a shop's vocabulary is shared.
-- **Cost**: local wrappers (`TagChip`, the views bar, the selection tags) until krizaka-ui#627 and #690 ship — deleted the day they land.
+- **Cost**: none left. Since Krizaka UI 3.59 the screens wire the package's `TagChip`, `MarkerPicker`, `TagSelector creatable`, `SavedViews` and `DataTable bulkActions` to the shop's routes (`components/app/organize.tsx` draws none of them); the administrator edits the sets with `TagSetEditor` / `StatusSetEditor` (`/console/organize`). A saved view is the author's own (the « share with the team » switch left with the local dialog).
 - **Signal we are wrong**: owners ask for « mark as paid » on a selection, or never use a tag.
 
 ## D12 — The signed-in app wears the product register 2027 (akinaza#352, ADR-006)
@@ -543,3 +543,12 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Refused**: a local `h1` rule, a copy of the font file, Google Fonts.
 - **Cost**: none in components; the files with a `rounded-*` use the radius roles and follow.
 - **Signal we are wrong**: titles read as a template in the captures; going back is one token (`--kz-font-display: var(--kz-font-sans)`).
+
+## Krizaka UI 3.59 adopted (akinaza#337, #352)
+
+- **Problem**: four stand-ins waited for the package (tags and views, the admin's editors, Appearance, the booking weeks).
+- **Principle**: no hand-written copy of a block; the product keeps only the wiring to its routes.
+- **Chosen**: the invoice's derived state is the package's `StatusChip` over the administrator's status set, read-only (no `onMove`: the ledger moves it). Settings offer the product register's themes only — System, Light, Dark, then the optional Blueprint and Carbone surfaces — with the density and the language; no accent row (Akinaza keeps its forest green and copper) and no sound. The Cahier papers stay the public shop pages'. Booking shows the times by week (← This week →) and by part of the day (morning, afternoon, evening, cut at noon and 17 h on the shop's clock), the shop's time zone said under them.
+- **Refused**: an accent choice (the brand is the product's identity); a sound nobody asked for.
+- **Cost**: the booking page browses at most eight weeks ahead; the engine answers a week with nothing free with the empty line.
+- **Signal we are wrong**: owners ask to share a view with the team from the bar, or clients ask for a later week than eight.

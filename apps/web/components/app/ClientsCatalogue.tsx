@@ -126,17 +126,6 @@ export function ClientsCatalogue({ clients, query, timeZone, organize, tagsByCli
           ))}
         </ul>
       </div>
-      {selected.length ? (
-        <div role="region" aria-label={say("clients.selection.label")} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-strong bg-surface-2 px-4 py-2">
-          <p className="text-sm font-semibold text-fg">{say("clients.selection.count", { count: selected.length })}</p>
-          <div className="flex flex-wrap items-center gap-2">
-            <SelectionTags organize={organize} selected={selected} onDone={() => setSelected([])} />
-            <Button variant="secondary" size="sm" onClick={exportSelection}>
-              {say("clients.selection.export")}
-            </Button>
-          </div>
-        </div>
-      ) : null}
       <DataTable
         caption={say("clients.caption")}
         rows={view.rows}
@@ -147,6 +136,15 @@ export function ClientsCatalogue({ clients, query, timeZone, organize, tagsByCli
         selectable
         selected={selected}
         onSelectedChange={setSelected}
+        bulkMax={200}
+        bulkActions={({ clear }) => (
+          <>
+            <SelectionTags organize={organize} selected={selected} onDone={clear} />
+            <Button variant="secondary" size="sm" onClick={exportSelection}>
+              {say("clients.selection.export")}
+            </Button>
+          </>
+        )}
         defaultSort={{ column: "client", direction: "ascending" }}
         empty={<EmptyState icon={<Mascot bird="beaver" mood="thinking" size={120} />} title={say("clients.noMatch")} action={<ButtonLink href={href(pathname, { q: "", filter: "all" })} variant="secondary" size="sm">{say("clients.clear")}</ButtonLink>} />}
       />

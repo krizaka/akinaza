@@ -186,7 +186,8 @@
       "badges": {
         "today": "appointments today: {count}",
         "toCollect": "to collect: {count}"
-      }
+      },
+      "organize": "Tags and views"
     },
     "admin": {
       "health": "Health",
@@ -301,6 +302,79 @@
         "monthMismatches": "Months where the ledger differs from the invoices",
         "shopsWithoutTaxNumbers": "Registered shops missing a GST or QST number",
         "refusedSignIns": "Refused sign-ins, last 24 h"
+      },
+      "organize": {
+        "title": "Tags and views",
+        "lead": "The defaults of every shop: who manages the tags, the ones offered by trade, and the states of an invoice. The database is the source of truth; every save is versioned and audited.",
+        "kind": {
+          "client": "Clients",
+          "invoice": "Invoices"
+        },
+        "none": "No setting stored yet: it appears as soon as a shop opens this list.",
+        "variant": "Tag set",
+        "variantHint": "One set per trade and language (“_en” for English).",
+        "save": "Save",
+        "saved": "Saved.",
+        "roles": {
+          "owner": "Owner",
+          "manager": "Manager",
+          "staff": "Staff"
+        },
+        "tags": {
+          "presets": "Tags offered",
+          "name": "Name of tag {position}",
+          "marker": "Colour of the tag {name}",
+          "moveUp": "Move {name} up",
+          "moveDown": "Move {name} down",
+          "remove": "Remove {name}",
+          "drag": "Drag {name}",
+          "add": "New tag",
+          "addButton": "Add",
+          "duplicate": "Another tag has this name",
+          "empty": "No tag offered yet",
+          "writers": "Who manages the tags",
+          "writersHint": "These roles create, rename, remove and assign tags.",
+          "userTags": "People can add their own tags",
+          "userTagsHint": "Beyond the tags offered here.",
+          "max": "Most tags",
+          "maxHint": "Per kind, from 1 to 200.",
+          "problems": "To fix before saving"
+        },
+        "status": {
+          "languageFr": "French",
+          "languageEn": "English",
+          "stateLabel": "Label in {language} of state {position}",
+          "tone": "Tone of state {position}",
+          "tones": {
+            "neutral": "Neutral",
+            "accent": "Accent",
+            "success": "Success",
+            "warning": "Warning",
+            "danger": "Danger"
+          },
+          "final": "State {position} is final",
+          "finalHint": "A final state has no way out.",
+          "initial": "State {position} is the initial state",
+          "initialNotFinal": "The initial state is never final.",
+          "states": "States, in the order of the column",
+          "addState": "Add a state",
+          "newState": "New state",
+          "moves": "Moves",
+          "movesHint": "Choose a move to set who can make it, whether it asks for a confirmation, and the reasons to pick from.",
+          "from": "Moves from {name}",
+          "noWayOut": "Final: no way out",
+          "move": "From {from} to {to}: {roles}",
+          "none": "nobody",
+          "moveDetail": "Move from {from} to {to}",
+          "roles": "Roles that can make this move",
+          "confirm": "Ask for a second press",
+          "reasons": "Reasons to pick from",
+          "addReason": "Add a reason",
+          "reasonLabel": "Reason {position} in {language}",
+          "removeReason": "Remove reason {position}",
+          "derived": "Derived: Akinaza computes this status, and nobody moves it.",
+          "problems": "To fix before saving"
+        }
       }
     },
     "errors": {
@@ -590,7 +664,6 @@
       "preferences": {
         "description": "How Akinaza speaks and looks for you.",
         "languageHint": "The language of the app and of the e-mails.",
-        "theme": "Theme",
         "themes": {
           "light": {
             "title": "Light",
@@ -603,7 +676,27 @@
           "system": {
             "title": "Like my device",
             "hint": "Follows your device's setting."
+          },
+          "blueprint": {
+            "title": "Blueprint",
+            "hint": "A navy dark, always dark."
+          },
+          "carbone": {
+            "title": "Carbon",
+            "hint": "A near-black, always dark."
           }
+        },
+        "appearance": {
+          "theme": "Theme",
+          "themeHint": "The look of the workspace. System follows your device.",
+          "density": "Density",
+          "densityHint": "How much fits on a screen.",
+          "language": "Language",
+          "languageHint": "The language of the app and of the e-mails."
+        },
+        "densities": {
+          "standard": "Standard",
+          "compact": "Compact"
         }
       },
       "sessions": {
@@ -773,8 +866,6 @@
         "upcoming": "Coming back"
       },
       "selection": {
-        "label": "Selection",
-        "count": "{count} selected",
         "export": "Export the selection (CSV)"
       },
       "exportFile": "clients.csv",
@@ -1159,7 +1250,13 @@
       "accessSave": "Save the notes",
       "accessSaved": "Notes saved (encrypted).",
       "needDog": "Add your dog first.",
-      "addAnother": "Add another dog"
+      "addAnother": "Add another dog",
+      "parts": {
+        "morning": "Morning",
+        "afternoon": "Afternoon",
+        "evening": "Evening"
+      },
+      "footer": "Times in {zone}"
     },
     "client": {
       "title": "My bookings",
@@ -1552,7 +1649,16 @@
       "bookAnother": "Book another time",
       "callShop": "Call {phone}",
       "directions": "Address",
-      "loading": "Loading"
+      "loading": "Loading",
+      "parts": {
+        "morning": "Morning",
+        "afternoon": "Afternoon",
+        "evening": "Evening"
+      },
+      "timesFooter": "Times in {zone}",
+      "weekPrevious": "Previous week",
+      "weekToday": "This week",
+      "weekNext": "Next week"
     },
     "team": {
       "title": "Your team",
@@ -2002,6 +2108,12 @@
         "page": "Page {page}",
         "compact": "Page {page} of {pageCount}",
         "pageSize": "Rows per page"
+      },
+      "selection": {
+        "bar": "Actions on the selection",
+        "selected": "{count} selected",
+        "clear": "Clear selection",
+        "tooMany": "At most {max} at a time"
       }
     },
     "states": {
@@ -2049,15 +2161,29 @@
       },
       "selection": {
         "tag": "Add a tag",
-        "untag": "Remove a tag",
-        "tooMany": "At most 200 rows can be tagged at once.",
-        "label": "Selection",
-        "count": "{count} selected"
+        "untag": "Remove a tag"
       },
       "file": {
         "tags": "Tags",
         "none": "No tag yet",
-        "edit": "Edit the tags"
+        "edit": "Edit the tags",
+        "add": "Add a tag",
+        "placeholder": "Tag name",
+        "create": "Create “{name}”",
+        "markerLabel": "Colour of the new tag",
+        "empty": "No tag of that name"
+      },
+      "savedViews": {
+        "system": "Suggested views",
+        "workspace": "Team views",
+        "mine": "My views",
+        "menu": "View: {current}",
+        "none": "All",
+        "modified": "modified",
+        "confirm": "Save",
+        "cancel": "Cancel",
+        "rename": "Rename",
+        "actions": "Actions for the view {label}"
       }
     }
   },
