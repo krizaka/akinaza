@@ -1,0 +1,43 @@
+id: no-locale-ternary
+language: Tsx
+severity: error
+message: "A text chosen with a locale ternary (`locale === \"fr\" ? a.nameFr : a.nameEn`). Read the message (`say`) or index the pair by the locale: `{ fr: a.nameFr, en: a.nameEn }[locale]` (AGENTS § 7)."
+note: "A ternary whose condition compares `locale` (or `x.locale`) to \"fr\"/\"en\", or reads `isFr`/`isEn`. A choice between two locale tags (\"fr-CA\" : \"en-CA\") is routing, not text, and is allowed."
+rule:
+  kind: ternary_expression
+  all:
+    - has:
+        field: condition
+        any:
+          - kind: binary_expression
+            all:
+              - has: { field: operator, regex: '^[!=]==?$' }
+              - has:
+                  field: left
+                  any:
+                    - { kind: identifier, regex: '^locale$' }
+                    - { kind: member_expression, has: { field: property, regex: '^locale$' } }
+              - has: { field: right, kind: string, regex: '^"(fr|en)"$|^''(fr|en)''$' }
+          - kind: parenthesized_expression
+            has:
+              kind: binary_expression
+              all:
+                - has: { field: operator, regex: '^[!=]==?$' }
+                - has: { field: left, any: [{ kind: identifier, regex: '^locale$' }, { kind: member_expression, has: { field: property, regex: '^locale$' } }] }
+                - has: { field: right, kind: string, regex: '^"(fr|en)"$|^''(fr|en)''$' }
+          - { kind: identifier, regex: '^is(Fr|En)$' }
+    - not:
+        has:
+          field: consequence
+          kind: string
+          regex: '^"[a-z]{2}-[A-Z]{2}"$'
+files:
+  - "apps/*/app/**/*.ts"
+  - "apps/*/app/**/*.tsx"
+  - "apps/*/components/**/*.tsx"
+  - "apps/*/lib/**/*.ts"
+  - "apps/*/lib/**/*.tsx"
+ignores:
+  - "**/node_modules/**"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"

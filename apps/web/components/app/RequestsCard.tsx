@@ -5,7 +5,7 @@ import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
 import { createKrizakaForm } from "@krizaka/ui/form";
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
@@ -26,18 +26,25 @@ const requestForm = createKrizakaForm({
   defaultValues: { serviceId: "", staffId: ANYONE, title: "", note: "" },
 });
 
-/** « Mes demandes » (akinaza#210): requests kept at the shop, renewed in one tap, with a photo or a document attached. */
+/**
+ * « Mes demandes » (akinaza#210): requests kept at the shop, renewed in one tap, with a photo or a document attached. The form
+ * is folded behind « Garder une demande » and opens in place (D7); renewing is a secondary — the screen keeps one primary.
+ */
 export function RequestsCard({ data }: { data: RequestsData }) {
   const { say, locale } = useSay();
   const call = useCall();
-  const name = (s: { serviceNameFr: string; serviceNameEn: string } | { nameFr: string; nameEn: string }) => ("nameFr" in s ? (locale === "fr" ? s.nameFr : s.nameEn) : locale === "fr" ? s.serviceNameFr : s.serviceNameEn);
+  const [adding, setAdding] = useState(false);
+  const name = (s: { serviceNameFr: string; serviceNameEn: string } | { nameFr: string; nameEn: string }) => ("nameFr" in s ? { fr: s.nameFr, en: s.nameEn } : { fr: s.serviceNameFr, en: s.serviceNameEn })[locale];
   const i18n = { t: (key: string, vars?: Readonly<Record<string, string | number | boolean | Date | null | undefined>>) => say(key, vars as Record<string, string | number> | undefined), locale };
   const form = requestForm.useForm({
     i18n,
     defaultValues: { serviceId: data.catalogue?.services[0]?.id ?? "", staffId: ANYONE, title: "", note: "" },
     onSubmit: async (values) => {
       const saved = await call.run("/api/me/requests", { json: { clientId: data.clientId, serviceId: values.serviceId, staffId: values.staffId || null, title: values.title, note: values.note || null } });
-      if (saved !== null) form.reset();
+      if (saved !== null) {
+        form.reset();
+        setAdding(false);
+      }
     },
   });
   if (!data.catalogue && data.requests.length === 0) return null;
@@ -57,7 +64,7 @@ export function RequestsCard({ data }: { data: RequestsData }) {
                 </div>
                 <div className="flex gap-2">
                   {data.shopSlug && data.catalogue ? (
-                    <Button asChild size="sm" variant="primary">
+                    <Button asChild size="sm" variant="secondary">
                       <Link href={serviceHref(locale, data.shopSlug, r.serviceId, { staffId: r.staffId, zoneId: r.zoneId })}>{say("client.requests.renew")}</Link>
                     </Button>
                   ) : null}
@@ -73,7 +80,12 @@ export function RequestsCard({ data }: { data: RequestsData }) {
       ) : (
         <p className="mb-4 text-sm text-fg-secondary">{say("client.requests.none")}</p>
       )}
-      {data.catalogue ? (
+      {data.catalogue && !adding ? (
+        <Button size="md" variant="secondary" className="w-full sm:w-auto sm:self-start" aria-expanded={false} onClick={() => setAdding(true)}>
+          {say("client.requests.open")}
+        </Button>
+      ) : null}
+      {data.catalogue && adding ? (
         <form.Form aria-label={say("client.requests.add")} className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <form.TextField name="title" label={say("client.requests.titleField")} placeholder={say("client.requests.titlePlaceholder")} />
           <form.Select name="serviceId" label={say("client.requests.service")} options={data.catalogue.services.map((s) => ({ value: s.id, label: name(s) }))} />

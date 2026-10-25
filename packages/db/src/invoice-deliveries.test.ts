@@ -2,8 +2,9 @@ import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { invoiceDeliveries, mailOutbox } from "./schema";
-import { enqueueInvoiceDelivery, invoiceByToken, invoiceDeliveryHistory, invoiceTokenHash } from "./invoice-deliveries";
-import { eraseClient, issueShopInvoice } from "./shop-ops";
+import { clientInvoices, enqueueInvoiceDelivery, invoiceByToken, invoiceDeliveryHistory, invoiceTokenHash } from "./invoice-deliveries";
+import { recordPayment } from "./invoice-payments";
+import { creditNote, eraseClient, issueShopInvoice } from "./shop-ops";
 import { freshDatabase } from "./test/db";
 import { salon } from "./test/fixtures";
 
@@ -129,5 +130,20 @@ describe("private invoice delivery links", () => {
     await enqueueInvoiceDelivery(t.db, shop.shop.id, invoice.id, mail("E", 1));
     await expect(enqueueInvoiceDelivery(t.db, shop.shop.id, invoice.id, mail("F", 1))).rejects.toMatchObject({ code: "AK_INVOICE_SEND_LIMIT" });
     await expect(enqueueInvoiceDelivery(t.db, shop.shop.id, invoice.id, mail("G", 2))).resolves.toHaveProperty("deliveryId");
+  });
+});
+
+describe("the client space's invoices (D7): what the ledger says of each, for its derived state", () => {
+  it("gives each invoice its paid amount, its due date, whether a credit note cancelled it, and the credit note itself", async () => {
+    const shop = await salon(t.db);
+    const paid = await issueShopInvoice(t.db, shop.shop.id, { clientId: shop.client.id, language: "fr", issuedOn: "2026-10-01", termsDays: 0, lines: [{ serviceId: shop.services.cut.id, quantity: 1 }] });
+    await recordPayment(t.db, shop.shop.id, paid.invoice.id, { method: "cash", amountCents: paid.invoice.totalCents }, NOW);
+    const cancelled = await issueShopInvoice(t.db, shop.shop.id, { clientId: shop.client.id, language: "fr", issuedOn: "2026-10-02", lines: [{ serviceId: shop.services.cut.id, quantity: 1 }] });
+    await creditNote(t.db, cancelled.invoice.id, "2026-10-03");
+    const rows = await clientInvoices(t.db, shop.client.id);
+    const byId = new Map(rows.map((r) => [r.id, r]));
+    expect(byId.get(paid.invoice.id)).toMatchObject({ paidCents: paid.invoice.totalCents, dueOn: "2026-10-01", superseded: false, creditOf: null });
+    expect(byId.get(cancelled.invoice.id)).toMatchObject({ paidCents: 0, superseded: true });
+    expect(rows.find((r) => r.creditOf === cancelled.invoice.id)).toMatchObject({ superseded: false });
   });
 });

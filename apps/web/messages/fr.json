@@ -1134,8 +1134,7 @@
       "upcoming": "À venir",
       "past": "Passées",
       "invoiceTitle": "Factures",
-      "invoiceNone": "Aucune facture pour cette boutique.",
-      "invoiceOpen": "Ouvrir la facture {number}",
+      "invoiceIssued": "Émise le {date}",
       "cancel": "Annuler",
       "cancelled": "Annulée",
       "cancelConfirm": "Annuler cette promenade?",
@@ -1148,8 +1147,12 @@
       "dogsTitle": "Mes chiens",
       "bookAgain": "Réserver chez {shop}",
       "privacyTitle": "Mes données (Loi 25)",
-      "privacyIntro": "{shop} conserve votre dossier et celui de vos chiens. Vous pouvez en prendre une copie ou le faire effacer.",
+      "dataLead": "Chaque boutique conserve votre dossier. Vous pouvez en prendre une copie ou le faire effacer.",
       "export": "Télécharger mes données",
+      "exportShort": "Télécharger",
+      "exportFor": "Télécharger mes données chez {shop}",
+      "eraseHeading": "Effacer un dossier",
+      "eraseLead": "Une boutique à la fois, pour de bon.",
       "erase": "Effacer mon dossier chez {shop}",
       "eraseTitle": "Effacer votre dossier?",
       "eraseDescription": "Vos coordonnées, vos chiens, les notes et les photos des rapports sont effacés pour de bon. Les factures sont conservées comme la loi l'exige. Saisissez votre courriel pour confirmer.",
@@ -1172,7 +1175,8 @@
         "attach": "Joindre une photo ou un PDF",
         "fileImage": "Photo",
         "filePdf": "Document PDF",
-        "fileRemove": "Retirer ce fichier"
+        "fileRemove": "Retirer ce fichier",
+        "open": "Garder une demande"
       }
     },
     "report": {
@@ -1475,7 +1479,6 @@
         },
         "client": {
           "cancelConfirm": "Annuler ce rendez-vous?",
-          "privacyIntro": "{shop} conserve votre dossier. Vous pouvez en prendre une copie ou le faire effacer.",
           "eraseDescription": "Vos coordonnées et vos réservations sont effacées pour de bon. Les factures sont conservées comme la loi l'exige. Saisissez votre courriel pour confirmer."
         }
       }
