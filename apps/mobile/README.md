@@ -27,8 +27,8 @@ pnpm lint && pnpm typecheck && pnpm test
 pnpm ios               # or: pnpm android — EXPO_PUBLIC_APP_URL=http://<your machine>:3000 for a local backend
 ```
 
-Tests: Jest with `jest-expo` and Testing Library (a test per tab, the domain rules). Maestro: `.maestro/smoke.yaml` (the first
-screen) and `.maestro/tabs.yaml` (the five tabs, signed in as the QA owner). `jest.resolver.js` lets Jest load the
+Tests: Jest with `jest-expo` and Testing Library (a test per tab, the domain rules). Maestro (`.maestro/`, run in CI on every pull request by the org's `mobile-e2e.yml`, check `mobile-e2e / gate`): `smoke` (the first
+screen), `tabs` (the five tabs), `aujourdhui`, `factures` and `quick-invoice`, signed in as the demo shop's owner (`PERSONA_EMAIL`, `PERSONA_PASSWORD`) against `scripts/ci-mobile-backend.sh`'s throwaway backend; the screenshots, video and JUnit report are the `maestro-e2e` artifact. `jest.resolver.js` lets Jest load the
 ESM-only `@krizaka/*` packages. CI: `.github/workflows/mobile-ci.yml` (the org's `expo-ci`: lint, types, tests, the iOS
 and Android bundle export).
 

@@ -1,0 +1,24 @@
+# The quick invoice (D8): pick a service, add the line, see GST and QST, issue it, find it in the list. The backend of CI is
+# throwaway, so issuing an invoice changes nothing that lasts.
+appId: com.krizaka.akinaza
+tags:
+  - ci
+---
+- launchApp:
+    clearState: true
+- runFlow: shared/sign-in.yaml
+- tapOn: "Factures|Invoices"
+- tapOn: "Nouvelle facture|New invoice"
+- assertVisible: "Service"
+# A service chip reads « name · price »
+- tapOn: ".+ · \\d.*"
+- tapOn: "Ajouter la ligne|Add the line"
+- assertVisible: "Sous-total.*|Subtotal.*"
+- assertVisible: "TPS.*|GST.*"
+- takeScreenshot: quick-invoice-totals
+- tapOn: "Émettre la facture|Issue the invoice"
+- extendedWaitUntil:
+    visible: "Nouvelle facture|New invoice"
+    timeout: 30000
+- assertVisible: "Total.*"
+- takeScreenshot: quick-invoice-issued
