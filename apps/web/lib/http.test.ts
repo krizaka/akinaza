@@ -37,6 +37,13 @@ describe("the API's answers", () => {
     expect(res.status).toBe(404);
   });
 
+  it("answers an invoice naming another shop's appointment as a 404, like an unknown one (D4)", async () => {
+    const res = await handle(async () => {
+      throw new ShopError("AK_APPOINTMENT_UNKNOWN");
+    });
+    expect(res.status).toBe(404);
+  });
+
   it("answers a service-shop refusal with its status and a stable code, never the internals", async () => {
     const res = await handle(async () => {
       throw new ShopError("AK_CANCEL_TOO_LATE");
