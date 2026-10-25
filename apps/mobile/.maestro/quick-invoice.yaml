@@ -10,8 +10,8 @@ tags:
 - tapOn: "Factures|Invoices"
 - tapOn: "Nouvelle facture|New invoice"
 - assertVisible: "Service"
-# A service chip reads « name · price »
-- tapOn: ".+ · \\d.*"
+# A service chip reads « name · price » (the first one)
+- tapOn: ".+ · .+"
 - tapOn: "Ajouter la ligne|Add the line"
 - assertVisible: "Sous-total.*|Subtotal.*"
 - assertVisible: "TPS.*|GST.*"
