@@ -54,4 +54,10 @@ describe("Today's board: the shop's money for who may see the invoices (D4)", ()
     expect(todayBoard).not.toHaveBeenCalled();
     expect(day.props.board ?? null).toBeNull();
   });
+
+  it("keeps the day when the board fails: the agenda renders, the side column says it failed (D6)", async () => {
+    vi.mocked(todayBoard).mockRejectedValue(new Error("down"));
+    const day = await page("owner");
+    expect(day.props).toMatchObject({ board: null, boardFailed: true });
+  });
 });

@@ -14,6 +14,7 @@ import { formatLongDay } from "@/lib/format";
 import { asLocale, format, getDictionary, type Locale } from "@/lib/i18n";
 import { may, memberShop } from "@/lib/member-shop";
 import { shopRoutes } from "@/lib/routes";
+import { settle } from "@/lib/settle";
 import { todayView } from "@/lib/today";
 import { consoleFor } from "@/lib/vocabulary";
 
@@ -43,12 +44,14 @@ export default async function Today({ params, searchParams }: { params: Promise<
   const today = localDay(new Date(), shop.timezone);
   const period: BoardPeriod = BOARD_PERIODS.find((p) => String(p) === query.period) ?? BOARD_PERIODS[0];
   // The board (the binder, the activity, « À encaisser ») is the shop's money: loaded only for who may see the invoices.
-  const board = may(role, "invoices") ? await todayBoard(db(), shop.id, { day: today, period }) : null;
-  return <OwnerDay locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} dependants={dependants} board={board} period={period} />;
+  // A board that fails leaves the day standing: the side column says so in place (D6).
+  const settled = may(role, "invoices") ? await settle(todayBoard(db(), shop.id, { day: today, period })) : null;
+  const board = settled?.ok ? settled.value : null;
+  return <OwnerDay locale={locale} shop={shop} role={role} staffAccountId={role === "staff" ? session.account.id : undefined} query={query} dependants={dependants} board={board} boardFailed={settled !== null && !settled.ok} period={period} />;
 }
 
 /** The agenda day of the owner (and a manager), for every trade; a staff member of another trade sees their own appointments here. */
-async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants, board, period }: { locale: Locale; shop: MemberShop; role: ShopRole; staffAccountId: string | undefined; query: { day?: string; appointment?: string }; dependants: boolean; /** Null for who may not see the shop's money. */ board: Awaited<ReturnType<typeof todayBoard>> | null; period: BoardPeriod }) {
+async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants, board, boardFailed, period }: { locale: Locale; shop: MemberShop; role: ShopRole; staffAccountId: string | undefined; query: { day?: string; appointment?: string }; dependants: boolean; /** Null for who may not see the shop's money. */ board: Awaited<ReturnType<typeof todayBoard>> | null; boardFailed: boolean; period: BoardPeriod }) {
   const t = getDictionary(locale).console;
   const routes = shopRoutes(locale, shop.id);
   const view = await todayView(shop, { day: query.day, staffAccountId });
@@ -72,6 +75,7 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
       description={offLine ?? ""}
       dependants={dependants}
       board={board}
+      boardFailed={boardFailed}
       period={period}
       publicPageHref={shop.published && shop.slug ? `/${locale}/s/${shop.slug}` : null}
       visits={dependants ? Object.fromEntries(visits.map((v) => [v.appointmentId, withMinutes(v)])) : undefined}

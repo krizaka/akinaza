@@ -68,7 +68,7 @@ export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /**
   };
   return (
     <div className="flex flex-col gap-4">
-      <PageHeader title={say(`shopSetup.sections.tabs.${tab}`)} />
+      <PageHeader as="h2" title={say(`shopSetup.sections.tabs.${tab}`)} />
       {body[tab]}
     </div>
   );

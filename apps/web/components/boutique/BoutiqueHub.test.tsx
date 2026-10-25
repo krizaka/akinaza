@@ -19,12 +19,13 @@ const render = (p: BoutiqueHubProps, locale: "en" | "fr" = "en") => renderIn(loc
 const text = (h: string) => h.replace(/<[^>]*>/g, " ").replace(/&[a-z#0-9]+;/gi, " ").replace(/\s+/g, " ");
 
 describe("Boutique, the shop's hub on SettingsLayout (K4)", () => {
-  it("names the shop, its status and its public address in the header, and holds no h1 of its own", () => {
+  it("names the screen « Boutique » in its one h1, with the shop, its status and its public address (D6)", () => {
     const html = render(props());
+    expect(html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/g)?.map((h) => text(h).trim())).toEqual(["Shop"]);
+    expect(text(render(props(), "fr")).match(/Boutique/)).not.toBeNull();
     expect(text(html)).toContain("Pattes de Saint-Henri");
     expect(text(html)).toContain("Published");
     expect(html).toContain("https://www.akinaza.com/en/s/pattes-de-saint-henri");
-    expect(html).not.toContain("<h1");
   });
 
   it("lets the address wrap on a 360 px phone instead of pushing the page wider", () => {

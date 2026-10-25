@@ -152,3 +152,12 @@ describe("a finished appointment is billed from its sheet (D3)", () => {
     expect(billAppointmentHref(base.appointments[0]!, routes, true)).toBeNull();
   });
 });
+
+describe("a failing section of the day (D6): an alert in place, the rest renders", () => {
+  it("says the side column could not load, with « Réessayer », and keeps the agenda", () => {
+    const t = text(render({ board: null, boardFailed: true }));
+    expect(t).toContain("states.error.title");
+    expect(t).toContain("states.retry");
+    expect(t).toContain("today.agendaLabel");
+  });
+});

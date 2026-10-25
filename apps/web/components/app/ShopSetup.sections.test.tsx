@@ -17,6 +17,9 @@ describe("« My shop page » in sections (#265)", () => {
   it("renders the section the hub opens, under its own title, and no tab strip: the hub's navigation names the sections", () => {
     const html = render(data(), "identity");
     expect(text(html)).toContain("Identity");
+    // Under Boutique's h1, the section is an h2 (D6).
+    expect(html).not.toMatch(/<h1[\s>]/);
+    expect(html).toMatch(/<h2[^>]*>Identity<\/h2>/);
     expect(html).not.toContain('role="tablist"');
     expect(text(html)).not.toContain("Publish");
     expect(text(render(data(), "publish"))).toContain("Publish the page");

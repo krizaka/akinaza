@@ -80,7 +80,7 @@ export function ShopLanguages({ data }: { data: LanguagesData }) {
   const targets = data.enabled.filter((l) => l !== data.source);
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={t("title")} description={t("intro")} />
+      <PageHeader as="h2" title={t("title")} description={t("intro")} />
       <p className="text-sm"><Link className="font-semibold text-fg-accent underline" href={data.setupHref}>{t("back")}</Link></p>
 
       <Card.Root className="flex flex-col gap-4 p-4">
