@@ -1204,7 +1204,6 @@
         "kind": "Type",
         "total": "Total",
         "state": "État",
-        "month": "Mois",
         "remaining": "Reste dû"
       },
       "correct": {
@@ -1220,10 +1219,12 @@
       "chain": {
         "replaces": "Remplace la facture {number}",
         "replacedBy": "Remplacée par la facture {number}",
-        "creditedBy": "Annulée par la note de crédit {number}"
+        "creditedBy": "Annulée par la note de crédit {number}",
+        "title": "Factures liées"
       },
       "actions": {
-        "correct": "Modifier"
+        "correct": "Modifier",
+        "print": "Imprimer"
       },
       "state": {
         "credit": "Note de crédit",
@@ -1250,7 +1251,8 @@
         "email": "Courriel du client",
         "message": "Message (facultatif)",
         "submit": "Mettre le courriel en file",
-        "queued": "Le courriel de la facture a été mis en file."
+        "queued": "Le courriel de la facture a été mis en file.",
+        "close": "Fermer"
       },
       "history": {
         "title": "Historique des envois",
@@ -1834,6 +1836,36 @@
       "consulting-histoire": {
         "name": "Mon travail",
         "intent": "La démarche et les cas d'abord."
+      }
+    },
+    "table": {
+      "selectAll": "Tout sélectionner",
+      "selectRow": "Sélectionner {name}",
+      "loading": "Chargement",
+      "empty": "Rien à afficher",
+      "details": "Détail",
+      "expandRow": "Voir le détail de {name}",
+      "group": "{value}, {count} lignes",
+      "resize": "Redimensionner {header}",
+      "result": "{count} résultat",
+      "results": "{count} résultats",
+      "filters": "Filtrer la liste",
+      "clearFilters": "Effacer les filtres",
+      "removeFilter": "Retirer {label}",
+      "activeFilter": "{header} : {value}",
+      "search": "Chercher dans {header}",
+      "rangeFrom": "{header} à partir de",
+      "rangeTo": "{header} jusqu’à",
+      "columns": "Colonnes",
+      "showMore": "En savoir plus sur {name}",
+      "export": "Exporter (CSV)",
+      "pagination": {
+        "nav": "Pages",
+        "previous": "Précédente",
+        "next": "Suivante",
+        "page": "Page {page}",
+        "compact": "Page {page} sur {pageCount}",
+        "pageSize": "Lignes par page"
       }
     }
   },

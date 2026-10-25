@@ -12,8 +12,9 @@ import { InvoiceSendAction } from "@/components/app/InvoiceSendAction";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
 import { ButtonLink } from "@/components/ButtonLink";
-import { formatDate, formatMoney, INTL_LOCALE } from "@/lib/format";
+import { formatDate, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import { useTableLabels } from "@/lib/table-labels";
 
 export interface InvoiceRowView {
   id: string;
@@ -34,30 +35,39 @@ export interface InvoiceRowView {
   superseded: boolean;
 }
 
-const STATE_TONE: Record<InvoiceState, "neutral" | "success" | "warning" | "danger" | "accent"> = { credit: "warning", cancelled: "neutral", paid: "success", partial: "accent", overdue: "danger", due: "neutral" };
+export const STATE_TONE: Record<InvoiceState, "neutral" | "success" | "warning" | "danger" | "accent"> = { credit: "warning", cancelled: "neutral", paid: "success", partial: "accent", overdue: "danger", due: "neutral" };
 const standing = (i: InvoiceRowView) => ({ totalCents: i.totalCents, paidCents: i.paidCents, dueOn: i.dueOn, isCredit: !!i.creditOf, superseded: i.superseded });
+
+/** The order of the list (D2): the overdue first — what to chase —, then the newest. */
+export function byUrgency<T extends InvoiceRowView>(invoices: readonly T[], today: string): T[] {
+  const overdue = (i: T) => (invoiceState(standing(i), today) === INVOICE_STATE.overdue ? 0 : 1);
+  return [...invoices].sort((a, b) => overdue(a) - overdue(b) || b.issuedOn.localeCompare(a.issuedOn) || b.number.localeCompare(a.number));
+}
 
 /** The ways a balance is cashed in one tap from the list (the invoice page records any other). */
 const QUICK_METHODS = ["cash", "card", "transfer"] as const;
 
 /**
- * The issued invoices (akinaza#218): searched by number and client, filtered by state and month, exported as CSV, each
- * unfolding its amounts and its quick actions — open, edit (#207), cash the balance. A card per invoice on a phone.
+ * The issued invoices (akinaza#218, D2): in the screen's words (`useTableLabels`), the number narrow and the client wide, the
+ * state derived from the ledger (`invoiceState`) as a chip with its tone, the overdue first; searched by number and client,
+ * filtered by state, exported as CSV, each unfolding its amounts and its quick actions — open, edit (#207), cash the balance.
+ * A card per invoice on a phone.
  */
 export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoices: InvoiceRowView[]; today: string; defaultMessage?: string }) {
   const { say, locale } = useSay();
   const routes = useShopRoutes();
   const call = useCall();
+  const labels = useTableLabels();
+  const ordered = useMemo(() => byUrgency(invoices, today), [invoices, today]);
   const columns = useMemo<DataTableColumn<InvoiceRowView>[]>(() => {
     const day = (d: string) => formatDate(`${d}T12:00:00Z`, locale, "UTC");
-    const month = (d: string) => new Date(`${d.slice(0, 7)}-15T12:00:00Z`).toLocaleDateString(INTL_LOCALE[locale], { month: "long", year: "numeric", timeZone: "UTC" });
-    const months = [...new Set(invoices.map((i) => i.issuedOn.slice(0, 7)))].sort().reverse();
     return [
       {
         id: "number",
         header: say("invoices.table.number"),
         type: "title",
         card: "title",
+        width: 132,
         sortable: true,
         filter: "text",
         value: (i) => i.number,
@@ -68,7 +78,7 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
         ),
         subtitle: (i) => (i.creditOf ? say("invoices.list.credit") : i.language.toUpperCase()),
       },
-      { id: "client", header: say("invoices.table.client"), sortable: true, filter: "text", value: (i) => i.client ?? "", cell: (i) => i.client ?? say("invoices.list.noClient") },
+      { id: "client", header: say("invoices.table.client"), sortable: true, filter: "text", minWidth: 240, value: (i) => i.client ?? "", cell: (i) => i.client ?? say("invoices.list.noClient") },
       {
         id: "state",
         header: say("invoices.table.state"),
@@ -78,16 +88,19 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
         value: (i) => invoiceState(standing(i), today),
         cell: (i) => {
           const state = invoiceState(standing(i), today);
-          return <Badge tone={STATE_TONE[state]}>{say(`invoices.state.${state}`)}</Badge>;
+          return (
+            <Badge tone={STATE_TONE[state]} data-invoice={i.id} data-state={state}>
+              {say(`invoices.state.${state}`)}
+            </Badge>
+          );
         },
       },
-      { id: "month", header: say("invoices.table.month"), filter: "facet", hideable: true, priority: 4, options: months.map((m) => ({ value: m, label: month(m) })), value: (i) => i.issuedOn.slice(0, 7), cell: (i) => month(i.issuedOn) },
       { id: "issued", header: say("invoices.table.issued"), sortable: true, priority: 2, value: (i) => i.issuedOn, cell: (i) => day(i.issuedOn) },
       { id: "due", header: say("invoices.table.due"), priority: 3, hideable: true, value: (i) => i.dueOn ?? "", cell: (i) => (i.dueOn ? day(i.dueOn) : "—") },
       { id: "total", header: say("invoices.table.total"), type: "number", sortable: true, value: (i) => i.totalCents, cell: (i) => formatMoney(i.totalCents, locale) },
       { id: "remaining", header: say("invoices.table.remaining"), type: "number", sortable: true, priority: 3, hideable: true, value: (i) => remainingCents(standing(i)), cell: (i) => formatMoney(remainingCents(standing(i)), locale) },
     ];
-  }, [say, locale, routes, today, invoices]);
+  }, [say, locale, routes, today]);
 
   const detail = (i: InvoiceRowView) => {
     const state = invoiceState(standing(i), today);
@@ -136,11 +149,12 @@ export function InvoicesTable({ invoices, today, defaultMessage = "" }: { invoic
   return (
     <DataTable
       caption={say("invoices.list.title")}
-      rows={invoices}
+      rows={ordered}
       columns={columns}
+      labels={labels}
+      density="compact"
       getRowId={(i) => i.id}
       rowLabel={(i) => i.number}
-      defaultSort={{ column: "issued", direction: "descending" }}
       renderDetail={detail}
       toolbar={
         <div className="flex flex-col gap-3">

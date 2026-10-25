@@ -1204,7 +1204,6 @@
         "kind": "Type",
         "total": "Total",
         "state": "State",
-        "month": "Month",
         "remaining": "Balance due"
       },
       "correct": {
@@ -1220,10 +1219,12 @@
       "chain": {
         "replaces": "Replaces invoice {number}",
         "replacedBy": "Replaced by invoice {number}",
-        "creditedBy": "Cancelled by credit note {number}"
+        "creditedBy": "Cancelled by credit note {number}",
+        "title": "Linked invoices"
       },
       "actions": {
-        "correct": "Correct"
+        "correct": "Correct",
+        "print": "Print"
       },
       "state": {
         "credit": "Credit note",
@@ -1250,7 +1251,8 @@
         "email": "Client's e-mail",
         "message": "Message (optional)",
         "submit": "Queue the e-mail",
-        "queued": "The invoice e-mail was queued."
+        "queued": "The invoice e-mail was queued.",
+        "close": "Close"
       },
       "history": {
         "title": "Sending history",
@@ -1834,6 +1836,36 @@
       "consulting-histoire": {
         "name": "My work",
         "intent": "Approach and cases first."
+      }
+    },
+    "table": {
+      "selectAll": "Select all rows",
+      "selectRow": "Select {name}",
+      "loading": "Loading",
+      "empty": "Nothing to show",
+      "details": "Details",
+      "expandRow": "Show the details of {name}",
+      "group": "{value}, {count} rows",
+      "resize": "Resize {header}",
+      "result": "{count} result",
+      "results": "{count} results",
+      "filters": "Filter the list",
+      "clearFilters": "Clear the filters",
+      "removeFilter": "Remove {label}",
+      "activeFilter": "{header}: {value}",
+      "search": "Search {header}",
+      "rangeFrom": "{header} from",
+      "rangeTo": "{header} to",
+      "columns": "Columns",
+      "showMore": "More about {name}",
+      "export": "Export (CSV)",
+      "pagination": {
+        "nav": "Pages",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {page}",
+        "compact": "Page {page} of {pageCount}",
+        "pageSize": "Rows per page"
       }
     }
   },

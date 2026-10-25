@@ -1,4 +1,6 @@
+import { invoiceState } from "@akinaza/core";
 import { KrizakaQueryProvider } from "@krizaka/query";
+import { dataTableLabels } from "@krizaka/ui/data-table";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
@@ -31,8 +33,7 @@ const row = (number: string, patch: Partial<InvoiceRowView> = {}): InvoiceRowVie
   ...patch,
 });
 const rows = [row("A-0001", { paidCents: 11_498 }), row("A-0002", { dueOn: "2026-10-15" }), row("A-0003", { paidCents: 5_000 }), row("A-0004", { superseded: true }), row("A-0005", { creditOf: "i-A-0004", totalCents: -11_498 })];
-const render = (locale: "en" | "fr") =>
-  readable(
+const markup = (locale: "en" | "fr") =>
     renderToStaticMarkup(
       <I18nProvider locale={locale} messages={MESSAGES[locale] as never}>
         <KrizakaQueryProvider>
@@ -41,8 +42,8 @@ const render = (locale: "en" | "fr") =>
           </ShopSession>
         </KrizakaQueryProvider>
       </I18nProvider>,
-    ),
-  );
+    );
+const render = (locale: "en" | "fr") => readable(markup(locale));
 
 describe("the invoices list (akinaza#218)", () => {
   it("says where each invoice stands, in the shop's words", () => {
@@ -55,5 +56,51 @@ describe("the invoices list (akinaza#218)", () => {
     const text = render("fr");
     expect(text).toMatch(/Export|Exporter/);
     expect(text).toContain("Reste dû");
+  });
+});
+
+/** The English words @krizaka/ui's DataTable falls back on (krizaka-ui#595): none may show in a French render. */
+const ENGLISH_DEFAULTS = [
+  ...Object.values(dataTableLabels).filter((v): v is string => typeof v === "string"),
+  dataTableLabels.expandRow("X").replace("X", ""),
+  dataTableLabels.results(3).replace("3", "").trim(),
+  dataTableLabels.search("X").replace("X", ""),
+  dataTableLabels.showMore("X").replace("X", ""),
+  dataTableLabels.removeFilter("X").replace("X", ""),
+].filter((w) => w.trim().length > 3 && !["Clients"].includes(w.trim()));
+
+describe("Factures in French (D2, review K3): the chrome, the columns, the derived state, overdue first", () => {
+  it("shows no English default label of the table in a French render", () => {
+    const html = markup("fr");
+    for (const word of ENGLISH_DEFAULTS) expect(html, word).not.toContain(word);
+  });
+
+  it("has no « Mois » column: the issue date says it", () => {
+    expect(render("fr")).not.toMatch(/\bMois\b/);
+    expect(render("en")).not.toMatch(/\bMonth\b/);
+  });
+
+  it("shows each invoice's state as a chip equal to invoiceState (due, partial, overdue, paid, credit, cancelled)", () => {
+    const html = markup("fr");
+    const known = [...rows, row("A-0006", { dueOn: "2026-11-30" })];
+    const all = renderToStaticMarkup(
+      <I18nProvider locale="fr" messages={MESSAGES.fr as never}>
+        <KrizakaQueryProvider>
+          <ShopSession locale="fr" shopId="s1" remembered>
+            <InvoicesTable invoices={known} today="2026-10-23" />
+          </ShopSession>
+        </KrizakaQueryProvider>
+      </I18nProvider>,
+    );
+    const chips = [...all.matchAll(/data-invoice="([^"]+)" data-state="([^"]+)"/g)].map((m) => [m[1], m[2]]);
+    const expected = known.map((i) => [i.id, invoiceState({ ...i, isCredit: !!i.creditOf }, "2026-10-23")]);
+    expect(new Set(chips.map((c) => c[1]))).toEqual(new Set(["paid", "overdue", "partial", "cancelled", "credit", "due"]));
+    for (const pair of expected) expect(chips).toContainEqual(pair);
+    expect(html).toContain('data-state="overdue"');
+  });
+
+  it("puts the overdue invoices first, then the newest", () => {
+    const order = [...markup("fr").matchAll(/data-invoice="i-(A-\d+)"/g)].map((m) => m[1]);
+    expect(order[0]).toBe("A-0002");
   });
 });

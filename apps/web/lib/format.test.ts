@@ -6,6 +6,11 @@ describe("format", () => {
   it("writes money in Canadian dollars, in the language's habit", () => {
     expect(formatMoney(12_345, "en").replace(/\s/g, " ")).toBe("$123.45");
     expect(formatMoney(12_345, "fr").replace(/\s/g, " ")).toBe("123,45 $");
+    expect(formatMoney(123_456_789, "fr").replace(/\s/g, " ")).toBe("1 234 567,89 $");
+  });
+
+  it("takes integer cents, never a float: the ledger's money through @krizaka/intl (« Krizaka first »)", () => {
+    expect(() => formatMoney(12.5, "fr")).toThrow(TypeError);
   });
 
   it("names a day in full whatever the machine's zone, and a time in the shop's zone", () => {
