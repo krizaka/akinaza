@@ -35,6 +35,31 @@ export async function customerOf(query: Query, accountId: string, create: () => 
   return kept?.customer ?? made.id;
 }
 
+/** The founder offer's seats: a business holds one from its first subscription on, whatever becomes of it (the offer is for the first businesses). */
+export interface FounderSeats {
+  limit: number;
+  taken: number;
+  open: boolean;
+}
+
+export async function founderSeats(query: Query, limit: number): Promise<FounderSeats> {
+  const [r] = await query<{ taken: number }>("SELECT count(*)::int AS taken FROM accounts WHERE payment_subscription_id IS NOT NULL");
+  const taken = r?.taken ?? 0;
+  return { limit, taken, open: taken < limit };
+}
+
+/**
+ * Who may open the founder checkout: `member` (already a founder: the limit never turns them away, and the price is the
+ * subscription's, which nothing here rewrites), `open` (a seat is left) or `full` (the offer is no longer offered).
+ */
+export type FounderGate = "open" | "member" | "full";
+
+export async function founderGate(query: Query, accountId: string, limit: number): Promise<FounderGate> {
+  const [own] = await query<{ sub: string | null }>("SELECT payment_subscription_id AS sub FROM accounts WHERE id = $1", [accountId]);
+  if (own?.sub) return "member";
+  return (await founderSeats(query, limit)).open ? "open" : "full";
+}
+
 /** Applies a verified payment event once (@krizaka/payments records its id first): a replay changes nothing. */
 export function applyPaymentEvent(query: Query, event: PaymentEvent): Promise<"applied" | "duplicate" | "ignored"> {
   return applyOnce(pgEventStore(query), event, {

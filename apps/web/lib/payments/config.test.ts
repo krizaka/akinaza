@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { paymentsFrom } from "./config";
 
-const base = { PAYMENTS_PRICE_KEY_FOUNDER: "k" };
+const base = { PAYMENTS_PRICE_KEY_FOUNDER: "k", PAYMENTS_PRICE_KEY_REGULAR: "r" };
 describe("the vendor is configuration", () => {
   it("is off unless a provider and its keys are set", () => {
     expect(paymentsFrom(base)).toBeNull();

@@ -1,9 +1,10 @@
 import { PaymentsError } from "@krizaka/payments";
 
 import { requireSession } from "@/lib/access";
-import { customerOf } from "@/lib/billing";
+import { customerOf, founderGate } from "@/lib/billing";
 import { query } from "@/lib/db";
 import { env } from "@/lib/env";
+import { founderLimit } from "@/lib/founder-offer";
 import { handle, HttpError, refuse } from "@/lib/http";
 import { FOUNDER, paymentsFrom } from "@/lib/payments/config";
 import { limit } from "@/lib/rate-limit";
@@ -25,6 +26,8 @@ export function POST(req: Request) {
       throw error;
     });
     limit("billing", req, account.id, [20, 3600]);
+    // The first businesses only (the setting `plans.founder.limit`): a founder is never turned away, a newcomer is once the offer is complete.
+    if ((await founderGate(query, account.id, await founderLimit())) === "full") throw refuse(409, "FOUNDER_OFFER_FULL", "The founder offer is complete");
     try {
       const customerId = await customerOf(query, account.id, () => port.createCustomer(account.email, account.id));
       const base = `${e.APP_PUBLIC_URL.replace(/\/$/, "")}/${account.locale}`;

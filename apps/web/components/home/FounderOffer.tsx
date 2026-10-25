@@ -2,8 +2,10 @@ import { CheckIcon } from "@krizaka/icons";
 import { Button } from "@krizaka/ui/button";
 import { Section } from "@krizaka/ui/page";
 
+import { founderSeats } from "@/lib/billing";
+import { query } from "@/lib/db";
 import { env } from "@/lib/env";
-import { founderPrice } from "@/lib/founder-offer";
+import { founderLimit, founderPrice } from "@/lib/founder-offer";
 import { format, getDictionary, type Locale } from "@/lib/i18n";
 import { paymentsFrom } from "@/lib/payments/config";
 import { contactHref } from "@/lib/site";
@@ -14,9 +16,21 @@ import { contactHref } from "@/lib/site";
  * a plain form (no script): it opens the payment page, or the sign-in page when nobody is signed in.
  */
 export async function FounderOffer({ locale }: { locale: Locale }) {
-  const copy = await founderPrice(paymentsFrom(env()), locale);
-  if (!copy) return null;
   const t = getDictionary(locale).landing.founder;
+  const seats = await founderSeats(query, await founderLimit());
+  // The first businesses only: once they are all in, the page says the offer is complete and sells nothing.
+  if (!seats.open) {
+    return (
+      <Section id="offer" title={t.full.title} lead={format(t.full.lead, { limit: seats.limit })} reveal divider>
+        <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
+          <a href={contactHref("dev-akinaza-offer")}>{t.talk}</a>
+        </Button>
+      </Section>
+    );
+  }
+  const price = await founderPrice(paymentsFrom(env()), locale);
+  if (!price) return null;
+  const copy = { ...price, limit: seats.limit };
   return (
     <Section id="offer" title={format(t.title, copy)} lead={t.lead} reveal divider>
       <ul className="m-0 flex list-none flex-col gap-2 p-0">

@@ -4,10 +4,10 @@ import { redirect } from "next/navigation";
 import { ProfileFrame } from "@/components/account/ProfileFrame";
 import { SubscriptionPanel } from "@/components/account/SubscriptionPanel";
 import { accountPage } from "@/lib/account-page";
-import { subscriptionOf } from "@/lib/billing";
+import { founderGate, subscriptionOf } from "@/lib/billing";
 import { query } from "@/lib/db";
 import { env } from "@/lib/env";
-import { founderPrice } from "@/lib/founder-offer";
+import { founderLimit, founderPrice } from "@/lib/founder-offer";
 import { asLocale } from "@/lib/i18n";
 import { titleOf } from "@/lib/page-title";
 import { paymentsFrom } from "@/lib/payments/config";
@@ -23,10 +23,12 @@ export default async function Subscription({ params }: { params: Promise<{ local
   // A manager or a staff member works in someone else's shop: no subscription of theirs to show (`accountSectionsFor`).
   if (!sections.includes("subscription")) redirect(accountRoutes(locale).profile);
   const e = env();
-  const [subscription, offer] = await Promise.all([subscriptionOf(query, session.account.id, new Date()), e.APP_FOUNDER_OFFER_ENABLED ? founderPrice(paymentsFrom(e), locale) : null]);
+  // The first businesses only: once the offer is complete a newcomer is told so, a founder is never turned away.
+  const full = e.APP_FOUNDER_OFFER_ENABLED && (await founderGate(query, session.account.id, await founderLimit())) === "full";
+  const [subscription, offer] = await Promise.all([subscriptionOf(query, session.account.id, new Date()), e.APP_FOUNDER_OFFER_ENABLED && !full ? founderPrice(paymentsFrom(e), locale) : null]);
   return (
     <ProfileFrame locale={locale} current="subscription" account={profile} sections={sections}>
-      <SubscriptionPanel subscription={{ active: subscription.active, periodEnd: subscription.periodEnd, hasCustomer: subscription.customerId !== null, offer }} />
+      <SubscriptionPanel subscription={{ active: subscription.active, periodEnd: subscription.periodEnd, hasCustomer: subscription.customerId !== null, offer, offerFull: full }} />
     </ProfileFrame>
   );
 }

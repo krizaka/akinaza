@@ -21,3 +21,15 @@ infrastructure and no vendor SDK, a vendor is chosen in configuration, prices an
 
 ## Consequences
 Live mode is a change of keys and of the processor account, not of code.
+
+## Addendum (2026-10-25, akinaza#363): the grid, the limit, no fee
+- **Prices are data in one module**, `apps/web/lib/pricing.ts`: founder 39 $ a month, plus taxes, setup included; regular 49 $ a month, plus taxes,
+  **not public** (no page shows it while sign-up is closed). `payments/catalogue.json` holds both for the processor; `lib/pricing.test.ts` keeps them equal.
+  Every price shown says « plus taxes », and no amount is typed in a message.
+- **The founder offer's limit is a setting**, `plans.founder.limit` (default 20 businesses, global). A business holds a seat from its first
+  subscription (`accounts.payment_subscription_id`). Once the limit is reached the checkout answers 409 `FOUNDER_OFFER_FULL` and the page says the
+  offer is complete. A founder is never turned away, and keeps the founder price as long as the subscription runs: the webhook writes the state
+  of the subscription, never its price (`lib/founder-seats.test.ts`). Concurrent checkouts opened before the last seat is taken can overshoot the
+  limit by the number in flight; the seat is counted when the processor confirms.
+- **Never a fee on transactions**: a plan is a flat monthly subscription; the catalogue has no field for a percentage, and the code never sends an
+  application fee (`lib/pricing.test.ts`).

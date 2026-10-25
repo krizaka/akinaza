@@ -35,6 +35,8 @@ export const SETTINGS = {
   "limits.wallItems": integer("limits", 24, { min: 1, max: 500, unit: "items" }),
   "limits.reelSeconds": integer("limits", 60, { min: 1, max: 300, unit: "seconds" }),
   "limits.reelMegabytes": integer("limits", 40, { min: 1, max: 500, unit: "megabytes" }),
+  // The founder offer (#363): how many businesses it is offered to. Once reached it is no longer offered; a founder keeps the price.
+  "plans.founder.limit": integer("plans", 20, { min: 1, max: 10000, unit: "businesses" }, GLOBAL_ONLY),
   // The shop page in other languages (#258): off until the Orazaka Studio is wired; the languages the owner may turn on; the runs per shop and day.
   "features.storefrontTranslation": flag("features", false, GLOBAL_ONLY),
   "storefront.languages.allowed": subset("storefront", ["fr", "en", "es"] as const, ["fr", "en", "es"], GLOBAL_ONLY),

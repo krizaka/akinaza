@@ -6,10 +6,12 @@ export interface PaymentsSettings {
   PAYMENTS_STRIPE_SECRET_KEY?: string;
   PAYMENTS_STRIPE_WEBHOOK_SECRET?: string;
   PAYMENTS_PRICE_KEY_FOUNDER: string;
+  PAYMENTS_PRICE_KEY_REGULAR: string;
 }
 
-/** Akinaza's plans: the founder offer is a subscription; its price is the processor's data, found by this lookup key. */
+/** Akinaza's plans (lib/pricing.ts): the founder offer and the regular plan are subscriptions; the price is the processor's data, found by lookup key. */
 export const FOUNDER = "founder";
+export const REGULAR = "regular";
 
 /** The only place a payments vendor is chosen (the adapter itself is @krizaka/payments). Null = payments are off. */
 export function paymentsFrom(e: PaymentsSettings): PaymentsPort | null {
@@ -17,6 +19,9 @@ export function paymentsFrom(e: PaymentsSettings): PaymentsPort | null {
   return stripeAdapter({
     secretKey: e.PAYMENTS_STRIPE_SECRET_KEY,
     webhookSecret: e.PAYMENTS_STRIPE_WEBHOOK_SECRET,
-    plans: { [FOUNDER]: { lookupKey: e.PAYMENTS_PRICE_KEY_FOUNDER, mode: "subscription" } },
+    plans: {
+      [FOUNDER]: { lookupKey: e.PAYMENTS_PRICE_KEY_FOUNDER, mode: "subscription" },
+      [REGULAR]: { lookupKey: e.PAYMENTS_PRICE_KEY_REGULAR, mode: "subscription" },
+    },
   });
 }
