@@ -151,8 +151,8 @@ importers:
         specifier: ^0.6.1
         version: 0.6.1(@krizaka/ui@3.55.0)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)
       '@krizaka/fonts':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: 0.5.0
+        version: 0.5.0
       '@krizaka/i18n':
         specifier: ^0.2.1
         version: 0.2.1(react@19.3.1)(typescript@5.9.3)
@@ -1958,8 +1958,8 @@ packages:
       react:
         optional: true
 
-  '@krizaka/fonts@0.3.0':
-    resolution: {integrity: sha512-a66enbTbNJ084fSfQy29mp9OMTORp8EfVDiYPUGuuIGOr+wiwWfEkJ2WQtD6+ijP39ISYbyu+ox8TxTSpmVi5A==}
+  '@krizaka/fonts@0.5.0':
+    resolution: {integrity: sha512-romnY4PqqOLvW/7ZYNzmUq1rTIM8ylmlUeZgB2YukNCp/PxlbSM4kc5ldm1SB6KHbt/rBOlkbQdkW9prhyVvqg==}
     engines: {node: '>=22'}
 
   '@krizaka/i18n@0.2.1':
@@ -9922,7 +9922,7 @@ snapshots:
     optionalDependencies:
       react: 19.3.1
 
-  '@krizaka/fonts@0.3.0': {}
+  '@krizaka/fonts@0.5.0': {}
 
   '@krizaka/i18n@0.2.1(react@19.3.1)(typescript@5.9.3)':
     dependencies:
@@ -11135,7 +11135,9 @@ snapshots:
       metro-runtime: 0.87.1
     transitivePeerDependencies:
       - '@babel/core'
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   '@react-native/normalize-colors@0.88.0': {}
 

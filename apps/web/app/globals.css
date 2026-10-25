@@ -4,7 +4,7 @@
    everything these pages draw. */
 @import "tailwindcss";
 @import "@krizaka/tailwind";
-@import "@krizaka/fonts/css";     /* the faces of @krizaka/fonts; the product surface (data-surface="product", @krizaka/ui blocks.css) draws only the sans */
+@import "@krizaka/fonts/css";     /* the faces of @krizaka/fonts, Plus Jakarta Sans (--kz-font-product-display) for the product register's titles */
 @import "@krizaka/ui/tailwind.css";
 @import "@krizaka/tokens/brands/akinaza.css";
 
@@ -14,12 +14,6 @@ html {
 
 body {
   background: var(--kz-surface-0);
-}
-
-/* The product register (direction § 2.4, #327): the page h1 at 700 — PageHeader draws it at 900. Until krizaka-ui#655 (and #626) carry
-   the register into the brand, this is the one local rule (remove with krizaka-ui#655); the faces come from @krizaka/ui. */
-[data-surface="product"] h1 {
-  font-weight: 700;
 }
 
 /* A changed row washes once (D11, motion.css `data-kz-arrival="flash"`); under reduced motion it does not move, and keeps a static

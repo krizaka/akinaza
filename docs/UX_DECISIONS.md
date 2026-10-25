@@ -497,3 +497,16 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
   keeps both themes legible. Per-user private tags: a shop's vocabulary is shared.
 - **Cost**: local wrappers (`TagChip`, the views bar, the selection tags) until krizaka-ui#627 and #690 ship — deleted the day they land.
 - **Signal we are wrong**: owners ask for « mark as paid » on a selection, or never use a tag.
+
+## D12 — The signed-in app wears the product register 2027 (akinaza#352, ADR-006)
+
+- **Decision**: every page roots on `data-surface="product"` and loads `@krizaka/ui/blocks.css`, so the 3.55 register applies without a
+  component change: slate ink, hairlines for cards only and a visible edge on every field (`--kz-border-control`), radius 14 on cards
+  and 8 on controls, the lift on a card that is a link. Titles are Plus Jakarta Sans (`--kz-font-product-display`, from `@krizaka/fonts`
+  0.5, weights 550 to 700); the page title and a figure's value are 700 by the register, so the app keeps no `h1` rule of its own.
+  The public shop pages keep the Cahier paper (ADR-006 §4).
+- **Problem**: the app drew its own `h1` weight and read the older sans-only register.
+- **Principle**: one register for the family's products; a local override is a debt with a name.
+- **Refused**: a local `h1` rule, a copy of the font file, Google Fonts.
+- **Cost**: none in components; the files with a `rounded-*` use the radius roles and follow.
+- **Signal we are wrong**: titles read as a template in the captures; going back is one token (`--kz-font-display: var(--kz-font-sans)`).
