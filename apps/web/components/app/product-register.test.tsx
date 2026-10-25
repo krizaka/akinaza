@@ -12,7 +12,8 @@ import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
 import { BooksLines, type BooksLineView } from "./BooksLines";
-import { InvoiceDocument, type InvoiceView } from "./InvoiceDocument";
+import { invoice as invoiceFixture } from "./invoice-fixture";
+import { InvoiceDocument } from "./InvoiceDocument";
 import { type InvoiceRowView, InvoicesTable } from "./InvoicesTable";
 import { ShopSession } from "./ShopSession";
 
@@ -112,13 +113,7 @@ describe("tabular digits on every amount (Factures, Livres)", () => {
   });
 
   it.each(["fr", "en"] as const)("an invoice, in %s", (language) => {
-    const doc: InvoiceView = {
-      id: "i1", number: "KZ-00004", clientId: null, replaces: null, replacedBy: null, creditedBy: null, issuedOn: "2026-10-21", termsDays: 30, dueOn: "2026-11-20", language, creditOf: null,
-      subtotalCents: 150_000, gstCents: 7_500, qstCents: 14_963, totalCents: 172_463,
-      client: { fullName: "Studio Lumen inc. (démo)", email: "contact.studiolumen@akinaza.test", phone: "514-555-0111" },
-      shop: { name: "Krizaka (démo)", legalName: "Technologies Krizaka inc. (démo)", address: "1 rue Exemple, Montréal QC", timezone: "America/Toronto", registrant: true, gstNumber: "123456789RT0001", qstNumber: "1234567890TQ0001", publicEmail: null },
-      lines: [{ id: "l1", invoiceId: "i1", position: 1, description: "Développement logiciel / Software development", quantityHundredths: 1_000, unitPriceCents: 15_000, discountCents: 0, taxCategory: "standard", amountCents: 150_000 }],
-    };
+    const doc = invoiceFixture({ language });
     const found = amounts(renderToStaticMarkup(<InvoiceDocument invoice={doc} locale={language} backHref="/fr/app/x/invoices" />));
     expect(found.length).toBeGreaterThanOrEqual(5);
     for (const a of found) {
