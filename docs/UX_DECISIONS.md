@@ -460,3 +460,21 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Cost**: the previous read's signatures kept per list (React state); one CSS rule to remove with krizaka-ui#680.
 - **Signal we are wrong**: owners miss a change that washed while they looked away (then a persistent marker), or find the wash
   distracting on a list that re-reads often.
+
+## The phone app: the web's five places at the web's addresses (Phase 2, D8, #335)
+
+- **Decision**: the tab bar is the web rail — **Aujourd'hui · Clients · Factures · Livres · Boutique**, in its order, words and
+  icons (`TABS` in `src/domain/links.ts`). Every screen lives at the web's address of the shop (`/fr/app/<shop>/aujourdhui?day=`,
+  `/clients?q=`, `/invoices/new?client=`, `/books?period=`, `/boutique`), so a link opens the same place on both; every call names
+  the shop (`?shopId=`) and every cache key carries it. **The calendar folds into Aujourd'hui** as a two-week `DayStrip` with the
+  days that have appointments marked; **the settings move under the avatar** (`/fr/app/profile`, the account's). **Livres** reads
+  the period's GST/QST nets from a new `GET /api/walker/books` (prepared, never filed); **Boutique** shows the shop, its tax status
+  and its services, the long forms staying on the web. Every tab tells its three states (`QueryStates`: the beaver while reading,
+  the error in place with « Réessayer », the empty state with what will fill it). The old addresses still land somewhere true.
+- **Problem**: five tabs that were not the web's (Calendrier and Réglages as places, no Livres, no Boutique), short addresses
+  without the shop, an error as a red sentence over an empty list.
+- **Principle**: consistency and standards (one product, one map), recognition rather than recall.
+- **Refused**: a native Boutique editor (the page, team and hours are a desk's forms); a copy of `LineItems` or `Agenda` here —
+  the quick invoice and the day wait for krizaka-ui#629 (native `LineItems`/`TotalsSummary`) and #628 (native `Agenda`).
+- **Cost**: the day's answer names its shop and time zone; one more walker route.
+- **Signal we are wrong**: owners look for the calendar as a tab, or open the web for the books on their phone.

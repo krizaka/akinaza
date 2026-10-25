@@ -34,7 +34,8 @@ export const dayVisit = z.object({
 });
 export type DayVisit = z.infer<typeof dayVisit>;
 
-export const dayAnswer = z.object({ day: z.string(), visits: z.array(dayVisit) });
+/** The shop the day belongs to and its time zone (D8): an app opens on that shop's own address, as the web, and draws its clock. */
+export const dayAnswer = z.object({ shopId: z.string(), timezone: z.string(), day: z.string(), visits: z.array(dayVisit) });
 export const calendarDay = z.object({ day: z.string(), visits: z.number(), bookings: z.number() });
 export const calendarAnswer = z.object({ days: z.array(calendarDay) });
 
@@ -70,6 +71,21 @@ export const shopAnswer = z.object({
   services: z.array(z.object({ id: z.string(), nameFr: z.string(), nameEn: z.string(), priceCents: z.number(), taxCategory: z.enum(["standard", "zeroRated", "exempt"]) })),
 });
 export type ShopAnswer = z.infer<typeof shopAnswer>;
+
+/**
+ * « Livres » for the apps (`GET /api/walker/books?period=`, D8): the period's combined GST/QST return as the web prepares it — what
+ * each net comes to and whether it is to remit or to claim. Prepared only: the merchant files it, never Akinaza.
+ */
+const netAnswer = z.object({ netCents: z.number().int().nonnegative(), outcome: z.enum(["remit", "claim", "zero"]) });
+export const booksAnswer = z.object({
+  period: z.object({ id: z.string(), start: z.string(), end: z.string() }),
+  /** The periods to choose from, the latest completed quarter first. */
+  choices: z.array(z.string()),
+  gst: netAnswer,
+  qst: netAnswer,
+  preparedOnly: z.literal(true),
+});
+export type BooksAnswer = z.infer<typeof booksAnswer>;
 
 export const issuedInvoice = z.object({ id: z.string(), number: z.string().or(z.number()), subtotalCents: z.number(), gstCents: z.number(), qstCents: z.number(), totalCents: z.number() });
 

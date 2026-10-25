@@ -7,10 +7,10 @@
   "tabs": {
     "label": "Main navigation",
     "today": "Today",
-    "calendar": "Calendar",
     "invoices": "Invoices",
     "clients": "Clients",
-    "settings": "Settings"
+    "books": "Books",
+    "boutique": "Shop"
   },
   "common": {
     "retry": "Try again",
@@ -40,15 +40,10 @@
     "out": "Finished at {time}",
     "previous": "Previous day",
     "next": "Next day",
-    "call": "Call {name}"
-  },
-  "calendar": {
-    "title": "Calendar",
-    "previous": "Previous month",
-    "next": "Next month",
-    "visits": "{count} visits",
-    "bookings": "{count} bookings",
-    "empty": "Nothing planned this month."
+    "call": "Call {name}",
+    "strip": "Day shown",
+    "marked": "has appointments",
+    "emptyLead": "Booked appointments show here, day by day."
   },
   "invoices": {
     "title": "Invoices",
@@ -68,7 +63,8 @@
     "issued": "Invoice {number} issued: {total}.",
     "failed": "The invoice could not be issued.",
     "lines": "Lines",
-    "smallSupplier": "Small supplier: no taxes."
+    "smallSupplier": "Small supplier: no taxes.",
+    "emptyLead": "An invoice issued here or on the web shows in this list."
   },
   "clients": {
     "title": "Clients",
@@ -76,7 +72,8 @@
     "clear": "Clear",
     "empty": "No client.",
     "dependants": "{count} pets",
-    "invoice": "Invoice"
+    "invoice": "Invoice",
+    "emptyLead": "A client who books, or whom you add on the web, has their file here."
   },
   "settings": {
     "title": "Settings",
@@ -93,5 +90,29 @@
   "account": {
     "open": "Your account",
     "openNamed": "Your account: {name}"
+  },
+  "books": {
+    "title": "Books",
+    "period": "From {from} to {to}",
+    "periods": "Period",
+    "gst": "Net GST",
+    "qst": "Net QST",
+    "remit": "To remit",
+    "claim": "To claim",
+    "zero": "Nothing to remit",
+    "lead": "Akinaza prepares the figures of your GST/QST return; you review it and file it yourself.",
+    "web": "See the lines on the web"
+  },
+  "boutique": {
+    "title": "Shop",
+    "services": "Services",
+    "noServices": "No service yet.",
+    "registrant": "Registered for GST/QST",
+    "smallSupplier": "Small supplier: no taxes",
+    "terms": "Payment in {days} days",
+    "edit": "Edit the shop on the web"
+  },
+  "profile": {
+    "title": "Profile"
   }
 }

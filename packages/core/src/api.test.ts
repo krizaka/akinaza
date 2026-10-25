@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { calendarAnswer, clientsAnswer, dayAnswer, invoicesAnswer, issuedInvoice, shopAnswer } from "./api";
+import { booksAnswer, calendarAnswer, clientsAnswer, dayAnswer, invoicesAnswer, issuedInvoice, shopAnswer } from "./api";
 
 const booking = {
   bookingId: "b1",
@@ -15,11 +15,26 @@ const booking = {
 describe("what the owner's API answers, as the apps parse it", () => {
   it("a day with its visits and who is booked on each", () => {
     const answer = {
+      shopId: "s1",
+      timezone: "America/Toronto",
       day: "2026-10-20",
       visits: [{ appointmentId: "a1", startsAt: "2026-10-20T13:00:00.000Z", endsAt: "2026-10-20T14:00:00.000Z", status: "booked", service: { fr: "Promenade", en: "Walk", capacity: 3 }, zone: "Saint-Henri", checkedInAt: null, checkedOutAt: null, bookings: [booking] }],
     };
     expect(dayAnswer.parse(answer).visits[0]?.bookings[0]?.dependant.name).toBe("Rex");
     expect(dayAnswer.safeParse({ ...answer, visits: [{ ...answer.visits[0], status: "lost" }] }).success).toBe(false);
+  });
+
+  it("names the day's shop and its time zone, so an app opens the shop's own address and draws its clock (D8)", () => {
+    expect(dayAnswer.parse({ shopId: "s1", timezone: "America/Toronto", day: "2026-10-20", visits: [] })).toMatchObject({ shopId: "s1", timezone: "America/Toronto" });
+    expect(dayAnswer.safeParse({ day: "2026-10-20", visits: [] }).success).toBe(false);
+    expect(dayAnswer.safeParse({ shopId: "s1", day: "2026-10-20", visits: [] }).success).toBe(false);
+  });
+
+  it("« Livres »: the prepared nets, an outcome each, and only ever prepared", () => {
+    const books = { period: { id: "2026-Q3", start: "2026-07-01", end: "2026-09-30" }, choices: ["2026-Q3"], gst: { netCents: 1_250, outcome: "remit" }, qst: { netCents: 0, outcome: "zero" }, preparedOnly: true };
+    expect(booksAnswer.parse(books).gst.outcome).toBe("remit");
+    expect(booksAnswer.safeParse({ ...books, preparedOnly: false }).success).toBe(false);
+    expect(booksAnswer.safeParse({ ...books, gst: { netCents: 12.5, outcome: "remit" } }).success).toBe(false);
   });
 
   it("a calendar, the clients, the invoices and the shop", () => {

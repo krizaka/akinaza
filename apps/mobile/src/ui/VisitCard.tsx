@@ -14,7 +14,7 @@ const STATUS_TONE = { booked: "accent", done: "success", cancelled: "neutral", n
 export function VisitCard({ visit, timeZone, busy, onCheckIn, onCheckOut }: { visit: DayVisit; timeZone: string; busy: boolean; onCheckIn: () => void; onCheckOut: () => void }) {
   const { t } = useI18n();
   const { locale } = useLocale();
-  const name = locale === "fr" ? visit.service.fr : visit.service.en;
+  const name = visit.service[locale];
   return (
     <Card.Root>
       <Card.Body>

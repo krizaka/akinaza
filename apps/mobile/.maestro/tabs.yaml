@@ -1,0 +1,24 @@
+# The five tabs of the shop (D8), signed in as the QA owner: maestro test .maestro/tabs.yaml -e EMAIL=… -e PASSWORD=…
+# (a simulator with the app installed, a backend with the QA accounts; the credentials come from the QA sheet, never this file).
+appId: com.krizaka.akinaza
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "email"
+- inputText: ${EMAIL}
+- tapOn:
+    id: "password"
+- inputText: ${PASSWORD}
+- tapOn:
+    id: "submit"
+# The web rail's places, in its order: Aujourd'hui · Clients · Factures · Livres · Boutique.
+- assertVisible: "Aujourd'hui|Today"
+- tapOn: "Clients"
+- assertVisible: "Chercher un client|Find a client"
+- tapOn: "Factures|Invoices"
+- assertVisible: "Nouvelle facture|New invoice"
+- tapOn: "Livres|Books"
+- assertVisible: "TPS nette|Net GST"
+- tapOn: "Boutique|Shop"
+- assertVisible: "Services"

@@ -1,4 +1,4 @@
-import { calendarAnswer, clientsAnswer, dayAnswer, invoicesAnswer, issuedInvoice, meAnswer, shopAnswer } from "@akinaza/core";
+import { booksAnswer, calendarAnswer, clientsAnswer, dayAnswer, invoicesAnswer, issuedInvoice, meAnswer, shopAnswer } from "@akinaza/core";
 import type { ApiClient, SessionStore } from "@krizaka/app-client";
 import { z } from "zod";
 
@@ -19,6 +19,12 @@ export interface InvoiceRequest {
  * The owner's API as the apps use it. Every answer is parsed at the edge: a shape the server did not promise stops here, never
  * inside a screen. `api` is `createApiClient` of `@krizaka/app-client`; `session` its session store.
  */
+/**
+ * The shop of the address (`/fr/app/<shop>/…`, as the web's): the walker routes pick it with `?shopId=`; without one, the server
+ * answers for the member's default shop (the app's first screen, before it knows which).
+ */
+export const inShop = (path: string, shopId?: string): string => (shopId ? `${path}${path.includes("?") ? "&" : "?"}shopId=${encodeURIComponent(shopId)}` : path);
+
 export function createAkinazaApi(api: Pick<ApiClient, "call">, session: Pick<SessionStore, "saveToken" | "clearToken">) {
   const get = <T extends z.ZodType>(schema: T, path: string): Promise<z.infer<T>> => api.call<unknown>(path).then((value) => schema.parse(value));
   const post = (path: string, body?: unknown) => api.call<unknown>(path, { method: "POST", ...(body === undefined ? {} : { body }) });
@@ -35,19 +41,21 @@ export function createAkinazaApi(api: Pick<ApiClient, "call">, session: Pick<Ses
     /** Who is signed in (`GET /api/me`, the bearer): what the header's account button shows. */
     me: () => get(meAnswer, "/api/me").then((r) => r.account ?? null),
     /** The owner's day (today in the shop's time zone when `date` is omitted). */
-    day: (date?: string) => get(dayAnswer, `/api/walker/day${date ? `?date=${date}` : ""}`),
-    calendar: (from: string, to: string) => get(calendarAnswer, `/api/walker/calendar?from=${from}&to=${to}`).then((r) => r.days),
-    clients: () => get(clientsAnswer, "/api/walker/clients").then((r) => r.clients),
-    invoices: () => get(invoicesAnswer, "/api/walker/invoices").then((r) => r.invoices),
-    shop: () => get(shopAnswer, "/api/walker/shop"),
-    async issueInvoice(request: InvoiceRequest) {
-      return issuedInvoice.parse(await post("/api/walker/invoices", request));
+    day: (date?: string, shopId?: string) => get(dayAnswer, inShop(`/api/walker/day${date ? `?date=${date}` : ""}`, shopId)),
+    calendar: (from: string, to: string, shopId?: string) => get(calendarAnswer, inShop(`/api/walker/calendar?from=${from}&to=${to}`, shopId)).then((r) => r.days),
+    clients: (shopId?: string) => get(clientsAnswer, inShop("/api/walker/clients", shopId)).then((r) => r.clients),
+    invoices: (shopId?: string) => get(invoicesAnswer, inShop("/api/walker/invoices", shopId)).then((r) => r.invoices),
+    shop: (shopId?: string) => get(shopAnswer, inShop("/api/walker/shop", shopId)),
+    /** « Livres »: the period's prepared GST/QST (`2026-Q3`, `2026-02`; the latest completed quarter by default). */
+    books: (period?: string, shopId?: string) => get(booksAnswer, inShop(`/api/walker/books${period ? `?period=${encodeURIComponent(period)}` : ""}`, shopId)),
+    async issueInvoice(request: InvoiceRequest, shopId?: string) {
+      return issuedInvoice.parse(await post(inShop("/api/walker/invoices", shopId), request));
     },
-    async checkIn(appointmentId: string) {
-      await post(`/api/walker/visits/${appointmentId}/check-in`);
+    async checkIn(appointmentId: string, shopId?: string) {
+      await post(inShop(`/api/walker/visits/${appointmentId}/check-in`, shopId));
     },
-    async checkOut(appointmentId: string) {
-      await post(`/api/walker/visits/${appointmentId}/check-out`);
+    async checkOut(appointmentId: string, shopId?: string) {
+      await post(inShop(`/api/walker/visits/${appointmentId}/check-out`, shopId));
     },
   };
 }

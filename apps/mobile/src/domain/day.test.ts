@@ -1,4 +1,4 @@
-import { isDay, shiftDay, timeOf } from "./day";
+import { isDay, shiftDay, stripWindow, timeOf } from "./day";
 
 describe("the owner's day", () => {
   it.each([["2026-10-20", true], ["2028-02-29", true], ["2026-02-30", false], ["2026-10", false], ["", false], [undefined, false]])("reads %j as a day: %s", (value, ok) => expect(isDay(value as string | undefined)).toBe(ok));
@@ -14,5 +14,12 @@ describe("the owner's day", () => {
     expect(timeOf("2026-10-20T13:00:00.000Z", "America/Toronto", "fr-CA")).toMatch(/^09( h |:)00$/);
     expect(timeOf("2026-10-20T13:00:00.000Z", "UTC", "fr-CA")).toMatch(/^13( h |:)00$/);
     expect(timeOf("2026-10-20T13:00:00.000Z", "America/Toronto", "en-CA")).toBe("09:00");
+  });
+});
+
+describe("the day strip of Aujourd'hui (D8)", () => {
+  it("shows two weeks around the day shown, three days before it", () => {
+    expect(stripWindow("2026-10-20")).toEqual({ start: "2026-10-17", end: "2026-10-30" });
+    expect(stripWindow("2026-12-30")).toEqual({ start: "2026-12-27", end: "2027-01-09" });
   });
 });
