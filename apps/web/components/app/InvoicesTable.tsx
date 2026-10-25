@@ -1,6 +1,6 @@
 "use client";
 
-import { INVOICE_STATE, type InvoiceState, invoiceState, remainingCents } from "@akinaza/core";
+import { INVOICE_STATE, invoiceState, remainingCents } from "@akinaza/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
@@ -14,6 +14,7 @@ import { useCall } from "@/components/app/useCall";
 import { ButtonLink } from "@/components/ButtonLink";
 import { formatDate, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
+import { STATE_TONE } from "@/lib/invoice-tone";
 import { useTableLabels } from "@/lib/table-labels";
 
 export interface InvoiceRowView {
@@ -35,7 +36,6 @@ export interface InvoiceRowView {
   superseded: boolean;
 }
 
-export const STATE_TONE: Record<InvoiceState, "neutral" | "success" | "warning" | "danger" | "accent"> = { credit: "warning", cancelled: "neutral", paid: "success", partial: "accent", overdue: "danger", due: "neutral" };
 const standing = (i: InvoiceRowView) => ({ totalCents: i.totalCents, paidCents: i.paidCents, dueOn: i.dueOn, isCredit: !!i.creditOf, superseded: i.superseded });
 
 /** The order of the list (D2): the overdue first — what to chase —, then the newest. */

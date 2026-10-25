@@ -9,11 +9,11 @@ import Link from "next/link";
 import { InvoiceDeliveryHistory } from "@/components/app/InvoiceDeliveryHistory";
 import { InvoiceDocument, type InvoiceView } from "@/components/app/InvoiceDocument";
 import { InvoiceSendAction } from "@/components/app/InvoiceSendAction";
-import { STATE_TONE } from "@/components/app/InvoicesTable";
 import { PrintInvoiceButton } from "@/components/app/PrintInvoiceButton";
 import { ButtonLink } from "@/components/ButtonLink";
 import { formatDate, formatMoney } from "@/lib/format";
 import { format, getDictionary, type Locale } from "@/lib/i18n";
+import { STATE_TONE } from "@/lib/invoice-tone";
 import type { ShopRoutes } from "@/lib/routes";
 
 export interface InvoiceDetailViewProps {
