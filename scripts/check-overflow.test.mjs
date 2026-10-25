@@ -16,4 +16,10 @@ describe("the dev-preview crawl (ui.themes-devices)", () => {
     const source = readFileSync(new URL("./check-overflow.mjs", import.meta.url), "utf8");
     for (const needle of ['page.on("console"', 'page.on("pageerror"', "response.status() >= 400", "empty <main>"]) expect(source).toContain(needle);
   });
+
+  it("waits for the page to load, never for the network to go quiet: the home's looping video never does (akinaza#341)", () => {
+    const source = readFileSync(new URL("./check-overflow.mjs", import.meta.url), "utf8");
+    expect(source).not.toContain('"networkidle"');
+    expect(source).toContain('waitUntil: "load"');
+  });
 });

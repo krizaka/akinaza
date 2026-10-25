@@ -119,7 +119,9 @@ describe.runIf(enabled)("API keys over HTTP", () => {
     await call(resetSetting, "DELETE", "/x", { cookie: admin, params: { key: "plans.free.apiKeys" }, json: {} });
     resetAppSettings();
     const history = (await call(settingsHistory, "GET", "/api/admin/settings/history?key=features.apiKeys", { cookie: admin })).body.history as { before: unknown; after: unknown; actorLabel: string }[];
-    expect(history.map((h) => [h.before, h.after])).toEqual([[false, null], [null, false]]);
+    // The history of a global setting outlives a run on a shared database (akinaza#341): read this run's administrator's entries.
+    const ours = history.filter((h) => h.actorLabel === `admin-${stamp}@akinaza.test`);
+    expect(ours.map((h) => [h.before, h.after])).toEqual([[false, null], [null, false]]);
     expect(history[0]!.actorLabel).toBe(`admin-${stamp}@akinaza.test`);
   });
 
