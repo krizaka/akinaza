@@ -67,6 +67,18 @@ describe("the three fictional demo shops", () => {
   });
 });
 
+describe("a demo shop always has its own trade, so it never wears another trade's images (#383)", () => {
+  it("a salon found without a trade or with another one is put back on salon by the next seed", async () => {
+    const { saveShopPageConfig, shopPageConfigOf } = await import("./shop-page");
+    const salon = (await publicShop(t.db, "cedre-ciseaux"))!;
+    for (const wrong of [null, "consulting"] as const) {
+      await saveShopPageConfig(t.db, salon.shop.id, { ...(await shopPageConfigOf(t.db, salon.shop.id)), shopType: wrong });
+      await seedDemoShops(t.db);
+      expect((await shopPageConfigOf(t.db, salon.shop.id)).shopType).toBe("salon");
+    }
+  });
+});
+
 describe("the demo shops use the proposed images (#267)", () => {
   it("each demo has its trade, the salon no cover of its own, so the page shows the defaults of its type", async () => {
     const { shopPageConfigOf } = await import("./shop-page");
