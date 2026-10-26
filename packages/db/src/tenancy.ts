@@ -75,6 +75,7 @@ export const TABLE_OWNERSHIP: Readonly<Record<string, TableOwnership>> = {
   // The platform's.
   app_settings: platform,
   settings_audit: platform,
+  price_versions: platform,
   audit_log: platform,
   payment_events: platform,
   webhook_received: platform,

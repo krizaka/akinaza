@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import type { MailSettings } from "./mail-settings";
-import { PLANS } from "./pricing";
+import { FOUNDER, PROCESSOR_PLANS, SCALE, STARTER } from "./pricing";
 
 /**
  * Every environment variable of the app, declared once (named by bounded context — APP_, DATABASE_, AUTH_, ABUSE_ —
@@ -65,8 +65,9 @@ export const envSchema = z.object({
   PAYMENTS_STRIPE_SECRET_KEY: z.string().optional(),
   PAYMENTS_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
   PAYMENTS_STRIPE_WEBHOOK_SECRET: z.string().optional(),
-  PAYMENTS_PRICE_KEY_FOUNDER: z.string().default(PLANS.founder.lookupKey),
-  PAYMENTS_PRICE_KEY_REGULAR: z.string().default(PLANS.regular.lookupKey),
+  PAYMENTS_PRICE_KEY_FOUNDER: z.string().default(PROCESSOR_PLANS[FOUNDER].lookupKey),
+  PAYMENTS_PRICE_KEY_STARTER: z.string().default(PROCESSOR_PLANS[STARTER].lookupKey),
+  PAYMENTS_PRICE_KEY_SCALE: z.string().default(PROCESSOR_PLANS[SCALE].lookupKey),
   /** The founder offer is shown on the public page only when this is `true` (after a test-card checkout is proven live). */
   APP_FOUNDER_OFFER_ENABLED: flag,
   /** The point of sale: off until the SRM scope and the payment provider are decided — and never for a restaurant or a bar. */

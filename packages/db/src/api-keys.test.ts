@@ -42,3 +42,9 @@ import { ROLES_MIGRATION_SQL } from "./roles-migration";
 it("the shop roles migration file is exactly what the shared block generates", () => {
   expect(readFileSync(fileURLToPath(new URL("../drizzle/0020_shop_roles.sql", import.meta.url)), "utf8")).toBe(ROLES_MIGRATION_SQL);
 });
+
+import { PRICES_MIGRATION_SQL } from "./prices-migration";
+
+it("the prices migration file is exactly what the shared block generates (akinaza#371)", () => {
+  expect(readFileSync(fileURLToPath(new URL("../drizzle/0035_prices.sql", import.meta.url)), "utf8")).toBe(PRICES_MIGRATION_SQL);
+});

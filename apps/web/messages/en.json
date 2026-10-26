@@ -57,7 +57,9 @@
       "title": "Founder offer: {price} a month plus taxes, setup included",
       "lead": "A limited offer for the first businesses. Akinaza is an early product: we build it with you, and we set your shop up with you at no extra cost.",
       "points": [
-        "{price} per month, plus GST and QST, as long as you stay",
+        "{price} per month plus taxes, as long as you stay",
+        "{cardRate} on cards: no Akinaza fee on what your clients pay by card",
+        "Pre-authorised debit or B2B transfer: {debitRate} an order, capped at {debitCap}; the funds stay with the payment processor",
         "Setup included: your services, your hours, your first invoices",
         "Cancel any time from your billing page, in two clicks",
         "Limited to the first {limit} businesses we welcome"
@@ -68,6 +70,13 @@
       "full": {
         "title": "The founder offer is complete",
         "lead": "The first {limit} businesses have joined. Write to us and we will tell you what comes next."
+      },
+      "plans": {
+        "starter": "Starter",
+        "scale": "Scale B2B",
+        "price": "{price} a month plus taxes",
+        "preparing": "in preparation",
+        "scaleSoon": "its B2B features are coming soon"
       }
     },
     "screens": {
@@ -191,7 +200,8 @@
         "today": "appointments today: {count}",
         "toCollect": "to collect: {count}"
       },
-      "organize": "Tags and views"
+      "organize": "Tags and views",
+      "prices": "Prices"
     },
     "admin": {
       "health": "Health",
@@ -379,6 +389,52 @@
           "derived": "Derived: Akinaza computes this status, and nobody moves it.",
           "problems": "To fix before saving"
         }
+      },
+      "prices": {
+        "title": "Prices",
+        "lead": "The catalogue the public pages read: each entry in force, a change from a date, and its history. Amounts are plus taxes. Making the founder offer internal ends it. A subscription already sold keeps the version it was sold at; the processor must sell the new amount before the checkout accepts it.",
+        "plans": {
+          "founder": "Founder offer",
+          "starter": "Starter",
+          "scale": "Scale B2B"
+        },
+        "entryHint": "{key} · version {version}",
+        "amount": "Price",
+        "plusTaxes": "Plus taxes (GST and QST added by the processor).",
+        "perUnit": "{price} / {unit}",
+        "noFigure": "no figure",
+        "availability": "Availability",
+        "units": {
+          "month": "month",
+          "year": "year",
+          "once": "once",
+          "document": "document",
+          "order": "order",
+          "pack": "pack",
+          "hour": "hour"
+        },
+        "availabilities": {
+          "public": "Public",
+          "internal": "Internal (never shown)",
+          "founder-limited": "Founder offer (first businesses)",
+          "preparing": "In preparation (no figure shown)"
+        },
+        "limits": {
+          "founderCap": "Founder offer: businesses",
+          "cardFeeBps": "Card fee (basis points)",
+          "directDebitBps": "Pre-authorised debit orchestration fee (basis points)",
+          "directDebitCapCents": "Pre-authorised debit cap per order (cents)"
+        },
+        "upcoming": "Scheduled from {date}",
+        "change": "Change {plan}",
+        "amountInput": "Price in dollars, plus taxes (empty: no figure)",
+        "from": "In force from (empty: now)",
+        "keepsHint": "Never in the past. Subscriptions already sold keep their version.",
+        "schedule": "Schedule the change",
+        "scheduled": "Scheduled.",
+        "history": "History",
+        "seedLine": "Starting value: {price}",
+        "historyLine": "{at}, {actor}: {before} → {after}, from {from}"
       }
     },
     "errors": {
@@ -473,7 +529,8 @@
       "NAME_TAKEN": "This name is already used.",
       "TAG_LIMIT": "The shop has reached its limit of tags.",
       "TOO_MANY": "At most 200 rows at a time.",
-      "STATUS_DERIVED": "An invoice's state follows its payments: it cannot be changed by hand."
+      "STATUS_DERIVED": "An invoice's state follows its payments: it cannot be changed by hand.",
+      "PRICE_NOT_READY": "The price is being updated. Please try again in a few minutes."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -724,10 +781,13 @@
         "manageHint": "Change the card, read the invoices or cancel, on the payment page.",
         "portal": "Open the payment page",
         "founder": "The founder offer",
-        "founderHint": "{price} a month, plus taxes.",
-      "offerFull": "The founder offer is complete: the first businesses have joined, and it is no longer offered.",
+        "founderHint": "{price} a month plus taxes, {cardRate} on cards.",
+        "offerFull": "The founder offer is complete: the first businesses have joined, and it is no longer offered.",
         "choose": "Choose this offer",
-        "unavailable": "No plan is on sale yet."
+        "unavailable": "No plan is on sale yet.",
+        "yourPrice": "Your price",
+        "yourPriceHint": "The price your subscription was sold at: you keep it as long as you stay.",
+        "priceLine": "{price} a month plus taxes"
       },
       "data": {
         "title": "Your data",

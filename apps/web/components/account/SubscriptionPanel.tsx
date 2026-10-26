@@ -17,9 +17,11 @@ export interface SubscriptionView {
   /** The processor knows this account: its hosted page can be opened. */
   hasCustomer: boolean;
   /** The founder offer is on sale, with its price as the processor states it. */
-  offer: { price: string } | null;
+  offer: { price: string; cardRate: string } | null;
   /** The founder offer is complete (its limit is reached) and this account is not a founder: it is no longer offered. */
   offerFull?: boolean;
+  /** The price this subscription was sold at (the catalogue's version kept with it): a founder keeps it. */
+  soldPrice?: string | null;
 }
 
 /** The subscription: its state, the founder offer when it is on sale, and the hosted page where it is managed, its invoices read and it is cancelled. */
@@ -40,6 +42,7 @@ export function SubscriptionPanel({ subscription }: { subscription: Subscription
         <Badge tone={subscription.active ? "success" : "neutral"}>{say(subscription.active ? "account.subscription.active" : "account.subscription.none")}</Badge>
       </SettingsRow>
       {subscription.active && subscription.periodEnd ? <SettingsRow label={say("account.subscription.renews")}>{formatDate(subscription.periodEnd, locale, "UTC")}</SettingsRow> : null}
+      {subscription.active && subscription.soldPrice ? <SettingsRow label={say("account.subscription.yourPrice")} description={say("account.subscription.yourPriceHint")}>{say("account.subscription.priceLine", { price: subscription.soldPrice })}</SettingsRow> : null}
       {subscription.hasCustomer ? (
         <SettingsRow label={say("account.subscription.manage")} description={say("account.subscription.manageHint")}>
           <Button size="sm" variant="secondary" loading={open.isPending} onClick={() => open.mutate("portal")}>
@@ -48,7 +51,7 @@ export function SubscriptionPanel({ subscription }: { subscription: Subscription
         </SettingsRow>
       ) : null}
       {!subscription.active && subscription.offer ? (
-        <SettingsRow label={say("account.subscription.founder")} description={say("account.subscription.founderHint", { price: subscription.offer.price })}>
+        <SettingsRow label={say("account.subscription.founder")} description={say("account.subscription.founderHint", { price: subscription.offer.price, cardRate: subscription.offer.cardRate })}>
           <Button size="sm" variant="primary" loading={open.isPending} onClick={() => open.mutate("checkout")}>
             {say("account.subscription.choose")}
           </Button>

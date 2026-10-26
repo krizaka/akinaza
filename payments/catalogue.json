@@ -1,8 +1,9 @@
 {
   "product": "akinaza",
   "plans": [
-    { "lookupKey": "akinaza_founder_monthly_cad", "name": "Akinaza — Founder offer (monthly, setup included)", "amount": 3900, "currency": "cad", "interval": "month", "taxCode": "txcd_10103001" },
-    { "lookupKey": "akinaza_regular_monthly_cad", "name": "Akinaza — Regular plan (monthly)", "amount": 4900, "currency": "cad", "interval": "month", "taxCode": "txcd_10103001" }
+    {"lookupKey": "akinaza_founder_monthly_cad", "name": "Akinaza — Founder offer (monthly, setup included)", "amount": 3900, "currency": "cad", "interval": "month", "taxCode": "txcd_10103001"},
+    {"lookupKey": "akinaza_starter_monthly_cad", "name": "Akinaza — Starter (monthly)", "amount": 4500, "currency": "cad", "interval": "month", "taxCode": "txcd_10103001"},
+    {"lookupKey": "akinaza_scale_monthly_cad", "name": "Akinaza — Scale B2B (monthly)", "amount": 9900, "currency": "cad", "interval": "month", "taxCode": "txcd_10103001"}
   ],
-  "portal": { "headline": "Akinaza — manage your subscription", "cancel": "at_period_end" }
+  "portal": {"headline": "Akinaza — manage your subscription", "cancel": "at_period_end"}
 }

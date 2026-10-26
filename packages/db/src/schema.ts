@@ -37,6 +37,8 @@ export const accounts = pgTable(
     paymentSubscriptionId: text("payment_subscription_id"),
     subscriptionStatus: text("subscription_status"),
     currentPeriodEnd: timestamp("current_period_end", { withTimezone: true }),
+    /** The catalogue's version this subscription was sold at (0035_prices): a founder keeps its price. */
+    subscriptionPriceVersion: text("subscription_price_version"),
   },
   (t) => [check("accounts_email_lower", sql`${t.email} = lower(${t.email})`), check("accounts_role", sql`${t.role} IN ('USER','ADMIN')`), check("accounts_status", sql`${t.status} IN ('ACTIVE','SUSPENDED')`), check("accounts_locale", sql`${t.locale} IN ('en','fr')`)],
 );

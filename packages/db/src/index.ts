@@ -10,6 +10,7 @@ export * from "./shop-page";
 export * from "./visits";
 export * from "./account-migration";
 export * from "./settings-migration";
+export * from "./prices-migration";
 export * from "./webhooks-migration";
 export * from "./api-keys";
 export * from "./invoice-payments";

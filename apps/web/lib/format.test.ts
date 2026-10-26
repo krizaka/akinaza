@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatDate, formatLongDay, formatMoney, formatMonth, formatTime } from "./format";
+import { centsFromDollars, formatDate, formatLongDay, formatMoney, formatMonth, formatTime } from "./format";
 
 describe("format", () => {
   it("writes money in Canadian dollars, in the language's habit", () => {
@@ -26,5 +26,14 @@ describe("format", () => {
   it("names the month an account was opened in Montréal, not in UTC", () => {
     expect(formatMonth("2026-11-01T02:00:00Z", "en", "America/Montreal")).toBe("October 2026");
     expect(formatMonth("2026-11-01T02:00:00Z", "fr", "America/Montreal")).toBe("octobre 2026");
+  });
+});
+
+describe("dollars typed by the administrator (akinaza#371)", () => {
+  it("are whole cents, with a dot or a comma, or null", () => {
+    expect(centsFromDollars("45")).toBe(4500);
+    expect(centsFromDollars(" 45,50 ")).toBe(4550);
+    expect(centsFromDollars("0.07")).toBe(7);
+    for (const bad of ["", "-1", "4.555", "abc", "1e3"]) expect(centsFromDollars(bad)).toBeNull();
   });
 });
