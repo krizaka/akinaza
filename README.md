@@ -14,6 +14,7 @@ GST/QST return **prepared** for the merchant to review and file.
 [![CI](https://github.com/krizaka/akinaza/actions/workflows/ci.yml/badge.svg)](https://github.com/krizaka/akinaza/actions/workflows/ci.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/krizaka/akinaza/badge)](https://scorecard.dev/viewer/?uri=github.com/krizaka/akinaza)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=krizaka_akinaza&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=krizaka_akinaza) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=krizaka_akinaza&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=krizaka_akinaza) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=krizaka_akinaza&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=krizaka_akinaza) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=krizaka_akinaza&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=krizaka_akinaza) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=krizaka_akinaza&metric=coverage)](https://sonarcloud.io/summary/new_code?id=krizaka_akinaza)
 
 Akinaza (商い *akinai*, trade) is a Krizaka product **in development**: nothing is deployed, sign-up is closed. The
 know-how it shows: **running a shop, for less** — one tool instead of five, bookings to taxes prepared.
