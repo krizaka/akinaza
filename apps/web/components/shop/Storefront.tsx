@@ -1,5 +1,6 @@
 import { Avatar } from "@krizaka/ui/avatar";
 import { Badge } from "@krizaka/ui/badge";
+import { Button } from "@krizaka/ui/button";
 import { CardGrid } from "@krizaka/ui/card-grid";
 import { CoverHero } from "@krizaka/ui/cover-hero";
 import { CtaPanel } from "@krizaka/ui/cta-panel";
@@ -14,6 +15,10 @@ import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
 
 import { ButtonLink } from "@/components/ButtonLink";
+import { Bulletin } from "@/components/shop/Bulletin";
+import { CommunityWall, ElsewhereVideos, type FacadeWords, type PlayerWords } from "@/components/shop/CommunityWall";
+import { ReviewsView } from "@/components/shop/ReviewsView";
+import { ShopTvLazy } from "@/components/shop/ShopTvLazy";
 import { ZoneMap } from "@/components/shop/ZoneMap";
 import { type Locale, translator } from "@/lib/i18n";
 import type { StorefrontView } from "@/lib/storefront";
@@ -42,6 +47,24 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
         {t("console.shopPage.book")}
       </ButtonLink>
     </>
+  );
+  const community = view.community;
+  const platforms = ["tiktok", "youtube-shorts", "instagram"] as const;
+  const platformName = (p: (typeof platforms)[number]) => t(`console.shopPage.platform.${p}`);
+  const facade: FacadeWords = {
+    play: Object.fromEntries(platforms.map((p) => [p, t("console.shopPage.facadePlay", { platform: platformName(p) })])),
+    notice: Object.fromEntries(platforms.map((p) => [p, t("console.shopPage.facadeNotice", { platform: platformName(p) })])),
+    elsewhereTitle: t("console.shopPage.elsewhereTitle", { title: "{title}" }),
+  };
+  const player: PlayerWords = Object.fromEntries(
+    (["play", "pause", "mute", "unmute", "volume", "seek", "fullscreen", "exitFullscreen", "pictureInPicture", "loading", "error", "retry"] as const).map((k) => [k, t(`console.shopPage.player.${k}`)]),
+  ) as unknown as PlayerWords;
+  player.speed = t("console.shopPage.player.speed", { rate: "{rate}" });
+  player.captionsOff = t("console.shopPage.player.captionsOff");
+  player.captionsOn = t("console.shopPage.player.captionsOn", { track: "{track}" });
+  player.time = t("console.shopPage.player.time", { time: "{time}", duration: "{duration}" });
+  const tvOf = (video: NonNullable<typeof community>["tv"] & object) => (
+    <ShopTvLazy video={video} channel={t("console.shopPage.tvChannel")} title={t("console.shopPage.tvTitle", { shop: view.name })} player={player} facade={facade} platformNames={Object.fromEntries(platforms.map((p) => [p, platformName(p)]))} />
   );
   const sections: Record<(typeof view.sections)[number]["id"], ReactNode> = {
     services: view.services.length ? (
@@ -83,11 +106,34 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
         <MediaGallery label={galleryLabel} items={view.gallery} />
       </Section>
     ) : null,
-    // The shop as a place (B45) is drawn by the next change; until then these sections show nothing, not « being prepared ».
-    wall: null,
-    reels: null,
-    announcements: null,
-    reviews: null,
+    wall: community?.has.wall ? (
+      <Section id="wall" divider title={t("console.shopPage.wallTitle")} lead={t("console.shopPage.wallLead")} reveal>
+        <CommunityWall pieces={community.wall?.pieces ?? []} texture={community.wall?.texture ?? "plaster"} name={view.name} label={t("console.shopPage.wallLabel", { shop: view.name })} tv={community.tvPlace === "wall" && community.tv ? tvOf(community.tv) : undefined} />
+      </Section>
+    ) : null,
+    reels: community?.has.reels ? (
+      <Section id="reels" divider title={t("console.shopPage.reelsTitle")} lead={community.links.length ? t("console.shopPage.socialLead") : undefined} reveal>
+        <div className="flex flex-col gap-6">
+          {community.tvPlace === "reels" && community.tv ? <div className="mx-auto w-full max-w-xs">{tvOf(community.tv)}</div> : null}
+          {community.elsewhere.length ? <ElsewhereVideos videos={community.elsewhere} facade={facade} label={t("console.shopPage.elsewhereLabel")} /> : null}
+          {community.links.length ? (
+            <ul aria-label={t("console.shopPage.socialTitle")} className="m-0 flex list-none flex-wrap gap-2 p-0" data-social="">
+              {community.links.map((l) => <li key={l.platform}><Button asChild variant="secondary" size="md"><a href={l.url} target="_blank" rel="noopener noreferrer nofollow" referrerPolicy="no-referrer">{l.label}</a></Button></li>)}
+            </ul>
+          ) : null}
+        </div>
+      </Section>
+    ) : null,
+    announcements: community?.has.announcements ? (
+      <Section id="announcements" divider title={t("console.shopPage.announcementsTitle")} reveal>
+        <Bulletin flyers={community.flyers} label={t("console.shopPage.announcementsLabel")} />
+      </Section>
+    ) : null,
+    reviews: community?.reviews ? (
+      <Section id="reviews" divider title={t("console.shopPage.reviewsTitle")} reveal>
+        <ReviewsView reviews={community.reviews} starText={t("console.shopPage.reviewStars", { stars: "{stars}", count: "{count}" })} replyLabel={t("console.shopPage.reviewReply")} ownerName={view.about?.name ?? view.name} label={t("console.shopPage.reviewsLabel")} />
+      </Section>
+    ) : null,
     follow: view.preparedSections.follow ? <Section id="follow" divider title={t("console.shopPage.followTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
   };
   return (

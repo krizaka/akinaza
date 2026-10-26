@@ -561,3 +561,11 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Refused**: a drag-only editor; a free colour or font; a client's surname or e-mail on a review; a third-party script or image on the page.
 - **Cost**: reviews are a small table here until `@krizaka/reviews` is published (krizaka-ts#37), then they move. `frame-src` of the page now names the three embed hosts (and this origin, for the preview) instead of `none`.
 - **Signal we are wrong**: owners ask to drag pieces by hand, or lose a move because the keys are not found.
+
+## The shop as a place, on the public page (B45, part 2; akinaza#310, #312, #313, #314, #315)
+
+- The page draws what the owner pinned, and nothing empty: the wall (Krizaka UI's `Wall`, a real list underneath, at most twelve pieces drawn), the shop's latest video in a `RetroTv` beside it, the bulletin board (three flyers at most, each with its whole text, newest first, gone after its last day), the verified score (`ReviewSummary` + three `ReviewCard`s, nothing under the administrator's minimum) and the profile links. A section with nothing to show is not drawn, so a new shop keeps its page.
+- **Another channel's video never loads before a click** (Loi 25): a TikTok, a YouTube Short or an Instagram reel sits behind `EmbedFacade`, whose poster is ours; the profile links are plain anchors with `rel="noopener noreferrer nofollow"` and no referrer. The page's CSP allows a frame only for those three hosts, and a frame exists only after the button was pressed.
+- The video player speaks the page's language (its labels come from the catalogues); the shop's own video plays in the television, muted and only while on screen.
+- The booking journey wears a **thin paper head** on steps 1, 2 and 4 (the shop's name in the display face, « Step 2 of 4 · The time », « Edit » on the time step) and the confirmation presses a « booked » stamp once. No wall, tilt, doodle or texture reaches a form; the skeleton carries a box of the head's height.
+

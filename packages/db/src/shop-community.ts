@@ -224,6 +224,8 @@ export interface CommunityView {
   wall: WallRow;
   /** The latest reel, if any. */
   reel: ReelRow | null;
+  /** Every reel, the newest first. */
+  reels: ReelRow[];
   links: SocialLinks;
   announcements: AnnouncementRow[];
   /** Published reviews only; the verified flag is kept for the score. */
@@ -236,6 +238,7 @@ export async function communityOf(db: Db, shopId: string): Promise<CommunityView
   return {
     wall,
     reel: reels[0] ?? null,
+    reels,
     links,
     announcements,
     reviews: reviews.filter((r) => r.state === REVIEW_STATE.published).map((r) => ({ id: r.id, firstName: r.firstName, lastInitial: r.lastInitial, rating: r.rating, body: r.body, serviceName: r.serviceName, reply: r.reply, createdAt: r.createdAt, verified: r.verified, state: r.state })),

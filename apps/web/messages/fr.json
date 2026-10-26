@@ -1629,6 +1629,56 @@
         "done": "A terminé pour aujourd'hui",
         "away": "Absent·e aujourd'hui",
         "off": "En congé jusqu'au {day}"
+      },
+      "wallLabel": "Photos et mots épinglés sur le mur de {shop}",
+      "wallLead": "Les dernières nouvelles de la boutique : des photos, un mot et la dernière vidéo.",
+      "tvChannel": "Dernière",
+      "tvTitle": "Dernière vidéo de {shop}",
+      "socialTitle": "Ailleurs sur le web",
+      "socialLead": "Ces liens ouvrent la plateforme dans un nouvel onglet. Rien n'est chargé depuis une plateforme tant que vous ne l'avez pas choisi.",
+      "elsewhereLabel": "Vidéos d'autres chaînes",
+      "elsewhereTitle": "Vidéo d'une autre chaîne : {title}",
+      "facadePlay": "Charger {platform} et lire",
+      "facadeNotice": "{platform} verra votre visite dès que vous lancez la lecture. Rien n'est chargé avant.",
+      "social": {
+        "tiktok": "TikTok",
+        "youtube": "YouTube",
+        "instagram": "Instagram",
+        "facebook": "Facebook"
+      },
+      "platform": {
+        "tiktok": "TikTok",
+        "youtube-shorts": "YouTube",
+        "instagram": "Instagram"
+      },
+      "announcementsLabel": "Annonces épinglées au babillard",
+      "flyerUntil": "Jusqu'au {day}",
+      "reviewsLabel": "Avis vérifiés",
+      "reviewScore": "{score} / 5",
+      "reviewCountOne": "{count} avis vérifié",
+      "reviewCountOther": "{count} avis vérifiés",
+      "reviewSummaryOne": "{score} sur 5, {count} avis vérifié",
+      "reviewSummaryOther": "{score} sur 5, {count} avis vérifiés",
+      "reviewRating": "{rating} sur 5",
+      "reviewStars": "{stars} étoiles : {count}",
+      "reviewReply": "Réponse de la boutique",
+      "player": {
+        "play": "Lire",
+        "pause": "Pause",
+        "mute": "Couper le son",
+        "unmute": "Remettre le son",
+        "volume": "Volume",
+        "seek": "Position",
+        "speed": "Vitesse {rate}×",
+        "captionsOff": "Sous-titres : aucun",
+        "captionsOn": "Sous-titres : {track}",
+        "fullscreen": "Plein écran",
+        "exitFullscreen": "Quitter le plein écran",
+        "pictureInPicture": "Image dans l’image",
+        "loading": "Chargement",
+        "error": "Cette vidéo ne peut pas être lue",
+        "retry": "Réessayer",
+        "time": "{time} sur {duration}"
       }
     },
     "book": {
@@ -2078,7 +2128,13 @@
       "timesFooter": "Heures de {zone}",
       "weekPrevious": "Semaine précédente",
       "weekToday": "Cette semaine",
-      "weekNext": "Semaine suivante"
+      "weekNext": "Semaine suivante",
+      "stepOf": "Étape {step} sur {total} · {label}",
+      "stepService": "Le service",
+      "stepTime": "L’heure",
+      "stepBooked": "Réservé",
+      "edit": "Modifier",
+      "bookedStamp": "réservé"
     },
     "team": {
       "title": "Votre équipe",

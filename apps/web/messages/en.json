@@ -1629,6 +1629,56 @@
         "done": "Done for today",
         "away": "Not in today",
         "off": "On time off until {day}"
+      },
+      "wallLabel": "Photos and words pinned on the wall of {shop}",
+      "wallLead": "The latest from the shop: photos, a word, and the latest video.",
+      "tvChannel": "Latest",
+      "tvTitle": "Latest video of {shop}",
+      "socialTitle": "Elsewhere on the web",
+      "socialLead": "These links open the platform in a new tab. Nothing is loaded from a platform until you choose.",
+      "elsewhereLabel": "Videos from other channels",
+      "elsewhereTitle": "Another channel's video: {title}",
+      "facadePlay": "Load {platform} and play",
+      "facadeNotice": "{platform} will see your visit once you press play. Nothing is loaded before.",
+      "social": {
+        "tiktok": "TikTok",
+        "youtube": "YouTube",
+        "instagram": "Instagram",
+        "facebook": "Facebook"
+      },
+      "platform": {
+        "tiktok": "TikTok",
+        "youtube-shorts": "YouTube",
+        "instagram": "Instagram"
+      },
+      "announcementsLabel": "Notices pinned on the board",
+      "flyerUntil": "Until {day}",
+      "reviewsLabel": "Verified reviews",
+      "reviewScore": "{score} / 5",
+      "reviewCountOne": "{count} verified review",
+      "reviewCountOther": "{count} verified reviews",
+      "reviewSummaryOne": "{score} out of 5, {count} verified review",
+      "reviewSummaryOther": "{score} out of 5, {count} verified reviews",
+      "reviewRating": "{rating} out of 5",
+      "reviewStars": "{stars} stars: {count}",
+      "reviewReply": "Reply from the shop",
+      "player": {
+        "play": "Play",
+        "pause": "Pause",
+        "mute": "Mute",
+        "unmute": "Unmute",
+        "volume": "Volume",
+        "seek": "Seek",
+        "speed": "Speed {rate}×",
+        "captionsOff": "Subtitles: off",
+        "captionsOn": "Subtitles: {track}",
+        "fullscreen": "Full screen",
+        "exitFullscreen": "Exit full screen",
+        "pictureInPicture": "Picture in picture",
+        "loading": "Loading",
+        "error": "This video cannot play",
+        "retry": "Try again",
+        "time": "{time} of {duration}"
       }
     },
     "book": {
@@ -2078,7 +2128,13 @@
       "timesFooter": "Times in {zone}",
       "weekPrevious": "Previous week",
       "weekToday": "This week",
-      "weekNext": "Next week"
+      "weekNext": "Next week",
+      "stepOf": "Step {step} of {total} · {label}",
+      "stepService": "The service",
+      "stepTime": "The time",
+      "stepBooked": "Booked",
+      "edit": "Edit",
+      "bookedStamp": "booked"
     },
     "team": {
       "title": "Your team",

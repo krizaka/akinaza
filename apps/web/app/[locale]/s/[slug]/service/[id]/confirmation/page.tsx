@@ -1,6 +1,7 @@
 import { bookingDetail, clientFilesOf } from "@akinaza/db";
 import { Alert } from "@krizaka/ui/alert";
 import { DescriptionList } from "@krizaka/ui/description-list";
+import { Stamp } from "@krizaka/ui/specimen-tag";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -34,9 +35,12 @@ export default async function ConfirmationPage({ params, searchParams }: { param
   const step = confirmationStep({ detail, locale });
   const cancelled = step.cancelled;
   return (
-    <JourneyFrame locale={locale} path={`/${locale}/s/${slug}/service/${id}/confirmation`} back={{ href: journeyBase(locale, detail.shop.slug), label: detail.shop.name }} title={cancelled ? t("console.journey.cancelled") : t("console.journey.bookedTitle")} lead={cancelled ? undefined : t("console.journey.bookedLead")}>
+    <JourneyFrame locale={locale} head={{ shop: detail.shop.name, step: t("console.journey.stepOf", { step: 4, total: 4, label: t("console.journey.stepBooked") }) }} path={`/${locale}/s/${slug}/service/${id}/confirmation`} back={{ href: journeyBase(locale, detail.shop.slug), label: detail.shop.name }} title={cancelled ? t("console.journey.cancelled") : t("console.journey.bookedTitle")} lead={cancelled ? undefined : t("console.journey.bookedLead")}>
       <div className="max-w-2xl rounded-xl border border-border-default bg-surface-1 p-5">
-        <h2 className="m-0 mb-3 font-display text-xl font-bold text-fg">{step.title}</h2>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="m-0 font-display text-xl font-bold text-fg">{step.title}</h2>
+          {cancelled ? null : <Stamp tone="ok" data-booked-stamp="">{t("console.journey.bookedStamp")}</Stamp>}
+        </div>
         <DescriptionList
           layout="inline"
           items={[
