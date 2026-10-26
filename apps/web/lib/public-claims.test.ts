@@ -51,6 +51,7 @@ const RESIDENCY_CLAIMS: Record<string, Store> = {
   "landing.trust.line": "database",
   "privacy.body": "database",
   "terms.sections.6.p": "database",
+  "docs.pages.data.sections.2.p.0": "database",
 };
 
 /** Messages that name a place without a storage claim. */
@@ -58,6 +59,7 @@ const NOT_RESIDENCY: Record<string, string> = {
   "privacy.officer.text": "the company's postal address (Montréal, Québec, Canada), published for the person in charge",
   "terms.sections.2.p": "names the Canada Revenue Agency, a tax authority, not a storage place",
   "terms.sections.11.p": "the federal laws of Canada that govern the terms, not a storage place",
+  "docs.pages.books.sections.2.p.0": "names the Canada Revenue Agency, a tax authority, not a storage place",
 };
 
 function leaves(node: unknown, path: string[] = []): Array<[string, string]> {

@@ -9,7 +9,9 @@ export const TERMS_VERSION = "2026-10-26";
 export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "0.1.0";
 
 /** The public pages, in both languages (sitemap, hreflang). */
-export const PAGES = ["home", "pricing", "privacy", "terms"] as const;
+export const DOC_IDS = ["shop", "bookings", "invoices", "books", "data"] as const;
+export type DocId = (typeof DOC_IDS)[number];
+export const PAGES = ["home", "pricing", "privacy", "terms", "docs", "docs/shop", "docs/bookings", "docs/invoices", "docs/books", "docs/data"] as const satisfies readonly ("home" | "pricing" | "privacy" | "terms" | "docs" | `docs/${DocId}`)[];
 export type PageId = (typeof PAGES)[number];
 export const pagePath = (locale: "en" | "fr", page: PageId) => (page === "home" ? `/${locale}` : `/${locale}/${page}`);
 

@@ -36,6 +36,10 @@
       "pricing": {
         "title": "Tarifs",
         "text": "Ce que coûte Akinaza, plan par plan."
+      },
+      "docs": {
+        "title": "Guide",
+        "text": "Boutique, réservation, facture, livres, données : le guide du propriétaire."
       }
     },
     "footerLabel": "Pied de page",
@@ -108,6 +112,228 @@
       "scope": "Pour les studios, salons et travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place."
     },
     "visualLabel": "dev.akinaza.com"
+  },
+  "docs": {
+    "title": "Guide du propriétaire",
+    "lead": "Cinq courtes pages, un travail chacune : votre boutique, une réservation, une facture, vos livres, vos données. Elles ne disent que ce qu'Akinaza fait aujourd'hui.",
+    "navLabel": "Guide du propriétaire",
+    "sidebarLabel": "Pages du guide",
+    "breadcrumbLabel": "Fil d'Ariane",
+    "tocLabel": "Sur cette page",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "collectionsTitle": "Le guide",
+    "popularTitle": "Les cinq pages",
+    "help": "Aide",
+    "home": "Guide",
+    "updated": "Écrit pour la version en développement ; il suit le produit.",
+    "collection": {
+      "title": "Akinaza",
+      "description": "Pour le propriétaire d'une boutique de services : rendez-vous, factures et chiffres de taxes de votre période."
+    },
+    "pages": {
+      "shop": {
+        "nav": "Ouvrir votre boutique",
+        "title": "Ouvrir votre boutique et publier sa page",
+        "lead": "Ce que voient vos clients, et comment ils réservent. Rien n'est public tant que vous ne publiez pas.",
+        "sections": [
+          {
+            "id": "create",
+            "h": "Ouvrir la boutique",
+            "p": [
+              "Depuis votre compte, choisissez Ouvrir une boutique. Vous donnez son nom, son métier et son adresse ; le métier règle les mots que lisent vos écrans et vos clients."
+            ],
+            "items": []
+          },
+          {
+            "id": "page",
+            "h": "Écrire la page",
+            "p": [
+              "Dans Boutique, sous Votre page, vous écrivez le nom de la boutique, une ligne en français et en anglais, qui vous êtes, et le téléphone et le courriel montrés aux visiteurs. Vous choisissez les sections de la page et leur ordre.",
+              "Ajoutez vos services avec leur durée et leur prix, les heures où chaque personne travaille et, si vous vous déplacez, les zones que vous servez. Les prix sont montrés avant les taxes."
+            ],
+            "items": []
+          },
+          {
+            "id": "publish",
+            "h": "La publier",
+            "p": [
+              "Activez Publier la page. Les clients la trouvent alors à son adresse et peuvent réserver. Vous pouvez changer l'adresse : l'ancienne mène toujours à votre page."
+            ],
+            "items": []
+          },
+          {
+            "id": "languages",
+            "h": "L'offrir dans d'autres langues",
+            "p": [
+              "Dans Boutique, Langues, vous choisissez les langues de votre page. Les autres textes sont traduits automatiquement à partir de celui que vous écrivez, et vous pouvez modifier chacun. Un texte marqué « traduit automatiquement » n'a pas encore été relu par vous."
+            ],
+            "items": []
+          },
+          {
+            "id": "team",
+            "h": "Ajouter des personnes",
+            "p": [
+              "Dans Boutique, Équipe, vous invitez les personnes qui travaillent dans la boutique. Chacune a ses propres heures, et un client peut choisir une personne ou laisser faire n'importe qui de libre."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "bookings": {
+        "nav": "Prendre une réservation",
+        "title": "Prendre une réservation et la confirmer",
+        "lead": "Les quatre étapes du client, et ce que vous voyez.",
+        "sections": [
+          {
+            "id": "steps",
+            "h": "Les quatre étapes du client",
+            "p": [
+              "Tout est dans l'adresse : une réservation peut être partagée ou reprise."
+            ],
+            "items": [
+              "Choisir un service sur votre page.",
+              "Choisir une personne, ou n'importe qui de libre, et une zone si vous vous déplacez.",
+              "Choisir une heure : seules les heures vraiment libres sont montrées.",
+              "Confirmer. La connexion se fait à cette dernière étape, et les choix sont gardés."
+            ]
+          },
+          {
+            "id": "confirm",
+            "h": "La confirmation",
+            "p": [
+              "Le client voit quand, avec qui, où et le prix, peut l'ajouter à un calendrier et la retrouve dans ses réservations."
+            ],
+            "items": []
+          },
+          {
+            "id": "cancel",
+            "h": "La règle d'annulation",
+            "p": [
+              "Votre page dit aux clients combien de temps avant la visite ils peuvent annuler sans frais (« Gratuit jusqu'à N h avant la visite »). Dans ce délai, ils annulent eux-mêmes ; après, ils sont invités à appeler la boutique."
+            ],
+            "items": []
+          },
+          {
+            "id": "today",
+            "h": "De votre côté",
+            "p": [
+              "Les réservations sont dans Aujourd'hui, jour par jour."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "invoices": {
+        "nav": "Facturer",
+        "title": "Émettre et corriger une facture",
+        "lead": "Une facture bilingue avec la TPS et la TVQ exactes au sou.",
+        "sections": [
+          {
+            "id": "issue",
+            "h": "Émettre une facture",
+            "p": [
+              "Dans Factures, choisissez Nouvelle facture. Choisissez le client, ajoutez une ligne pour un service ou écrivez la vôtre avec son prix et sa quantité, et vérifiez le total. La facture est datée d'aujourd'hui et reçoit son numéro à l'émission ; l'échéance suit vos conditions de paiement."
+            ],
+            "items": []
+          },
+          {
+            "id": "taxes",
+            "h": "Les taxes",
+            "p": [
+              "La TPS (5 %) et la TVQ (9,975 %) sont calculées une fois par facture, sur le sous-total taxable, et arrondies au sou."
+            ],
+            "items": []
+          },
+          {
+            "id": "correct",
+            "h": "Corriger une facture",
+            "p": [
+              "Une facture émise ne change jamais. Choisissez Corriger : Akinaza émet la note de crédit de la facture et la nouvelle facture ensemble, et les relie. Le client, la langue et les conditions restent les mêmes."
+            ],
+            "items": []
+          },
+          {
+            "id": "link",
+            "h": "Le lien du client",
+            "p": [
+              "Envoyez la facture par courriel. Le client l'ouvre depuis un lien privé, où il peut l'imprimer ou l'enregistrer en PDF. Dans Boutique, Courriels de facture, vous réglez le message et la durée pendant laquelle le lien reste ouvert ; un lien qui n'est plus valide mène à une page introuvable."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "books": {
+        "nav": "Vos livres",
+        "title": "Vos livres : la TPS et la TVQ d'une période",
+        "lead": "Akinaza prépare les chiffres. Vous les vérifiez et vous les déclarez.",
+        "sections": [
+          {
+            "id": "period",
+            "h": "Choisir la période",
+            "p": [
+              "Vos livres montrent les lignes de la déclaration TPS/TVQ pour une période : ventes (ligne 101), TPS perçue (103), crédits de taxe sur les intrants (106) et TPS nette (109), puis TVQ perçue (203), remboursements de taxe sur les intrants (206) et TVQ nette (209). Le résultat dit si vous avez un montant à verser, un remboursement à réclamer ou rien."
+            ],
+            "items": []
+          },
+          {
+            "id": "source",
+            "h": "D'où vient chaque chiffre",
+            "p": [
+              "Chaque chiffre est calculé à partir de vos factures, notes de crédit retirées, et de vos dépenses. À côté d'un chiffre, vous voyez combien de documents le soutiennent, et vous pouvez les ouvrir."
+            ],
+            "items": []
+          },
+          {
+            "id": "file",
+            "h": "Vous déclarez, Akinaza jamais",
+            "p": [
+              "Akinaza ne produit jamais de déclaration et n'envoie rien à Revenu Québec ni à l'Agence du revenu du Canada. Vérifiez chaque chiffre, puis produisez vous-même la déclaration. Ces chiffres ne sont ni un avis fiscal ni un avis comptable."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "data": {
+        "nav": "Vos données",
+        "title": "Vos données",
+        "lead": "Ce qu'Akinaza garde sur vous, et votre droit d'y accéder.",
+        "sections": [
+          {
+            "id": "export",
+            "h": "Exporter",
+            "p": [
+              "Dans votre compte, Vos données, Exporter vous donne tout ce qui est détenu sur le compte en un seul fichier."
+            ],
+            "items": []
+          },
+          {
+            "id": "delete",
+            "h": "Supprimer le compte",
+            "p": [
+              "Supprimer mon compte efface d'abord vos fiches clients. Les livres d'une boutique sont conservés, parce que la loi fiscale l'exige (six ans)."
+            ],
+            "items": []
+          },
+          {
+            "id": "clients",
+            "h": "Les données de vos clients",
+            "p": [
+              "Le consentement d'un client est consigné pour chaque finalité et peut être retiré. Effacer un client vide ses champs personnels et garde les factures que la loi oblige à conserver. Les données sont gardées au Canada, chiffrées au repos, et visibles de votre boutique seulement."
+            ],
+            "items": []
+          },
+          {
+            "id": "notice",
+            "h": "L'avis de confidentialité",
+            "p": [
+              "L'avis de confidentialité dit qui est responsable de la protection des renseignements personnels et comment exercer vos droits."
+            ],
+            "items": []
+          }
+        ]
+      }
+    }
   },
   "pricing": {
     "title": "Tarifs",

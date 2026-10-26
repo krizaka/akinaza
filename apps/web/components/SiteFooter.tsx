@@ -41,6 +41,9 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <Link href={pagePath(locale, "pricing")}>{t("chrome.menu.pricing.title")}</Link>
         </SiteFooterLink>
         <SiteFooterLink asChild>
+          <Link href={pagePath(locale, "docs")}>{t("chrome.menu.docs.title")}</Link>
+        </SiteFooterLink>
+        <SiteFooterLink asChild>
           <Link href={pagePath(locale, "privacy")}>{t("chrome.legal")}</Link>
         </SiteFooterLink>
         <SiteFooterLink asChild>

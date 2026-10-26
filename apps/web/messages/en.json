@@ -36,6 +36,10 @@
       "pricing": {
         "title": "Pricing",
         "text": "What Akinaza costs, plan by plan."
+      },
+      "docs": {
+        "title": "Guide",
+        "text": "Shop, booking, invoice, books, data: the owner's guide."
       }
     },
     "footerLabel": "Site footer",
@@ -108,6 +112,228 @@
       "scope": "For studios, salons and the self-employed. Not for restaurants, cafés, bars or bakeries with on-site consumption."
     },
     "visualLabel": "dev.akinaza.com"
+  },
+  "docs": {
+    "title": "Owner's guide",
+    "lead": "Five short pages, one job each: your shop, a booking, an invoice, your books, your data. They say only what Akinaza does today.",
+    "navLabel": "Owner's guide",
+    "sidebarLabel": "Pages of the guide",
+    "breadcrumbLabel": "Breadcrumb",
+    "tocLabel": "On this page",
+    "previous": "Previous",
+    "next": "Next",
+    "collectionsTitle": "The guide",
+    "popularTitle": "The five pages",
+    "help": "Help",
+    "home": "Guide",
+    "updated": "Written for the version in development; it changes with the product.",
+    "collection": {
+      "title": "Akinaza",
+      "description": "For the owner of a service shop: appointments, invoices and the tax figures of your period."
+    },
+    "pages": {
+      "shop": {
+        "nav": "Open your shop",
+        "title": "Open your shop and publish its page",
+        "lead": "What your clients see, and how they book. Nothing is public until you publish it.",
+        "sections": [
+          {
+            "id": "create",
+            "h": "Open the shop",
+            "p": [
+              "From your account, choose Open a shop. You give its name, its trade and its address; the trade sets the words your screens and your clients read."
+            ],
+            "items": []
+          },
+          {
+            "id": "page",
+            "h": "Write the page",
+            "p": [
+              "In Boutique, under Your page, you write the shop name, one line in French and in English, who you are, and the phone and e-mail shown to visitors. You choose which sections the page has and in which order.",
+              "Add your services with their duration and price, the hours when each person works and, if you travel, the areas you serve. Prices are shown before taxes."
+            ],
+            "items": []
+          },
+          {
+            "id": "publish",
+            "h": "Publish it",
+            "p": [
+              "Turn on Publish the page. Clients then find it at its address and can book. You can change the address: the old one still leads to your page."
+            ],
+            "items": []
+          },
+          {
+            "id": "languages",
+            "h": "Offer it in other languages",
+            "p": [
+              "In Boutique, Languages, you choose the languages of your page. The other texts are translated automatically from the one you write in, and you can edit each one. A text marked « translated automatically » has not been read by you yet."
+            ],
+            "items": []
+          },
+          {
+            "id": "team",
+            "h": "Add people",
+            "p": [
+              "In Boutique, Team, you invite the people who work in the shop. Each has their own hours, and a client can choose a person or leave it to anyone who is free."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "bookings": {
+        "nav": "Take a booking",
+        "title": "Take a booking and confirm it",
+        "lead": "The client's four steps, and what you see.",
+        "sections": [
+          {
+            "id": "steps",
+            "h": "The client's four steps",
+            "p": [
+              "Everything is in the address, so a booking can be shared or resumed."
+            ],
+            "items": [
+              "Choose a service on your page.",
+              "Choose a person, or anyone free, and an area if you travel.",
+              "Pick a time: only times that are really free are shown.",
+              "Confirm. The sign-in is at this last step, and the choices are kept."
+            ]
+          },
+          {
+            "id": "confirm",
+            "h": "The confirmation",
+            "p": [
+              "The client sees when, with whom, where and the price, can add it to a calendar and finds it in their bookings."
+            ],
+            "items": []
+          },
+          {
+            "id": "cancel",
+            "h": "The cancellation rule",
+            "p": [
+              "Your page tells clients how long before the visit they can cancel for free (« Free until N h before the visit »). Within that window they cancel themselves; after it, they are asked to call the shop."
+            ],
+            "items": []
+          },
+          {
+            "id": "today",
+            "h": "On your side",
+            "p": [
+              "The bookings are on Today, day by day."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "invoices": {
+        "nav": "Invoice",
+        "title": "Issue and correct an invoice",
+        "lead": "A bilingual invoice with the GST and QST exact to the cent.",
+        "sections": [
+          {
+            "id": "issue",
+            "h": "Issue an invoice",
+            "p": [
+              "In Invoices, choose New invoice. Pick the client, add a line for a service or write your own with its price and quantity, and check the total. The invoice is dated today and gets its number when you issue it; the due date follows your payment terms."
+            ],
+            "items": []
+          },
+          {
+            "id": "taxes",
+            "h": "The taxes",
+            "p": [
+              "The GST (5 %) and the QST (9.975 %) are worked out once per invoice, on the taxable subtotal, and rounded to the cent."
+            ],
+            "items": []
+          },
+          {
+            "id": "correct",
+            "h": "Correct an invoice",
+            "p": [
+              "An issued invoice never changes. Choose Correct: Akinaza issues the credit note of the invoice and the new invoice together, and links them. The client, the language and the terms stay the same."
+            ],
+            "items": []
+          },
+          {
+            "id": "link",
+            "h": "The client's link",
+            "p": [
+              "Send the invoice by e-mail. The client opens it from a private link, where they can print it or save it as a PDF. In Boutique, Invoice e-mails, you set the message and how long the link stays open; a link that is no longer valid leads to a page not found."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "books": {
+        "nav": "Your books",
+        "title": "Your books: the GST and QST of a period",
+        "lead": "Akinaza prepares the figures. You check them and you file.",
+        "sections": [
+          {
+            "id": "period",
+            "h": "Choose the period",
+            "p": [
+              "Your books show the lines of the GST/QST return for a period: sales (line 101), GST collected (103), input tax credits (106) and the net GST (109), then QST collected (203), input tax refunds (206) and the net QST (209). The result says whether you have something to remit, a refund to claim or nothing."
+            ],
+            "items": []
+          },
+          {
+            "id": "source",
+            "h": "Where each number comes from",
+            "p": [
+              "Every figure is worked out from your invoices, with credit notes taken off, and your expenses. Next to a figure you see how many documents are behind it, and you can open them."
+            ],
+            "items": []
+          },
+          {
+            "id": "file",
+            "h": "You file, Akinaza never does",
+            "p": [
+              "Akinaza never files a return and never sends anything to Revenu Québec or the Canada Revenue Agency. Check each figure, then file the return yourself. These figures are not tax or accounting advice."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "data": {
+        "nav": "Your data",
+        "title": "Your data",
+        "lead": "What Akinaza keeps about you, and your right to it.",
+        "sections": [
+          {
+            "id": "export",
+            "h": "Export",
+            "p": [
+              "In your account, Your data, Export gives you everything held about the account as one file."
+            ],
+            "items": []
+          },
+          {
+            "id": "delete",
+            "h": "Delete the account",
+            "p": [
+              "Delete my account erases your client files first. A shop's books are kept, because the tax law requires it (six years)."
+            ],
+            "items": []
+          },
+          {
+            "id": "clients",
+            "h": "Your clients' data",
+            "p": [
+              "A client's consent is recorded for each purpose and can be withdrawn. Erasing a client blanks their personal fields and keeps the invoices that the law requires. Data is kept in Canada, encrypted at rest, and visible to your shop only."
+            ],
+            "items": []
+          },
+          {
+            "id": "notice",
+            "h": "The privacy notice",
+            "p": [
+              "The privacy notice says who is in charge of the protection of personal information and how to exercise your rights."
+            ],
+            "items": []
+          }
+        ]
+      }
+    }
   },
   "pricing": {
     "title": "Pricing",
