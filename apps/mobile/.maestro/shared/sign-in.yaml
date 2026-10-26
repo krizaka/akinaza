@@ -3,6 +3,11 @@
 # never from this file.
 appId: com.krizaka.akinaza
 ---
+# After clearState a slow emulator paints a blank screen first. Wait for the app to be there, signed out (its sign-in) or signed in
+# (the first tab), before reading which: otherwise the blank screen reads as "signed in" and the flow taps into nothing.
+- extendedWaitUntil:
+    visible: "Se connecter|Sign in|Aujourd'hui|Today"
+    timeout: 60000
 - runFlow:
     when:
       visible:

@@ -16,14 +16,14 @@ export function generateStaticParams() {
   return DOC_IDS.flatMap((page) => ["en", "fr"].map((locale) => ({ locale, page })));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string; page: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: Readonly<{ params: Promise<{ locale: string; page: string }> }>): Promise<Metadata> {
   const { locale, page } = await params;
   if (!isDocId(page)) return {};
   return pageMetadata(asLocale(locale), `docs/${page}`);
 }
 
 /** One page of the owner's guide: a job, in short sections, every one of them a true statement about the product today. */
-export default async function DocsPage({ params }: { params: Promise<{ locale: string; page: string }> }) {
+export default async function DocsPage({ params }: Readonly<{ params: Promise<{ locale: string; page: string }> }>) {
   const { locale: raw, page } = await params;
   const locale = asLocale(raw);
   if (!isDocId(page)) notFound();

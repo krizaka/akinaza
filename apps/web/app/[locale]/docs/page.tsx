@@ -9,12 +9,12 @@ import { asLocale, getDictionary } from "@/lib/i18n";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { DOC_IDS, pagePath } from "@/lib/site";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: Readonly<{ params: Promise<{ locale: string }> }>): Promise<Metadata> {
   return pageMetadata(asLocale((await params).locale), "docs");
 }
 
 /** The owner's guide: five pages, one job each, in the product's own words (akinaza#382). */
-export default async function Docs({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Docs({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const d = getDictionary(locale).docs;
   return (
