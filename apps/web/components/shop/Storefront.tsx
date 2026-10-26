@@ -16,8 +16,9 @@ import { Fragment, type ReactNode } from "react";
 
 import { ButtonLink } from "@/components/ButtonLink";
 import { Bulletin } from "@/components/shop/Bulletin";
-import { CommunityWall, ElsewhereVideos, type FacadeWords, type PlayerWords, ShopTv } from "@/components/shop/CommunityWall";
+import { CommunityWall, ElsewhereVideos, type FacadeWords, type PlayerWords } from "@/components/shop/CommunityWall";
 import { ReviewsView } from "@/components/shop/ReviewsView";
+import { ShopTvLazy } from "@/components/shop/ShopTvLazy";
 import { ZoneMap } from "@/components/shop/ZoneMap";
 import { type Locale, translator } from "@/lib/i18n";
 import type { StorefrontView } from "@/lib/storefront";
@@ -63,7 +64,7 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
   player.captionsOn = t("console.shopPage.player.captionsOn", { track: "{track}" });
   player.time = t("console.shopPage.player.time", { time: "{time}", duration: "{duration}" });
   const tvOf = (video: NonNullable<typeof community>["tv"] & object) => (
-    <ShopTv video={video} channel={t("console.shopPage.tvChannel")} title={t("console.shopPage.tvTitle", { shop: view.name })} player={player} facade={facade} platformNames={Object.fromEntries(platforms.map((p) => [p, platformName(p)]))} />
+    <ShopTvLazy video={video} channel={t("console.shopPage.tvChannel")} title={t("console.shopPage.tvTitle", { shop: view.name })} player={player} facade={facade} platformNames={Object.fromEntries(platforms.map((p) => [p, platformName(p)]))} />
   );
   const sections: Record<(typeof view.sections)[number]["id"], ReactNode> = {
     services: view.services.length ? (
