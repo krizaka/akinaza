@@ -119,10 +119,13 @@ async function ensureOwner(db: Db, email: string): Promise<string> {
   return row!.id;
 }
 
-/** The demo's trade, once: a shop that already chose one keeps it. */
+/**
+ * The demo's trade, always: a demo shop is a fixture, so its trade is the fixture's. A shop without one would be given another trade's
+ * images (« professional » without a trade reads as consulting: a shelf of books on a hair salon, akinaza#383).
+ */
 async function keepType(db: Db, shopId: string, shopType: ShopType): Promise<void> {
   const config = await shopPageConfigOf(db, shopId);
-  if (!config.shopType) await saveShopPageConfig(db, shopId, { ...config, shopType });
+  if (config.shopType !== shopType) await saveShopPageConfig(db, shopId, { ...config, shopType });
 }
 
 /** The demo's template, once: a page that wears one keeps it (and its version). Through `applyTemplate`, the template's order, as a new shop would get it. */
