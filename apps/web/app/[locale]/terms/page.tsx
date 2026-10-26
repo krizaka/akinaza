@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * Under the Charter of the French Language the French text is the reference. A draft until the single lawyer review
  * (krizaka/.github#250): `data-lawyer-review` marks it, and the status line says so.
  */
-export default async function Terms({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Terms({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale);
   return (

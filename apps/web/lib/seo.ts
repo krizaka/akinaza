@@ -17,9 +17,15 @@ export const CRAWLERS = [
 
 const url = (locale: Locale, page: PageId) => `${SITE_URL}${pagePath(locale, page)}`;
 
+function pageTitleOf(t: ReturnType<typeof getDictionary>, page: PageId): string {
+  if (page === "privacy") return t.privacy.title;
+  if (page === "terms") return t.terms.title;
+  return t.landing.title;
+}
+
 export function pageMetadata(locale: Locale, page: PageId): Metadata {
   const t = getDictionary(locale);
-  const pageTitle = page === "privacy" ? t.privacy.title : page === "terms" ? t.terms.title : t.landing.title;
+  const pageTitle = pageTitleOf(t, page);
   const title = page === "home" ? `${t.meta.siteName} · ${t.landing.title}` : `${pageTitle} · ${t.meta.siteName}`;
   const description = t.meta.description;
   return {

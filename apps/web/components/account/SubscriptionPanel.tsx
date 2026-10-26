@@ -25,6 +25,20 @@ export interface SubscriptionView {
   soldPrice?: string | null;
 }
 
+/** The line under the founder offer: choosing it accepts the terms of use. */
+function TermsNote() {
+  const { say, locale } = useSay();
+  return (
+    <p className="py-2 text-sm text-fg-secondary" data-testid="terms-accept">
+      {say("account.subscription.acceptPrefix")}
+      <Link className="underline" href={`/${locale}/terms`}>
+        {say("account.subscription.acceptLink")}
+      </Link>
+      .
+    </p>
+  );
+}
+
 /** The subscription: its state, the founder offer when it is on sale, and the hosted page where it is managed, its invoices read and it is cancelled. */
 export function SubscriptionPanel({ subscription }: { subscription: SubscriptionView }) {
   const { say, locale } = useSay();
@@ -60,15 +74,7 @@ export function SubscriptionPanel({ subscription }: { subscription: Subscription
       ) : null}
       {!subscription.active && subscription.offerFull ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.offerFull")}</p> : null}
       {!subscription.active && !subscription.offer && !subscription.offerFull && !subscription.hasCustomer ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.unavailable")}</p> : null}
-      {!subscription.active && subscription.offer ? (
-        <p className="py-2 text-sm text-fg-secondary" data-testid="terms-accept">
-          {say("account.subscription.acceptPrefix")}
-          <Link className="underline" href={`/${locale}/terms`}>
-            {say("account.subscription.acceptLink")}
-          </Link>
-          .
-        </p>
-      ) : null}
+      {!subscription.active && subscription.offer ? <TermsNote /> : null}
       {problem ? <Alert tone="danger">{problem}</Alert> : null}
     </SettingsSection>
   );
