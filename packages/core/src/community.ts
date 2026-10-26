@@ -1,4 +1,3 @@
-import { compareDesc } from "date-fns";
 import { z } from "zod";
 
 /**
@@ -92,11 +91,16 @@ export function reviewScore(reviews: readonly ScoredReview[], rules: ScoreRules)
 
 // ---- the bulletin board --------------------------------------------------------------------------------------------------------------------------
 
+function newestFirst(a: { createdAt: Date }, b: { createdAt: Date }): number {
+  if (a.createdAt < b.createdAt) return 1;
+  return a.createdAt > b.createdAt ? -1 : 0;
+}
+
 /** The flyers still up on `today` (the shop's local day, `YYYY-MM-DD`): no end date, or an end date not yet passed; newest first, at most three. */
 export function currentAnnouncements<T extends { endsOn: string | null; createdAt: Date }>(list: readonly T[], today: string): T[] {
   return list
     .filter((a) => a.endsOn === null || a.endsOn >= today)
-    .sort((a, b) => compareDesc(a.createdAt, b.createdAt))
+    .sort(newestFirst)
     .slice(0, ANNOUNCEMENT_LIMITS.current);
 }
 
