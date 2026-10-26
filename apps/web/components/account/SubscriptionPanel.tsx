@@ -50,16 +50,26 @@ export function SubscriptionPanel({ subscription }: { subscription: Subscription
           </Button>
         </SettingsRow>
       ) : null}
-      {!subscription.active && subscription.offer ? (
+      {subscription.active ? null : <NotSubscribed subscription={subscription} pending={open.isPending} onChoose={() => open.mutate("checkout")} />}
+      {problem ? <Alert tone="danger">{problem}</Alert> : null}
+    </SettingsSection>
+  );
+}
+
+/** What an account without a subscription is offered: the founder offer while it is on sale, or why there is none. */
+function NotSubscribed({ subscription, pending, onChoose }: { subscription: SubscriptionView; pending: boolean; onChoose: () => void }) {
+  const { say } = useSay();
+  return (
+    <>
+      {subscription.offer ? (
         <SettingsRow label={say("account.subscription.founder")} description={say("account.subscription.founderHint", { price: subscription.offer.price, cardRate: subscription.offer.cardRate })}>
-          <Button size="sm" variant="primary" loading={open.isPending} onClick={() => open.mutate("checkout")}>
+          <Button size="sm" variant="primary" loading={pending} onClick={onChoose}>
             {say("account.subscription.choose")}
           </Button>
         </SettingsRow>
       ) : null}
-      {!subscription.active && subscription.offerFull ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.offerFull")}</p> : null}
-      {!subscription.active && !subscription.offer && !subscription.offerFull && !subscription.hasCustomer ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.unavailable")}</p> : null}
-      {problem ? <Alert tone="danger">{problem}</Alert> : null}
-    </SettingsSection>
+      {subscription.offerFull ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.offerFull")}</p> : null}
+      {!subscription.offer && !subscription.offerFull && !subscription.hasCustomer ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.unavailable")}</p> : null}
+    </>
   );
 }
