@@ -36,7 +36,7 @@ const addressOf = (file: string) => `/api/walker${file.slice("./walker".length, 
 const ROUTES = Object.keys(routeModules).map((file) => ({ file, address: addressOf(file), source: routeSources[file]! })).sort((a, b) => a.address.localeCompare(b.address));
 
 /** What a route does with the shop: through a shop guard (membership sweep), or about the session's own items (collections, tags, shops). */
-const SHOP_GUARD = /require(Shop|Owner|ShopClient)\b|visitRoute|teamRoute|organizeApi/;
+const SHOP_GUARD = /require(Shop|Owner|ShopClient)\b|visitRoute|teamRoute|organizeApi|takeDown/;
 const SESSION_OWNED = new Set(["/api/walker/shop-collections", "/api/walker/shop-collections/[id]", "/api/walker/shop-tags", "/api/walker/shop-tags/[id]", "/api/walker/shops", "/api/walker/shops/[id]", "/api/walker/shops/[id]/default", "/api/walker/shop"]);
 
 /** An address with its dynamic segments filled (`values` for the named ones, else a fresh UUID or a day) - and the same as route params. */
