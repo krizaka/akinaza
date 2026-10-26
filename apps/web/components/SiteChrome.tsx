@@ -1,6 +1,6 @@
 "use client";
 
-import { BillingIcon, HomeIcon, KnowledgeIcon, PlayIcon } from "@krizaka/icons";
+import { BillingIcon, HomeIcon, KnowledgeIcon } from "@krizaka/icons";
 import { AkinazaLogo } from "@krizaka/ui";
 import { languagesFor } from "@krizaka/ui/language-switch";
 import { NavBar } from "@krizaka/ui/nav-bar";
@@ -9,15 +9,13 @@ import Link from "next/link";
 
 import { BarSession, type BarWords } from "@/components/account/BarSession";
 import { type Locale, translator } from "@/lib/i18n";
-import { DEMO_SHOP } from "@/lib/landing";
 import { type PageId, pagePath, REPO_URL } from "@/lib/site";
 
-/** The product's pages, in the one « Product » menu (the products' bar standard): no Platforms (web only); the owner's guide is the Docs. */
+/** The product's pages, in the one « Product » menu (the products' bar standard): no Platforms (web only); the owner's guide is the Docs. Three links at most (lib/chrome.test.ts); the demo shop is in the footer and the home's action. */
 const MENU = [
   { id: "home", icon: <HomeIcon />, path: (l: Locale) => pagePath(l, "home"), page: "home" },
   { id: "pricing", icon: <BillingIcon />, path: (l: Locale) => pagePath(l, "pricing"), page: "pricing" },
   { id: "docs", icon: <KnowledgeIcon />, path: (l: Locale) => pagePath(l, "docs"), page: "docs" },
-  { id: "shop", icon: <PlayIcon />, path: (l: Locale) => `/${l}/s/${DEMO_SHOP}`, page: null },
 ] as const;
 
 /**
