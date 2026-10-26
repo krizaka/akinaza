@@ -1,3 +1,4 @@
+import { compareDesc } from "date-fns";
 import { z } from "zod";
 
 /**
@@ -95,7 +96,7 @@ export function reviewScore(reviews: readonly ScoredReview[], rules: ScoreRules)
 export function currentAnnouncements<T extends { endsOn: string | null; createdAt: Date }>(list: readonly T[], today: string): T[] {
   return list
     .filter((a) => a.endsOn === null || a.endsOn >= today)
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .sort((a, b) => compareDesc(a.createdAt, b.createdAt))
     .slice(0, ANNOUNCEMENT_LIMITS.current);
 }
 
