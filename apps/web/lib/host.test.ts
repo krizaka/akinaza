@@ -40,7 +40,7 @@ describe("a shop's own subdomain (#77, level 2)", () => {
     expect(routeFor("salon-laurier.akinaza.com", "/en", "fr", site)).toEqual({ kind: "rewrite", path: "/en/s/salon-laurier" });
   });
   it("lets the shop's own journey through, as the page links it", () => {
-    expect(routeFor("salon-laurier.akinaza.com", "/fr/s/salon-laurier/service/42/creneau", "fr", site)).toEqual({ kind: "next" });
+    expect(routeFor("salon-laurier.akinaza.com", "/fr/s/salon-laurier/service/42/slots", "fr", site)).toEqual({ kind: "next" });
   });
   it("sends everything else to www: another shop, the sign-in, the app", () => {
     expect(routeFor("salon-laurier.akinaza.com", "/fr/s/autre-salon", "fr", site)).toEqual({ kind: "redirect", path: "https://www.akinaza.com/fr/s/autre-salon" });

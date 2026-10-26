@@ -1,11 +1,14 @@
+import { briefTokenKnown } from "@akinaza/db";
 import { Page } from "@krizaka/ui/page";
 import { PageHero } from "@krizaka/ui/page-hero";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { StopBrief } from "@/components/brief/StopBrief";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
+import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +19,8 @@ export const metadata: Metadata = { robots: { index: false, follow: false }, ref
 export default async function StopBriefPage({ params }: { params: Promise<{ locale: string; token: string }> }) {
   const { locale: raw, token } = await params;
   const locale = asLocale(raw);
+  // A link that leads nowhere is a 404, never a page that looks alive (akinaza#381).
+  if (!(await briefTokenKnown(db(), token))) notFound();
   const t = getDictionary(locale).console.brief.stop;
   return (
     <>

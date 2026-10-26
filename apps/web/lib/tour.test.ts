@@ -27,6 +27,6 @@ describe("the retired changelog", () => {
     const config = readFileSync(new URL("../next.config.mjs", import.meta.url), "utf8");
     expect(config).toContain('source: "/:locale(en|fr)/changelog"');
     expect(config).toContain('source: "/:locale(en|fr)/changelog/feed.xml"');
-    expect(config.match(/permanent: true/g)).toHaveLength(3);
+    expect(config.match(/permanent: false/g)).toBeNull(); // every retired address is a 308, never a 307
   });
 });

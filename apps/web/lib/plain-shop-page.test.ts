@@ -14,7 +14,7 @@ describe("the public shop page and its booking journey carry no eyebrow", () => 
     "components/shop/Storefront.tsx",
     "components/journey/JourneyFrame.tsx",
     "app/[locale]/s/[slug]/(public)/service/[id]/page.tsx",
-    "app/[locale]/s/[slug]/(public)/service/[id]/creneau/page.tsx",
+    "app/[locale]/s/[slug]/(public)/service/[id]/slots/page.tsx",
     "app/[locale]/s/[slug]/service/[id]/confirmation/page.tsx",
     "components/home/FounderOffer.tsx",
   ];

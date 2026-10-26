@@ -5,8 +5,8 @@ import { PageHero } from "@krizaka/ui/page-hero";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
-import { ButtonLink } from "@/components/ButtonLink";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { db } from "@/lib/db";
@@ -22,12 +22,13 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
   const locale = asLocale(raw);
   const t = getDictionary(locale).console.report;
   const report = await reportByToken(db(), token, new Date());
+  // An unknown or expired link is a 404, with the product's calm not-found page (akinaza#381).
+  if (!report) notFound();
   const lang = locale === "fr" ? "fr-CA" : "en-CA";
   return (
     <>
       <SiteHeader locale={locale} current="home" path={`/${locale}/report/${token}`} />
       <main id="content" className="pt-20">
-        {report ? (
           <>
             <PageHero eyebrow={format(t.by, { shop: report.shopName })} title={format(t.title, { dog: report.dependantName })} lead={format(t.when, { date: new Date(report.startsAt).toLocaleString(lang, { dateStyle: "full", timeStyle: "short", timeZone: "America/Toronto" }), minutes: report.durationMinutes })} linkAs={Link} />
             <Page className="flex flex-col gap-6 pb-8">
@@ -39,13 +40,6 @@ export default async function ReportPage({ params }: { params: Promise<{ locale:
               <p className="text-sm text-fg-muted">{t.private}</p>
             </Page>
           </>
-        ) : (
-          <PageHero title={t.expired} lead={t.expiredHelp} linkAs={Link}>
-            <ButtonLink href={`/${locale}/sign-in`} variant="primary">
-              {t.signIn}
-            </ButtonLink>
-          </PageHero>
-        )}
       </main>
       <SiteFooter locale={locale} />
     </>

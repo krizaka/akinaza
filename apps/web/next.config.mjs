@@ -40,6 +40,29 @@ const securityHeaders = [
 
 // The noindex of a closed deployment is per host (www is public, dev is not): the proxy says it, API included (proxy.ts).
 
+/** A shop is named in addresses by its id (a UUID): anything else is not a shop and falls through to the 404. */
+const UUID = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
+
+/**
+ * The old addresses and what replaced them, all 308 (akinaza#381). They sit here, in the configuration, and not in pages that only redirect.
+ * The five addresses from before the shop was in the path (`/app/books`, `/app/clients`…) need the shop last worked in, which a
+ * configuration cannot know: they stay route handlers with a 307 (`lib/legacy-redirect.ts`).
+ */
+export const retiredAddresses = [
+  { source: "/:locale(en|fr)/changelog/feed.xml", destination: "/:locale", permanent: true },
+  { source: "/:locale(en|fr)/changelog", destination: "/:locale", permanent: true },
+  { source: "/:locale(en|fr)/app/connections", destination: "/:locale/app", permanent: true },
+  // « Ma page boutique », the languages and the team moved into Boutique (K4).
+  { source: `/:locale(en|fr)/app/:shop(${UUID})/shop`, destination: "/:locale/app/:shop/boutique/page", permanent: true },
+  { source: `/:locale(en|fr)/app/:shop(${UUID})/shop/languages`, destination: "/:locale/app/:shop/boutique/languages", permanent: true },
+  { source: `/:locale(en|fr)/app/:shop(${UUID})/team`, destination: "/:locale/app/:shop/boutique/team", permanent: true },
+  // One way to book: the public steps, signing in at the last one. The old signed-in page keeps its service, person, area and time.
+  { source: "/:locale(en|fr)/s/:slug/book", has: [{ type: "query", key: "service", value: `(?<service>${UUID})` }], destination: "/:locale/s/:slug/service/:service/confirm", permanent: true },
+  { source: "/:locale(en|fr)/s/:slug/book", destination: "/:locale/s/:slug", permanent: true },
+  // One language of addresses: English (the code's). The French word of a public step answers 308.
+  { source: "/:locale(en|fr)/s/:slug/service/:id/creneau", destination: "/:locale/s/:slug/service/:id/slots", permanent: true },
+];
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
@@ -61,11 +84,7 @@ const nextConfig = {
   },
   // The retired pages answer 308 to what replaced them.
   async redirects() {
-    return [
-      { source: "/:locale(en|fr)/changelog/feed.xml", destination: "/:locale", permanent: true },
-      { source: "/:locale(en|fr)/changelog", destination: "/:locale", permanent: true },
-      { source: "/:locale(en|fr)/app/connections", destination: "/:locale/app", permanent: true },
-    ];
+    return retiredAddresses;
   },
   async headers() {
     return [

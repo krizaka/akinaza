@@ -90,7 +90,7 @@ function FileSection({ file, primary }: { file: ClientFileView; /** Whether « R
         <h2 className="min-w-0 break-words font-display text-xl font-bold text-fg">{file.client.shopName}</h2>
         {file.client.shopSlug ? (
           <Button asChild size="md" variant={primary ? "primary" : "secondary"} className="w-full sm:w-auto">
-            <Link href={`/${locale}/s/${file.client.shopSlug}/book`}>{say("client.bookAgain", { shop: file.client.shopName })}</Link>
+            <Link href={`/${locale}/s/${file.client.shopSlug}`}>{say("client.bookAgain", { shop: file.client.shopName })}</Link>
           </Button>
         ) : null}
       </div>

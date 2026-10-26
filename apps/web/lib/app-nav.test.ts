@@ -37,9 +37,9 @@ describe("the rail of each role (docs/ux/2026-10-full-review.md § 4.1): five de
 /**
  * One primary per screen (errata 2 of docs/ux/2026-10-full-review.md, revised in D1b): who carries it on each owner route. The
  * header's « Nouvelle facture » on the lists; the page's own on the day (the next appointment), the hub (its section's save) and an
- * invoice's screens (send, correct, issue). Every page of the shop's space is in this table (« moved »: an old address that answers 308): a new one must say who holds its primary.
+ * invoice's screens (send, correct, issue). Every page of the shop's space is in this table (an old address that answers 308 is a redirect of `next.config.mjs`, not a page): a new one must say who holds its primary.
  */
-const OWNER_SCREENS: Record<string, "header" | "page" | "moved"> = {
+const OWNER_SCREENS: Record<string, "header" | "page"> = {
   "aujourdhui": "page",
   "books": "header",
   "boutique": "page",
@@ -51,10 +51,7 @@ const OWNER_SCREENS: Record<string, "header" | "page" | "moved"> = {
   "invoices/[id]": "page",
   "invoices/[id]/correct": "page",
   "invoices/new": "page",
-  "shop": "moved",
-  "shop/languages": "moved",
   "shop/new": "page",
-  "team": "moved",
 };
 
 const SHOP_SPACE = fileURLToPath(new URL("../app/[locale]/(app)/app/[shop]/", import.meta.url));
@@ -67,7 +64,7 @@ describe("one primary per screen: the header's « Nouvelle facture » or the pag
     expect(ownerRoutes().sort()).toEqual(Object.keys(OWNER_SCREENS).sort());
   });
 
-  it.each(Object.entries(OWNER_SCREENS).filter(([, owner]) => owner !== "moved"))("%s: the %s", (route, owner) => {
+  it.each(Object.entries(OWNER_SCREENS))("%s: the %s", (route, owner) => {
     expect(screenPrimary(sample(route))).toBe(owner);
   });
 

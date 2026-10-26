@@ -46,7 +46,7 @@ describe("a service step", () => {
   it("offers a choice of person only when several work here, « anyone » first, the chosen one marked", () => {
     const s = serviceStep({ page, locale: "en", serviceId: "cut", staffId: "k" })!;
     expect(s.team.map((m) => [m.name, m.selected])).toEqual([["Anyone free", false], ["Maëlle", false], ["Karim", true]]);
-    expect(s.timesHref).toBe("/en/s/cedre-ciseaux/service/cut/creneau?staff=k");
+    expect(s.timesHref).toBe("/en/s/cedre-ciseaux/service/cut/slots?staff=k");
     expect(s.zones).toEqual([]);
     expect(serviceStep({ page: solo, locale: "en", serviceId: "cut", staffId: null })!.team).toEqual([]);
   });
@@ -54,13 +54,13 @@ describe("a service step", () => {
     const walker = { ...solo, zones: [{ id: "z1", name: "Saint-Henri" }, { id: "z2", name: "Griffintown" }] } as unknown as PublicShop;
     const s = serviceStep({ page: walker, locale: "en", serviceId: "cut", staffId: null, zoneId: "z2" })!;
     expect(s.zones.map((z) => [z.name, z.selected])).toEqual([["Saint-Henri", false], ["Griffintown", true]]);
-    expect(s.timesHref).toBe("/en/s/cedre-ciseaux/service/cut/creneau?zone=z2");
+    expect(s.timesHref).toBe("/en/s/cedre-ciseaux/service/cut/slots?zone=z2");
     expect(serviceStep({ page: walker, locale: "en", serviceId: "cut", staffId: null })!.timesHref).toContain("zone=z1");
     const t2 = timesStep({ page: walker, locale: "en", now: NOW, serviceId: "cut", staffId: null, zoneId: "z2", slots: [{ startsAt: new Date("2026-10-20T13:00:00Z"), endsAt: new Date("2026-10-20T14:00:00Z"), seatsLeft: 1, capacity: 1, joins: false, staffId: "m" }] })!;
     expect(t2.days[0]!.slots[0]!.href).toContain("zone=z2");
   });
   it("ignores a person who is not on the team, and an unknown service is null", () => {
-    expect(serviceStep({ page, locale: "en", serviceId: "cut", staffId: "stranger" })!.timesHref).toBe("/en/s/cedre-ciseaux/service/cut/creneau");
+    expect(serviceStep({ page, locale: "en", serviceId: "cut", staffId: "stranger" })!.timesHref).toBe("/en/s/cedre-ciseaux/service/cut/slots");
     expect(serviceStep({ page, locale: "en", serviceId: "nope", staffId: null })).toBeNull();
   });
 });
@@ -73,7 +73,7 @@ describe("a times step", () => {
     expect(step.days[0]!.label).toBe("Demain");
     expect(step.days[0]!.slots[0]!.label.replace(/\s/g, " ")).toBe("9 h");
     expect(step.days[0]!.slots[1]!.label.replace(/\s/g, " ")).toBe("10 h 30");
-    expect(step.days[0]!.slots[0]!.href).toBe("/fr/s/cedre-ciseaux/book?service=cut&staff=m&start=2026-10-20T13%3A00%3A00.000Z");
+    expect(step.days[0]!.slots[0]!.href).toBe("/fr/s/cedre-ciseaux/service/cut/confirm?staff=m&start=2026-10-20T13%3A00%3A00.000Z");
     expect(step.who).toBe("Avec Maëlle");
   });
   it("also groups each day's times by part of the day on the shop's clock, and says which clock (SlotPicker groups, krizaka-ui#672)", () => {
@@ -94,7 +94,7 @@ describe("a times step", () => {
   });
   it("the way back keeps the person, and the addresses are the journey's", () => {
     expect(timesStep({ page, locale: "en", now: NOW, serviceId: "cut", staffId: "k", slots: [] })!.backHref).toBe("/en/s/cedre-ciseaux/service/cut?staff=k");
-    expect(timesHref("fr", "x", "s")).toBe("/fr/s/x/service/s/creneau");
+    expect(timesHref("fr", "x", "s")).toBe("/fr/s/x/service/s/slots");
   });
 });
 

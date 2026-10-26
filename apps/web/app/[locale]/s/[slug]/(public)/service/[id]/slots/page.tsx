@@ -22,7 +22,7 @@ export default async function TimesPage({ params, searchParams }: { params: Prom
   const query = await searchParams;
   const locale = asLocale(raw);
   const t = translator(locale);
-  const page = await loadPublicShopOrMove(locale, slug, `/service/${id}/creneau${queryString(query)}`);
+  const page = await loadPublicShopOrMove(locale, slug, `/service/${id}/slots${queryString(query)}`);
   if (!page || !page.services.some((s) => s.id === id)) notFound();
   const now = new Date();
   const choice = resolveChoice(page, { staff: searchValue(query.staff), zone: searchValue(query.zone) });
@@ -30,7 +30,7 @@ export default async function TimesPage({ params, searchParams }: { params: Prom
   const step = timesStep({ page, locale, now, serviceId: id, staffId: choice.staffId, zoneId: choice.zoneId, slots });
   if (!step) notFound();
   return (
-    <JourneyFrame locale={locale} path={`/${locale}/s/${slug}/service/${id}/creneau`} back={{ href: step.backHref, label: step.title }} title={t("console.journey.pickTime")} lead={[step.who, t("console.journey.pickTimeLead")].filter(Boolean).join(" · ")}>
+    <JourneyFrame locale={locale} path={`/${locale}/s/${slug}/service/${id}/slots`} back={{ href: step.backHref, label: step.title }} title={t("console.journey.pickTime")} lead={[step.who, t("console.journey.pickTimeLead")].filter(Boolean).join(" · ")}>
       <StorefrontLive slug={slug} enabled={await appSettings().get("realtime.storefront.enabled")} />
       <ShopSlots
         days={step.days}

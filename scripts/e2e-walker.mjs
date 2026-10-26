@@ -183,7 +183,7 @@ try {
   await caption(c.page, W.captions.signIn);
   await signIn(c.page, client);
   await c.page.getByRole("button", { name: W.addAnother }).waitFor();
-  check(c.page.url().includes(`/s/${SLUG}/book`), "after signing in she is back on the booking page");
+  check(/\/s\/[^/]+\/service\/[^/]+\/confirm/.test(c.page.url()), "after signing in she is back on the last step of the booking path");
   await caption(c.page, W.captions.dog);
   await c.page.getByRole("button", { name: W.addAnother }).click();
   await c.page.getByLabel(W.dogName, { exact: true }).fill("Miso");

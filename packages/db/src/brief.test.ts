@@ -2,7 +2,7 @@ import { shopBrief } from "@akinaza/core";
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { briefActionsOf, briefMailShops, briefSnapshot, claimBriefAction, claimBriefDelivery, reachableClients, recordBriefResult, unsubscribeBrief } from "./brief";
+import { briefActionsOf, briefMailShops, briefSnapshot, briefTokenKnown, claimBriefAction, claimBriefDelivery, reachableClients, recordBriefResult, unsubscribeBrief } from "./brief";
 import { appointments, daysOff, schedules, shops } from "./schema";
 import { book, eraseClient, issueInvoice, recordConsent, recordExpense } from "./shop-ops";
 import { freshDatabase } from "./test/db";
@@ -114,6 +114,9 @@ describe("the brief by e-mail (real PostgreSQL 16, #200)", () => {
     const stored = await t.db.execute(sql`SELECT unsubscribe_sha256 FROM brief_deliveries WHERE shop_id = ${s.shop.id}`);
     expect(JSON.stringify(stored.rows)).not.toContain(token!); // only the hash is kept
 
+    expect(await briefTokenKnown(t.db, token!)).toBe(true);
+    expect(await briefTokenKnown(t.db, "A".repeat(43))).toBe(false);
+    expect(await briefTokenKnown(t.db, "not-a-token")).toBe(false);
     expect(await unsubscribeBrief(t.db, "not-a-token")).toBe(false);
     expect(await unsubscribeBrief(t.db, "A".repeat(43))).toBe(false);
     expect(await unsubscribeBrief(t.db, token!)).toBe(true);
