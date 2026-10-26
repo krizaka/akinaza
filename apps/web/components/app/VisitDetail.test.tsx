@@ -51,7 +51,7 @@ describe("what a walk holds, the same in the owner's side sheet and the walker's
   });
 
   it("fills a phone's card with a big button only when asked (the sheet keeps it medium)", () => {
-    expect(renderToStaticMarkup(<VisitProgress visit={walk} timeZone="America/Toronto" wide />)).toContain("w-full");
-    expect(renderToStaticMarkup(<VisitProgress visit={walk} timeZone="America/Toronto" />)).not.toContain("w-full");
+    expect(renderToStaticMarkup(<VisitProgress visit={walk} timeZone="America/Toronto" wide />)).toMatch(/\sw-full\b/);
+    expect(renderToStaticMarkup(<VisitProgress visit={walk} timeZone="America/Toronto" />)).not.toMatch(/\sw-full\b/);
   });
 });

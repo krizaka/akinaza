@@ -1,5 +1,6 @@
 
-import { teamDay } from "@akinaza/db";
+import { localDay } from "@akinaza/core";
+import { communityOf, teamDay } from "@akinaza/db";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
@@ -7,6 +8,8 @@ import { Storefront } from "@/components/shop/Storefront";
 import { StorefrontLive } from "@/components/shop/StorefrontLive";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
+import { buildCommunity } from "@/lib/community-view";
+import { reviewRules } from "@/lib/community";
 import { db } from "@/lib/db";
 import { proposedDefaults } from "@/lib/default-media-settings";
 import { asLocale, asPageLocale, getDictionary, uiLocaleOf } from "@/lib/i18n";
@@ -38,8 +41,9 @@ export default async function ShopPage({ params }: { params: Promise<{ locale: s
   if (!page.languages.enabled.includes(content)) redirect(`/${page.languages.source}/s/${slug}`);
   const now = new Date();
   // Who is here today, computed on the server from bare time ranges: the page receives a state per first name, nothing else.
-  const [team, enabledUpcomingSections] = await Promise.all([teamDay(db(), page.shop.id, now), shopSectionFeatures()]);
-  const view = buildStorefront({ page, locale, contentLocale: content, now, teamDay: team, enabledUpcomingSections, defaults: await proposedDefaults(page) });
+  const [team, enabledUpcomingSections, community, rules] = await Promise.all([teamDay(db(), page.shop.id, now), shopSectionFeatures(), communityOf(db(), page.shop.id), reviewRules()]);
+  const placed = buildCommunity({ community, locale, today: localDay(now, page.shop.timezone), rules, enabled: enabledUpcomingSections });
+  const view = buildStorefront({ page, locale, contentLocale: content, now, teamDay: team, enabledUpcomingSections, community: placed, defaults: await proposedDefaults(page) });
   return (
     <>
       <SiteHeader locale={locale} current="home" path={`/${content}/s/${slug}`} languages={page.languages.enabled} contentLocale={content} />

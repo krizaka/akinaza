@@ -30,7 +30,7 @@ export default async function TimesPage({ params, searchParams }: { params: Prom
   const step = timesStep({ page, locale, now, serviceId: id, staffId: choice.staffId, zoneId: choice.zoneId, slots });
   if (!step) notFound();
   return (
-    <JourneyFrame locale={locale} path={`/${locale}/s/${slug}/service/${id}/slots`} back={{ href: step.backHref, label: step.title }} title={t("console.journey.pickTime")} lead={[step.who, t("console.journey.pickTimeLead")].filter(Boolean).join(" · ")}>
+    <JourneyFrame locale={locale} head={{ shop: page.shop.name, step: t("console.journey.stepOf", { step: 2, total: 4, label: t("console.journey.stepTime") }), edit: { href: step.backHref, label: t("console.journey.edit") } }} path={`/${locale}/s/${slug}/service/${id}/slots`} back={{ href: step.backHref, label: step.title }} title={t("console.journey.pickTime")} lead={[step.who, t("console.journey.pickTimeLead")].filter(Boolean).join(" · ")}>
       <StorefrontLive slug={slug} enabled={await appSettings().get("realtime.storefront.enabled")} />
       <ShopSlots
         days={step.days}

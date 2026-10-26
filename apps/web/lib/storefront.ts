@@ -1,6 +1,7 @@
 import { bookingPreselect, localDay, MEMBER_STATE, type MemberDay, memberStateAt, openStatus, resolveTemplate, type Template, weekdayOf, weekSchedule } from "@akinaza/core";
 import type { PublicMedia, PublicShop } from "@akinaza/db";
 
+import type { CommunityPublicView } from "@/lib/community-view";
 import type { DefaultImage, ResolvedDefaults } from "@/lib/default-media";
 import { type Locale, type PageLocale, translator } from "@/lib/i18n";
 import { serviceHref } from "@/lib/journey-paths";
@@ -77,6 +78,8 @@ export interface StorefrontView {
   /** The template the shop applied (#261), or null: a shop with none renders exactly as before. Its order is already in `sections`; the variants and the hue are drawn here. */
   template: { id: string; version: number; layout: string; hue: string; variants: Record<string, string> } | null;
   preparedSections: Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>;
+  /** The shop as a place (B45); null when the page was built without it. */
+  community: CommunityPublicView | null;
 }
 
 export interface Selection {
@@ -144,7 +147,7 @@ function memberView(member: { id: string; name: string }, day: MemberDay | undef
   return { id: member.id, name: member.name, state: label, free: state.kind === MEMBER_STATE.free };
 }
 
-export function buildStorefront(input: { page: PublicShop; locale: Locale; /** The language of the shop's own texts when it is not the product's (a Spanish page); defaults to `locale`. */ contentLocale?: PageLocale; /** The proposed images of the shop's type, when the page shows them (#267): used where the owner has none. */ defaults?: ResolvedDefaults; /** The templates catalogue (the published one by default; tests hand one with several versions). */ catalogue?: readonly Template[]; now: Date; teamDay?: ReadonlyMap<string, MemberDay>; enabledUpcomingSections?: Partial<Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>> }): StorefrontView {
+export function buildStorefront(input: { page: PublicShop; /** The shop as a place (B45): its wall, videos, board and reviews, already built. */ community?: CommunityPublicView; locale: Locale; /** The language of the shop's own texts when it is not the product's (a Spanish page); defaults to `locale`. */ contentLocale?: PageLocale; /** The proposed images of the shop's type, when the page shows them (#267): used where the owner has none. */ defaults?: ResolvedDefaults; /** The templates catalogue (the published one by default; tests hand one with several versions). */ catalogue?: readonly Template[]; now: Date; teamDay?: ReadonlyMap<string, MemberDay>; enabledUpcomingSections?: Partial<Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>> }): StorefrontView {
   const { page, locale, now } = input;
   const t = translator(locale);
   const timezone = page.shop.timezone;
@@ -253,9 +256,10 @@ export function buildStorefront(input: { page: PublicShop; locale: Locale; /** T
     logoUrl: page.pageConfig?.logoUrl ?? null,
     sections: pageSections.map((section) => ({
       ...section,
-      visible: section.visible && (section.id in preparedSections ? preparedSections[section.id as keyof typeof preparedSections] : true),
+      visible: section.visible && (section.id in preparedSections ? preparedSections[section.id as keyof typeof preparedSections] : true) && (input.community?.has[section.id as keyof CommunityPublicView["has"]] ?? true),
     })) as StorefrontView["sections"],
     template: appliedTemplate && { id: appliedTemplate.id, version: appliedTemplate.version, layout: appliedTemplate.layout, hue: appliedTemplate.hue, variants: Object.fromEntries(appliedTemplate.sections.map((x) => [x.id, x.variant])) },
     preparedSections,
+    community: input.community ?? null,
   };
 }

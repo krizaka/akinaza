@@ -25,7 +25,7 @@ export default async function ServicePage({ params, searchParams }: { params: Pr
   const step = page ? serviceStep({ page, locale, serviceId: id, staffId: searchValue(query.staff), zoneId: searchValue(query.zone) }) : null;
   if (!page || !step) notFound();
   return (
-    <JourneyFrame locale={locale} path={`/${locale}/s/${slug}/service/${id}`} back={{ href: step.backHref, label: t("console.journey.allServices") }} title={step.name} lead={step.description ?? undefined}>
+    <JourneyFrame locale={locale} head={{ shop: page.shop.name, step: t("console.journey.stepOf", { step: 1, total: 4, label: t("console.journey.stepService") }) }} path={`/${locale}/s/${slug}/service/${id}`} back={{ href: step.backHref, label: t("console.journey.allServices") }} title={step.name} lead={step.description ?? undefined}>
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <div className="flex min-w-0 flex-col gap-6">
           {step.team.length ? (
