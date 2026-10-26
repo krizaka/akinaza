@@ -1,6 +1,7 @@
 "use client";
 
-import type { WallTexture } from "@akinaza/core";
+
+import { WALL_KIND, type WallTexture } from "@akinaza/core";
 import { EmbedFacade } from "@krizaka/ui/embed-facade";
 import { RetroTv } from "@krizaka/ui/retro-tv";
 import type { VideoPlayerLabels } from "@krizaka/ui/video-player";
@@ -56,7 +57,7 @@ export interface FacadeWords {
 
 const itemOf = (piece: WallPiece, name: string): WallItem => {
   const place = { id: piece.id, x: piece.x, y: piece.y, rotation: piece.rotation, z: piece.z };
-  if (piece.kind === "polaroid") {
+  if (piece.kind === WALL_KIND.polaroid) {
     return {
       ...place,
       kind: "polaroid",
@@ -65,7 +66,7 @@ const itemOf = (piece: WallPiece, name: string): WallItem => {
       img: <Image src={piece.imageUrl ?? ""} alt={piece.alt} width={960} height={720} unoptimized loading="lazy" referrerPolicy="no-referrer" className="h-auto w-full" />,
     };
   }
-  if (piece.kind === "note") return { ...place, kind: "note", text: piece.text, signature: piece.signature || undefined, hold: piece.attachment, ink: "blue" };
+  if (piece.kind === WALL_KIND.note) return { ...place, kind: "note", text: piece.text, signature: piece.signature || undefined, hold: piece.attachment, ink: "blue" };
   return { ...place, kind: "sign", variant: piece.variant, as: "p", children: name };
 };
 

@@ -1,4 +1,4 @@
-import { currentAnnouncements, reviewScore, type ScoreRules, type WallTexture } from "@akinaza/core";
+import { currentAnnouncements, reviewScore, type ScoreRules, WALL_KIND, type WallTexture } from "@akinaza/core";
 import type { CommunityView } from "@akinaza/db";
 
 import { type Locale, translator } from "@/lib/i18n";
@@ -94,21 +94,19 @@ export function buildCommunity(input: { community: CommunityView; locale: Locale
   const t = translator(locale);
   const say = (fr: string, en: string) => ({ fr, en })[locale] || fr || en;
 
-  const pieces: WallPiece[] = community.wall.items.map((item) => ({
-    id: item.id,
-    kind: item.kind,
-    x: item.x,
-    y: item.y,
-    rotation: item.rotation,
-    z: item.z,
-    attachment: item.kind === "sign" ? "tape" : item.attachment,
-    imageUrl: item.kind === "polaroid" ? item.imageUrl : null,
-    alt: item.kind === "polaroid" ? say(item.altFr, item.altEn) : "",
-    caption: item.kind === "polaroid" ? say(item.captionFr, item.captionEn) : "",
-    text: item.kind === "note" ? say(item.textFr, item.textEn) : "",
-    signature: item.kind === "note" ? item.signature : "",
-    variant: item.kind === "sign" ? item.variant : "enamel",
-  }));
+  const blank = { attachment: "tape" as const, imageUrl: null, alt: "", caption: "", text: "", signature: "", variant: "enamel" as const };
+  const pieceOf = (item: CommunityView["wall"]["items"][number]): WallPiece => {
+    const place = { id: item.id, x: item.x, y: item.y, rotation: item.rotation, z: item.z };
+    switch (item.kind) {
+      case WALL_KIND.polaroid:
+        return { ...blank, ...place, kind: item.kind, attachment: item.attachment, imageUrl: item.imageUrl, alt: say(item.altFr, item.altEn), caption: say(item.captionFr, item.captionEn) };
+      case WALL_KIND.note:
+        return { ...blank, ...place, kind: item.kind, attachment: item.attachment, text: say(item.textFr, item.textEn), signature: item.signature };
+      default:
+        return { ...blank, ...place, kind: item.kind, variant: item.variant };
+    }
+  };
+  const pieces: WallPiece[] = community.wall.items.map(pieceOf);
 
   const video = (r: CommunityView["reels"][number]): VideoView => ({ id: r.id, title: say(r.titleFr, r.titleEn), mp4: r.mp4Url, webm: r.webmUrl, poster: r.posterUrl, platform: r.platform, externalUrl: r.externalUrl });
   const reels = enabled.reels ? community.reels.map(video) : [];
