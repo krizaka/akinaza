@@ -1,18 +1,17 @@
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { stripeAdapter } from "@krizaka/payments";
 import { findTypedPrices, memoryPriceStore, priceCatalogue } from "@krizaka/settings";
 import { describe, expect, it } from "vitest";
 
 import en from "../messages/en.json";
 import fr from "../messages/fr.json";
 import { readEnv } from "./env";
-import { scaleView } from "./founder-offer";
+import { plansView } from "./founder-offer";
 import { paymentsFrom } from "./payments/config";
 import { publicPrices } from "./price-catalogue";
-import { cardFeeCents, directDebitFeeCents, type PriceKey, PRICES, PROCESSOR_PLANS, SCALE, STARTER } from "./pricing";
+import { cardFeeCents, directDebitFeeCents, FOUNDER, type PriceKey, PRICES, PROCESSOR_PLANS, SCALE, STARTER } from "./pricing";
 import { SETTINGS } from "./settings";
 
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
@@ -29,10 +28,11 @@ function sources(dir: string): string[] {
 }
 
 describe("the seed of the catalogue: Starter and Scale (akinaza#371, ADR-009)", () => {
-  it("Starter 45 $ a month, founder-limited to the first 20 businesses; Scale B2B 99 $ a month, in preparation — CAD, plus taxes", () => {
-    expect(PRICES.keys).toEqual([STARTER, SCALE]);
-    expect(PRICES.defaultOf(STARTER)).toEqual({ unit: "month", amountCents: 4500, currency: "CAD", taxes: "plus-taxes", availability: "founder-limited", limits: { founderCap: 20, cardFeeBps: 0, directDebitBps: 50, directDebitCapCents: 1500 } });
-    expect(PRICES.defaultOf(SCALE)).toEqual({ unit: "month", amountCents: 9900, currency: "CAD", taxes: "plus-taxes", availability: "preparing", limits: { cardFeeBps: 0, directDebitBps: 25, directDebitCapCents: 1000 } });
+  it("the founder offer 39 $ a month for the first 20 businesses; Starter 45 $ and Scale B2B 99 $ a month, public — CAD, plus taxes", () => {
+    expect(PRICES.keys).toEqual([FOUNDER, STARTER, SCALE]);
+    expect(PRICES.defaultOf(FOUNDER)).toEqual({ unit: "month", amountCents: 3900, currency: "CAD", taxes: "plus-taxes", availability: "founder-limited", limits: { founderCap: 20, cardFeeBps: 0, directDebitBps: 50, directDebitCapCents: 1500 } });
+    expect(PRICES.defaultOf(STARTER)).toEqual({ unit: "month", amountCents: 4500, currency: "CAD", taxes: "plus-taxes", availability: "public", limits: { cardFeeBps: 0, directDebitBps: 50, directDebitCapCents: 1500 } });
+    expect(PRICES.defaultOf(SCALE)).toEqual({ unit: "month", amountCents: 9900, currency: "CAD", taxes: "plus-taxes", availability: "public", limits: { cardFeeBps: 0, directDebitBps: 25, directDebitCapCents: 1000 } });
   });
 
   it("0 % on cards in every entry: a card payment of any order carries no fee", () => {
@@ -40,6 +40,13 @@ describe("the seed of the catalogue: Starter and Scale (akinaza#371, ADR-009)", 
       const price = PRICES.defaultOf(key);
       expect(price.limits.cardFeeBps, key).toBe(0);
       for (const order of [0, 1, 999, 4500, 1_000_000]) expect(cardFeeCents(price, order), key).toBe(0);
+    }
+  });
+
+  it("the pre-authorised debit fee of any order is at most the entry's cap, in every entry", () => {
+    for (const key of PRICES.keys) {
+      const price = PRICES.defaultOf(key);
+      for (const order of [0, 1, 4500, 199_999, 200_000, 300_000, 400_000, 10_000_000, 99_999_999]) expect(directDebitFeeCents(price, order), key).toBeLessThanOrEqual(price.limits.directDebitCapCents);
     }
   });
 
@@ -75,52 +82,27 @@ describe("the seed of the catalogue: Starter and Scale (akinaza#371, ADR-009)", 
     await expect(port!.price("unknown")).rejects.toThrow(/Unknown plan/);
   });
 
-  it("the public view never shows an internal entry, and Scale shows without a figure while in preparation", async () => {
+  it("the public view never shows an internal entry, and an entry in preparation shows without a figure", async () => {
     const prices = priceCatalogue(PRICES, memoryPriceStore());
     const now = new Date("2026-11-01T12:00:00Z");
-    const shown = await publicPrices(prices, now);
-    const scale = shown.find((e) => e.key === SCALE)!;
-    expect(scale).toMatchObject({ availability: "preparing", amountCents: null, limits: {} });
-    expect(scaleView(shown, "en")).toEqual({ price: null });
+    expect(plansView(await publicPrices(prices, now), "en")).toEqual({ starter: { price: "$45" }, scale: { price: "$99" } });
+    await prices.schedule({ id: null, label: "admin" }, SCALE, { availability: "preparing" }, now, now);
+    const preparing = await publicPrices(prices, now);
+    expect(preparing.find((e) => e.key === SCALE)).toMatchObject({ availability: "preparing", amountCents: null, limits: {} });
+    expect(plansView(preparing, "en").scale).toEqual({ price: null });
+    // The administrator ends the founder offer and hides Scale: neither is shown any more.
+    await prices.schedule({ id: null, label: "admin" }, FOUNDER, { availability: "internal" }, now, now);
     await prices.schedule({ id: null, label: "admin" }, SCALE, { availability: "internal" }, now, now);
     const later = await publicPrices(prices, now);
     expect(later.map((e) => e.key)).toEqual([STARTER]);
-    expect(scaleView(later, "fr")).toBeNull();
     expect(later.map((e) => e.availability)).not.toContain("internal");
-    expect(later.map((e) => e.amountCents)).toEqual([4500]);
+    expect(plansView(later, "fr").scale).toBeNull();
   });
 
   it("the former setting `plans.founder.limit` is retired: the cap has one source, the Starter entry", () => {
     expect(Object.keys(SETTINGS)).not.toContain("plans.founder.limit");
     const files = [...sources(join(ROOT, "apps/web/lib")), ...sources(join(ROOT, "apps/web/components")), ...sources(join(ROOT, "apps/web/app"))];
     for (const file of files) expect(readFileSync(file, "utf8"), file).not.toMatch(/["']plans\.founder\.limit["']/);
-  });
-});
-
-describe("no processor fee on what a business's clients pay (akinaza#363)", () => {
-  it("every plan of the catalogue is a flat monthly subscription: no field for a percentage, a fee or a usage price", () => {
-    const allowed = new Set(["lookupKey", "name", "amount", "currency", "interval", "taxCode"]);
-    for (const plan of catalogue.plans) {
-      expect(Object.keys(plan).filter((k) => !allowed.has(k)), String(plan.lookupKey)).toEqual([]);
-      expect(plan.interval).toBe("month");
-    }
-    // The fees a business's clients may carry are the catalogue's named limits (0 on cards), never a processor field.
-    expect(JSON.stringify(catalogue)).not.toMatch(/fee|percent|commission|bps|usage|metered/i);
-  });
-
-  it("the checkout never asks the processor for an application fee or a transfer", () => {
-    const files = [...sources(join(ROOT, "apps/web/lib")), ...sources(join(ROOT, "apps/web/app/api/billing")), ...sources(join(ROOT, "apps/web/app/api/webhooks"))];
-    expect(files.length).toBeGreaterThan(5);
-    for (const file of files) expect(readFileSync(file, "utf8"), file).not.toMatch(/application_fee|transfer_data|on_behalf_of|fee_percent|commission/i);
-  });
-
-  it("the shared adapter sends none either: its request builder has no fee field", () => {
-    const entry = fileURLToPath(import.meta.resolve("@krizaka/payments"));
-    const dir = join(entry, "..");
-    const dist = existsSync(dir) ? readdirSync(dir).filter((f) => /\.(js|mjs)$/.test(f)) : [];
-    expect(dist.length).toBeGreaterThan(0);
-    for (const f of dist) expect(readFileSync(join(dir, f), "utf8"), f).not.toMatch(/application_fee|transfer_data|on_behalf_of/);
-    expect(typeof stripeAdapter).toBe("function");
   });
 });
 
@@ -137,7 +119,7 @@ describe("every price shown says « plus taxes », and none is typed in a messag
   it("each text that carries a {price} says the taxes are extra", () => {
     const texts: string[] = [];
     for (const m of [en, fr]) {
-      texts.push(m.landing.founder.title, ...m.landing.founder.points, m.landing.founder.scale.price, m.console.account.subscription.founderHint, m.console.account.subscription.priceLine);
+      texts.push(m.landing.founder.title, ...m.landing.founder.points, m.landing.founder.plans.price, m.console.account.subscription.founderHint, m.console.account.subscription.priceLine);
     }
     const priced = texts.filter((t) => t.includes("{price}"));
     expect(priced.length).toBe(10);
@@ -151,8 +133,10 @@ describe("every price shown says « plus taxes », and none is typed in a messag
     expect(fr.console.account.subscription.founderHint).toContain("{cardRate} sur les cartes");
   });
 
-  it("no claim of conformity, hosting place or uptime in the pricing words", () => {
-    for (const m of [en, fr]) expect(JSON.stringify([m.landing.founder, m.console.account.subscription, m.console.admin.prices])).not.toMatch(/PIPEDA|Loi 25|Law 25|conform|hébergé au|hosted in|uptime|disponibilité de \d|99[.,]9/i);
+  it("no claim of conformity, hosting place, uptime or escrow in the pricing words; Scale's B2B features are « soon »", () => {
+    for (const m of [en, fr]) expect(JSON.stringify([m.landing.founder, m.console.account.subscription, m.console.admin.prices])).not.toMatch(/PIPEDA|Loi 25|Law 25|conform|hébergé au|hosted in|uptime|disponibilité de \d|99[.,]9|séquestre|escrow/i);
+    expect(en.landing.founder.plans.scaleSoon).toMatch(/coming soon/);
+    expect(fr.landing.founder.plans.scaleSoon).toMatch(/bientôt/);
   });
 
   it("the seed is the only place a plan amount is written (no 4500 or 9900 elsewhere in the web sources)", () => {

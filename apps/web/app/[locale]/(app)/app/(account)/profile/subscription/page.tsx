@@ -8,7 +8,7 @@ import { accountPage } from "@/lib/account-page";
 import { founderGate, soldVersionOf, subscriptionOf } from "@/lib/billing";
 import { query } from "@/lib/db";
 import { env } from "@/lib/env";
-import { founderCap, founderOfferCopy, starterEntry } from "@/lib/founder-offer";
+import { founderCap, founderEntry,founderOfferCopy } from "@/lib/founder-offer";
 import { asLocale } from "@/lib/i18n";
 import { titleOf } from "@/lib/page-title";
 import { appPrices } from "@/lib/price-catalogue";
@@ -30,7 +30,7 @@ export default async function Subscription({ params }: { params: Promise<{ local
   const e = env();
   const now = systemClock.now();
   const catalogue = appPrices();
-  const entry = await starterEntry(catalogue, now);
+  const entry = await founderEntry(catalogue, now);
   // The first businesses only: once the offer is complete a newcomer is told so, a founder is never turned away.
   const full = e.APP_FOUNDER_OFFER_ENABLED && (await founderGate(query, session.account.id, founderCap(entry))) === "full";
   const offer = e.APP_FOUNDER_OFFER_ENABLED && !full ? founderOfferCopy(entry, locale) : null;

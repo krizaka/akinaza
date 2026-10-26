@@ -54,12 +54,12 @@
       "caption": "La vraie application, une seule prise, le 19 octobre 2026. Aucune personne réelle."
     },
     "founder": {
-      "title": "Starter, offre fondateur : {price} par mois plus taxes, mise en route incluse",
+      "title": "Offre fondateur : {price} par mois plus taxes, mise en route incluse",
       "lead": "Une offre limitée pour les premières entreprises. Akinaza est un produit à ses débuts : nous le construisons avec vous et nous installons votre commerce avec vous, sans frais de plus.",
       "points": [
         "{price} par mois plus taxes, tant que vous restez",
         "{cardRate} sur les cartes : aucun frais Akinaza sur ce que vos clients paient par carte",
-        "Débit préautorisé ou virement B2B : {debitRate} par commande, plafonné à {debitCap}",
+        "Débit préautorisé ou virement B2B : {debitRate} par commande, plafonné à {debitCap}; les fonds restent chez le processeur de paiement",
         "Mise en route incluse : vos services, vos heures, vos premières factures",
         "Annulez en tout temps depuis votre page de facturation, en deux clics",
         "Limitée aux {limit} premières entreprises que nous accueillons"
@@ -71,10 +71,12 @@
         "title": "L’offre fondateur est complète",
         "lead": "Les {limit} premières entreprises sont à bord. Écrivez-nous et nous vous dirons la suite."
       },
-      "scale": {
-        "name": "Scale B2B",
-        "preparing": "en préparation : ses fonctions ne sont pas encore construites, il n’a donc pas encore de prix.",
-        "price": "{price} par mois plus taxes"
+      "plans": {
+        "starter": "Starter",
+        "scale": "Scale B2B",
+        "price": "{price} par mois plus taxes",
+        "preparing": "en préparation",
+        "scaleSoon": "ses fonctions B2B arrivent bientôt"
       }
     },
     "screens": {
@@ -390,8 +392,9 @@
       },
       "prices": {
         "title": "Prix",
-        "lead": "Le catalogue que lisent les pages publiques : chaque entrée en vigueur, un changement à partir d’une date, et son historique. Les montants sont plus taxes. Un abonnement déjà vendu garde la version à laquelle il a été vendu; le processeur doit vendre le nouveau montant avant que le paiement l’accepte.",
+        "lead": "Le catalogue que lisent les pages publiques : chaque entrée en vigueur, un changement à partir d’une date, et son historique. Les montants sont plus taxes. Passer l’offre fondateur en interne y met fin. Un abonnement déjà vendu garde la version à laquelle il a été vendu; le processeur doit vendre le nouveau montant avant que le paiement l’accepte.",
         "plans": {
+          "founder": "Offre fondateur",
           "starter": "Starter",
           "scale": "Scale B2B"
         },
@@ -419,7 +422,7 @@
         "limits": {
           "founderCap": "Offre fondateur : entreprises",
           "cardFeeBps": "Frais sur les cartes (points de base)",
-          "directDebitBps": "Frais de débit préautorisé (points de base)",
+          "directDebitBps": "Frais d’orchestration du débit préautorisé (points de base)",
           "directDebitCapCents": "Plafond du débit préautorisé par commande (cents)"
         },
         "upcoming": "Prévu à partir du {date}",
@@ -777,7 +780,7 @@
         "manage": "Gérer",
         "manageHint": "Changer de carte, lire les factures ou résilier, sur la page de paiement.",
         "portal": "Ouvrir la page de paiement",
-        "founder": "Starter, l’offre fondateur",
+        "founder": "L’offre fondateur",
         "founderHint": "{price} par mois plus taxes, {cardRate} sur les cartes.",
         "offerFull": "L’offre fondateur est complète : les premières entreprises sont à bord, elle n’est plus offerte.",
         "choose": "Choisir cette offre",

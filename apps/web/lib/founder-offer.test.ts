@@ -7,9 +7,9 @@ import en from "../messages/en.json";
 import fr from "../messages/fr.json";
 import { founderGate } from "./billing";
 import { readEnv } from "./env";
-import { founderCap, founderOfferCopy, onSale, starterEntry } from "./founder-offer";
+import { founderCap, founderEntry, founderOfferCopy, onSale } from "./founder-offer";
 import { format } from "./i18n";
-import { PRICES, STARTER } from "./pricing";
+import { FOUNDER, PRICES } from "./pricing";
 
 const read = (p: string) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
 const NOW = new Date("2026-11-01T12:00:00Z");
@@ -43,38 +43,38 @@ describe("the founder offer on the public page", () => {
 });
 
 describe("every figure of the offer is the catalogue's, formatted with the locale (akinaza#371)", () => {
-  it("reads the Starter entry: 45 $ plus taxes, 0 % on cards, 0,5 % by debit capped at 15 $, the first 20 businesses", async () => {
-    const entry = await starterEntry(fresh(), NOW);
+  it("reads the founder entry: 39 $ plus taxes, 0 % on cards, 0,5 % by debit capped at 15 $, the first 20 businesses", async () => {
+    const entry = await founderEntry(fresh(), NOW);
     const enCopy = founderOfferCopy(entry, "en")!;
     const frCopy = founderOfferCopy(entry, "fr")!;
-    expect(format(en.landing.founder.title, enCopy)).toBe("Starter, founder offer: $45 a month plus taxes, setup included");
-    expect(format(fr.landing.founder.title, frCopy).replace(/\s/g, " ")).toBe("Starter, offre fondateur : 45 $ par mois plus taxes, mise en route incluse");
+    expect(format(en.landing.founder.title, enCopy)).toBe("Founder offer: $39 a month plus taxes, setup included");
+    expect(format(fr.landing.founder.title, frCopy).replace(/\s/g, " ")).toBe("Offre fondateur : 39 $ par mois plus taxes, mise en route incluse");
     expect(format(fr.landing.founder.points[1]!, frCopy).replace(/\s/g, " ")).toMatch(/^0 % sur les cartes/);
-    expect(format(en.landing.founder.points[2]!, enCopy)).toBe("Pre-authorised debit or B2B transfer: 0.5% an order, capped at $15");
+    expect(format(en.landing.founder.points[2]!, enCopy)).toBe("Pre-authorised debit or B2B transfer: 0.5% an order, capped at $15; the funds stay with the payment processor");
     expect(enCopy.limit).toBe(20);
   });
-  it("follows the administrator's change from its date, and shows nothing once the entry is not on sale", async () => {
+  it("follows the administrator's change from its date, and ends the offer when the administrator makes it internal", async () => {
     const prices = fresh();
     const later = new Date("2026-12-01T00:00:00Z");
-    await prices.schedule(ADMIN, STARTER, { amountCents: 5000 }, later, NOW);
-    expect(founderOfferCopy(await starterEntry(prices, NOW), "en")?.price).toBe("$45");
-    expect(founderOfferCopy(await starterEntry(prices, later), "en")?.price).toBe("$50");
-    await prices.schedule(ADMIN, STARTER, { availability: "internal" }, NOW, NOW);
-    const hidden = await starterEntry(prices, NOW);
+    await prices.schedule(ADMIN, FOUNDER, { amountCents: 5000 }, later, NOW);
+    expect(founderOfferCopy(await founderEntry(prices, NOW), "en")?.price).toBe("$39");
+    expect(founderOfferCopy(await founderEntry(prices, later), "en")?.price).toBe("$50");
+    await prices.schedule(ADMIN, FOUNDER, { availability: "internal" }, NOW, NOW);
+    const hidden = await founderEntry(prices, NOW);
     expect(onSale(hidden)).toBe(false);
     expect(founderOfferCopy(hidden, "fr")).toBeNull();
   });
 });
 
 describe("the founder gate reads the cap from the catalogue (akinaza#371)", () => {
-  it("is the Starter entry's founderCap: 20 by default, raised by the administrator with no deployment", async () => {
+  it("is the founder entry's founderCap: 20 by default, raised by the administrator with no deployment", async () => {
     const prices = fresh();
-    const entry = await starterEntry(prices, NOW);
+    const entry = await founderEntry(prices, NOW);
     expect(founderCap(entry)).toBe(20);
     expect(await founderGate(accounts(19), "newcomer", founderCap(entry))).toBe("open");
     expect(await founderGate(accounts(20), "newcomer", founderCap(entry))).toBe("full");
-    await prices.schedule(ADMIN, STARTER, { limits: { ...entry.limits, founderCap: 30 } }, NOW, NOW);
-    const raised = await starterEntry(prices, NOW);
+    await prices.schedule(ADMIN, FOUNDER, { limits: { ...entry.limits, founderCap: 30 } }, NOW, NOW);
+    const raised = await founderEntry(prices, NOW);
     expect(founderCap(raised)).toBe(30);
     expect(await founderGate(accounts(20), "newcomer", founderCap(raised))).toBe("open");
     expect(await founderGate(accounts(40), "founder", founderCap(raised))).toBe("member");

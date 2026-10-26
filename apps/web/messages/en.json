@@ -54,12 +54,12 @@
       "caption": "The real app, one take, October 19, 2026. No real person."
     },
     "founder": {
-      "title": "Starter, founder offer: {price} a month plus taxes, setup included",
+      "title": "Founder offer: {price} a month plus taxes, setup included",
       "lead": "A limited offer for the first businesses. Akinaza is an early product: we build it with you, and we set your shop up with you at no extra cost.",
       "points": [
         "{price} per month plus taxes, as long as you stay",
         "{cardRate} on cards: no Akinaza fee on what your clients pay by card",
-        "Pre-authorised debit or B2B transfer: {debitRate} an order, capped at {debitCap}",
+        "Pre-authorised debit or B2B transfer: {debitRate} an order, capped at {debitCap}; the funds stay with the payment processor",
         "Setup included: your services, your hours, your first invoices",
         "Cancel any time from your billing page, in two clicks",
         "Limited to the first {limit} businesses we welcome"
@@ -71,10 +71,12 @@
         "title": "The founder offer is complete",
         "lead": "The first {limit} businesses have joined. Write to us and we will tell you what comes next."
       },
-      "scale": {
-        "name": "Scale B2B",
-        "preparing": "in preparation: its features are not built yet, so it has no price yet.",
-        "price": "{price} a month plus taxes"
+      "plans": {
+        "starter": "Starter",
+        "scale": "Scale B2B",
+        "price": "{price} a month plus taxes",
+        "preparing": "in preparation",
+        "scaleSoon": "its B2B features are coming soon"
       }
     },
     "screens": {
@@ -390,8 +392,9 @@
       },
       "prices": {
         "title": "Prices",
-        "lead": "The catalogue the public pages read: each entry in force, a change from a date, and its history. Amounts are plus taxes. A subscription already sold keeps the version it was sold at; the processor must sell the new amount before the checkout accepts it.",
+        "lead": "The catalogue the public pages read: each entry in force, a change from a date, and its history. Amounts are plus taxes. Making the founder offer internal ends it. A subscription already sold keeps the version it was sold at; the processor must sell the new amount before the checkout accepts it.",
         "plans": {
+          "founder": "Founder offer",
           "starter": "Starter",
           "scale": "Scale B2B"
         },
@@ -419,7 +422,7 @@
         "limits": {
           "founderCap": "Founder offer: businesses",
           "cardFeeBps": "Card fee (basis points)",
-          "directDebitBps": "Pre-authorised debit fee (basis points)",
+          "directDebitBps": "Pre-authorised debit orchestration fee (basis points)",
           "directDebitCapCents": "Pre-authorised debit cap per order (cents)"
         },
         "upcoming": "Scheduled from {date}",
@@ -777,7 +780,7 @@
         "manage": "Manage",
         "manageHint": "Change the card, read the invoices or cancel, on the payment page.",
         "portal": "Open the payment page",
-        "founder": "Starter, the founder offer",
+        "founder": "The founder offer",
         "founderHint": "{price} a month plus taxes, {cardRate} on cards.",
         "offerFull": "The founder offer is complete: the first businesses have joined, and it is no longer offered.",
         "choose": "Choose this offer",

@@ -2,7 +2,7 @@ import { memoryPriceStore, priceCatalogue } from "@krizaka/settings";
 import { describe, expect, it } from "vitest";
 
 import { applyPaymentEvent, founderGate, founderSeats, recordOfferedVersion, soldVersionOf } from "./billing";
-import { PRICES, STARTER } from "./pricing";
+import { FOUNDER, PRICES } from "./pricing";
 
 /** A stand-in for the `accounts` table: the accounts that hold a subscription (a founder's), and the SQL it was asked. */
 function accounts(subscribed: string[]) {
@@ -80,16 +80,16 @@ describe("a subscription keeps the catalogue's version it was sold at (akinaza#3
     const prices = priceCatalogue(PRICES, memoryPriceStore());
     const now = new Date("2026-11-01T12:00:00Z");
     const { query, row } = account();
-    const sold = await prices.entry(STARTER, now);
+    const sold = await prices.entry(FOUNDER, now);
     await recordOfferedVersion(query, "a1", sold.versionId);
     await applyPaymentEvent(query, { id: "e1", type: "subscription_started", accountId: "a1", customerId: "cus_1", subscriptionId: "sub_1" });
     // Later: the price changes, and the founder opens a checkout again — the version kept is not rewritten.
-    const next = await prices.schedule({ id: null, label: "admin" }, STARTER, { amountCents: 6000 }, now, now);
+    const next = await prices.schedule({ id: null, label: "admin" }, FOUNDER, { amountCents: 6000 }, now, now);
     await recordOfferedVersion(query, "a1", next.versionId);
     expect(row.version).toBe(sold.versionId);
     const kept = await prices.version((await soldVersionOf(query, "a1"))!);
-    expect(kept?.amountCents).toBe(4500);
-    expect((await prices.entry(STARTER, now)).amountCents).toBe(6000);
+    expect(kept?.amountCents).toBe(3900);
+    expect((await prices.entry(FOUNDER, now)).amountCents).toBe(6000);
   });
 
   it("no version is read for an account without a subscription", async () => {
