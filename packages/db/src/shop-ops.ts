@@ -3,7 +3,7 @@ import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { Db, Tx } from "./client";
-import { appointments, bookings, clientConsents, clientNotes, clients, dependants, expenses, invoiceDeliveries, invoiceLines, invoices, mailOutbox, services, shops, taxLedger, visitReports } from "./schema";
+import { appointments, bookings, clientConsents, clientNotes, clients, dependants, expenses, invoiceDeliveries, invoiceLines, invoices, mailOutbox, services, shopReviews, shops, taxLedger, visitReports } from "./schema";
 import { ShopError } from "./errors";
 
 const post = (tx: Tx, shopId: string, entries: LedgerEntry[]) =>
@@ -89,6 +89,8 @@ export async function eraseClient(db: Db, clientId: string, textVersion: string)
     await tx.update(dependants).set({ name: "—", profile: {}, erasedAt: sql`now()` }).where(eq(dependants.clientId, clientId));
     // The shop's notes on the client (D5) are personal information: gone with the file.
     await tx.delete(clientNotes).where(eq(clientNotes.clientId, clientId));
+    // Their review keeps its rating (the score) but loses the name and the words, and the link to the file (Loi 25).
+    await tx.update(shopReviews).set({ firstName: "—", lastInitial: "", body: "", clientId: null }).where(eq(shopReviews.clientId, clientId));
     const reports = tx.select({ id: visitReports.id }).from(visitReports).innerJoin(bookings, eq(bookings.id, visitReports.bookingId)).where(eq(bookings.clientId, clientId));
     await tx.delete(mailOutbox).where(and(eq(mailOutbox.relatedKind, "visit_report"), inArray(mailOutbox.relatedId, reports)));
     const invoiceIds = tx.select({ id: invoices.id }).from(invoices).where(eq(invoices.clientId, clientId));

@@ -126,11 +126,11 @@ describe("the storefront renders from the shop's data — a dog walker, in Frenc
       };
       const view = buildStorefront({ page, locale: "en", now: NOW, enabledUpcomingSections: { wall: true } });
       const html = renderToStaticMarkup(<Storefront locale="en" view={view} />);
-      expect(html.indexOf('id="wall"')).toBeLessThan(html.indexOf('id="gallery"'));
+      expect(html).not.toContain('id="wall"');
       expect(html).toContain("https://cdn.test/brand/logo.webp");
       expect(html).not.toContain('id="services"');
       expect(html).not.toContain('id="reels"');
-      expect(html).toContain("This section is being prepared.");
+      expect(html).not.toContain("This section is being prepared.");
     });
   });
   it("tags the popular service, names the capacity in the shop's unit, and says it is open now", () => {

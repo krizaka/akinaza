@@ -35,4 +35,6 @@ export function consentsInForce(history: readonly (Consent & { at: Date })[]): R
 /** The realtime topics: one per shop's booking slots (a slot taken disappears from every open booking page). */
 export const REALTIME_CHANNEL = "akinaza_events";
 export const slotsTopic = (shopId: string) => `shop:${shopId}:slots`;
+/** The page of a shop changed (the wall, the reel, the board, the reviews): the open storefronts, and the studio's preview, render again. */
+export const pageTopic = (shopId: string) => `shop:${shopId}:page`;
 export type SlotEvent = { type: "slot"; shopId: string; staffId: string; startsAt: string; endsAt: string; status: "taken" | "freed" };

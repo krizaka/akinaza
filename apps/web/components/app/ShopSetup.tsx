@@ -74,6 +74,11 @@ export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /**
       </div>
     ),
     publish: <PublishSection page={data.page} publicUrl={data.publicUrl} />,
+    // The shop as a place (B45) has its own panels, opened by the hub (boutique/[section]/page.tsx).
+    wall: null,
+    reels: null,
+    board: null,
+    reviews: null,
   };
   return (
     <div className="flex flex-col gap-4">

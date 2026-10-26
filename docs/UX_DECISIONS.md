@@ -552,3 +552,12 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Refused**: an accent choice (the brand is the product's identity); a sound nobody asked for.
 - **Cost**: the booking page browses at most eight weeks ahead; the engine answers a week with nothing free with the empty line.
 - **Signal we are wrong**: owners ask to share a view with the team from the bar, or clients ask for a later week than eight.
+
+## The shop as a place: the studio of the wall, the board, the video and the reviews (akinaza#317, #310, #311, #312, #313, #314)
+
+- **Problem**: the page promised a wall, a video, a board and reviews (« being prepared ») and the owner had no place to dress them.
+- **Principle**: one place, Boutique › Page, with the live preview beside it on a desktop and behind « View the page » on a phone; the owner and the manager write what is pinned on the page, the identity and the publication stay the owner's.
+- **Chosen**: the wall is composed on a 16:9 stage and moved by keyboard (arrows, Shift for larger steps, `[` `]` to tilt, Page Up/Down for the layer) or with sliders - no drag is needed, and a move is announced in words. Every bound (0-100 %, ±8°, 40/140/500 characters, the administrator's item count) is checked on what was sent, then by the database. The video is an upload checked by its bytes (the container's own header gives its length) or a link to a TikTok, a YouTube Short or an Instagram reel on an exact host; profiles are plain links, nothing from a platform loads before a click (Loi 25). A review shows a first name and an initial; the owner replies in public or hides it, never edits it.
+- **Refused**: a drag-only editor; a free colour or font; a client's surname or e-mail on a review; a third-party script or image on the page.
+- **Cost**: reviews are a small table here until `@krizaka/reviews` is published (krizaka-ts#37), then they move. `frame-src` of the page now names the three embed hosts (and this origin, for the preview) instead of `none`.
+- **Signal we are wrong**: owners ask to drag pieces by hand, or lose a move because the keys are not found.

@@ -869,7 +869,15 @@
       "TAG_LIMIT": "The shop has reached its limit of tags.",
       "TOO_MANY": "At most 200 rows at a time.",
       "STATUS_DERIVED": "An invoice's state follows its payments: it cannot be changed by hand.",
-      "PRICE_NOT_READY": "The price is being updated. Please try again in a few minutes."
+      "PRICE_NOT_READY": "The price is being updated. Please try again in a few minutes.",
+      "REEL_LINK": "This is not a TikTok video, a YouTube Short or an Instagram reel. Paste its address.",
+      "REEL_LIMIT": "You keep twelve videos at most. Take one down first.",
+      "REEL_TOO_LONG": "This video is too long.",
+      "REEL_NOT_VIDEO": "This is not an MP4 or a WebM video.",
+      "UPLOAD_NOT_VIDEO": "This is not an MP4 or a WebM video.",
+      "SOCIAL_LINK": "This address is not a page of that platform.",
+      "ANNOUNCEMENT_LIMIT": "You keep thirty flyers at most. Take one down first.",
+      "REVIEW_REMOVED": "This review was removed by the administrator."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -1440,7 +1448,11 @@
           "offer": "What you offer",
           "media": "Photos and video",
           "look": "Look",
-          "publish": "Publish"
+          "publish": "Publish",
+          "wall": "The wall",
+          "board": "Bulletin board",
+          "reels": "Video and profiles",
+          "reviews": "Reviews"
         },
         "identity": {
           "title": "Identity",
@@ -2592,6 +2604,146 @@
         "cancel": "Cancel",
         "rename": "Rename",
         "actions": "Actions for the view {label}"
+      }
+    },
+    "studio": {
+      "preview": {
+        "title": "Live preview",
+        "label": "Preview of your page",
+        "phone": "Phone",
+        "desktop": "Computer",
+        "show": "View the page",
+        "hide": "Hide the page",
+        "unpublished": "Publish your page to see it here."
+      },
+      "wall": {
+        "title": "The wall",
+        "lead": "Photos, words on cards and your sign, pinned where you want them. Visitors see them on your page, in this order.",
+        "texture": "The wall behind",
+        "textures": {
+          "brick": "Montréal brick",
+          "zellige": "Moroccan zellige",
+          "ridge": "Grenoble ridges",
+          "plaster": "Plain plaster"
+        },
+        "addPhoto": "Add a photo",
+        "addNote": "Add a card",
+        "addSign": "Add the sign",
+        "uploadTitle": "Choose a photo",
+        "empty": "Nothing is pinned yet. Add a photo, a card or your sign.",
+        "count": "{count} of {max} items",
+        "drawn": "The page draws the first {drawn}; the others stay in the list underneath.",
+        "stage": "The wall as laid out. Select a piece, then use the keys.",
+        "keys": "Arrow keys move the piece (Shift for larger steps), [ and ] tilt it, Page Up and Page Down change its layer.",
+        "pieces": "Pieces on the wall",
+        "kinds": {
+          "polaroid": "Photo",
+          "note": "Card",
+          "sign": "Sign"
+        },
+        "piece": "{kind} {n}",
+        "x": "Across (%)",
+        "y": "Down (%)",
+        "rotation": "Tilt (degrees)",
+        "layer": "Layer",
+        "altFr": "Describe the photo in French",
+        "altEn": "Describe the photo in English",
+        "captionFr": "Caption in French (40 characters)",
+        "captionEn": "Caption in English (40 characters)",
+        "textFr": "Word on the card in French (140 characters)",
+        "textEn": "Word on the card in English (140 characters)",
+        "signature": "Signed (optional)",
+        "attachment": "Held by",
+        "attachments": {
+          "tape": "Tape",
+          "pin": "Pin"
+        },
+        "variant": "Sign style",
+        "variants": {
+          "enamel": "Enamel plate",
+          "neon": "Neon",
+          "painted": "Painted"
+        },
+        "signNote": "The sign shows your shop's name.",
+        "remove": "Remove this piece",
+        "save": "Save the wall",
+        "saved": "The wall is saved.",
+        "uploading": "Sending the photo…",
+        "pieceOf": "Piece {n} of {total}",
+        "moved": "Moved to {x} % across, {y} % down, tilted {rotation} degrees."
+      },
+      "board": {
+        "title": "The bulletin board",
+        "lead": "Up to three flyers are pinned on your page, the newest first. A flyer comes down on its last day.",
+        "textFr": "Flyer in French",
+        "textEn": "Flyer in English",
+        "photo": "Photo (optional)",
+        "photoAlt": "Describe the photo",
+        "endsOn": "Last day (optional)",
+        "endsOnHint": "Leave empty to keep it up until you take it down.",
+        "add": "Pin this flyer",
+        "remove": "Take down",
+        "none": "No flyer yet.",
+        "upNow": "Up now",
+        "ended": "Ended",
+        "pinned": "Pinned",
+        "saved": "The flyer is pinned.",
+        "max": "500 characters in each language."
+      },
+      "reels": {
+        "title": "Your latest video",
+        "lead": "The newest video plays on your page in an old television. A link to TikTok, YouTube or Instagram shows a picture and a button: nothing is loaded from the platform until the visitor presses it.",
+        "linkLabel": "Link to a TikTok, a YouTube Short or an Instagram reel",
+        "linkHint": "Paste the address of the video.",
+        "titleFr": "Title in French (optional)",
+        "titleEn": "Title in English (optional)",
+        "addLink": "Add this link",
+        "upload": "Upload a video",
+        "uploadTitle": "Choose a video",
+        "uploadHint": "MP4 or WebM, vertical, {seconds} seconds and {megabytes} MB at most.",
+        "poster": "A picture for the video (optional)",
+        "posterTitle": "Choose a picture",
+        "remove": "Take down",
+        "none": "No video yet.",
+        "shown": "Shown on your page",
+        "kinds": {
+          "upload": "Uploaded video",
+          "external": "Link"
+        },
+        "platforms": {
+          "tiktok": "TikTok",
+          "youtube-shorts": "YouTube Shorts",
+          "instagram": "Instagram"
+        },
+        "added": "The video is added.",
+        "socialTitle": "Your profiles",
+        "socialLead": "Plain links to your pages. Nothing from these platforms loads on your page; a visitor leaves only by following one.",
+        "social": {
+          "instagram": "Instagram",
+          "tiktok": "TikTok",
+          "youtube": "YouTube",
+          "facebook": "Facebook"
+        },
+        "socialHint": "Leave empty to remove a link.",
+        "saveLinks": "Save the links",
+        "linksSaved": "The links are saved."
+      },
+      "reviews": {
+        "title": "Reviews",
+        "lead": "Only verified reviews, from clients who had an appointment, count in your score. Reply in public, or hide a review from your page.",
+        "score": "{score} out of 5, {count} verified reviews",
+        "notShown": "Your score is shown on your page from {min} verified reviews. You have {count}.",
+        "none": "No review yet.",
+        "verified": "Verified",
+        "unverified": "Not verified",
+        "hiddenBadge": "Hidden from your page",
+        "removedBadge": "Removed by the administrator",
+        "pendingBadge": "Waiting",
+        "reply": "Your reply",
+        "sendReply": "Send the reply",
+        "hide": "Hide from my page",
+        "show": "Show again",
+        "saved": "Done."
       }
     }
   },
