@@ -9,7 +9,7 @@ import { SignInForm } from "@/components/console/SignInForm";
 import { pageSession } from "@/lib/access";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { safeNext } from "@/lib/next-url";
-import { contactHref } from "@/lib/site";
+import { contactHref, pagePath } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +50,11 @@ export default async function SignInPage({ params, searchParams }: { params: Pro
       legal={
         <>
           {t.legalPrefix}
-          <Link className="underline" href={`/${locale}/privacy`}>
+          <Link className="underline" href={pagePath(locale, "terms")}>
+            {t.terms}
+          </Link>
+          {t.legalAnd}
+          <Link className="underline" href={pagePath(locale, "privacy")}>
             {t.privacy}
           </Link>
           .

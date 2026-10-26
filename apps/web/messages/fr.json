@@ -22,6 +22,7 @@
     "sourceCode": "Code source",
     "contact": "Contact",
     "legal": "Confidentialité",
+    "terms": "Conditions d'utilisation",
     "menu": {
       "label": "Menu",
       "home": {
@@ -66,6 +67,8 @@
       ],
       "cta": "Profiter de l’offre fondateur",
       "note": "Vous payez sur la page sécurisée de Stripe, et vous y gérez ou annulez votre abonnement. Déjà membre ? Connectez-vous d’abord.",
+      "termsPrefix": "En vous abonnant, vous acceptez les ",
+      "termsLink": "conditions d'utilisation",
       "talk": "Écrivez-nous d’abord",
       "full": {
         "title": "L’offre fondateur est complète",
@@ -112,6 +115,66 @@
       "text": "La personne responsable de la protection des renseignements personnels est publiée ici. Titre : {role}, Technologies Krizaka Inc., Montréal (Québec), Canada. Contact : contact@krizaka.com, pour accéder à vos renseignements, les corriger ou les effacer, retirer un consentement ou déposer une plainte ; nous répondons dans un délai de 30 jours."
     }
   },
+  "terms": {
+    "title": "Conditions d'utilisation",
+    "version": "Version {version}",
+    "status": "Version rédigée de bonne foi à partir de la loi, en attente de la révision d'un avocat avant l'ouverture publique d'Akinaza. En cas de doute, le français fait foi.",
+    "privacyLink": "Lire l'avis de confidentialité",
+    "sections": [
+      {
+        "h": "1. Qui nous sommes, à qui elles s'adressent",
+        "p": "Akinaza est un produit de Technologies Krizaka Inc. (Montréal, Québec), l'éditeur. Ces conditions encadrent l'abonnement à Akinaza par les entreprises de services du Québec : salons, ateliers, coachs, entreprises de nettoyage, services aux animaux, consultants. Les restaurants, cafés, bars et boulangeries en sont exclus, parce que la loi y exige un module d'enregistrement des ventes certifié que le point de vente d'Akinaza n'est pas. C'est un contrat d'adhésion (art. 1379 du Code civil du Québec, C.c.Q.) : nous vous le montrons avant tout paiement, et une clause illisible, incompréhensible ou abusive n'a pas d'effet contre vous (art. 1435 à 1437 C.c.Q.)."
+      },
+      {
+        "h": "2. Ce qu'Akinaza fait",
+        "p": "Akinaza vous donne une page de boutique et des réservations, des factures bilingues avec la TPS et la TVQ exactes au sou, un registre comptable qui ne s'efface pas, et un rapport de taxes préparé à partir de ce registre. Le service est en développement : une fonction annoncée « bientôt » n'est pas vendue et ne fait pas partie de votre abonnement. Une réservation est un contrat entre votre client et vous ; Akinaza n'en est pas partie, elle vous fournit l'outil."
+      },
+      {
+        "h": "3. Ce qu'Akinaza ne fait jamais",
+        "p": "Akinaza prépare, vous produisez. Elle ne produit, ne signe et ne transmet aucune déclaration à Revenu Québec ou à l'Agence du revenu du Canada : c'est à vous de vérifier les chiffres préparés et de les déclarer, selon la Loi sur la taxe de vente du Québec (RLRQ, c. T-0.1) et la Loi sur la taxe d'accise (L.R.C. 1985, c. E-15). Les chiffres préparés ne sont ni un avis fiscal ni un avis comptable. Akinaza n'est pas un caissier : elle ne remplace pas le module d'enregistrement des ventes qu'un restaurant ou un bar doit utiliser."
+      },
+      {
+        "h": "4. L'abonnement, le prix et le renouvellement",
+        "p": "L'abonnement est mensuel et se renouvelle de lui-même à la fin de chaque période, jusqu'à ce que vous le résiliiez. Le prix est celui du catalogue publié sur la page des tarifs au moment où vous souscrivez, plus les taxes applicables ; il est conservé avec votre abonnement, et un changement de prix ne s'applique pas à un abonnement déjà vendu sans que vous en soyez avisé par écrit au moins 30 jours à l'avance et que vous puissiez résilier avant son entrée en vigueur. Aucun frais n'est exigible s'il n'est pas indiqué dans le contrat (art. 12 de la Loi sur la protection du consommateur, LPC). Une fonction annoncée « bientôt » n'est pas facturée."
+      },
+      {
+        "h": "5. Les paiements",
+        "p": "L'abonnement est payé sur la page de paiement hébergée de notre processeur de paiement : Akinaza ne voit et ne conserve jamais votre numéro de carte. Les paiements de vos propres clients, lorsqu'ils seront offerts, passent par votre propre compte chez votre propre processeur : l'argent va directement du client à vous. Akinaza ne détient jamais de fonds, ne garde rien pour vous ni pour votre client, n'agit pas comme fiduciaire et ne retient rien. Les frais du processeur sont ceux de votre contrat avec lui ; ceux d'Akinaza sur ces paiements sont indiqués sur la page des tarifs (aucun pourcentage sur les cartes, un montant plafonné pour le débit préautorisé)."
+      },
+      {
+        "h": "6. La résiliation et les remboursements",
+        "p": "Vous pouvez résilier en tout temps, même si le service est déjà en cours (art. 2125 C.c.Q.), depuis la page de paiement ouverte à partir de votre abonnement : la résiliation prend effet à la fin de la période payée et rien n'est prélevé ensuite. Vous payez le service rendu jusqu'à ce moment (art. 2129 C.c.Q.) ; la période en cours n'est pas remboursée, sauf en cas d'erreur de facturation, de double prélèvement ou lorsque la loi l'exige. De notre côté, nous ne pouvons résilier que pour un motif sérieux (non-paiement, usage illicite, atteinte à la sécurité du service) et jamais à contretemps (art. 2126 C.c.Q.) ; nous vous avisons par écrit. Vous pouvez exporter vos données avant ou après la résiliation."
+      },
+      {
+        "h": "7. Vos renseignements personnels",
+        "p": "Les renseignements de vos clients que vous saisissez restent les vôtres : vous en êtes responsable et Akinaza les traite pour votre compte, au Canada, chiffrés au repos, visibles de votre boutique seulement. Les consentements sont demandés par finalité, jamais pré-cochés, et peuvent être retirés ; l'effacement vide les champs personnels et garde les factures que la loi fiscale oblige à conserver (six ans). Le tout est encadré par la Loi sur la protection des renseignements personnels dans le secteur privé (RLRQ, c. P-39.1), telle que modifiée par la Loi modernisant des dispositions législatives en matière de protection des renseignements personnels (L.Q. 2021, c. 25). Le détail, le responsable de la protection des renseignements personnels et la façon d'exercer vos droits sont dans l'avis de confidentialité."
+      },
+      {
+        "h": "8. Notre responsabilité",
+        "p": "Nous répondons de nos fautes. Nous ne sommes pas responsables d'une déclaration de taxes que vous produisez, ni des pénalités, intérêts ou retards qui en découlent, ni des différends entre vous et vos clients, ni d'une interruption du service qui ne tient pas à notre faute. Sauf faute intentionnelle ou lourde, notre responsabilité envers vous est limitée aux sommes que vous avez payées pour l'abonnement pendant les 12 mois précédant le fait, et nous ne répondons pas des dommages indirects (perte de profit, perte d'occasion). Aucune de ces limites ne s'applique à une faute intentionnelle ou lourde, ni à un préjudice corporel ou moral (art. 1474 C.c.Q.), ni à ce qu'un consommateur ne peut pas écarter (art. 10 LPC)."
+      },
+      {
+        "h": "9. Si vous agissez comme consommateur",
+        "p": "Akinaza s'adresse aux entreprises. Si vous contractez comme particulier, pour un usage qui n'est pas celui de votre commerce, la Loi sur la protection du consommateur (RLRQ, c. P-40.1) s'applique et rien dans ces conditions ne limite vos droits : notamment les règles du contrat conclu à distance (art. 54.1 et suivants LPC, dont l'information avant le contrat, la copie du contrat et la résolution prévue à l'art. 54.8), l'interdiction de la clause d'arbitrage ou qui vous prive d'une action collective (art. 11.1 LPC) et l'interdiction de limiter notre responsabilité pour nos propres actes (art. 10 LPC). Vous pouvez aussi vous adresser à l'Office de la protection du consommateur."
+      },
+      {
+        "h": "10. Les changements de ces conditions",
+        "p": "Nous pouvons modifier ces conditions. Nous vous avisons par écrit au moins 30 jours avant l'entrée en vigueur d'un changement qui vous touche, et vous pouvez résilier avant. La version et la date sont affichées en haut de cette page ; la version que vous avez acceptée est conservée avec votre abonnement."
+      },
+      {
+        "h": "11. La langue",
+        "p": "Ces conditions sont rédigées en français, qui est la version de référence, comme le veut la Charte de la langue française (art. 55). La version anglaise est une traduction offerte par courtoisie ; en cas de différence, le français l'emporte."
+      },
+      {
+        "h": "12. Le droit applicable et le tribunal",
+        "p": "Ces conditions sont régies par les lois du Québec et les lois fédérales du Canada qui s'y appliquent. Les tribunaux du Québec sont compétents. Un consommateur peut toujours poursuivre dans le district où il est domicilié, et ne peut y renoncer d'avance (art. 3149 C.c.Q. ; art. 33 du Code de procédure civile)."
+      },
+      {
+        "h": "13. Nous joindre",
+        "p": "Par le formulaire de contact de Krizaka (sujet Akinaza), ou à contact@krizaka.com pour vos renseignements personnels. Nous répondons dans les 30 jours."
+      }
+    ]
+  },
   "console": {
     "meta": {
       "signIn": "Se connecter",
@@ -141,6 +204,8 @@
       "closed": "Akinaza est en développement ; les comptes sont créés par notre équipe.",
       "contact": "Nous écrire",
       "legalPrefix": "En vous connectant, vous acceptez l'",
+      "terms": "conditions d'utilisation",
+      "legalAnd": " et l'",
       "privacy": "avis de confidentialité",
       "forgot": "Mot de passe oublié ?"
     },
@@ -655,7 +720,8 @@
         "closedTitle": "L'inscription est fermée.",
         "closed": "Akinaza est en développement ; les comptes sont créés par notre équipe.",
         "contact": "Nous joindre",
-        "back": "Retour à la connexion"
+        "back": "Retour à la connexion",
+        "legalPrefix": "En créant un compte, vous acceptez les "
       },
       "profile": {
         "title": "Votre profil",
@@ -787,7 +853,9 @@
         "unavailable": "Aucun forfait n'est en vente pour l'instant.",
         "yourPrice": "Votre prix",
         "yourPriceHint": "Le prix auquel votre abonnement a été vendu : vous le gardez tant que vous restez.",
-        "priceLine": "{price} par mois plus taxes"
+        "priceLine": "{price} par mois plus taxes",
+        "acceptPrefix": "En choisissant cette offre, vous acceptez les ",
+        "acceptLink": "conditions d'utilisation"
       },
       "data": {
         "title": "Vos données",

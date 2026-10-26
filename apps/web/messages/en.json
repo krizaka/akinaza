@@ -22,6 +22,7 @@
     "sourceCode": "Source code",
     "contact": "Contact",
     "legal": "Privacy",
+    "terms": "Terms of use",
     "menu": {
       "label": "Menu",
       "home": {
@@ -66,6 +67,8 @@
       ],
       "cta": "Subscribe to the founder offer",
       "note": "You pay on Stripe's secure page, and you manage or cancel your subscription there. Already a member? Sign in first.",
+      "termsPrefix": "By subscribing you accept the ",
+      "termsLink": "terms of use",
       "talk": "Contact us first",
       "full": {
         "title": "The founder offer is complete",
@@ -112,6 +115,66 @@
       "text": "The person in charge of the protection of personal information is published here. Role: {role}, Technologies Krizaka Inc., Montréal, Québec, Canada. Contact: contact@krizaka.com, to access, correct or erase your information, withdraw a consent or file a complaint; we answer within 30 days."
     }
   },
+  "terms": {
+    "title": "Terms of use",
+    "version": "Version {version}",
+    "status": "A good-faith version written from the law, waiting for a lawyer's review before Akinaza opens to the public. If in doubt, the French version prevails.",
+    "privacyLink": "Read the privacy notice",
+    "sections": [
+      {
+        "h": "1. Who we are, who these terms are for",
+        "p": "Akinaza is a product of Technologies Krizaka Inc. (Montréal, Québec), the publisher. These terms govern the subscription to Akinaza by service businesses in Québec: salons, workshops, coaches, cleaning businesses, pet services, consultants. Restaurants, cafés, bars and bakeries are excluded, because the law requires them to use a certified sales recording module, which Akinaza's point of sale is not. This is a contract of adhesion (art. 1379 of the Civil Code of Québec, C.C.Q.): we show it to you before any payment, and an illegible, incomprehensible or abusive clause has no effect against you (art. 1435 to 1437 C.C.Q.)."
+      },
+      {
+        "h": "2. What Akinaza does",
+        "p": "Akinaza gives you a shop page and bookings, bilingual invoices with GST and QST exact to the cent, an accounting ledger that never erases, and a tax report prepared from that ledger. The service is in development: a feature marked « soon » is not sold and is not part of your subscription. A booking is a contract between your client and you; Akinaza is not a party to it, it provides the tool."
+      },
+      {
+        "h": "3. What Akinaza never does",
+        "p": "Akinaza prepares, you file. It never produces, signs or transmits a return to Revenu Québec or the Canada Revenue Agency: it is for you to check the prepared figures and to file them, under the Act respecting the Québec sales tax (CQLR, c. T-0.1) and the Excise Tax Act (R.S.C. 1985, c. E-15). The prepared figures are neither tax advice nor accounting advice. Akinaza is not a cash register: it does not replace the sales recording module that a restaurant or a bar must use."
+      },
+      {
+        "h": "4. The subscription, the price and the renewal",
+        "p": "The subscription is monthly and renews by itself at the end of each period until you cancel. The price is the one in the catalogue published on the pricing page when you subscribe, plus the applicable taxes; it is kept with your subscription, and a price change does not apply to a subscription already sold unless you are told in writing at least 30 days ahead and can cancel before it takes effect. No fee can be charged unless the contract states it (art. 12 of the Consumer Protection Act, CPA). A feature marked « soon » is not billed."
+      },
+      {
+        "h": "5. Payments",
+        "p": "The subscription is paid on the hosted payment page of our payment processor: Akinaza never sees or keeps your card number. The payments of your own clients, when they are offered, go through your own account with your own processor: the money goes straight from the client to you. Akinaza never holds funds, does not keep anything for you or for your client, does not act as a trustee and keeps nothing back. The processor's fees are those of your contract with it; Akinaza's fees on these payments are shown on the pricing page (no percentage on cards, a capped amount for pre-authorised debit)."
+      },
+      {
+        "h": "6. Cancellation and refunds",
+        "p": "You can cancel at any time, even while the service is under way (art. 2125 C.C.Q.), from the payment page opened from your subscription: the cancellation takes effect at the end of the paid period and nothing is charged after it. You pay for the service rendered until then (art. 2129 C.C.Q.); the current period is not refunded, except for a billing error, a double charge or where the law requires it. On our side, we can cancel only for a serious reason (non-payment, unlawful use, a threat to the security of the service) and never at an inopportune moment (art. 2126 C.C.Q.); we tell you in writing. You can export your data before or after cancelling."
+      },
+      {
+        "h": "7. Your personal information",
+        "p": "The information about your clients that you enter stays yours: you are responsible for it and Akinaza processes it on your behalf, in Canada, encrypted at rest, visible to your shop only. Consent is asked per purpose, never pre-ticked, and can be withdrawn; erasure blanks the personal fields and keeps the invoices tax law requires us to keep (six years). All of this falls under the Act respecting the protection of personal information in the private sector (CQLR, c. P-39.1), as amended by the Act to modernize legislative provisions as regards the protection of personal information (S.Q. 2021, c. 25). The details, the person in charge of the protection of personal information and how to exercise your rights are in the privacy notice."
+      },
+      {
+        "h": "8. Our liability",
+        "p": "We answer for our faults. We are not liable for a tax return you file, nor for the penalties, interest or delays that follow, nor for disputes between you and your clients, nor for an interruption of the service that is not our fault. Except for intentional or gross fault, our liability to you is limited to the amounts you paid for the subscription in the 12 months before the event, and we are not liable for indirect damage (lost profit, lost opportunity). None of these limits applies to intentional or gross fault, nor to bodily or moral injury (art. 1474 C.C.Q.), nor to what a consumer cannot waive (art. 10 CPA)."
+      },
+      {
+        "h": "9. If you act as a consumer",
+        "p": "Akinaza is for businesses. If you contract as an individual, for a use that is not your business, the Consumer Protection Act (CQLR, c. P-40.1) applies and nothing in these terms limits your rights: notably the rules for a contract made at a distance (art. 54.1 and following CPA, including the information before the contract, the copy of the contract and the cancellation provided by art. 54.8), the ban on an arbitration clause or one that takes away a class action (art. 11.1 CPA) and the ban on limiting our liability for our own acts (art. 10 CPA). You can also turn to the Office de la protection du consommateur."
+      },
+      {
+        "h": "10. Changes to these terms",
+        "p": "We may change these terms. We tell you in writing at least 30 days before a change that affects you takes effect, and you can cancel before then. The version and its date are shown at the top of this page; the version you accepted is kept with your subscription."
+      },
+      {
+        "h": "11. Language",
+        "p": "These terms are written in French, the reference version, as the Charter of the French Language requires (art. 55). The English version is a courtesy translation; if they differ, the French prevails."
+      },
+      {
+        "h": "12. Governing law and court",
+        "p": "These terms are governed by the laws of Québec and the federal laws of Canada that apply there. The courts of Québec have jurisdiction. A consumer can always sue in the district where they live, and cannot waive that in advance (art. 3149 C.C.Q.; art. 33 of the Code of Civil Procedure)."
+      },
+      {
+        "h": "13. Contact",
+        "p": "Through Krizaka's contact form (topic Akinaza), or at contact@krizaka.com for your personal information. We answer within 30 days."
+      }
+    ]
+  },
   "console": {
     "meta": {
       "signIn": "Sign in",
@@ -141,6 +204,8 @@
       "closed": "Akinaza is in development; accounts are created by our team.",
       "contact": "Contact us",
       "legalPrefix": "By signing in you accept the ",
+      "terms": "terms of use",
+      "legalAnd": " and the ",
       "privacy": "privacy notice",
       "forgot": "Forgot your password?"
     },
@@ -655,7 +720,8 @@
         "closedTitle": "Sign-up is closed.",
         "closed": "Akinaza is in development; accounts are created by our team.",
         "contact": "Contact us",
-        "back": "Back to sign-in"
+        "back": "Back to sign-in",
+        "legalPrefix": "By creating an account you accept the "
       },
       "profile": {
         "title": "Your profile",
@@ -787,7 +853,9 @@
         "unavailable": "No plan is on sale yet.",
         "yourPrice": "Your price",
         "yourPriceHint": "The price your subscription was sold at: you keep it as long as you stay.",
-        "priceLine": "{price} a month plus taxes"
+        "priceLine": "{price} a month plus taxes",
+        "acceptPrefix": "By choosing this offer, you accept the ",
+        "acceptLink": "terms of use"
       },
       "data": {
         "title": "Your data",

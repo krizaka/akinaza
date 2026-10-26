@@ -19,7 +19,8 @@ const url = (locale: Locale, page: PageId) => `${SITE_URL}${pagePath(locale, pag
 
 export function pageMetadata(locale: Locale, page: PageId): Metadata {
   const t = getDictionary(locale);
-  const title = page === "home" ? `${t.meta.siteName} · ${t.landing.title}` : `${t.privacy.title} · ${t.meta.siteName}`;
+  const pageTitle = page === "privacy" ? t.privacy.title : page === "terms" ? t.terms.title : t.landing.title;
+  const title = page === "home" ? `${t.meta.siteName} · ${t.landing.title}` : `${pageTitle} · ${t.meta.siteName}`;
   const description = t.meta.description;
   return {
     title: { absolute: title },
@@ -76,6 +77,7 @@ export function llmsText(): string {
 
 - [${en.meta.siteName}](${SITE_URL}/en) · [Akinaza (fr)](${SITE_URL}/fr): what it does and how
 - [${en.privacy.title}](${SITE_URL}/en/privacy) · [${getDictionary("fr").privacy.title} (fr)](${SITE_URL}/fr/privacy)
+- [${en.terms.title}](${SITE_URL}/en/terms) · [${getDictionary("fr").terms.title} (fr)](${SITE_URL}/fr/terms)
 - [Contact Akinaza](${KRIZAKA_URL}/contact?topic=akinaza): the one way to reach the team
 
 ## Source

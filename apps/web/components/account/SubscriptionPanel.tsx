@@ -5,6 +5,7 @@ import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
 import { SettingsRow, SettingsSection } from "@krizaka/ui/settings-layout";
+import Link from "next/link";
 import { useState } from "react";
 
 import { errorKey } from "@/lib/client";
@@ -59,6 +60,15 @@ export function SubscriptionPanel({ subscription }: { subscription: Subscription
       ) : null}
       {!subscription.active && subscription.offerFull ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.offerFull")}</p> : null}
       {!subscription.active && !subscription.offer && !subscription.offerFull && !subscription.hasCustomer ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.unavailable")}</p> : null}
+      {!subscription.active && subscription.offer ? (
+        <p className="py-2 text-sm text-fg-secondary" data-testid="terms-accept">
+          {say("account.subscription.acceptPrefix")}
+          <Link className="underline" href={`/${locale}/terms`}>
+            {say("account.subscription.acceptLink")}
+          </Link>
+          .
+        </p>
+      ) : null}
       {problem ? <Alert tone="danger">{problem}</Alert> : null}
     </SettingsSection>
   );

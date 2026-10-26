@@ -2,6 +2,7 @@ import { PaymentsError } from "@krizaka/payments";
 
 import { systemClock } from "@/app/system-clock";
 import { requireSession } from "@/lib/access";
+import { audit } from "@/lib/audit";
 import { customerOf, founderGate, recordOfferedVersion } from "@/lib/billing";
 import { query } from "@/lib/db";
 import { env } from "@/lib/env";
@@ -10,6 +11,7 @@ import { handle, HttpError, refuse } from "@/lib/http";
 import { FOUNDER_PLAN, paymentsFrom } from "@/lib/payments/config";
 import { appPrices } from "@/lib/price-catalogue";
 import { limit } from "@/lib/rate-limit";
+import { TERMS_VERSION } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +42,8 @@ export function POST(req: Request) {
       if ((await port.price(FOUNDER_PLAN)).amount !== entry.amountCents) throw refuse(503, "PRICE_NOT_READY", "The price is being updated");
       // The version sold is kept with the account: a founder keeps this price whatever is scheduled later.
       await recordOfferedVersion(query, account.id, entry.versionId);
+      // The terms shown beside the button (the accepted version) are kept in the audit trail with the subscription being started.
+      await audit({ action: "billing.terms_accepted", actorId: account.id, actorLabel: account.email, targetId: account.id, detail: { termsVersion: TERMS_VERSION, priceVersion: entry.versionId }, headers: req.headers });
       const customerId = await customerOf(query, account.id, () => port.createCustomer(account.email, account.id));
       const base = `${e.APP_PUBLIC_URL.replace(/\/$/, "")}/${account.locale}`;
       const session = await port.checkout({ kind: FOUNDER_PLAN, customerId, accountId: account.id, successUrl: `${base}/app?billing=success`, cancelUrl: `${base}?billing=cancelled`, locale: account.locale });

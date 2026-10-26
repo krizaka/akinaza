@@ -4,10 +4,12 @@ export const REPO_URL = "https://github.com/krizaka/akinaza";
 /** Krizaka, the publisher: named only in the footer and the legal mentions (the products are independent). */
 export const KRIZAKA_URL = "https://www.krizaka.com";
 export const PRIVACY_UPDATED = "2026-10-15";
+/** The version of the terms of use (its date): kept in the audit trail when a subscription is started, so the accepted version is known. */
+export const TERMS_VERSION = "2026-10-26";
 export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "0.1.0";
 
 /** The public pages, in both languages (sitemap, hreflang). */
-export const PAGES = ["home", "privacy"] as const;
+export const PAGES = ["home", "privacy", "terms"] as const;
 export type PageId = (typeof PAGES)[number];
 export const pagePath = (locale: "en" | "fr", page: PageId) => (page === "home" ? `/${locale}` : `/${locale}/${page}`);
 

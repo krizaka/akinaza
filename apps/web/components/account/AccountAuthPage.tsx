@@ -6,7 +6,7 @@ import Link from "next/link";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
 /** The account's signed-out pages (forgotten password, reset, sign-up) on @krizaka/ui's auth template: one brand, one promise, the beaver. */
-export function AccountAuthPage({ locale, title, description, footer, children }: { locale: Locale; title: string; description?: string; footer: React.ReactNode; children: React.ReactNode }) {
+export function AccountAuthPage({ locale, title, description, footer, legal, children }: { locale: Locale; title: string; description?: string; footer: React.ReactNode; legal?: React.ReactNode; children: React.ReactNode }) {
   const t = getDictionary(locale).console;
   return (
     <AuthLayout
@@ -21,6 +21,7 @@ export function AccountAuthPage({ locale, title, description, footer, children }
       title={title}
       description={description}
       footer={footer}
+      legal={legal}
     >
       {children}
     </AuthLayout>

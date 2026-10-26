@@ -1,6 +1,7 @@
 import { CheckIcon } from "@krizaka/icons";
 import { Button } from "@krizaka/ui/button";
 import { Section } from "@krizaka/ui/page";
+import Link from "next/link";
 
 import { systemClock } from "@/app/system-clock";
 import { founderSeats } from "@/lib/billing";
@@ -8,7 +9,7 @@ import { query } from "@/lib/db";
 import { founderCap, founderEntry, founderOfferCopy, plansView } from "@/lib/founder-offer";
 import { format, getDictionary, type Locale } from "@/lib/i18n";
 import { appPrices, publicPrices } from "@/lib/price-catalogue";
-import { contactHref } from "@/lib/site";
+import { contactHref, pagePath } from "@/lib/site";
 
 /**
  * The founder offer: a limited offer with the setup included. Shown only when `APP_FOUNDER_OFFER_ENABLED`; every
@@ -56,6 +57,13 @@ export async function FounderOffer({ locale }: { locale: Locale }) {
         </Button>
       </div>
       <p className="mt-3 max-w-2xl text-sm text-fg-secondary">{t.note}</p>
+      <p className="mt-1 max-w-2xl text-sm text-fg-secondary" data-testid="terms-accept">
+        {t.termsPrefix}
+        <Link className="underline" href={pagePath(locale, "terms")}>
+          {t.termsLink}
+        </Link>
+        .
+      </p>
       <ul className="mt-6 flex list-none flex-col gap-1 p-0 text-sm text-fg-secondary">
         {plans.starter ? (
           <li>
