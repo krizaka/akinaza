@@ -10,7 +10,7 @@ export PORT=3000
 # The server's clock is UTC, as the deployed one's; the crawls' browsers run in a visitor's zone (check-hydration.mjs).
 export TZ=UTC
 trap 'tail -100 web.log || true' ERR
-(cd apps/web && npx next start -p 3000 > ../../web.log 2>&1 &)
+(cd apps/web && pnpm exec next start -p 3000 > ../../web.log 2>&1 &)
 # The signed-in pages and the storefronts need a database: the migrations, the three demo shops, the QA accounts and the
 # walker persona on CI's PostgreSQL (DATABASE_URL), with CI-only passwords. The crawl signs in as the walker (the owner) and as
 # Camille, a seeded client with bookings and invoices (the QA user has no client file: it would only see the empty state).
