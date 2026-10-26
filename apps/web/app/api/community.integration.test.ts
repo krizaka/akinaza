@@ -9,8 +9,8 @@ import { apiCall, closeSuite, type Handler, openBookableShop, testAccount } from
 import { GET as getAnnouncements, POST as addFlyer } from "./walker/announcements/route";
 import { GET as getReels, POST as linkReel } from "./walker/reels/route";
 import { POST as uploadReel } from "./walker/reels/upload/route";
-import { GET as getReviews } from "./walker/reviews/route";
 import { PATCH as patchReview } from "./walker/reviews/[id]/route";
+import { GET as getReviews } from "./walker/reviews/route";
 import { PUT as putLinks } from "./walker/social-links/route";
 import { GET as getWall, PUT as putWall } from "./walker/wall/route";
 

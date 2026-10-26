@@ -6,6 +6,7 @@ import type { Db } from "./client";
 import { accounts, clients, invoices, services, shops, shopZones } from "./schema";
 import { issueInvoice, recordExpense } from "./shop-ops";
 import { addDependant, addWindow, addZone, bookVisit, joinShop, listSlots, saveShopMedia, saveShopPage, saveService, setAccessNotes, shopOfOwner } from "./service-shop";
+import { seedDemoCommunity } from "./demo-community";
 import { applyTemplate, shopPageConfigOf } from "./shop-page";
 import { checkIn, checkOut, saveReport } from "./visits";
 
@@ -111,6 +112,7 @@ export async function enrichSaintHenri(db: Db, ownerId: string, shopId: string):
   for (const [name, place] of Object.entries(SAINT_HENRI.zonePlaces)) await db.update(shopZones).set(place).where(and(eq(shopZones.shopId, shopId), eq(shopZones.name, name)));
   for (const [nameEn, card] of Object.entries(SAINT_HENRI.cards)) await db.update(services).set(card).where(and(eq(services.shopId, shopId), eq(services.nameEn, nameEn)));
   await saveShopMedia(db, shopId, SAINT_HENRI.media);
+  await seedDemoCommunity(db, shopId, SAINT_HENRI.shop.slug);
 }
 
 /**

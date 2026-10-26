@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 
 import type { Db } from "./client";
 import { accounts, services as servicesTable, shops, staff as staffTable } from "./schema";
+import { seedDemoCommunity } from "./demo-community";
 import { applyTemplate, saveShopPageConfig, shopPageConfigOf } from "./shop-page";
 import { addStaff, addWindow, saveRules, type ServiceInput, saveService, saveShopMedia, saveShopPage, shopOfOwner } from "./service-shop";
 
@@ -142,6 +143,7 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
   if (existing) {
     await keepType(db, existing.id, demo.shopType);
     await keepTemplate(db, existing.id, demo.template);
+    await seedDemoCommunity(db, existing.id, demo.shop.slug);
     return { shopId: existing.id, created: false };
   }
   const { shopId } = await saveShopPage(db, ownerId, { ...page, published: false });
@@ -160,6 +162,7 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
   await saveShopPage(db, ownerId, { ...page, published: true });
   await keepType(db, shopId, demo.shopType);
   await keepTemplate(db, shopId, demo.template);
+  await seedDemoCommunity(db, shopId, demo.shop.slug);
   return { shopId, created: true };
 }
 

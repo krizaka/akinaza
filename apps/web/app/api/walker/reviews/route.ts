@@ -14,7 +14,7 @@ export function GET(req: Request) {
     const { shop } = await requireShop(req, "agenda");
     const reviews = await reviewsOf(db(), shop.id);
     return Response.json({
-      reviews: reviews.map(({ clientId: _client, ...review }) => review),
+      reviews: reviews.map((review) => ({ id: review.id, firstName: review.firstName, lastInitial: review.lastInitial, rating: review.rating, body: review.body, serviceName: review.serviceName, verified: review.verified, state: review.state, reply: review.reply, createdAt: review.createdAt })),
       score: reviewScore(reviews, await reviewRules()),
     });
   });

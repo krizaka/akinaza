@@ -1,35 +1,39 @@
 import { describe, expect, it } from "vitest";
 
-import { BOUTIQUE_NEEDS, BOUTIQUE_SECTIONS, boutiqueGroups, type BoutiqueNavWords,boutiqueSectionsAllowed, firstBoutiqueSection, isBoutiqueSection, isPageTab, PAGE_TABS } from "./boutique";
+import { BOUTIQUE_NEEDS, BOUTIQUE_SECTIONS, boutiqueGroups, type BoutiqueNavWords,boutiqueSectionsAllowed, firstBoutiqueSection, isBoutiqueSection, isPageTab, PAGE_TABS, pageTabsAllowed } from "./boutique";
 import { may } from "./member-shop";
 
 const WORDS: BoutiqueNavWords = {
   groups: { page: "Your page", business: "Your activity" },
-  tabs: { identity: "Identity", texts: "Your page text", contact: "Contact", offer: "Offer", media: "Photos", look: "Look", publish: "Publish" },
+  tabs: { identity: "Identity", texts: "Your page text", contact: "Contact", offer: "Offer", media: "Photos", look: "Look", wall: "Wall", reels: "Video", board: "Board", reviews: "Reviews", publish: "Publish" },
   languages: "Languages",
   team: "Team",
   invoices: "Invoice e-mails",
   shops: "Your shops",
 };
 const href = (section: string, tab?: string) => `/en/app/s-1/boutique/${section}${tab ? `?tab=${tab}` : ""}`;
+const tabsFor = (role: "owner" | "manager" | "staff") => pageTabsAllowed((permission) => may(role, permission));
 const allowedFor = (role: "owner" | "manager" | "staff") => boutiqueSectionsAllowed((permission) => may(role, permission));
 
 describe("Boutique, the hub of the shop's configuration (K4)", () => {
-  it("holds the seven sections of the shop page and nothing that is still being prepared", () => {
-    expect(PAGE_TABS).toEqual(["identity", "texts", "contact", "offer", "media", "look", "publish"]);
+  it("holds the sections of the shop page and the shop as a place", () => {
+    expect(PAGE_TABS).toEqual(["identity", "texts", "contact", "offer", "media", "look", "wall", "reels", "board", "reviews", "publish"]);
     expect(BOUTIQUE_SECTIONS).toEqual(["page", "languages", "team", "invoices", "shops"]);
   });
 
   it("reads what a role may open from the role table (packages/db/src/roles.ts), never from a role name", () => {
-    expect(BOUTIQUE_NEEDS).toEqual({ page: "settings", languages: "settings", team: "team", invoices: "settings", shops: "settings" });
+    expect(BOUTIQUE_NEEDS).toEqual({ page: "catalogue", languages: "settings", team: "team", invoices: "settings", shops: "settings" });
     expect(allowedFor("owner")).toEqual(["page", "languages", "team", "invoices", "shops"]);
-    expect(allowedFor("manager")).toEqual(["team"]);
+    expect(allowedFor("manager")).toEqual(["page", "team"]);
+    expect(tabsFor("manager")).toEqual(["wall", "reels", "board", "reviews"]);
+    expect(tabsFor("owner")).toEqual([...PAGE_TABS]);
+    expect(tabsFor("staff")).toEqual([]);
     expect(allowedFor("staff")).toEqual([]);
   });
 
   it("opens the first section the role may open, and no section for a role with none", () => {
     expect(firstBoutiqueSection(allowedFor("owner"))).toBe("page");
-    expect(firstBoutiqueSection(allowedFor("manager"))).toBe("team");
+    expect(firstBoutiqueSection(allowedFor("manager"))).toBe("page");
     expect(firstBoutiqueSection(allowedFor("staff"))).toBeNull();
   });
 
@@ -44,7 +48,7 @@ describe("Boutique, the hub of the shop's configuration (K4)", () => {
   it("groups the owner's navigation: the page and its languages, then the team, the invoice e-mails and the shops", () => {
     const groups = boutiqueGroups({ allowed: allowedFor("owner"), href, current: { section: "page", tab: "contact" }, words: WORDS });
     expect(groups.map((g) => g.id)).toEqual(["page", "business"]);
-    expect(groups[0]!.items.map((i) => i.id)).toEqual(["page-identity", "page-texts", "page-contact", "page-offer", "page-media", "page-look", "page-publish", "languages"]);
+    expect(groups[0]!.items.map((i) => i.id)).toEqual(["page-identity", "page-texts", "page-contact", "page-offer", "page-media", "page-look", "page-wall", "page-reels", "page-board", "page-reviews", "page-publish", "languages"]);
     expect(groups[1]!.items.map((i) => i.id)).toEqual(["team", "invoices", "shops"]);
   });
 
@@ -56,10 +60,10 @@ describe("Boutique, the hub of the shop's configuration (K4)", () => {
     expect(groups[1]!.items[0]!.href).toBe("/en/app/s-1/boutique/team");
   });
 
-  it("shows a manager the team alone, and a staff member no group at all", () => {
-    const manager = boutiqueGroups({ allowed: allowedFor("manager"), href, current: { section: "team" }, words: WORDS });
-    expect(manager.map((g) => g.items.map((i) => i.id))).toEqual([["team"]]);
-    expect(manager[0]!.items[0]!.current).toBe(true);
+  it("shows a manager what is pinned on the page and the team, and a staff member no group at all", () => {
+    const manager = boutiqueGroups({ allowed: allowedFor("manager"), tabs: tabsFor("manager"), href, current: { section: "team" }, words: WORDS });
+    expect(manager.map((g) => g.items.map((i) => i.id))).toEqual([["page-wall", "page-reels", "page-board", "page-reviews"], ["team"]]);
+    expect(manager[1]!.items[0]!.current).toBe(true);
     expect(boutiqueGroups({ allowed: allowedFor("staff"), href, current: { section: "team" }, words: WORDS })).toEqual([]);
   });
 });

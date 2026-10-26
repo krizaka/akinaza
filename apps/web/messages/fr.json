@@ -530,7 +530,15 @@
       "TAG_LIMIT": "La boutique a atteint sa limite d'étiquettes.",
       "TOO_MANY": "200 lignes au plus à la fois.",
       "STATUS_DERIVED": "L'état d'une facture suit ses paiements : on ne le change pas à la main.",
-      "PRICE_NOT_READY": "Le prix est en cours de mise à jour. Réessayez dans quelques minutes."
+      "PRICE_NOT_READY": "Le prix est en cours de mise à jour. Réessayez dans quelques minutes.",
+      "REEL_LINK": "Ce n'est pas une vidéo TikTok, un Short YouTube ni un reel Instagram. Collez son adresse.",
+      "REEL_LIMIT": "Vous gardez douze vidéos au plus. Retirez-en une d'abord.",
+      "REEL_TOO_LONG": "Cette vidéo est trop longue.",
+      "REEL_NOT_VIDEO": "Ce n'est pas une vidéo MP4 ou WebM.",
+      "UPLOAD_NOT_VIDEO": "Ce n'est pas une vidéo MP4 ou WebM.",
+      "SOCIAL_LINK": "Cette adresse n'est pas une page de cette plateforme.",
+      "ANNOUNCEMENT_LIMIT": "Vous gardez trente affichettes au plus. Retirez-en une d'abord.",
+      "REVIEW_REMOVED": "Cet avis a été retiré par l'administration."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -1098,7 +1106,11 @@
           "offer": "Ce que vous offrez",
           "media": "Photos et vidéo",
           "look": "Apparence",
-          "publish": "Publier"
+          "publish": "Publier",
+          "wall": "Le mur",
+          "board": "Le babillard",
+          "reels": "Vidéo et profils",
+          "reviews": "Avis"
         },
         "identity": {
           "title": "Identité",
@@ -2250,6 +2262,146 @@
         "cancel": "Annuler",
         "rename": "Renommer",
         "actions": "Actions de la vue {label}"
+      }
+    },
+    "studio": {
+      "preview": {
+        "title": "Aperçu en direct",
+        "label": "Aperçu de votre page",
+        "phone": "Téléphone",
+        "desktop": "Ordinateur",
+        "show": "Voir la page",
+        "hide": "Masquer la page",
+        "unpublished": "Publiez votre page pour la voir ici."
+      },
+      "wall": {
+        "title": "Le mur",
+        "lead": "Des photos, des mots sur des cartes et votre enseigne, épinglés où vous voulez. Les visiteurs les voient sur votre page, dans cet ordre.",
+        "texture": "Le mur derrière",
+        "textures": {
+          "brick": "Brique montréalaise",
+          "zellige": "Zellige marocain",
+          "ridge": "Crêtes de Grenoble",
+          "plaster": "Plâtre uni"
+        },
+        "addPhoto": "Ajouter une photo",
+        "addNote": "Ajouter une carte",
+        "addSign": "Ajouter l'enseigne",
+        "uploadTitle": "Choisir une photo",
+        "empty": "Rien n'est encore épinglé. Ajoutez une photo, une carte ou votre enseigne.",
+        "count": "{count} pièces sur {max}",
+        "drawn": "La page dessine les {drawn} premières ; les autres restent dans la liste en dessous.",
+        "stage": "Le mur tel qu'il est disposé. Sélectionnez une pièce, puis utilisez les touches.",
+        "keys": "Les flèches déplacent la pièce (Maj pour de plus grands pas), [ et ] l'inclinent, Page précédente et Page suivante changent son plan.",
+        "pieces": "Pièces du mur",
+        "kinds": {
+          "polaroid": "Photo",
+          "note": "Carte",
+          "sign": "Enseigne"
+        },
+        "piece": "{kind} {n}",
+        "x": "En largeur (%)",
+        "y": "En hauteur (%)",
+        "rotation": "Inclinaison (degrés)",
+        "layer": "Plan",
+        "altFr": "Décrivez la photo en français",
+        "altEn": "Décrivez la photo en anglais",
+        "captionFr": "Légende en français (40 caractères)",
+        "captionEn": "Légende en anglais (40 caractères)",
+        "textFr": "Mot sur la carte en français (140 caractères)",
+        "textEn": "Mot sur la carte en anglais (140 caractères)",
+        "signature": "Signé (facultatif)",
+        "attachment": "Tenue par",
+        "attachments": {
+          "tape": "Du ruban adhésif",
+          "pin": "Une punaise"
+        },
+        "variant": "Style de l'enseigne",
+        "variants": {
+          "enamel": "Plaque émaillée",
+          "neon": "Néon",
+          "painted": "Peinte"
+        },
+        "signNote": "L'enseigne affiche le nom de votre boutique.",
+        "remove": "Retirer cette pièce",
+        "save": "Enregistrer le mur",
+        "saved": "Le mur est enregistré.",
+        "uploading": "Envoi de la photo…",
+        "pieceOf": "Pièce {n} sur {total}",
+        "moved": "Déplacée à {x} % en largeur, {y} % en hauteur, inclinée de {rotation} degrés."
+      },
+      "board": {
+        "title": "Le babillard",
+        "lead": "Jusqu'à trois affichettes sont épinglées sur votre page, la plus récente d'abord. Une affichette descend à son dernier jour.",
+        "textFr": "Affichette en français",
+        "textEn": "Affichette en anglais",
+        "photo": "Photo (facultatif)",
+        "photoAlt": "Décrivez la photo",
+        "endsOn": "Dernier jour (facultatif)",
+        "endsOnHint": "Laissez vide pour la garder jusqu'à ce que vous la retiriez.",
+        "add": "Épingler cette affichette",
+        "remove": "Retirer",
+        "none": "Aucune affichette pour l'instant.",
+        "upNow": "Affichée",
+        "ended": "Terminée",
+        "pinned": "Épinglée",
+        "saved": "L'affichette est épinglée.",
+        "max": "500 caractères dans chaque langue."
+      },
+      "reels": {
+        "title": "Votre dernière vidéo",
+        "lead": "La vidéo la plus récente joue sur votre page dans une vieille télévision. Un lien TikTok, YouTube ou Instagram montre une image et un bouton : rien n'est chargé depuis la plateforme tant que le visiteur n'appuie pas.",
+        "linkLabel": "Lien vers un TikTok, un Short YouTube ou un reel Instagram",
+        "linkHint": "Collez l'adresse de la vidéo.",
+        "titleFr": "Titre en français (facultatif)",
+        "titleEn": "Titre en anglais (facultatif)",
+        "addLink": "Ajouter ce lien",
+        "upload": "Téléverser une vidéo",
+        "uploadTitle": "Choisir une vidéo",
+        "uploadHint": "MP4 ou WebM, à la verticale, {seconds} secondes et {megabytes} Mo au plus.",
+        "poster": "Une image pour la vidéo (facultatif)",
+        "posterTitle": "Choisir une image",
+        "remove": "Retirer",
+        "none": "Aucune vidéo pour l'instant.",
+        "shown": "Affichée sur votre page",
+        "kinds": {
+          "upload": "Vidéo téléversée",
+          "external": "Lien"
+        },
+        "platforms": {
+          "tiktok": "TikTok",
+          "youtube-shorts": "YouTube Shorts",
+          "instagram": "Instagram"
+        },
+        "added": "La vidéo est ajoutée.",
+        "socialTitle": "Vos profils",
+        "socialLead": "De simples liens vers vos pages. Rien de ces plateformes ne se charge sur votre page ; un visiteur n'en sort qu'en suivant un lien.",
+        "social": {
+          "instagram": "Instagram",
+          "tiktok": "TikTok",
+          "youtube": "YouTube",
+          "facebook": "Facebook"
+        },
+        "socialHint": "Laissez vide pour retirer un lien.",
+        "saveLinks": "Enregistrer les liens",
+        "linksSaved": "Les liens sont enregistrés."
+      },
+      "reviews": {
+        "title": "Avis",
+        "lead": "Seuls les avis vérifiés, de clients qui ont eu un rendez-vous, comptent dans votre note. Répondez en public, ou masquez un avis de votre page.",
+        "score": "{score} sur 5, {count} avis vérifiés",
+        "notShown": "Votre note s'affiche sur votre page à partir de {min} avis vérifiés. Vous en avez {count}.",
+        "none": "Aucun avis pour l'instant.",
+        "verified": "Vérifié",
+        "unverified": "Non vérifié",
+        "hiddenBadge": "Masqué sur votre page",
+        "removedBadge": "Retiré par l'administration",
+        "pendingBadge": "En attente",
+        "reply": "Votre réponse",
+        "sendReply": "Envoyer la réponse",
+        "hide": "Masquer de ma page",
+        "show": "Afficher de nouveau",
+        "saved": "C'est fait."
       }
     }
   },

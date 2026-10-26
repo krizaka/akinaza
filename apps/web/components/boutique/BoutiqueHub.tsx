@@ -4,6 +4,7 @@ import { Badge } from "@krizaka/ui/badge";
 import { SettingsLayout } from "@krizaka/ui/settings-layout";
 import Link from "next/link";
 
+import { PagePreview } from "@/components/boutique/PagePreview";
 import { boutiqueGroups, type BoutiqueSection, PAGE_TABS, type PageTab } from "@/lib/boutique";
 import { useSay } from "@/lib/i18n-client";
 import { type RouteLocale, shopRoutes } from "@/lib/routes";
@@ -14,6 +15,10 @@ export interface BoutiqueHubProps {
   /** The sections the role may open (`BOUTIQUE_NEEDS`): the navigation shows these and nothing else. */
   allowed: BoutiqueSection[];
   current: { section: BoutiqueSection; tab?: PageTab };
+  /** The tabs of the page the role may open (all when absent). */
+  tabs?: readonly PageTab[];
+  /** The live preview beside the section (the shop as a place), when it is one that changes the page. */
+  preview?: { src: string };
   shop: { name: string; published: boolean; publicUrl: string | null };
   children: React.ReactNode;
 }
@@ -22,11 +27,12 @@ export interface BoutiqueHubProps {
  * Boutique (K4): the shop's configuration on `SettingsLayout` — the shop's identity (name, status, public address) on top, the
  * sections beside the page (grouped; one menu on a phone). Each section is its own address; the page holds one section, one save.
  */
-export function BoutiqueHub({ locale, shopId, allowed, current, shop, children }: BoutiqueHubProps) {
+export function BoutiqueHub({ locale, shopId, allowed, tabs, preview, current, shop, children }: BoutiqueHubProps) {
   const { say } = useSay();
   const routes = shopRoutes(locale, shopId);
   const groups = boutiqueGroups({
     allowed,
+    tabs,
     href: (section, tab) => routes.boutique(section, tab),
     current,
     words: {
@@ -56,7 +62,12 @@ export function BoutiqueHub({ locale, shopId, allowed, current, shop, children }
         </header>
       }
     >
-      {children}
+      {preview ? (
+        <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
+          <div className="min-w-0">{children}</div>
+          <PagePreview src={preview.src} published={shop.published} />
+        </div>
+      ) : children}
     </SettingsLayout>
   );
 }

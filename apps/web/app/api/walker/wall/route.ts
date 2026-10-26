@@ -1,4 +1,4 @@
-import { wallOf, saveWall } from "@akinaza/db";
+import { saveWall,wallOf } from "@akinaza/db";
 
 import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";

@@ -7,9 +7,12 @@ const appVersion = process.env.APP_VERSION?.trim() || (process.env.APP_COMMIT_SH
 const production = process.env.NODE_ENV === "production";
 
 /**
- * Content Security Policy: nothing but this origin — no third-party script, frame or font. Next renders
+ * Content Security Policy: nothing but this origin — no third-party script or font, and a frame only for the three embed hosts, after a click. Next renders
  * inline bootstrap scripts without a nonce, so scripts keep 'unsafe-inline'. Development adds what the dev server needs.
  */
+/** The only third parties a page may frame: the players of a TikTok, a YouTube Short and an Instagram reel, behind a click (packages/core/src/community.ts `externalReel`). */
+export const EMBED_FRAME_HOSTS = ["https://www.youtube-nocookie.com", "https://www.tiktok.com", "https://www.instagram.com"];
+
 const csp = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${production ? "" : " 'unsafe-eval'"}`,
@@ -20,7 +23,8 @@ const csp = [
   // The map's engine (MapLibre) runs its worker from a blob; its tiles and glyphs come through this origin (/maps/v1).
   "worker-src 'self' blob:",
   `connect-src 'self'${production ? "" : " ws: http://localhost:* http://127.0.0.1:*"}`,
-  "frame-src 'none'",
+  // The studio previews the page in a frame of its own origin; the three video platforms may fill a frame only after a visitor pressed a facade's button (nothing is framed before the click).
+  `frame-src 'self' ${EMBED_FRAME_HOSTS.join(" ")}`,
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",

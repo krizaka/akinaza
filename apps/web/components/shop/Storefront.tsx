@@ -83,10 +83,11 @@ export function Storefront({ view, locale }: { view: StorefrontView; locale: Loc
         <MediaGallery label={galleryLabel} items={view.gallery} />
       </Section>
     ) : null,
-    wall: view.preparedSections.wall ? <Section id="wall" divider title={t("console.shopPage.wallTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
-    reels: view.preparedSections.reels ? <Section id="reels" divider title={t("console.shopPage.reelsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
-    announcements: view.preparedSections.announcements ? <Section id="announcements" divider title={t("console.shopPage.announcementsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
-    reviews: view.preparedSections.reviews ? <Section id="reviews" divider title={t("console.shopPage.reviewsTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
+    // The shop as a place (B45) is drawn by the next change; until then these sections show nothing, not « being prepared ».
+    wall: null,
+    reels: null,
+    announcements: null,
+    reviews: null,
     follow: view.preparedSections.follow ? <Section id="follow" divider title={t("console.shopPage.followTitle")}><p className="m-0 text-fg-secondary">{t("console.shopPage.sectionComing")}</p></Section> : null,
   };
   return (

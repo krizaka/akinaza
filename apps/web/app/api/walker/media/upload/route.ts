@@ -3,6 +3,7 @@ import { audit } from "@/lib/audit";
 import { handle, refuse } from "@/lib/http";
 import { detectImage, MAX_UPLOAD_BYTES, MEDIA_PURPOSES, type MediaPurpose, mediaSettings, PURPOSE_FEATURE, storeImage } from "@/lib/media-upload";
 import { appSettings } from "@/lib/settings";
+import { may } from "@/lib/shop-permissions";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
  */
 export function POST(req: Request) {
   return handle(async () => {
-    const { session, shop } = await requireShop(req, "catalogue");
+    const { session, shop, role } = await requireShop(req, "catalogue");
     const settings = mediaSettings();
     if (!settings) throw refuse(503, "UPLOAD_UNAVAILABLE", "media storage is not configured");
     if (Number(req.headers.get("content-length") ?? 0) > MAX_UPLOAD_BYTES + 4096) throw refuse(413, "UPLOAD_TOO_LARGE", "file too large");
@@ -21,6 +22,8 @@ export function POST(req: Request) {
     if (!(file instanceof File)) throw refuse(400, "BAD_REQUEST", "no file");
     const purpose = form?.get("purpose") ?? "gallery";
     if (typeof purpose !== "string" || !MEDIA_PURPOSES.includes(purpose as (typeof MEDIA_PURPOSES)[number])) throw refuse(400, "BAD_REQUEST", "invalid media purpose");
+    // What is pinned on the page is the owner's and the manager's; the shop's own brand (its logo) stays the owner's.
+    if (purpose === "brand" && !may(role, "settings")) throw refuse(403, "FORBIDDEN", "Your role does not allow this", { permission: "settings" });
     const feature = (PURPOSE_FEATURE as Partial<Record<MediaPurpose, "features.shopWall" | "features.shopReels" | "features.shopAnnouncements">>)[purpose as MediaPurpose];
     if (feature && !(await appSettings().get(feature, { userId: null }))) throw refuse(403, "FEATURE_OFF", "This feature is switched off", { feature });
     if (file.size > MAX_UPLOAD_BYTES) throw refuse(413, "UPLOAD_TOO_LARGE", "file too large");

@@ -181,3 +181,35 @@ describe("the reviews (#313)", () => {
     expect(row).toMatchObject({ firstName: "—", lastInitial: "", body: "", rating: 5 });
   });
 });
+
+describe("the demo shops as places (B45)", () => {
+  it("pins a wall, a reel, links, flyers and eight reviews, once, and leaves the owner's own alone", async () => {
+    const { seedDemoCommunity } = await import("./demo-community");
+    const s = await walkerShop(t.db, "demo-place");
+    await seedDemoCommunity(t.db, s.shopId, "pattes-saint-henri");
+    const first = await communityOf(t.db, s.shopId);
+    expect(first.wall.items.length).toBeGreaterThanOrEqual(6);
+    expect(first.wall.items.filter((i) => i.kind === "polaroid").every((i) => i.kind === "polaroid" && i.imageUrl.includes("/pattes-saint-henri/"))).toBe(true);
+    expect(first.reel?.kind).toBe("upload");
+    expect(Object.keys(first.links).sort()).toEqual(["instagram", "tiktok"]);
+    expect(first.announcements.length).toBe(2);
+    expect(first.reviews.length).toBe(8);
+    await seedDemoCommunity(t.db, s.shopId, "pattes-saint-henri");
+    const again = await communityOf(t.db, s.shopId);
+    expect(again.wall.items).toHaveLength(first.wall.items.length);
+    expect(again.reviews).toHaveLength(8);
+    expect(await reelsOf(t.db, s.shopId)).toHaveLength(2);
+  });
+  it("gives each demo trade its own photos: a salon's wall shows no dog and a walker's wall no chair", async () => {
+    const { seedDemoCommunity } = await import("./demo-community");
+    const a = await walkerShop(t.db, "demo-trade-a");
+    const b = await walkerShop(t.db, "demo-trade-b");
+    await seedDemoCommunity(t.db, a.shopId, "cedre-ciseaux");
+    await seedDemoCommunity(t.db, b.shopId, "pattes-saint-henri");
+    const urls = async (id: string) => (await wallOf(t.db, id)).items.flatMap((i) => (i.kind === "polaroid" ? [i.imageUrl] : []));
+    expect((await urls(a.shopId)).every((u) => u.includes("/demo/cedre-ciseaux/"))).toBe(true);
+    expect((await urls(b.shopId)).every((u) => u.includes("/demo/pattes-saint-henri/"))).toBe(true);
+    const text = JSON.stringify(await wallOf(t.db, a.shopId)).toLowerCase();
+    for (const word of ["livre", "book ", "chien", "dog", "laisse"]) expect(text, word).not.toContain(word);
+  });
+});

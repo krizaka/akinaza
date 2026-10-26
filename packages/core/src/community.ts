@@ -9,6 +9,7 @@ import { z } from "zod";
 export const WALL_TEXTURES = ["brick", "zellige", "ridge", "plaster"] as const;
 export type WallTexture = (typeof WALL_TEXTURES)[number];
 export const WALL_KINDS = ["polaroid", "note", "sign"] as const;
+export const WALL_KIND = { polaroid: "polaroid", note: "note", sign: "sign" } as const;
 export const SIGN_VARIANTS = ["enamel", "neon", "painted"] as const;
 export const ATTACHMENTS = ["tape", "pin"] as const;
 
@@ -55,6 +56,7 @@ export type WallInput = z.infer<ReturnType<typeof wallSchema>>;
 // ---- reviews -------------------------------------------------------------------------------------------------------------------------------------
 
 export const REVIEW_STATES = ["published", "hidden_by_owner", "removed_by_admin", "pending"] as const;
+export const REVIEW_STATE = { published: "published", hiddenByOwner: "hidden_by_owner", removedByAdmin: "removed_by_admin", pending: "pending" } as const;
 export interface ScoredReview {
   rating: number;
   verified: boolean;
@@ -78,7 +80,7 @@ export interface ReviewScore {
 
 /** `(C·m + Σr) / (C + n)` over the published, verified reviews only: a lone five-star word does not make a five-star shop. */
 export function reviewScore(reviews: readonly ScoredReview[], rules: ScoreRules): ReviewScore {
-  const counted = reviews.filter((r) => r.verified && r.state === "published" && Number.isInteger(r.rating) && r.rating >= 1 && r.rating <= 5);
+  const counted = reviews.filter((r) => r.verified && r.state === REVIEW_STATE.published && Number.isInteger(r.rating) && r.rating >= 1 && r.rating <= 5);
   const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } as ReviewScore["distribution"];
   for (const r of counted) distribution[r.rating as 1 | 2 | 3 | 4 | 5] += 1;
   const count = counted.length;
@@ -93,7 +95,7 @@ export function reviewScore(reviews: readonly ScoredReview[], rules: ScoreRules)
 export function currentAnnouncements<T extends { endsOn: string | null; createdAt: Date }>(list: readonly T[], today: string): T[] {
   return list
     .filter((a) => a.endsOn === null || a.endsOn >= today)
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0))
     .slice(0, ANNOUNCEMENT_LIMITS.current);
 }
 

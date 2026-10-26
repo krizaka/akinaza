@@ -1,4 +1,4 @@
-import { ANNOUNCEMENT_LIMITS, externalReel, REVIEW_LIMITS, REVIEW_STATES, SOCIAL_PLATFORMS, socialLink, type SocialPlatform, type WallItem, wallSchema, type WallTexture } from "@akinaza/core";
+import { ANNOUNCEMENT_LIMITS, REVIEW_STATE, WALL_KIND, externalReel, REVIEW_LIMITS, REVIEW_STATES, SOCIAL_PLATFORMS, socialLink, type SocialPlatform, type WallItem, wallSchema, type WallTexture } from "@akinaza/core";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -21,8 +21,8 @@ export interface WallRow {
 
 const itemOf = (r: typeof shopWallItems.$inferSelect): WallItemRow => {
   const place = { id: r.id, x: r.x, y: r.y, rotation: r.rotation, z: r.z };
-  if (r.kind === "polaroid") return { ...place, kind: "polaroid", attachment: r.attachment, imageUrl: r.imageUrl ?? "", altFr: r.altFr, altEn: r.altEn, captionFr: r.captionFr, captionEn: r.captionEn };
-  if (r.kind === "note") return { ...place, kind: "note", attachment: r.attachment, textFr: r.textFr, textEn: r.textEn, signature: r.signature };
+  if (r.kind === WALL_KIND.polaroid) return { ...place, kind: "polaroid", attachment: r.attachment, imageUrl: r.imageUrl ?? "", altFr: r.altFr, altEn: r.altEn, captionFr: r.captionFr, captionEn: r.captionEn };
+  if (r.kind === WALL_KIND.note) return { ...place, kind: "note", attachment: r.attachment, textFr: r.textFr, textEn: r.textEn, signature: r.signature };
   return { ...place, kind: "sign", variant: r.variant ?? "enamel" };
 };
 
@@ -40,9 +40,9 @@ export async function saveWall(db: Db, shopId: string, input: unknown, max: numb
     if (!wall.items.length) return;
     await tx.insert(shopWallItems).values(wall.items.map((i) => ({
       shopId, kind: i.kind, x: i.x, y: i.y, rotation: i.rotation, z: i.z,
-      ...(i.kind === "polaroid" ? { attachment: i.attachment, imageUrl: i.imageUrl, altFr: i.altFr, altEn: i.altEn, captionFr: i.captionFr, captionEn: i.captionEn } : {}),
-      ...(i.kind === "note" ? { attachment: i.attachment, textFr: i.textFr, textEn: i.textEn, signature: i.signature } : {}),
-      ...(i.kind === "sign" ? { variant: i.variant } : {}),
+      ...(i.kind === WALL_KIND.polaroid ? { attachment: i.attachment, imageUrl: i.imageUrl, altFr: i.altFr, altEn: i.altEn, captionFr: i.captionFr, captionEn: i.captionEn } : {}),
+      ...(i.kind === WALL_KIND.note ? { attachment: i.attachment, textFr: i.textFr, textEn: i.textEn, signature: i.signature } : {}),
+      ...(i.kind === WALL_KIND.sign ? { variant: i.variant } : {}),
     })));
   });
 }
@@ -74,7 +74,7 @@ export async function reelsOf(db: Db, shopId: string): Promise<ReelRow[]> {
 const httpsOrNull = z.string().max(500).regex(/^https:\/\//).nullable();
 const titles = { titleFr: z.string().max(60), titleEn: z.string().max(60) };
 const uploadedReelSchema = z.object({ mp4Url: httpsOrNull, webmUrl: httpsOrNull, posterUrl: httpsOrNull, seconds: z.number().positive().max(3600), ...titles }).refine((r) => r.mp4Url || r.webmUrl, { message: "A video address" });
-const externalTitles = z.object(titles);
+const externalTitles = z.object({ ...titles, posterUrl: httpsOrNull.optional() });
 
 async function assertRoom(tx: Pick<Db, "select">, shopId: string): Promise<void> {
   const [row] = await tx.select({ n: sql<number>`count(*)::int` }).from(shopReels).where(eq(shopReels.shopId, shopId));
@@ -99,7 +99,7 @@ export async function addExternalReel(db: Db, shopId: string, url: string, raw: 
   return db.transaction(async (tx) => {
     await tx.execute(sql`SELECT id FROM shops WHERE id = ${shopId} FOR UPDATE`);
     await assertRoom(tx, shopId);
-    const [row] = await tx.insert(shopReels).values({ shopId, kind: "external", platform: link.platform, externalUrl: link.url, embedUrl: link.embedUrl, ...names }).returning({ id: shopReels.id });
+    const [row] = await tx.insert(shopReels).values({ shopId, kind: "external", platform: link.platform, externalUrl: link.url, embedUrl: link.embedUrl, ...names, posterUrl: names.posterUrl ?? null }).returning({ id: shopReels.id });
     return row!.id;
   });
 }
@@ -202,7 +202,7 @@ export async function setReviewState(db: Db, shopId: string, reviewId: string, s
   return db.transaction(async (tx) => {
     const [row] = await tx.select({ state: shopReviews.state }).from(shopReviews).where(and(eq(shopReviews.shopId, shopId), eq(shopReviews.id, reviewId))).for("update");
     if (!row) return false;
-    if (row.state === "removed_by_admin") throw new ShopError("AK_REVIEW_REMOVED");
+    if (row.state === REVIEW_STATE.removedByAdmin) throw new ShopError("AK_REVIEW_REMOVED");
     await tx.update(shopReviews).set({ state }).where(eq(shopReviews.id, reviewId));
     return true;
   });
@@ -238,6 +238,6 @@ export async function communityOf(db: Db, shopId: string): Promise<CommunityView
     reel: reels[0] ?? null,
     links,
     announcements,
-    reviews: reviews.filter((r) => r.state === "published").map((r) => ({ id: r.id, firstName: r.firstName, lastInitial: r.lastInitial, rating: r.rating, body: r.body, serviceName: r.serviceName, reply: r.reply, createdAt: r.createdAt, verified: r.verified, state: r.state })),
+    reviews: reviews.filter((r) => r.state === REVIEW_STATE.published).map((r) => ({ id: r.id, firstName: r.firstName, lastInitial: r.lastInitial, rating: r.rating, body: r.body, serviceName: r.serviceName, reply: r.reply, createdAt: r.createdAt, verified: r.verified, state: r.state })),
   };
 }
