@@ -1,4 +1,4 @@
-import { REALTIME_CHANNEL, slotsTopic } from "@akinaza/core";
+import { pageTopic, REALTIME_CHANNEL, slotsTopic } from "@akinaza/core";
 import { createBus, type RealtimeBus } from "@krizaka/realtime";
 import { pgChannel } from "@krizaka/realtime/pg";
 
@@ -31,4 +31,13 @@ export async function announceSlots(shopId: string): Promise<void> {
   }
 }
 
-export { slotsTopic };
+/** Tells the open storefronts (and the studio's preview) that this shop's page changed: `shop.page.updated`. Best effort, like the slots. */
+export async function announcePage(shopId: string): Promise<void> {
+  try {
+    await realtimeBus().publish(pageTopic(shopId), { type: "shop.page.updated" });
+  } catch (error) {
+    console.error("storefront page event not published", error);
+  }
+}
+
+export { pageTopic, slotsTopic };

@@ -1,4 +1,4 @@
-import { requireOwner } from "@/lib/access";
+import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { handle, refuse } from "@/lib/http";
 import { detectImage, MAX_UPLOAD_BYTES, MEDIA_PURPOSES, type MediaPurpose, mediaSettings, PURPOSE_FEATURE, storeImage } from "@/lib/media-upload";
@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
  */
 export function POST(req: Request) {
   return handle(async () => {
-    const { session, shop } = await requireOwner(req);
+    const { session, shop } = await requireShop(req, "catalogue");
     const settings = mediaSettings();
     if (!settings) throw refuse(503, "UPLOAD_UNAVAILABLE", "media storage is not configured");
     if (Number(req.headers.get("content-length") ?? 0) > MAX_UPLOAD_BYTES + 4096) throw refuse(413, "UPLOAD_TOO_LARGE", "file too large");

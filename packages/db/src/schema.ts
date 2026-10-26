@@ -251,6 +251,134 @@ export const shopPage = pgTable(
   (t) => [check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
 );
 
+/** The wall of the public page (B45, #310): its texture; no row = plaster and no item. */
+export const shopWall = pgTable(
+  "shop_wall",
+  {
+    shopId: uuid("shop_id").primaryKey().references(() => shops.id, { onDelete: "cascade" }),
+    texture: text("texture", { enum: ["brick", "zellige", "ridge", "plaster"] }).notNull().default("plaster"),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check("shop_wall_texture", sql`${t.texture} IN ('brick','zellige','ridge','plaster')`)],
+);
+
+/** One thing pinned to the wall: a photo, a card, the sign. Percent positions, a small tilt, a stacking order; the bounds are the database's too. */
+export const shopWallItems = pgTable(
+  "shop_wall_items",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: ["polaroid", "note", "sign"] }).notNull(),
+    x: doublePrecision("x").notNull(),
+    y: doublePrecision("y").notNull(),
+    rotation: doublePrecision("rotation").notNull().default(0),
+    z: integer("z").notNull().default(0),
+    attachment: text("attachment", { enum: ["tape", "pin"] }).notNull().default("tape"),
+    variant: text("variant", { enum: ["enamel", "neon", "painted"] }),
+    imageUrl: text("image_url"),
+    altFr: text("alt_fr").notNull().default(""),
+    altEn: text("alt_en").notNull().default(""),
+    captionFr: text("caption_fr").notNull().default(""),
+    captionEn: text("caption_en").notNull().default(""),
+    textFr: text("text_fr").notNull().default(""),
+    textEn: text("text_en").notNull().default(""),
+    signature: text("signature").notNull().default(""),
+  },
+  (t) => [
+    index("shop_wall_items_shop").on(t.shopId, t.z),
+    check("shop_wall_items_kind", sql`${t.kind} IN ('polaroid','note','sign')`),
+    check("shop_wall_items_place", sql`${t.x} BETWEEN 0 AND 100 AND ${t.y} BETWEEN 0 AND 100 AND ${t.rotation} BETWEEN -8 AND 8 AND ${t.z} BETWEEN 0 AND 1000`),
+    check("shop_wall_items_texts", sql`length(${t.captionFr}) <= 40 AND length(${t.captionEn}) <= 40 AND length(${t.textFr}) <= 140 AND length(${t.textEn}) <= 140 AND length(${t.signature}) <= 40 AND length(${t.altFr}) <= 200 AND length(${t.altEn}) <= 200`),
+    check("shop_wall_items_image", sql`${t.imageUrl} IS NULL OR (${t.imageUrl} LIKE 'https://%' AND length(${t.imageUrl}) <= 500)`),
+  ],
+);
+
+/** The shop's reels (B45, #312): an uploaded vertical video (kept as CDN addresses) or a link to a TikTok, a YouTube Short or an Instagram reel. The latest is shown. */
+export const shopReels = pgTable(
+  "shop_reels",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: ["upload", "external"] }).notNull(),
+    mp4Url: text("mp4_url"),
+    webmUrl: text("webm_url"),
+    posterUrl: text("poster_url"),
+    seconds: doublePrecision("seconds"),
+    platform: text("platform", { enum: ["tiktok", "youtube-shorts", "instagram"] }),
+    externalUrl: text("external_url"),
+    embedUrl: text("embed_url"),
+    titleFr: text("title_fr").notNull().default(""),
+    titleEn: text("title_en").notNull().default(""),
+    createdAt: created(),
+  },
+  (t) => [
+    index("shop_reels_shop").on(t.shopId, t.createdAt),
+    check("shop_reels_kind", sql`(${t.kind} = 'upload' AND (${t.mp4Url} IS NOT NULL OR ${t.webmUrl} IS NOT NULL) AND ${t.platform} IS NULL) OR (${t.kind} = 'external' AND ${t.platform} IS NOT NULL AND ${t.externalUrl} IS NOT NULL AND ${t.embedUrl} IS NOT NULL)`),
+    check("shop_reels_urls", sql`coalesce(${t.mp4Url}, 'https://') ~ '^https://' AND coalesce(${t.webmUrl}, 'https://') ~ '^https://' AND coalesce(${t.posterUrl}, 'https://') ~ '^https://' AND coalesce(${t.externalUrl}, 'https://') ~ '^https://' AND coalesce(${t.embedUrl}, 'https://') ~ '^https://'`),
+    check("shop_reels_titles", sql`length(${t.titleFr}) <= 60 AND length(${t.titleEn}) <= 60`),
+  ],
+);
+
+/** The shop's profile on a platform: a plain outbound link, one per platform. */
+export const shopSocialLinks = pgTable(
+  "shop_social_links",
+  {
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    platform: text("platform", { enum: ["tiktok", "youtube", "instagram", "facebook"] }).notNull(),
+    url: text("url").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.shopId, t.platform] }), check("shop_social_links_url", sql`${t.url} LIKE 'https://%' AND length(${t.url}) <= 300`), check("shop_social_links_platform", sql`${t.platform} IN ('tiktok','youtube','instagram','facebook')`)],
+);
+
+/** A client's word about the shop (B45, #313): a first name and an initial, never more. Only `published` and `verified` reviews count. Moves to @krizaka/reviews when it is published (krizaka-ts#37). */
+export const shopReviews = pgTable(
+  "shop_reviews",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    /** The client who wrote it; blanked with their erasure (Loi 25). */
+    clientId: uuid("client_id").references(() => clients.id, { onDelete: "set null" }),
+    firstName: text("first_name").notNull(),
+    lastInitial: text("last_initial").notNull().default(""),
+    rating: smallint("rating").notNull(),
+    body: text("body").notNull().default(""),
+    serviceName: text("service_name").notNull().default(""),
+    /** The person really had an appointment (the product says so; the score never guesses). */
+    verified: boolean("verified").notNull().default(false),
+    state: text("state", { enum: ["published", "hidden_by_owner", "removed_by_admin", "pending"] }).notNull().default("published"),
+    reply: text("reply").notNull().default(""),
+    createdAt: created(),
+  },
+  (t) => [
+    index("shop_reviews_shop").on(t.shopId, t.createdAt),
+    uniqueIndex("shop_reviews_one_per_client").on(t.shopId, t.clientId).where(sql`${t.clientId} IS NOT NULL`),
+    check("shop_reviews_rating", sql`${t.rating} BETWEEN 1 AND 5`),
+    check("shop_reviews_state", sql`${t.state} IN ('published','hidden_by_owner','removed_by_admin','pending')`),
+    check("shop_reviews_texts", sql`length(${t.body}) <= 1000 AND length(${t.reply}) <= 1000 AND length(${t.firstName}) <= 40 AND length(${t.lastInitial}) <= 2 AND length(${t.serviceName}) <= 120`),
+  ],
+);
+
+/** A flyer of the bulletin board (B45, #314): up to 500 characters in either language, an optional photo, an optional last day. */
+export const shopAnnouncements = pgTable(
+  "shop_announcements",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    textFr: text("text_fr").notNull().default(""),
+    textEn: text("text_en").notNull().default(""),
+    photoUrl: text("photo_url"),
+    photoAlt: text("photo_alt").notNull().default(""),
+    /** The last day the flyer is up (the shop's local day); null = until the owner takes it down. */
+    endsOn: date("ends_on", { mode: "string" }),
+    createdAt: created(),
+  },
+  (t) => [
+    index("shop_announcements_shop").on(t.shopId, t.createdAt),
+    check("shop_announcements_text", sql`length(${t.textFr}) <= 500 AND length(${t.textEn}) <= 500 AND length(${t.textFr}) + length(${t.textEn}) > 0 AND length(${t.photoAlt}) <= 200`),
+    check("shop_announcements_photo", sql`${t.photoUrl} IS NULL OR (${t.photoUrl} LIKE 'https://%' AND length(${t.photoUrl}) <= 500)`),
+  ],
+);
+
 /** The languages the owner turned on for the shop page (#258): the language the owner writes in and the ones offered. No row = French source, French and English. */
 export const shopLanguages = pgTable(
   "shop_languages",

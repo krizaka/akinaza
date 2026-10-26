@@ -19,7 +19,8 @@ export function StorefrontLive({ slug, enabled }: { slug: string; enabled: boole
     let unsubscribe: (() => void) | undefined;
     const visibility = () => {
       if (document.visibilityState === "visible") {
-        unsubscribe ??= live.subscribe("slots.changed", refresh);
+        // The slots (a booking) and the page itself (the owner pinned something): both ask the server to render again.
+        unsubscribe ??= ((offSlots, offPage) => () => { offSlots(); offPage(); })(live.subscribe("slots.changed", refresh), live.subscribe("shop.page.updated", refresh));
       } else {
         unsubscribe?.();
         unsubscribe = undefined;

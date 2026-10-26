@@ -2,7 +2,7 @@ import { eventStream } from "@krizaka/realtime/sse";
 import { minutesToMilliseconds, secondsToMilliseconds } from "date-fns";
 
 import { handle } from "@/lib/http";
-import { realtimeBus, slotsTopic } from "@/lib/realtime";
+import { pageTopic, realtimeBus, slotsTopic } from "@/lib/realtime";
 import { appSettings } from "@/lib/settings";
 import { loadPublicShop } from "@/lib/shop-page";
 
@@ -51,7 +51,9 @@ export function GET(req: Request, { params }: { params: Promise<{ slug: string }
         req.signal.addEventListener("abort", close, { once: true });
         try {
           // Never forward the bus payload: only this shop's invalidation crosses the public wire.
-          unsubscribe = bus.subscribe(slotsTopic(shopId), () => send({ event: "slots.changed", data: { type: "slots.changed" } }));
+          const offSlots = bus.subscribe(slotsTopic(shopId), () => send({ event: "slots.changed", data: { type: "slots.changed" } }));
+          const offPage = bus.subscribe(pageTopic(shopId), () => send({ event: "shop.page.updated", data: { type: "shop.page.updated" } }));
+          unsubscribe = () => { offSlots(); offPage(); };
           if (req.signal.aborted) close();
         } catch (error) {
           cleanup();

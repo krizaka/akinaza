@@ -70,6 +70,14 @@ export async function storeImage(settings: MediaSettings, shopId: string, bytes:
   return `https://${settings.cdn}/${key}`;
 }
 
+/** Sends a reel (an MP4 or a WebM already checked by its bytes) to the storage zone, content-hashed under `reels/`, and returns its CDN address. */
+export async function storeVideo(settings: MediaSettings, shopId: string, bytes: Uint8Array, ext: "mp4" | "webm", fetchImpl: typeof fetch = fetch): Promise<string> {
+  const key = uploadKey(shopId, bytes, ext, "reels");
+  const response = await fetchImpl(`https://${settings.endpoint}/${settings.zone}/${key}`, { method: "PUT", headers: { AccessKey: settings.apiKey, "content-type": ext === "mp4" ? "video/mp4" : "video/webm" }, body: bytes as unknown as BodyInit });
+  if (!response.ok) throw new Error(`media storage refused (${response.status})`);
+  return `https://${settings.cdn}/${key}`;
+}
+
 // @fixed: the largest file attached to a client's request (a photo redrawn by the phone, or a short PDF) — an abuse limit.
 export const MAX_REQUEST_FILE_BYTES = 5 * 1024 * 1024;
 

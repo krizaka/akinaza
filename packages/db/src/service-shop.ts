@@ -6,6 +6,7 @@ import { z } from "zod";
 import type { Db, Tx } from "./client";
 import { openField, sealField } from "./crypto";
 import { ShopError } from "./errors";
+import { type CommunityView, communityOf } from "./shop-community";
 import { shopPageConfigOf, type ShopPageConfig } from "./shop-page";
 import { type ShopLanguages, shopLanguagesOf, type StoredTranslation, translationsOf } from "./shop-translations";
 import { appointments, bookings, memberships, clients, dependants, daysOff, MediaRole, schedules, services, shopFormerSlugs, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
@@ -416,6 +417,8 @@ export interface PublicShop {
   translations: StoredTranslation[];
   /** The service to tag « Popular », from real bookings; null when none stands out. */
   popularServiceId: string | null;
+  /** The shop as a place (B45): the wall, the latest reel, the profile links, the bulletin board and the published reviews. */
+  community?: CommunityView;
 }
 
 /** The public page of a published shop, by its address; null when there is none (or it is not published). Projected here, once: a caller cannot leak a column. */
@@ -431,7 +434,7 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
   const full = await loadShop(db, row);
   const team = await activeStaff(db, row.id);
   const everyone = team.length > 1 ? await db.select().from(schedules).where(inArray(schedules.staffId, team.map((m) => m.id))) : full.windows;
-  const [media, pageConfig, languages, translations, counts] = await Promise.all([
+  const [media, pageConfig, languages, translations, counts, community] = await Promise.all([
     db.select().from(shopMedia).where(eq(shopMedia.shopId, row.id)).orderBy(asc(shopMedia.position)),
     shopPageConfigOf(db, row.id),
     shopLanguagesOf(db, row.id),
@@ -441,6 +444,7 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
         FROM bookings b JOIN appointments a ON a.id = b.appointment_id
        WHERE a.shop_id = ${row.id} AND b.status = 'booked' AND a.status <> 'cancelled'
        GROUP BY a.service_id`),
+    communityOf(db, row.id),
   ]);
   const publicMedia = (m: typeof shopMedia.$inferSelect): PublicMedia => ({ id: m.id, url: m.url, webmUrl: m.webmUrl, mp4Url: m.mp4Url, altFr: m.altFr, altEn: m.altEn, captionFr: m.captionFr, captionEn: m.captionEn, wide: m.wide });
   const bookingCounts = (counts.rows as { service_id: string; bookings: number }[]).map((r) => ({ serviceId: r.service_id, bookings: r.bookings }));
@@ -456,6 +460,7 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
     pageConfig,
     languages,
     translations,
+    community,
     popularServiceId: popularServiceId(full.services.map((s) => ({ serviceId: s.id, bookings: bookingCounts.find((c) => c.serviceId === s.id)?.bookings ?? 0 }))),
   };
 }

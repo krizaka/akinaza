@@ -253,6 +253,13 @@
       "when": 1795000004000,
       "tag": "0035_prices",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1795000005000,
+      "tag": "0036_shop_community",
+      "breakpoints": true
     }
   ]
 }
