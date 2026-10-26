@@ -27,3 +27,10 @@ export function formatDate(iso: string, locale: FormatLocale, timeZone: string):
 export function formatMonth(instant: Date | string, locale: FormatLocale, timeZone: string): string {
   return getDateTimeFormat(INTL_LOCALE[locale], { month: "long", year: "numeric", timeZone }).format(new Date(instant));
 }
+
+/** Dollars typed by the administrator (« 45 », « 45,50 ») as whole cents, or null when it is not an amount. */
+export function centsFromDollars(text: string): number | null {
+  const clean = text.trim().replace(",", ".");
+  if (!/^\d{1,7}(\.\d{1,2})?$/.test(clean)) return null;
+  return Math.round(Number(clean) * 100);
+}

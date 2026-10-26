@@ -1,5 +1,5 @@
 import { OrganizeError, ShopError, TranslationUnavailable } from "@akinaza/db";
-import { SettingsError } from "@krizaka/settings";
+import { PriceError, SettingsError } from "@krizaka/settings";
 import { z, ZodError } from "zod";
 
 /** An error the API answers with: a status, a stable code (the client translates it), a message for logs. */
@@ -53,7 +53,7 @@ async function dispatch(run: () => Promise<Response>, requestId: string): Promis
     if (error instanceof OrganizeError) {
       return Response.json({ error: error.message, code: error.code }, { status: error.status });
     }
-    if (error instanceof SettingsError) {
+    if (error instanceof SettingsError || error instanceof PriceError) {
       return Response.json({ error: error.message, code: error.code }, { status: error.status });
     }
     if (error instanceof ZodError) {

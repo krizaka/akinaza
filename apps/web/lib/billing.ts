@@ -60,6 +60,21 @@ export async function founderGate(query: Query, accountId: string, limit: number
   return (await founderSeats(query, limit)).open ? "open" : "full";
 }
 
+/**
+ * The price a subscription is sold at (akinaza#371): the catalogue's version offered at the checkout is kept on the account
+ * while it has no subscription yet; from the first subscription on nothing rewrites it (the webhook writes only the state),
+ * so a founder keeps the founder price whatever the administrator schedules later.
+ */
+export async function recordOfferedVersion(query: Query, accountId: string, versionId: string): Promise<void> {
+  await query("UPDATE accounts SET subscription_price_version = $2 WHERE id = $1 AND payment_subscription_id IS NULL", [accountId, versionId]);
+}
+
+/** The version of the catalogue an account's subscription was sold at, or null (no subscription, or sold before the catalogue). */
+export async function soldVersionOf(query: Query, accountId: string): Promise<string | null> {
+  const [r] = await query<{ version: string | null }>("SELECT subscription_price_version AS version FROM accounts WHERE id = $1 AND payment_subscription_id IS NOT NULL", [accountId]);
+  return r?.version ?? null;
+}
+
 /** Applies a verified payment event once (@krizaka/payments records its id first): a replay changes nothing. */
 export function applyPaymentEvent(query: Query, event: PaymentEvent): Promise<"applied" | "duplicate" | "ignored"> {
   return applyOnce(pgEventStore(query), event, {

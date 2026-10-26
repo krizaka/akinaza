@@ -47,7 +47,7 @@ describe("the account's other sections", () => {
 
   it.each([
     ["an active subscription with its page", { active: true, periodEnd: "2026-11-22T00:00:00.000Z", hasCustomer: true, offer: null }, ["Active", "Open the payment page"], ["Choose this offer"]],
-    ["the founder offer on sale", { active: false, periodEnd: null, hasCustomer: false, offer: { price: "$39.00" } }, ["No subscription", "Choose this offer", "$39.00 a month"], ["Open the payment page"]],
+    ["the founder offer on sale", { active: false, periodEnd: null, hasCustomer: false, offer: { price: "$45", cardRate: "0%" } }, ["No subscription", "Choose this offer", "$45 a month plus taxes, 0% on cards"], ["Open the payment page"]],
     ["nothing on sale", { active: false, periodEnd: null, hasCustomer: false, offer: null }, ["No plan is on sale yet."], ["Choose this offer", "Open the payment page"]],
   ] as const)("%s", (_name, subscription, shown, hidden) => {
     const page = text(around(<SubscriptionPanel subscription={subscription} />));

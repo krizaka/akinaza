@@ -1,6 +1,8 @@
+import { memoryPriceStore, priceCatalogue } from "@krizaka/settings";
 import { describe, expect, it } from "vitest";
 
-import { applyPaymentEvent, founderGate, founderSeats } from "./billing";
+import { applyPaymentEvent, founderGate, founderSeats, recordOfferedVersion, soldVersionOf } from "./billing";
+import { PRICES, STARTER } from "./pricing";
 
 /** A stand-in for the `accounts` table: the accounts that hold a subscription (a founder's), and the SQL it was asked. */
 function accounts(subscribed: string[]) {
@@ -55,5 +57,44 @@ describe("a founder keeps the founder price as long as the subscription runs (ak
     const { stripeAdapter } = await import("@krizaka/payments");
     const port = stripeAdapter({ secretKey: "x", webhookSecret: "y", plans: { founder: { lookupKey: "k", mode: "subscription" } } });
     expect(Object.keys(port).sort()).toEqual(["checkout", "createCustomer", "parseWebhook", "portal", "price"]);
+  });
+});
+
+describe("a subscription keeps the catalogue's version it was sold at (akinaza#371)", () => {
+  /** One account row: its subscription and the version kept with it, written by the SQL the module sends. */
+  function account() {
+    const row: { sub: string | null; version: string | null } = { sub: null, version: null };
+    const query = (async (text: string, values: unknown[] = []) => {
+      if (/^UPDATE accounts SET subscription_price_version/.test(text)) {
+        if (row.sub === null) row.version = String(values[1]);
+        return [];
+      }
+      if (/SELECT subscription_price_version/.test(text)) return row.sub ? [{ version: row.version }] : [];
+      if (/SET payment_subscription_id = \$2/.test(text)) row.sub = String(values[1]);
+      return [{ id: "a1" }];
+    }) as never;
+    return { query, row };
+  }
+
+  it("a founder keeps the founder price after the administrator schedules a new one", async () => {
+    const prices = priceCatalogue(PRICES, memoryPriceStore());
+    const now = new Date("2026-11-01T12:00:00Z");
+    const { query, row } = account();
+    const sold = await prices.entry(STARTER, now);
+    await recordOfferedVersion(query, "a1", sold.versionId);
+    await applyPaymentEvent(query, { id: "e1", type: "subscription_started", accountId: "a1", customerId: "cus_1", subscriptionId: "sub_1" });
+    // Later: the price changes, and the founder opens a checkout again — the version kept is not rewritten.
+    const next = await prices.schedule({ id: null, label: "admin" }, STARTER, { amountCents: 6000 }, now, now);
+    await recordOfferedVersion(query, "a1", next.versionId);
+    expect(row.version).toBe(sold.versionId);
+    const kept = await prices.version((await soldVersionOf(query, "a1"))!);
+    expect(kept?.amountCents).toBe(4500);
+    expect((await prices.entry(STARTER, now)).amountCents).toBe(6000);
+  });
+
+  it("no version is read for an account without a subscription", async () => {
+    const { query } = account();
+    await recordOfferedVersion(query, "a1", "seed:akinaza.starter");
+    expect(await soldVersionOf(query, "a1")).toBeNull();
   });
 });

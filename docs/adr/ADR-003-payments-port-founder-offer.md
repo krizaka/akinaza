@@ -33,3 +33,21 @@ Live mode is a change of keys and of the processor account, not of code.
   limit by the number in flight; the seat is counted when the processor confirms.
 - **Never a fee on transactions**: a plan is a flat monthly subscription; the catalogue has no field for a percentage, and the code never sends an
   application fee (`lib/pricing.test.ts`).
+
+## Addendum (2026-10-25, akinaza#371, ADR-009 krizaka/.github#253): prices from the catalogue
+- **Prices are a catalogue the administrator edits** (`@krizaka/settings`, `definePrices`): `apps/web/lib/pricing.ts` is only its **seed**.
+  `akinaza.starter` 45 $ a month plus taxes, setup included, `founder-limited` (limits `founderCap` 20, `cardFeeBps` 0, `directDebitBps` 50,
+  `directDebitCapCents` 1500); `akinaza.scale` (Scale B2B) 99 $ a month plus taxes, `preparing` — shown without a figure, its features are not
+  built (limits `cardFeeBps` 0, `directDebitBps` 25, `directDebitCapCents` 1000). They replace the founder 39 $ and regular 49 $ prices above.
+- **One catalogue on the server** (`lib/price-catalogue.ts`): the seed plus the versions in `price_versions` (migration `0035_prices`), each
+  audited in `settings_audit`. The administrator sees each entry, schedules a change from a date (never the past) and reads the history at
+  `/console/prices` (SettingsSection / SettingsRow until krizaka/krizaka-ui#713).
+- **The founder cap is the Starter entry's `founderCap`**; the setting `plans.founder.limit` is retired by `0035_prices` (an override, if any,
+  stays in the audit trail and is re-entered on the prices page) — one source only.
+- **The home, the subscription page and the checkout read the catalogue.** The checkout sells only when the processor's amount equals the
+  entry's (503 `PRICE_NOT_READY` otherwise: a scheduled change is set up at the processor with `pnpm run payments:setup` first), and keeps the
+  entry's `versionId` on the account (`accounts.subscription_price_version`) while it has no subscription; nothing rewrites it afterwards, so
+  a founder keeps the founder price. Lookup keys: `akinaza_starter_monthly_cad`, `akinaza_scale_monthly_cad`
+  (`PAYMENTS_PRICE_KEY_STARTER`, `PAYMENTS_PRICE_KEY_SCALE`).
+- **0 % on cards** in every entry; a pre-authorised debit or B2B transfer carries the entry's rate, capped per order (`directDebitFeeCents`).
+  The processor is still never asked for an application fee. No message types an amount (`findTypedPrices`).
