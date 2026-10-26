@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * changed there changes this page. The founder offer shows only while it is on sale, as on the home. What is not built says
  * « soon », with no figure. The action follows the home's: the demo shop and the sign-in while sign-up is closed.
  */
-export default async function Pricing({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Pricing({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale);
   const d = t.pricing;
@@ -50,13 +50,17 @@ export default async function Pricing({ params }: { params: Promise<{ locale: st
         {t.landing.actions[hero.primary.message]}
       </ButtonLink>
     );
+  const badgeOf = (plan: (typeof plans)[number]) => {
+    if (plan.id !== "founder") return undefined;
+    return plan.limit ? format(d.badgeFounderLimit, { limit: plan.limit }) : d.badgeFounder;
+  };
   const cards: PricingPlan[] = plans.map((plan, i) => ({
     id: plan.id,
     name: d.plans[plan.id],
     price: plan.price ?? d.preparing,
     unit: plan.price === null ? undefined : d.perMonth,
     featured: i === 0,
-    badge: plan.id === "founder" ? (plan.limit ? format(d.badgeFounderLimit, { limit: plan.limit }) : d.badgeFounder) : undefined,
+    badge: badgeOf(plan),
     features: [
       ...(plan.id === "founder" ? [d.founderNote] : []),
       ...plan.features.map((f) => (f.soon ? `${d.features[f.id]} (${d.soon})` : format(d.features[f.id], f.vars))),
