@@ -1,6 +1,6 @@
 "use client";
 
-import { HomeIcon, PlayIcon } from "@krizaka/icons";
+import { BillingIcon, HomeIcon, KnowledgeIcon } from "@krizaka/icons";
 import { AkinazaLogo } from "@krizaka/ui";
 import { languagesFor } from "@krizaka/ui/language-switch";
 import { NavBar } from "@krizaka/ui/nav-bar";
@@ -9,13 +9,13 @@ import Link from "next/link";
 
 import { BarSession, type BarWords } from "@/components/account/BarSession";
 import { type Locale, translator } from "@/lib/i18n";
-import { DEMO_SHOP } from "@/lib/landing";
 import { type PageId, pagePath, REPO_URL } from "@/lib/site";
 
-/** The product's pages, in the one « Product » menu (the products' bar standard): no Platforms (web only), no Docs yet. */
+/** The product's pages, in the one « Product » menu (the products' bar standard): no Platforms (web only); the owner's guide is the Docs. Three links at most (lib/chrome.test.ts); the demo shop is in the footer and the home's action. */
 const MENU = [
   { id: "home", icon: <HomeIcon />, path: (l: Locale) => pagePath(l, "home"), page: "home" },
-  { id: "shop", icon: <PlayIcon />, path: (l: Locale) => `/${l}/s/${DEMO_SHOP}`, page: null },
+  { id: "pricing", icon: <BillingIcon />, path: (l: Locale) => pagePath(l, "pricing"), page: "pricing" },
+  { id: "docs", icon: <KnowledgeIcon />, path: (l: Locale) => pagePath(l, "docs"), page: "docs" },
 ] as const;
 
 /**
@@ -29,7 +29,7 @@ export function SiteHeader({ locale, current, path, languages: offered, contentL
   const currentLanguage = contentLocale ?? locale;
   const home = pagePath(locale, "home");
   const words: BarWords = { signIn: t("chrome.signIn"), tryIt: t("chrome.tryIt"), openApp: t("chrome.openApp"), account: t("chrome.account"), settings: t("chrome.settings"), language: t("chrome.languageLabel"), theme: t("chrome.themeToggle"), signOut: t("chrome.signOut") };
-  const items = MENU.map((m) => ({ id: m.id, icon: m.icon, href: m.path(locale), active: m.page === current }));
+  const items = MENU.map((m) => ({ id: m.id, icon: m.icon, href: m.path(locale), active: m.page === current || (m.page === "docs" && current.startsWith("docs/")) }));
   return (
     <div className="pointer-events-none fixed inset-x-0 top-3 z-50 px-3">
       <NavBar.Root label={t("chrome.navLabel")} className="pointer-events-auto mx-auto max-w-(--kz-page-max,72rem)">

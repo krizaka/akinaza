@@ -22,6 +22,7 @@
     "sourceCode": "Source code",
     "contact": "Contact",
     "legal": "Privacy",
+    "terms": "Terms of use",
     "menu": {
       "label": "Menu",
       "home": {
@@ -31,6 +32,14 @@
       "shop": {
         "title": "The demo shop",
         "text": "A dog walker's real booking page, on dev."
+      },
+      "pricing": {
+        "title": "Pricing",
+        "text": "What Akinaza costs, plan by plan."
+      },
+      "docs": {
+        "title": "Guide",
+        "text": "Shop, booking, invoice, books, data: the owner's guide."
       }
     },
     "footerLabel": "Site footer",
@@ -66,6 +75,8 @@
       ],
       "cta": "Subscribe to the founder offer",
       "note": "You pay on Stripe's secure page, and you manage or cancel your subscription there. Already a member? Sign in first.",
+      "termsPrefix": "By subscribing you accept the ",
+      "termsLink": "terms of use",
       "talk": "Contact us first",
       "full": {
         "title": "The founder offer is complete",
@@ -102,6 +113,272 @@
     },
     "visualLabel": "dev.akinaza.com"
   },
+  "docs": {
+    "title": "Owner's guide",
+    "lead": "Five short pages, one job each: your shop, a booking, an invoice, your books, your data. They say only what Akinaza does today.",
+    "navLabel": "Owner's guide",
+    "sidebarLabel": "Pages of the guide",
+    "breadcrumbLabel": "Breadcrumb",
+    "tocLabel": "On this page",
+    "previous": "Previous",
+    "next": "Next",
+    "collectionsTitle": "The guide",
+    "popularTitle": "The five pages",
+    "help": "Help",
+    "home": "Guide",
+    "updated": "Written for the version in development; it changes with the product.",
+    "collection": {
+      "title": "Akinaza",
+      "description": "For the owner of a service shop: appointments, invoices and the tax figures of your period."
+    },
+    "pages": {
+      "shop": {
+        "nav": "Open your shop",
+        "title": "Open your shop and publish its page",
+        "lead": "What your clients see, and how they book. Nothing is public until you publish it.",
+        "sections": [
+          {
+            "id": "create",
+            "h": "Open the shop",
+            "p": [
+              "From your account, choose Open a shop. You give its name, its trade and its address; the trade sets the words your screens and your clients read."
+            ],
+            "items": []
+          },
+          {
+            "id": "page",
+            "h": "Write the page",
+            "p": [
+              "In Boutique, under Your page, you write the shop name, one line in French and in English, who you are, and the phone and e-mail shown to visitors. You choose which sections the page has and in which order.",
+              "Add your services with their duration and price, the hours when each person works and, if you travel, the areas you serve. Prices are shown before taxes."
+            ],
+            "items": []
+          },
+          {
+            "id": "publish",
+            "h": "Publish it",
+            "p": [
+              "Turn on Publish the page. Clients then find it at its address and can book. You can change the address: the old one still leads to your page."
+            ],
+            "items": []
+          },
+          {
+            "id": "languages",
+            "h": "Offer it in other languages",
+            "p": [
+              "In Boutique, Languages, you choose the languages of your page. The other texts are translated automatically from the one you write in, and you can edit each one. A text marked « translated automatically » has not been read by you yet."
+            ],
+            "items": []
+          },
+          {
+            "id": "team",
+            "h": "Add people",
+            "p": [
+              "In Boutique, Team, you invite the people who work in the shop. Each has their own hours, and a client can choose a person or leave it to anyone who is free."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "bookings": {
+        "nav": "Take a booking",
+        "title": "Take a booking and confirm it",
+        "lead": "The client's four steps, and what you see.",
+        "sections": [
+          {
+            "id": "steps",
+            "h": "The client's four steps",
+            "p": [
+              "Everything is in the address, so a booking can be shared or resumed."
+            ],
+            "items": [
+              "Choose a service on your page.",
+              "Choose a person, or anyone free, and an area if you travel.",
+              "Pick a time: only times that are really free are shown.",
+              "Confirm. The sign-in is at this last step, and the choices are kept."
+            ]
+          },
+          {
+            "id": "confirm",
+            "h": "The confirmation",
+            "p": [
+              "The client sees when, with whom, where and the price, can add it to a calendar and finds it in their bookings."
+            ],
+            "items": []
+          },
+          {
+            "id": "cancel",
+            "h": "The cancellation rule",
+            "p": [
+              "Your page tells clients how long before the visit they can cancel for free (« Free until N h before the visit »). Within that window they cancel themselves; after it, they are asked to call the shop."
+            ],
+            "items": []
+          },
+          {
+            "id": "today",
+            "h": "On your side",
+            "p": [
+              "The bookings are on Today, day by day."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "invoices": {
+        "nav": "Invoice",
+        "title": "Issue and correct an invoice",
+        "lead": "A bilingual invoice with the GST and QST exact to the cent.",
+        "sections": [
+          {
+            "id": "issue",
+            "h": "Issue an invoice",
+            "p": [
+              "In Invoices, choose New invoice. Pick the client, add a line for a service or write your own with its price and quantity, and check the total. The invoice is dated today and gets its number when you issue it; the due date follows your payment terms."
+            ],
+            "items": []
+          },
+          {
+            "id": "taxes",
+            "h": "The taxes",
+            "p": [
+              "The GST (5 %) and the QST (9.975 %) are worked out once per invoice, on the taxable subtotal, and rounded to the cent."
+            ],
+            "items": []
+          },
+          {
+            "id": "correct",
+            "h": "Correct an invoice",
+            "p": [
+              "An issued invoice never changes. Choose Correct: Akinaza issues the credit note of the invoice and the new invoice together, and links them. The client, the language and the terms stay the same."
+            ],
+            "items": []
+          },
+          {
+            "id": "link",
+            "h": "The client's link",
+            "p": [
+              "Send the invoice by e-mail. The client opens it from a private link, where they can print it or save it as a PDF. In Boutique, Invoice e-mails, you set the message and how long the link stays open; a link that is no longer valid leads to a page not found."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "books": {
+        "nav": "Your books",
+        "title": "Your books: the GST and QST of a period",
+        "lead": "Akinaza prepares the figures. You check them and you file.",
+        "sections": [
+          {
+            "id": "period",
+            "h": "Choose the period",
+            "p": [
+              "Your books show the lines of the GST/QST return for a period: sales (line 101), GST collected (103), input tax credits (106) and the net GST (109), then QST collected (203), input tax refunds (206) and the net QST (209). The result says whether you have something to remit, a refund to claim or nothing."
+            ],
+            "items": []
+          },
+          {
+            "id": "source",
+            "h": "Where each number comes from",
+            "p": [
+              "Every figure is worked out from your invoices, with credit notes taken off, and your expenses. Next to a figure you see how many documents are behind it, and you can open them."
+            ],
+            "items": []
+          },
+          {
+            "id": "file",
+            "h": "You file, Akinaza never does",
+            "p": [
+              "Akinaza never files a return and never sends anything to Revenu Québec or the Canada Revenue Agency. Check each figure, then file the return yourself. These figures are not tax or accounting advice."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "data": {
+        "nav": "Your data",
+        "title": "Your data",
+        "lead": "What Akinaza keeps about you, and your right to it.",
+        "sections": [
+          {
+            "id": "export",
+            "h": "Export",
+            "p": [
+              "In your account, Your data, Export gives you everything held about the account as one file."
+            ],
+            "items": []
+          },
+          {
+            "id": "delete",
+            "h": "Delete the account",
+            "p": [
+              "Delete my account erases your client files first. A shop's books are kept, because the tax law requires it (six years)."
+            ],
+            "items": []
+          },
+          {
+            "id": "clients",
+            "h": "Your clients' data",
+            "p": [
+              "A client's consent is recorded for each purpose and can be withdrawn. Erasing a client blanks their personal fields and keeps the invoices that the law requires. Data is kept in Canada, encrypted at rest, and visible to your shop only."
+            ],
+            "items": []
+          },
+          {
+            "id": "notice",
+            "h": "The privacy notice",
+            "p": [
+              "The privacy notice says who is in charge of the protection of personal information and how to exercise your rights."
+            ],
+            "items": []
+          }
+        ]
+      }
+    }
+  },
+  "pricing": {
+    "title": "Pricing",
+    "lead": "Monthly plans in CAD, plus taxes. You can cancel at any time.",
+    "plansLabel": "Plans",
+    "perMonth": "a month plus taxes",
+    "preparing": "in preparation",
+    "soon": "soon",
+    "badgeFounder": "Founder offer",
+    "badgeFounderLimit": "First {limit} businesses",
+    "founderNote": "Setup included: your services, your hours, your first invoices.",
+    "plans": {
+      "founder": "Founder",
+      "starter": "Starter",
+      "scale": "Scale B2B"
+    },
+    "features": {
+      "booking": "Your shop page and bookings, with the times you really have",
+      "invoices": "Bilingual invoices with GST and QST exact to the cent",
+      "books": "The books and the tax figures of each period, prepared for you to file",
+      "fees": "Fees on your clients' payments: {cardRate} on cards, {debitRate} an order by pre-authorised debit, capped at {debitCap}",
+      "payments": "Your clients' payments, through your own processor",
+      "contract": "The signed order contract",
+      "transfers": "B2B orders and their transfers"
+    },
+    "faqTitle": "Questions",
+    "faq": [
+      {
+        "q": "Are taxes included?",
+        "a": "No. Prices are before GST and QST, which the payment page adds."
+      },
+      {
+        "q": "Does Akinaza hold my clients' money?",
+        "a": "Never. Payments go through your own processor, straight to you; Akinaza only states its fee."
+      },
+      {
+        "q": "Does Akinaza file my tax return?",
+        "a": "No. It prepares the figures and you file them."
+      },
+      {
+        "q": "What if the price changes?",
+        "a": "Your subscription keeps the price it was sold at, and the terms of use say how a change is announced."
+      }
+    ]
+  },
   "privacy": {
     "title": "Privacy",
     "updated": "Updated {date}",
@@ -111,6 +388,66 @@
       "role": "Privacy Officer (« Responsable de la protection des renseignements personnels »)",
       "text": "The person in charge of the protection of personal information is published here. Role: {role}, Technologies Krizaka Inc., Montréal, Québec, Canada. Contact: contact@krizaka.com, to access, correct or erase your information, withdraw a consent or file a complaint; we answer within 30 days."
     }
+  },
+  "terms": {
+    "title": "Terms of use",
+    "version": "Version {version}",
+    "status": "A good-faith version written from the law, waiting for a lawyer's review before Akinaza opens to the public. If in doubt, the French version prevails.",
+    "privacyLink": "Read the privacy notice",
+    "sections": [
+      {
+        "h": "1. Who we are, who these terms are for",
+        "p": "Akinaza is a product of Technologies Krizaka Inc. (Montréal, Québec), the publisher. These terms govern the subscription to Akinaza by service businesses in Québec: salons, workshops, coaches, cleaning businesses, pet services, consultants. Restaurants, cafés, bars and bakeries are excluded, because the law requires them to use a certified sales recording module, which Akinaza's point of sale is not. This is a contract of adhesion (art. 1379 of the Civil Code of Québec, C.C.Q.): we show it to you before any payment, and an illegible, incomprehensible or abusive clause has no effect against you (art. 1435 to 1437 C.C.Q.)."
+      },
+      {
+        "h": "2. What Akinaza does",
+        "p": "Akinaza gives you a shop page and bookings, bilingual invoices with GST and QST exact to the cent, an accounting ledger that never erases, and a tax report prepared from that ledger. The service is in development: a feature marked « soon » is not sold and is not part of your subscription. A booking is a contract between your client and you; Akinaza is not a party to it, it provides the tool."
+      },
+      {
+        "h": "3. What Akinaza never does",
+        "p": "Akinaza prepares, you file. It never produces, signs or transmits a return to Revenu Québec or the Canada Revenue Agency: it is for you to check the prepared figures and to file them, under the Act respecting the Québec sales tax (CQLR, c. T-0.1) and the Excise Tax Act (R.S.C. 1985, c. E-15). The prepared figures are neither tax advice nor accounting advice. Akinaza is not a cash register: it does not replace the sales recording module that a restaurant or a bar must use."
+      },
+      {
+        "h": "4. The subscription, the price and the renewal",
+        "p": "The subscription is monthly and renews by itself at the end of each period until you cancel. The price is the one in the catalogue published on the pricing page when you subscribe, plus the applicable taxes; it is kept with your subscription, and a price change does not apply to a subscription already sold unless you are told in writing at least 30 days ahead and can cancel before it takes effect. No fee can be charged unless the contract states it (art. 12 of the Consumer Protection Act, CPA). A feature marked « soon » is not billed."
+      },
+      {
+        "h": "5. Payments",
+        "p": "The subscription is paid on the hosted payment page of our payment processor: Akinaza never sees or keeps your card number. The payments of your own clients, when they are offered, go through your own account with your own processor: the money goes straight from the client to you. Akinaza never holds funds, does not keep anything for you or for your client, does not act as a trustee and keeps nothing back. The processor's fees are those of your contract with it; Akinaza's fees on these payments are shown on the pricing page (no percentage on cards, a capped amount for pre-authorised debit)."
+      },
+      {
+        "h": "6. Cancellation and refunds",
+        "p": "You can cancel at any time, even while the service is under way (art. 2125 C.C.Q.), from the payment page opened from your subscription: the cancellation takes effect at the end of the paid period and nothing is charged after it. You pay for the service rendered until then (art. 2129 C.C.Q.); the current period is not refunded, except for a billing error, a double charge or where the law requires it. On our side, we can cancel only for a serious reason (non-payment, unlawful use, a threat to the security of the service) and never at an inopportune moment (art. 2126 C.C.Q.); we tell you in writing. You can export your data before or after cancelling."
+      },
+      {
+        "h": "7. Your personal information",
+        "p": "The information about your clients that you enter stays yours: you are responsible for it and Akinaza processes it on your behalf, in Canada, encrypted at rest, visible to your shop only. Consent is asked per purpose, never pre-ticked, and can be withdrawn; erasure blanks the personal fields and keeps the invoices tax law requires us to keep (six years). All of this falls under the Act respecting the protection of personal information in the private sector (CQLR, c. P-39.1), as amended by the Act to modernize legislative provisions as regards the protection of personal information (S.Q. 2021, c. 25). The details, the person in charge of the protection of personal information and how to exercise your rights are in the privacy notice."
+      },
+      {
+        "h": "8. Our liability",
+        "p": "We answer for our faults. We are not liable for a tax return you file, nor for the penalties, interest or delays that follow, nor for disputes between you and your clients, nor for an interruption of the service that is not our fault. Except for intentional or gross fault, our liability to you is limited to the amounts you paid for the subscription in the 12 months before the event, and we are not liable for indirect damage (lost profit, lost opportunity). None of these limits applies to intentional or gross fault, nor to bodily or moral injury (art. 1474 C.C.Q.), nor to what a consumer cannot waive (art. 10 CPA)."
+      },
+      {
+        "h": "9. If you act as a consumer",
+        "p": "Akinaza is for businesses. If you contract as an individual, for a use that is not your business, the Consumer Protection Act (CQLR, c. P-40.1) applies and nothing in these terms limits your rights: notably the rules for a contract made at a distance (art. 54.1 and following CPA, including the information before the contract, the copy of the contract and the cancellation provided by art. 54.8), the ban on an arbitration clause or one that takes away a class action (art. 11.1 CPA) and the ban on limiting our liability for our own acts (art. 10 CPA). You can also turn to the Office de la protection du consommateur."
+      },
+      {
+        "h": "10. Changes to these terms",
+        "p": "We may change these terms. We tell you in writing at least 30 days before a change that affects you takes effect, and you can cancel before then. The version and its date are shown at the top of this page; the version you accepted is kept with your subscription."
+      },
+      {
+        "h": "11. Language",
+        "p": "These terms are written in French, the reference version, as the Charter of the French Language requires (art. 55). The English version is a courtesy translation; if they differ, the French prevails."
+      },
+      {
+        "h": "12. Governing law and court",
+        "p": "These terms are governed by the laws of Québec and the federal laws of Canada that apply there. The courts of Québec have jurisdiction. A consumer can always sue in the district where they live, and cannot waive that in advance (art. 3149 C.C.Q.; art. 33 of the Code of Civil Procedure)."
+      },
+      {
+        "h": "13. Contact",
+        "p": "Through Krizaka's contact form (topic Akinaza), or at contact@krizaka.com for your personal information. We answer within 30 days."
+      }
+    ]
   },
   "console": {
     "meta": {
@@ -141,6 +478,8 @@
       "closed": "Akinaza is in development; accounts are created by our team.",
       "contact": "Contact us",
       "legalPrefix": "By signing in you accept the ",
+      "terms": "terms of use",
+      "legalAnd": " and the ",
       "privacy": "privacy notice",
       "forgot": "Forgot your password?"
     },
@@ -655,7 +994,8 @@
         "closedTitle": "Sign-up is closed.",
         "closed": "Akinaza is in development; accounts are created by our team.",
         "contact": "Contact us",
-        "back": "Back to sign-in"
+        "back": "Back to sign-in",
+        "legalPrefix": "By creating an account you accept the "
       },
       "profile": {
         "title": "Your profile",
@@ -787,7 +1127,9 @@
         "unavailable": "No plan is on sale yet.",
         "yourPrice": "Your price",
         "yourPriceHint": "The price your subscription was sold at: you keep it as long as you stay.",
-        "priceLine": "{price} a month plus taxes"
+        "priceLine": "{price} a month plus taxes",
+        "acceptPrefix": "By choosing this offer, you accept the ",
+        "acceptLink": "terms of use"
       },
       "data": {
         "title": "Your data",

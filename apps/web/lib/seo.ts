@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 
 import { getDictionary, type Locale } from "./i18n";
-import { KRIZAKA_URL, type PageId, pagePath, REPO_URL, SITE_URL } from "./site";
+import { DOC_IDS, type DocId, KRIZAKA_URL, type PageId, pagePath, REPO_URL, SITE_URL } from "./site";
 
 export const ORG_ID = `${KRIZAKA_URL}/#organization`;
 const ORG = { "@type": "Organization", "@id": ORG_ID, name: "Krizaka", url: KRIZAKA_URL };
@@ -17,9 +17,19 @@ export const CRAWLERS = [
 
 const url = (locale: Locale, page: PageId) => `${SITE_URL}${pagePath(locale, page)}`;
 
+function pageTitleOf(t: ReturnType<typeof getDictionary>, page: PageId): string {
+  if (page === "privacy") return t.privacy.title;
+  if (page === "terms") return t.terms.title;
+  if (page === "pricing") return t.pricing.title;
+  if (page === "home") return t.landing.title;
+  if (page === "docs") return t.docs.title;
+  return t.docs.pages[page.slice("docs/".length) as DocId].title;
+}
+
 export function pageMetadata(locale: Locale, page: PageId): Metadata {
   const t = getDictionary(locale);
-  const title = page === "home" ? `${t.meta.siteName} · ${t.landing.title}` : `${t.privacy.title} · ${t.meta.siteName}`;
+  const pageTitle = pageTitleOf(t, page);
+  const title = page === "home" ? `${t.meta.siteName} · ${t.landing.title}` : `${pageTitle} · ${t.meta.siteName}`;
   const description = t.meta.description;
   return {
     title: { absolute: title },
@@ -76,6 +86,10 @@ export function llmsText(): string {
 
 - [${en.meta.siteName}](${SITE_URL}/en) · [Akinaza (fr)](${SITE_URL}/fr): what it does and how
 - [${en.privacy.title}](${SITE_URL}/en/privacy) · [${getDictionary("fr").privacy.title} (fr)](${SITE_URL}/fr/privacy)
+- [${en.terms.title}](${SITE_URL}/en/terms) · [${getDictionary("fr").terms.title} (fr)](${SITE_URL}/fr/terms)
+- [${en.pricing.title}](${SITE_URL}/en/pricing) · [${getDictionary("fr").pricing.title} (fr)](${SITE_URL}/fr/pricing): the plans, read from the price catalogue
+- [${en.docs.title}](${SITE_URL}/en/docs) · [${getDictionary("fr").docs.title} (fr)](${SITE_URL}/fr/docs): the owner's guide, five pages
+${DOC_IDS.map((id) => `  - [${en.docs.pages[id].title}](${SITE_URL}/en/docs/${id})`).join("\n")}
 - [Contact Akinaza](${KRIZAKA_URL}/contact?topic=akinaza): the one way to reach the team
 
 ## Source

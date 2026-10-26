@@ -38,7 +38,16 @@ export function SiteFooter({ locale }: { locale: Locale }) {
           <Link href={`/${locale}/s/${DEMO_SHOP}`}>{t("chrome.menu.shop.title")}</Link>
         </SiteFooterLink>
         <SiteFooterLink asChild>
+          <Link href={pagePath(locale, "pricing")}>{t("chrome.menu.pricing.title")}</Link>
+        </SiteFooterLink>
+        <SiteFooterLink asChild>
+          <Link href={pagePath(locale, "docs")}>{t("chrome.menu.docs.title")}</Link>
+        </SiteFooterLink>
+        <SiteFooterLink asChild>
           <Link href={pagePath(locale, "privacy")}>{t("chrome.legal")}</Link>
+        </SiteFooterLink>
+        <SiteFooterLink asChild>
+          <Link href={pagePath(locale, "terms")}>{t("chrome.terms")}</Link>
         </SiteFooterLink>
         <SiteFooterLink href={REPO_URL}>{t("chrome.sourceCode")}</SiteFooterLink>
         <SiteFooterLink href={contactHref("dev-akinaza-footer")}>{t("chrome.contact")}</SiteFooterLink>

@@ -46,3 +46,16 @@ describe("shots-storefront (the captures of #261 on a seeded database)", () => {
     expect(source).toMatch(/DATABASE_DIRECT_URL: ""/); // migrations prefer the direct URL: the run must never migrate a real deployment
   });
 });
+
+describe("the owner's guide's captures (akinaza#382)", () => {
+  it("has one scene per page of the guide, taken from the demo shop's own views", async () => {
+    const { DOCS_SCENES } = await import("./shots-storefront.mjs");
+    expect(DOCS_SCENES).toEqual(["docs-shop", "docs-bookings", "docs-invoices", "docs-books", "docs-data"]);
+    const shop = { id: "shop-1", slug: "pattes-saint-henri" };
+    expect(SCENES["docs-books"].path("en", shop)).toBe("/en/app/shop-1/books");
+    expect(SCENES["docs-data"].path("fr", shop)).toBe("/fr/app/profile/data");
+    for (const s of DOCS_SCENES) expect(SCENES[s].expect).toMatchObject({ fr: expect.any(String), en: expect.any(String) });
+    const script = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).scripts["shots:docs"];
+    for (const s of DOCS_SCENES) expect(script).toContain(s);
+  });
+});

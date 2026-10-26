@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AccountAuthPage } from "@/components/account/AccountAuthPage";
 import { signupEnabled } from "@/lib/env";
 import { asLocale, getDictionary } from "@/lib/i18n";
-import { contactHref } from "@/lib/site";
+import { contactHref, pagePath } from "@/lib/site";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +26,19 @@ export default async function SignUpPage({ params }: { params: Promise<{ locale:
       locale={locale}
       title={t.account.signUp.title}
       description={open ? t.account.signUp.description : undefined}
+      legal={
+        <>
+          {t.account.signUp.legalPrefix}
+          <Link className="underline" href={pagePath(locale, "terms")}>
+            {t.signIn.terms}
+          </Link>
+          {t.signIn.legalAnd}
+          <Link className="underline" href={pagePath(locale, "privacy")}>
+            {t.signIn.privacy}
+          </Link>
+          .
+        </>
+      }
       footer={
         open ? (
           <Link className="font-semibold text-fg-accent" href={`/${locale}/sign-in`}>

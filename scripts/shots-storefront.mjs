@@ -23,7 +23,15 @@ export const SCENES = {
   salon: { path: (locale) => `/${locale}/s/cedre-ciseaux`, expect: { fr: "Salon Cèdre & Ciseaux", en: "Salon Cèdre & Ciseaux" }, signedIn: false },
   workshop: { path: (locale) => `/${locale}/s/encre-vive`, expect: { fr: "Encre Vive Studio", en: "Encre Vive Studio" }, signedIn: false },
   consulting: { path: (locale) => `/${locale}/s/ferland-conseil`, expect: { fr: "Ferland Conseil", en: "Ferland Conseil" }, signedIn: false },
+  // The owner's guide (akinaza#382, `pnpm run shots:docs`): its figures are captured from the demo shop, never drawn.
+  "docs-shop": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/page`, expect: { fr: "Votre page boutique", en: "Your shop page" }, signedIn: true },
+  "docs-bookings": { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Pattes de Saint-Henri", en: "Pattes de Saint-Henri" }, signedIn: false },
+  "docs-invoices": { path: (locale, shop) => `/${locale}/app/${shop.id}/invoices/new`, expect: { fr: "Nouvelle facture", en: "New invoice" }, signedIn: true },
+  "docs-books": { path: (locale, shop) => `/${locale}/app/${shop.id}/books`, expect: { fr: "Vos livres", en: "Your books" }, signedIn: true },
+  "docs-data": { path: (locale) => `/${locale}/app/profile/data`, expect: { fr: "Vos données", en: "Your data" }, signedIn: true },
 };
+/** The scenes of the owner's guide, one per page of it (`docs.pages.<id>`). */
+export const DOCS_SCENES = Object.keys(SCENES).filter((s) => s.startsWith("docs-"));
 export const THEMES = ["dark", "light"];
 export const DEVICES = { desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844 } };
 

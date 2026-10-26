@@ -22,6 +22,7 @@
     "sourceCode": "Code source",
     "contact": "Contact",
     "legal": "Confidentialité",
+    "terms": "Conditions d'utilisation",
     "menu": {
       "label": "Menu",
       "home": {
@@ -31,6 +32,14 @@
       "shop": {
         "title": "La boutique de démonstration",
         "text": "La vraie page de réservation d'un promeneur de chiens, sur dev."
+      },
+      "pricing": {
+        "title": "Tarifs",
+        "text": "Ce que coûte Akinaza, plan par plan."
+      },
+      "docs": {
+        "title": "Guide",
+        "text": "Boutique, réservation, facture, livres, données : le guide du propriétaire."
       }
     },
     "footerLabel": "Pied de page",
@@ -66,6 +75,8 @@
       ],
       "cta": "Profiter de l’offre fondateur",
       "note": "Vous payez sur la page sécurisée de Stripe, et vous y gérez ou annulez votre abonnement. Déjà membre ? Connectez-vous d’abord.",
+      "termsPrefix": "En vous abonnant, vous acceptez les ",
+      "termsLink": "conditions d'utilisation",
       "talk": "Écrivez-nous d’abord",
       "full": {
         "title": "L’offre fondateur est complète",
@@ -102,6 +113,272 @@
     },
     "visualLabel": "dev.akinaza.com"
   },
+  "docs": {
+    "title": "Guide du propriétaire",
+    "lead": "Cinq courtes pages, un travail chacune : votre boutique, une réservation, une facture, vos livres, vos données. Elles ne disent que ce qu'Akinaza fait aujourd'hui.",
+    "navLabel": "Guide du propriétaire",
+    "sidebarLabel": "Pages du guide",
+    "breadcrumbLabel": "Fil d'Ariane",
+    "tocLabel": "Sur cette page",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "collectionsTitle": "Le guide",
+    "popularTitle": "Les cinq pages",
+    "help": "Aide",
+    "home": "Guide",
+    "updated": "Écrit pour la version en développement ; il suit le produit.",
+    "collection": {
+      "title": "Akinaza",
+      "description": "Pour le propriétaire d'une boutique de services : rendez-vous, factures et chiffres de taxes de votre période."
+    },
+    "pages": {
+      "shop": {
+        "nav": "Ouvrir votre boutique",
+        "title": "Ouvrir votre boutique et publier sa page",
+        "lead": "Ce que voient vos clients, et comment ils réservent. Rien n'est public tant que vous ne publiez pas.",
+        "sections": [
+          {
+            "id": "create",
+            "h": "Ouvrir la boutique",
+            "p": [
+              "Depuis votre compte, choisissez Ouvrir une boutique. Vous donnez son nom, son métier et son adresse ; le métier règle les mots que lisent vos écrans et vos clients."
+            ],
+            "items": []
+          },
+          {
+            "id": "page",
+            "h": "Écrire la page",
+            "p": [
+              "Dans Boutique, sous Votre page, vous écrivez le nom de la boutique, une ligne en français et en anglais, qui vous êtes, et le téléphone et le courriel montrés aux visiteurs. Vous choisissez les sections de la page et leur ordre.",
+              "Ajoutez vos services avec leur durée et leur prix, les heures où chaque personne travaille et, si vous vous déplacez, les zones que vous servez. Les prix sont montrés avant les taxes."
+            ],
+            "items": []
+          },
+          {
+            "id": "publish",
+            "h": "La publier",
+            "p": [
+              "Activez Publier la page. Les clients la trouvent alors à son adresse et peuvent réserver. Vous pouvez changer l'adresse : l'ancienne mène toujours à votre page."
+            ],
+            "items": []
+          },
+          {
+            "id": "languages",
+            "h": "L'offrir dans d'autres langues",
+            "p": [
+              "Dans Boutique, Langues, vous choisissez les langues de votre page. Les autres textes sont traduits automatiquement à partir de celui que vous écrivez, et vous pouvez modifier chacun. Un texte marqué « traduit automatiquement » n'a pas encore été relu par vous."
+            ],
+            "items": []
+          },
+          {
+            "id": "team",
+            "h": "Ajouter des personnes",
+            "p": [
+              "Dans Boutique, Équipe, vous invitez les personnes qui travaillent dans la boutique. Chacune a ses propres heures, et un client peut choisir une personne ou laisser faire n'importe qui de libre."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "bookings": {
+        "nav": "Prendre une réservation",
+        "title": "Prendre une réservation et la confirmer",
+        "lead": "Les quatre étapes du client, et ce que vous voyez.",
+        "sections": [
+          {
+            "id": "steps",
+            "h": "Les quatre étapes du client",
+            "p": [
+              "Tout est dans l'adresse : une réservation peut être partagée ou reprise."
+            ],
+            "items": [
+              "Choisir un service sur votre page.",
+              "Choisir une personne, ou n'importe qui de libre, et une zone si vous vous déplacez.",
+              "Choisir une heure : seules les heures vraiment libres sont montrées.",
+              "Confirmer. La connexion se fait à cette dernière étape, et les choix sont gardés."
+            ]
+          },
+          {
+            "id": "confirm",
+            "h": "La confirmation",
+            "p": [
+              "Le client voit quand, avec qui, où et le prix, peut l'ajouter à un calendrier et la retrouve dans ses réservations."
+            ],
+            "items": []
+          },
+          {
+            "id": "cancel",
+            "h": "La règle d'annulation",
+            "p": [
+              "Votre page dit aux clients combien de temps avant la visite ils peuvent annuler sans frais (« Gratuit jusqu'à N h avant la visite »). Dans ce délai, ils annulent eux-mêmes ; après, ils sont invités à appeler la boutique."
+            ],
+            "items": []
+          },
+          {
+            "id": "today",
+            "h": "De votre côté",
+            "p": [
+              "Les réservations sont dans Aujourd'hui, jour par jour."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "invoices": {
+        "nav": "Facturer",
+        "title": "Émettre et corriger une facture",
+        "lead": "Une facture bilingue avec la TPS et la TVQ exactes au sou.",
+        "sections": [
+          {
+            "id": "issue",
+            "h": "Émettre une facture",
+            "p": [
+              "Dans Factures, choisissez Nouvelle facture. Choisissez le client, ajoutez une ligne pour un service ou écrivez la vôtre avec son prix et sa quantité, et vérifiez le total. La facture est datée d'aujourd'hui et reçoit son numéro à l'émission ; l'échéance suit vos conditions de paiement."
+            ],
+            "items": []
+          },
+          {
+            "id": "taxes",
+            "h": "Les taxes",
+            "p": [
+              "La TPS (5 %) et la TVQ (9,975 %) sont calculées une fois par facture, sur le sous-total taxable, et arrondies au sou."
+            ],
+            "items": []
+          },
+          {
+            "id": "correct",
+            "h": "Corriger une facture",
+            "p": [
+              "Une facture émise ne change jamais. Choisissez Corriger : Akinaza émet la note de crédit de la facture et la nouvelle facture ensemble, et les relie. Le client, la langue et les conditions restent les mêmes."
+            ],
+            "items": []
+          },
+          {
+            "id": "link",
+            "h": "Le lien du client",
+            "p": [
+              "Envoyez la facture par courriel. Le client l'ouvre depuis un lien privé, où il peut l'imprimer ou l'enregistrer en PDF. Dans Boutique, Courriels de facture, vous réglez le message et la durée pendant laquelle le lien reste ouvert ; un lien qui n'est plus valide mène à une page introuvable."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "books": {
+        "nav": "Vos livres",
+        "title": "Vos livres : la TPS et la TVQ d'une période",
+        "lead": "Akinaza prépare les chiffres. Vous les vérifiez et vous les déclarez.",
+        "sections": [
+          {
+            "id": "period",
+            "h": "Choisir la période",
+            "p": [
+              "Vos livres montrent les lignes de la déclaration TPS/TVQ pour une période : ventes (ligne 101), TPS perçue (103), crédits de taxe sur les intrants (106) et TPS nette (109), puis TVQ perçue (203), remboursements de taxe sur les intrants (206) et TVQ nette (209). Le résultat dit si vous avez un montant à verser, un remboursement à réclamer ou rien."
+            ],
+            "items": []
+          },
+          {
+            "id": "source",
+            "h": "D'où vient chaque chiffre",
+            "p": [
+              "Chaque chiffre est calculé à partir de vos factures, notes de crédit retirées, et de vos dépenses. À côté d'un chiffre, vous voyez combien de documents le soutiennent, et vous pouvez les ouvrir."
+            ],
+            "items": []
+          },
+          {
+            "id": "file",
+            "h": "Vous déclarez, Akinaza jamais",
+            "p": [
+              "Akinaza ne produit jamais de déclaration et n'envoie rien à Revenu Québec ni à l'Agence du revenu du Canada. Vérifiez chaque chiffre, puis produisez vous-même la déclaration. Ces chiffres ne sont ni un avis fiscal ni un avis comptable."
+            ],
+            "items": []
+          }
+        ]
+      },
+      "data": {
+        "nav": "Vos données",
+        "title": "Vos données",
+        "lead": "Ce qu'Akinaza garde sur vous, et votre droit d'y accéder.",
+        "sections": [
+          {
+            "id": "export",
+            "h": "Exporter",
+            "p": [
+              "Dans votre compte, Vos données, Exporter vous donne tout ce qui est détenu sur le compte en un seul fichier."
+            ],
+            "items": []
+          },
+          {
+            "id": "delete",
+            "h": "Supprimer le compte",
+            "p": [
+              "Supprimer mon compte efface d'abord vos fiches clients. Les livres d'une boutique sont conservés, parce que la loi fiscale l'exige (six ans)."
+            ],
+            "items": []
+          },
+          {
+            "id": "clients",
+            "h": "Les données de vos clients",
+            "p": [
+              "Le consentement d'un client est consigné pour chaque finalité et peut être retiré. Effacer un client vide ses champs personnels et garde les factures que la loi oblige à conserver. Les données sont gardées au Canada, chiffrées au repos, et visibles de votre boutique seulement."
+            ],
+            "items": []
+          },
+          {
+            "id": "notice",
+            "h": "L'avis de confidentialité",
+            "p": [
+              "L'avis de confidentialité dit qui est responsable de la protection des renseignements personnels et comment exercer vos droits."
+            ],
+            "items": []
+          }
+        ]
+      }
+    }
+  },
+  "pricing": {
+    "title": "Tarifs",
+    "lead": "Des plans mensuels en CAD, taxes en sus. Vous résiliez quand vous voulez.",
+    "plansLabel": "Plans",
+    "perMonth": "par mois, taxes en sus",
+    "preparing": "en préparation",
+    "soon": "bientôt",
+    "badgeFounder": "Offre fondatrice",
+    "badgeFounderLimit": "Les {limit} premières entreprises",
+    "founderNote": "Mise en route incluse : vos services, vos heures, vos premières factures.",
+    "plans": {
+      "founder": "Fondatrice",
+      "starter": "Starter",
+      "scale": "Scale B2B"
+    },
+    "features": {
+      "booking": "Votre page de boutique et vos réservations, avec les heures que vous avez vraiment",
+      "invoices": "Des factures bilingues avec la TPS et la TVQ exactes au sou",
+      "books": "Les livres et les chiffres de taxes de chaque période, préparés pour que vous les déclariez",
+      "fees": "Frais sur les paiements de vos clients : {cardRate} sur les cartes, {debitRate} par commande par débit préautorisé, plafonné à {debitCap}",
+      "payments": "Les paiements de vos clients, par votre propre processeur",
+      "contract": "Le contrat de commande signé",
+      "transfers": "Les commandes B2B et leurs virements"
+    },
+    "faqTitle": "Questions",
+    "faq": [
+      {
+        "q": "Les taxes sont-elles incluses ?",
+        "a": "Non. Les prix sont avant la TPS et la TVQ, que la page de paiement ajoute."
+      },
+      {
+        "q": "Akinaza garde-t-elle l'argent de mes clients ?",
+        "a": "Jamais. Les paiements passent par votre propre processeur, directement à vous ; Akinaza ne fait qu'indiquer ses frais."
+      },
+      {
+        "q": "Akinaza produit-elle ma déclaration ?",
+        "a": "Non. Elle prépare les chiffres et c'est vous qui les déclarez."
+      },
+      {
+        "q": "Et si le prix change ?",
+        "a": "Votre abonnement garde le prix auquel il a été vendu, et les conditions d'utilisation disent comment un changement est annoncé."
+      }
+    ]
+  },
   "privacy": {
     "title": "Confidentialité",
     "updated": "Mis à jour le {date}",
@@ -111,6 +388,66 @@
       "role": "Responsable de la protection des renseignements personnels",
       "text": "La personne responsable de la protection des renseignements personnels est publiée ici. Titre : {role}, Technologies Krizaka Inc., Montréal (Québec), Canada. Contact : contact@krizaka.com, pour accéder à vos renseignements, les corriger ou les effacer, retirer un consentement ou déposer une plainte ; nous répondons dans un délai de 30 jours."
     }
+  },
+  "terms": {
+    "title": "Conditions d'utilisation",
+    "version": "Version {version}",
+    "status": "Version rédigée de bonne foi à partir de la loi, en attente de la révision d'un avocat avant l'ouverture publique d'Akinaza. En cas de doute, le français fait foi.",
+    "privacyLink": "Lire l'avis de confidentialité",
+    "sections": [
+      {
+        "h": "1. Qui nous sommes, à qui elles s'adressent",
+        "p": "Akinaza est un produit de Technologies Krizaka Inc. (Montréal, Québec), l'éditeur. Ces conditions encadrent l'abonnement à Akinaza par les entreprises de services du Québec : salons, ateliers, coachs, entreprises de nettoyage, services aux animaux, consultants. Les restaurants, cafés, bars et boulangeries en sont exclus, parce que la loi y exige un module d'enregistrement des ventes certifié que le point de vente d'Akinaza n'est pas. C'est un contrat d'adhésion (art. 1379 du Code civil du Québec, C.c.Q.) : nous vous le montrons avant tout paiement, et une clause illisible, incompréhensible ou abusive n'a pas d'effet contre vous (art. 1435 à 1437 C.c.Q.)."
+      },
+      {
+        "h": "2. Ce qu'Akinaza fait",
+        "p": "Akinaza vous donne une page de boutique et des réservations, des factures bilingues avec la TPS et la TVQ exactes au sou, un registre comptable qui ne s'efface pas, et un rapport de taxes préparé à partir de ce registre. Le service est en développement : une fonction annoncée « bientôt » n'est pas vendue et ne fait pas partie de votre abonnement. Une réservation est un contrat entre votre client et vous ; Akinaza n'en est pas partie, elle vous fournit l'outil."
+      },
+      {
+        "h": "3. Ce qu'Akinaza ne fait jamais",
+        "p": "Akinaza prépare, vous produisez. Elle ne produit, ne signe et ne transmet aucune déclaration à Revenu Québec ou à l'Agence du revenu du Canada : c'est à vous de vérifier les chiffres préparés et de les déclarer, selon la Loi sur la taxe de vente du Québec (RLRQ, c. T-0.1) et la Loi sur la taxe d'accise (L.R.C. 1985, c. E-15). Les chiffres préparés ne sont ni un avis fiscal ni un avis comptable. Akinaza n'est pas un caissier : elle ne remplace pas le module d'enregistrement des ventes qu'un restaurant ou un bar doit utiliser."
+      },
+      {
+        "h": "4. L'abonnement, le prix et le renouvellement",
+        "p": "L'abonnement est mensuel et se renouvelle de lui-même à la fin de chaque période, jusqu'à ce que vous le résiliiez. Le prix est celui du catalogue publié sur la page des tarifs au moment où vous souscrivez, plus les taxes applicables ; il est conservé avec votre abonnement, et un changement de prix ne s'applique pas à un abonnement déjà vendu sans que vous en soyez avisé par écrit au moins 30 jours à l'avance et que vous puissiez résilier avant son entrée en vigueur. Aucun frais n'est exigible s'il n'est pas indiqué dans le contrat (art. 12 de la Loi sur la protection du consommateur, LPC). Une fonction annoncée « bientôt » n'est pas facturée."
+      },
+      {
+        "h": "5. Les paiements",
+        "p": "L'abonnement est payé sur la page de paiement hébergée de notre processeur de paiement : Akinaza ne voit et ne conserve jamais votre numéro de carte. Les paiements de vos propres clients, lorsqu'ils seront offerts, passent par votre propre compte chez votre propre processeur : l'argent va directement du client à vous. Akinaza ne détient jamais de fonds, ne garde rien pour vous ni pour votre client, n'agit pas comme fiduciaire et ne retient rien. Les frais du processeur sont ceux de votre contrat avec lui ; ceux d'Akinaza sur ces paiements sont indiqués sur la page des tarifs (aucun pourcentage sur les cartes, un montant plafonné pour le débit préautorisé)."
+      },
+      {
+        "h": "6. La résiliation et les remboursements",
+        "p": "Vous pouvez résilier en tout temps, même si le service est déjà en cours (art. 2125 C.c.Q.), depuis la page de paiement ouverte à partir de votre abonnement : la résiliation prend effet à la fin de la période payée et rien n'est prélevé ensuite. Vous payez le service rendu jusqu'à ce moment (art. 2129 C.c.Q.) ; la période en cours n'est pas remboursée, sauf en cas d'erreur de facturation, de double prélèvement ou lorsque la loi l'exige. De notre côté, nous ne pouvons résilier que pour un motif sérieux (non-paiement, usage illicite, atteinte à la sécurité du service) et jamais à contretemps (art. 2126 C.c.Q.) ; nous vous avisons par écrit. Vous pouvez exporter vos données avant ou après la résiliation."
+      },
+      {
+        "h": "7. Vos renseignements personnels",
+        "p": "Les renseignements de vos clients que vous saisissez restent les vôtres : vous en êtes responsable et Akinaza les traite pour votre compte, au Canada, chiffrés au repos, visibles de votre boutique seulement. Les consentements sont demandés par finalité, jamais pré-cochés, et peuvent être retirés ; l'effacement vide les champs personnels et garde les factures que la loi fiscale oblige à conserver (six ans). Le tout est encadré par la Loi sur la protection des renseignements personnels dans le secteur privé (RLRQ, c. P-39.1), telle que modifiée par la Loi modernisant des dispositions législatives en matière de protection des renseignements personnels (L.Q. 2021, c. 25). Le détail, le responsable de la protection des renseignements personnels et la façon d'exercer vos droits sont dans l'avis de confidentialité."
+      },
+      {
+        "h": "8. Notre responsabilité",
+        "p": "Nous répondons de nos fautes. Nous ne sommes pas responsables d'une déclaration de taxes que vous produisez, ni des pénalités, intérêts ou retards qui en découlent, ni des différends entre vous et vos clients, ni d'une interruption du service qui ne tient pas à notre faute. Sauf faute intentionnelle ou lourde, notre responsabilité envers vous est limitée aux sommes que vous avez payées pour l'abonnement pendant les 12 mois précédant le fait, et nous ne répondons pas des dommages indirects (perte de profit, perte d'occasion). Aucune de ces limites ne s'applique à une faute intentionnelle ou lourde, ni à un préjudice corporel ou moral (art. 1474 C.c.Q.), ni à ce qu'un consommateur ne peut pas écarter (art. 10 LPC)."
+      },
+      {
+        "h": "9. Si vous agissez comme consommateur",
+        "p": "Akinaza s'adresse aux entreprises. Si vous contractez comme particulier, pour un usage qui n'est pas celui de votre commerce, la Loi sur la protection du consommateur (RLRQ, c. P-40.1) s'applique et rien dans ces conditions ne limite vos droits : notamment les règles du contrat conclu à distance (art. 54.1 et suivants LPC, dont l'information avant le contrat, la copie du contrat et la résolution prévue à l'art. 54.8), l'interdiction de la clause d'arbitrage ou qui vous prive d'une action collective (art. 11.1 LPC) et l'interdiction de limiter notre responsabilité pour nos propres actes (art. 10 LPC). Vous pouvez aussi vous adresser à l'Office de la protection du consommateur."
+      },
+      {
+        "h": "10. Les changements de ces conditions",
+        "p": "Nous pouvons modifier ces conditions. Nous vous avisons par écrit au moins 30 jours avant l'entrée en vigueur d'un changement qui vous touche, et vous pouvez résilier avant. La version et la date sont affichées en haut de cette page ; la version que vous avez acceptée est conservée avec votre abonnement."
+      },
+      {
+        "h": "11. La langue",
+        "p": "Ces conditions sont rédigées en français, qui est la version de référence, comme le veut la Charte de la langue française (art. 55). La version anglaise est une traduction offerte par courtoisie ; en cas de différence, le français l'emporte."
+      },
+      {
+        "h": "12. Le droit applicable et le tribunal",
+        "p": "Ces conditions sont régies par les lois du Québec et les lois fédérales du Canada qui s'y appliquent. Les tribunaux du Québec sont compétents. Un consommateur peut toujours poursuivre dans le district où il est domicilié, et ne peut y renoncer d'avance (art. 3149 C.c.Q. ; art. 33 du Code de procédure civile)."
+      },
+      {
+        "h": "13. Nous joindre",
+        "p": "Par le formulaire de contact de Krizaka (sujet Akinaza), ou à contact@krizaka.com pour vos renseignements personnels. Nous répondons dans les 30 jours."
+      }
+    ]
   },
   "console": {
     "meta": {
@@ -141,6 +478,8 @@
       "closed": "Akinaza est en développement ; les comptes sont créés par notre équipe.",
       "contact": "Nous écrire",
       "legalPrefix": "En vous connectant, vous acceptez l'",
+      "terms": "conditions d'utilisation",
+      "legalAnd": " et l'",
       "privacy": "avis de confidentialité",
       "forgot": "Mot de passe oublié ?"
     },
@@ -655,7 +994,8 @@
         "closedTitle": "L'inscription est fermée.",
         "closed": "Akinaza est en développement ; les comptes sont créés par notre équipe.",
         "contact": "Nous joindre",
-        "back": "Retour à la connexion"
+        "back": "Retour à la connexion",
+        "legalPrefix": "En créant un compte, vous acceptez les "
       },
       "profile": {
         "title": "Votre profil",
@@ -787,7 +1127,9 @@
         "unavailable": "Aucun forfait n'est en vente pour l'instant.",
         "yourPrice": "Votre prix",
         "yourPriceHint": "Le prix auquel votre abonnement a été vendu : vous le gardez tant que vous restez.",
-        "priceLine": "{price} par mois plus taxes"
+        "priceLine": "{price} par mois plus taxes",
+        "acceptPrefix": "En choisissant cette offre, vous acceptez les ",
+        "acceptLink": "conditions d'utilisation"
       },
       "data": {
         "title": "Vos données",
