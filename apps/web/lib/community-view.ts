@@ -89,6 +89,38 @@ const monthOf = (at: Date, locale: Locale) => new Intl.DateTimeFormat(lang(local
 const dayOf = (day: string, locale: Locale) => new Intl.DateTimeFormat(lang(locale), { timeZone: "UTC", day: "numeric", month: "long" }).format(new Date(`${day}T12:00:00Z`));
 const numberOf = (n: number, locale: Locale) => new Intl.NumberFormat(lang(locale), { maximumFractionDigits: 1, minimumFractionDigits: 1 }).format(n);
 
+const tvPlaceOf = (wallOn: boolean) => (wallOn ? "wall" : "reels");
+const plural = <T extends string>(count: number, one: T, other: T): T => (count === 1 ? one : other);
+
+/** The score and the latest verified reviews, or null under the administrator's minimum. */
+function reviewsView({ community, locale, rules }: Readonly<{ community: CommunityView; locale: Locale; rules: ScoreRules }>): ReviewsView | null {
+  const t = translator(locale);
+  const result = reviewScore(community.reviews, rules);
+  if (!result.shown || result.score === null) return null;
+  const shownScore = numberOf(result.score, locale);
+  const d = result.distribution;
+  return {
+    score: result.score,
+    count: result.count,
+    distribution: [d[1], d[2], d[3], d[4], d[5]],
+    minCount: rules.minCount,
+    scoreText: t("console.shopPage.reviewScore", { score: shownScore }),
+    countText: t(plural(result.count, "console.shopPage.reviewCountOne", "console.shopPage.reviewCountOther"), { count: result.count }),
+    summaryText: t(plural(result.count, "console.shopPage.reviewSummaryOne", "console.shopPage.reviewSummaryOther"), { score: shownScore, count: result.count }),
+    cards: community.reviews.filter((r) => r.verified).slice(0, SHOWN.reviews).map((r) => ({
+      id: r.id,
+      author: `${r.firstName} ${r.lastInitial}.`,
+      date: monthOf(r.createdAt, locale),
+      dateTime: r.createdAt.toISOString().slice(0, 7),
+      service: r.serviceName,
+      rating: r.rating,
+      ratingText: t("console.shopPage.reviewRating", { rating: r.rating }),
+      text: r.body,
+      reply: r.reply || null,
+    })),
+  };
+}
+
 export function buildCommunity(input: { community: CommunityView; locale: Locale; today: string; rules: ScoreRules; enabled: Record<"wall" | "reels" | "announcements" | "reviews", boolean> }): CommunityPublicView {
   const { community, locale, today, rules, enabled } = input;
   const t = translator(locale);
@@ -122,36 +154,9 @@ export function buildCommunity(input: { community: CommunityView; locale: Locale
     ? currentAnnouncements(community.announcements, today).map((a) => ({ id: a.id, text: say(a.textFr, a.textEn), until: a.endsOn ? t("console.shopPage.flyerUntil", { day: dayOf(a.endsOn, locale) }) : null }))
     : [];
 
-  let reviews: ReviewsView | null = null;
-  if (enabled.reviews) {
-    const result = reviewScore(community.reviews, rules);
-    if (result.shown && result.score !== null) {
-      const shownScore = numberOf(result.score, locale);
-      const d = result.distribution;
-      reviews = {
-        score: result.score,
-        count: result.count,
-        distribution: [d[1], d[2], d[3], d[4], d[5]],
-        minCount: rules.minCount,
-        scoreText: t("console.shopPage.reviewScore", { score: shownScore }),
-        countText: t(result.count === 1 ? "console.shopPage.reviewCountOne" : "console.shopPage.reviewCountOther", { count: result.count }),
-        summaryText: t(result.count === 1 ? "console.shopPage.reviewSummaryOne" : "console.shopPage.reviewSummaryOther", { score: shownScore, count: result.count }),
-        cards: community.reviews.filter((r) => r.verified).slice(0, SHOWN.reviews).map((r) => ({
-          id: r.id,
-          author: `${r.firstName} ${r.lastInitial}.`,
-          date: monthOf(r.createdAt, locale),
-          dateTime: r.createdAt.toISOString().slice(0, 7),
-          service: r.serviceName,
-          rating: r.rating,
-          ratingText: t("console.shopPage.reviewRating", { rating: r.rating }),
-          text: r.body,
-          reply: r.reply || null,
-        })),
-      };
-    }
-  }
+  const reviews = enabled.reviews ? reviewsView({ community, locale, rules }) : null;
 
   const wall = enabled.wall && pieces.length > 0 ? { texture: community.wall.texture, pieces } : null;
-  const tvPlace = tv ? (enabled.wall ? "wall" : "reels") : null;
+  const tvPlace = tv ? tvPlaceOf(enabled.wall) : null;
   return { wall, tv, tvPlace, elsewhere, links, flyers, reviews, has: { wall: wall !== null || tvPlace === "wall", reels: tvPlace === "reels" || elsewhere.length > 0 || links.length > 0, announcements: flyers.length > 0, reviews: reviews !== null } };
 }

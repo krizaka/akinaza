@@ -147,6 +147,33 @@ function memberView(member: { id: string; name: string }, day: MemberDay | undef
   return { id: member.id, name: member.name, state: label, free: state.kind === MEMBER_STATE.free };
 }
 
+type StatusT = ReturnType<typeof translator>;
+
+/** « Open · closes at 7 pm » or « Closed · opens tomorrow at 9 am », from the open status; null when the shop has no hours. */
+function statusView(open: ReturnType<typeof openStatus> | null, t: StatusT, locale: Locale): StorefrontView["status"] {
+  if (!open) return null;
+  const time = (clock: string) => clockLabel(clock, locale);
+  if (open.open) return { open: true, label: t("console.shopPage.open"), detail: t("console.shopPage.closesAt", { time: time(open.closesAt!) }) };
+  const next = open.nextOpen;
+  let detail = "";
+  if (next?.today) detail = t("console.shopPage.opensAt", { time: time(next.time) });
+  else if (next?.tomorrow) detail = t("console.shopPage.opensTomorrow", { time: time(next.time) });
+  else if (next) detail = t("console.shopPage.opensOn", { day: dayName(next.day, locale, "long"), time: time(next.time) });
+  return { open: false, label: t("console.shopPage.closed"), detail };
+}
+
+/** The page's sections in the shop's order; one is visible when the owner shows it, its feature is on and it has something to show. */
+function sectionsView(sections: readonly { id: string; visible: boolean }[], prepared: Record<string, boolean>, community: CommunityPublicView | undefined): StorefrontView["sections"] {
+  const has: Record<string, boolean> = community?.has ?? {};
+  return sections.map((section) => ({ ...section, visible: section.visible && (prepared[section.id] ?? true) && (has[section.id] ?? true) })) as StorefrontView["sections"];
+}
+
+/** « Up to 5 dogs » (the shop's own unit) or « Up to 5 seats »; null for a single visit. */
+function capacityLabel(capacity: number, unit: string | null, t: StatusT): string | null {
+  if (capacity <= 1) return null;
+  return unit ? t("console.shopPage.capacityUnit", { count: capacity, unit }) : t("console.shopPage.capacitySeats", { count: capacity });
+}
+
 export function buildStorefront(input: { page: PublicShop; /** The shop as a place (B45): its wall, videos, board and reviews, already built. */ community?: CommunityPublicView; locale: Locale; /** The language of the shop's own texts when it is not the product's (a Spanish page); defaults to `locale`. */ contentLocale?: PageLocale; /** The proposed images of the shop's type, when the page shows them (#267): used where the owner has none. */ defaults?: ResolvedDefaults; /** The templates catalogue (the published one by default; tests hand one with several versions). */ catalogue?: readonly Template[]; now: Date; teamDay?: ReadonlyMap<string, MemberDay>; enabledUpcomingSections?: Partial<Record<"wall" | "reels" | "announcements" | "reviews" | "follow", boolean>> }): StorefrontView {
   const { page, locale, now } = input;
   const t = translator(locale);
@@ -172,15 +199,7 @@ export function buildStorefront(input: { page: PublicShop; /** The shop as a pla
   const windows = page.windows;
   const open = windows.length ? openStatus(windows, now, timezone, page.daysOff) : null;
   const time = (clock: string) => clockLabel(clock, locale);
-  let status: StorefrontView["status"] = null;
-  if (open) {
-    if (open.open) status = { open: true, label: t("console.shopPage.open"), detail: t("console.shopPage.closesAt", { time: time(open.closesAt!) }) };
-    else {
-      const next = open.nextOpen;
-      const detail = !next ? "" : next.today ? t("console.shopPage.opensAt", { time: time(next.time) }) : next.tomorrow ? t("console.shopPage.opensTomorrow", { time: time(next.time) }) : t("console.shopPage.opensOn", { day: dayName(next.day, locale, "long"), time: time(next.time) });
-      status = { open: false, label: t("console.shopPage.closed"), detail };
-    }
-  }
+  const status = statusView(open, t, locale);
 
   // The proposed images (#267): described in the page's language; used only where the owner has no media of their own.
   const proposed = input.defaults;
@@ -196,7 +215,7 @@ export function buildStorefront(input: { page: PublicShop; /** The shop as a pla
     description: own("service", s.id, "description", s.descriptionFr, s.descriptionEn),
     included: (own("service", s.id, "included", s.includedFr.join("\n"), s.includedEn.join("\n")) ?? "").split("\n").filter(Boolean),
     duration: t("console.shopPage.minutes", { minutes: s.durationMinutes }),
-    capacity: s.capacity > 1 ? (unit ? t("console.shopPage.capacityUnit", { count: s.capacity, unit }) : t("console.shopPage.capacitySeats", { count: s.capacity })) : null,
+    capacity: capacityLabel(s.capacity, unit, t),
     price: money(s.priceCents, locale),
     priceFrom: s.priceVaries ? t("console.shopPage.from") : null,
     tag: s.id === page.popularServiceId ? t("console.shopPage.popular") : null,
@@ -254,10 +273,7 @@ export function buildStorefront(input: { page: PublicShop; /** The shop as a pla
       : (proposed?.gallery ?? []).map((d) => ({ id: d.id, src: d.src, alt: describe(d.altKey), shape: "portrait" as const })),
     galleryIllustrative: page.media.gallery.length === 0 && (proposed?.gallery.length ?? 0) > 0,
     logoUrl: page.pageConfig?.logoUrl ?? null,
-    sections: pageSections.map((section) => ({
-      ...section,
-      visible: section.visible && (section.id in preparedSections ? preparedSections[section.id as keyof typeof preparedSections] : true) && (input.community?.has[section.id as keyof CommunityPublicView["has"]] ?? true),
-    })) as StorefrontView["sections"],
+    sections: sectionsView(pageSections, preparedSections, input.community),
     template: appliedTemplate && { id: appliedTemplate.id, version: appliedTemplate.version, layout: appliedTemplate.layout, hue: appliedTemplate.hue, variants: Object.fromEntries(appliedTemplate.sections.map((x) => [x.id, x.variant])) },
     preparedSections,
     community: input.community ?? null,
