@@ -142,6 +142,12 @@ export async function claimBriefDelivery(db: Db, shopId: string, week: string, i
   return claimed.length === 1 ? token : null;
 }
 
+/** Whether a link's token leads somewhere (the page of an unknown token answers 404): read only, it changes nothing. */
+export async function briefTokenKnown(db: Db, token: string): Promise<boolean> {
+  if (!/^[A-Za-z0-9_-]{43}$/.test(token)) return false;
+  return (await rows<{ ok: number }>(db, sql`SELECT 1 AS ok FROM brief_deliveries WHERE unsubscribe_sha256 = ${sha256(token)} LIMIT 1`)).length === 1;
+}
+
 /** Turns the shop's Monday e-mail off from the link of one of its mails; false for a token that leads nowhere. */
 export async function unsubscribeBrief(db: Db, token: string): Promise<boolean> {
   if (!/^[A-Za-z0-9_-]{43}$/.test(token)) return false;

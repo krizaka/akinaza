@@ -2,7 +2,7 @@ import { addLocalDays, groupSlotsByDay, invoiceTotals, localDay } from "@akinaza
 import type { BookingDetail, PublicShop, StaffSlot } from "@akinaza/db";
 
 import { type Locale, translator } from "@/lib/i18n";
-import { type Choice, journeyBase, serviceHref, timesHref } from "@/lib/journey-paths";
+import { type Choice, confirmHref, journeyBase, serviceHref, timesHref } from "@/lib/journey-paths";
 import { groupByPart, hourIn } from "@/lib/slot-weeks";
 import { clockLabel } from "@/lib/storefront";
 
@@ -100,7 +100,6 @@ export function timesStep(input: { page: PublicShop; locale: Locale; now: Date; 
   const person = page.team.find((m) => m.id === staffId) ?? null;
   const today = localDay(now, timezone);
   const tomorrow = addLocalDays(today, 1);
-  const book = `${journeyBase(locale, slugOf(page))}/book`;
   return {
     title: locale === "fr" ? service.nameFr : service.nameEn,
     who: person ? t("console.journey.with", { name: person.name }) : page.team.length > 1 ? t("console.journey.anyone") : null,
@@ -109,7 +108,7 @@ export function timesStep(input: { page: PublicShop; locale: Locale; now: Date; 
       const slot = (s: { startsAt: Date }) => ({
         id: s.startsAt.toISOString(),
         label: clock(s.startsAt, timezone, locale),
-        href: `${book}?${[`service=${service.id}`, person ? `staff=${person.id}` : "", zoneId ? `zone=${zoneId}` : "", `start=${encodeURIComponent(s.startsAt.toISOString())}`].filter(Boolean).join("&")}`,
+        href: confirmHref(locale, slugOf(page), service.id, { staffId: person?.id, zoneId }, s.startsAt.toISOString()),
       });
       return {
         id: d.day,

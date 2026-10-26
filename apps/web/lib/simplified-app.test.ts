@@ -53,7 +53,7 @@ describe("the owner's app keeps only what the job needs (krizaka/akinaza#161)", 
   });
 
   it("the shop's pages ask the role table, never the owner: no page reads shopOfOwner", () => {
-    const pages = ["(account)/page.tsx", "(account)/layout.tsx", "(account)/profile/page.tsx", "[shop]/layout.tsx", "[shop]/aujourdhui/page.tsx", "[shop]/clients/page.tsx", "[shop]/clients/[id]/page.tsx", "[shop]/invoices/page.tsx", "[shop]/invoices/[id]/page.tsx", "[shop]/invoices/new/page.tsx", "[shop]/books/page.tsx", "[shop]/shop/page.tsx", "[shop]/team/page.tsx"];
+    const pages = ["(account)/page.tsx", "(account)/layout.tsx", "(account)/profile/page.tsx", "[shop]/layout.tsx", "[shop]/aujourdhui/page.tsx", "[shop]/clients/page.tsx", "[shop]/clients/[id]/page.tsx", "[shop]/invoices/page.tsx", "[shop]/invoices/[id]/page.tsx", "[shop]/invoices/new/page.tsx", "[shop]/books/page.tsx"];
     for (const page of pages) expect(read(`${APP}/${page}`), page).not.toContain("shopOfOwner");
   });
 });

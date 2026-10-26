@@ -12,5 +12,10 @@ const query = (c: Choice) => {
   return q ? `?${q}` : "";
 };
 export const serviceHref = (locale: Locale, slug: string, serviceId: string, c: Choice = {}) => `${journeyBase(locale, slug)}/service/${serviceId}${query(c)}`;
-export const timesHref = (locale: Locale, slug: string, serviceId: string, c: Choice = {}) => `${journeyBase(locale, slug)}/service/${serviceId}/creneau${query(c)}`;
+export const timesHref = (locale: Locale, slug: string, serviceId: string, c: Choice = {}) => `${journeyBase(locale, slug)}/service/${serviceId}/slots${query(c)}`;
+/** The last step: the sign-in is here, and the person, area and time travel in the address. */
+export const confirmHref = (locale: Locale, slug: string, serviceId: string, c: Choice = {}, start?: string) => {
+  const q = [c.staffId ? `staff=${c.staffId}` : "", c.zoneId ? `zone=${c.zoneId}` : "", start ? `start=${encodeURIComponent(start)}` : ""].filter(Boolean).join("&");
+  return `${journeyBase(locale, slug)}/service/${serviceId}/confirm${q ? `?${q}` : ""}`;
+};
 
