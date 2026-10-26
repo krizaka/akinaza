@@ -1,12 +1,13 @@
 "use client";
 
+import type { WallTexture } from "@akinaza/core";
 import { EmbedFacade } from "@krizaka/ui/embed-facade";
 import { RetroTv } from "@krizaka/ui/retro-tv";
-import { Wall, type WallItem } from "@krizaka/ui/wall";
 import type { VideoPlayerLabels } from "@krizaka/ui/video-player";
+import { Wall, type WallItem } from "@krizaka/ui/wall";
+import Image from "next/image";
 
 import type { VideoView, WallPiece } from "@/lib/community-view";
-import type { WallTexture } from "@akinaza/core";
 
 /** The words of the video player, plain strings from the catalogue (the player wants functions, built here: a server component cannot hand them down). */
 export interface PlayerWords {
@@ -61,7 +62,7 @@ const itemOf = (piece: WallPiece, name: string): WallItem => {
       kind: "polaroid",
       attachment: piece.attachment,
       caption: piece.caption || undefined,
-      img: <img src={piece.imageUrl ?? ""} alt={piece.alt} width={960} height={720} loading="lazy" decoding="async" referrerPolicy="no-referrer" />,
+      img: <Image src={piece.imageUrl ?? ""} alt={piece.alt} width={960} height={720} unoptimized loading="lazy" referrerPolicy="no-referrer" className="h-auto w-full" />,
     };
   }
   if (piece.kind === "note") return { ...place, kind: "note", text: piece.text, signature: piece.signature || undefined, hold: piece.attachment, ink: "blue" };
