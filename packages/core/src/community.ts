@@ -242,26 +242,38 @@ const floatOf = (b: Uint8Array, from: number, to: number) => {
   return to - from === 4 ? view.getFloat32(0) : view.getFloat64(0);
 };
 
+interface EbmlElement { id: number; body: number; end: number; unknown: boolean }
+
+/** The element at `at`: its id, where its body starts and ends (`to` when its size is unknown); null when the header is cut. */
+function ebmlElement(b: Uint8Array, at: number, to: number): EbmlElement | null {
+  const id = readVint(b, at, true);
+  const size = id ? readVint(b, at + id.length, false) : null;
+  if (!id || !size) return null;
+  const body = at + id.length + size.length;
+  return { id: id.value, body, end: size.unknown ? to : Math.min(to, body + size.value), unknown: size.unknown };
+}
+
+/** The two leaves that state a WebM's length: the time scale, and the duration in those units. */
+function readLeaf(b: Uint8Array, el: EbmlElement, found: { scale: number; duration: number | null }): void {
+  if (el.id === TIMECODE_SCALE) found.scale = uintOf(b, el.body, el.end);
+  if (el.id === DURATION && (el.end - el.body === 4 || el.end - el.body === 8)) found.duration = floatOf(b, el.body, el.end);
+}
+
 function webmSeconds(b: Uint8Array): number | null {
-  let scale = 1_000_000;
-  let duration: number | null = null;
+  const found: { scale: number; duration: number | null } = { scale: 1_000_000, duration: null };
   const walk = (from: number, to: number, depth: number) => {
     let at = from;
-    while (at < to && duration === null && depth < 3) {
-      const id = readVint(b, at, true);
-      const size = id ? readVint(b, at + id.length, false) : null;
-      if (!id || !size) return;
-      const body = at + id.length + size.length;
-      const end = size.unknown ? to : Math.min(to, body + size.value);
-      if (id.value === SEGMENT || id.value === INFO) walk(body, end, depth + 1);
-      if (id.value === TIMECODE_SCALE) scale = uintOf(b, body, end);
-      if (id.value === DURATION && (end - body === 4 || end - body === 8)) duration = floatOf(b, body, end);
-      if (size.unknown) return;
-      at = end;
+    while (at < to && found.duration === null && depth < 3) {
+      const el = ebmlElement(b, at, to);
+      if (!el) return;
+      if (el.id === SEGMENT || el.id === INFO) walk(el.body, el.end, depth + 1);
+      else readLeaf(b, el, found);
+      if (el.unknown) return;
+      at = el.end;
     }
   };
   walk(0, Math.min(b.length, 1_000_000), 0);
-  return duration === null ? null : (duration * scale) / 1e9;
+  return found.duration === null ? null : (found.duration * found.scale) / 1e9;
 }
 
 /** An MP4 or a WebM by its first bytes, with the duration its header states; anything else (an image, a script, a truncated file) is null. */
