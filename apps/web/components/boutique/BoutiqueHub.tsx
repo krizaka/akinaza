@@ -27,7 +27,7 @@ export interface BoutiqueHubProps {
  * Boutique (K4): the shop's configuration on `SettingsLayout` — the shop's identity (name, status, public address) on top, the
  * sections beside the page (grouped; one menu on a phone). Each section is its own address; the page holds one section, one save.
  */
-export function BoutiqueHub({ locale, shopId, allowed, tabs, preview, current, shop, children }: BoutiqueHubProps) {
+export function BoutiqueHub({ locale, shopId, allowed, tabs, preview, current, shop, children }: Readonly<BoutiqueHubProps>) {
   const { say } = useSay();
   const routes = shopRoutes(locale, shopId);
   const groups = boutiqueGroups({

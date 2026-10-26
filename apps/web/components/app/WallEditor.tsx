@@ -21,7 +21,7 @@ export interface WallEditorProps {
   limits: { wallItems: number; drawn: number };
 }
 
-function Labeled({ label, hint, children }: { label: string; hint?: string; children: (id: string) => React.ReactNode }) {
+function Labeled({ label, hint, children }: Readonly<{ label: string; hint?: string; children: (id: string) => React.ReactNode }>) {
   const id = useId();
   return (
     <Field.Root>
@@ -43,7 +43,7 @@ const withoutId = (piece: Piece): WallItem => {
  * arrow keys (Shift for larger steps), tilted with [ and ], layered with Page Up and Page Down - or with the sliders. No drag is needed, and
  * nothing leaves the bounds the server enforces. One save sends the whole wall.
  */
-export function WallEditor({ wall, limits }: WallEditorProps) {
+export function WallEditor({ wall, limits }: Readonly<WallEditorProps>) {
   const { say } = useSay();
   const call = useCall();
   const [texture, setTexture] = useState<WallTexture>(wall.texture);
@@ -60,7 +60,8 @@ export function WallEditor({ wall, limits }: WallEditorProps) {
 
   const change = (id: string, next: Partial<Piece> | ((item: Piece) => Piece)) => {
     setSaved(false);
-    setItems((all) => all.map((item) => (item.id === id ? (typeof next === "function" ? next(item) : ({ ...item, ...next } as Piece)) : item)));
+    const apply = (item: Piece): Piece => (typeof next === "function" ? next(item) : ({ ...item, ...next } as Piece));
+    setItems((all) => all.map((item) => (item.id === id ? apply(item) : item)));
   };
   const move = (item: Piece, key: string, shift: boolean): boolean => {
     const moved = nudge(item, key, shift);
@@ -126,11 +127,10 @@ export function WallEditor({ wall, limits }: WallEditorProps) {
         <Button variant="secondary" size="md" disabled={full || items.some((i) => i.kind === "sign")} onClick={addSign}>{say("studio.wall.addSign")}</Button>
       </div>
       {items.length === 0 ? <p className="m-0 text-sm text-fg-secondary">{say("studio.wall.empty")}</p> : null}
-      <div
-        role="group"
+      <fieldset
         aria-label={say("studio.wall.stage")}
         data-texture={texture}
-        className="relative aspect-video w-full overflow-hidden rounded-lg border border-border-default bg-surface-2"
+        className="relative m-0 aspect-video w-full min-w-0 overflow-hidden rounded-lg border border-border-default bg-surface-2 p-0"
       >
         {drawnOrder.map((item) => (
           <button
@@ -148,7 +148,7 @@ export function WallEditor({ wall, limits }: WallEditorProps) {
             {item.kind === "polaroid" && item.imageUrl ? <Image src={item.imageUrl} alt="" width={160} height={120} unoptimized className="aspect-[4/3] w-full object-cover" /> : <span className="p-1">{kindName(item)}</span>}
           </button>
         ))}
-      </div>
+      </fieldset>
       <p className="m-0 text-xs text-fg-secondary" id="wall-keys">{say("studio.wall.keys")}</p>
       <p className="sr-only" role="status" aria-live="polite">{announce}</p>
       {items.length > limits.drawn ? <Alert tone="info">{say("studio.wall.drawn", { drawn: limits.drawn })}</Alert> : null}

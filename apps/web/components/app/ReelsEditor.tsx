@@ -48,7 +48,7 @@ const linksForm = createKrizakaForm({
 });
 
 /** Boutique › Vidéo et profils (#312): the latest video of the page (an upload, or a link behind a facade) and the shop's plain profile links. */
-export function ReelsEditor({ reels, links, limits }: ReelsEditorProps) {
+export function ReelsEditor({ reels, links, limits }: Readonly<ReelsEditorProps>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [done, setDone] = useState<"reel" | "links" | null>(null);

@@ -95,7 +95,7 @@ export function reviewScore(reviews: readonly ScoredReview[], rules: ScoreRules)
 export function currentAnnouncements<T extends { endsOn: string | null; createdAt: Date }>(list: readonly T[], today: string): T[] {
   return list
     .filter((a) => a.endsOn === null || a.endsOn >= today)
-    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0))
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, ANNOUNCEMENT_LIMITS.current);
 }
 
@@ -167,33 +167,42 @@ export interface DetectedVideo {
 
 const be32 = (b: Uint8Array, at: number) => ((b[at]! * 2 ** 24) + (b[at + 1]! << 16) + (b[at + 2]! << 8) + b[at + 3]!);
 const be64 = (b: Uint8Array, at: number) => be32(b, at) * 2 ** 32 + be32(b, at + 4);
-const tag = (b: Uint8Array, at: number) => String.fromCharCode(b[at]!, b[at + 1]!, b[at + 2]!, b[at + 3]!);
+const tag = (b: Uint8Array, at: number) => String.fromCodePoint(b[at]!, b[at + 1]!, b[at + 2]!, b[at + 3]!);
+
+/** One MP4 box at `at`: its type, where its body starts and where it ends; null when it does not fit in `to`. */
+function mp4Box(b: Uint8Array, at: number, to: number): { type: string; body: number; end: number } | null {
+  let size = be32(b, at);
+  let header = 8;
+  if (size === 1) {
+    size = be64(b, at + 8);
+    header = 16;
+  } else if (size === 0) size = to - at;
+  if (size < header || at + size > to) return null;
+  return { type: tag(b, at + 4), body: at + header, end: at + size };
+}
+
+/** The duration stated by a `mvhd` box whose body starts at `body`. */
+function mvhdSeconds(b: Uint8Array, body: number): number | null {
+  const long = b[body] === 1;
+  const timescale = long ? be32(b, body + 20) : be32(b, body + 12);
+  const duration = long ? be64(b, body + 24) : be32(b, body + 16);
+  return timescale > 0 ? duration / timescale : null;
+}
 
 function mp4Seconds(b: Uint8Array): number | null {
-  const walk = (from: number, to: number, path: string[]): number | null => {
+  const walk = (from: number, to: number, inMoov: boolean): number | null => {
     let at = from;
     while (at + 8 <= to) {
-      let size = be32(b, at);
-      const type = tag(b, at + 4);
-      let header = 8;
-      if (size === 1) { size = be64(b, at + 8); header = 16; } else if (size === 0) size = to - at;
-      if (size < header || at + size > to) return null;
-      if (path.length === 0 && type === "mvhd") {
-        const body = at + header;
-        const version = b[body]!;
-        const timescale = version === 1 ? be32(b, body + 20) : be32(b, body + 12);
-        const duration = version === 1 ? be64(b, body + 24) : be32(b, body + 16);
-        return timescale > 0 ? duration / timescale : null;
-      }
-      if (path[0] === type) {
-        const inner = walk(at + header, at + size, path.slice(1));
-        if (inner !== null) return inner;
-      }
-      at += size;
+      const box = mp4Box(b, at, to);
+      if (!box) return null;
+      if (inMoov && box.type === "mvhd") return mvhdSeconds(b, box.body);
+      const inner = !inMoov && box.type === "moov" ? walk(box.body, box.end, true) : null;
+      if (inner !== null) return inner;
+      at = box.end;
     }
     return null;
   };
-  return walk(0, b.length, ["moov"]);
+  return walk(0, b.length, false);
 }
 
 function readVint(b: Uint8Array, at: number, keepMarker: boolean): { value: number; length: number; unknown: boolean } | null {
@@ -217,6 +226,17 @@ const INFO = 0x1549a966;
 const TIMECODE_SCALE = 0x2ad7b1;
 const DURATION = 0x4489;
 
+const uintOf = (b: Uint8Array, from: number, to: number) => {
+  let v = 0;
+  for (let i = from; i < to; i++) v = v * 256 + b[i]!;
+  return v;
+};
+
+const floatOf = (b: Uint8Array, from: number, to: number) => {
+  const view = new DataView(b.buffer, b.byteOffset + from, to - from);
+  return to - from === 4 ? view.getFloat32(0) : view.getFloat64(0);
+};
+
 function webmSeconds(b: Uint8Array): number | null {
   let scale = 1_000_000;
   let duration: number | null = null;
@@ -224,17 +244,13 @@ function webmSeconds(b: Uint8Array): number | null {
     let at = from;
     while (at < to && duration === null && depth < 3) {
       const id = readVint(b, at, true);
-      if (!id) return;
-      const size = readVint(b, at + id.length, false);
-      if (!size) return;
+      const size = id ? readVint(b, at + id.length, false) : null;
+      if (!id || !size) return;
       const body = at + id.length + size.length;
       const end = size.unknown ? to : Math.min(to, body + size.value);
       if (id.value === SEGMENT || id.value === INFO) walk(body, end, depth + 1);
-      else if (id.value === TIMECODE_SCALE) { let v = 0; for (let i = body; i < end; i++) v = v * 256 + b[i]!; scale = v; }
-      else if (id.value === DURATION && (end - body === 4 || end - body === 8)) {
-        const view = new DataView(b.buffer, b.byteOffset + body, end - body);
-        duration = end - body === 4 ? view.getFloat32(0) : view.getFloat64(0);
-      }
+      if (id.value === TIMECODE_SCALE) scale = uintOf(b, body, end);
+      if (id.value === DURATION && (end - body === 4 || end - body === 8)) duration = floatOf(b, body, end);
       if (size.unknown) return;
       at = end;
     }

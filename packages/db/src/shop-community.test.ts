@@ -144,7 +144,7 @@ describe("the reviews (#313)", () => {
     const publicList = (await communityOf(t.db, s.shopId)).reviews;
     expect(publicList.map((r) => r.firstName)).toEqual(["Camille"]);
     expect(JSON.stringify(publicList)).not.toContain(s.camille.clientId);
-    expect((await reviewsOf(t.db, s.shopId)).length).toBe(3);
+    expect(await reviewsOf(t.db, s.shopId)).toHaveLength(3);
   });
 
   it("has one review per client and refuses a rating outside 1 to 5", async () => {
@@ -192,8 +192,8 @@ describe("the demo shops as places (B45)", () => {
     expect(first.wall.items.filter((i) => i.kind === "polaroid").every((i) => i.kind === "polaroid" && i.imageUrl.includes("/pattes-saint-henri/"))).toBe(true);
     expect(first.reel?.kind).toBe("upload");
     expect(Object.keys(first.links).sort()).toEqual(["instagram", "tiktok"]);
-    expect(first.announcements.length).toBe(2);
-    expect(first.reviews.length).toBe(8);
+    expect(first.announcements).toHaveLength(2);
+    expect(first.reviews).toHaveLength(8);
     await seedDemoCommunity(t.db, s.shopId, "pattes-saint-henri");
     const again = await communityOf(t.db, s.shopId);
     expect(again.wall.items).toHaveLength(first.wall.items.length);

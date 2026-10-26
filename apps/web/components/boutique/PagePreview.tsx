@@ -11,7 +11,7 @@ import { useSay } from "@/lib/i18n-client";
  * behind a « View the page » button on a phone. It renders again by itself when the owner saves - the page listens to `shop.page.updated`
  * (StorefrontLive) - so nothing here reloads it.
  */
-export function PagePreview({ src, published }: { src: string; published: boolean }) {
+export function PagePreview({ src, published }: Readonly<{ src: string; published: boolean }>) {
   const { say } = useSay();
   const panel = useId();
   const [open, setOpen] = useState(false);

@@ -65,10 +65,10 @@ async function PageSection({ locale, shopId, tab }: { locale: RouteLocale; shopI
 }
 
 /** The tabs that pin something on the public page: the owner's and the manager's, each with the live preview beside it. */
-const COMMUNITY_TABS: readonly PageTab[] = ["wall", "reels", "board", "reviews"];
+const COMMUNITY_TABS: ReadonlySet<PageTab> = new Set<PageTab>(["wall", "reels", "board", "reviews"]);
 
 /** Boutique › Page › the shop as a place (B45): the wall, the video and profiles, the bulletin board, the reviews. */
-async function CommunityTab({ shopId, tab }: { shopId: string; tab: "wall" | "reels" | "board" | "reviews" }) {
+async function CommunityTab({ shopId, tab }: Readonly<{ shopId: string; tab: "wall" | "reels" | "board" | "reviews" }>) {
   const { shop } = await memberShop(shopId, "catalogue");
   const limits = await communityLimits();
   if (tab === "wall") {
@@ -156,6 +156,15 @@ async function ShopsSection({ locale, shopId }: { locale: RouteLocale; shopId: s
   );
 }
 
+/** The body of one section of Boutique. */
+function boutiqueBody({ section, tab, community, locale, shopId }: Readonly<{ section: BoutiqueSection; tab: PageTab; community: boolean; locale: RouteLocale; shopId: string }>) {
+  if (section === "page") return community ? <CommunityTab shopId={shopId} tab={tab as "wall" | "reels" | "board" | "reviews"} /> : <PageSection locale={locale} shopId={shopId} tab={tab} />;
+  if (section === "languages") return <LanguagesSection locale={locale} shopId={shopId} />;
+  if (section === "team") return <TeamSection locale={locale} shopId={shopId} />;
+  if (section === "invoices") return <InvoicesSection locale={locale} shopId={shopId} />;
+  return <ShopsSection locale={locale} shopId={shopId} />;
+}
+
 /** One section of Boutique, named by the address. A section the role may not open is a 404, whatever the link says. */
 export default async function BoutiqueSectionPage({ params, searchParams }: { params: Promise<{ locale: string; shop: string; section: string }>; searchParams: Promise<{ tab?: string }> }) {
   const { locale: rawLocale, shop: shopId, section: rawSection } = await params;
@@ -172,10 +181,10 @@ export default async function BoutiqueSectionPage({ params, searchParams }: { pa
   const base = readEnv().APP_PUBLIC_URL;
   const header = { name: shop.name, published: shop.published, publicUrl: shop.slug ? `${base}/${locale}/s/${shop.slug}` : null };
   const current = section === "page" ? { section, tab } : { section };
-  const body =
-    section === "page" ? (COMMUNITY_TABS.includes(tab) ? <CommunityTab shopId={shop.id} tab={tab as "wall" | "reels" | "board" | "reviews"} /> : <PageSection locale={locale} shopId={shop.id} tab={tab} />) : section === "languages" ? <LanguagesSection locale={locale} shopId={shop.id} /> : section === "team" ? <TeamSection locale={locale} shopId={shop.id} /> : section === "invoices" ? <InvoicesSection locale={locale} shopId={shop.id} /> : <ShopsSection locale={locale} shopId={shop.id} />;
+  const community = COMMUNITY_TABS.has(tab);
+  const body = boutiqueBody({ section, tab, community, locale, shopId: shop.id });
   return (
-    <BoutiqueHub locale={locale} shopId={shop.id} allowed={allowed} tabs={tabs} preview={section === "page" && (COMMUNITY_TABS.includes(tab) || tab === "look") && shop.slug ? { src: `/${locale}/s/${shop.slug}?preview=1` } : undefined} current={current} shop={header}>
+    <BoutiqueHub locale={locale} shopId={shop.id} allowed={allowed} tabs={tabs} preview={section === "page" && (community || tab === "look") && shop.slug ? { src: `/${locale}/s/${shop.slug}?preview=1` } : undefined} current={current} shop={header}>
       {body}
     </BoutiqueHub>
   );

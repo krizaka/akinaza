@@ -37,7 +37,7 @@ const flyerForm = createKrizakaForm({
 });
 
 /** Boutique › Le babillard (#314): the flyers pinned on the page - up to three at a time, the newest first, each down on its last day. */
-export function BoardEditor({ flyers, today }: { flyers: BoardFlyer[]; /** The shop's local day, `YYYY-MM-DD`. */ today: string }) {
+export function BoardEditor({ flyers, today }: Readonly<{ flyers: BoardFlyer[]; /** The shop's local day, `YYYY-MM-DD`. */ today: string }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [saved, setSaved] = useState(false);

@@ -28,7 +28,7 @@ export interface ReviewsPanelProps {
   minCount: number;
 }
 
-function ReviewRow({ review }: { review: ReviewLine }) {
+function ReviewRow({ review }: Readonly<{ review: ReviewLine }>) {
   const { say } = useSay();
   const call = useCall();
   const id = useId();
@@ -60,13 +60,13 @@ function ReviewRow({ review }: { review: ReviewLine }) {
         </>
       ) : null}
       {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
-      {ok ? <p className="m-0 text-xs text-fg-secondary" role="status">{say("studio.reviews.saved")}</p> : null}
+      {ok ? <output className="m-0 text-xs text-fg-secondary">{say("studio.reviews.saved")}</output> : null}
     </li>
   );
 }
 
 /** Boutique › Avis (#313): every review of the shop, with the score as the page would show it; the owner replies in public or hides a review from the page. */
-export function ReviewsPanel({ reviews, score, minCount }: ReviewsPanelProps) {
+export function ReviewsPanel({ reviews, score, minCount }: Readonly<ReviewsPanelProps>) {
   const { say } = useSay();
   return (
     <Card.Root className="flex flex-col gap-4 p-4">
