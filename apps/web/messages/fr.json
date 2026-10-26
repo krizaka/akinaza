@@ -32,6 +32,10 @@
       "shop": {
         "title": "La boutique de démonstration",
         "text": "La vraie page de réservation d'un promeneur de chiens, sur dev."
+      },
+      "pricing": {
+        "title": "Tarifs",
+        "text": "Ce que coûte Akinaza, plan par plan."
       }
     },
     "footerLabel": "Pied de page",
@@ -104,6 +108,50 @@
       "scope": "Pour les studios, salons et travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place."
     },
     "visualLabel": "dev.akinaza.com"
+  },
+  "pricing": {
+    "title": "Tarifs",
+    "lead": "Des plans mensuels en CAD, taxes en sus. Vous résiliez quand vous voulez.",
+    "plansLabel": "Plans",
+    "perMonth": "par mois, taxes en sus",
+    "preparing": "en préparation",
+    "soon": "bientôt",
+    "badgeFounder": "Offre fondatrice",
+    "badgeFounderLimit": "Les {limit} premières entreprises",
+    "founderNote": "Mise en route incluse : vos services, vos heures, vos premières factures.",
+    "plans": {
+      "founder": "Fondatrice",
+      "starter": "Starter",
+      "scale": "Scale B2B"
+    },
+    "features": {
+      "booking": "Votre page de boutique et vos réservations, avec les heures que vous avez vraiment",
+      "invoices": "Des factures bilingues avec la TPS et la TVQ exactes au sou",
+      "books": "Les livres et les chiffres de taxes de chaque période, préparés pour que vous les déclariez",
+      "fees": "Frais sur les paiements de vos clients : {cardRate} sur les cartes, {debitRate} par commande par débit préautorisé, plafonné à {debitCap}",
+      "payments": "Les paiements de vos clients, par votre propre processeur",
+      "contract": "Le contrat de commande signé",
+      "transfers": "Les commandes B2B et leurs virements"
+    },
+    "faqTitle": "Questions",
+    "faq": [
+      {
+        "q": "Les taxes sont-elles incluses ?",
+        "a": "Non. Les prix sont avant la TPS et la TVQ, que la page de paiement ajoute."
+      },
+      {
+        "q": "Akinaza garde-t-elle l'argent de mes clients ?",
+        "a": "Jamais. Les paiements passent par votre propre processeur, directement à vous ; Akinaza ne fait qu'indiquer ses frais."
+      },
+      {
+        "q": "Akinaza produit-elle ma déclaration ?",
+        "a": "Non. Elle prépare les chiffres et c'est vous qui les déclarez."
+      },
+      {
+        "q": "Et si le prix change ?",
+        "a": "Votre abonnement garde le prix auquel il a été vendu, et les conditions d'utilisation disent comment un changement est annoncé."
+      }
+    ]
   },
   "privacy": {
     "title": "Confidentialité",

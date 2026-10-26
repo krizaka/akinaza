@@ -20,6 +20,7 @@ const url = (locale: Locale, page: PageId) => `${SITE_URL}${pagePath(locale, pag
 function pageTitleOf(t: ReturnType<typeof getDictionary>, page: PageId): string {
   if (page === "privacy") return t.privacy.title;
   if (page === "terms") return t.terms.title;
+  if (page === "pricing") return t.pricing.title;
   return t.landing.title;
 }
 
@@ -84,6 +85,7 @@ export function llmsText(): string {
 - [${en.meta.siteName}](${SITE_URL}/en) · [Akinaza (fr)](${SITE_URL}/fr): what it does and how
 - [${en.privacy.title}](${SITE_URL}/en/privacy) · [${getDictionary("fr").privacy.title} (fr)](${SITE_URL}/fr/privacy)
 - [${en.terms.title}](${SITE_URL}/en/terms) · [${getDictionary("fr").terms.title} (fr)](${SITE_URL}/fr/terms)
+- [${en.pricing.title}](${SITE_URL}/en/pricing) · [${getDictionary("fr").pricing.title} (fr)](${SITE_URL}/fr/pricing): the plans, read from the price catalogue
 - [Contact Akinaza](${KRIZAKA_URL}/contact?topic=akinaza): the one way to reach the team
 
 ## Source

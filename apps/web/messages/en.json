@@ -32,6 +32,10 @@
       "shop": {
         "title": "The demo shop",
         "text": "A dog walker's real booking page, on dev."
+      },
+      "pricing": {
+        "title": "Pricing",
+        "text": "What Akinaza costs, plan by plan."
       }
     },
     "footerLabel": "Site footer",
@@ -104,6 +108,50 @@
       "scope": "For studios, salons and the self-employed. Not for restaurants, cafés, bars or bakeries with on-site consumption."
     },
     "visualLabel": "dev.akinaza.com"
+  },
+  "pricing": {
+    "title": "Pricing",
+    "lead": "Monthly plans in CAD, plus taxes. You can cancel at any time.",
+    "plansLabel": "Plans",
+    "perMonth": "a month plus taxes",
+    "preparing": "in preparation",
+    "soon": "soon",
+    "badgeFounder": "Founder offer",
+    "badgeFounderLimit": "First {limit} businesses",
+    "founderNote": "Setup included: your services, your hours, your first invoices.",
+    "plans": {
+      "founder": "Founder",
+      "starter": "Starter",
+      "scale": "Scale B2B"
+    },
+    "features": {
+      "booking": "Your shop page and bookings, with the times you really have",
+      "invoices": "Bilingual invoices with GST and QST exact to the cent",
+      "books": "The books and the tax figures of each period, prepared for you to file",
+      "fees": "Fees on your clients' payments: {cardRate} on cards, {debitRate} an order by pre-authorised debit, capped at {debitCap}",
+      "payments": "Your clients' payments, through your own processor",
+      "contract": "The signed order contract",
+      "transfers": "B2B orders and their transfers"
+    },
+    "faqTitle": "Questions",
+    "faq": [
+      {
+        "q": "Are taxes included?",
+        "a": "No. Prices are before GST and QST, which the payment page adds."
+      },
+      {
+        "q": "Does Akinaza hold my clients' money?",
+        "a": "Never. Payments go through your own processor, straight to you; Akinaza only states its fee."
+      },
+      {
+        "q": "Does Akinaza file my tax return?",
+        "a": "No. It prepares the figures and you file them."
+      },
+      {
+        "q": "What if the price changes?",
+        "a": "Your subscription keeps the price it was sold at, and the terms of use say how a change is announced."
+      }
+    ]
   },
   "privacy": {
     "title": "Privacy",
