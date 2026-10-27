@@ -41,11 +41,12 @@ export function GET(req: Request) {
  */
 export function POST(req: Request) {
   return handle(async () => {
+    // The session and the shop come first: a caller with no right to this shop learns nothing of what the body should say.
+    const { shop, role, session } = await requireShop(req, "agenda");
     const body = await readJson(req, add);
     limit("calendar-connect", req, null, [20, 3600]);
     const s = appSettings();
     if (!(await s.get("features.calendarSync")) || !(await s.get(`calendarSync.${body.kind}.enabled`))) throw refuse(403, "FEATURE_OFF", "This feature is switched off", { feature: "calendarSync" });
-    const { shop, role, session } = await requireShop(req, "agenda");
     const overview = await calendarOverview(shop.id, agendaScope(role, session.account.id));
     if (body.staffId === null ? !overview.wholeShop : !overview.people.some((p) => p.id === body.staffId)) throw refuse(404, "NOT_FOUND", "Not found");
     const now = systemClock.now();
