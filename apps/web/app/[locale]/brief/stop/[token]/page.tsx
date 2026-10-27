@@ -6,8 +6,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { StopBrief } from "@/components/brief/StopBrief";
-import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
 

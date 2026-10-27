@@ -4,8 +4,8 @@ import { Stamp } from "@krizaka/ui/specimen-tag";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import type { Locale } from "@/lib/i18n";
 
 /** The thin paper head of a step (B45, #315): the shop's name in the display face, where the visitor stands, and the way back to change a choice. Nothing else of the notebook. */
