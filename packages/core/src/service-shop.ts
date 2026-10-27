@@ -2,6 +2,8 @@ import { TZDate } from "@date-fns/tz";
 import { addDays, addMinutes, compareAsc, differenceInSeconds, format, isBefore } from "date-fns";
 import { z } from "zod";
 
+import { type BusyInterval, overlapsBusy } from "./calendar/source";
+
 /**
  * The generic service-shop model (ADR-001): a shop sells time (services), has zones, weekly availability and a capacity,
  * takes bookings from clients for their dependants (a dog, a cat…), and reports on each visit. Nothing here says "dog"
@@ -84,6 +86,8 @@ export interface SlotRequest {
   /** Nothing is offered that starts sooner than this after `now`. */
   minNoticeMinutes: number;
   visits: readonly TakenVisit[];
+  /** The owner's busy times elsewhere (their other calendars, ADR-004): no start overlapping one is offered, whatever the service. */
+  busy?: readonly BusyInterval[];
 }
 
 const minutesOfClock = (clock: string) => Number(clock.slice(0, 2)) * 60 + Number(clock.slice(3, 5));
@@ -132,6 +136,7 @@ export function openSlots(request: SlotRequest): Slot[] {
         const startsAt = localInstant(day, t, request.timezone);
         const endsAt = addMinutes(startsAt, request.durationMinutes);
         if (isBefore(startsAt, earliest)) continue;
+        if (request.busy && overlapsBusy(startsAt, endsAt, request.busy)) continue;
         const same = request.visits.find((v) => v.startsAt.getTime() === startsAt.getTime() && v.endsAt.getTime() === endsAt.getTime() && v.serviceId === request.serviceId && v.zoneId === request.zoneId);
         if (same && request.capacity > 1) {
           if (same.seatsTaken < request.capacity) out.push({ startsAt, endsAt, seatsLeft: request.capacity - same.seatsTaken, capacity: request.capacity, joins: true });

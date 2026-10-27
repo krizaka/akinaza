@@ -971,7 +971,14 @@
       "UPLOAD_NOT_VIDEO": "Ce n'est pas une vidéo MP4 ou WebM.",
       "SOCIAL_LINK": "Cette adresse n'est pas une page de cette plateforme.",
       "ANNOUNCEMENT_LIMIT": "Vous gardez trente affichettes au plus. Retirez-en une d'abord.",
-      "REVIEW_REMOVED": "Cet avis a été retiré par l'administration."
+      "REVIEW_REMOVED": "Cet avis a été retiré par l'administration.",
+      "CAL_INVALID": "Cette adresse n'est pas un agenda que nous pouvons lire.",
+      "CAL_UNREACHABLE": "L'agenda est injoignable. Nous réessaierons.",
+      "CAL_REFUSED": "L'agenda nous a refusé l'accès : vérifiez l'adresse.",
+      "CAL_TOO_LARGE": "Cet agenda est trop volumineux pour être lu.",
+      "CAL_UNAUTHORIZED": "L'agenda demande de vous reconnecter.",
+      "CAL_RATE_LIMITED": "L'agenda nous demande de ralentir. Nous réessaierons.",
+      "CALENDAR_LIMIT": "Vous avez atteint le nombre d'agendas permis."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -1067,7 +1074,9 @@
         "owed": "Reste dû : {amount}",
         "overdue": "Dont {amount} en retard",
         "noneLate": "Rien en retard."
-      }
+      },
+      "conflict": "Chevauche votre agenda {calendar}",
+      "conflictDetail": "Ce rendez-vous chevauche une plage occupée de votre agenda {calendar}. Rien n'a été modifié de part ni d'autre : gardez-le, ou déplacez l'un des deux vous-même."
     },
     "account": {
       "forgot": {
@@ -1648,6 +1657,54 @@
         "updateTemplateOrder": "Mettre à jour avec son ordre"
       }
     },
+    "exports": {
+      "columns": {
+        "appointments": {
+          "id": "Id",
+          "start": "Début",
+          "end": "Fin",
+          "status": "Statut",
+          "service": "Service",
+          "staff": "Employé",
+          "client": "Client",
+          "price": "Prix"
+        },
+        "clients": {
+          "id": "Id",
+          "name": "Nom",
+          "email": "Courriel",
+          "phone": "Téléphone",
+          "language": "Langue",
+          "since": "Client depuis",
+          "dependants": "Dépendants"
+        },
+        "invoices": {
+          "number": "Numéro",
+          "issuedOn": "Émise le",
+          "dueOn": "Échéance",
+          "client": "Client",
+          "subtotal": "Sous-total",
+          "gst": "TPS",
+          "qst": "TVQ",
+          "total": "Total",
+          "paid": "Payé",
+          "creditOf": "Note de crédit de",
+          "state": "État",
+          "language": "Langue"
+        }
+      },
+      "status": {
+        "booked": "Réservé",
+        "done": "Terminé",
+        "cancelled": "Annulé",
+        "noShow": "Absent"
+      },
+      "invoiceState": {
+        "open": "Ouverte",
+        "paid": "Payée",
+        "superseded": "Remplacée ou créditée"
+      }
+    },
     "boutique": {
       "title": "Votre boutique",
       "navLabel": "Sections de votre boutique",
@@ -1659,7 +1716,39 @@
         "languages": "Langues",
         "team": "Équipe",
         "invoices": "Courriels de facture",
-        "shops": "Vos boutiques"
+        "shops": "Vos boutiques",
+        "figures": "Seuils des chiffres",
+        "data": "Vos données",
+        "agenda": "Agenda"
+      },
+      "data": {
+        "title": "Vos données",
+        "lead": "Téléchargez ce que la boutique détient, pour l’ouvrir dans vos propres outils. Seulement ce que vous voyez déjà ici ; rien d’une autre boutique, aucune note d’accès, aucune personne effacée.",
+        "download": "Télécharger",
+        "audited": "Chaque téléchargement est consigné dans le journal de la boutique. Seul le propriétaire peut en faire un.",
+        "off": "L’administrateur a désactivé les téléchargements de données.",
+        "files": {
+          "appointmentsCsv": {
+            "group": "Rendez-vous",
+            "label": "Tableur (CSV)",
+            "hint": "Chaque rendez-vous, avec son service, son employé et son client. Le fichier ICS s’ouvre dans les agendas Apple, Google ou Outlook."
+          },
+          "appointmentsIcs": {
+            "group": "Rendez-vous",
+            "label": "Fichier d’agenda (ICS)",
+            "hint": "Chaque rendez-vous, avec son service, son employé et son client. Le fichier ICS s’ouvre dans les agendas Apple, Google ou Outlook."
+          },
+          "clientsCsv": {
+            "group": "Clients",
+            "label": "Tableur (CSV)",
+            "hint": "Noms, courriel, téléphone, langue et dépendants."
+          },
+          "invoicesCsv": {
+            "group": "Factures",
+            "label": "Tableur (CSV)",
+            "hint": "Factures et notes de crédit dans l’ordre des livres, montants en dollars avec TPS et TVQ."
+          }
+        }
       },
       "invoices": {
         "title": "Courriels de facture",
@@ -1671,6 +1760,70 @@
         "current": "Cette boutique",
         "open": "Ouvrir cette boutique",
         "add": "Ajouter une boutique"
+      },
+      "figures": {
+        "title": "Seuils des chiffres",
+        "lead": "Quand un chiffre demande un coup d’œil, et quand il demande d’agir. Seul cela change : les montants et les formules, jamais."
+      },
+      "agenda": {
+        "title": "Votre agenda sur votre téléphone",
+        "lead": "Un lien privé auquel votre téléphone s’abonne, pour voir vos rendez-vous dans l’agenda que vous utilisez déjà. Il ne porte que l’heure, le service et les prénoms : jamais un téléphone, un courriel ou une note.",
+        "feed": {
+          "shop": "Toute la boutique",
+          "live": "Lien actif",
+          "none": "Pas encore de lien",
+          "since": "Créé {when}",
+          "create": "Créer le lien",
+          "rotate": "Créer un nouveau lien",
+          "revoke": "Désactiver",
+          "revokeConfirm": "Désactiver ce lien ? Les agendas qui l’utilisent cessent de se mettre à jour.",
+          "once": "Copiez ce lien maintenant : il n’est affiché qu’une fois. Créer un nouveau lien désactive l’ancien aussitôt.",
+          "copy": "Copier le lien",
+          "copied": "Lien copié",
+          "qrLabel": "Code QR du lien d’agenda privé de {name} : scannez-le avec votre téléphone pour vous abonner",
+          "url": "Lien privé de {name}",
+          "howTitle": "Comment l’ajouter",
+          "how": "Calendrier Apple : Fichier, Nouvel abonnement à un calendrier. Google Agenda : Autres agendas, À partir de l’URL. Outlook : Ajouter un calendrier, S’abonner à partir du Web. Quiconque a le lien peut lire ces heures : ne le partagez avec personne.",
+          "off": "L’administrateur a désactivé les liens d’agenda.",
+          "nobody": "Pas encore de membre d’équipe."
+        },
+        "sources": {
+          "title": "Vos autres agendas",
+          "lead": "Akinaza lit les plages où vous êtes occupé dans l'agenda que vous utilisez déjà, et les garde libres de réservations. Il ne lit que les heures : jamais un titre, un invité ou une note, et il ne modifie jamais votre agenda.",
+          "wholeShop": "Toute la boutique",
+          "add": "Connecter un agenda",
+          "label": "Nom",
+          "labelHint": "Pour vous seulement, par exemple Google ou Dentiste.",
+          "whose": "Bloque les heures de",
+          "url": "Adresse de l'agenda (ICS)",
+          "urlHint": "Google Agenda : Paramètres, votre agenda, Adresse secrète au format iCal. Apple et Outlook en donnent une aussi quand vous publiez ou partagez un agenda. Quiconque a cette adresse peut lire cet agenda : elle est gardée chiffrée ici et n'est montrée à personne.",
+          "consent": "J'accepte qu'Akinaza lise les plages où je suis occupé dans cet agenda, pour les garder libres de réservations. Je peux me déconnecter à tout moment : ces plages sont alors supprimées.",
+          "needConsent": "Cochez la case pour connecter l'agenda.",
+          "connect": "Connecter",
+          "none": "Aucun agenda connecté.",
+          "state": {
+            "ok": "Lu",
+            "error": "Illisible",
+            "pending": "En attente"
+          },
+          "lastRead": "Lu {when}",
+          "neverRead": "Pas encore lu.",
+          "refresh": "Relire",
+          "remove": "Déconnecter",
+          "removeConfirm": "Déconnecter cet agenda ? Ses plages occupées sont supprimées et ces créneaux se rouvrent.",
+          "off": "L'administrateur a désactivé la connexion d'agendas.",
+          "providers": {
+            "title": "Connecter Google ou Outlook",
+            "lead": "Vous donnez votre accord sur la page de Google ou de Microsoft, et Akinaza ne reçoit que les plages où vous êtes occupé : jamais un titre, un invité ou une note. Vous pouvez aussi y retirer l'autorisation.",
+            "google": "Connecter Google Agenda",
+            "outlook": "Connecter Outlook"
+          },
+          "outcome": {
+            "connected": "Agenda connecté. Ses plages occupées gardent désormais ces créneaux libres.",
+            "denied": "Rien n'a été connecté : vous n'avez pas donné l'autorisation.",
+            "error": "L'agenda n'a pas pu être connecté. Réessayez."
+          }
+        }
       }
     },
     "shopPage": {
@@ -2527,7 +2680,28 @@
       "lexiconTerms": "Les mots employés ici",
       "never": "Akinaza prépare ces chiffres. Vous les vérifiez et vous produisez vos déclarations vous-même.",
       "formulaHere": "{formula} Ici : {terms}.",
-      "updatedLabel": "Mis à jour"
+      "updatedLabel": "Mis à jour",
+      "rules": {
+        "title": "Quand un chiffre demande votre attention",
+        "hint": "Valeur habituelle {usual}. Vous pouvez la régler entre {min} et {max}.",
+        "hintDays": "Valeur habituelle {usual} jours. Vous pouvez la régler entre {min} et {max}.",
+        "fields": {
+          "overdueWatchPct": "Factures en retard : à surveiller au-dessus de (%)",
+          "overdueAlertPct": "Factures en retard : à traiter au-dessus de (%)",
+          "collectedWatchPct": "Encaissé sur ce que vous avez facturé : à surveiller sous (%)",
+          "collectedAlertPct": "Encaissé sur ce que vous avez facturé : à traiter sous (%)",
+          "marginWatchPct": "Marge sur votre chiffre d’affaires : à surveiller sous (%)",
+          "marginAlertPct": "Marge sur votre chiffre d’affaires : à traiter sous (%)",
+          "noShowWatchPct": "Rendez-vous manqués : à surveiller au-dessus de (%)",
+          "noShowAlertPct": "Rendez-vous manqués : à traiter au-dessus de (%)",
+          "taxPeriodSoonDays": "Me rappeler de préparer la déclaration TPS/TVQ ce nombre de jours avant la fin de la période"
+        },
+        "fixed": "Ces valeurs sont fixées par Akinaza et ne peuvent pas être changées pour l’instant. Chaque chiffre montre quand même comment il est jugé.",
+        "save": "Enregistrer mes seuils",
+        "reset": "Revenir aux valeurs habituelles",
+        "saved": "Enregistré. Vos chiffres utilisent maintenant ces seuils.",
+        "evenness": "Si un seuil « à traiter » était plus doux que le seuil « à surveiller », il est ramené au même niveau : un chiffre ne se contredit jamais."
+      }
     },
     "lexicon": {
       "title": "Lexique",
