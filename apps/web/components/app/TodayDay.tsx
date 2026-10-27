@@ -242,6 +242,32 @@ function Binder({ board, count, invoicesHref, weekHref }: { board: TodayBoard; c
   );
 }
 
+/** The column beside the agenda: the board's failure said in place, the quick accesses, the activity and « À encaisser ». */
+function SideColumn({ board, boardFailed, totals, quiet, quick, period, address }: { board: TodayBoard | null; boardFailed: boolean; totals: { invoiced: number; collected: number; appointments: number } | null; quiet: boolean; quick: { href: string; label: string }[]; period: BoardPeriod; address: (next: DayAddressChange) => string }) {
+  const { say } = useSay();
+  const shown = board !== null && !quiet;
+  return (
+    <div className="flex min-w-0 flex-col gap-4 sm:col-span-2 xl:col-span-1">
+      {boardFailed ? <SectionError /> : null}
+      {quick.length ? (
+        <Widget title={say("today.quick.title")} id="quick-access">
+          <ul className="flex flex-col gap-2">
+            {quick.map((q) => (
+              <li key={q.href}>
+                <ButtonLink href={q.href} variant="secondary" size="sm" className="w-full justify-start">
+                  {q.label}
+                </ButtonLink>
+              </li>
+            ))}
+          </ul>
+        </Widget>
+      ) : null}
+      {shown && totals ? <ActivityWidget board={board} totals={totals} period={period} address={address} /> : null}
+      {shown ? <BalanceWidget balance={board.balance} /> : null}
+    </div>
+  );
+}
+
 /** The side sheet of the open appointment: a walk shows its dogs and progress, any other its service, staff, price and state. */
 function DetailSheet({ open, timeZone, time, dogs, billing, clientHref }: { open: Row; timeZone: string; time: (iso: string) => string; dogs: (count: number) => string; billing: string | null; clientHref: string | null }) {
   const { say, locale } = useSay();
@@ -383,24 +409,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
             empty={<EmptyState icon={<Mascot bird="beaver" mood="empty" size={120} />} title={say("today.noneTitle")} description={say(isToday ? "today.none" : "today.noneOtherDay")} />}
           />
         </Widget>
-        <div className="flex min-w-0 flex-col gap-4 sm:col-span-2 xl:col-span-1">
-          {boardFailed ? <SectionError /> : null}
-          {quick.length ? (
-            <Widget title={say("today.quick.title")} id="quick-access">
-              <ul className="flex flex-col gap-2">
-                {quick.map((q) => (
-                  <li key={q.href}>
-                    <ButtonLink href={q.href} variant="secondary" size="sm" className="w-full justify-start">
-                      {q.label}
-                    </ButtonLink>
-                  </li>
-                ))}
-              </ul>
-            </Widget>
-          ) : null}
-          {board && totals && !allZero ? <ActivityWidget board={board} totals={totals} period={period} address={address} /> : null}
-          {board && !allZero ? <BalanceWidget balance={board.balance} /> : null}
-        </div>
+        <SideColumn board={board} boardFailed={boardFailed} totals={totals} quiet={allZero} quick={quick} period={period} address={address} />
       </DashboardLayout>
 
       <Dialog.Root open={open !== null} onOpenChange={(next) => (next ? undefined : router.replace(address({ appointment: null }), { scroll: false }))}>
