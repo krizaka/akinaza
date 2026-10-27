@@ -33,4 +33,5 @@ export * from "./workspace";
 export * from "./workspace-defaults";
 export * from "./privacy";
 export * from "./privacy-migration";
+export * from "./figures";
 export * from "./shop-page-versions";

@@ -7,9 +7,11 @@ import type { Metadata } from "next";
 import { BriefBanner } from "@/components/app/BriefBanner";
 import { TodayDay } from "@/components/app/TodayDay";
 import { type DayVisitView, WalkerDay } from "@/components/app/WalkerDay";
+import { WhatToDoNow } from "@/components/app/WhatToDoNow";
 import { loadShopBrief } from "@/lib/brief";
 import { dayView, shiftDay } from "@/lib/day";
 import { db } from "@/lib/db";
+import { loadFigures } from "@/lib/figures";
 import { formatLongDay } from "@/lib/format";
 import { asLocale, format, getDictionary, type Locale } from "@/lib/i18n";
 import { may, memberShop } from "@/lib/member-shop";
@@ -56,10 +58,12 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
   const routes = shopRoutes(locale, shop.id);
   const view = await todayView(shop, { day: query.day, staffAccountId });
   // Who is off that day (akinaza#208): a name and the last day of their time off, never the reason.
-  const [off, brief, visits] = await Promise.all([
+  const [off, brief, visits, figures] = await Promise.all([
     offOn(db(), shop.id, view.day),
     may(role, "reports") ? loadShopBrief(shop, new Date()) : null,
     dependants ? dayVisits(db(), shop.id, view.day) : [],
+    // « Que faire maintenant » is the shop's money and hours: only who may read the reports sees it, and a failure leaves the day standing.
+    may(role, "reports") ? settle(loadFigures(shop, view.today, new Date())) : null,
   ]);
   const offLine = off.length ? format(t.today.offToday, { names: off.map((o) => format(t.today.offUntil, { name: o.name, until: formatLongDay(o.until, locale) })).join(", ") }) : null;
   return (
@@ -79,7 +83,14 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
       period={period}
       publicPageHref={shop.published && shop.slug ? `/${locale}/s/${shop.slug}` : null}
       visits={dependants ? Object.fromEntries(visits.map((v) => [v.appointmentId, withMinutes(v)])) : undefined}
-      banner={brief ? <BriefBanner count={brief.items.length} href={routes.brief} /> : null}
+      banner={
+        brief || figures?.ok ? (
+          <>
+            {brief ? <BriefBanner count={brief.items.length} href={routes.brief} /> : null}
+            {figures?.ok ? <WhatToDoNow actions={figures.value.actions} locale={locale} routes={routes} /> : null}
+          </>
+        ) : null
+      }
       newInvoiceHref={board ? routes.newInvoice : null}
     />
   );

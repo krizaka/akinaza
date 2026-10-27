@@ -1953,6 +1953,7 @@
         }
       },
       "footnote": "Akinaza prépare ces chiffres à partir de vos factures et de vos dépenses. C'est vous qui produisez la déclaration auprès de Revenu Québec, après avoir vérifié chaque chiffre.",
+      "figuresTitle": "Vos chiffres de TPS et de TVQ",
       "remitHint": "Préparé à partir de vos factures et dépenses ; vous le produisez vous-même auprès de Revenu Québec.",
       "periodHint": "Le dernier trimestre terminé est celui à produire maintenant ; le trimestre en cours est encore ouvert.",
       "empty": {
@@ -2478,7 +2479,30 @@
           "why": "Seulement {booked} de ces {offered} plages ont été réservées récemment.",
           "cta": "Ouvrir les heures"
         }
-      }
+      },
+      "title": "Vos chiffres",
+      "lead": "Chaque chiffre dit ce qu'il signifie, comment il est calculé à partir de vos factures et d'où il vient.",
+      "rateOf": {
+        "collected": "Cela représente {rate} % de ce que vous avez facturé, taxes comprises.",
+        "toCollect": "{rate} % est en retard.",
+        "margin": "Cela représente {rate} % de votre revenu.",
+        "noShows": "Cela représente {rate} % des rendez-vous qui étaient dus."
+      },
+      "source": "D'où il vient",
+      "urgency": {
+        "now": "Maintenant",
+        "soon": "Bientôt",
+        "week": "Cette semaine"
+      },
+      "lexiconLead": "Les mots qui demandent un comptable sont signalés.",
+      "print": "Imprimer ou enregistrer en PDF",
+      "printHint": "Une copie propre pour votre comptable : les chiffres, leurs formules et leurs sources.",
+      "forPeriod": "Pour la période du {start} au {end}",
+      "computed": "Calculé {when}",
+      "lexiconTerms": "Les mots employés ici",
+      "never": "Akinaza prépare ces chiffres. Vous les vérifiez et vous produisez vos déclarations vous-même.",
+      "formulaHere": "{formula} Ici : {terms}.",
+      "updatedLabel": "Mis à jour"
     },
     "lexicon": {
       "title": "Lexique",
