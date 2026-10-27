@@ -21,6 +21,13 @@ export interface OutlookOptions {
   fetch?: typeof fetch;
 }
 
+/** A Graph date-time as a `Date`; one with no offset is UTC, none at all is an invalid date. */
+function graphDate(v: string | undefined): Date {
+  if (!v) return new Date("invalid");
+  const hasOffset = /(?:[zZ]|[+-]\d\d:?\d\d)$/.test(v);
+  return new Date(hasOffset ? v : v + "Z");
+}
+
 export function outlookSource(options: OutlookOptions): ConnectableSource {
   const doFetch = options.fetch ?? fetch;
   const MAIN: CalendarRef = { id: "primary", name: "Outlook" };
@@ -63,7 +70,7 @@ export function outlookSource(options: OutlookOptions): ConnectableSource {
         for (const e of body.value ?? []) {
           if (e.isCancelled || FREE.has(e.showAs ?? "")) continue;
           // With the UTC preference Graph writes « 2026-10-27T14:00:00.0000000 » with no offset: it is UTC.
-          const [startsAt, endsAt] = [e.start?.dateTime, e.end?.dateTime].map((v) => new Date(v ? (/[zZ]|[+-]\d\d:?\d\d$/.test(v) ? v : `${v}Z`) : "invalid"));
+          const [startsAt, endsAt] = [e.start?.dateTime, e.end?.dateTime].map(graphDate);
           if (!Number.isNaN(startsAt!.getTime()) && !Number.isNaN(endsAt!.getTime())) busy.push({ startsAt: startsAt!, endsAt: endsAt! });
         }
         next = body["@odata.nextLink"];

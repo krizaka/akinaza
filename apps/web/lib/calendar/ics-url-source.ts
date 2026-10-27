@@ -35,6 +35,24 @@ async function readLimited(res: Response): Promise<string> {
   return new TextDecoder().decode(Buffer.concat(chunks));
 }
 
+async function request(doFetch: typeof fetch, url: URL, validators: Validators): Promise<Response> {
+  const headers: Record<string, string> = { accept: "text/calendar, text/plain;q=0.5", "user-agent": "Akinaza-calendar-sync" };
+  if (validators.etag) headers["if-none-match"] = validators.etag;
+  if (validators.lastModified) headers["if-modified-since"] = validators.lastModified;
+  try {
+    return await doFetch(url, { headers, redirect: "manual", signal: AbortSignal.timeout(TIMEOUT_MS) });
+  } catch {
+    throw new CalendarSourceError("AK_CAL_UNREACHABLE", true);
+  }
+}
+
+/** What a refusing or failing answer means for the sync: slow down, stop asking, or try again later. */
+function failOnStatus(res: Response): void {
+  if (res.status === 429) throw new CalendarSourceError("AK_CAL_RATE_LIMITED", true);
+  if ([401, 403, 404, 410].includes(res.status)) throw new CalendarSourceError("AK_CAL_REFUSED", false);
+  if (!res.ok) throw new CalendarSourceError("AK_CAL_UNREACHABLE", res.status >= 500);
+}
+
 /** An ICS address (« subscribe by URL » of Google, Apple, Outlook, Fastmail…): read-only, polled with `ETag` / `If-Modified-Since` (ADR-004). */
 export function icsUrlSource(options: IcsUrlOptions): CalendarSource {
   const doFetch = options.fetch ?? fetch;
@@ -44,15 +62,7 @@ export function icsUrlSource(options: IcsUrlOptions): CalendarSource {
       let url = parseCalendarUrl(options.url);
       for (let hop = 0; ; hop++) {
         await assertPublicHost(url, options.resolve);
-        const headers: Record<string, string> = { accept: "text/calendar, text/plain;q=0.5", "user-agent": "Akinaza-calendar-sync" };
-        if (validators.etag) headers["if-none-match"] = validators.etag;
-        if (validators.lastModified) headers["if-modified-since"] = validators.lastModified;
-        let res: Response;
-        try {
-          res = await doFetch(url, { headers, redirect: "manual", signal: AbortSignal.timeout(TIMEOUT_MS) });
-        } catch {
-          throw new CalendarSourceError("AK_CAL_UNREACHABLE", true);
-        }
+        const res = await request(doFetch, url, validators);
         if (res.status === 304) return { changed: false };
         if (res.status >= 300 && res.status < 400) {
           const next = res.headers.get("location");
@@ -60,9 +70,7 @@ export function icsUrlSource(options: IcsUrlOptions): CalendarSource {
           url = parseCalendarUrl(new URL(next, url).toString());
           continue;
         }
-        if (res.status === 429) throw new CalendarSourceError("AK_CAL_RATE_LIMITED", true);
-        if (res.status === 401 || res.status === 403 || res.status === 404 || res.status === 410) throw new CalendarSourceError("AK_CAL_REFUSED", false);
-        if (!res.ok) throw new CalendarSourceError("AK_CAL_UNREACHABLE", res.status >= 500);
+        failOnStatus(res);
         const text = await readLimited(res);
         if (!/^\s*BEGIN:VCALENDAR/i.test(text)) throw new CalendarSourceError("AK_CAL_INVALID", false, "not a calendar");
         return {

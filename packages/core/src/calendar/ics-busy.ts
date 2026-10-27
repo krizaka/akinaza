@@ -27,24 +27,30 @@ function unfold(text: string): string[] {
   return text.replace(/\r?\n[ \t]/g, "").split(/\r?\n/).filter((l) => l.length > 0);
 }
 
-function parseProp(line: string): { name: string; prop: Prop } | null {
+/** The index of the colon that ends the name and parameters (a colon inside quotes does not), or -1. */
+function colonIndex(line: string): number {
   let quoted = false;
-  let colon = -1;
   for (let i = 0; i < line.length; i++) {
     if (line[i] === '"') quoted = !quoted;
-    else if (line[i] === ":" && !quoted) {
-      colon = i;
-      break;
-    }
+    else if (line[i] === ":" && !quoted) return i;
   }
-  if (colon < 1) return null;
-  const [name, ...rest] = line.slice(0, colon).split(";");
+  return -1;
+}
+
+function paramsOf(rest: string[]): Record<string, string> {
   const params: Record<string, string> = {};
   for (const p of rest) {
     const eq = p.indexOf("=");
-    if (eq > 0) params[p.slice(0, eq).toUpperCase()] = p.slice(eq + 1).replace(/"/g, "");
+    if (eq > 0) params[p.slice(0, eq).toUpperCase()] = p.slice(eq + 1).replaceAll('"', "");
   }
-  return { name: name!.toUpperCase(), prop: { params, value: line.slice(colon + 1) } };
+  return params;
+}
+
+function parseProp(line: string): { name: string; prop: Prop } | null {
+  const colon = colonIndex(line);
+  if (colon < 1) return null;
+  const [name, ...rest] = line.slice(0, colon).split(";");
+  return { name: name!.toUpperCase(), prop: { params: paramsOf(rest), value: line.slice(colon + 1) } };
 }
 
 function events(text: string): Props[] {
@@ -63,7 +69,10 @@ function events(text: string): Props[] {
     else if (current && upper.startsWith("END:")) depth--;
     else if (current && depth === 0) {
       const parsed = parseProp(line);
-      if (parsed) (current[parsed.name] ??= []).push(parsed.prop);
+      if (parsed) {
+        current[parsed.name] ??= [];
+        current[parsed.name]!.push(parsed.prop);
+      }
     }
   }
   return out;
@@ -108,9 +117,11 @@ function parseMoment(prop: Prop, shopZone: string): Moment | null {
 }
 
 function parseDuration(value: string): number | null {
-  const m = /^([+-])?P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/.exec(value.trim());
-  if (!m) return null;
-  const seconds = Number(m[2] ?? 0) * 604_800 + Number(m[3] ?? 0) * 86_400 + Number(m[4] ?? 0) * 3_600 + Number(m[5] ?? 0) * 60 + Number(m[6] ?? 0);
+  const m = /^([+-])?P([^T]*)(?:T(.*))?$/.exec(value.trim());
+  const date = m ? /^(?:(\d+)W)?(?:(\d+)D)?$/.exec(m[2]!) : null;
+  const time = m ? /^(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/.exec(m[3] ?? "") : null;
+  if (!m || !date || !time) return null;
+  const seconds = Number(date[1] ?? 0) * 604_800 + Number(date[2] ?? 0) * 86_400 + Number(time[1] ?? 0) * 3_600 + Number(time[2] ?? 0) * 60 + Number(time[3] ?? 0);
   return (m[1] === "-" ? -seconds : seconds) * 1_000;
 }
 
@@ -123,12 +134,17 @@ interface Rule {
   byDay: number[];
 }
 
+/** UNTIL is inclusive: a date-only one is that whole day (up to the next midnight), a time is itself (up to the next millisecond). */
+function exclusiveEnd(until: Moment): number {
+  if (!until.allDay) return until.at + 1;
+  return localInstant(addLocalDays(localDay(new Date(until.at), until.tz), 1), 0, until.tz).getTime();
+}
+
 function parseRule(value: string, zone: string): Rule | null {
   const parts = Object.fromEntries(value.split(";").map((p) => p.split("=") as [string, string]));
   if (!["DAILY", "WEEKLY", "MONTHLY", "YEARLY"].includes(parts.FREQ ?? "")) return null;
   const until = parts.UNTIL ? parseMoment({ params: {}, value: parts.UNTIL }, zone) : null;
-  // UNTIL is inclusive: a date-only one is that whole day (up to the next midnight), a time is itself (up to the next millisecond).
-  const untilMs = until ? (until.allDay ? localInstant(addLocalDays(localDay(new Date(until.at), until.tz), 1), 0, until.tz).getTime() : until.at + 1) : null;
+  const untilMs = until ? exclusiveEnd(until) : null;
   return {
     freq: parts.FREQ as Rule["freq"],
     interval: Math.max(1, Number(parts.INTERVAL ?? 1) || 1),
@@ -146,23 +162,31 @@ function addMonthsLocal(day: string, n: number): string {
   return dayOf(first.getUTCFullYear(), first.getUTCMonth() + 1, Math.min(d, last));
 }
 
+/** The days of the `k`-th period of a rule (a week, a month, a year...), in order. */
+function daysOfPeriod(startDay: string, rule: Rule, k: number): string[] {
+  if (rule.freq === "DAILY") return [addLocalDays(startDay, k * rule.interval)];
+  if (rule.freq === "WEEKLY") {
+    const monday = addLocalDays(startDay, k * rule.interval * 7 - ((weekdayOf(startDay) + 6) % 7)); // weeks start on Monday
+    const weekdays = rule.byDay.length > 0 ? rule.byDay : [weekdayOf(startDay)];
+    return weekdays.map((w) => addLocalDays(monday, (w + 6) % 7)).sort((a, b) => a.localeCompare(b));
+  }
+  return [addMonthsLocal(startDay, k * rule.interval * (rule.freq === "YEARLY" ? 12 : 1))];
+}
+
 /** The starts of a recurring event, in order, up to the end of the window (counted from the first occurrence, as the rule is). */
 function occurrenceStarts(first: Moment, rule: Rule, untilMs: number): number[] {
   const out: number[] = [];
   const startDay = localDay(new Date(first.at), first.tz);
   const minutes = minutesOfDay(first.at, first.tz);
   const startOf = (day: string) => (day === startDay ? first.at : localInstant(day, minutes, first.tz).getTime());
-  for (let k = 0; out.length < MAX_OCCURRENCES; k++) {
-    let days: string[];
-    if (rule.freq === "DAILY") days = [addLocalDays(startDay, k * rule.interval)];
-    else if (rule.freq === "WEEKLY") {
-      const monday = addLocalDays(startDay, k * rule.interval * 7 - ((weekdayOf(startDay) + 6) % 7)); // weeks start on Monday
-      days = (rule.byDay.length > 0 ? rule.byDay : [weekdayOf(startDay)]).map((w) => addLocalDays(monday, (w + 6) % 7)).sort();
-    } else days = [addMonthsLocal(startDay, k * rule.interval * (rule.freq === "YEARLY" ? 12 : 1))];
+  const reached = (start: number) => start >= untilMs || (rule.until !== null && start >= rule.until);
+  let k = 0;
+  while (out.length < MAX_OCCURRENCES) {
+    const days = daysOfPeriod(startDay, rule, k++);
     for (const day of days) {
       if (day < startDay) continue;
       const start = startOf(day);
-      if (start >= untilMs || (rule.until !== null && start >= rule.until)) return out;
+      if (reached(start)) return out;
       out.push(start);
       if (rule.count !== null && out.length >= rule.count) return out;
     }
@@ -171,35 +195,57 @@ function occurrenceStarts(first: Moment, rule: Rule, untilMs: number): number[] 
   return out;
 }
 
-/** The busy times of an ICS file inside the window, merged. Malformed events are skipped, never fatal. */
-export function parseBusy(text: string, options: IcsBusyOptions): BusyInterval[] {
-  const { timezone } = options;
-  const [from, to] = [options.from.getTime(), options.to.getTime()];
-  const all = events(text);
+/** The starts of each event that a later occurrence replaces (RECURRENCE-ID), by UID. */
+function overriddenStarts(all: Props[], timezone: string): Map<string, Set<number>> {
   const overridden = new Map<string, Set<number>>();
   for (const e of all) {
     const id = e["RECURRENCE-ID"]?.[0];
     const uid = e.UID?.[0]?.value;
     const moment = id ? parseMoment(id, timezone) : null;
-    if (uid && moment) (overridden.get(uid) ?? overridden.set(uid, new Set()).get(uid)!).add(moment.at);
+    if (!uid || !moment) continue;
+    const set = overridden.get(uid) ?? new Set<number>();
+    set.add(moment.at);
+    overridden.set(uid, set);
   }
+  return overridden;
+}
+
+/** How long the event lasts, in milliseconds (0 or less: nothing to block). */
+function lengthOf(e: Props, first: Moment, timezone: string): number {
+  const end = e.DTEND?.[0] ? parseMoment(e.DTEND[0], timezone) : null;
+  if (end) return end.at - first.at;
+  const duration = e.DURATION?.[0] ? parseDuration(e.DURATION[0].value) : null;
+  if (duration !== null) return duration;
+  return first.allDay ? ALL_DAY_MS : 0;
+}
+
+/** The occurrences left out: the ones overridden by another event and the EXDATEs. */
+function skippedStarts(e: Props, overridden: Map<string, Set<number>>, timezone: string): Set<number> {
+  const uid = e.UID?.[0]?.value;
+  const skip = new Set<number>(uid && !e["RECURRENCE-ID"] ? overridden.get(uid) : []);
+  for (const ex of e.EXDATE ?? [])
+    for (const v of ex.value.split(",")) {
+      const m = parseMoment({ params: ex.params, value: v }, timezone);
+      if (m) skip.add(m.at);
+    }
+  return skip;
+}
+
+/** The busy times of an ICS file inside the window, merged. Malformed events are skipped, never fatal. */
+export function parseBusy(text: string, options: IcsBusyOptions): BusyInterval[] {
+  const { timezone } = options;
+  const [from, to] = [options.from.getTime(), options.to.getTime()];
+  const all = events(text);
+  const overridden = overriddenStarts(all, timezone);
   const out: BusyInterval[] = [];
   for (const e of all) {
     if (e.TRANSP?.[0]?.value.toUpperCase() === "TRANSPARENT") continue;
     if (e.STATUS?.[0]?.value.toUpperCase() === "CANCELLED") continue;
     const first = e.DTSTART?.[0] ? parseMoment(e.DTSTART[0], timezone) : null;
     if (!first) continue;
-    const end = e.DTEND?.[0] ? parseMoment(e.DTEND[0], timezone) : null;
-    const duration = e.DURATION?.[0] ? parseDuration(e.DURATION[0].value) : null;
-    const length = end ? end.at - first.at : (duration ?? (first.allDay ? ALL_DAY_MS : 0));
+    const length = lengthOf(e, first, timezone);
     if (length <= 0) continue;
-    const uid = e.UID?.[0]?.value;
-    const skip = new Set<number>(uid && !e["RECURRENCE-ID"] ? overridden.get(uid) : []);
-    for (const ex of e.EXDATE ?? [])
-      for (const v of ex.value.split(",")) {
-        const m = parseMoment({ params: ex.params, value: v }, timezone);
-        if (m) skip.add(m.at);
-      }
+    const skip = skippedStarts(e, overridden, timezone);
     const rule = e.RRULE?.[0] ? parseRule(e.RRULE[0].value, timezone) : null;
     const starts = rule && !e["RECURRENCE-ID"] ? occurrenceStarts(first, rule, to) : [first.at];
     for (const start of starts) {

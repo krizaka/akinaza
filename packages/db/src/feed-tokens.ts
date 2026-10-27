@@ -28,9 +28,10 @@ async function ownStaff(db: Pick<Db, "select">, ref: FeedRef): Promise<boolean> 
  */
 export async function rotateFeedToken(db: Db, ref: FeedRef, tokenHash: string, now: Date): Promise<FeedInfo | null> {
   if (!(await ownStaff(db, ref))) return null;
+  const lockKey = ["feed", ref.shopId, ref.staffId ?? ""].join(":");
   return db.transaction(async (tx) => {
     // Two rotations of the same feed take turns: the second revokes the first's token, never leaving two live ones.
-    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`feed:${ref.shopId}:${ref.staffId ?? ""}`}, 0))`);
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`);
     const live = ref.staffId === null ? isNull(feedTokens.staffId) : eq(feedTokens.staffId, ref.staffId);
     const revoked = await tx.update(feedTokens).set({ revokedAt: now }).where(and(eq(feedTokens.shopId, ref.shopId), live, isNull(feedTokens.revokedAt))).returning({ id: feedTokens.id });
     const [row] = await tx.insert(feedTokens).values({ shopId: ref.shopId, staffId: ref.staffId, tokenHash, rotatedAt: revoked.length > 0 ? now : null }).returning();

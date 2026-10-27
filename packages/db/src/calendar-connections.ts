@@ -39,8 +39,9 @@ const refuse = (code: string): never => {
 
 /** Connects a calendar: the staff member must be the shop's, the shop under its bound. Syncs as soon as the next tick comes. */
 export async function addConnection(db: Db, input: NewConnection): Promise<ConnectionInfo> {
+  const lockKey = "calendar:" + input.shopId;
   return db.transaction(async (tx) => {
-    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`calendar:${input.shopId}`}, 0))`);
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${lockKey}, 0))`);
     if (input.staffId) {
       const [own] = await tx.select({ id: staff.id }).from(staff).where(and(eq(staff.id, input.staffId), eq(staff.shopId, input.shopId)));
       if (!own) return refuse("AK_STAFF_UNKNOWN");

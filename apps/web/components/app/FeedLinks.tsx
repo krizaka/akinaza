@@ -12,7 +12,7 @@ import type { FeedOverview, FeedState } from "@/lib/feed-overview";
 import { useSay } from "@/lib/i18n-client";
 
 /** One feed: its state, « make / make a new link / turn off », and the address when it has just been made (shown once, never kept). */
-function FeedRow({ staffId, name, state }: { staffId: string | null; name: string; state: FeedState }) {
+function FeedRow({ staffId, name, state }: Readonly<{ staffId: string | null; name: string; state: FeedState }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [url, setUrl] = useState<string | null>(null);
@@ -48,7 +48,7 @@ function FeedRow({ staffId, name, state }: { staffId: string | null; name: strin
             variant="ghost"
             disabled={call.pending}
             onClick={async () => {
-              if (!window.confirm(t("revokeConfirm"))) return;
+              if (!globalThis.confirm(t("revokeConfirm"))) return;
               setUrl(null);
               await call.run("/api/walker/feeds", { method: "DELETE", json: { staffId } });
             }}
@@ -62,7 +62,7 @@ function FeedRow({ staffId, name, state }: { staffId: string | null; name: strin
 }
 
 /** « Votre agenda sur votre téléphone » (ADR-004): the private feeds of the shop and of each team member. */
-export function FeedLinks({ overview, shopName }: { overview: FeedOverview; shopName: string }) {
+export function FeedLinks({ overview, shopName }: Readonly<{ overview: FeedOverview; shopName: string }>) {
   const { say } = useSay();
   const t = (key: string) => say(`boutique.agenda.feed.${key}`);
   if (!overview.enabled) return <Alert tone="info">{t("off")}</Alert>;

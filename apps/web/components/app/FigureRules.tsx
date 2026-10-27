@@ -30,7 +30,7 @@ const changed = (usual: Values, values: Values): OwnerOverrides => Object.fromEn
  * The thresholds a figure is judged against, for this shop (#260): the usual values are the administrator's, the owner moves them inside the bounds.
  * Only the moment a figure asks for a look or for action changes; the amounts and the formulas never do.
  */
-export function FigureRules({ tunable, usual, overrides, bounds }: { tunable: boolean; usual: Values; overrides: OwnerOverrides; bounds: typeof OWNER_BOUNDS }) {
+export function FigureRules({ tunable, usual, overrides, bounds }: Readonly<{ tunable: boolean; usual: Values; overrides: OwnerOverrides; bounds: typeof OWNER_BOUNDS }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [saved, setSaved] = useState(false);

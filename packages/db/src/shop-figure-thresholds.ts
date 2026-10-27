@@ -16,10 +16,7 @@ export async function shopFigureOverrides(db: Db, shopId: string): Promise<Owner
  */
 export async function saveShopFigureOverrides(db: Db, shopId: string, input: unknown): Promise<OwnerOverrides> {
   const kept = parseOwnerOverrides(input);
-  if (Object.keys(kept).length === 0) {
-    await db.delete(shopFigureRules).where(eq(shopFigureRules.shopId, shopId));
-    return kept;
-  }
-  await db.insert(shopFigureRules).values({ shopId, overrides: kept }).onConflictDoUpdate({ target: shopFigureRules.shopId, set: { overrides: kept, updatedAt: sql`now()` } });
+  if (Object.keys(kept).length === 0) await db.delete(shopFigureRules).where(eq(shopFigureRules.shopId, shopId));
+  else await db.insert(shopFigureRules).values({ shopId, overrides: kept }).onConflictDoUpdate({ target: shopFigureRules.shopId, set: { overrides: kept, updatedAt: sql`now()` } });
   return kept;
 }

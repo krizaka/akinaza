@@ -23,6 +23,18 @@ function back(path: string, outcome: Outcome, secure: boolean): Response {
   return new Response(null, { status: 303, headers: { Location: `${path}?calendar=${outcome}`, "Cache-Control": "private, no-store", "Set-Cookie": clearPkceCookie(secure) } });
 }
 
+/** Whether the signed-in person may connect a calendar for this staff member (or for the whole shop when `staffId` is null). */
+function mayConnect(staffId: string | null, overview: { wholeShop: boolean; people: readonly { id: string }[] }): boolean {
+  if (staffId === null) return overview.wholeShop;
+  return overview.people.some((p) => p.id === staffId);
+}
+
+/** A refusal the page already explains stays quiet; anything else is logged without its detail. */
+function logUnexpected(error: unknown): void {
+  if (error instanceof HttpError || error instanceof CalendarSourceError) return;
+  console.error("[akinaza] calendar callback failed", error instanceof Error ? error.message : "unknown");
+}
+
 /**
  * The provider brings the owner back with a code. The signed state, the browser's PKCE cookie and the signed-in account must all agree
  * before the code is exchanged; the grant (a refresh token) is sealed at once and never leaves the server again.
@@ -45,7 +57,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ kind: st
     const source = connectable(kind, oauthApps());
     if (!code || !source || !(await s.get("features.calendarSync")) || !(await s.get(`calendarSync.${kind}.enabled`))) return back(agenda, "error", secure);
     const overview = await calendarOverview(shop.id, agendaScope(role, session.account.id));
-    if (state.staffId === null ? !overview.wholeShop : !overview.people.some((p) => p.id === state.staffId)) return back(agenda, "error", secure);
+    if (!mayConnect(state.staffId, overview)) return back(agenda, "error", secure);
     const grant = await source.exchange({ code, redirectUri: `${env().APP_PUBLIC_URL.replace(/\/$/, "")}/api/calendars/callback/${kind}`, codeVerifier: verifier });
     const id = crypto.randomUUID();
     await addConnection(db(), { id, shopId: shop.id, staffId: state.staffId, kind, label: state.label, secretEnc: sealField(grant.secret, dataKey(), id), consentTextVersion: CALENDAR_CONSENT_VERSION, now, max: await s.get("calendarSync.maxCalendarsPerShop") });
@@ -58,7 +70,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ kind: st
     if (read?.changed) await recordSyncOk(db(), { id, shopId: shop.id, staffId: state.staffId }, { busy: read.busy, validators: read.validators }, now, settings.intervalMinutes);
     return back(agenda, "connected", secure);
   } catch (error) {
-    if (!(error instanceof HttpError) && !(error instanceof CalendarSourceError)) console.error("[akinaza] calendar callback failed", error instanceof Error ? error.message : "unknown");
+    logUnexpected(error);
     return back(agenda, "error", secure);
   }
 }

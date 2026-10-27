@@ -38,7 +38,7 @@ export function caldavSource(options: CaldavOptions): CalendarSource {
       try {
         res = await doFetch(url, {
           method: "REPORT",
-          headers: { authorization: `Basic ${Buffer.from(`${options.username}:${options.password}`).toString("base64")}`, depth: "1", "content-type": "application/xml; charset=utf-8" },
+          headers: { authorization: `Basic ${Buffer.from([options.username, options.password].join(":")).toString("base64")}`, depth: "1", "content-type": "application/xml; charset=utf-8" },
           body,
           redirect: "error",
           signal: AbortSignal.timeout(20_000),

@@ -29,7 +29,7 @@ const OUTCOME_TONE = { connected: "success", denied: "info", error: "danger" } a
 const STATE_TONE = { ok: "success", error: "danger", pending: "neutral" } as const;
 
 /** One connected calendar: its state, « read again » and « disconnect ». The address is never shown: it is sealed on the server. */
-function SourceRow({ c, who }: { c: CalendarOverview["connections"][number]; who: string }) {
+function SourceRow({ c, who }: Readonly<{ c: CalendarOverview["connections"][number]; who: string }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const t = (key: string, vars?: Record<string, string | number>) => say(`boutique.agenda.sources.${key}`, vars);
@@ -54,7 +54,7 @@ function SourceRow({ c, who }: { c: CalendarOverview["connections"][number]; who
           variant="ghost"
           disabled={call.pending}
           onClick={async () => {
-            if (window.confirm(t("removeConfirm"))) await call.run("/api/walker/calendars", { method: "DELETE", json: { id: c.id } });
+            if (globalThis.confirm(t("removeConfirm"))) await call.run("/api/walker/calendars", { method: "DELETE", json: { id: c.id } });
           }}
         >
           {t("remove")}
@@ -107,7 +107,7 @@ function ProviderConnect({ providers, options }: Readonly<{ providers: Provider[
 }
 
 /** « Vos autres agendas » (ADR-004): the calendars the owner already uses, read-only; their busy times keep those slots free of bookings. */
-export function CalendarSources({ overview }: { overview: CalendarOverview }) {
+export function CalendarSources({ overview }: Readonly<{ overview: CalendarOverview }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [needConsent, setNeedConsent] = useState(false);

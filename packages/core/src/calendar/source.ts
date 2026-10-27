@@ -69,7 +69,7 @@ export interface ConnectableSource extends CalendarSource {
 
 /** Sorted, merged: overlapping or touching busy intervals become one. */
 export function mergeBusy(intervals: readonly BusyInterval[]): BusyInterval[] {
-  const sorted = intervals.filter((i) => i.endsAt.getTime() > i.startsAt.getTime()).sort((a, b) => (a.startsAt < b.startsAt ? -1 : a.startsAt > b.startsAt ? 1 : 0));
+  const sorted = intervals.filter((i) => i.endsAt.getTime() > i.startsAt.getTime()).sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
   const out: BusyInterval[] = [];
   for (const next of sorted) {
     const last = out.at(-1);
