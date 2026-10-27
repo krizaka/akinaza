@@ -35,3 +35,4 @@ export * from "./privacy-migration";
 export * from "./figures";
 export * from "./shop-figure-thresholds";
 export * from "./feed-tokens";
+export * from "./calendar-connections";

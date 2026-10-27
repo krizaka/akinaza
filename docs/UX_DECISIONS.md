@@ -597,3 +597,12 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Refused**: an account connection (OAuth scopes and consent for something a link already does); a link that can be read again later (it would have to be stored in clear); one shared link per account.
 - **Cost**: whoever has the link reads those times: said under the field, and the link can be renewed in one tap. The feed is in French for now.
 - **Wrong if**: owners paste the link into shared documents - then add an expiry or a per-device link.
+
+## Your other calendars keep your slots free (#282, ADR-004)
+
+- **Decision**: Boutique › Agenda lets the owner (or a team member, for their own agenda) connect the calendar they already use by its ICS address. Akinaza reads only the times they are busy and takes those slots off the booking page; an appointment that lands on such a time stays and is flagged in Today (« Chevauche votre agenda Google »), in the list and in the detail. Nothing is deleted on either side, and Akinaza never writes to the calendar. The connection asks for an explicit consent (what is read, why, how to stop); disconnecting deletes the connection and its busy times, so the slots open again at once.
+- **Problem**: a client books the hour a dentist appointment already takes; the owner keeps two calendars in their head.
+- **Principle**: error prevention before error recovery (the slot is not offered), and visibility of system status (the state of each calendar, its last read, the reason in words when it cannot be read).
+- **Refused**: deciding for the owner when two things overlap (a rule that moves or cancels one would be wrong half the time); showing event titles (more data than blocking a time needs, and Loi 25); writing bookings into their calendar (the private link already does it).
+- **Cost**: a calendar is read every 30 minutes by default (set by the administrator), so a meeting added a minute ago may not block yet - « Read again » reads it now. The address is a secret: kept sealed, shown to nobody.
+- **Wrong if**: owners connect a calendar full of personal events and are surprised that those times are closed - then show the count of blocked times next to each calendar.

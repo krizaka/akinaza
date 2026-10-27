@@ -167,5 +167,11 @@ describe("a failing section of the day (D6): an alert in place, the rest renders
     expect(html).not.toContain("data-kz-arrive=");
     expect(html).not.toContain("data-kz-status=");
   });
-});
 
+  it("flags an appointment that overlaps the owner's other calendar, and keeps it (ADR-004)", () => {
+    const html = render({ appointments: [{ ...base.appointments[0]!, agendaConflict: "Google" }] });
+    expect(text(html)).toContain("today.conflict Google");
+    expect(html).toContain("Sofia Rossi");
+    expect(text(render({}))).not.toContain("today.conflict");
+  });
+});

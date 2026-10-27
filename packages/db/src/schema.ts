@@ -287,6 +287,53 @@ export const feedTokens = pgTable(
   ],
 );
 
+/**
+ * A calendar the owner already uses, read-only (ADR-004, #282). `staff_id` null blocks everyone's slots, a staff id only that person's.
+ * `secret_enc` is the ICS address or the provider grant, sealed with the data key (the row's id as additional data).
+ */
+export const calendarConnections = pgTable(
+  "calendar_connections",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    staffId: uuid("staff_id").references(() => staff.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: ["ics", "google", "outlook", "caldav"] }).notNull(),
+    label: text("label").notNull(),
+    secretEnc: text("secret_enc").notNull(),
+    consentTextVersion: text("consent_text_version").notNull(),
+    consentedAt: timestamp("consented_at", { withTimezone: true }).notNull(),
+    etag: text("etag"),
+    lastModified: text("last_modified"),
+    state: text("state", { enum: ["pending", "ok", "error"] }).notNull().default("pending"),
+    failures: integer("failures").notNull().default(0),
+    lastError: text("last_error"),
+    lastAttemptAt: timestamp("last_attempt_at", { withTimezone: true }),
+    lastSuccessAt: timestamp("last_success_at", { withTimezone: true }),
+    nextSyncAt: timestamp("next_sync_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: created(),
+  },
+  (t) => [
+    index("calendar_connections_shop").on(t.shopId),
+    index("calendar_connections_due").on(t.nextSyncAt),
+    check("calendar_connections_kind", sql`${t.kind} IN ('ics','google','outlook','caldav')`),
+    check("calendar_connections_state", sql`${t.state} IN ('pending','ok','error')`),
+    check("calendar_connections_label", sql`char_length(${t.label}) BETWEEN 1 AND 80`),
+  ],
+);
+
+/** What the owner is busy with elsewhere: a stretch of time, no title, no attendee. Replaced at each sync, deleted with its connection. */
+export const busyIntervals = pgTable(
+  "busy_intervals",
+  {
+    id: id(),
+    connectionId: uuid("connection_id").notNull().references(() => calendarConnections.id, { onDelete: "cascade" }),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    staffId: uuid("staff_id").references(() => staff.id, { onDelete: "cascade" }),
+    during: tstzrange("during").notNull(),
+  },
+  (t) => [index("busy_intervals_shop").on(t.shopId, t.staffId), index("busy_intervals_connection").on(t.connectionId), index("busy_intervals_during").using("gist", t.during), check("busy_intervals_bounded", sql`NOT isempty(${t.during}) AND NOT lower_inf(${t.during}) AND NOT upper_inf(${t.during})`)],
+);
+
 /** The wall of the public page (B45, #310): its texture; no row = plaster and no item. */
 export const shopWall = pgTable(
   "shop_wall",

@@ -928,7 +928,14 @@
       "UPLOAD_NOT_VIDEO": "Ce n'est pas une vidéo MP4 ou WebM.",
       "SOCIAL_LINK": "Cette adresse n'est pas une page de cette plateforme.",
       "ANNOUNCEMENT_LIMIT": "Vous gardez trente affichettes au plus. Retirez-en une d'abord.",
-      "REVIEW_REMOVED": "Cet avis a été retiré par l'administration."
+      "REVIEW_REMOVED": "Cet avis a été retiré par l'administration.",
+      "CAL_INVALID": "Cette adresse n'est pas un agenda que nous pouvons lire.",
+      "CAL_UNREACHABLE": "L'agenda est injoignable. Nous réessaierons.",
+      "CAL_REFUSED": "L'agenda nous a refusé l'accès : vérifiez l'adresse.",
+      "CAL_TOO_LARGE": "Cet agenda est trop volumineux pour être lu.",
+      "CAL_UNAUTHORIZED": "L'agenda demande de vous reconnecter.",
+      "CAL_RATE_LIMITED": "L'agenda nous demande de ralentir. Nous réessaierons.",
+      "CALENDAR_LIMIT": "Vous avez atteint le nombre d'agendas permis."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -1022,7 +1029,9 @@
         "owed": "Reste dû : {amount}",
         "overdue": "Dont {amount} en retard",
         "noneLate": "Rien en retard."
-      }
+      },
+      "conflict": "Chevauche votre agenda {calendar}",
+      "conflictDetail": "Ce rendez-vous chevauche une plage occupée de votre agenda {calendar}. Rien n'a été modifié de part ni d'autre : gardez-le, ou déplacez l'un des deux vous-même."
     },
     "account": {
       "forgot": {
@@ -1649,6 +1658,32 @@
           "how": "Calendrier Apple : Fichier, Nouvel abonnement à un calendrier. Google Agenda : Autres agendas, À partir de l’URL. Outlook : Ajouter un calendrier, S’abonner à partir du Web. Quiconque a le lien peut lire ces heures : ne le partagez avec personne.",
           "off": "L’administrateur a désactivé les liens d’agenda.",
           "nobody": "Pas encore de membre d’équipe."
+        },
+        "sources": {
+          "title": "Vos autres agendas",
+          "lead": "Akinaza lit les plages où vous êtes occupé dans l'agenda que vous utilisez déjà, et les garde libres de réservations. Il ne lit que les heures : jamais un titre, un invité ou une note, et il ne modifie jamais votre agenda.",
+          "wholeShop": "Toute la boutique",
+          "add": "Connecter un agenda",
+          "label": "Nom",
+          "labelHint": "Pour vous seulement, par exemple Google ou Dentiste.",
+          "whose": "Bloque les heures de",
+          "url": "Adresse de l'agenda (ICS)",
+          "urlHint": "Google Agenda : Paramètres, votre agenda, Adresse secrète au format iCal. Apple et Outlook en donnent une aussi quand vous publiez ou partagez un agenda. Quiconque a cette adresse peut lire cet agenda : elle est gardée chiffrée ici et n'est montrée à personne.",
+          "consent": "J'accepte qu'Akinaza lise les plages où je suis occupé dans cet agenda, pour les garder libres de réservations. Je peux me déconnecter à tout moment : ces plages sont alors supprimées.",
+          "needConsent": "Cochez la case pour connecter l'agenda.",
+          "connect": "Connecter",
+          "none": "Aucun agenda connecté.",
+          "state": {
+            "ok": "Lu",
+            "error": "Illisible",
+            "pending": "En attente"
+          },
+          "lastRead": "Lu {when}",
+          "neverRead": "Pas encore lu.",
+          "refresh": "Relire",
+          "remove": "Déconnecter",
+          "removeConfirm": "Déconnecter cet agenda ? Ses plages occupées sont supprimées et ces créneaux se rouvrent.",
+          "off": "L'administrateur a désactivé la connexion d'agendas."
         }
       }
     },
