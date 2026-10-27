@@ -8,7 +8,8 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 
 import { RoutePageTransition } from "@/components/RoutePageTransition";
-import { getDictionary, type Locale, LOCALES, PAGE_LOCALES, type PageLocale } from "@/lib/i18n";
+import { StageNotice } from "@/components/StageNotice";
+import { getDictionary, type Locale, LOCALES, PAGE_LOCALES, type PageLocale, uiLocaleOf } from "@/lib/i18n";
 import { SITE_URL } from "@/lib/site";
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
@@ -42,6 +43,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
       </head>
       <body className="min-h-screen bg-surface-0 text-fg antialiased selection:bg-accent selection:text-on-accent">
         <ThemeProvider defaultMode="dark">
+          <StageNotice locale={uiLocaleOf(locale as PageLocale)} />
           <RoutePageTransition>{children}</RoutePageTransition>
           <MotionObserver />
         </ThemeProvider>

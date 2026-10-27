@@ -79,3 +79,12 @@ describe("the owner's guide (akinaza#382)", () => {
     expect(c.account.data.export).toBe("Export");
   });
 });
+
+describe("the guide's hub lists the five pages once (akinaza#440)", () => {
+  it("keeps the list and drops the chips of the card above it", () => {
+    const hub = read("app/[locale]/docs/page.tsx");
+    expect(hub).toContain("links: []");
+    expect(hub.match(/DOC_IDS\.map/g)).toHaveLength(1);
+    expect(hub).toContain("popular={{");
+  });
+});

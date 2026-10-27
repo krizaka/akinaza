@@ -78,3 +78,11 @@ html.light [data-hue="ink"]    { --kz-hue: hsl(222 30% 22%); --kz-hue-2: hsl(217
 .kz-tpl-preview[data-paper="dot-grid"] { background-image: radial-gradient(color-mix(in srgb, currentColor 30%, transparent) 0.6px, transparent 0.8px); background-size: 6px 6px; }
 .kz-tpl-preview[data-paper="ruled"] { background-image: repeating-linear-gradient(to bottom, transparent 0 7px, color-mix(in srgb, currentColor 18%, transparent) 7px 8px); }
 .kz-tpl-preview[data-paper="kraft"] { background-color: color-mix(in srgb, var(--kz-accent) 10%, transparent); }
+
+/* The frame under what stands above the page (the development notice): its screen is what is left of the viewport, so a short page
+   never scrolls by the notice's height. `--kz-top-chrome-h` is measured by FrameSlot (0 without a notice). The rail is sticky, so it
+   gets the same height or it would hold the page open. */
+[data-app-frame-slot] > .min-h-dvh { min-height: calc(100dvh - var(--kz-top-chrome-h, 0px)); }
+@media (min-width: 48rem) {
+  [data-app-frame-slot] .md\:h-dvh { height: calc(100dvh - var(--kz-top-chrome-h, 0px)); }
+}

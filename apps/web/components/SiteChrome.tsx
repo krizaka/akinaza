@@ -25,7 +25,9 @@ export function SiteHeader({ locale, current, path, languages: offered, contentL
   const words: BarWords = { signIn: t("chrome.signIn"), tryIt: t("chrome.tryIt"), openApp: t("chrome.openApp"), account: t("chrome.account"), settings: t("chrome.settings"), language: t("chrome.languageLabel"), theme: t("chrome.themeToggle"), signOut: t("chrome.signOut") };
   const items = publicBarLinks({ pricing: pagePath(locale, "pricing"), docs: pagePath(locale, "docs") }, locale).map((l) => ({ ...l, active: l.id === current || (l.id === "docs" && current.startsWith("docs/")) }));
   return (
-    <div className="pointer-events-none fixed inset-x-0 top-3 z-50 px-3">
+    <div className="pointer-events-none sticky top-0 z-50 h-0 px-3" data-site-bar>
+      {/* 12 px under the development notice (or the top): an offset that takes no room in the flow, so nothing moves below it. */}
+      <div className="relative top-3">
       <NavBar.Root label={t("chrome.navLabel")} className="pointer-events-auto mx-auto max-w-(--kz-page-max,72rem)">
         <NavBar.Brand asChild>
           <Link href={home} aria-label={t("chrome.brandHome")}>
@@ -65,6 +67,7 @@ export function SiteHeader({ locale, current, path, languages: offered, contentL
           </NavBar.Mobile>
         </NavBar.Actions>
       </NavBar.Root>
+      </div>
     </div>
   );
 }

@@ -10,8 +10,15 @@ export const HOME_SECTIONS = ["hero", "screens", "offer", "trust"] as const;
 /** The demo shop of the first proof: a dog walker in Saint-Henri (fictional, seeded). Its public page is real. */
 export const DEMO_SHOP = "pattes-saint-henri";
 
-/** The three jobs, each shown on a real screen of the app (lib/tour.ts has the captures). */
-export const SCREENS = [{ id: "book" }, { id: "invoice" }, { id: "books" }] as const;
+/**
+ * The three jobs, each shown on a real screen of the app (lib/tour.ts has the captures). `crop` is where the still is cut in its card
+ * (akinaza#440): the booking's capture opens on an empty band under its header, so its card starts at the page's content.
+ */
+export const SCREENS = [
+  { id: "book", crop: "object-[50%_36%]" },
+  { id: "invoice", crop: "object-top" },
+  { id: "books", crop: "object-top" },
+] as const;
 
 type DevPreview = { criteria: Record<string, { evidence?: string | null; na?: boolean | string }> };
 

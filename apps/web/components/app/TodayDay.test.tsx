@@ -76,8 +76,16 @@ describe("Aujourd'hui on the home grammar (D4): the headline, the date on the ri
 
   it("opens « Le classeur » under the heading: Rendez-vous · À facturer · À encaisser · Cette semaine, with their counts", () => {
     const t = text(render({ board }));
-    for (const part of ["today.binder.appointments 1", "today.binder.toBill 1", "today.binder.toCollect 1", "today.binder.week 11"]) expect(t).toContain(part);
-    expect(t.indexOf("today.binder.title")).toBeLessThan(t.indexOf("today.agendaLabel"));
+    for (const part of ["today.glance.appointments 1", "today.glance.toBill 1", "today.glance.toCollect 1", "today.glance.week 11"]) expect(t).toContain(part);
+    expect(t.indexOf("today.glance.title")).toBeLessThan(t.indexOf("today.agendaLabel"));
+  });
+
+  it("never lets a cents value reach a label: money is an amount in dollars, the period is named in each label", () => {
+    const html = render({ board });
+    const t = text(html);
+    expect(t).toContain("151,74");
+    for (const cents of ["15174", "15 174", "15,174", "5174", "5 174", "5,174", "3174", "3,174"]) expect(t).not.toContain(cents);
+    expect(t).toContain("today.activity.daysLong 7");
   });
 
   it("holds quick access, the activity and « À encaisser » in the side column, after the agenda", () => {
@@ -89,6 +97,13 @@ describe("Aujourd'hui on the home grammar (D4): the headline, the date on the ri
     expect(html).toContain('href="/fr/s/demo"');
     for (const part of ["today.activity.invoiced", "today.activity.collected", "today.activity.appointments"]) expect(t).toContain(part);
     expect(html).toContain("today.balance.overdue");
+  });
+
+  it("writes the activity charts' text version as money, not as cents (« 10 000 » for 100 $)", () => {
+    const html = render({ board });
+    expect(html).toMatch(/Invoiced|today\.activity\.invoiced/);
+    expect(html).not.toMatch(/10[\s\u202f\u00a0,]?000[^0-9]/);
+    expect(html).toMatch(/100[.,]00/);
   });
 
   it("keeps the period in the address: 7, 30 or 90 days, the current one marked", () => {
@@ -109,7 +124,7 @@ describe("Aujourd'hui on the home grammar (D4): the headline, the date on the ri
     const t = text(html);
     expect(t).toContain("today.noneTitle");
     expect(t).not.toContain("today.activity.invoiced");
-    expect(t).not.toContain("today.binder.title");
+    expect(t).not.toContain("today.glance.title");
   });
 
   it("opens an appointment from the address: each row links to ?appointment=<id>", () => {

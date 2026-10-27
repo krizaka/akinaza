@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint . --max-warnings 0 && krizaka-server-client-boundary",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "qa-accounts": "node scripts/qa-accounts.mjs"
@@ -43,7 +43,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@krizaka/config": "^0.9.1",
+    "@krizaka/config": "^0.10.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^24.19.2",
     "@types/pg": "^8.15.6",
@@ -52,6 +52,7 @@
     "@vitest/coverage-v8": "4.1.11",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.1",
+    "jsdom": "26.1.0",
     "postcss": "^8.5.6",
     "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3",

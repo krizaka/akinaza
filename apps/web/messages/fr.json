@@ -46,6 +46,10 @@
     "preferences": "Préférences",
     "version": "v{version}"
   },
+  "stage": {
+    "title": "Version de développement",
+    "message": "Les données peuvent être réinitialisées à tout moment. Ce n’est pas encore une offre commerciale."
+  },
   "landing": {
     "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
     "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",
@@ -84,7 +88,7 @@
       },
       "plans": {
         "starter": "Starter",
-        "scale": "Scale B2B",
+        "scale": "Pro",
         "price": "{price} par mois plus taxes",
         "preparing": "en préparation",
         "scaleSoon": "ses fonctions B2B arrivent bientôt"
@@ -111,7 +115,7 @@
       "line": "Dossiers dans une base de données au Canada · Consentement noté par finalité · Taxes préparées, déclaration produite par vous",
       "scope": "Pour les studios, salons et travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place."
     },
-    "visualLabel": "dev.akinaza.com",
+    "visualLabel": "www.akinaza.com",
     "feed": {
       "title": "Affiché dans votre quartier",
       "lead": "Les affichettes que les commerces épinglent sur leur propre page : une porte ouverte, un nouveau service, une place libérée. Rien ici n’est de la publicité que nous vendons.",
@@ -119,6 +123,7 @@
       "all": "Tous les quartiers",
       "boardLabel": "Affichettes épinglées par les commerces du quartier",
       "visit": "Voir {shop}",
+      "demo": "Voir la boutique de démonstration",
       "empty": "Aucune affichette dans ce quartier pour le moment.",
       "error": "Impossible de charger les affichettes. Réessayez dans un instant."
     }
@@ -351,16 +356,18 @@
     "plansLabel": "Plans",
     "perMonth": "par mois, taxes en sus",
     "preparing": "en préparation",
-    "soon": "bientôt",
+    "soon": "Bientôt",
+    "plannedTitle": "À venir",
     "badgeFounder": "Offre fondatrice",
     "badgeFounderLimit": "Les {limit} premières entreprises",
     "founderNote": "Mise en route incluse : vos services, vos heures, vos premières factures.",
     "plans": {
       "founder": "Fondatrice",
       "starter": "Starter",
-      "scale": "Scale B2B"
+      "scale": "Pro"
     },
     "features": {
+      "inherits": "Tout ce qu’inclut {plan}, plus les fonctions ci-dessous à mesure qu’elles arrivent",
       "booking": "Votre page de boutique et vos réservations, avec les heures que vous avez vraiment",
       "invoices": "Des factures bilingues avec la TPS et la TVQ exactes au sou",
       "books": "Les livres et les chiffres de taxes de chaque période, préparés pour que vous les déclariez",
@@ -1014,8 +1021,9 @@
       },
       "week": "Semaine {week} · {date}",
       "calendar": "Calendrier",
-      "binder": {
-        "title": "Le classeur",
+      "glance": {
+        "title": "Votre journée en bref",
+        "hint": "Chaque nombre ouvre sa liste.",
         "appointments": "Rendez-vous {count}",
         "toBill": "À facturer {count}",
         "toCollect": "À encaisser {count}",
@@ -1033,7 +1041,8 @@
         "days": "{days} j",
         "invoiced": "Facturé",
         "collected": "Encaissé",
-        "appointments": "Rendez-vous faits"
+        "appointments": "Rendez-vous faits",
+        "daysLong": "{days} jours"
       },
       "balance": {
         "title": "À encaisser",
@@ -1081,12 +1090,12 @@
         "accountTitle": "Mon compte",
         "description": "Votre profil, vos préférences, votre sécurité et vos données.",
         "profileDescription": "Votre nom et votre image, tels que votre équipe les voit.",
+        "profileDescriptionClient": "Votre nom et votre image.",
         "avatar": "Photo de profil",
         "email": "Courriel",
         "language": "Langue",
         "role": "Rôle",
         "roleIn": "{role} chez {shop}",
-        "roleUser": "Membre",
         "roleAdmin": "Administrateur",
         "lastSeen": "Dernière visite",
         "passwordTitle": "Changer votre mot de passe",
@@ -1123,6 +1132,7 @@
       "name": {
         "label": "Nom",
         "hint": "Affiché dans le menu du compte et à votre équipe.",
+        "hintClient": "Affiché dans le menu de votre compte.",
         "missing": "Pas encore de nom"
       },
       "avatar": {
@@ -1341,7 +1351,8 @@
         "label": "Vos clients en bref",
         "count": "{count} clients",
         "owedLabel": "À encaisser",
-        "upToDate": "{count} sur {total} à jour"
+        "upToDate": "{count} sur {total} à jour",
+        "upToDateHint": "À jour : rien n’est dû."
       },
       "search": "Rechercher un client",
       "searchPlaceholder": "Nom, courriel ou téléphone",
@@ -1350,7 +1361,7 @@
       "filter": {
         "all": "Tous",
         "due": "Reste dû",
-        "upcoming": "À venir"
+        "upcoming": "Prochain rendez-vous pris"
       },
       "selection": {
         "export": "Exporter la sélection (CSV)"
@@ -1403,7 +1414,7 @@
         "legalName": "Raison sociale",
         "address": "Adresse",
         "slug": "Adresse de la page",
-        "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. pattes-saint-henri Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
+        "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. pattes-saint-henri. Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
         "ownerName": "Votre prénom",
         "taglineFr": "Une ligne, en français",
         "taglineEn": "Une ligne, en anglais",
@@ -1426,7 +1437,8 @@
         "businessTypes": {
           "professional": "Services professionnels (studio, conseil, réparation…)",
           "pets": "Soins aux animaux (promenades, toilettage…)"
-        }
+        },
+        "ownerNameHint": "Votre nom dans l’agenda et sur vos rendez-vous."
       },
       "zones": {
         "title": "Zones desservies",
@@ -2059,6 +2071,7 @@
         "zero": "Rien à remettre"
       },
       "sources": "{count} documents derrière ce chiffre",
+      "sourcesOne": "1 document derrière ce chiffre",
       "kinds": {
         "invoice": "Facture",
         "expense": "Dépense"
@@ -2093,7 +2106,14 @@
         }
       },
       "footnote": "Akinaza prépare ces chiffres à partir de vos factures et de vos dépenses. C'est vous qui produisez la déclaration auprès de Revenu Québec, après avoir vérifié chaque chiffre.",
-      "figuresTitle": "Vos chiffres de TPS et de TVQ"
+      "figuresTitle": "Vos chiffres de TPS et de TVQ",
+      "remitHint": "Préparé à partir de vos factures et dépenses ; vous le produisez vous-même auprès de Revenu Québec.",
+      "periodHint": "Le dernier trimestre terminé est celui à produire maintenant ; le trimestre en cours est encore ouvert.",
+      "empty": {
+        "title": "Rien à préparer pour cette période",
+        "body": "Les chiffres apparaissent ici dès que vous émettez des factures ou saisissez des dépenses sur cette période.",
+        "action": "Voir les factures"
+      }
     },
     "invoices": {
       "title": "Factures",
@@ -2294,7 +2314,7 @@
         },
         "shopSetup": {
           "page": {
-            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
+            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio. Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
             "areaHint": "Montréal — jamais l'adresse civique.",
             "seatUnitHint": "Pour un service de groupe : « Jusqu'à 5 personnes ». Vide : « places »."
           },
@@ -2487,7 +2507,7 @@
       "autoMark": "Les textes marqués « traduit automatiquement » n'ont pas encore été relus par vous : relisez-les et modifiez-les au besoin.",
       "runs": "{used} traductions sur {limit} utilisées aujourd'hui.",
       "nothing": "Rien à traduire pour l'instant : remplissez d'abord votre accroche, votre histoire et vos services.",
-      "ownHint": "Vous avez écrit ce texte vous-même dans cette langue : modifiez-le depuis la page boutique.",
+      "ownHint": "Vous avez écrit ces textes vous-même dans cette langue : modifiez-les depuis la page de la boutique.",
       "staleHint": "Votre texte d'origine a changé depuis cette traduction.",
       "fields": {
         "tagline": "Accroche",
@@ -2879,7 +2899,11 @@
         "body": "Le reste de la page fonctionne. Réessayez dans un instant."
       },
       "retry": "Réessayer",
-      "loading": "Chargement…"
+      "loading": "Chargement…",
+      "page": {
+        "title": "Cette page n’a pas pu se charger.",
+        "body": "Rien n’est perdu. Réessayez dans un instant."
+      }
     },
     "organize": {
       "close": "Fermer",

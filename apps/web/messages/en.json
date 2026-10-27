@@ -46,6 +46,10 @@
     "preferences": "Preferences",
     "version": "v{version}"
   },
+  "stage": {
+    "title": "Development version",
+    "message": "Data can be reset at any time. This is not a commercial offer yet."
+  },
   "landing": {
     "title": "Your appointments, invoices and taxes, sorted.",
     "lead": "Clients book, you invoice, your tax figures are ready. In French and in English.",
@@ -84,7 +88,7 @@
       },
       "plans": {
         "starter": "Starter",
-        "scale": "Scale B2B",
+        "scale": "Pro",
         "price": "{price} a month plus taxes",
         "preparing": "in preparation",
         "scaleSoon": "its B2B features are coming soon"
@@ -111,7 +115,7 @@
       "line": "Records in a database in Canada · Consent noted by purpose · Taxes prepared, return filed by you",
       "scope": "For studios, salons and the self-employed. Not for restaurants, cafés, bars or bakeries with on-site consumption."
     },
-    "visualLabel": "dev.akinaza.com",
+    "visualLabel": "www.akinaza.com",
     "feed": {
       "title": "Posted in your neighbourhood",
       "lead": "The flyers shops pin on their own page: an open day, a new service, a place left. Nothing here is advertising we sell.",
@@ -119,6 +123,7 @@
       "all": "All neighbourhoods",
       "boardLabel": "Flyers pinned by the shops of the neighbourhood",
       "visit": "See {shop}",
+      "demo": "See the demo shop",
       "empty": "No flyer up in this neighbourhood yet.",
       "error": "The flyers could not be loaded. Try again in a moment."
     }
@@ -351,16 +356,18 @@
     "plansLabel": "Plans",
     "perMonth": "a month plus taxes",
     "preparing": "in preparation",
-    "soon": "soon",
+    "soon": "Soon",
+    "plannedTitle": "Coming soon",
     "badgeFounder": "Founder offer",
     "badgeFounderLimit": "First {limit} businesses",
     "founderNote": "Setup included: your services, your hours, your first invoices.",
     "plans": {
       "founder": "Founder",
       "starter": "Starter",
-      "scale": "Scale B2B"
+      "scale": "Pro"
     },
     "features": {
+      "inherits": "Everything in {plan}, plus the features below as they ship",
       "booking": "Your shop page and bookings, with the times you really have",
       "invoices": "Bilingual invoices with GST and QST exact to the cent",
       "books": "The books and the tax figures of each period, prepared for you to file",
@@ -1014,8 +1021,9 @@
       },
       "week": "Week {week} · {date}",
       "calendar": "Calendar",
-      "binder": {
-        "title": "The binder",
+      "glance": {
+        "title": "Your day at a glance",
+        "hint": "Each count opens its list.",
         "appointments": "Appointments {count}",
         "toBill": "To bill {count}",
         "toCollect": "To collect {count}",
@@ -1033,7 +1041,8 @@
         "days": "{days} d",
         "invoiced": "Invoiced",
         "collected": "Collected",
-        "appointments": "Appointments done"
+        "appointments": "Appointments done",
+        "daysLong": "{days} days"
       },
       "balance": {
         "title": "To collect",
@@ -1081,12 +1090,12 @@
         "accountTitle": "My account",
         "description": "Your profile, your preferences, your security and your data.",
         "profileDescription": "Your name and your picture, as your team sees them.",
+        "profileDescriptionClient": "Your name and your picture.",
         "avatar": "Profile picture",
         "email": "E-mail",
         "language": "Language",
         "role": "Role",
         "roleIn": "{role} at {shop}",
-        "roleUser": "Member",
         "roleAdmin": "Administrator",
         "lastSeen": "Last seen",
         "passwordTitle": "Change your password",
@@ -1123,6 +1132,7 @@
       "name": {
         "label": "Name",
         "hint": "Shown in the account menu and to your team.",
+        "hintClient": "Shown in your account menu.",
         "missing": "No name yet"
       },
       "avatar": {
@@ -1341,7 +1351,8 @@
         "label": "Your clients at a glance",
         "count": "{count} clients",
         "owedLabel": "To collect",
-        "upToDate": "{count} of {total} up to date"
+        "upToDate": "{count} of {total} up to date",
+        "upToDateHint": "Up to date means nothing owed."
       },
       "search": "Search a client",
       "searchPlaceholder": "Name, e-mail or phone",
@@ -1350,7 +1361,7 @@
       "filter": {
         "all": "All",
         "due": "Still owed",
-        "upcoming": "Coming back"
+        "upcoming": "Next visit booked"
       },
       "selection": {
         "export": "Export the selection (CSV)"
@@ -1403,7 +1414,7 @@
         "legalName": "Legal name",
         "address": "Address",
         "slug": "Page address",
-        "slugHint": "Lowercase words joined by hyphens, e.g. pattes-saint-henri You can change it: the old address still leads to your page.",
+        "slugHint": "Lowercase words joined by hyphens, e.g. pattes-saint-henri. You can change it: the old address still leads to your page.",
         "ownerName": "Your first name",
         "taglineFr": "One line, in French",
         "taglineEn": "One line, in English",
@@ -1426,7 +1437,8 @@
         "businessTypes": {
           "professional": "Professional services (studio, consulting, repairs…)",
           "pets": "Pet care (walks, grooming…)"
-        }
+        },
+        "ownerNameHint": "Your name in the agenda and on your appointments."
       },
       "zones": {
         "title": "Zones you serve",
@@ -2059,6 +2071,7 @@
         "zero": "Nothing to remit"
       },
       "sources": "{count} documents behind this figure",
+      "sourcesOne": "1 document behind this figure",
       "kinds": {
         "invoice": "Invoice",
         "expense": "Expense"
@@ -2093,7 +2106,14 @@
         }
       },
       "footnote": "Akinaza prepares these figures from your invoices and expenses. You file the return with Revenu Québec yourself, after checking each figure.",
-      "figuresTitle": "Your GST and QST figures"
+      "figuresTitle": "Your GST and QST figures",
+      "remitHint": "Prepared from your invoices and expenses; you file it with Revenu Québec.",
+      "periodHint": "The latest finished quarter is the one to file now; the current quarter is still open.",
+      "empty": {
+        "title": "Nothing to prepare for this period yet",
+        "body": "The figures appear here as soon as you issue invoices or record expenses in this period.",
+        "action": "See the invoices"
+      }
     },
     "invoices": {
       "title": "Invoices",
@@ -2294,7 +2314,7 @@
         },
         "shopSetup": {
           "page": {
-            "slugHint": "Lowercase words joined by hyphens, e.g. my-studio You can change it: the old address still leads to your page.",
+            "slugHint": "Lowercase words joined by hyphens, e.g. my-studio. You can change it: the old address still leads to your page.",
             "areaHint": "Montréal — never the street address.",
             "seatUnitHint": "For a group service: « Up to 5 people ». Empty: « places »."
           },
@@ -2487,7 +2507,7 @@
       "autoMark": "Texts marked « translated automatically » have not been read by you yet: read them and edit them if needed.",
       "runs": "{used} of {limit} translations used today.",
       "nothing": "Nothing to translate yet: fill in your tagline, your story and your services first.",
-      "ownHint": "You wrote this text yourself in this language: change it from the shop page.",
+      "ownHint": "You wrote these texts yourself in this language: change them from the shop page.",
       "staleHint": "Your original text changed since this translation was made.",
       "fields": {
         "tagline": "Tagline",
@@ -2879,7 +2899,11 @@
         "body": "The rest of the page works. Try again in a moment."
       },
       "retry": "Try again",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "page": {
+        "title": "This page could not load.",
+        "body": "Nothing is lost. Try again in a moment."
+      }
     },
     "organize": {
       "close": "Close",

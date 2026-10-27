@@ -130,6 +130,8 @@ function DayPrimary({ next, nextHref, newInvoiceHref, time }: { next: { id: stri
 /** The activity of the period: one discreet row of three figures, never stacked full width (B2), and the period's chips. */
 function ActivityWidget({ board, totals, period, address }: { board: TodayBoard; totals: { invoiced: number; collected: number; appointments: number }; period: BoardPeriod; address: (next: DayAddressChange) => string }) {
   const { say, locale } = useSay();
+  // The series are cents: the chart reads them as money (its text version said « 25,295 » for $252.95).
+  const moneyFormat = (cents: number) => formatMoney(cents, locale);
   return (
     <Widget
       title={say("today.activity.title")}
@@ -147,15 +149,15 @@ function ActivityWidget({ board, totals, period, address }: { board: TodayBoard;
     >
       <dl className="grid grid-cols-3 gap-3">
         {([
-          ["invoiced", formatMoney(totals.invoiced, locale), board.activity.invoicedCents, "line"],
-          ["collected", formatMoney(totals.collected, locale), board.activity.collectedCents, "line"],
-          ["appointments", String(totals.appointments), board.activity.appointments, "bar"],
-        ] as const).map(([key, value, series, variant]) => (
+          ["invoiced", formatMoney(totals.invoiced, locale), board.activity.invoicedCents, "line", moneyFormat],
+          ["collected", formatMoney(totals.collected, locale), board.activity.collectedCents, "line", moneyFormat],
+          ["appointments", String(totals.appointments), board.activity.appointments, "bar", "integer"],
+        ] as const).map(([key, value, series, variant, format]) => (
           <div key={key} className="flex min-w-0 flex-col gap-1">
-            <dt className="truncate text-xs text-fg-secondary">{say(`today.activity.${key}`)}</dt>
+            <dt className="text-xs leading-tight text-fg-secondary">{say(`today.activity.${key}`)} · {say("today.activity.daysLong", { days: period })}</dt>
             <dd className="truncate text-sm font-semibold tabular-nums text-fg">{value}</dd>
             <dd>
-              <Sparkline title={say(`today.activity.${key}`)} data={series} categories={board.activity.days} variant={variant} width={72} height={24} />
+              <Sparkline title={`${say(`today.activity.${key}`)} · ${say("today.activity.daysLong", { days: period })}`} data={series} categories={board.activity.days} variant={variant} format={format} width={72} height={24} />
             </dd>
           </div>
         ))}
@@ -236,13 +238,14 @@ function DayNav({ day, today, address }: { day: string; today: string; address: 
 function Binder({ board, count, invoicesHref, weekHref }: { board: TodayBoard; count: number; invoicesHref: string; weekHref: string }) {
   const { say } = useSay();
   return (
-    <nav aria-label={say("today.binder.title")} className="flex flex-col gap-2">
-      <h2 className="text-sm font-semibold text-fg-secondary">{say("today.binder.title")}</h2>
+    <nav aria-label={say("today.glance.title")} className="flex flex-col gap-2">
+      <h2 className="text-sm font-semibold text-fg-secondary">{say("today.glance.title")}</h2>
+      <p className="text-xs text-fg-secondary">{say("today.glance.hint")}</p>
       <ul className="flex flex-wrap gap-2">
-        <li><ChipLink href="#agenda">{say("today.binder.appointments", { count })}</ChipLink></li>
-        <li><ChipLink href="#quick-access">{say("today.binder.toBill", { count: board.toBill.length })}</ChipLink></li>
-        <li><ChipLink asChild><Link href={invoicesHref}>{say("today.binder.toCollect", { count: board.balance.count })}</Link></ChipLink></li>
-        <li><ChipLink asChild><Link href={weekHref}>{say("today.binder.week", { count: board.week })}</Link></ChipLink></li>
+        <li><ChipLink href="#agenda">{say("today.glance.appointments", { count })}</ChipLink></li>
+        <li><ChipLink href="#quick-access">{say("today.glance.toBill", { count: board.toBill.length })}</ChipLink></li>
+        <li><ChipLink asChild><Link href={invoicesHref}>{say("today.glance.toCollect", { count: board.balance.count })}</Link></ChipLink></li>
+        <li><ChipLink asChild><Link href={weekHref}>{say("today.glance.week", { count: board.week })}</Link></ChipLink></li>
       </ul>
     </nav>
   );
@@ -400,7 +403,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
           </div>
         }
       >
-        <Widget span={3} title={say("today.agendaLabel")} id="agenda">
+        <Widget span={3} title={say("today.agendaLabel")} id="agenda" className="self-start">
           {/* TODO(krizaka-ui#680): a changed appointment washes once when `Agenda` can mark its row (`data-kz-arrive` on the `li`);
               until then only the step that succeeded rings (VisitAction). */}
           <Agenda

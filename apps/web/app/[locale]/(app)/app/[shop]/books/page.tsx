@@ -1,6 +1,8 @@
 // @template: app-dashboard
 import { prepareShopReturn, shopDay } from "@akinaza/db";
 import { ChipLink } from "@krizaka/ui/chip-link";
+import { EmptyState } from "@krizaka/ui/empty-state";
+import { Mascot } from "@krizaka/ui/mascots";
 import { PageHeader } from "@krizaka/ui/page-header";
 import { Stat, StatGrid } from "@krizaka/ui/stat";
 import type { Metadata } from "next";
@@ -10,7 +12,8 @@ import { BooksLines } from "@/components/app/BooksLines";
 import { FiguresPanel } from "@/components/app/FiguresPanel";
 import { LexiconSection } from "@/components/app/LexiconSection";
 import { PrintInvoiceButton } from "@/components/app/PrintInvoiceButton";
-import { booksView, periodChoices, periodFor } from "@/lib/books";
+import { ButtonLink } from "@/components/ButtonLink";
+import { booksIsEmpty, booksView, periodChoices, periodFor } from "@/lib/books";
 import { db } from "@/lib/db";
 import { loadFigures } from "@/lib/figures";
 import { formatLongDay, formatMoney } from "@/lib/format";
@@ -54,17 +57,23 @@ export default async function Books({ params, searchParams }: { params: Promise<
           </ChipLink>
         ))}
       </nav>
+      <p className="text-sm text-fg-secondary">{t.periodHint}</p>
       <StatGrid>
         {nets.map(({ key, net }) => (
           <Stat key={key} label={t.net[key]} value={money(net.netCents)} hint={t.outcome[net.outcome]} />
         ))}
       </StatGrid>
+      <p className="text-sm text-fg-secondary">{t.remitHint}</p>
       <section aria-labelledby="books-figures" className="flex flex-col gap-3">
         <h2 id="books-figures" className="text-lg font-semibold">{t.figuresTitle}</h2>
         <p className="text-sm text-fg-muted">{getDictionary(locale).console.figures.never}</p>
         <FiguresPanel ids={["gstCollected", "qstCollected", "gstToRemit", "qstToRemit"]} figures={figures} locale={locale} routes={routes} timeZone={shop.timezone} now={new Date().toISOString()} />
       </section>
-      <BooksLines lines={view.lines} />
+      {booksIsEmpty(view) ? (
+        <EmptyState icon={<Mascot bird="beaver" mood="empty" size={120} />} title={t.empty.title} description={t.empty.body} action={<ButtonLink href={shopRoutes(locale, shop.id).invoices} variant="secondary" size="sm">{t.empty.action}</ButtonLink>} />
+      ) : (
+        <BooksLines lines={view.lines} />
+      )}
       <p className="text-sm text-fg-muted">{t.footnote}</p>
       <div data-no-print className="flex flex-col gap-1">
         <div><PrintInvoiceButton label={getDictionary(locale).console.figures.print} /></div>
