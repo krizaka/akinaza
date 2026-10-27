@@ -396,6 +396,31 @@
       }
     ]
   },
+  "download": {
+    "title": "The apps",
+    "lead": "Akinaza in your pocket and on the web, recorded by our own tests on the demo shop. Nothing here is a store listing: no app is offered for download yet.",
+    "videos": {
+      "title": "See the apps at work",
+      "lead": "Each video is recorded by the automated tests on the latest version, with demo data only.",
+      "play": "Play",
+      "recorded": "Recorded {date}",
+      "seconds": "{seconds} s",
+      "items": {
+        "web-storefront": {
+          "name": "The shop's public page",
+          "body": "A demo shop's page, then the same shop in other compositions of Krizaka UI."
+        },
+        "web-composer": {
+          "name": "The page composer",
+          "body": "A section moved with the keyboard, the style changed. Nothing is published."
+        },
+        "android-today-books": {
+          "name": "Today and the books, on the phone",
+          "body": "The day's board and the books on the Android app, with demo data."
+        }
+      }
+    }
+  },
   "privacy": {
     "title": "Privacy",
     "updated": "Updated {date}",
@@ -946,7 +971,14 @@
       "UPLOAD_NOT_VIDEO": "This is not an MP4 or a WebM video.",
       "SOCIAL_LINK": "This address is not a page of that platform.",
       "ANNOUNCEMENT_LIMIT": "You keep thirty flyers at most. Take one down first.",
-      "REVIEW_REMOVED": "This review was removed by the administrator."
+      "REVIEW_REMOVED": "This review was removed by the administrator.",
+      "CAL_INVALID": "This is not a calendar address we can read.",
+      "CAL_UNREACHABLE": "The calendar could not be reached. We will try again.",
+      "CAL_REFUSED": "The calendar refused us: check the address.",
+      "CAL_TOO_LARGE": "This calendar is too big to read.",
+      "CAL_UNAUTHORIZED": "The calendar needs you to connect again.",
+      "CAL_RATE_LIMITED": "The calendar asked us to slow down. We will try again.",
+      "CALENDAR_LIMIT": "You reached the number of calendars allowed."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -1042,7 +1074,9 @@
         "owed": "Still owed: {amount}",
         "overdue": "Of which {amount} overdue",
         "noneLate": "Nothing overdue."
-      }
+      },
+      "conflict": "Overlaps your {calendar} calendar",
+      "conflictDetail": "This appointment overlaps a busy time in your {calendar} calendar. Nothing was changed on either side: keep it, or move one of them yourself."
     },
     "account": {
       "forgot": {
@@ -1623,6 +1657,54 @@
         "updateTemplateOrder": "Update with its order"
       }
     },
+    "exports": {
+      "columns": {
+        "appointments": {
+          "id": "Id",
+          "start": "Start",
+          "end": "End",
+          "status": "Status",
+          "service": "Service",
+          "staff": "Staff",
+          "client": "Client",
+          "price": "Price"
+        },
+        "clients": {
+          "id": "Id",
+          "name": "Name",
+          "email": "E-mail",
+          "phone": "Phone",
+          "language": "Language",
+          "since": "Client since",
+          "dependants": "Dependants"
+        },
+        "invoices": {
+          "number": "Number",
+          "issuedOn": "Issued on",
+          "dueOn": "Due on",
+          "client": "Client",
+          "subtotal": "Subtotal",
+          "gst": "GST",
+          "qst": "QST",
+          "total": "Total",
+          "paid": "Paid",
+          "creditOf": "Credit note of",
+          "state": "State",
+          "language": "Language"
+        }
+      },
+      "status": {
+        "booked": "Booked",
+        "done": "Done",
+        "cancelled": "Cancelled",
+        "noShow": "No-show"
+      },
+      "invoiceState": {
+        "open": "Open",
+        "paid": "Paid",
+        "superseded": "Replaced or credited"
+      }
+    },
     "boutique": {
       "title": "Your shop",
       "navLabel": "Sections of your shop",
@@ -1634,7 +1716,39 @@
         "languages": "Languages",
         "team": "Team",
         "invoices": "Invoice e-mails",
-        "shops": "Your shops"
+        "shops": "Your shops",
+        "figures": "Figure thresholds",
+        "data": "Your data",
+        "agenda": "Calendar"
+      },
+      "data": {
+        "title": "Your data",
+        "lead": "Download what the shop holds, to open in your own tools. Only what you already see here; nothing of another shop, no access note, no erased person.",
+        "download": "Download",
+        "audited": "Each download is recorded in the shop's journal. Only the owner can make one.",
+        "off": "The administrator switched the data downloads off.",
+        "files": {
+          "appointmentsCsv": {
+            "group": "Appointments",
+            "label": "Spreadsheet (CSV)",
+            "hint": "Every appointment, with its service, staff member and client. The ICS opens in Apple, Google or Outlook calendars."
+          },
+          "appointmentsIcs": {
+            "group": "Appointments",
+            "label": "Calendar file (ICS)",
+            "hint": "Every appointment, with its service, staff member and client. The ICS opens in Apple, Google or Outlook calendars."
+          },
+          "clientsCsv": {
+            "group": "Clients",
+            "label": "Spreadsheet (CSV)",
+            "hint": "Names, e-mail, phone, language and dependants."
+          },
+          "invoicesCsv": {
+            "group": "Invoices",
+            "label": "Spreadsheet (CSV)",
+            "hint": "Invoices and credit notes in the order of the books, amounts in dollars with GST and QST."
+          }
+        }
       },
       "invoices": {
         "title": "Invoice e-mails",
@@ -1646,6 +1760,70 @@
         "current": "This shop",
         "open": "Open this shop",
         "add": "Add a shop"
+      },
+      "figures": {
+        "title": "Figure thresholds",
+        "lead": "When a figure asks for a look, and when it asks for action. Only this changes: the amounts and the formulas never do."
+      },
+      "agenda": {
+        "title": "Your calendar on your phone",
+        "lead": "A private link your phone subscribes to, so your appointments show in the calendar you already use. It carries the time, the service and first names only: never a phone number, an e-mail or a note.",
+        "feed": {
+          "shop": "The whole shop",
+          "live": "Link active",
+          "none": "No link yet",
+          "since": "Made {when}",
+          "create": "Make the link",
+          "rotate": "Make a new link",
+          "revoke": "Turn off",
+          "revokeConfirm": "Turn off this link? The calendars that use it stop updating.",
+          "once": "Copy this link now: it is shown only once. Making a new link turns the old one off at once.",
+          "copy": "Copy the link",
+          "copied": "Link copied",
+          "qrLabel": "QR code of the private calendar link for {name}: scan it with your phone to subscribe",
+          "url": "Private link of {name}",
+          "howTitle": "How to add it",
+          "how": "Apple Calendar: File, New Calendar Subscription. Google Calendar: Other calendars, From URL. Outlook: Add calendar, Subscribe from web. Anyone who has the link can read these times: share it with nobody.",
+          "off": "The administrator has switched the calendar links off.",
+          "nobody": "No team member yet."
+        },
+        "sources": {
+          "title": "Your other calendars",
+          "lead": "Akinaza reads the times you are busy in the calendar you already use, and keeps them free of bookings. It reads only the times: never a title, a guest or a note, and it never changes your calendar.",
+          "wholeShop": "The whole shop",
+          "add": "Connect a calendar",
+          "label": "Name",
+          "labelHint": "For you only, e.g. Google or Dentist.",
+          "whose": "Blocks the times of",
+          "url": "Calendar address (ICS)",
+          "urlHint": "Google Calendar: Settings, your calendar, Secret address in iCal format. Apple and Outlook give one too when you publish or share a calendar. Anyone with this address can read that calendar: it is kept sealed here and shown to nobody.",
+          "consent": "I agree that Akinaza reads the times I am busy in this calendar, to keep them free of bookings. I can disconnect at any time: those times are then deleted.",
+          "needConsent": "Tick the box to connect the calendar.",
+          "connect": "Connect",
+          "none": "No calendar connected.",
+          "state": {
+            "ok": "Read",
+            "error": "Cannot read",
+            "pending": "Waiting"
+          },
+          "lastRead": "Read {when}",
+          "neverRead": "Not read yet.",
+          "refresh": "Read again",
+          "remove": "Disconnect",
+          "removeConfirm": "Disconnect this calendar? Its busy times are deleted and those slots open again.",
+          "off": "The administrator has switched calendar connections off.",
+          "providers": {
+            "title": "Connect Google or Outlook",
+            "lead": "You agree at Google's or Microsoft's own page, and Akinaza receives only the times you are busy: never a title, a guest or a note. You can take the permission back there too.",
+            "google": "Connect Google Calendar",
+            "outlook": "Connect Outlook"
+          },
+          "outcome": {
+            "connected": "Calendar connected. Its busy times now keep those slots free.",
+            "denied": "Nothing was connected: you did not give the permission.",
+            "error": "The calendar could not be connected. Try again."
+          }
+        }
       }
     },
     "shopPage": {
@@ -2502,7 +2680,28 @@
       "lexiconTerms": "Words used here",
       "never": "Akinaza prepares these figures. You check them and you file your returns yourself.",
       "formulaHere": "{formula} Here: {terms}.",
-      "updatedLabel": "Updated"
+      "updatedLabel": "Updated",
+      "rules": {
+        "title": "When a figure needs your attention",
+        "hint": "Usual value {usual}. You can set it between {min} and {max}.",
+        "hintDays": "Usual value {usual} days. You can set it between {min} and {max}.",
+        "fields": {
+          "overdueWatchPct": "Overdue invoices: keep an eye on it above (%)",
+          "overdueAlertPct": "Overdue invoices: needs action above (%)",
+          "collectedWatchPct": "Collected from what you invoiced: keep an eye on it below (%)",
+          "collectedAlertPct": "Collected from what you invoiced: needs action below (%)",
+          "marginWatchPct": "Margin on your revenue: keep an eye on it below (%)",
+          "marginAlertPct": "Margin on your revenue: needs action below (%)",
+          "noShowWatchPct": "Missed appointments: keep an eye on it above (%)",
+          "noShowAlertPct": "Missed appointments: needs action above (%)",
+          "taxPeriodSoonDays": "Remind me to prepare the GST/QST return this many days before the period ends"
+        },
+        "fixed": "These values are set by Akinaza and cannot be changed for now. Each figure still shows how it is judged.",
+        "save": "Save my thresholds",
+        "reset": "Back to the usual values",
+        "saved": "Saved. Your figures now use these thresholds.",
+        "evenness": "If an action threshold would be gentler than its watch threshold, it is moved to match, so a figure never contradicts itself."
+      }
     },
     "lexicon": {
       "title": "Lexique",

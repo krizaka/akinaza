@@ -5,6 +5,7 @@ import { addDays } from "date-fns";
 import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 
 import type { Db } from "./client";
+import { agendaConflicts } from "./calendar-connections";
 import { openField } from "./crypto";
 import { appointments, bookings, clients, dependants, mailOutbox, services, shops, shopZones, staff, visitReports } from "./schema";
 import { ShopError } from "./service-shop";
@@ -39,6 +40,8 @@ export interface DayVisit {
   checkedInAt: string | null;
   checkedOutAt: string | null;
   bookings: DayBooking[];
+  /** The label of the owner's other calendar this visit overlaps (« Google »…), or null: Akinaza flags it and deletes neither side (ADR-004). */
+  agendaConflict: string | null;
 }
 
 /** The worker's visits of one local day (cancelled ones excluded), with who and what is booked on each. */
@@ -60,6 +63,7 @@ export async function dayVisits(db: Db, shopId: string, day: string, scope: Agen
     .where(and(eq(appointments.shopId, shopId), scope.staffAccountId ? assignedTo(scope.staffAccountId) : undefined, sql`${appointments.status} <> 'cancelled'`, sql`(lower(${appointments.during}) AT TIME ZONE ${shop.timezone})::date = ${day}::date`))
     .orderBy(sql`lower(${appointments.during})`);
   if (visits.length === 0) return [];
+  const conflicts = await agendaConflicts(db, visits.map((v) => v.a.id));
   const rows = await db
     .select({
       bookingId: bookings.id,
@@ -92,6 +96,7 @@ export async function dayVisits(db: Db, shopId: string, day: string, scope: Agen
     zone: v.zone,
     checkedInAt: v.a.checkedInAt?.toISOString() ?? null,
     checkedOutAt: v.a.checkedOutAt?.toISOString() ?? null,
+    agendaConflict: conflicts.get(v.a.id) ?? null,
     bookings: rows
       .filter((r) => r.appointmentId === v.a.id)
       .map((r) => ({

@@ -3,6 +3,7 @@
 import { BOARD_PERIODS, type BoardPeriod, type TodayBoard } from "@akinaza/core";
 import { Sparkline } from "@krizaka/charts/sparkline";
 import { Agenda, type AgendaItem } from "@krizaka/ui/agenda";
+import { Alert } from "@krizaka/ui/alert";
 import { Avatar } from "@krizaka/ui/avatar";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
@@ -202,7 +203,12 @@ function appointmentRow(a: TodayAppointment, visit: DayVisitView | null, ctx: { 
     description: visit ? `${dogs(visit.bookings.length)} · ${a.staff}` : `${a.service[locale]} · ${a.staff}`,
     tone: STATUS_TONE[statusWord(a)],
     leading: <Avatar alt="" size="sm" defaultAvatar={{ brand: "akinaza", seed: a.staff }} fallback={a.staff.charAt(0)} />,
-    status: <Badge tone={STATUS_TONE[statusWord(a)]}>{say(`today.statuses.${statusWord(a)}`)}</Badge>,
+    status: (
+      <span className="flex flex-wrap items-center justify-end gap-1">
+        {a.agendaConflict ? <Badge tone="warning">{say("today.conflict", { calendar: a.agendaConflict })}</Badge> : null}
+        <Badge tone={STATUS_TONE[statusWord(a)]}>{say(`today.statuses.${statusWord(a)}`)}</Badge>
+      </span>
+    ),
     href: ctx.href,
   };
 }
@@ -282,6 +288,7 @@ function DetailSheet({ open, timeZone, time, dogs, billing, clientHref }: { open
         <Dialog.Description>{[`${time(open.start)} – ${time(open.end ?? open.start)}`, visit?.zone ?? null, visit ? dogs(visit.bookings.length) : null].filter(Boolean).join(" · ")}</Dialog.Description>
       </Dialog.Header>
       <Dialog.Body className="flex flex-col gap-4">
+        {appointment.agendaConflict ? <Alert tone="warning">{say("today.conflictDetail", { calendar: appointment.agendaConflict })}</Alert> : null}
         {visit ? (
           <>
             <VisitBookings visit={visit} timeZone={timeZone} />

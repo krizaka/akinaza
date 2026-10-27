@@ -1,0 +1,21 @@
+# The phone video of the download page (krizaka/.github#315): Today, then the Books figures, as the demo shop's owner (the fictional Saint-Henri walker).
+# NOT a required flow: it lives in .maestro-showcase, run by the « Download page videos » jobs of mobile-ci.yml on main, after mobile-e2e is
+# green. The sign-in happens before the recording starts (nothing typed is filmed).
+appId: com.krizaka.akinaza
+---
+- runFlow: ../.maestro/shared/launch.yaml
+- runFlow: ../.maestro/shared/sign-in.yaml
+- assertVisible: "Aujourd'hui|Today"
+- waitForAnimationToEnd
+- startRecording: android-today-books
+- waitForAnimationToEnd
+- scroll
+- tapOn: "Livres|Books"
+- extendedWaitUntil:
+    visible: "TPS nette|Net GST"
+    timeout: 30000
+- waitForAnimationToEnd
+- scroll
+- tapOn: "Aujourd'hui|Today"
+- waitForAnimationToEnd
+- stopRecording

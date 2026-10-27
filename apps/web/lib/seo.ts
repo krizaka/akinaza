@@ -21,6 +21,7 @@ function pageTitleOf(t: ReturnType<typeof getDictionary>, page: PageId): string 
   if (page === "privacy") return t.privacy.title;
   if (page === "terms") return t.terms.title;
   if (page === "pricing") return t.pricing.title;
+  if (page === "download") return t.download.title;
   if (page === "home") return t.landing.title;
   if (page === "docs") return t.docs.title;
   return t.docs.pages[page.slice("docs/".length) as DocId].title;

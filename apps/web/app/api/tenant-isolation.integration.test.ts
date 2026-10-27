@@ -49,7 +49,7 @@ const at = (address: string, values: Record<string, string> = {}) => {
 describe.runIf(enabled)("tenant isolation over the walker surface", () => {
   const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   const tokens = {} as Record<"a" | "b" | "client", string>;
-  const ids = {} as { shopA: string; shopB: string; zone: string; service: string; hour: string; client: string; appointment: string; booking: string; invoice: string; webhook: string; invitation: string; staff: string; collection: string; reel: string; flyer: string; review: string; tag: string; clientTag: string; invoiceTag: string; clientView: string; invoiceView: string };
+  const ids = {} as { shopA: string; shopB: string; zone: string; service: string; hour: string; client: string; appointment: string; booking: string; invoice: string; webhook: string; invitation: string; staff: string; collection: string; reel: string; flyer: string; review: string; tag: string; clientTag: string; invoiceTag: string; clientView: string; invoiceView: string; calendar: string };
 
   const call = (handler: Handler, method: string, path: string, opts: CallOptions = {}) => apiCall(handler, method, path, opts);
   const account = (label: string) => testAccount(label, stamp);
@@ -84,6 +84,7 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     ids.reel = (await query<{ id: string }>("INSERT INTO shop_reels (shop_id, kind, platform, external_url, embed_url) VALUES ($1, 'external', 'instagram', 'https://www.instagram.com/reel/Cabc123xyz/', 'https://www.instagram.com/reel/Cabc123xyz/embed') RETURNING id", [ids.shopA]))[0]!.id;
     ids.flyer = (await query<{ id: string }>("INSERT INTO shop_announcements (shop_id, text_fr) VALUES ($1, 'Portes ouvertes') RETURNING id", [ids.shopA]))[0]!.id;
     ids.review = (await query<{ id: string }>("INSERT INTO shop_reviews (shop_id, first_name, rating, verified) VALUES ($1, 'Camille', 5, true) RETURNING id", [ids.shopA]))[0]!.id;
+    ids.calendar = (await query<{ id: string }>("INSERT INTO calendar_connections (shop_id, kind, label, secret_enc, consent_text_version, consented_at) VALUES ($1, 'ics', 'Agenda A', 'sealed-not-read', 'v1', now()) RETURNING id", [ids.shopA]))[0]!.id;
     ids.collection = (await query<{ id: string }>("SELECT id FROM collections WHERE owner_id = $1 LIMIT 1", [a.id]))[0]?.id ?? randomUUID();
     ids.tag = (await query<{ id: string }>("SELECT id FROM tags WHERE owner_id = $1 LIMIT 1", [a.id]))[0]?.id ?? randomUUID();
   });
@@ -164,10 +165,11 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     { address: "/api/walker/reels/[id]", method: "DELETE", params: () => ({ id: ids.reel }), intact: async () => expect(await query("SELECT 1 FROM shop_reels WHERE id = $1", [ids.reel])).toHaveLength(1) },
     { address: "/api/walker/announcements/[id]", method: "DELETE", params: () => ({ id: ids.flyer }), intact: async () => expect(await query("SELECT 1 FROM shop_announcements WHERE id = $1", [ids.flyer])).toHaveLength(1) },
     { address: "/api/walker/reviews/[id]", method: "PATCH", params: () => ({ id: ids.review }), json: () => ({ reply: "Pris", state: "hidden_by_owner" }), intact: async () => expect(await query("SELECT 1 FROM shop_reviews WHERE id = $1 AND state = 'published' AND reply = ''", [ids.review])).toHaveLength(1) },
+    { address: "/api/walker/calendars/[id]/sync", method: "POST", params: () => ({ id: ids.calendar }) },
     { address: "/api/walker/shop-tags/[id]", method: "DELETE", params: () => ({ id: ids.tag }) },
   ];
-  /** Dynamic segments that are not another shop's resource: a calendar day names a day of the caller's own shop. */
-  const OWN_DAY = new Set(["/api/walker/days-off/[day]"]);
+  /** Dynamic segments that are not another shop's resource: a calendar day, or the name of an export file, is read in the caller's own shop. */
+  const OWN_DAY = new Set(["/api/walker/days-off/[day]", "/api/walker/exports/[file]"]);
 
   it("declares every walker route with a resource id (a new one must be added to RESOURCES)", () => {
     const declared = new Set(RESOURCES.map((r) => r.address));

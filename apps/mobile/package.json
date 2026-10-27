@@ -22,8 +22,8 @@
     "@krizaka/icons": "^0.7.0",
     "@krizaka/intl": "0.3.0",
     "@krizaka/query": "^0.2.2",
-    "@krizaka/tokens": "^3.65.0",
-    "@krizaka/ui": "^3.65.0",
+    "@krizaka/tokens": "^3.63.1",
+    "@krizaka/ui": "^3.66.0",
     "@shopify/flash-list": "2.3.2",
     "expo": "~58.0.17",
     "expo-constants": "~58.0.13",
@@ -69,7 +69,7 @@
       "/scripts/"
     ],
     "transformIgnorePatterns": [
-      "node_modules/(?!(\\.pnpm|(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@krizaka/.*|@tanstack/.*|react-native-svg|standard-navigation|@shopify/flash-list))"
+      "node_modules/(?!(\\.pnpm|(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@krizaka/.*|@tanstack/.*|react-native-svg|@shopify/flash-list))"
     ],
     "resolver": "<rootDir>/jest.resolver.js"
   }

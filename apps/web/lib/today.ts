@@ -1,5 +1,5 @@
 import type { TaxCategory } from "@akinaza/core";
-import { schema } from "@akinaza/db";
+import { agendaConflicts, schema } from "@akinaza/db";
 import { and, eq, ne, sql } from "drizzle-orm";
 
 import { type AppointmentStatus, isIsoDay } from "./day";
@@ -23,6 +23,8 @@ export interface TodayAppointment {
   checkedInAt: string | null;
   priceCents: number;
   category: TaxCategory;
+  /** The label of the owner's other calendar this appointment overlaps (« Google »…): flagged, never deleted (ADR-004). */
+  agendaConflict?: string | null;
 }
 
 export interface TodayView {
@@ -51,6 +53,7 @@ export async function todayView(shop: { id: string; name: string; registrant: bo
     .leftJoin(clients, sql`${clients.id} = ${whoComes}`)
     .where(and(eq(appointments.shopId, shop.id), options.staffAccountId ? eq(staff.accountId, options.staffAccountId) : undefined, ne(appointments.status, "cancelled"), sql`(lower(${appointments.during}) AT TIME ZONE ${shop.timezone})::date = ${day}::date`))
     .orderBy(sql`lower(${appointments.during})`);
+  const conflicts = await agendaConflicts(db(), rows.map((r) => r.a.id));
   return {
     shop: { id: shop.id, name: shop.name, registrant: shop.registrant, timezone: shop.timezone },
     day,
@@ -68,6 +71,7 @@ export async function todayView(shop: { id: string; name: string; registrant: bo
       checkedInAt: r.a.checkedInAt?.toISOString() ?? null,
       priceCents: r.price,
       category: r.category as TaxCategory,
+      agendaConflict: conflicts.get(r.a.id) ?? null,
     })),
   };
 }

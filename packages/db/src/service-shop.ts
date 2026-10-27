@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import type { Db, Tx } from "./client";
 import { openField, sealField } from "./crypto";
+import { busyBetween } from "./calendar-connections";
 import { ShopError } from "./errors";
 import { type CommunityView, communityOf } from "./shop-community";
 import { shopPageConfigOf, type ShopPageConfig } from "./shop-page";
@@ -581,6 +582,7 @@ export async function listSlots(db: Reader, query: SlotQuery): Promise<StaffSlot
   for (const member of members) {
     const [windows, off] = await Promise.all([db.select().from(schedules).where(eq(schedules.staffId, member.id)), db.select({ d: daysOff.onDate }).from(daysOff).where(eq(daysOff.staffId, member.id))]);
     const visits = await takenVisits(db, member.id, rangeStart, rangeEnd);
+    const busy = await busyBetween(db, shop.id, member.id, { from: rangeStart, to: rangeEnd });
     const asWindows: WeeklyWindow[] = windows.map((w) => ({ weekday: w.weekday, startsAt: w.startsAt.slice(0, 5), endsAt: w.endsAt.slice(0, 5) }));
     const open = openSlots({
       timezone: shop.timezone,
@@ -596,6 +598,7 @@ export async function listSlots(db: Reader, query: SlotQuery): Promise<StaffSlot
       capacity: service.capacity,
       minNoticeMinutes: rules.minNoticeMinutes,
       visits,
+      busy,
     });
     // « Anyone »: a time is offered once; a group visit already started is preferred (it fills the visit), else the first who joined.
     for (const slot of open) {

@@ -52,6 +52,7 @@ know-how it shows: **running a shop, for less** — one tool instead of five, bo
   `realtime.storefront.heartbeatSeconds` (15; 5–60) and `realtime.storefront.maxStreamsPerPage` (100; 1–1000 concurrent
   streams per shop page per server instance). Streams reconnect within five minutes to reread settings; no rebuild is needed.
 - **Consent and erasure** — consent per purpose, append-only; erasure blanks personal data and keeps the invoices tax law requires.
+- **Other calendars** — the owner's Google, Outlook, iCloud/CalDAV or ICS calendars are read, busy times only, to keep those slots free of bookings (ADR-004). Google asks for `calendar.freebusy`, Microsoft for `Calendars.ReadBasic` + `offline_access`; the grants are sealed at rest and revoked on disconnection. Each provider is a flag in the administration, off by default, and needs its OAuth client (`AUTH_CALENDAR_GOOGLE_CLIENT_ID`/`_SECRET`, `AUTH_CALENDAR_OUTLOOK_CLIENT_ID`/`_SECRET`).
 - **Accounts** — sign-in, "forgot password" with one-use 30-minute links (the answer is the same for every address), a password change that ends the other sessions, a profile with Krizaka's default picture; registration is built and closed by configuration (`AUTH_SIGNUP_ENABLED`).
 - **Not for restaurants, cafés, bars and bakeries with on-site consumption** — they must use a sales recording system certified MEV-WEB by Revenu Québec; the point of sale is a stub behind
   `APP_POS_ENABLED` until that scope and a payment provider are decided. No payment provider is wired.
