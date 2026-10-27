@@ -1,6 +1,7 @@
 import { type ShopType, TEMPLATES } from "@akinaza/core";
 import { PASSWORD_RESET_MAX_MINUTES, PASSWORD_RESET_MIN_MINUTES, PASSWORD_RESET_TTL_MINUTES } from "@krizaka/auth";
 import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, type SettingsService, subset, WORKSPACE_SCOPES } from "@krizaka/settings";
+import { storageSettings } from "@krizaka/storage/settings";
 
 import { query } from "./db";
 import { refuse } from "./http";
@@ -72,6 +73,8 @@ export const SETTINGS = {
   "storefront.templates.default.consulting": defaultTemplate("consulting"),
   // The account (@krizaka/auth): how long a password reset link lives; the expiry and the mailed text both read it.
   "auth.passwordResetTtlMinutes": integer("auth", PASSWORD_RESET_TTL_MINUTES, { min: PASSWORD_RESET_MIN_MINUTES, max: PASSWORD_RESET_MAX_MINUTES, unit: "minutes" }, GLOBAL_ONLY),
+  // Where the owners' and clients' files live (ADR-010): the provider and its coordinates, chosen by the administrator; `local` (the default) follows the deployment's environment.
+  ...storageSettings,
   "realtime.storefront.enabled": flag("realtime", true, GLOBAL_ONLY),
   "realtime.storefront.heartbeatSeconds": integer("realtime", 15, { min: 5, max: 60, unit: "seconds" }, GLOBAL_ONLY),
   "realtime.storefront.maxStreamsPerPage": integer("realtime", 100, { min: 1, max: 1000, unit: "streams" }, GLOBAL_ONLY),

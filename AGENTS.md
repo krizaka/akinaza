@@ -15,8 +15,9 @@
   `fetch` in a client `useEffect`, no hand-written `<table>` or multi-field `<form>`.
 
 - **Storefront photos are uploaded by the owner** (`/api/walker/media/upload`): JPEG/PNG/WebP checked by bytes, ≤ 2 MB after the
-  phone redraws them, stored content-hashed under `user/akinaza/shops/<shop>/` of the media storage (`MEDIA_STORAGE_*`,
-  `MEDIA_CDN_HOSTNAME`), only the CDN address kept. Off (503, the owner pastes an address) until the storage is configured.
+  phone redraws them, stored content-hashed under `user/akinaza/shops/<shop>/` of the media storage by `@krizaka/storage` (`lib/media-storage.ts`; the
+  administrator's `storage.*` settings over `MEDIA_STORAGE_*` / `MEDIA_CDN_HOSTNAME`; no local copy of the upload code, nothing
+  encrypted since the files are public on the CDN), only the CDN address kept; the keys published before the package stay valid. Off (503, the owner pastes an address) until the storage is configured.
 
 - **Proposed images and videos (#267).** So that no section of a storefront is empty, each trade (`SHOP_TYPES` in `@akinaza/core`: salon, coaching,
   workshop, cleaning, pets, consulting - never a restaurant or a bar) has default media for the slots `cover` (image + silent loop), `gallery` and `service`
