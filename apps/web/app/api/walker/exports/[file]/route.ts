@@ -40,10 +40,11 @@ async function* chunks(file: ExportFile, shop: { id: string; name: string; timez
  */
 export function GET(req: Request, ctx: { params: Promise<{ file: string }> }) {
   return handle(async () => {
+    // The session and the shop come first: a caller with no right here learns nothing of which files exist.
+    const { shop, session } = await requireShop(req, "privacy");
     const file = (await ctx.params).file;
     if (!isExportFile(file)) throw refuse(404, "NOT_FOUND", "Not found");
     if (!(await appSettings().get("exports.data.enabled"))) throw refuse(403, "FEATURE_OFF", "This feature is switched off", { feature: "exports.data" });
-    const { shop, session } = await requireShop(req, "privacy");
     limit("data-export", req, session.account.id, [20, 3600]);
     const locale = asLocale(new URL(req.url).searchParams.get("locale") ?? "fr");
     await audit({ action: "shop.data_exported", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { kind: kindOf(file), format: formatOf(file) }, headers: req.headers });

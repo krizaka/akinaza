@@ -18,13 +18,15 @@ const body = z.object({ staffId: z.string().uuid().nullable().default(null) });
  * Who may open which feed: the shop's own, and any staff member's, for who runs the bookings (owner, manager); a staff member opens only their own.
  * Another shop's staff id is the 404 of an id that exists nowhere.
  */
-async function allowed(req: Request, staffId: string | null) {
+async function allowed(req: Request) {
+  // The feature, the session and the shop come first: a caller with no right here learns nothing of what the body should say.
   if (!(await appSettings().get("exports.icsFeed.enabled"))) throw refuse(403, "FEATURE_OFF", "This feature is switched off", { feature: "exports.icsFeed" });
   const { shop, role, session } = await requireShop(req, "agenda");
   const scope = agendaScope(role, session.account.id);
   const people = await feedPeople(db(), shop.id, scope);
+  const { staffId } = await readJson(req, body);
   if (staffId === null ? scope.staffAccountId !== undefined : !people.some((p) => p.id === staffId)) throw refuse(404, "NOT_FOUND", "Not found");
-  return { shop, session, people };
+  return { shop, session, staffId };
 }
 
 /** The feeds the member may manage and whether each is live: never an address (only its hash is kept, so it cannot be shown again). */
@@ -38,8 +40,7 @@ export function GET(req: Request) {
 /** Makes the feed's first address, or rotates it (the old one is dead at once). The address is in this answer only, once. */
 export function POST(req: Request) {
   return handle(async () => {
-    const { staffId } = await readJson(req, body);
-    const { shop, session } = await allowed(req, staffId);
+    const { shop, session, staffId } = await allowed(req);
     const token = newFeedToken();
     const feed = await rotateFeedToken(db(), { shopId: shop.id, staffId }, feedTokenHash(token, sessionSecret()), new Date());
     if (!feed) throw refuse(404, "NOT_FOUND", "Not found");
@@ -51,8 +52,7 @@ export function POST(req: Request) {
 /** Switches the feed off: its address answers 404 from now on. */
 export function DELETE(req: Request) {
   return handle(async () => {
-    const { staffId } = await readJson(req, body);
-    const { shop, session } = await allowed(req, staffId);
+    const { shop, session, staffId } = await allowed(req);
     const revoked = await revokeFeedToken(db(), { shopId: shop.id, staffId }, new Date());
     if (revoked) await audit({ action: "shop.feed_revoked", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { staffId }, headers: req.headers });
     return Response.json({ revoked });
