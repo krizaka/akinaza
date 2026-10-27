@@ -4,8 +4,9 @@
 # The browsers are installed and cached by node-ci (`playwright: chromium`).
 set -euo pipefail
 export NODE_ENV=production
-export AUTH_SESSION_SECRET=ci-only-session-secret-0123456789abcdef
-export APP_DATA_ENCRYPTION_KEY=Y2ktb25seS1kYXRhLWtleS0zMi1ieXRlcy0xMjM0NTY=
+# CI-only secrets, generated for this run (never a literal: gitleaks scans the repository).
+export AUTH_SESSION_SECRET="$(openssl rand -hex 32)"
+export APP_DATA_ENCRYPTION_KEY="$(openssl rand -base64 32)"
 export PORT=3000
 # The server's clock is UTC, as the deployed one's; the crawls' browsers run in a visitor's zone (check-hydration.mjs).
 export TZ=UTC
