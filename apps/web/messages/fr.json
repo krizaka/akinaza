@@ -1297,7 +1297,17 @@
         "export": "Exporter la sélection (CSV)"
       },
       "exportFile": "clients.csv",
-      "noMatch": "Aucun client ne correspond."
+      "noMatch": "Aucun client ne correspond.",
+      "privacy": {
+        "title": "Leurs demandes de confidentialité",
+        "lead": "Quand cette personne demande à voir, à obtenir une copie ou à effacer ce que vous détenez sur elle, répondez ici, dans un délai de 30 jours. Akinaza détient le dossier pour votre boutique.",
+        "export": "Télécharger ses données",
+        "erase": "Effacer son dossier",
+        "eraseConfirm": "Effacer le dossier de ce client ?",
+        "eraseDescription": "Ses coordonnées, ses personnes à charge, vos notes, les rapports et les photos sont effacés pour de bon, et ses consentements sont retirés. Les factures et le registre des taxes sont gardés six ans, comme l'exige la loi fiscale. Cette action est définitive.",
+        "eraseYes": "Effacer pour de bon",
+        "keep": "Garder le dossier"
+      }
     },
     "shopSetup": {
       "title": "Votre page boutique",

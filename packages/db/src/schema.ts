@@ -495,20 +495,6 @@ export const clients = pgTable(
   ],
 );
 
-/** Every consent decision, per purpose and text version — append-only (trigger). */
-export const clientConsents = pgTable(
-  "client_consents",
-  {
-    id: bigserial("id", { mode: "number" }).primaryKey(),
-    clientId: uuid("client_id").notNull().references(() => clients.id, { onDelete: "cascade" }),
-    purpose: text("purpose", { enum: ["service", "reminders", "marketing"] }).notNull(),
-    granted: boolean("granted").notNull(),
-    textVersion: text("text_version").notNull(),
-    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [check("client_consents_purpose", sql`${t.purpose} IN ('service','reminders','marketing')`)],
-);
-
 export const appointments = pgTable(
   "appointments",
   {

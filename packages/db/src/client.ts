@@ -3,7 +3,8 @@ import pg from "pg";
 
 import * as schema from "./schema";
 
-export type Db = NodePgDatabase<typeof schema>;
+/** The database; `$client` is the pool it was made over (a statement the query builder cannot say, a transaction of the shared modules). */
+export type Db = NodePgDatabase<typeof schema> & { $client: pg.Pool };
 export type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
 
 /**

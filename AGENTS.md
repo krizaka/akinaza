@@ -52,9 +52,16 @@
   difference is shown — never silently adopted.
 - **Restaurants, cafés, bars and bakeries are excluded** (a sales recording system certified MEV-WEB is required in Québec): the database refuses those shop kinds. Akinaza targets service businesses only.
   The point of sale stays a stub behind `APP_POS_ENABLED`. **Subscription payments (prices are a catalogue the administrator edits at `/console/prices`, ADR-009, akinaza#371: the founder offer 39 $ CAD/month plus taxes for the first businesses by its `founderCap` limit; Starter 45 $ and Scale B2B 99 $ plus taxes, public, Scale's B2B features « soon »; 0 % on cards, a capped debit fee per order; the seed in `apps/web/lib/pricing.ts`, read only through `lib/price-catalogue.ts`; a subscription keeps the version it was sold at) go through a payments port** (`apps/web/lib/payments`, ADR-003): the vendor is configuration (`PAYMENTS_PROVIDER`), the price is data at the vendor, the webhook is verified and idempotent; the offer shows only when `APP_FOUNDER_OFFER_ENABLED`. No merchant payment (the shop's own sales) is wired.
-- **Loi 25 by design.** Data in Canada, encrypted at rest (the managed database's volumes); consent per purpose, never
-  pre-ticked, append-only; erasure blanks every personal field and keeps the invoices tax law requires (six years). The
-  Loi 25 pack of Orazaka (orazaka-packs#14) is reused for the consent texts and the incident register when it lands.
+- **Loi 25 by design.** Consent per purpose, never pre-ticked, append-only; the access, portability and erasure of a client file are
+  `@krizaka/privacy` (akinaza#370): the subject is `{ kind: "client", id }`, `packages/db/src/privacy.ts` registers one contributor per
+  module (the file, the visits, the invoices, the requests, the consents), `exportClient` assembles the document, `eraseClient` runs every
+  contributor in one transaction and withdraws the live consents; the shop's owner answers a client from the console
+  (`/api/walker/clients/[id]/export` and `/erase`, permission `privacy`, audited). Retention is data (`RETENTION_RULES`,
+  `@akinaza/core`): invoices, their lines, payments and the tax ledger stay six years (the erasure blanks the person, keeps the row); a
+  new table that holds personal data gets a contributor and a rule. The privacy impact assessment, the register of transfers outside
+  Québec (`docs/privacy/`, tested against `deploy/digitalocean/app.yaml`) and the claims the lawyer reads (krizaka/.github#250) are the
+  published position: a public text states a place or a flow only where the code or the spec proves it (`public-claims.test.ts`,
+  `transfers.test.ts`). Canadian hosting is planned, not claimed.
 - **No AI in the product, in its screens or its words.** Akinaza says what it does (appointments, invoices, tax figures) in plain words; never « IA », « intelligent » or « révolutionnaire ». If a model is ever needed, it goes through Orazaka, behind a port, and the epic krizaka/akinaza#161 is reopened first.
   **One model is now involved (2026-10-23, #258, decision recorded on #161): translating the shop page's texts.** It goes through the `TranslationPort`
   (`packages/db/src/translation-port.ts`; the adapter in `apps/web/lib/translation.ts` calls the Orazaka Studio `text-translation`, krizaka/orazaka-packs#119).

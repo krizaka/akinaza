@@ -260,6 +260,13 @@
       "when": 1795000005000,
       "tag": "0036_shop_community",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1795000006000,
+      "tag": "0037_privacy",
+      "breakpoints": true
     }
   ]
 }

@@ -345,12 +345,18 @@ importers:
       '@krizaka/auth':
         specifier: 0.5.0
         version: 0.5.0
+      '@krizaka/db':
+        specifier: 0.2.0
+        version: 0.2.0
       '@krizaka/intl':
         specifier: 0.3.0
         version: 0.3.0
       '@krizaka/organize':
         specifier: 0.4.0
         version: 0.4.0(vitest@4.1.11)
+      '@krizaka/privacy':
+        specifier: 0.1.0
+        version: 0.1.0(vitest@4.1.11)(zod@4.6.7)
       '@krizaka/settings':
         specifier: 0.2.0
         version: 0.2.0(zod@4.6.7)
@@ -1986,6 +1992,10 @@ packages:
       prettier:
         optional: true
 
+  '@krizaka/db@0.2.0':
+    resolution: {integrity: sha512-m4gFEqeKd1B//UDjGaj/6YN0pXPWjKi2vH391Hl86K0pCemuVg57+AKx9b1pHzpLXm1SyBK4p/svmoi9o1gOgA==}
+    engines: {node: '>=22'}
+
   '@krizaka/discovery@0.1.0':
     resolution: {integrity: sha512-45XrvMxxTdJQ6Oi+auQpegfYPBQsfFbMmTKpoQbIbNvQeyccrVgAjZv6Qfe5SOstXc+99oZDMcKtKig1OcgB6g==}
     engines: {node: '>=22'}
@@ -2057,6 +2067,18 @@ packages:
     engines: {node: '>=22'}
     hasBin: true
 
+  '@krizaka/privacy@0.1.0':
+    resolution: {integrity: sha512-frzqIxx1rrafNeswqrZEg1LCjluEhUmspQAiQ80uEqCc+zPWGeGoZQSr9z6HCcek6lsu9+L8GUW4DOzR+IDVdQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      vitest: '>=4'
+      zod: '>=3.23'
+    peerDependenciesMeta:
+      vitest:
+        optional: true
+      zod:
+        optional: true
+
   '@krizaka/query@0.2.2':
     resolution: {integrity: sha512-pIREW9+/+i+RS3Atbtx0k5ltM1mrcvpzoUgt1H+49LIHQEMaAMsxY9qxk00HPhh2mSq8P/hyVin8jH01FQWqfw==}
     engines: {node: '>=22'}
@@ -2081,6 +2103,12 @@ packages:
     peerDependencies:
       zod: '>=3.23'
 
+  '@krizaka/settings@0.4.0':
+    resolution: {integrity: sha512-ZGzkVLMIE3QxSsxheVAd5uZ3LTeh08hqsbxajIZTPUokcst84Lk+C10jJACdsDw4S0syPDha8dWshpl9D4RitQ==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: '>=3.23'
+
   '@krizaka/tailwind@3.63.1':
     resolution: {integrity: sha512-JILqGXOLHb4VWbchEzLgsujhYirttu8PgZFRX1NaGX0VR1/KI8ps801vy/0fB3pKlVQjZJRwze7MAWEKAsw0cA==}
     engines: {node: '>=22'}
@@ -2088,6 +2116,10 @@ packages:
       '@krizaka/tokens': ^3.63.1
       '@krizaka/ui': ^3.63.1
       tailwindcss: ^4.1
+
+  '@krizaka/time@0.1.0':
+    resolution: {integrity: sha512-GceKAmqE6X39p+zmtYCAJ3menmqNKLYzTUpwkb99ppiARBjqSFB15gioo1Hb93V70QHUWaRBsIsJDc6n1SuHJA==}
+    engines: {node: '>=22'}
 
   '@krizaka/tokens@3.63.1':
     resolution: {integrity: sha512-iQCrwWYMLWG96VvS78dFQPvXAAatMub5uKnL3q6Dh6ZaopmJhm1pvIP4JyvmR5ELUURLrrh7iq/HpUEGRrxTDw==}
@@ -10070,6 +10102,8 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@krizaka/db@0.2.0': {}
+
   '@krizaka/discovery@0.1.0(react@19.3.1)':
     dependencies:
       '@noble/curves': 2.4.0
@@ -10116,6 +10150,15 @@ snapshots:
 
   '@krizaka/payments@0.1.0': {}
 
+  '@krizaka/privacy@0.1.0(vitest@4.1.11)(zod@4.6.7)':
+    dependencies:
+      '@krizaka/db': 0.2.0
+      '@krizaka/settings': 0.4.0(zod@4.6.7)
+      '@krizaka/time': 0.1.0
+    optionalDependencies:
+      vitest: 4.1.11(@types/node@24.19.2)(@vitest/coverage-v8@4.1.11)(jsdom@26.1.0)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      zod: 4.6.7
+
   '@krizaka/query@0.2.2(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1)':
     dependencies:
       '@krizaka/realtime': 0.2.1(pg@8.23.1)
@@ -10138,11 +10181,20 @@ snapshots:
     dependencies:
       zod: 4.6.7
 
+  '@krizaka/settings@0.4.0(zod@4.6.7)':
+    dependencies:
+      '@krizaka/db': 0.2.0
+      zod: 4.6.7
+
   '@krizaka/tailwind@3.63.1(@krizaka/tokens@3.63.1)(@krizaka/ui@3.63.1)(tailwindcss@4.3.3)':
     dependencies:
       '@krizaka/tokens': 3.63.1
       '@krizaka/ui': 3.63.1(@krizaka/query@0.2.2(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.63.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.11)
       tailwindcss: 4.3.3
+
+  '@krizaka/time@0.1.0':
+    dependencies:
+      date-fns: 4.4.0
 
   '@krizaka/tokens@3.63.1': {}
 
