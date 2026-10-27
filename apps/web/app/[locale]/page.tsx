@@ -1,5 +1,6 @@
 import { ForwardIcon } from "@krizaka/icons";
 import { Button } from "@krizaka/ui/button";
+import { cn } from "@krizaka/ui/cn";
 import { LandingPage } from "@krizaka/ui/landing-page";
 import { Section } from "@krizaka/ui/page";
 import type { Metadata } from "next";
@@ -71,12 +72,12 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               </p>
             </>
           }
-          features={SCREENS.map(({ id }) => ({
+          features={SCREENS.map(({ id, crop }) => ({
             id,
             icon: null,
             title: d.screens[id].title,
             text: d.screens[id].text,
-            visual: <Image src={screenStill(id, locale)} alt={d.screens[id].alt} width={780} height={1688} unoptimized loading="lazy" className="h-72 w-full rounded-lg border border-border-default object-cover object-top" />,
+            visual: <Image src={screenStill(id, locale)} alt={d.screens[id].alt} width={780} height={1688} unoptimized loading="lazy" className={cn("h-72 w-full rounded-lg border border-border-default object-cover", crop)} />,
           }))}
         >
           {env().APP_FOUNDER_OFFER_ENABLED && <FounderOffer locale={locale} />}

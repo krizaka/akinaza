@@ -1,3 +1,4 @@
+import { cn } from "@krizaka/ui/cn";
 import { Stuck } from "@krizaka/ui/stuck";
 import Link from "next/link";
 
@@ -19,7 +20,7 @@ export function bulletinLayout(count: number): { shown: number; columns: 2 | 3 }
 export function Bulletin({ flyers, label, visit }: Readonly<{ flyers: FlyerView[]; label: string; visit?: (shop: string) => string }>) {
   const { shown, columns } = bulletinLayout(flyers.length);
   return (
-    <ul aria-label={label} className={`m-0 grid list-none gap-6 p-0 ${columns === 2 ? "md:grid-cols-2" : "md:grid-cols-3"}`} data-bulletin="">
+    <ul aria-label={label} className={cn("m-0 grid list-none gap-6 p-0", columns === 2 ? "md:grid-cols-2" : "md:grid-cols-3")} data-bulletin="">
       {flyers.slice(0, shown).map((f, index) => (
         <li key={f.id}>
           <Stuck as="aside" hold={index % 2 === 0 ? "pin" : "tape"} seed={f.id} className="block">

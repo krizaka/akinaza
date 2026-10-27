@@ -6,6 +6,7 @@ import { bulletinLayout } from "@/components/shop/Bulletin";
 
 import en from "../messages/en.json";
 import fr from "../messages/fr.json";
+import { SCREENS } from "./landing";
 
 const home = readFileSync(new URL("../app/[locale]/page.tsx", import.meta.url), "utf8");
 
@@ -31,6 +32,17 @@ describe("the home after the pages review (akinaza#440)", () => {
     expect(feed).toContain("d.feed.demo");
     expect(en.landing.feed.demo).toBeTruthy();
     expect(fr.landing.feed.demo).toBeTruthy();
+  });
+});
+
+describe("the three cards show their screen's content, not an empty band (akinaza#440)", () => {
+  it("starts the booking's card under the capture's empty band, and the others at the top", () => {
+    expect(SCREENS.map((s) => [s.id, s.crop])).toEqual([
+      ["book", "object-[50%_36%]"],
+      ["invoice", "object-top"],
+      ["books", "object-top"],
+    ]);
+    expect(home).toContain("object-cover\", crop)");
   });
 });
 

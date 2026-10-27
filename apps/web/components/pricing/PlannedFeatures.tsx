@@ -8,7 +8,7 @@ export function PlannedFeatures({ title, soon, items }: Readonly<{ title: string
   if (!items.length) return null;
   return (
     <section aria-label={title} data-planned className="mb-4 border-t border-border-subtle pt-3 text-left">
-      <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-fg-secondary">{title}</h3>
+      <h3 className="mb-2 text-sm font-semibold text-fg-secondary">{title}</h3>
       <ul className="m-0 flex list-none flex-col gap-2 p-0 text-sm text-fg-secondary">
         {items.map((item) => (
           <li key={item} className="flex items-start gap-2">
