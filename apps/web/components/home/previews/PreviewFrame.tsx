@@ -11,7 +11,7 @@ export function PreviewFrame({ alt, demo, children }: Readonly<{ alt: string; de
       <div aria-hidden="true" {...{ inert: true }} className="pointer-events-none h-full w-full select-none p-3 [mask-image:linear-gradient(to_bottom,black_80%,transparent)]">
         {children}
       </div>
-      <span aria-hidden="true" className="absolute right-2 top-2 rounded-full border border-border-default bg-surface-2 px-2 py-0.5 font-mono text-xs text-fg-muted">
+      <span aria-hidden="true" className="absolute right-2 top-2 border border-border-default bg-surface-2 px-2 py-0.5 font-mono text-xs text-fg-muted">
         {demo}
       </span>
     </figure>
