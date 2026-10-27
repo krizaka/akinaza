@@ -1,6 +1,20 @@
 {
   "allow": [
-    { "path": "a11y-baseline.json", "why": "the accessibility crawl's ratchet (axe counts per rule), read by scripts/check-overflow.mjs and guarded by scripts/a11y-guard.test.mjs" },
-    { "path": ".pre-commit-config.yaml", "why": "pre-commit reads its config only from the repository root (org hooks gitleaks and zizmor, krizaka/.github#324)" }
+    {
+      "path": "a11y-baseline.json",
+      "why": "the accessibility crawl's ratchet (axe counts per rule), read by scripts/check-overflow.mjs and guarded by scripts/a11y-guard.test.mjs"
+    },
+    {
+      "path": ".pre-commit-config.yaml",
+      "why": "pre-commit reads its config only from the repository root (org hooks gitleaks and zizmor, krizaka/.github#324)"
+    },
+    {
+      "path": ".gitleaksignore",
+      "why": "gitleaks reads its allowlist only from the repository root (org hook and Security scan, krizaka/.github#324)"
+    },
+    {
+      "path": "perf-budgets.json",
+      "why": "the page-weight budgets, read by scripts/check-perf-budgets.mjs after the build (scripts/ci-after-build.sh) and by the shop page weight test"
+    }
   ]
 }
