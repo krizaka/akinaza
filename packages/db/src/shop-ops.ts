@@ -121,6 +121,17 @@ export const invoiceInputSchema = z.object({
 });
 export type InvoiceInput = z.input<typeof invoiceInputSchema>;
 
+/** One free or service line of an invoice input, resolved against the shop's services (a service of another shop is unknown). */
+async function resolveLine(db: Db | Tx, shopId: string, l: InvoiceInput["lines"][number]): Promise<LineInput> {
+  if (!l.serviceId) {
+    if (l.unitPriceCents === undefined) throw new ShopError("AK_LINE_PRICE", "AK_LINE_PRICE: a free line needs a price");
+    return { description: l.description!, quantity: l.quantity, unitPriceCents: l.unitPriceCents, category: l.category ?? "standard" };
+  }
+  const [service] = await db.select().from(services).where(and(eq(services.id, l.serviceId), eq(services.shopId, shopId)));
+  if (!service) throw new ShopError("AK_SERVICE_UNKNOWN", `AK_SERVICE_UNKNOWN: ${l.serviceId}`);
+  return { description: l.description ?? `${service.nameFr} / ${service.nameEn}`, quantity: l.quantity, unitPriceCents: l.unitPriceCents ?? service.priceCents, category: l.category ?? service.taxCategory };
+}
+
 /** Issues an invoice for the shop from its services and free lines (the same transaction as `issueInvoice`). */
 export async function issueShopInvoice(db: Db | Tx, shopId: string, raw: InvoiceInput, link: { replaces?: string } = {}) {
   const input = invoiceInputSchema.parse(raw);
@@ -133,16 +144,7 @@ export async function issueShopInvoice(db: Db | Tx, shopId: string, raw: Invoice
     if (!appointment) throw new ShopError("AK_APPOINTMENT_UNKNOWN", `AK_APPOINTMENT_UNKNOWN: ${input.appointmentId}`);
   }
   const lines: LineInput[] = [];
-  for (const l of input.lines) {
-    if (l.serviceId) {
-      const [service] = await db.select().from(services).where(and(eq(services.id, l.serviceId), eq(services.shopId, shopId)));
-      if (!service) throw new ShopError("AK_SERVICE_UNKNOWN", `AK_SERVICE_UNKNOWN: ${l.serviceId}`);
-      lines.push({ description: l.description ?? `${service.nameFr} / ${service.nameEn}`, quantity: l.quantity, unitPriceCents: l.unitPriceCents ?? service.priceCents, category: l.category ?? service.taxCategory });
-    } else {
-      if (l.unitPriceCents === undefined) throw new ShopError("AK_LINE_PRICE", "AK_LINE_PRICE: a free line needs a price");
-      lines.push({ description: l.description!, quantity: l.quantity, unitPriceCents: l.unitPriceCents, category: l.category ?? "standard" });
-    }
-  }
+  for (const l of input.lines) lines.push(await resolveLine(db, shopId, l));
   return issueInvoice(db, { shopId, clientId: input.clientId ?? null, appointmentId: input.appointmentId ?? null, language: input.language, issuedOn: input.issuedOn, termsDays: input.termsDays ?? null, lines, replaces: link.replaces ?? null });
 }
 

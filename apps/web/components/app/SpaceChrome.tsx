@@ -20,26 +20,28 @@ type Membership = { shop: { id: string; name: string; businessType: Parameters<t
  */
 export async function SpaceChrome({ locale, account, member, children }: { locale: RouteLocale; account: { id: string; email: string }; member: Membership; children: React.ReactNode }) {
   const profile = await accounts().profile(account.id);
-  const shops = member ? await shopsOf(account.id) : [];
-  const places = member ? placesFor(member.role) : [...CLIENT_PLACES];
-  const membership = member ? { shopId: member.shop.id, role: member.role } : null;
-  const routes = member ? shopRoutes(locale, member.shop.id) : null;
+  const routes = accountRoutes(locale);
+  const common = { locale, account: { id: account.id, email: account.email, name: profile.name, avatarSeed: profile.avatarSeed }, dev: !indexable(), home: routes.home, profileHref: routes.profile };
+  if (!member) {
+    const places = [...CLIENT_PLACES].map((place) => ({ key: place, href: placeHrefFor(locale, null, place), also: undefined }));
+    return <ShopFrame {...common} places={places} shop={undefined} newInvoiceHref={null} search={false} counts={undefined}>{children}</ShopFrame>;
+  }
+  const shops = await shopsOf(account.id);
+  const shopRoutesOf = shopRoutes(locale, member.shop.id);
+  const membership = { shopId: member.shop.id, role: member.role };
+  const mayInvoice = may(member.role, "invoices");
   // The rail's counts: the day's appointments (a staff member's own), the invoices to collect for who may see them.
-  const counts = member ? await frameCounts(db(), member.shop.id, { day: await shopDay(db(), member.shop.id, new Date()), ...agendaScope(member.role, account.id) }) : null;
+  const counts = await frameCounts(db(), member.shop.id, { day: await shopDay(db(), member.shop.id, new Date()), ...agendaScope(member.role, account.id) });
   return (
     <ShopFrame
-      locale={locale}
-      account={{ id: account.id, email: account.email, name: profile.name, avatarSeed: profile.avatarSeed }}
-      places={places.map((place) => ({ key: place, href: placeHrefFor(locale, membership, place), also: place === "shop" && routes ? [routes.team] : undefined }))}
-      shop={member && routes ? { current: { id: member.shop.id, name: member.shop.name }, others: shops.filter((s) => s.id !== member.shop.id).map((s) => ({ id: s.id, name: s.name })), addHref: may(member.role, "settings") ? `${routes.setup}/new` : null } : undefined}
-      newInvoiceHref={member && routes && may(member.role, "invoices") ? routes.newInvoice : null}
-      search={member ? may(member.role, "clients") || may(member.role, "invoices") : false}
-      counts={counts && member ? { today: counts.appointments, toCollect: may(member.role, "invoices") ? counts.toCollect : undefined } : undefined}
-      dev={!indexable()}
-      home={accountRoutes(locale).home}
-      profileHref={accountRoutes(locale).profile}
+      {...common}
+      places={placesFor(member.role).map((place) => ({ key: place, href: placeHrefFor(locale, membership, place), also: place === "shop" ? [shopRoutesOf.team] : undefined }))}
+      shop={{ current: { id: member.shop.id, name: member.shop.name }, others: shops.filter((s) => s.id !== member.shop.id).map((s) => ({ id: s.id, name: s.name })), addHref: may(member.role, "settings") ? `${shopRoutesOf.setup}/new` : null }}
+      newInvoiceHref={mayInvoice ? shopRoutesOf.newInvoice : null}
+      search={may(member.role, "clients") || mayInvoice}
+      counts={{ today: counts.appointments, toCollect: mayInvoice ? counts.toCollect : undefined }}
     >
-      {member ? <VocabularyProvider type={member.shop.businessType}>{children}</VocabularyProvider> : children}
+      <VocabularyProvider type={member.shop.businessType}>{children}</VocabularyProvider>
     </ShopFrame>
   );
 }
