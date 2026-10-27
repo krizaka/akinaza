@@ -109,3 +109,24 @@ describe("the demo shops each wear a template of their trade (#261, step 6)", ()
     for (const demo of DEMO_SHOPS) expect((await shopPageConfigOf(t.db, (await publicShop(t.db, demo.shop.slug))!.shop.id)).templateId).toBe(demo.template);
   });
 });
+
+describe("a dev database seeded by an older version", () => {
+  it("keeps the shop that already holds a demo address (another owner), never creating it again, and gives it its trade and template back", async () => {
+    const other = await freshDatabase();
+    try {
+      const [demo] = DEMO_SHOPS;
+      const older = await seedDemoShops(other.db);
+      // An older seed: the same address, another owner, no trade and no template.
+      const { accounts, shops } = await import("./schema");
+      const { eq } = await import("drizzle-orm");
+      const [stranger] = await other.db.insert(accounts).values({ email: "eric@akinaza.test" }).returning({ id: accounts.id });
+      await other.db.update(shops).set({ ownerId: stranger!.id }).where(eq(shops.id, older[0]!.shopId));
+      const again = await seedDemoShops(other.db);
+      expect(again[0]!.shopId).toBe(older[0]!.shopId);
+      expect(again[0]!.created).toBe(false);
+      expect(demo!.shop.slug).toBe("cedre-ciseaux");
+    } finally {
+      await other.drop();
+    }
+  });
+});
