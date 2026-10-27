@@ -69,16 +69,54 @@ function ListSection({ id, title, empty, children }: { id: string; title: string
   );
 }
 
+/** The visits that took place (not cancelled, not missed, started), the latest of them, and the next booked one. */
+function visitSummary(visits: Visit[], now: number) {
+  const began = visits.filter((v) => v.status !== AppointmentStatus.Cancelled && v.status !== AppointmentStatus.NoShow && Date.parse(v.startsAt) <= now);
+  const upcoming = visits.filter((v) => v.status === AppointmentStatus.Booked && Date.parse(v.startsAt) > now);
+  return { began, last: began[0], next: upcoming.at(-1) };
+}
+
+/** The line under the name: phone, e-mail, since when, and the client's tags with their editor for who may organise. */
+function ClientMeta({ client, timeZone, tags, organize }: { client: ClientFilePanelProps["file"]["client"]; timeZone: string; tags: NonNullable<ClientFilePanelProps["tags"]>; organize: ClientFilePanelProps["organize"] }) {
+  const { say, locale } = useSay();
+  const parts = [
+    client.phone ? (
+      <a key="phone" className="text-fg-accent underline" href={`tel:${client.phone.replace(/[^0-9+]/g, "")}`}>
+        {client.phone}
+      </a>
+    ) : null,
+    client.email ? (
+      <a key="email" className="break-all text-fg-accent underline" href={`mailto:${client.email}`}>
+        {client.email}
+      </a>
+    ) : null,
+    <span key="since" className="whitespace-nowrap">{say("clients.file.since", { date: formatDate(client.since, locale, timeZone) })}</span>,
+  ].filter(Boolean);
+  const showsTags = tags.length > 0 || organize?.canWrite;
+  return (
+    <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-fg-secondary">
+      {parts.map((part, n) => (
+        <span key={n} className="flex items-center gap-2">
+          {n > 0 ? <span aria-hidden>·</span> : null}
+          {part}
+        </span>
+      ))}
+      {showsTags ? (
+        <span className="flex flex-wrap items-center gap-2" aria-label={say("organize.file.tags")}>
+          <TagChips tags={tags} />
+          {organize ? <TagsEditor organize={organize} entityId={client.id} worn={tags} /> : null}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, notes, tab, today, organize, tags = [] }: ClientFilePanelProps) {
   const { say, locale } = useSay();
   const routes = useShopRoutes();
   const labels = useTableLabels();
   const { client } = file;
-  const now = Date.parse(nowIso);
-  const began = file.visits.filter((v) => v.status !== AppointmentStatus.Cancelled && v.status !== AppointmentStatus.NoShow && Date.parse(v.startsAt) <= now);
-  const upcoming = file.visits.filter((v) => v.status === AppointmentStatus.Booked && Date.parse(v.startsAt) > now);
-  const last = began[0];
-  const next = upcoming.at(-1);
+  const { began, last, next } = visitSummary(file.visits, Date.parse(nowIso));
   const spent = file.invoices.reduce((sum, i) => sum + i.totalCents, 0);
   const owed = file.invoices.reduce((n, i) => n + remainingCents(standing(i)), 0);
   const tabHref = (t: ClientFileTab) => (t === "summary" ? routes.client(client.id) : `${routes.client(client.id)}?tab=${t}`);
@@ -128,19 +166,6 @@ export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, no
     [say, locale, routes, today],
   );
 
-  const contact = [
-    client.phone ? (
-      <a key="phone" className="text-fg-accent underline" href={`tel:${client.phone.replace(/[^0-9+]/g, "")}`}>
-        {client.phone}
-      </a>
-    ) : null,
-    client.email ? (
-      <a key="email" className="break-all text-fg-accent underline" href={`mailto:${client.email}`}>
-        {client.email}
-      </a>
-    ) : null,
-    <span key="since" className="whitespace-nowrap">{say("clients.file.since", { date: formatDate(client.since, locale, timeZone) })}</span>,
-  ].filter(Boolean);
   const notesColumn = <ClientNotes clientId={client.id} notes={notes} timeZone={timeZone} />;
   return (
     <DetailLayout
@@ -149,22 +174,7 @@ export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, no
       media={<ClientAvatar name={client.fullName} size="lg" />}
       title={client.fullName}
       status={owed > 0 ? <Badge tone="warning">{say("clients.state.owes", { amount: formatMoney(owed, locale) })}</Badge> : <Badge tone="success">{say("clients.state.upToDate")}</Badge>}
-      meta={
-        <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-fg-secondary">
-          {contact.map((part, n) => (
-            <span key={n} className="flex items-center gap-2">
-              {n > 0 ? <span aria-hidden>·</span> : null}
-              {part}
-            </span>
-          ))}
-          {tags.length || organize?.canWrite ? (
-            <span className="flex flex-wrap items-center gap-2" aria-label={say("organize.file.tags")}>
-              <TagChips tags={tags} />
-              {organize ? <TagsEditor organize={organize} entityId={client.id} worn={tags} /> : null}
-            </span>
-          ) : null}
-        </span>
-      }
+      meta={<ClientMeta client={client} timeZone={timeZone} tags={tags} organize={organize} />}
       actions={
         mayInvoice ? (
           <ButtonLink href={routes.newInvoiceFor({ client: client.id })} variant="secondary" size="md">
