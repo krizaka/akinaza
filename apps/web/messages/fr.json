@@ -1620,6 +1620,54 @@
         "updateTemplateOrder": "Mettre à jour avec son ordre"
       }
     },
+    "exports": {
+      "columns": {
+        "appointments": {
+          "id": "Id",
+          "start": "Début",
+          "end": "Fin",
+          "status": "Statut",
+          "service": "Service",
+          "staff": "Employé",
+          "client": "Client",
+          "price": "Prix"
+        },
+        "clients": {
+          "id": "Id",
+          "name": "Nom",
+          "email": "Courriel",
+          "phone": "Téléphone",
+          "language": "Langue",
+          "since": "Client depuis",
+          "dependants": "Dépendants"
+        },
+        "invoices": {
+          "number": "Numéro",
+          "issuedOn": "Émise le",
+          "dueOn": "Échéance",
+          "client": "Client",
+          "subtotal": "Sous-total",
+          "gst": "TPS",
+          "qst": "TVQ",
+          "total": "Total",
+          "paid": "Payé",
+          "creditOf": "Note de crédit de",
+          "state": "État",
+          "language": "Langue"
+        }
+      },
+      "status": {
+        "booked": "Réservé",
+        "done": "Terminé",
+        "cancelled": "Annulé",
+        "noShow": "Absent"
+      },
+      "invoiceState": {
+        "open": "Ouverte",
+        "paid": "Payée",
+        "superseded": "Remplacée ou créditée"
+      }
+    },
     "boutique": {
       "title": "Votre boutique",
       "navLabel": "Sections de votre boutique",
@@ -1633,7 +1681,37 @@
         "invoices": "Courriels de facture",
         "shops": "Vos boutiques",
         "figures": "Seuils des chiffres",
+        "data": "Vos données",
         "agenda": "Agenda"
+      },
+      "data": {
+        "title": "Vos données",
+        "lead": "Téléchargez ce que la boutique détient, pour l’ouvrir dans vos propres outils. Seulement ce que vous voyez déjà ici ; rien d’une autre boutique, aucune note d’accès, aucune personne effacée.",
+        "download": "Télécharger",
+        "audited": "Chaque téléchargement est consigné dans le journal de la boutique. Seul le propriétaire peut en faire un.",
+        "off": "L’administrateur a désactivé les téléchargements de données.",
+        "files": {
+          "appointmentsCsv": {
+            "group": "Rendez-vous",
+            "label": "Tableur (CSV)",
+            "hint": "Chaque rendez-vous, avec son service, son employé et son client. Le fichier ICS s’ouvre dans les agendas Apple, Google ou Outlook."
+          },
+          "appointmentsIcs": {
+            "group": "Rendez-vous",
+            "label": "Fichier d’agenda (ICS)",
+            "hint": "Chaque rendez-vous, avec son service, son employé et son client. Le fichier ICS s’ouvre dans les agendas Apple, Google ou Outlook."
+          },
+          "clientsCsv": {
+            "group": "Clients",
+            "label": "Tableur (CSV)",
+            "hint": "Noms, courriel, téléphone, langue et dépendants."
+          },
+          "invoicesCsv": {
+            "group": "Factures",
+            "label": "Tableur (CSV)",
+            "hint": "Factures et notes de crédit dans l’ordre des livres, montants en dollars avec TPS et TVQ."
+          }
+        }
       },
       "invoices": {
         "title": "Courriels de facture",

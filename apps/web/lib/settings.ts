@@ -47,6 +47,8 @@ export const SETTINGS = {
   "limits.translationsPerShopPerDay": integer("limits", 20, { min: 1, max: 500, unit: "runs" }, GLOBAL_ONLY),
   // The private calendar feeds of the shop and its staff (#282, ADR-004): off, every feed address answers 404 and none can be made.
   "exports.icsFeed.enabled": flag("exports", true, GLOBAL_ONLY),
+  // The owner's data downloads (#420, ADR-004 §5): appointments (CSV, ICS), clients and invoices (CSV). Off, none is served.
+  "exports.data.enabled": flag("exports", true, GLOBAL_ONLY),
   // The owner's other calendars, read-only (#282, ADR-004): busy times block slots. The ICS address is on; the providers wait for their OAuth apps (off until the administrator turns them on).
   "features.calendarSync": flag("features", true, GLOBAL_ONLY),
   "calendarSync.ics.enabled": flag("calendarSync", true, GLOBAL_ONLY),
