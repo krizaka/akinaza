@@ -127,3 +127,19 @@ describe("a reel upload is checked by its bytes (#312)", () => {
     expect(detectVideo(new Uint8Array(box("ftyp", [..."isom"].map((c) => c.charCodeAt(0)), [0, 0, 2, 0])))).toBeNull();
   });
 });
+
+describe("the neighbourhood feed (#318)", () => {
+  it("folds accents, case and punctuation", async () => {
+    const { foldArea } = await import("./community");
+    expect(foldArea("  Côte-des-Neiges, Montréal ")).toBe("cote des neiges montreal");
+  });
+  it("matches a locality that contains the asked neighbourhood", async () => {
+    const { areaMatches, quartierOf } = await import("./community");
+    expect(areaMatches("Saint-Henri, Montréal", "saint henri")).toBe(true);
+    expect(areaMatches("Saint-Henri, Montréal", "Villeray")).toBe(false);
+    expect(areaMatches(null, "Saint-Henri")).toBe(false);
+    expect(areaMatches("Saint-Henri", "")).toBe(true);
+    expect(quartierOf("Saint-Henri, Montréal")).toBe("Saint-Henri");
+    expect(quartierOf("Villeray")).toBe("Villeray");
+  });
+});

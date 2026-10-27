@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import type { Db } from "./client";
 import { ShopError } from "./errors";
-import { shopAnnouncements, shopReels, shopReviews, shopSocialLinks, shopWall, shopWallItems } from "./schema";
+import { shopAnnouncements, shopReels, shopReviews, shops, shopSocialLinks, shopWall, shopWallItems } from "./schema";
 
 /**
  * The shop as a place (akinaza#236, B45): the wall, the reels, the profile links, the bulletin board and the reviews of the public page.
@@ -163,6 +163,49 @@ export async function addAnnouncement(db: Db, shopId: string, input: Announcemen
 export async function removeAnnouncement(db: Db, shopId: string, id: string): Promise<boolean> {
   const rows = await db.delete(shopAnnouncements).where(and(eq(shopAnnouncements.shopId, shopId), eq(shopAnnouncements.id, id))).returning({ id: shopAnnouncements.id });
   return rows.length > 0;
+}
+
+// ---- the neighbourhood feed ----------------------------------------------------------------------------------------------------------------------
+
+export interface FeedFlyerRow {
+  id: string;
+  textFr: string;
+  textEn: string;
+  photoUrl: string | null;
+  photoAlt: string;
+  endsOn: string | null;
+  createdAt: Date;
+  shopName: string;
+  shopSlug: string;
+  area: string | null;
+}
+
+// @fixed: the feed reads the newest flyers of the published shops and cuts them to a handful afterwards; two hundred rows is more than any home shows.
+const FEED_READ = 200;
+
+/**
+ * The flyers still up in every published shop that has an address and a locality (the shop's local day decides « still up »), newest first.
+ * Only what the owner already pinned on the public page leaves the shop: no street, no client, no figure.
+ */
+export async function feedFlyers(db: Db): Promise<FeedFlyerRow[]> {
+  return db
+    .select({
+      id: shopAnnouncements.id,
+      textFr: shopAnnouncements.textFr,
+      textEn: shopAnnouncements.textEn,
+      photoUrl: shopAnnouncements.photoUrl,
+      photoAlt: shopAnnouncements.photoAlt,
+      endsOn: shopAnnouncements.endsOn,
+      createdAt: shopAnnouncements.createdAt,
+      shopName: shops.name,
+      shopSlug: sql<string>`${shops.slug}`,
+      area: shops.area,
+    })
+    .from(shopAnnouncements)
+    .innerJoin(shops, eq(shops.id, shopAnnouncements.shopId))
+    .where(and(eq(shops.published, true), sql`${shops.slug} IS NOT NULL`, sql`coalesce(${shops.area}, '') <> ''`, sql`(${shopAnnouncements.endsOn} IS NULL OR ${shopAnnouncements.endsOn} >= (now() AT TIME ZONE ${shops.timezone})::date)`))
+    .orderBy(desc(shopAnnouncements.createdAt), desc(shopAnnouncements.id))
+    .limit(FEED_READ);
 }
 
 // ---- the reviews ---------------------------------------------------------------------------------------------------------------------------------

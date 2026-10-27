@@ -9,10 +9,12 @@ import { preconnect } from "react-dom";
 
 import { FounderOffer } from "@/components/home/FounderOffer";
 import { HeroPhone } from "@/components/home/HeroPhone";
+import { NeighbourhoodFeed } from "@/components/home/NeighbourhoodFeed";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { pageSession } from "@/lib/access";
 import { env } from "@/lib/env";
+import { homeFeed } from "@/lib/home-feed";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { heroActions, productStatus, SCREENS } from "@/lib/landing";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
@@ -35,6 +37,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   // The storefront still is the page's LCP: open the CDN's connection now and fetch it at once (React hoists the link into <head>).
   preconnect(MEDIA_CDN);
   // The hero's action follows the session, rendered on the server: no flash of the signed-out action.
+  const feed = await homeFeed(locale);
   const hero = heroActions(locale, Boolean(await pageSession().catch(() => null)));
   return (
     <>
@@ -71,6 +74,11 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           }))}
         >
           {env().APP_FOUNDER_OFFER_ENABLED && <FounderOffer locale={locale} />}
+          {feed.flyers.length > 0 && (
+            <Section id="neighbourhood" spacing="sm" title={d.feed.title} lead={d.feed.lead}>
+              <NeighbourhoodFeed initial={feed} locale={locale} words={{ filterLabel: d.feed.filterLabel, all: d.feed.all, boardLabel: d.feed.boardLabel, visit: d.feed.visit, empty: d.feed.empty, error: d.feed.error }} />
+            </Section>
+          )}
           <Section id="trust" spacing="sm">
             <p className="m-0 text-sm text-fg-muted" data-testid="trust-line">
               {d.trust.line}
