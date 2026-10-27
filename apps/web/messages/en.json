@@ -561,6 +561,7 @@
       "openMenu": "Open the menu",
       "collapse": "Fold the menu",
       "expand": "Unfold the menu",
+      "yourAccount": "Your account",
       "signedInAs": "Signed in as {email}",
       "devBuild": "DEV · v{version}",
       "language": "Language",
