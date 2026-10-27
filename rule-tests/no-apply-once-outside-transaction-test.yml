@@ -1,0 +1,7 @@
+id: no-apply-once-outside-transaction
+valid:
+  - |
+    applyOnceInTransaction(transaction, event, handlers);
+invalid:
+  - |
+    applyOnce(pgEventStore(query), event, handlers);

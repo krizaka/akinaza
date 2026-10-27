@@ -1,0 +1,10 @@
+id: no-apply-once-outside-transaction
+language: Tsx
+severity: error
+message: "`applyOnce` records the event id in one step and runs the handler in another: a crash between them loses the event. Use `applyOnceInTransaction` (id and effect commit together or roll back together)."
+rule:
+  pattern: applyOnce($$$ARGS)
+ignores:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/dist/**"
