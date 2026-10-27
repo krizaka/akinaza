@@ -26,6 +26,38 @@ const arg = (name, fallback) => {
   return i >= 0 ? process.argv[i + 1] : fallback;
 };
 
+/** Runs in the page (serialised by Playwright, so self-contained): the scroll width, what pokes out unclipped, and the height of every action. */
+function measure() {
+  const doc = document.documentElement;
+  // An element that pokes out only matters when nothing clips it: decorative layers (aria-hidden) and anything inside a
+  // clipping or scrolling ancestor (overflow hidden / clip / auto / scroll) are meant to extend.
+  const clipped = (el) => {
+    for (let n = el; n && n !== document.body; n = n.parentElement) {
+      if (n.getAttribute("aria-hidden") === "true") return true;
+      if (n !== el && ["hidden", "clip", "auto", "scroll"].includes(getComputedStyle(n).overflowX)) return true;
+    }
+    return false;
+  };
+  const wide = [...document.querySelectorAll("body *")]
+    .filter((el) => {
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && (r.right > doc.clientWidth + 1 || r.left < -1) && !clipped(el);
+    })
+    .slice(0, 3)
+    .map((el) => `${el.tagName.toLowerCase()}.${String(el.className).split(" ").slice(0, 3).join(".")}`);
+  const actions = [...document.querySelectorAll("main a[class*='kz-button'], main a[data-slot='button'], main .kz-button")].filter((a) => a.getBoundingClientRect().width > 0).map((a) => Math.round(a.getBoundingClientRect().height));
+  return { scroll: doc.scrollWidth, client: doc.clientWidth, wide, actions };
+}
+
+/** The problems one page at one width shows, from what `measure` read. */
+function judge(result, where) {
+  const out = [];
+  if (result.scroll > result.client) out.push(`${where}: scrollWidth ${result.scroll} > ${result.client} (${result.wide.join(", ")})`);
+  else if (result.wide.length) out.push(`${where}: elements past the edge (${result.wide.join(", ")})`);
+  if (result.actions.some((h) => h < 36)) out.push(`${where}: an action is ${Math.min(...result.actions)} px tall (< 36)`);
+  return out;
+}
+
 /** Every page at every width in one theme: HTTP and empty-page checks, then no horizontal overflow and no small action. */
 async function crawl({ page, paths, base, theme, shots, problems, at }) {
   for (const path of paths) {
@@ -38,31 +70,8 @@ async function crawl({ page, paths, base, theme, shots, problems, at }) {
       if (!response || response.status() >= 400) problems.push(`${path} @${width} ${theme}: HTTP ${response?.status() ?? "none"}`);
       const empty = await page.evaluate(() => document.querySelector("main")?.innerText.trim().length === 0);
       if (empty) problems.push(`${path} @${width} ${theme}: empty <main>`);
-      const result = await page.evaluate(() => {
-        const doc = document.documentElement;
-        // An element that pokes out only matters when nothing clips it: decorative layers (aria-hidden) and anything inside a
-        // clipping or scrolling ancestor (overflow hidden / clip / auto / scroll) are meant to extend.
-        const clipped = (el) => {
-          for (let n = el; n && n !== document.body; n = n.parentElement) {
-            if (n.getAttribute("aria-hidden") === "true") return true;
-            if (n !== el && ["hidden", "clip", "auto", "scroll"].includes(getComputedStyle(n).overflowX)) return true;
-          }
-          return false;
-        };
-        const wide = [...document.querySelectorAll("body *")]
-          .filter((el) => {
-            const r = el.getBoundingClientRect();
-            return r.width > 0 && (r.right > doc.clientWidth + 1 || r.left < -1) && !clipped(el);
-          })
-          .slice(0, 3)
-          .map((el) => `${el.tagName.toLowerCase()}.${String(el.className).split(" ").slice(0, 3).join(".")}`);
-        const actions = [...document.querySelectorAll("main a[class*='kz-button'], main a[data-slot='button'], main .kz-button")].filter((a) => a.getBoundingClientRect().width > 0).map((a) => Math.round(a.getBoundingClientRect().height));
-        return { scroll: doc.scrollWidth, client: doc.clientWidth, wide, actions };
-      });
-      const where = `${path} @${width} ${theme}`;
-      if (result.scroll > result.client) problems.push(`${where}: scrollWidth ${result.scroll} > ${result.client} (${result.wide.join(", ")})`);
-      else if (result.wide.length) problems.push(`${where}: elements past the edge (${result.wide.join(", ")})`);
-      if (result.actions.some((h) => h < 36)) problems.push(`${where}: an action is ${Math.min(...result.actions)} px tall (< 36)`);
+      const result = await page.evaluate(measure);
+      problems.push(...judge(result, `${path} @${width} ${theme}`));
       if (shots) {
         mkdirSync(shots, { recursive: true });
         await page.screenshot({ path: join(shots, `${path.replace(/\//g, "_") || "_"}-${width}-${theme}.png`), fullPage: false });
