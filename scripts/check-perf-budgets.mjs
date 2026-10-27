@@ -15,6 +15,8 @@ import { fileURLToPath } from "node:url";
 export const BUDGETS_FILE = fileURLToPath(new URL("../perf-budgets.json", import.meta.url));
 export const LIMITS = { lcpMs: 2500, cls: 0, screens: 5 };
 export const SHOP_ROUTES = ["/en/s/cedre-ciseaux", "/fr/s/cedre-ciseaux", "/en/s/pattes-saint-henri", "/fr/s/pattes-saint-henri"];
+// The explore pages are measured and reported, but their absolute budgets do not block until the page exists (akinaza#473).
+export const NON_BLOCKING_ROUTES = ["/en/explore", "/fr/explore"];
 export const VIEWPORT = { width: 390, height: 844 };
 const HERO = '[class*="hero"], [data-section="hero"], [data-hero], main > :first-child';
 
@@ -141,7 +143,7 @@ async function main() {
   const { chromium } = await import("playwright-core");
   const browser = await chromium.launch();
   const report = {};
-  for (const route of SHOP_ROUTES) {
+  for (const route of [...SHOP_ROUTES, ...NON_BLOCKING_ROUTES]) {
     const samples = [];
     for (let i = 0; i < runs; i += 1) samples.push(await sample(browser, base + route));
     report[route] = { ...summarise(samples), samples };
@@ -161,10 +163,11 @@ async function main() {
   if (process.argv.includes("--update")) writeFileSync(BUDGETS_FILE, `${JSON.stringify({ jsBytes: lowered(recorded, measured) }, null, 2)}\n`);
 
   const problems = Object.entries(report).flatMap(([route, s]) => judge(route, s));
+  const blockingProblems = problems.filter((p) => !NON_BLOCKING_ROUTES.some((r) => p.startsWith(`${r}:`)));
   const jsProblems = js.increased.map((i) => `${i.route}: client JS ${i.to} B > ${i.from} B recorded`);
-  for (const p of [...problems, ...jsProblems]) console.error(`FAIL ${p}`);
+  for (const p of [...problems, ...jsProblems]) console.error(`${blockingProblems.includes(p) || jsProblems.includes(p) ? "FAIL" : "WARN"} ${p}`);
   const blocking = process.env.PERF_BLOCKING !== "0";
-  if (jsProblems.length || (blocking && problems.length)) process.exit(1);
+  if (jsProblems.length || (blocking && blockingProblems.length)) process.exit(1);
   if (problems.length) console.log("Absolute budgets missed, reported without failing (PERF_BLOCKING=0).");
 }
 

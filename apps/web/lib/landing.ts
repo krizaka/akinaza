@@ -11,13 +11,12 @@ export const HOME_SECTIONS = ["hero", "screens", "offer", "trust"] as const;
 export const DEMO_SHOP = "pattes-saint-henri";
 
 /**
- * The three jobs, each shown on a real screen of the app (lib/tour.ts has the captures). `crop` is where the still is cut in its card
- * (akinaza#440): the booking's capture opens on an empty band under its header, so its card starts at the page's content.
+ * The three jobs, each shown by the real component of the app drawn with demo data (components/home/previews, lib/landing-demo.ts).
  */
 export const SCREENS = [
-  { id: "book", crop: "object-[50%_36%]" },
-  { id: "invoice", crop: "object-top" },
-  { id: "books", crop: "object-top" },
+  { id: "book" },
+  { id: "invoice" },
+  { id: "books" },
 ] as const;
 
 type DevPreview = { criteria: Record<string, { evidence?: string | null; na?: boolean | string }> };
