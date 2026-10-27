@@ -17,7 +17,7 @@ jobs:
   # The web: scripts/showcase-web.mjs on the same throwaway backend as the phone's flows (the demo shops, the Saint-Henri walker).
   showcase-web:
     name: Showcase videos (web)
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -53,7 +53,7 @@ jobs:
   # apps/mobile/.maestro-showcase (startRecording / stopRecording); the whole-run recorder is off (two recorders fight).
   mobile-showcase:
     name: Showcase video (phone)
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.full_name == github.repository
     permissions:
       contents: read
     uses: krizaka/.github/.github/workflows/mobile-e2e.yml@eabd6ab14d91febe8e0ebd7bfba6be98df5ae492 # main (krizaka/.github#318)
@@ -77,7 +77,7 @@ jobs:
   app-videos:
     name: Download page videos
     needs: [showcase-web, mobile-showcase]
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.full_name == github.repository
     permissions:
       contents: write
       pull-requests: write
