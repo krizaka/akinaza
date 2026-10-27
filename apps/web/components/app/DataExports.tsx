@@ -13,7 +13,7 @@ export const fileKey = (file: ExportFile): string => file.replace(/\.(\w)(\w*)$/
  * Boutique › Vos données (#420): the owner's appointments, clients and invoices to download. Plain links to the streamed route: nothing is
  * built in the page, and the link carries the shop and the language, never a secret.
  */
-export function DataExports({ words, enabled, href }: { words: Words; enabled: boolean; href: (file: ExportFile) => string }) {
+export function DataExports({ words, enabled, href }: Readonly<{ words: Words; enabled: boolean; href: (file: ExportFile) => string }>) {
   if (!enabled) return <Alert tone="info">{words.off}</Alert>;
   const groups = [...new Set(EXPORT_FILES.map((f) => words.files[fileKey(f)]!.group))];
   return (

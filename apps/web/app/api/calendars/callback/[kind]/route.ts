@@ -33,7 +33,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ kind: st
   const url = new URL(req.url);
   const now = systemClock.now();
   const state = verifyState(url.searchParams.get("state") ?? "", sessionSecret(), now);
-  if (!isOAuthKind(kind) || !state || state.kind !== kind) return new Response("Not found", { status: 404, headers: { "Set-Cookie": clearPkceCookie(secure) } });
+  if (!isOAuthKind(kind) || state?.kind !== kind) return new Response("Not found", { status: 404, headers: { "Set-Cookie": clearPkceCookie(secure) } });
   const agenda = `/${state.locale}/app/${state.shopId}/boutique/agenda`;
   try {
     const verifier = verifierFor(req.headers.get("cookie"), state.nonce);

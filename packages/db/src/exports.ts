@@ -84,7 +84,7 @@ export async function* exportAppointments(db: Db, shopId: string, batch = EXPORT
       priceCents: Number(r.price_cents),
     }));
     if (rows.length < batch) return;
-    const last = rows[rows.length - 1]!;
+    const last = rows.at(-1)!;
     after = { at: last.starts_at as string, id: last.id as string };
   }
 }
@@ -114,7 +114,7 @@ export async function* exportClients(db: Db, shopId: string, batch = EXPORT_BATC
       dependants: (r.dependants as string[]) ?? [],
     }));
     if (rows.length < batch) return;
-    const last = rows[rows.length - 1]!;
+    const last = rows.at(-1)!;
     after = { name: last.full_name as string, id: last.id as string };
   }
 }
@@ -155,7 +155,7 @@ export async function* exportInvoices(db: Db, shopId: string, batch = EXPORT_BAT
       superseded: Boolean(r.superseded),
     }));
     if (rows.length < batch) return;
-    const last = rows[rows.length - 1]!;
+    const last = rows.at(-1)!;
     after = { on: last.issued_on as string, number: last.number as string };
   }
 }

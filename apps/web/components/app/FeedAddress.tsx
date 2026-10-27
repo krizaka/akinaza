@@ -11,7 +11,7 @@ import { useSay } from "@/lib/i18n-client";
  * The private address of a calendar feed, right after it was made (#282): the link with « Copy the link », and the same address as a QR
  * code the phone scans. Both live in this component's props only: nothing here stores, sends or logs the address.
  */
-export function FeedAddress({ id, name, url }: { id: string; name: string; url: string }) {
+export function FeedAddress({ id, name, url }: Readonly<{ id: string; name: string; url: string }>) {
   const { say } = useSay();
   const t = (key: string, vars?: Record<string, string | number>) => say(`boutique.agenda.feed.${key}`, vars);
   const [copied, setCopied] = useState(false);

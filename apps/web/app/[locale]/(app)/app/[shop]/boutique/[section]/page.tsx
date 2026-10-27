@@ -192,7 +192,7 @@ async function FiguresSection({ locale, shopId }: { locale: RouteLocale; shopId:
 }
 
 /** Boutique › Vos données: the owner's appointments, clients and invoices to download (#420, ADR-004 §5). */
-async function DataSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
+async function DataSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   await memberShop(shopId, "privacy");
   const t = getDictionary(locale).console.boutique.data;
   const enabled = await appSettings().get("exports.data.enabled");

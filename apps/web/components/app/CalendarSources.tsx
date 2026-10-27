@@ -65,7 +65,7 @@ function SourceRow({ c, who }: { c: CalendarOverview["connections"][number]; who
 }
 
 /** Google and Outlook: the owner consents at the provider's own page (OAuth), then comes back here. Only the busy times are asked for. */
-function ProviderConnect({ providers, options }: { providers: Provider[]; options: { value: string; label: string }[] }) {
+function ProviderConnect({ providers, options }: Readonly<{ providers: Provider[]; options: { value: string; label: string }[] }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [needConsent, setNeedConsent] = useState(false);
@@ -79,7 +79,7 @@ function ProviderConnect({ providers, options }: { providers: Provider[]; option
       setNeedConsent(!values.consent);
       if (!values.consent) return;
       const started = await call.run<{ url: string }>(`/api/calendars/connect/${chosen.current}`, { json: { label: values.label, staffId: values.staffId || null, locale, consent: true } }, { refresh: false });
-      if (started) window.location.assign(started.url);
+      if (started) globalThis.location.assign(started.url);
     },
   });
   return (

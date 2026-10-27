@@ -25,10 +25,11 @@ export const BOM = "\uFEFF";
  * so a client named `=HYPERLINK(...)` is text, never a command. Quotes, commas and line breaks are quoted.
  */
 export function csvCell(value: string | null | undefined): string {
-  const raw = value ?? "";
-  const safe = /^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw;
-  return /[",\r\n]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe;
+  return quoted(guarded(value ?? ""));
 }
+
+const guarded = (raw: string): string => (/^[=+\-@\t\r]/.test(raw) ? `'${raw}` : raw);
+const quoted = (safe: string): string => (/[",\r\n]/.test(safe) ? `"${safe.replaceAll('"', '""')}"` : safe);
 
 export const csvLine = (cells: readonly (string | null | undefined)[]): string => `${cells.map(csvCell).join(",")}\r\n`;
 
@@ -37,7 +38,7 @@ export const dollars = (cents: number): string => (cents / 100).toFixed(2);
 
 /** A date and time as the shop's clock reads it: `2026-11-20 10:00`. */
 export function localDateTime(at: Date, timeZone: string): string {
-  return new Intl.DateTimeFormat("sv-SE", { timeZone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(at).replace(/\u202f|\u00a0/g, " ");
+  return new Intl.DateTimeFormat("sv-SE", { timeZone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(at).replace(/[\u202f\u00a0]/g, " ");
 }
 
 /** The words of the exports, from the messages (`console.exports`). */
@@ -64,7 +65,10 @@ export const appointmentsCsv = (rows: readonly AppointmentExportRow[], w: Export
 export const clientsCsv = (rows: readonly ClientExportRow[], _w: ExportWords, timeZone: string): string =>
   rows.map((r) => csvLine([r.id, r.fullName, r.email, r.phone, r.language, localDateTime(r.createdAt, timeZone).slice(0, 10), r.dependants.join("; ")])).join("");
 
-const invoiceState = (r: InvoiceExportRow): "open" | "paid" | "superseded" => (r.superseded ? "superseded" : r.paidCents >= r.totalCents && r.totalCents > 0 ? "paid" : "open");
+function invoiceState(r: InvoiceExportRow): "open" | "paid" | "superseded" {
+  if (r.superseded) return "superseded";
+  return r.paidCents >= r.totalCents && r.totalCents > 0 ? "paid" : "open";
+}
 
 export const invoicesCsv = (rows: readonly InvoiceExportRow[], w: ExportWords): string =>
   rows.map((r) => csvLine([r.number, r.issuedOn, r.dueOn, r.client, dollars(r.subtotalCents), dollars(r.gstCents), dollars(r.qstCents), dollars(r.totalCents), dollars(r.paidCents), r.creditOf, w.invoiceState[invoiceState(r)], r.language])).join("");
@@ -88,7 +92,7 @@ export function appointmentsIcs(rows: readonly AppointmentExportRow[], w: Export
         `DTSTART:${stamp(r.startsAt)}`,
         `DTEND:${stamp(r.endsAt)}`,
         `SUMMARY:${escape([service, r.client].filter(Boolean).join(" · "))}`,
-        `DESCRIPTION:${escape(`${r.staff} · ${w.status[r.status]}`)}`,
+        `DESCRIPTION:${escape([r.staff, w.status[r.status]].join(" · "))}`,
         `STATUS:${ICS_STATUS[r.status]}`,
         "END:VEVENT",
       ];

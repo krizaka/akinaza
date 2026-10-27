@@ -18,8 +18,8 @@ export interface CaldavOptions {
   resolve?: Resolver;
 }
 
-const compact = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
-const unescapeXml = (s: string) => s.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, "&");
+const compact = (d: Date) => d.toISOString().replaceAll(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+const unescapeXml = (s: string) => s.replaceAll(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&quot;", '"').replaceAll("&apos;", "'").replaceAll("&amp;", "&");
 
 /** The iCalendar bodies of a multistatus answer. */
 export function calendarDataOf(xml: string): string[] {
