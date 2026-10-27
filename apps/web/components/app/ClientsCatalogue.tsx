@@ -107,6 +107,7 @@ export function ClientsCatalogue({ clients, query, timeZone, organize, tagsByCli
         </p>
         <div className="flex flex-col gap-1">
           <p className="text-sm text-fg-secondary">{say("clients.strip.upToDate", { count: view.strip.upToDate, total: view.strip.count })}</p>
+          <p className="text-xs text-fg-secondary">{say("clients.strip.upToDateHint")}</p>
           <Meter label={say("clients.strip.upToDate", { count: view.strip.upToDate, total: view.strip.count })} value={view.strip.upToDate} max={Math.max(view.strip.count, 1)} valueText={say("clients.strip.upToDate", { count: view.strip.upToDate, total: view.strip.count })} />
         </div>
       </section>

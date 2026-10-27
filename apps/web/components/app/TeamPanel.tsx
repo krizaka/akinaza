@@ -153,7 +153,7 @@ export function TeamPanel({ members, invitations, assignable, timeZone }: TeamPa
     <div className="flex flex-col gap-8">
       {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
       <section aria-labelledby="team-members" className="flex flex-col gap-3">
-        <h2 id="team-members" className="font-display text-lg font-bold text-fg">
+        <h2 id="team-members" className="sr-only">
           {say("team.members")}
         </h2>
         <DataTable caption={say("team.members")} rows={members} columns={columns} getRowId={(m) => m.accountId} rowLabel={(m) => m.name ?? m.email} />
