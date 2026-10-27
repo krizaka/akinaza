@@ -10,13 +10,13 @@ export interface IcsEvent {
   now: Date;
 }
 
-const stamp = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
-const escape = (text: string) => text.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+export const stamp = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
+export const escape = (text: string) => text.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
 
 // @fixed: RFC 5545 §3.1 — a content line is folded before 75 octets
 const FOLD = 75;
 
-function fold(line: string): string {
+export function fold(line: string): string {
   const bytes = new TextEncoder();
   const out: string[] = [];
   let current = "";

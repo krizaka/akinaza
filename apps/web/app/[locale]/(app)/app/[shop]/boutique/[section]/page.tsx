@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 import { configuredKinds } from "@/app/calendar-edge";
 import { BoardEditor } from "@/components/app/BoardEditor";
 import { CalendarSources } from "@/components/app/CalendarSources";
+import { DataExports } from "@/components/app/DataExports";
 import { FeedLinks } from "@/components/app/FeedLinks";
 import { FigureRules } from "@/components/app/FigureRules";
 import { InvoiceMailSettings } from "@/components/app/InvoiceMailSettings";
@@ -190,6 +191,19 @@ async function FiguresSection({ locale, shopId }: { locale: RouteLocale; shopId:
   );
 }
 
+/** Boutique › Vos données: the owner's appointments, clients and invoices to download (#420, ADR-004 §5). */
+async function DataSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
+  await memberShop(shopId, "privacy");
+  const t = getDictionary(locale).console.boutique.data;
+  const enabled = await appSettings().get("exports.data.enabled");
+  return (
+    <div className="flex flex-col gap-5">
+      <PageHeader as="h2" title={t.title} description={t.lead} />
+      <DataExports words={t} enabled={enabled} href={(file) => `/api/walker/exports/${file}?shopId=${shopId}&locale=${locale}`} />
+    </div>
+  );
+}
+
 /** Boutique › Boutiques: the shops the account works in, and « Add a shop » (one more, unpublished). */
 async function ShopsSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
   await memberShop(shopId, "settings");
@@ -225,6 +239,7 @@ function boutiqueBody({ section, tab, community, locale, shopId }: Readonly<{ se
   if (section === "invoices") return <InvoicesSection locale={locale} shopId={shopId} />;
   if (section === "agenda") return <AgendaSection locale={locale} shopId={shopId} />;
   if (section === "figures") return <FiguresSection locale={locale} shopId={shopId} />;
+  if (section === "data") return <DataSection locale={locale} shopId={shopId} />;
   return <ShopsSection locale={locale} shopId={shopId} />;
 }
 

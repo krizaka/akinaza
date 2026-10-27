@@ -43,6 +43,7 @@ export function BoutiqueHub({ locale, shopId, allowed, tabs, preview, current, s
       invoices: say("boutique.sections.invoices"),
       agenda: say("boutique.sections.agenda"),
       figures: say("boutique.sections.figures"),
+      data: say("boutique.sections.data"),
       shops: say("boutique.sections.shops"),
     },
   });

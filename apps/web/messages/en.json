@@ -1620,6 +1620,54 @@
         "updateTemplateOrder": "Update with its order"
       }
     },
+    "exports": {
+      "columns": {
+        "appointments": {
+          "id": "Id",
+          "start": "Start",
+          "end": "End",
+          "status": "Status",
+          "service": "Service",
+          "staff": "Staff",
+          "client": "Client",
+          "price": "Price"
+        },
+        "clients": {
+          "id": "Id",
+          "name": "Name",
+          "email": "E-mail",
+          "phone": "Phone",
+          "language": "Language",
+          "since": "Client since",
+          "dependants": "Dependants"
+        },
+        "invoices": {
+          "number": "Number",
+          "issuedOn": "Issued on",
+          "dueOn": "Due on",
+          "client": "Client",
+          "subtotal": "Subtotal",
+          "gst": "GST",
+          "qst": "QST",
+          "total": "Total",
+          "paid": "Paid",
+          "creditOf": "Credit note of",
+          "state": "State",
+          "language": "Language"
+        }
+      },
+      "status": {
+        "booked": "Booked",
+        "done": "Done",
+        "cancelled": "Cancelled",
+        "noShow": "No-show"
+      },
+      "invoiceState": {
+        "open": "Open",
+        "paid": "Paid",
+        "superseded": "Replaced or credited"
+      }
+    },
     "boutique": {
       "title": "Your shop",
       "navLabel": "Sections of your shop",
@@ -1633,7 +1681,37 @@
         "invoices": "Invoice e-mails",
         "shops": "Your shops",
         "figures": "Figure thresholds",
+        "data": "Your data",
         "agenda": "Calendar"
+      },
+      "data": {
+        "title": "Your data",
+        "lead": "Download what the shop holds, to open in your own tools. Only what you already see here; nothing of another shop, no access note, no erased person.",
+        "download": "Download",
+        "audited": "Each download is recorded in the shop's journal. Only the owner can make one.",
+        "off": "The administrator switched the data downloads off.",
+        "files": {
+          "appointmentsCsv": {
+            "group": "Appointments",
+            "label": "Spreadsheet (CSV)",
+            "hint": "Every appointment, with its service, staff member and client. The ICS opens in Apple, Google or Outlook calendars."
+          },
+          "appointmentsIcs": {
+            "group": "Appointments",
+            "label": "Calendar file (ICS)",
+            "hint": "Every appointment, with its service, staff member and client. The ICS opens in Apple, Google or Outlook calendars."
+          },
+          "clientsCsv": {
+            "group": "Clients",
+            "label": "Spreadsheet (CSV)",
+            "hint": "Names, e-mail, phone, language and dependants."
+          },
+          "invoicesCsv": {
+            "group": "Invoices",
+            "label": "Spreadsheet (CSV)",
+            "hint": "Invoices and credit notes in the order of the books, amounts in dollars with GST and QST."
+          }
+        }
       },
       "invoices": {
         "title": "Invoice e-mails",
