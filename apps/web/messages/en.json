@@ -396,6 +396,31 @@
       }
     ]
   },
+  "download": {
+    "title": "The apps",
+    "lead": "Akinaza in your pocket and on the web, recorded by our own tests on the demo shop. Nothing here is a store listing: no app is offered for download yet.",
+    "videos": {
+      "title": "See the apps at work",
+      "lead": "Each video is recorded by the automated tests on the latest version, with demo data only.",
+      "play": "Play",
+      "recorded": "Recorded {date}",
+      "seconds": "{seconds} s",
+      "items": {
+        "web-storefront": {
+          "name": "The shop's public page",
+          "body": "A demo shop's page, then the same shop in other compositions of Krizaka UI."
+        },
+        "web-composer": {
+          "name": "The page composer",
+          "body": "A section moved with the keyboard, the style changed. Nothing is published."
+        },
+        "android-today-books": {
+          "name": "Today and the books, on the phone",
+          "body": "The day's board and the books on the Android app, with demo data."
+        }
+      }
+    }
+  },
   "privacy": {
     "title": "Privacy",
     "updated": "Updated {date}",

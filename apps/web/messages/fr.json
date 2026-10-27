@@ -396,6 +396,31 @@
       }
     ]
   },
+  "download": {
+    "title": "Les applications",
+    "lead": "Akinaza dans votre poche et sur le web, enregistré par nos propres tests sur la boutique de démonstration. Ce n'est pas une fiche de boutique d'applications : aucune application n'est encore proposée au téléchargement.",
+    "videos": {
+      "title": "Les applications à l'œuvre",
+      "lead": "Chaque vidéo est enregistrée par les tests automatisés sur la dernière version, avec des données de démonstration seulement.",
+      "play": "Lire",
+      "recorded": "Enregistrée le {date}",
+      "seconds": "{seconds} s",
+      "items": {
+        "web-storefront": {
+          "name": "La page publique de la boutique",
+          "body": "La page d'une boutique de démonstration, puis la même boutique dans d'autres compositions de Krizaka UI."
+        },
+        "web-composer": {
+          "name": "Le compositeur de page",
+          "body": "Une section déplacée au clavier, le style changé. Rien n'est publié."
+        },
+        "android-today-books": {
+          "name": "Aujourd'hui et les livres, sur le téléphone",
+          "body": "Le tableau du jour et les livres dans l'application Android, avec des données de démonstration."
+        }
+      }
+    }
+  },
   "privacy": {
     "title": "Confidentialité",
     "updated": "Mis à jour le {date}",
