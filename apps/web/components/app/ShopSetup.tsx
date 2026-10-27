@@ -75,6 +75,7 @@ export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /**
     ),
     publish: <PublishSection page={data.page} publicUrl={data.publicUrl} />,
     // The shop as a place (B45) has its own panels, opened by the hub (boutique/[section]/page.tsx).
+    composer: null,
     wall: null,
     reels: null,
     board: null,

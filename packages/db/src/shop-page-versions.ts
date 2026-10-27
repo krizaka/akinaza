@@ -125,3 +125,14 @@ async function pruneArchive(db: Db, shopId: string): Promise<void> {
 export async function shopPageVersionsOf(db: Db, shopId: string): Promise<ShopPageVersionRow[]> {
   return db.select(listColumns).from(shopPageVersions).where(eq(shopPageVersions.shopId, shopId)).orderBy(desc(shopPageVersions.version));
 }
+
+/** The accent the owner chose within the look, or null (the look's own). */
+export async function shopAccentOf(db: Db, shopId: string): Promise<string | null> {
+  const [row] = await db.select({ accent: shopPage.accent }).from(shopPage).where(eq(shopPage.shopId, shopId));
+  return row?.accent ?? null;
+}
+
+/** Stores the accent (the caller checked it against the look's tested accents); creates the shop's page row when it has none. */
+export async function setShopAccent(db: Db, shopId: string, accent: string | null): Promise<void> {
+  await db.insert(shopPage).values({ shopId, accent }).onConflictDoUpdate({ target: shopPage.shopId, set: { accent, updatedAt: sql`now()` } });
+}

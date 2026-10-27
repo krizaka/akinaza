@@ -1,4 +1,4 @@
-import { draftShopPage, saveShopPageDraft } from "@akinaza/db";
+import { draftShopPage, saveShopPageDraft, shopAccentOf } from "@akinaza/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";
@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export function GET(req: Request) {
   return handle(async () => {
     const { shop } = await requireShop(req, "agenda");
-    return Response.json(await draftShopPage(db(), shop.id));
+    return Response.json({ ...(await draftShopPage(db(), shop.id)), accent: await shopAccentOf(db(), shop.id) });
   });
 }
 

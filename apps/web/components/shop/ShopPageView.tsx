@@ -20,7 +20,9 @@ import { Fragment, type ReactNode } from "react";
 import { preload } from "react-dom";
 
 import { ButtonLink } from "@/components/ButtonLink";
+import { MapSetup } from "@/components/shop/MapSetup";
 import { ShopReviews } from "@/components/shop/ShopReviews";
+import { ShopVideoLazy } from "@/components/shop/ShopVideoLazy";
 import { type Locale, translator } from "@/lib/i18n";
 import { photoLedger, type PhotoPool, planPhotos } from "@/lib/shop-page-media";
 import type { StorefrontView } from "@/lib/storefront";
@@ -120,7 +122,8 @@ export function ShopPageView({ page, view, locale, accent, today }: ShopPageView
         const tv = section.variant === "tv" ? community?.tv : null;
         const reels = section.variant === "shorts" ? (community?.elsewhere ?? []).flatMap((v) => (v.platform && v.externalUrl ? [{ id: v.id, platform: v.platform, url: v.externalUrl, title: v.title, poster: claim(v.poster) }] : [])) : [];
         if (!tv && !reels.length) return null;
-        return <VideoSection {...common} variant={section.variant} title={title(t("console.shopPage.reelsTitle"))} lead={lead} reels={reels} clip={tv ? { src: tv.mp4 ?? tv.webm ?? undefined, poster: claim(tv.poster), title: t("console.shopPage.tvTitle", { shop: view.name }) } : undefined} playLabels={playLabels} notice={notice} cabinet={section.settings.cabinet} channel={t("console.shopPage.tvChannel")} />;
+        const Video = section.variant === "tv" ? ShopVideoLazy : VideoSection;
+        return <Video {...common} variant={section.variant} title={title(t("console.shopPage.reelsTitle"))} lead={lead} reels={reels} clip={tv ? { src: tv.mp4 ?? tv.webm ?? undefined, poster: claim(tv.poster), title: t("console.shopPage.tvTitle", { shop: view.name }) } : undefined} playLabels={playLabels} notice={notice} cabinet={section.settings.cabinet} channel={t("console.shopPage.tvChannel")} />;
       }
       case "social": {
         const links = (section.blocks?.length ? section.blocks.map((b) => ({ id: b.key, platform: b.settings.platform, url: b.settings.url })) : (community?.links ?? []).flatMap((l) => (isPlatform(l.platform) ? [{ id: l.platform, platform: l.platform, url: l.url }] : [])));
@@ -144,6 +147,7 @@ export function ShopPageView({ page, view, locale, accent, today }: ShopPageView
   const accentOf = accent ? { accent } : {};
   return (
     <ShopFrame preset={page.preset.id} density={page.density} {...accentOf} data-testid="shop-page">
+      <MapSetup />
       {page.sections.filter((s) => !s.disabled).map((s) => <Fragment key={s.key}>{render(s)}</Fragment>)}
     </ShopFrame>
   );
