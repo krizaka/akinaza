@@ -117,9 +117,25 @@ describe("the phone app's five tabs, each with its three states (D8)", () => {
     expect(await screen.findByText("Relancer la facture F-12")).toBeTruthy();
     expect(screen.getByText("Facturé")).toBeTruthy();
     expect(screen.getByText("Sur la bonne voie")).toBeTruthy();
-    expect(screen.getByText(/3 factures/)).toBeTruthy();
     expect(screen.getByText(/vous produisez vos déclarations vous-même/)).toBeTruthy();
     expect(api.figures).toHaveBeenCalledWith(SHOP);
+  });
+
+  it("Vos chiffres: a figure opens into its detail (formula, sources, freshness, lexique) from the URL", async () => {
+    mockParams = { figure: "margin" };
+    api.figures!.mockResolvedValue({
+      period: { start: "2026-07-01", end: "2026-09-30" },
+      figures: [{ id: "margin", value: 80_000, unit: "cents", rate: 80, formula: [{ label: "invoicesSubtotal", value: 100_000, unit: "cents" }, { label: "expensesBusinessShare", value: 20_000, unit: "cents", op: "−" }], lexicon: ["margin"], sources: [{ kind: "invoice", ids: ["i1"], count: 3 }], period: { start: "2026-07-01", end: "2026-09-30" }, computedAt: "2020-10-20T12:00:00.000Z", cadence: "onChange", staleAfterHours: 24, state: "watch" }],
+      actions: [],
+    });
+    await show(<Figures />);
+    expect(await screen.findByText("Comment c'est calculé")).toBeTruthy();
+    expect(screen.getByText(/3 factures/)).toBeTruthy();
+    expect(screen.getAllByText("Marge").length).toBe(2);
+    expect(screen.getByText(/Peut être périmé/)).toBeTruthy();
+    expect(screen.getByText("À valider par votre comptable.")).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "Vos chiffres" }));
+    expect(mockRouter.setParams).toHaveBeenCalledWith({ figure: undefined });
   });
 
   it("Vos chiffres: nothing to do says so", async () => {

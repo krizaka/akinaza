@@ -1,0 +1,24 @@
+# Livres → « Vos chiffres » (#168, #260): the period's GST/QST nets, then the explained figures, one opened into its detail with the
+# lexique's words (the same wording as the web's console). Akinaza prepares; nothing is filed from here.
+appId: com.krizaka.akinaza
+tags:
+  - ci
+---
+- launchApp:
+    clearState: true
+- runFlow: shared/sign-in.yaml
+- tapOn: "Livres|Books"
+- assertVisible: "TPS nette|Net GST"
+- takeScreenshot: livres
+- tapOn: "Voir vos chiffres|See your figures"
+- assertVisible: "Facturé|Invoiced"
+- assertVisible: "Akinaza prépare ces chiffres.*|Akinaza prepares these figures.*"
+- takeScreenshot: chiffres
+- tapOn:
+    text: "Détails|Details"
+    index: 0
+- assertVisible: "Comment c'est calculé|How it is computed"
+- assertVisible: "D'où ça vient|Where it comes from"
+- scrollUntilVisible:
+    element: "Ce que les mots veulent dire|What the words mean"
+- takeScreenshot: chiffres-detail

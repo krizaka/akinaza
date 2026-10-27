@@ -1,11 +1,13 @@
 import { useQuery } from "@krizaka/query";
-import { Badge, Card, Grid, Screen, Txt } from "@krizaka/ui/native";
+import { Badge, Button, Card, Grid, Screen, Txt } from "@krizaka/ui/native";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import * as React from "react";
 
 import { queries } from "@/config";
-import { actionText, formulaText, meaningText, type Say, sourcesText, toneOf, valueText } from "@/domain/figures";
+import { actionText, meaningText, type Say, toneOf, valueText } from "@/domain/figures";
 import { useI18n } from "@/i18n";
 import { AppHeader } from "@/ui/AppHeader";
+import { FigureDetail } from "@/ui/FigureDetail";
 import { QueryStates } from "@/ui/QueryStates";
 import { useLocale } from "@/use-locale";
 import { useShop } from "@/use-shop";
@@ -25,11 +27,16 @@ export default function Figures() {
   const t = typed as unknown as Say;
   const { locale } = useLocale();
   const shop = useShop();
+  const { figure: openId } = useLocalSearchParams<{ figure?: string }>();
+  const router = useRouter();
   const figures = useQuery(queries.figures(shop));
   return (
     <Screen header={<AppHeader title={t("figures.title")} />} onRefresh={() => void figures.refetch()} refreshing={figures.isRefetching}>
       <QueryStates query={figures}>
-        {(f) => (
+        {(f) => {
+          const open = f.figures.find((figure) => figure.id === openId);
+          if (open) return <FigureDetail figure={open} now={new Date().toISOString()} onBack={() => router.setParams({ figure: undefined })} />;
+          return (
           <>
             <Txt tone="secondary">{t("figures.lead")}</Txt>
             <Txt tone="muted" variant="caption">{t("figures.periodLabel", { start: f.period.start, end: f.period.end })}</Txt>
@@ -55,15 +62,15 @@ export default function Figures() {
                     <Txt variant="title">{valueText(figure, locale)}</Txt>
                     <Badge tone={toneOf(figure.state)}>{t(`figures.state.${figure.state}`)}</Badge>
                     <Txt>{meaningText(figure, t)}</Txt>
-                    <Txt tone="secondary" variant="caption">{formulaText(figure, t, locale)}</Txt>
-                    <Txt tone="muted" variant="caption">{`${t("figures.whereFrom")}: ${sourcesText(figure, t)}`}</Txt>
+                    <Button variant="ghost" size="sm" label={t("figures.details")} onPress={() => router.setParams({ figure: figure.id })} />
                   </Card.Body>
                 </Card.Root>
               ))}
             </Grid>
             <Txt tone="muted" variant="caption">{t("figures.never")}</Txt>
           </>
-        )}
+          );
+        }}
       </QueryStates>
     </Screen>
   );
