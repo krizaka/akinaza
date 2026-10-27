@@ -1,11 +1,11 @@
-import { addLocalDays, type BusyRange, type CalendarKind, type CalendarSource, CalendarSourceError, localDay, localInstant, NO_VALIDATORS } from "@akinaza/core";
+import { addLocalDays, type BusyRange, CalendarSourceError, localDay, localInstant, NO_VALIDATORS } from "@akinaza/core";
 import { claimDueConnections, type DueConnection, openField, recordSyncFailure, recordSyncOk } from "@akinaza/db";
 
 import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { appSettings } from "@/lib/settings";
 
-import { sourceFor } from "./registry";
+import { type SourceMaker, sourceFor } from "./registry";
 
 // @fixed: connections read per tick, and the lease that keeps another instance (or the next tick) from reading the same one meanwhile
 const BATCH = 20;
@@ -29,7 +29,7 @@ export function windowOf(now: Date, windowDays: number, timezone: string): BusyR
 }
 
 /** Reads one claimed connection and records the outcome. Never throws: a failure is the connection's state, with a backoff. */
-export async function syncConnection(c: DueConnection, now: Date, settings: SyncSettings, key: Buffer, make: (kind: CalendarKind, secret: string, timezone: string) => CalendarSource | null = sourceFor): Promise<"ok" | "unchanged" | "error"> {
+export async function syncConnection(c: DueConnection, now: Date, settings: SyncSettings, key: Buffer, make: SourceMaker = sourceFor): Promise<"ok" | "unchanged" | "error"> {
   try {
     const source = make(c.kind, openField(c.secretEnc, key, c.id), c.timezone);
     if (!source) throw new CalendarSourceError("AK_CAL_REFUSED", false, "this kind of calendar is switched off");
@@ -46,10 +46,10 @@ export async function syncConnection(c: DueConnection, now: Date, settings: Sync
 }
 
 /** The tick (`instrumentation.ts`): every connection whose time has come, a few at a time. Off when the administrator has switched the feature off. */
-export async function syncDueCalendars(now: Date, key: Buffer): Promise<number> {
+export async function syncDueCalendars(now: Date, key: Buffer, make: SourceMaker = sourceFor): Promise<number> {
   if (!(await appSettings().get("features.calendarSync"))) return 0;
   const settings = await syncSettings();
   const due = await claimDueConnections(db(), now, BATCH, LEASE_MINUTES);
-  for (const c of due) await syncConnection(c, now, settings, key);
+  for (const c of due) await syncConnection(c, now, settings, key, make);
   return due.length;
 }

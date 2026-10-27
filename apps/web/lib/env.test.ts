@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { assertProductionEnv, consoleAllowedIps, dataKey, productionProblems, readEnv } from "./env";
+import { assertProductionEnv, calendarOAuthApps, consoleAllowedIps, dataKey, productionProblems, readEnv } from "./env";
 
 const PROD = {
   NODE_ENV: "production",
@@ -35,6 +35,12 @@ describe("env", () => {
       "DATABASE_CA_CERT is required for a TLS database",
     ]);
     expect(productionProblems(readEnv({}))).toEqual([]);
+  });
+
+  it("offers a calendar provider only when both halves of its OAuth client are set", () => {
+    expect(calendarOAuthApps({})).toEqual({});
+    expect(calendarOAuthApps({ AUTH_CALENDAR_GOOGLE_CLIENT_ID: "id" })).toEqual({});
+    expect(calendarOAuthApps({ AUTH_CALENDAR_GOOGLE_CLIENT_ID: "id", AUTH_CALENDAR_GOOGLE_CLIENT_SECRET: "s", AUTH_CALENDAR_OUTLOOK_CLIENT_ID: "x" })).toEqual({ google: { clientId: "id", clientSecret: "s" } });
   });
 
   it("keeps the point of sale off unless its flag is exactly true", () => {

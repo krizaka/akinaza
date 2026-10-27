@@ -30,5 +30,6 @@ export async function register() {
   // The owner's other calendars (ADR-004): the due ones are read, leased in the database so several instances never read the same one.
   const { syncDueCalendars } = await import("./lib/calendar/sync");
   const { dataKey } = await import("./lib/env");
-  setInterval(() => void syncDueCalendars(systemClock.now(), dataKey()).catch((error) => console.error("[akinaza] calendar tick failed", error)), CALENDAR_TICK_MS).unref();
+  const { calendarSourceMaker } = await import("./app/calendar-edge");
+  setInterval(() => void calendarSourceMaker().then((make) => syncDueCalendars(systemClock.now(), dataKey(), make)).catch((error) => console.error("[akinaza] calendar tick failed", error)), CALENDAR_TICK_MS).unref();
 }

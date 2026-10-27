@@ -1,4 +1,4 @@
-import { addConnection, feedPeople, listConnections, recordSyncOk, removeConnection } from "@akinaza/db";
+import { addConnection, connectionSecret, feedPeople, listConnections, recordSyncOk, removeConnection, sealField } from "@akinaza/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireShop } from "@/lib/access";
@@ -10,10 +10,10 @@ import { DELETE, GET, POST } from "./route";
 vi.mock("@/lib/access", async (original) => ({ ...(await original<typeof import("@/lib/access")>()), requireShop: vi.fn() }));
 vi.mock("@/lib/audit", () => ({ audit: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
-vi.mock("@/lib/env", () => ({ dataKey: () => Buffer.alloc(32, 7) }));
+vi.mock("@/lib/env", () => ({ dataKey: () => Buffer.alloc(32, 7), calendarOAuthApps: () => ({ google: { clientId: "cid", clientSecret: "csec" } }) }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
 vi.mock("@/lib/rate-limit", () => ({ limit: vi.fn() }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), addConnection: vi.fn(), feedPeople: vi.fn(), listConnections: vi.fn(), recordSyncOk: vi.fn(), removeConnection: vi.fn() }));
+vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), addConnection: vi.fn(), connectionSecret: vi.fn(), feedPeople: vi.fn(), listConnections: vi.fn(), recordSyncOk: vi.fn(), removeConnection: vi.fn() }));
 vi.mock("@/lib/calendar/public-url", async (original) => ({ ...(await original<typeof import("@/lib/calendar/public-url")>()), assertPublicHost: vi.fn(async () => undefined) }));
 
 const STAFF = "11111111-1111-4111-8111-111111111111";
@@ -31,6 +31,7 @@ describe("connecting a calendar (#282, ADR-004)", () => {
     vi.mocked(listConnections).mockResolvedValue([{ id: "c1", staffId: null, kind: "ics", label: "Google", state: "ok", lastError: null, lastSuccessAt: new Date("2026-10-26T12:00:00Z"), consentedAt: new Date("2026-10-26T11:00:00Z") }]);
     vi.mocked(addConnection).mockResolvedValue({ id: "c2" } as never);
     vi.mocked(removeConnection).mockResolvedValue(true);
+    vi.mocked(connectionSecret).mockResolvedValue(null);
     vi.stubGlobal("fetch", vi.fn(async () => new Response(ICS)));
   });
   afterEach(() => {
@@ -86,5 +87,29 @@ describe("connecting a calendar (#282, ADR-004)", () => {
     vi.mocked(listConnections).mockResolvedValue([{ id: "33333333-3333-4333-8333-333333333333", staffId: null, kind: "ics", label: "G", state: "ok", lastError: null, lastSuccessAt: null, consentedAt: new Date() }]);
     expect((await send(DELETE, "DELETE", { id: "33333333-3333-4333-8333-333333333333" })).status).toBe(200);
     expect(audit).toHaveBeenCalledWith(expect.objectContaining({ action: "shop.calendar_removed" }));
+  });
+
+  it("tells Google to forget the grant when a Google calendar is disconnected, then deletes it even if Google is down", async () => {
+    const id = "44444444-4444-4444-8444-444444444444";
+    vi.mocked(listConnections).mockResolvedValue([{ id, staffId: null, kind: "google", label: "G", state: "ok", lastError: null, lastSuccessAt: null, consentedAt: new Date() }]);
+    vi.mocked(connectionSecret).mockResolvedValue({ kind: "google", secretEnc: sealField("REFRESH", Buffer.alloc(32, 7), id) });
+    const down = vi.fn(async () => Promise.reject(new Error("google is down")));
+    vi.stubGlobal("fetch", down);
+    expect((await send(DELETE, "DELETE", { id })).status).toBe(200);
+    expect(String(down.mock.calls[0]![0])).toBe("https://oauth2.googleapis.com/revoke");
+    expect(new URLSearchParams(String((down.mock.calls[0]![1] as RequestInit).body)).get("token")).toBe("REFRESH");
+    expect(removeConnection).toHaveBeenCalledWith(expect.anything(), "s1", id);
+  });
+
+  it("connects a CalDAV calendar: read once over HTTPS, the whole credential sealed together, never shown", async () => {
+    const xml = `<d:multistatus xmlns:d="DAV:"><c:calendar-data xmlns:c="urn:ietf:params:xml:ns:caldav">${ICS}</c:calendar-data></d:multistatus>`;
+    vi.stubGlobal("fetch", vi.fn(async () => new Response(xml, { status: 207 })));
+    vi.mocked(appSettings).mockReturnValue({ get: vi.fn(async (key: string) => (key === "calendarSync.maxCalendarsPerShop" ? 5 : key.endsWith("intervalMinutes") ? 30 : key.endsWith("windowDays") ? 60 : true)) } as never);
+    const res = await send(POST, "POST", { kind: "caldav", url: "https://caldav.example.com/me/", username: "me", password: "app-pw", label: "iCloud", staffId: null, consent: true });
+    expect(res.status).toBe(201);
+    const added = vi.mocked(addConnection).mock.calls[0]![1];
+    expect(added).toMatchObject({ kind: "caldav" });
+    expect(added.secretEnc).not.toContain("app-pw");
+    expect(JSON.stringify(vi.mocked(audit).mock.calls)).not.toContain("app-pw");
   });
 });

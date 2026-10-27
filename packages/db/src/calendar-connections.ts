@@ -73,6 +73,12 @@ export async function removeConnection(db: Db, shopId: string, id: string): Prom
   return gone.length > 0;
 }
 
+/** What the owner is about to disconnect: the kind and the sealed grant, so the provider can be told to forget it. Never returned by a route. */
+export async function connectionSecret(db: Reader, shopId: string, id: string): Promise<{ kind: CalendarKind; secretEnc: string } | null> {
+  const [row] = await db.select({ kind: calendarConnections.kind, secretEnc: calendarConnections.secretEnc }).from(calendarConnections).where(and(eq(calendarConnections.id, id), eq(calendarConnections.shopId, shopId)));
+  return row ?? null;
+}
+
 export interface DueConnection {
   id: string;
   shopId: string;

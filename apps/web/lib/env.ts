@@ -68,6 +68,11 @@ export const envSchema = z.object({
   PAYMENTS_PRICE_KEY_FOUNDER: z.string().default(PROCESSOR_PLANS[FOUNDER].lookupKey),
   PAYMENTS_PRICE_KEY_STARTER: z.string().default(PROCESSOR_PLANS[STARTER].lookupKey),
   PAYMENTS_PRICE_KEY_SCALE: z.string().default(PROCESSOR_PLANS[SCALE].lookupKey),
+  /** Akinaza's OAuth clients for the owner's calendars (ADR-004), created by the administrator at Google and at Microsoft; a provider without both halves is not offered. Each provider's flag in the administration is off by default. */
+  AUTH_CALENDAR_GOOGLE_CLIENT_ID: z.string().optional(),
+  AUTH_CALENDAR_GOOGLE_CLIENT_SECRET: z.string().optional(),
+  AUTH_CALENDAR_OUTLOOK_CLIENT_ID: z.string().optional(),
+  AUTH_CALENDAR_OUTLOOK_CLIENT_SECRET: z.string().optional(),
   /** The founder offer is shown on the public page only when this is `true` (after a test-card checkout is proven live). */
   APP_FOUNDER_OFFER_ENABLED: flag,
   /** The point of sale: off until the SRM scope and the payment provider are decided — and never for a restaurant or a bar. */
@@ -130,6 +135,15 @@ export function dataKey(source: Record<string, string | undefined> = process.env
   }
   if (e.NODE_ENV === "production") throw new Error("APP_DATA_ENCRYPTION_KEY is not set");
   return Buffer.from(DEV_DATA_KEY, "base64");
+}
+
+/** The OAuth clients configured for the calendar providers (a provider needs both its id and its secret). */
+export function calendarOAuthApps(source: Record<string, string | undefined> = process.env): { google?: { clientId: string; clientSecret: string }; outlook?: { clientId: string; clientSecret: string } } {
+  const e = readEnv(source);
+  const pair = (clientId?: string, clientSecret?: string) => (clientId && clientSecret ? { clientId, clientSecret } : undefined);
+  const google = pair(e.AUTH_CALENDAR_GOOGLE_CLIENT_ID, e.AUTH_CALENDAR_GOOGLE_CLIENT_SECRET);
+  const outlook = pair(e.AUTH_CALENDAR_OUTLOOK_CLIENT_ID, e.AUTH_CALENDAR_OUTLOOK_CLIENT_SECRET);
+  return { ...(google ? { google } : {}), ...(outlook ? { outlook } : {}) };
 }
 
 export function mailSettings(source: Record<string, string | undefined> = process.env): MailSettings {
