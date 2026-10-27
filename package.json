@@ -42,6 +42,6 @@
   "engines": {
     "node": ">=22"
   },
-  "license": "Apache-2.0",
+  "license": "FSL-1.1-ALv2",
   "author": "Krizaka"
 }
