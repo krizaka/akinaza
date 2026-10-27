@@ -1,3 +1,4 @@
+import { downloadPageOpen } from "@/lib/downloads";
 import { SiteFooter as FamilyFooter, SiteFooterColumn, SiteFooterLink } from "@krizaka/ui/site-footer";
 import Link from "next/link";
 
@@ -40,6 +41,11 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <SiteFooterLink asChild>
           <Link href={pagePath(locale, "pricing")}>{t("chrome.menu.pricing.title")}</Link>
         </SiteFooterLink>
+        {downloadPageOpen() ? (
+          <SiteFooterLink asChild>
+            <Link href={pagePath(locale, "download")}>{t("download.title")}</Link>
+          </SiteFooterLink>
+        ) : null}
         <SiteFooterLink asChild>
           <Link href={pagePath(locale, "docs")}>{t("chrome.menu.docs.title")}</Link>
         </SiteFooterLink>
