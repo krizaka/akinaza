@@ -41,6 +41,8 @@ export interface FlyerView {
   text: string;
   /** « Until June 3 », or null. */
   until: string | null;
+  /** On the neighbourhood feed: the shop that pinned it, so the flyer leads to its page. Absent on the shop's own board. */
+  shop?: { name: string; href: string };
 }
 
 export interface ReviewLine {
@@ -86,7 +88,7 @@ const SHOWN = { reviews: 3, elsewhere: 2 } as const;
 
 const lang = (locale: Locale) => ({ fr: "fr-CA", en: "en-CA" })[locale];
 const monthOf = (at: Date, locale: Locale) => new Intl.DateTimeFormat(lang(locale), { month: "long", year: "numeric" }).format(at);
-const dayOf = (day: string, locale: Locale) => new Intl.DateTimeFormat(lang(locale), { timeZone: "UTC", day: "numeric", month: "long" }).format(new Date(`${day}T12:00:00Z`));
+export const dayOf = (day: string, locale: Locale) => new Intl.DateTimeFormat(lang(locale), { timeZone: "UTC", day: "numeric", month: "long" }).format(new Date(`${day}T12:00:00Z`));
 const numberOf = (n: number, locale: Locale) => new Intl.NumberFormat(lang(locale), { maximumFractionDigits: 1, minimumFractionDigits: 1 }).format(n);
 
 const tvPlaceOf = (wallOn: boolean) => (wallOn ? "wall" : "reels");

@@ -113,7 +113,7 @@ describe("the bar", () => {
     const bar = read("components/SiteChrome.tsx");
     expect(bar).not.toContain("NavBar.Badge");
     expect(bar).not.toContain("APP_VERSION");
-    expect(bar).toContain("NavBar.Menu");
+    expect(bar).toContain("publicBarLinks(");
   });
 });
 

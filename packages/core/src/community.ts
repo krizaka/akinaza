@@ -288,3 +288,31 @@ export function detectVideo(bytes: Uint8Array): DetectedVideo | null {
   }
   return null;
 }
+
+// ---- the neighbourhood feed ----------------------------------------------------------------------------------------------------------------------
+
+// @fixed: the home shows a handful of flyers; the rest is each shop's own page. Two per shop so one busy shop does not fill the board.
+export const FEED_LIMITS = { total: 9, perShop: 2 } as const;
+
+/** « Saint-Henri » and « saint henri » are the same neighbourhood: lowercase, accents and punctuation folded away. */
+export function foldArea(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+/** A shop's locality (« Saint-Henri, Montréal ») matches the asked neighbourhood when it contains it; an empty ask matches every shop that has one. */
+export function areaMatches(area: string | null, quartier: string): boolean {
+  const ask = foldArea(quartier);
+  if (!area) return false;
+  const have = foldArea(area);
+  return have.length > 0 && have.includes(ask);
+}
+
+/** The neighbourhood a locality names: the part before the city (« Saint-Henri, Montréal » is « Saint-Henri »). */
+export function quartierOf(area: string): string {
+  return area.split(",")[0]!.trim();
+}

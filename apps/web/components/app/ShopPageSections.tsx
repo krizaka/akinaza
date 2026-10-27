@@ -38,13 +38,15 @@ function useSectionSave(page: Page | null) {
 const EMPTY: Page = { name: "", legalName: "", address: "", slug: "", ownerName: "", taglineFr: "", taglineEn: "", published: false, area: "", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "", businessType: "professional" };
 
 /** The frame of a section: title, one line of what it is for, then its form. */
-function SectionCard({ title, lead, badge, children }: { title: string; lead: string; badge?: React.ReactNode; children: React.ReactNode }) {
+function SectionCard({ title, lead, badge, quiet = false, children }: { title: string; lead: string; badge?: React.ReactNode; /** The page's heading above already says the title (« Identity »): the card does not say it again. */ quiet?: boolean; children: React.ReactNode }) {
   return (
     <Card.Root className="p-4">
-      <div className="mb-1 flex flex-wrap items-center gap-3">
-        <h2 className="font-display text-base font-bold text-fg">{title}</h2>
-        {badge}
-      </div>
+      {quiet ? null : (
+        <div className="mb-1 flex flex-wrap items-center gap-3">
+          <h2 className="font-display text-base font-bold text-fg">{title}</h2>
+          {badge}
+        </div>
+      )}
       <p className="mb-4 text-sm text-fg-secondary">{lead}</p>
       {children}
     </Card.Root>
@@ -84,7 +86,7 @@ export function IdentityFields({ form, say, withAddress = false, withBusinessTyp
       <form.TextField name="name" label={say("shopSetup.page.name")} autoComplete="organization" />
       {withBusinessType ? <form.Select name="businessType" label={say("shopSetup.page.businessType")} hint={say("shopSetup.page.businessTypeHint")} options={BUSINESS_TYPES.map((type) => ({ value: type, label: say(`shopSetup.page.businessTypes.${type}`) }))} /> : null}
       <form.TextField name="legalName" label={say("shopSetup.page.legalName")} hint={say("shopSetup.sections.identity.legalHint")} />
-      <form.TextField name="ownerName" label={say("shopSetup.page.ownerName")} autoComplete="given-name" />
+      <form.TextField name="ownerName" label={say("shopSetup.page.ownerName")} hint={say("shopSetup.page.ownerNameHint")} autoComplete="given-name" />
       {withAddress ? (
         <div className="sm:col-span-2">
           <form.TextField name="address" label={say("shopSetup.page.address")} hint={say("shopSetup.sections.contact.addressPrivate")} autoComplete="street-address" />
@@ -102,7 +104,7 @@ export function IdentitySection({ page }: { page: Page | null }) {
   const s = useSectionSave(page);
   const form = identityForm.useForm({ i18n: s.i18n, defaultValues: { name: page?.name ?? "", businessType: page?.businessType ?? "professional", legalName: page?.legalName ?? "", ownerName: page?.ownerName ?? "", slug: page?.slug ?? "", address: page?.address ?? "" }, onSubmit: (v) => s.save(v) });
   return (
-    <SectionCard title={s.say("shopSetup.sections.identity.title")} lead={s.say("shopSetup.sections.identity.lead")}>
+    <SectionCard title={s.say("shopSetup.sections.identity.title")} lead={s.say("shopSetup.sections.identity.lead")} quiet>
       <form.Form aria-label={s.say("shopSetup.sections.identity.title")} className="grid gap-4 sm:grid-cols-2">
         <IdentityFields form={form} say={s.say} withAddress={!page} />
         <SectionFooter s={s} Submit={form.Submit} />

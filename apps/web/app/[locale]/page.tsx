@@ -1,5 +1,6 @@
 import { ForwardIcon } from "@krizaka/icons";
 import { Button } from "@krizaka/ui/button";
+import { cn } from "@krizaka/ui/cn";
 import { LandingPage } from "@krizaka/ui/landing-page";
 import { Section } from "@krizaka/ui/page";
 import type { Metadata } from "next";
@@ -9,12 +10,14 @@ import { preconnect } from "react-dom";
 
 import { FounderOffer } from "@/components/home/FounderOffer";
 import { HeroPhone } from "@/components/home/HeroPhone";
+import { NeighbourhoodFeed } from "@/components/home/NeighbourhoodFeed";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { pageSession } from "@/lib/access";
 import { env } from "@/lib/env";
+import { homeFeed } from "@/lib/home-feed";
 import { asLocale, getDictionary } from "@/lib/i18n";
-import { heroActions, productStatus, SCREENS } from "@/lib/landing";
+import { DEMO_SHOP, heroActions, productStatus, SCREENS } from "@/lib/landing";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { heroTake, MEDIA_CDN, screenStill } from "@/lib/tour";
 
@@ -35,6 +38,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   // The storefront still is the page's LCP: open the CDN's connection now and fetch it at once (React hoists the link into <head>).
   preconnect(MEDIA_CDN);
   // The hero's action follows the session, rendered on the server: no flash of the signed-out action.
+  const feed = await homeFeed(locale);
   const hero = heroActions(locale, Boolean(await pageSession().catch(() => null)));
   return (
     <>
@@ -49,33 +53,53 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
           visualLabel={d.visualLabel}
           visual={<HeroPhone locale={locale} />}
           actions={
-            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-              <Button asChild variant="primary" size="lg" className="w-full sm:w-auto">
-                <Link href={hero.primary.href}>
-                  {d.actions[hero.primary.message]} <ForwardIcon size={16} strokeWidth={2.25} />
-                </Link>
-              </Button>
-              {hero.secondary ? (
-                <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
-                  <Link href={hero.secondary.href}>{d.actions[hero.secondary.message]}</Link>
+            <>
+              <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+                <Button asChild variant="primary" size="lg" className="w-full sm:w-auto">
+                  <Link href={hero.primary.href}>
+                    {d.actions[hero.primary.message]} <ForwardIcon size={16} strokeWidth={2.25} />
+                  </Link>
                 </Button>
-              ) : null}
-            </div>
+                {hero.secondary ? (
+                  <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
+                    <Link href={hero.secondary.href}>{d.actions[hero.secondary.message]}</Link>
+                  </Button>
+                ) : null}
+              </div>
+              {/* What Akinaza is not for protects the product's claims: under the hero's actions, at a readable size (akinaza#440). */}
+              <p className="m-0 mt-4 max-w-prose text-base text-fg-secondary" data-testid="scope-line">
+                {d.trust.scope}
+              </p>
+            </>
           }
-          features={SCREENS.map(({ id }) => ({
+          features={SCREENS.map(({ id, crop }) => ({
             id,
             icon: null,
             title: d.screens[id].title,
             text: d.screens[id].text,
-            visual: <Image src={screenStill(id, locale)} alt={d.screens[id].alt} width={780} height={1688} unoptimized loading="lazy" className="h-72 w-full rounded-lg border border-border-default object-cover object-top" />,
+            visual: <Image src={screenStill(id, locale)} alt={d.screens[id].alt} width={780} height={1688} unoptimized loading="lazy" className={cn("h-72 w-full rounded-lg border border-border-default object-cover", crop)} />,
           }))}
         >
           {env().APP_FOUNDER_OFFER_ENABLED && <FounderOffer locale={locale} />}
+          {feed.flyers.length > 0 && (
+            <Section
+              id="neighbourhood"
+              spacing="sm"
+              title={d.feed.title}
+              lead={d.feed.lead}
+              actions={
+                <Button asChild variant="secondary" size="md">
+                  <Link href={`/${locale}/s/${DEMO_SHOP}`}>{d.feed.demo}</Link>
+                </Button>
+              }
+            >
+              <NeighbourhoodFeed initial={feed} locale={locale} words={{ filterLabel: d.feed.filterLabel, all: d.feed.all, boardLabel: d.feed.boardLabel, visit: d.feed.visit, empty: d.feed.empty, error: d.feed.error }} />
+            </Section>
+          )}
           <Section id="trust" spacing="sm">
             <p className="m-0 text-sm text-fg-muted" data-testid="trust-line">
               {d.trust.line}
             </p>
-            <p className="m-0 mt-1 text-sm text-fg-muted">{d.trust.scope}</p>
             <p className="m-0 mt-1 text-sm text-fg-muted">{d.status[status]}</p>
           </Section>
         </LandingPage>

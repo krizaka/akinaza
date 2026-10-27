@@ -33,7 +33,7 @@ export function BooksLines({ lines }: { lines: BooksLineView[] }) {
             <span className="font-semibold text-fg">{say(`books.lines.${r.line}.label`)}</span>
             {r.sources.length > 0 ? (
               <details className="text-sm">
-                <summary className="cursor-pointer text-fg-accent">{say("books.sources", { count: r.sources.length })}</summary>
+                <summary className="cursor-pointer text-fg-accent">{r.sources.length === 1 ? say("books.sourcesOne") : say("books.sources", { count: r.sources.length })}</summary>
                 <ul className="mt-1 flex flex-col gap-1">
                   {r.sources.map((s) => (
                     <li key={`${s.kind}-${s.id}-${s.amountCents}`} className="flex flex-wrap items-center justify-between gap-2">

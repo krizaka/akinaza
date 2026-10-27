@@ -46,9 +46,11 @@ describe("Clients on the catalogue template (D5)", () => {
 
   it("draws the binder's dividers per tag, each a link that holds the tag in the address, with its count (akinaza#337)", () => {
     const html = render();
-    expect(readable(html)).toMatch(/Tous[\s\S]*Fidèle\s*1[\s\S]*À rappeler\s*0/);
+    expect(readable(html)).toMatch(/Tous[\s\S]*Fidèle\s*1/);
     expect(html).toContain('href="/fr/app/s1/clients?tags=t1"');
-    expect(html).toContain('href="/fr/app/s1/clients?tags=t2"');
+    // A tag worn by nobody has no divider (review K3b: no tab at 0).
+    expect(readable(html)).not.toContain("À rappeler");
+    expect(html).not.toContain('href="/fr/app/s1/clients?tags=t2"');
   });
 
   it("shows a client's tags on its row with their marker, and the owner's « new tag » divider", () => {

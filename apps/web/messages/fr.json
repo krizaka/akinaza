@@ -46,6 +46,10 @@
     "preferences": "Préférences",
     "version": "v{version}"
   },
+  "stage": {
+    "title": "Version de développement",
+    "message": "Les données peuvent être réinitialisées à tout moment. Ce n’est pas encore une offre commerciale."
+  },
   "landing": {
     "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
     "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",
@@ -84,7 +88,7 @@
       },
       "plans": {
         "starter": "Starter",
-        "scale": "Scale B2B",
+        "scale": "Pro",
         "price": "{price} par mois plus taxes",
         "preparing": "en préparation",
         "scaleSoon": "ses fonctions B2B arrivent bientôt"
@@ -111,7 +115,18 @@
       "line": "Dossiers dans une base de données au Canada · Consentement noté par finalité · Taxes préparées, déclaration produite par vous",
       "scope": "Pour les studios, salons et travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place."
     },
-    "visualLabel": "dev.akinaza.com"
+    "visualLabel": "www.akinaza.com",
+    "feed": {
+      "title": "Affiché dans votre quartier",
+      "lead": "Les affichettes que les commerces épinglent sur leur propre page : une porte ouverte, un nouveau service, une place libérée. Rien ici n’est de la publicité que nous vendons.",
+      "filterLabel": "Choisir un quartier",
+      "all": "Tous les quartiers",
+      "boardLabel": "Affichettes épinglées par les commerces du quartier",
+      "visit": "Voir {shop}",
+      "demo": "Voir la boutique de démonstration",
+      "empty": "Aucune affichette dans ce quartier pour le moment.",
+      "error": "Impossible de charger les affichettes. Réessayez dans un instant."
+    }
   },
   "docs": {
     "title": "Guide du propriétaire",
@@ -341,16 +356,18 @@
     "plansLabel": "Plans",
     "perMonth": "par mois, taxes en sus",
     "preparing": "en préparation",
-    "soon": "bientôt",
+    "soon": "Bientôt",
+    "plannedTitle": "À venir",
     "badgeFounder": "Offre fondatrice",
     "badgeFounderLimit": "Les {limit} premières entreprises",
     "founderNote": "Mise en route incluse : vos services, vos heures, vos premières factures.",
     "plans": {
       "founder": "Fondatrice",
       "starter": "Starter",
-      "scale": "Scale B2B"
+      "scale": "Pro"
     },
     "features": {
+      "inherits": "Tout ce qu’inclut {plan}, plus les fonctions ci-dessous à mesure qu’elles arrivent",
       "booking": "Votre page de boutique et vos réservations, avec les heures que vous avez vraiment",
       "invoices": "Des factures bilingues avec la TPS et la TVQ exactes au sou",
       "books": "Les livres et les chiffres de taxes de chaque période, préparés pour que vous les déclariez",
@@ -551,6 +568,7 @@
       "openMenu": "Ouvrir le menu",
       "collapse": "Replier le menu",
       "expand": "Déplier le menu",
+      "yourAccount": "Votre compte",
       "signedInAs": "Connecté en tant que {email}",
       "devBuild": "DEV · v{version}",
       "language": "Langue",
@@ -996,8 +1014,9 @@
       },
       "week": "Semaine {week} · {date}",
       "calendar": "Calendrier",
-      "binder": {
-        "title": "Le classeur",
+      "glance": {
+        "title": "Votre journée en bref",
+        "hint": "Chaque nombre ouvre sa liste.",
         "appointments": "Rendez-vous {count}",
         "toBill": "À facturer {count}",
         "toCollect": "À encaisser {count}",
@@ -1015,7 +1034,8 @@
         "days": "{days} j",
         "invoiced": "Facturé",
         "collected": "Encaissé",
-        "appointments": "Rendez-vous faits"
+        "appointments": "Rendez-vous faits",
+        "daysLong": "{days} jours"
       },
       "balance": {
         "title": "À encaisser",
@@ -1061,12 +1081,12 @@
         "accountTitle": "Mon compte",
         "description": "Votre profil, vos préférences, votre sécurité et vos données.",
         "profileDescription": "Votre nom et votre image, tels que votre équipe les voit.",
+        "profileDescriptionClient": "Votre nom et votre image.",
         "avatar": "Photo de profil",
         "email": "Courriel",
         "language": "Langue",
         "role": "Rôle",
         "roleIn": "{role} chez {shop}",
-        "roleUser": "Membre",
         "roleAdmin": "Administrateur",
         "lastSeen": "Dernière visite",
         "passwordTitle": "Changer votre mot de passe",
@@ -1103,6 +1123,7 @@
       "name": {
         "label": "Nom",
         "hint": "Affiché dans le menu du compte et à votre équipe.",
+        "hintClient": "Affiché dans le menu de votre compte.",
         "missing": "Pas encore de nom"
       },
       "avatar": {
@@ -1321,7 +1342,8 @@
         "label": "Vos clients en bref",
         "count": "{count} clients",
         "owedLabel": "À encaisser",
-        "upToDate": "{count} sur {total} à jour"
+        "upToDate": "{count} sur {total} à jour",
+        "upToDateHint": "À jour : rien n’est dû."
       },
       "search": "Rechercher un client",
       "searchPlaceholder": "Nom, courriel ou téléphone",
@@ -1330,7 +1352,7 @@
       "filter": {
         "all": "Tous",
         "due": "Reste dû",
-        "upcoming": "À venir"
+        "upcoming": "Prochain rendez-vous pris"
       },
       "selection": {
         "export": "Exporter la sélection (CSV)"
@@ -1383,7 +1405,7 @@
         "legalName": "Raison sociale",
         "address": "Adresse",
         "slug": "Adresse de la page",
-        "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. pattes-saint-henri Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
+        "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. pattes-saint-henri. Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
         "ownerName": "Votre prénom",
         "taglineFr": "Une ligne, en français",
         "taglineEn": "Une ligne, en anglais",
@@ -1406,7 +1428,8 @@
         "businessTypes": {
           "professional": "Services professionnels (studio, conseil, réparation…)",
           "pets": "Soins aux animaux (promenades, toilettage…)"
-        }
+        },
+        "ownerNameHint": "Votre nom dans l’agenda et sur vos rendez-vous."
       },
       "zones": {
         "title": "Zones desservies",
@@ -1513,7 +1536,8 @@
           "wall": "Le mur",
           "board": "Le babillard",
           "reels": "Vidéo et profils",
-          "reviews": "Avis"
+          "reviews": "Avis",
+          "composer": "Composition"
         },
         "identity": {
           "title": "Identité",
@@ -1740,6 +1764,16 @@
         "error": "Cette vidéo ne peut pas être lue",
         "retry": "Réessayer",
         "time": "{time} sur {duration}"
+      },
+      "faqTitle": "Questions fréquentes",
+      "looks": {
+        "label": "Voir autrement",
+        "note": "Ceci est une boutique de démonstration : la même boutique, dessinée avec une autre composition de Krizaka UI.",
+        "compact": "Compact",
+        "editorial": "Éditorial",
+        "gallery": "Galerie",
+        "route": "Parcours",
+        "journal": "Journal"
       }
     },
     "book": {
@@ -1884,6 +1918,7 @@
         "zero": "Rien à remettre"
       },
       "sources": "{count} documents derrière ce chiffre",
+      "sourcesOne": "1 document derrière ce chiffre",
       "kinds": {
         "invoice": "Facture",
         "expense": "Dépense"
@@ -1918,7 +1953,14 @@
         }
       },
       "footnote": "Akinaza prépare ces chiffres à partir de vos factures et de vos dépenses. C'est vous qui produisez la déclaration auprès de Revenu Québec, après avoir vérifié chaque chiffre.",
-      "figuresTitle": "Vos chiffres de TPS et de TVQ"
+      "figuresTitle": "Vos chiffres de TPS et de TVQ",
+      "remitHint": "Préparé à partir de vos factures et dépenses ; vous le produisez vous-même auprès de Revenu Québec.",
+      "periodHint": "Le dernier trimestre terminé est celui à produire maintenant ; le trimestre en cours est encore ouvert.",
+      "empty": {
+        "title": "Rien à préparer pour cette période",
+        "body": "Les chiffres apparaissent ici dès que vous émettez des factures ou saisissez des dépenses sur cette période.",
+        "action": "Voir les factures"
+      }
     },
     "invoices": {
       "title": "Factures",
@@ -2119,7 +2161,7 @@
         },
         "shopSetup": {
           "page": {
-            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
+            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio. Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
             "areaHint": "Montréal — jamais l'adresse civique.",
             "seatUnitHint": "Pour un service de groupe : « Jusqu'à 5 personnes ». Vide : « places »."
           },
@@ -2312,7 +2354,7 @@
       "autoMark": "Les textes marqués « traduit automatiquement » n'ont pas encore été relus par vous : relisez-les et modifiez-les au besoin.",
       "runs": "{used} traductions sur {limit} utilisées aujourd'hui.",
       "nothing": "Rien à traduire pour l'instant : remplissez d'abord votre accroche, votre histoire et vos services.",
-      "ownHint": "Vous avez écrit ce texte vous-même dans cette langue : modifiez-le depuis la page boutique.",
+      "ownHint": "Vous avez écrit ces textes vous-même dans cette langue : modifiez-les depuis la page de la boutique.",
       "staleHint": "Votre texte d'origine a changé depuis cette traduction.",
       "fields": {
         "tagline": "Accroche",
@@ -2683,7 +2725,11 @@
         "body": "Le reste de la page fonctionne. Réessayez dans un instant."
       },
       "retry": "Réessayer",
-      "loading": "Chargement…"
+      "loading": "Chargement…",
+      "page": {
+        "title": "Cette page n’a pas pu se charger.",
+        "body": "Rien n’est perdu. Réessayez dans un instant."
+      }
     },
     "organize": {
       "close": "Fermer",
@@ -2886,6 +2932,205 @@
         "show": "Afficher de nouveau",
         "saved": "C'est fait."
       }
+    },
+    "composer": {
+      "title": "Page de la boutique",
+      "sections": "Sections",
+      "addSection": "Ajouter une section",
+      "addSectionHint": "Choisissez ce que vous ajoutez à votre page.",
+      "toggleVisible": "Afficher {name}",
+      "sectionMenu": "Actions pour {name}",
+      "moveUp": "Monter",
+      "moveDown": "Descendre",
+      "moveTop": "Placer en haut",
+      "remove": "Retirer",
+      "announceMoved": "{name} déplacée en position {n} sur {total}",
+      "announceCannotMove": "{name} ne peut pas aller plus loin",
+      "announceAdded": "{name} ajoutée en position {n}",
+      "announceRemoved": "{name} retirée",
+      "announceShown": "{name} est affichée",
+      "announceHidden": "{name} est masquée",
+      "announceUndone": "Annulé",
+      "announceRedone": "Rétabli",
+      "hiddenNote": "masquée",
+      "inspector": "Section",
+      "noSelection": "Choisissez une section pour changer sa présentation.",
+      "backToSections": "Retour aux sections",
+      "variant": "Présentation",
+      "settings": "Réglages",
+      "words": "Vos mots",
+      "titleField": "Titre",
+      "leadField": "Ligne sous le titre",
+      "french": "Français",
+      "english": "Anglais",
+      "blocks": "Éléments",
+      "addBlock": "Ajouter",
+      "removeBlock": "Retirer {name}",
+      "look": "Style",
+      "preset": "Allure",
+      "density": "Espacement",
+      "densityCompact": "Compact",
+      "densityAiry": "Aéré",
+      "undo": "Annuler",
+      "redo": "Rétablir",
+      "saved": "Enregistré",
+      "saving": "Enregistrement…",
+      "saveFailed": "Non enregistré",
+      "publish": "Publier",
+      "discard": "Abandonner le brouillon",
+      "preview": "Aperçu",
+      "previewTitle": "Aperçu en direct de votre page",
+      "phone": "Téléphone",
+      "desktop": "Ordinateur",
+      "viewPreview": "Voir",
+      "closePreview": "Fermer",
+      "publishTitle": "Publier cette page",
+      "publishWhat": "Ce qui change",
+      "publishNothing": "Rien n'a changé depuis la dernière publication.",
+      "publishConfirm": "Publier",
+      "cancel": "Annuler",
+      "problemsTitle": "Corrigez {n} problème avant de publier",
+      "problemIn": "{name}",
+      "sectionNames": {
+        "hero": "Couverture",
+        "services": "Services",
+        "booking": "Réservation",
+        "gallery": "Photos",
+        "video": "Vidéo",
+        "reviews": "Avis",
+        "bulletin": "Nouvelles",
+        "team": "Équipe",
+        "visit": "Venir",
+        "story": "Histoire",
+        "social": "Réseaux",
+        "faq": "Questions",
+        "policies": "Conditions"
+      },
+      "variantNames": {
+        "hero.poster": "Affiche",
+        "hero.split": "Partagée",
+        "hero.banner": "Bandeau",
+        "hero.tv": "Télévision",
+        "services.menu": "Carte",
+        "services.cards": "Cartes",
+        "services.index": "Fiches",
+        "services.carousel": "Carrousel",
+        "booking.strip": "Prochains créneaux",
+        "booking.panel": "Appel final",
+        "booking.sticky": "Barre mobile",
+        "gallery.mosaic": "Mosaïque",
+        "gallery.filmstrip": "Pellicule",
+        "gallery.wall": "Mur",
+        "gallery.grid": "Grille",
+        "video.tv": "Télévision",
+        "video.shorts": "Reels",
+        "reviews.summary-cards": "Note et avis",
+        "reviews.quote": "Une citation",
+        "reviews.strip": "Ligne de note",
+        "bulletin.board": "Tableau",
+        "bulletin.banner": "Ligne d'annonce",
+        "team.row": "Rangée",
+        "team.cards": "Cartes",
+        "visit.card": "Carte",
+        "visit.map": "Plan",
+        "visit.split": "Horaires et plan",
+        "story.quote": "Citation",
+        "story.owner": "Propriétaire",
+        "social.links": "Liens",
+        "social.facade": "Dernier reel",
+        "faq.list": "Liste",
+        "policies.inline": "En ligne"
+      },
+      "blockNames": {
+        "fact": "Fait",
+        "service": "Service",
+        "photo": "Photo",
+        "note": "Note",
+        "sign": "Enseigne",
+        "reel": "Reel",
+        "flyer": "Affichette",
+        "member": "Membre",
+        "link": "Lien",
+        "question": "Question"
+      },
+      "settingNames": {
+        "media": "Photo",
+        "focus": "Cadrage",
+        "source": "Source",
+        "groupBy": "Regrouper par",
+        "columns": "Colonnes",
+        "aside": "À côté de la liste",
+        "serviceId": "Service",
+        "count": "Combien",
+        "texture": "Mur",
+        "cabinet": "Meuble",
+        "channel": "Chaîne",
+        "rule": "Quels avis",
+        "showPhone": "Afficher le téléphone",
+        "body": "Texte",
+        "show": "Afficher"
+      },
+      "optionNames": {
+        "center": "Centre",
+        "top": "Haut",
+        "bottom": "Bas",
+        "all": "Tous",
+        "pick": "Choisir",
+        "category": "Catégorie",
+        "none": "Aucun",
+        "hours": "Horaires",
+        "plaster": "Plâtre",
+        "brick": "Brique",
+        "ridge": "Crête",
+        "zellige": "Zellige",
+        "cabinet": "Meuble",
+        "portable": "Portable",
+        "best": "Les meilleurs",
+        "latest": "Les derniers",
+        "cancellation": "Annulation",
+        "prices": "Prix",
+        "booking-window": "Délai de réservation"
+      },
+      "diff": {
+        "added": "{name} ajoutée",
+        "removed": "{name} retirée",
+        "moved": "{name} déplacée de {from} à {to}",
+        "variant": "{name} présentée en {to} (était {from})",
+        "settings": "{name} : réglages modifiés",
+        "blocks": "{name} : éléments modifiés",
+        "text": "{name} : mots modifiés",
+        "disabled": "{name} masquée",
+        "enabled": "{name} affichée",
+        "preset": "Allure changée en {to} (était {from})",
+        "density": "Espacement changé en {to} (était {from})"
+      }
+    },
+    "composerPanel": {
+      "accent": "Couleur d'accent",
+      "accentOwn": "Celle du style",
+      "accentSaved": "Accent enregistré.",
+      "accentNote": "Seules les couleurs testées pour ce style sont proposées.",
+      "versions": "Historique",
+      "versionsLead": "La page en ligne, le brouillon et les dernières versions. Restaurer une version la republie comme une nouvelle version.",
+      "versionDraft": "Brouillon",
+      "versionPublished": "En ligne",
+      "versionArchived": "Ancienne",
+      "versionN": "Version {n}",
+      "restore": "Restaurer",
+      "restoredKept": "La version {n} est de nouveau en ligne. Votre brouillon n'a pas changé.",
+      "keepDraft": "Garder mon brouillon quand je restaure",
+      "discardAsk": "Jeter le brouillon et revenir à la page en ligne ?",
+      "discardYes": "Oui, annuler",
+      "discardNo": "Continuer à modifier",
+      "discarded": "Modifications annulées. Le composeur montre votre page en ligne.",
+      "restored": "La version {n} est de nouveau en ligne. Votre brouillon y a été remis.",
+      "noVersions": "Rien n'a encore été publié : votre page montre le modèle de votre métier.",
+      "readOnly": "Vous pouvez lire la page ; le propriétaire et le gérant la modifient.",
+      "published": "Publié. Votre page est en ligne.",
+      "publishFailed": "Non publié.",
+      "problems": "La page ne peut pas être enregistrée : {issues}",
+      "loading": "Chargement de l'historique…",
+      "openPreview": "Ouvrir l'aperçu dans un nouvel onglet"
     }
   },
   "notFound": {

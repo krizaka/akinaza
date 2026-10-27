@@ -1,20 +1,18 @@
 "use client";
 
 import { BillingIcon, BookmarkIcon, CalendarIcon, ClockIcon, HomeIcon, PlusIcon, UsersIcon } from "@krizaka/icons";
-import { krizakaFetch, useMutation } from "@krizaka/query";
 import { AkinazaLogo } from "@krizaka/ui";
-import { AppHeader } from "@krizaka/ui/app-header";
+import { AppFrame, type FrameSection } from "@krizaka/ui/app-frame";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
-import { languagesFor,LanguageSwitch } from "@krizaka/ui/language-switch";
-import { RailNav } from "@krizaka/ui/rail-nav";
 import { SkipLink } from "@krizaka/ui/skip-link";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 
-import { AkinazaAccountMenu } from "@/components/account/AkinazaAccountMenu";
+import { FrameSlot } from "@/components/app/FrameSlot";
 import { type ChipShop, ShopChip } from "@/components/app/ShopChip";
 import { ShopSearch } from "@/components/app/ShopSearch";
+import { useFrameAccount } from "@/components/app/use-frame-account";
 import { type AppPlace, screenPrimary } from "@/lib/app-nav";
 import { useSay } from "@/lib/i18n-client";
 import type { PaletteItem } from "@/lib/palette";
@@ -43,23 +41,17 @@ export interface ShopFrameProps {
 }
 
 /**
- * The signed-in frame of the shop's space (docs/ux/2026-10-full-review.md § 4.1, the family's rule): where you work is on the rail
- * — five destinations, icons on a desktop, the tab bar on a phone — and who you are is under the avatar, in the header, at every
- * width. The header names the product and the shop, carries the search (⌘K), the language, the DEV chip and the lists' primary
- * action (the hero primary: the brand's gradient), which yields where the page holds its own (`screenPrimary`); the page's `h1` is in the
- * content (`PageHeader`), never here. The administration keeps `AppFrame` (admin.akinaza.com).
+ * The signed-in frame of the shop's space: the shared `AppFrame` of @krizaka/ui (one frame, one account menu for the family) fed
+ * with this product's data (docs/ux/2026-10-full-review.md § 4.1). Where you work is on the rail (five destinations, icons on a
+ * desktop, the tab bar on a phone); who you are is under the avatar in the header, at every width, with the language and the theme.
+ * The header names the product and the shop, carries the search (⌘K), the DEV chip and the lists' primary action, which yields
+ * where the page holds its own (`screenPrimary`); the page's `h1` is in the content (`PageHeader`), never here. The administration
+ * is `AppFrame.tsx`.
  */
 export function ShopFrame({ locale, account, places, shop, newInvoiceHref, search = false, counts = {}, dev = false, home, profileHref, children }: ShopFrameProps) {
   const { say } = useSay();
-  const router = useRouter();
-  const path = usePathname() ?? "";
-  const signOut = useMutation({
-    mutationFn: () => krizakaFetch("/api/auth/sign-out", { method: "POST" }),
-    onSettled: () => {
-      router.replace(`/${locale}/sign-in`);
-      router.refresh();
-    },
-  });
+  const [searchOpen, setSearchOpen] = useState(false);
+  const { path, account: who, language } = useFrameAccount({ locale, id: account.id, email: account.email, name: account.name, avatarSeed: account.avatarSeed, profileHref });
   const isCurrent = (to: string) => {
     const pathname = to.split("?")[0]!;
     return path === pathname || path.startsWith(`${pathname}/`);
@@ -69,81 +61,57 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
     const n = key === "today" ? counts.today : key === "invoices" ? counts.toCollect : undefined;
     return n ? { badge: n, badgeLabel: say(key === "today" ? "shell.badges.today" : "shell.badges.toCollect", { count: n }) } : {};
   };
+  const sections: FrameSection[] = places.map(({ key, href }) => ({ id: key, label: say(`shell.${key}`), href, icon: ICONS[key], ...badgeOf(key) }));
+  const currentId = places.find(({ href, also }) => isCurrent(href) || (also ?? []).some(isCurrent))?.key;
   const actions: PaletteItem[] = [
     ...(newInvoiceHref ? [{ id: "action:new-invoice", group: "actions" as const, label: say("shell.newInvoice"), href: newInvoiceHref }] : []),
     ...places.map(({ key, href }) => ({ id: `place:${key}`, group: "actions" as const, label: say(`shell.${key}`), href })),
   ];
-  const menu = (
-    <AkinazaAccountMenu
-      locale={locale}
-      accountId={account.id}
-      name={account.name}
-      email={account.email}
-      avatarSeed={account.avatarSeed}
-      settingsHref={profileHref}
-      showName={Boolean(account.name)}
-      words={{ account: say("shell.account"), settings: say("shell.settings"), language: say("shell.language"), theme: say("shell.theme"), signOut: say("shell.signOut") }}
-      onSignOut={() => signOut.mutate()}
-    />
-  );
+  const searchable = search && shop;
   return (
-    <RailNav.Shell>
+    <>
       <SkipLink>{say("shell.skip")}</SkipLink>
-      <RailNav.Root
-        label="Akinaza"
+      <FrameSlot>
+      <AppFrame
+        name="Akinaza"
+        mark={<AkinazaLogo size={28} animated={false} />}
+        headerMark={<AkinazaLogo size={22} animated={false} />}
+        homeHref={home}
         accent="akinaza"
-        mark={
-          <Link href={home} aria-label="Akinaza">
-            <AkinazaLogo size={28} animated={false} />
-          </Link>
+        sections={sections}
+        currentId={currentId}
+        account={who}
+        language={language}
+        locale={locale}
+        linkAs={Link}
+        chips={
+          <>
+            {shop ? <ShopChip locale={locale} current={shop.current} others={shop.others} addHref={shop.addHref} /> : null}
+            {dev ? (
+              <Badge tone="warning" className="hidden sm:inline-flex" data-testid="app-version" title={VERSION ? say("shell.devBuild", { version: VERSION }) : undefined}>
+                {say("shell.dev")}
+              </Badge>
+            ) : null}
+          </>
         }
-        expandable
-        defaultExpanded
-        expandLabels={[say("shell.expand"), say("shell.collapse")]}
+        search={searchable ? { label: say("shell.search.open"), onOpen: () => setSearchOpen(true) } : undefined}
+        primary={
+          newInvoiceHref && screenPrimary(path) === "header" ? (
+            <Button asChild variant="gradient" size="sm" className="font-bold">
+              <Link href={newInvoiceHref} aria-label={say("shell.newInvoice")} data-testid="primary-action" data-primary>
+                <PlusIcon size={16} strokeWidth={2.5} aria-hidden />
+                <span className="hidden sm:inline">{say("shell.newInvoice")}</span>
+              </Link>
+            </Button>
+          ) : undefined
+        }
       >
-        {places.map(({ key, href, also }) => (
-          <RailNav.Item key={key} asChild icon={ICONS[key]} label={say(`shell.${key}`)} current={isCurrent(href) || (also ?? []).some(isCurrent)} {...badgeOf(key)}>
-            <Link href={href} />
-          </RailNav.Item>
-        ))}
-      </RailNav.Root>
-      <RailNav.Body>
-        <AppHeader
-          name="Akinaza"
-          mark={<AkinazaLogo size={22} animated={false} />}
-          homeLink={<Link href={home} />}
-          chips={
-            <>
-              {shop ? <ShopChip locale={locale} current={shop.current} others={shop.others} addHref={shop.addHref} /> : null}
-              {dev ? (
-                <Badge tone="warning" className="hidden sm:inline-flex" data-testid="app-version" title={VERSION ? say("shell.devBuild", { version: VERSION }) : undefined}>
-                  {say("shell.dev")}
-                </Badge>
-              ) : null}
-            </>
-          }
-          actions={
-            <>
-              {search && shop ? <ShopSearch locale={locale} shopId={shop.current.id} actions={actions} /> : null}
-              <div className="hidden sm:block" data-testid="header-language">
-                <LanguageSwitch label={say("shell.language")} current={locale} languages={languagesFor(path)} linkAs={Link} />
-              </div>
-              {newInvoiceHref && screenPrimary(path) === "header" ? (
-                <Button asChild variant="gradient" size="sm" className="font-bold">
-                  <Link href={newInvoiceHref} aria-label={say("shell.newInvoice")} data-testid="primary-action" data-primary>
-                    <PlusIcon size={16} strokeWidth={2.5} aria-hidden />
-                    <span className="hidden sm:inline">{say("shell.newInvoice")}</span>
-                  </Link>
-                </Button>
-              ) : null}
-              <div data-testid="account-menu-header">{menu}</div>
-            </>
-          }
-        />
         <main id="content" className="flex-1 p-4 md:p-6">
           {children}
         </main>
-      </RailNav.Body>
-    </RailNav.Shell>
+      </AppFrame>
+      </FrameSlot>
+      {searchable ? <ShopSearch locale={locale} shopId={shop.current.id} actions={actions} open={searchOpen} onOpenChange={setSearchOpen} /> : null}
+    </>
   );
 }
