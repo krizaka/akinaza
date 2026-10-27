@@ -48,7 +48,8 @@ function measure() {
   const actions = [...document.querySelectorAll("main a[class*='kz-button'], main a[data-slot='button'], main .kz-button")].filter((a) => a.getBoundingClientRect().width > 0).map((a) => Math.round(a.getBoundingClientRect().height));
   // The development notice stands above the page in the flow; the site bar floats under it, never over it (akinaza#440).
   const notice = document.querySelector("[data-top-chrome]");
-  const bar = document.querySelector("[data-site-bar] nav, [data-site-bar] [role='navigation']");
+  // The bar's own box (the offset wrapper just inside the sticky one): the navs inside it are display:none at some widths.
+  const bar = document.querySelector("[data-site-bar] > div");
   const chrome = notice && bar && window.scrollY === 0 ? { noticeBottom: Math.round(notice.getBoundingClientRect().bottom), barTop: Math.round(bar.getBoundingClientRect().top) } : null;
   return { scroll: doc.scrollWidth, client: doc.clientWidth, wide, actions, chrome };
 }
