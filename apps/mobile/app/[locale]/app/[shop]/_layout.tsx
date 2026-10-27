@@ -31,7 +31,9 @@ export default function ShopTabs() {
     <Tabs
       screenOptions={{ headerShown: false }}
       tabBar={({ state }) => {
-        const active = state.routes[state.index]?.name.split("/")[0] as TabName;
+        // « Vos chiffres » is opened from Livres, so Livres stays the lit tab.
+        const name = state.routes[state.index]?.name.split("/")[0];
+        const active = (name === "figures" ? "books" : name) as TabName;
         return <TabBar aria-label={t("tabs.label")} items={items} value={active} onValueChange={(name) => router.navigate(TABS.find((tab) => tab.name === name)!.href(locale, shop) as never)} />;
       }}
     >

@@ -43,7 +43,18 @@
     "call": "Appeler {name}",
     "strip": "Jour affiché",
     "marked": "des rendez-vous",
-    "emptyLead": "Les rendez-vous réservés s'affichent ici, jour par jour."
+    "emptyLead": "Les rendez-vous réservés s'affichent ici, jour par jour.",
+    "detail": {
+      "back": "Aujourd’hui",
+      "detailTitle": "Rendez-vous",
+      "when": "Quand",
+      "where": "Où",
+      "who": "Qui",
+      "status": "État",
+      "none": "Personne n’est inscrit à ce rendez-vous.",
+      "select": "Choisissez un rendez-vous",
+      "list": "Les rendez-vous du jour"
+    }
   },
   "invoices": {
     "title": "Factures",
@@ -114,5 +125,126 @@
   },
   "profile": {
     "title": "Profil"
+  },
+  "figures": {
+    "state": {
+      "good": "Sur la bonne voie",
+      "watch": "À surveiller",
+      "alert": "À corriger",
+      "info": "Rien à juger pour l'instant"
+    },
+    "sources": {
+      "invoice": "{count} factures",
+      "expense": "{count} dépenses",
+      "payment": "{count} paiements",
+      "appointment": "{count} rendez-vous"
+    },
+    "periodLabel": "Période : du {start} au {end}",
+    "lead": "Chaque chiffre dit ce qu'il signifie, comment il est calculé à partir de vos factures et d'où il vient.",
+    "title": "Vos chiffres",
+    "never": "Akinaza prépare ces chiffres. Vous les vérifiez et vous produisez vos déclarations vous-même.",
+    "nextTitle": "Que faire maintenant",
+    "nothingToDo": "Rien ne vous attend pour l'instant.",
+    "urgency": {
+      "now": "Maintenant",
+      "soon": "Bientôt",
+      "week": "Cette semaine"
+    },
+    "actions": {
+      "chase": {
+        "title": "Relancer la facture {number}",
+        "why": "Elle est en retard de {days} jours et {amount} reste dû.",
+        "more": "{others} autres factures sont aussi en retard, {total} en tout.",
+        "cta": "Ouvrir la facture"
+      },
+      "taxes": {
+        "title": "Préparer votre déclaration TPS/TVQ",
+        "why": "Votre période se termine dans {days} jours ({start} au {end}). Akinaza prépare les chiffres ; vous produisez la déclaration vous-même.",
+        "whyPast": "Votre période s'est terminée le {end}. Akinaza prépare les chiffres ; vous produisez la déclaration vous-même.",
+        "cta": "Préparer la déclaration"
+      },
+      "slot": {
+        "title": "Ouvrir le {weekday} {time} aux réservations",
+        "why": "Seulement {booked} de ces {offered} plages ont été réservées récemment.",
+        "cta": "Ouvrir les heures"
+      }
+    },
+    "rateOf": {
+      "collected": "Cela représente {rate} % de ce que vous avez facturé, taxes comprises.",
+      "toCollect": "{rate} % est en retard.",
+      "margin": "Cela représente {rate} % de votre revenu.",
+      "noShows": "Cela représente {rate} % des rendez-vous qui étaient dus."
+    },
+    "terms": {
+      "invoicesSubtotal": "Factures avant taxes",
+      "paymentsReceived": "Paiements reçus",
+      "invoicedWithTaxes": "Facturé taxes comprises",
+      "invoicesTotal": "Factures taxes comprises",
+      "overdue": "Dont en retard",
+      "gstOnInvoices": "TPS sur les factures",
+      "qstOnInvoices": "TVQ sur les factures",
+      "gstOnExpenses": "TPS sur les dépenses",
+      "qstOnExpenses": "TVQ sur les dépenses",
+      "expensesBusinessShare": "Dépenses pour l'entreprise",
+      "appointmentsDone": "Rendez-vous terminés",
+      "appointmentsNoShow": "Absences",
+      "appointmentsDue": "Rendez-vous prévus"
+    },
+    "formulaHere": "{formula} Ici : {terms}.",
+    "updated": "Mis à jour {when}",
+    "stale": "Peut être périmé : recalculé dès que quelque chose change.",
+    "howComputed": "Comment c'est calculé",
+    "whereFrom": "D'où ça vient",
+    "invoiced": {
+      "name": "Facturé",
+      "meaning": "Ce que vous avez facturé dans la période, avant les taxes. Une note de crédit retire ce qu'elle annule.",
+      "formula": "Total de vos factures avant taxes, moins vos notes de crédit."
+    },
+    "collected": {
+      "name": "Encaissé",
+      "meaning": "L'argent que vous avez réellement reçu dans la période, peu importe la date de la facture.",
+      "formula": "Total des paiements reçus dans la période. À côté : ce total sur ce que vous avez facturé, taxes comprises."
+    },
+    "toCollect": {
+      "name": "À encaisser",
+      "meaning": "Ce que vos clients vous doivent encore aujourd'hui, sur toutes vos factures.",
+      "formula": "Factures taxes comprises, moins les paiements reçus. La part en retard : celles dont l'échéance est passée."
+    },
+    "gstCollected": {
+      "name": "TPS perçue",
+      "meaning": "La TPS (5 %) que vos factures ont chargée dans la période.",
+      "formula": "Somme de la TPS de vos factures de la période, notes de crédit déduites."
+    },
+    "qstCollected": {
+      "name": "TVQ perçue",
+      "meaning": "La TVQ (9,975 %) que vos factures ont chargée dans la période.",
+      "formula": "Somme de la TVQ de vos factures de la période, notes de crédit déduites."
+    },
+    "gstToRemit": {
+      "name": "TPS à remettre",
+      "meaning": "Ce que vous paieriez au gouvernement pour la TPS si la période se terminait aujourd'hui. Akinaza le prépare ; vous produisez la déclaration.",
+      "formula": "TPS perçue sur vos factures, moins la TPS que vous pouvez récupérer sur vos dépenses."
+    },
+    "qstToRemit": {
+      "name": "TVQ à remettre",
+      "meaning": "Ce que vous paieriez à Revenu Québec pour la TVQ si la période se terminait aujourd'hui. Akinaza le prépare ; vous produisez la déclaration.",
+      "formula": "TVQ perçue sur vos factures, moins la TVQ que vous pouvez récupérer sur vos dépenses."
+    },
+    "margin": {
+      "name": "Marge",
+      "meaning": "Ce qui reste de vos revenus après vos dépenses, avant les taxes. Elle ne compte ni votre salaire ni les coûts que vous n'avez pas notés.",
+      "formula": "Facturé avant taxes, moins vos dépenses avant taxes, à la part utilisée pour l'entreprise."
+    },
+    "appointments": {
+      "name": "Rendez-vous",
+      "meaning": "Les rendez-vous qui ont eu lieu dans la période.",
+      "formula": "Nombre de rendez-vous marqués comme terminés."
+    },
+    "noShows": {
+      "name": "Absences",
+      "meaning": "Les rendez-vous où le client ne s'est pas présenté, sur ceux qui étaient prévus.",
+      "formula": "Absences sur les rendez-vous terminés plus les absences."
+    },
+    "open": "Voir vos chiffres"
   }
 }
