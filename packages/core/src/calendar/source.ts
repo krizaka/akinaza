@@ -2,8 +2,6 @@
  * The calendar sources of a shop (ADR-004, akinaza#282): a port, one adapter per provider or format. A source is **read-only**:
  * it tells when the owner is busy, nothing else (no title, no attendee), and Akinaza never writes to it.
  */
-import { compareAsc } from "date-fns";
-
 export const CALENDAR_KINDS = ["ics", "google", "outlook", "caldav"] as const;
 export type CalendarKind = (typeof CALENDAR_KINDS)[number];
 
@@ -71,7 +69,7 @@ export interface ConnectableSource extends CalendarSource {
 
 /** Sorted, merged: overlapping or touching busy intervals become one. */
 export function mergeBusy(intervals: readonly BusyInterval[]): BusyInterval[] {
-  const sorted = intervals.filter((i) => i.endsAt.getTime() > i.startsAt.getTime()).sort((a, b) => compareAsc(a.startsAt, b.startsAt));
+  const sorted = intervals.filter((i) => i.endsAt.getTime() > i.startsAt.getTime()).sort((a, b) => Number(a.startsAt) - Number(b.startsAt));
   const out: BusyInterval[] = [];
   for (const next of sorted) {
     const last = out.at(-1);
