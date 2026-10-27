@@ -19,7 +19,7 @@ describe("a shop's public page paints its first screen at once", () => {
 
   it("preloads the cover with a high priority, from the server render", () => {
     const view = read("components/shop/ShopPageView.tsx");
-    expect(view).toMatch(/preload\(plan\.cover\.src, \{ as: "image", fetchPriority: "high" \}\)/);
+    expect(view).toMatch(/preload\(plan\.cover\.src, \{ as: "image", fetchPriority: "high", \.\.\.\(srcSet \? \{ imageSrcSet: srcSet, imageSizes: /);
     expect(view.startsWith('"use client"')).toBe(false);
   });
 });
