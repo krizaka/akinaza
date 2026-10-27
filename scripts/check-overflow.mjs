@@ -7,13 +7,18 @@
 // Exits 1 listing every page x width x theme that overflows. With --shots it also writes a screenshot of each.
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
+import { A11yCollector, auditPage as auditA11y, finish } from "@krizaka/a11y-audit";
 import { chromium } from "playwright-core";
 
 /** After `load`, the time fonts and images take to lay the page out. */
 const SETTLE_MS = 600;
 export const WIDTHS = [360, 390, 430, 768, 1024, 1440];
 export const THEMES = ["dark", "light"];
+/** axe-core (WCAG 2.1 AA) runs at the phone and the desktop width only: a finding is counted once per route, theme and node (ratchet: a11y-baseline.json). */
+export const A11Y_WIDTHS = [390, 1440];
+export const A11Y_BASELINE = fileURLToPath(new URL("../a11y-baseline.json", import.meta.url));
 /** The two demo shops and every composition they offer (akinaza#404): the Krizaka UI showcase must not overflow at any width. */
 export const SHOP_PAGES = ["/en/s/cedre-ciseaux", "/fr/s/cedre-ciseaux?look=editorial", "/en/s/cedre-ciseaux?look=gallery", "/fr/s/pattes-saint-henri", "/en/s/pattes-saint-henri?look=journal"];
 /** The signed-in frame (akinaza#396, the « never overflows » containment of the shared `AppFrame`), relative to `/<locale>/app/<shop>`: the owner's rail, header and account menu at every width. */
@@ -73,7 +78,7 @@ export function judge(result, where) {
 }
 
 /** Every page at every width in one theme: HTTP and empty-page checks, then no horizontal overflow and no small action. */
-async function crawl({ page, paths, base, theme, shots, problems, at }) {
+async function crawl({ page, paths, base, theme, shots, problems, at, a11y }) {
   for (const path of paths) {
     for (const width of WIDTHS) {
       await page.setViewportSize({ width, height: 900 });
@@ -86,6 +91,7 @@ async function crawl({ page, paths, base, theme, shots, problems, at }) {
       if (empty) problems.push(`${path} @${width} ${theme}: empty <main>`);
       const result = await page.evaluate(measure);
       problems.push(...judge(result, `${path} @${width} ${theme}`));
+      if (A11Y_WIDTHS.includes(width)) a11y.add({ route: path, theme }, await auditA11y(page));
       if (shots) {
         mkdirSync(shots, { recursive: true });
         await page.screenshot({ path: join(shots, `${path.replace(/\//g, "_") || "_"}-${width}-${theme}.png`), fullPage: false });
@@ -97,6 +103,7 @@ async function crawl({ page, paths, base, theme, shots, problems, at }) {
 export async function check({ base, shots, owner }) {
   const browser = await chromium.launch();
   const problems = [];
+  const a11y = new A11yCollector("akinaza");
   for (const theme of THEMES) {
     const context = await browser.newContext({ colorScheme: theme });
     await context.addInitScript((t) => {
@@ -109,7 +116,7 @@ export async function check({ base, shots, owner }) {
     let current = "";
     page.on("console", (m) => m.type() === "error" && problems.push(`${current}: console error: ${m.text().slice(0, 160)}`));
     page.on("pageerror", (e) => problems.push(`${current}: uncaught: ${String(e.message).slice(0, 160)}`));
-    await crawl({ page, paths: PAGES, base, theme, shots, problems, at: (v) => (current = v) });
+    await crawl({ page, paths: PAGES, base, theme, shots, problems, at: (v) => (current = v), a11y });
     await context.close();
     // The same guard inside the signed-in frame, as the owner (the rail, the header, the account menu), for who has the credentials.
     if (owner) {
@@ -127,11 +134,14 @@ export async function check({ base, shots, owner }) {
       await framed.goto(`${base}/fr/app`, { waitUntil: "load" });
       const shopRoot = new URL(framed.url()).pathname.replace(/^\/(fr|en)/, "").match(/^\/app\/[^/]+/)?.[0];
       if (!shopRoot) throw new Error(`the owner's /app did not lead to a shop (${framed.url()})`);
-      await crawl({ page: framed, paths: FRAME_LOCALES.flatMap((l) => FRAME_PAGES.map((f) => `/${l}${shopRoot}${f}`)), base, theme, shots, problems, at: (v) => (current = v) });
+      await crawl({ page: framed, paths: FRAME_LOCALES.flatMap((l) => FRAME_PAGES.map((f) => `/${l}${shopRoot}${f}`)), base, theme, shots, problems, at: (v) => (current = v), a11y });
       await inside.close();
     }
   }
   await browser.close();
+  const guard = finish(a11y, { baseline: A11Y_BASELINE });
+  for (const note of guard.notes) console.log(note);
+  problems.push(...guard.problems);
   return problems;
 }
 
