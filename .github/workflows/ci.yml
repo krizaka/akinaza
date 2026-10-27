@@ -51,5 +51,5 @@ jobs:
       playwright: chromium
       # SEO family contract on the built site, sign-up closed, no horizontal overflow (scripts/ci-after-build.sh).
       after-build: scripts/ci-after-build.sh
-      # Files no test or build reads skip the heavy jobs (docs/, policy text, templates, the README's images). Fails open.
-      ignore: '^docs/|^\.changeset/|^(LICENSE|SECURITY|CODE_OF_CONDUCT|SUPPORT)(\.md)?$|^\.github/(ISSUE_TEMPLATE/|assets/|pull_request_template\.md$|FUNDING\.yml$|dependabot\.yml$)'
+      # Files no test or build reads skip the heavy jobs (policy text; docs/ is NOT ignored: the required SonarCloud check only reports when the scan runs, templates, the README's images). Fails open.
+      ignore: '^\.changeset/|^(LICENSE|SECURITY|CODE_OF_CONDUCT|SUPPORT)(\.md)?$|^\.github/(ISSUE_TEMPLATE/|assets/|pull_request_template\.md$|FUNDING\.yml$|dependabot\.yml$)'
