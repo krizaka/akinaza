@@ -1,0 +1,6 @@
+{
+  "allow": [
+    { "path": "a11y-baseline.json", "why": "the accessibility crawl's ratchet (axe counts per rule), read by scripts/check-overflow.mjs and guarded by scripts/a11y-guard.test.mjs" },
+    { "path": ".pre-commit-config.yaml", "why": "pre-commit reads its config only from the repository root (org hooks gitleaks and zizmor, krizaka/.github#324)" }
+  ]
+}
