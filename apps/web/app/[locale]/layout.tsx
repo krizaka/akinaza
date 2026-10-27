@@ -10,8 +10,8 @@ import { notFound } from "next/navigation";
 
 import { RoutePageTransition } from "@/components/RoutePageTransition";
 import { StageNotice } from "@/components/StageNotice";
-import { shopDisplay, shopSans } from "@/lib/shop-fonts";
 import { getDictionary, type Locale, LOCALES, PAGE_LOCALES, type PageLocale, uiLocaleOf } from "@/lib/i18n";
+import { shopDisplay, shopSans } from "@/lib/shop-fonts";
 import { SITE_URL } from "@/lib/site";
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
