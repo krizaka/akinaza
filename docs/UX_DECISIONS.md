@@ -588,3 +588,12 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Refused**: letting the owner change a formula or an amount (only when a figure asks for a look moves); a slider (no precision on a phone, no keyboard value).
 - **Cost**: nine fields on a screen; an alert threshold gentler than its watch threshold is moved to match (said on the screen).
 - **Wrong if**: owners tune and never come back to read the state words - then show the tuned value on the figure itself.
+
+## Your calendar on your phone: a private link, not an account (#282, ADR-004)
+
+- **Decision**: Boutique › Agenda gives the owner and the manager a private calendar link (RFC 5545) for the shop and for each team member; the phone subscribes to it. The link holds a random 256-bit token; only a keyed hash is stored, so it is shown once, when made or renewed. « Make a new link » kills the old one at once; « Turn off » answers 404. The feed says the time, the service and first names, never a phone, an e-mail, a note or a place.
+- **Problem**: owners already live in Google, Apple or Outlook calendars and will not open a second app to know their day.
+- **Principle**: recognition over recall (the calendar they already look at), and the smallest data that does the job (Loi 25).
+- **Refused**: an account connection (OAuth scopes and consent for something a link already does); a link that can be read again later (it would have to be stored in clear); one shared link per account.
+- **Cost**: whoever has the link reads those times: said under the field, and the link can be renewed in one tap. The feed is in French for now.
+- **Wrong if**: owners paste the link into shared documents - then add an expiry or a per-device link.

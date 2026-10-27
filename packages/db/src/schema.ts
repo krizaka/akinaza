@@ -262,6 +262,31 @@ export const shopFigureRules = pgTable(
   (t) => [check("shop_figure_rules_object", sql`jsonb_typeof(${t.overrides}) = 'object'`)],
 );
 
+/**
+ * The private calendar feeds of a shop and of its staff members (ADR-004, #282): one active token per feed. Only the keyed hash of the token is kept,
+ * so a leaked table opens nothing; rotating revokes the old row and adds a new one, revoking only revokes. `staff_id` null = the whole shop's feed.
+ */
+export const feedTokens = pgTable(
+  "feed_tokens",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    staffId: uuid("staff_id").references(() => staff.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull(),
+    createdAt: created(),
+    /** When this token replaced an earlier one (null = the feed's first token). */
+    rotatedAt: timestamp("rotated_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("feed_tokens_hash").on(t.tokenHash),
+    index("feed_tokens_shop").on(t.shopId),
+    uniqueIndex("feed_tokens_active_shop").on(t.shopId).where(sql`${t.staffId} IS NULL AND ${t.revokedAt} IS NULL`),
+    uniqueIndex("feed_tokens_active_staff").on(t.shopId, t.staffId).where(sql`${t.staffId} IS NOT NULL AND ${t.revokedAt} IS NULL`),
+    check("feed_tokens_hash_shape", sql`${t.tokenHash} ~ '^[0-9a-f]{64}$'`),
+  ],
+);
+
 /** The wall of the public page (B45, #310): its texture; no row = plaster and no item. */
 export const shopWall = pgTable(
   "shop_wall",

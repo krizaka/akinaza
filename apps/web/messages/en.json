@@ -1611,7 +1611,8 @@
         "team": "Team",
         "invoices": "Invoice e-mails",
         "shops": "Your shops",
-        "figures": "Figure thresholds"
+        "figures": "Figure thresholds",
+        "agenda": "Calendar"
       },
       "invoices": {
         "title": "Invoice e-mails",
@@ -1627,6 +1628,28 @@
       "figures": {
         "title": "Figure thresholds",
         "lead": "When a figure asks for a look, and when it asks for action. Only this changes: the amounts and the formulas never do."
+      },
+      "agenda": {
+        "title": "Your calendar on your phone",
+        "lead": "A private link your phone subscribes to, so your appointments show in the calendar you already use. It carries the time, the service and first names only: never a phone number, an e-mail or a note.",
+        "feed": {
+          "shop": "The whole shop",
+          "live": "Link active",
+          "none": "No link yet",
+          "since": "Made {when}",
+          "create": "Make the link",
+          "rotate": "Make a new link",
+          "revoke": "Turn off",
+          "revokeConfirm": "Turn off this link? The calendars that use it stop updating.",
+          "once": "Copy this link now: it is shown only once. Making a new link turns the old one off at once.",
+          "copy": "Copy the link",
+          "copied": "Link copied",
+          "url": "Private link of {name}",
+          "howTitle": "How to add it",
+          "how": "Apple Calendar: File, New Calendar Subscription. Google Calendar: Other calendars, From URL. Outlook: Add calendar, Subscribe from web. Anyone who has the link can read these times: share it with nobody.",
+          "off": "The administrator has switched the calendar links off.",
+          "nobody": "No team member yet."
+        }
       }
     },
     "shopPage": {
