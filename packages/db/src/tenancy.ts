@@ -58,7 +58,6 @@ export const TABLE_OWNERSHIP: Readonly<Record<string, TableOwnership>> = {
   tax_ledger: shop,
   // The shop's, through a parent.
   bookings: child("appointments", "appointment_id"),
-  client_consents: child("clients", "client_id"),
   client_requests: child("clients", "client_id"),
   client_request_files: child("client_requests", "request_id"),
   days_off: child("staff", "staff_id"),
@@ -86,4 +85,6 @@ export const TABLE_OWNERSHIP: Readonly<Record<string, TableOwnership>> = {
   payment_events: platform,
   webhook_received: platform,
   mail_outbox: platform,
+  // The shared modules' own: which version of each is applied (@krizaka/db), and the privacy schema's tables live outside `public`.
+  krizaka_module_versions: platform,
 };

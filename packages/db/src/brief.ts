@@ -60,7 +60,7 @@ export async function briefSnapshot(db: Db, shopId: string, at: { week: string; 
     ? await rows<{ id: string; contactable: boolean; marketing: boolean; erased: boolean }>(
         db,
         sql`SELECT c.id, (c.email IS NOT NULL) AS contactable, (c.erased_at IS NOT NULL) AS erased,
-                   COALESCE((SELECT k.granted FROM client_consents k WHERE k.client_id = c.id AND k.purpose = 'marketing' ORDER BY k.at DESC, k.id DESC LIMIT 1), false) AS marketing
+                   COALESCE((SELECT k.granted FROM privacy.consent k WHERE k.subject_kind = 'client' AND k.subject_id = c.id::text AND k.purpose = 'marketing' ORDER BY k.seq DESC LIMIT 1), false) AS marketing
               FROM clients c WHERE c.shop_id = ${shopId} AND c.id IN (${sql.join(clientIds.map((id) => sql`${id}::uuid`), sql`, `)}) ORDER BY c.id`,
       )
     : [];
@@ -113,7 +113,7 @@ export async function reachableClients(db: Db, shopId: string, clientIds: readon
     sql`SELECT c.id, c.full_name AS "fullName", c.email, c.language FROM clients c
          WHERE c.shop_id = ${shopId} AND c.erased_at IS NULL AND c.email IS NOT NULL
            AND c.id IN (${sql.join(clientIds.map((id) => sql`${id}::uuid`), sql`, `)})
-           AND COALESCE((SELECT k.granted FROM client_consents k WHERE k.client_id = c.id AND k.purpose = 'marketing' ORDER BY k.at DESC, k.id DESC LIMIT 1), false)
+           AND COALESCE((SELECT k.granted FROM privacy.consent k WHERE k.subject_kind = 'client' AND k.subject_id = c.id::text AND k.purpose = 'marketing' ORDER BY k.seq DESC LIMIT 1), false)
          ORDER BY c.id`,
   );
 }

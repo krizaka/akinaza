@@ -1336,7 +1336,17 @@
         "export": "Export the selection (CSV)"
       },
       "exportFile": "clients.csv",
-      "noMatch": "No client matches."
+      "noMatch": "No client matches.",
+      "privacy": {
+        "title": "Their privacy requests",
+        "lead": "When this person asks to see, take a copy of or erase what you hold about them, answer here, within 30 days. Akinaza holds the file for your shop.",
+        "export": "Download their data",
+        "erase": "Erase their file",
+        "eraseConfirm": "Erase this client's file?",
+        "eraseDescription": "Their details, their dependants, your notes, the reports and photos are erased for good, and their consents are withdrawn. Invoices and the tax ledger are kept for six years, as tax law requires. This cannot be undone.",
+        "eraseYes": "Erase for good",
+        "keep": "Keep the file"
+      }
     },
     "shopSetup": {
       "title": "Your shop page",

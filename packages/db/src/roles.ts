@@ -2,11 +2,11 @@ import { createRoles, defineRoles } from "@krizaka/auth";
 
 /**
  * The roles of a shop (#180), as data on `@krizaka/auth`'s role model: what each may do is this table, never an `if` on a role.
- *  - owner: everything — the shop's settings, billing, deletion, the team, and all the rest.
+ *  - owner: everything — the shop's settings, billing, deletion, the team, a client's access and erasure requests (`privacy`: the shop is the enterprise that holds the file, Loi 25), and all the rest.
  *  - manager: bookings, clients, invoices, reports, the catalogue and the schedule, the team's staff; no settings, no billing, no deletion.
  *  - staff: their agenda, check-in and out, the visit reports and the access notes of their visits; no invoices, no reports, no clients' file.
  */
-export const SHOP_PERMISSIONS = ["settings", "billing", "delete", "team", "catalogue", "schedule", "bookings", "clients", "invoices", "reports", "agenda", "checkin", "visit-reports", "access-notes"] as const;
+export const SHOP_PERMISSIONS = ["settings", "billing", "delete", "team", "catalogue", "schedule", "bookings", "clients", "invoices", "reports", "agenda", "checkin", "visit-reports", "access-notes", "privacy"] as const;
 export type ShopPermission = (typeof SHOP_PERMISSIONS)[number];
 
 export const SHOP_ROLES = defineRoles({

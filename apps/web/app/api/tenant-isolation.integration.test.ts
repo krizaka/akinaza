@@ -36,7 +36,7 @@ const addressOf = (file: string) => `/api/walker${file.slice("./walker".length, 
 const ROUTES = Object.keys(routeModules).map((file) => ({ file, address: addressOf(file), source: routeSources[file]! })).sort((a, b) => a.address.localeCompare(b.address));
 
 /** What a route does with the shop: through a shop guard (membership sweep), or about the session's own items (collections, tags, shops). */
-const SHOP_GUARD = /require(Shop|Owner|ShopClient)\b|visitRoute|teamRoute|organizeApi|takeDown/;
+const SHOP_GUARD = /require(Shop|Owner|ShopClient)\b|visitRoute|teamRoute|organizeApi|takeDown|clientPrivacyRoute/;
 const SESSION_OWNED = new Set(["/api/walker/shop-collections", "/api/walker/shop-collections/[id]", "/api/walker/shop-tags", "/api/walker/shop-tags/[id]", "/api/walker/shops", "/api/walker/shops/[id]", "/api/walker/shops/[id]/default", "/api/walker/shop"]);
 
 /** An address with its dynamic segments filled (`values` for the named ones, else a fresh UUID or a day) - and the same as route params. */
@@ -130,6 +130,8 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     // 409 AK_NO_REPORT: the lookup is scoped to the caller's shop, so another shop's report is "no report" - the answer of an unknown id.
     { address: "/api/walker/bookings/[id]/report/send", method: "POST", params: () => ({ id: ids.booking }), refused: 409 },
     { address: "/api/walker/clients/[id]/access-notes", method: "GET", params: () => ({ id: ids.client }) },
+    { address: "/api/walker/clients/[id]/export", method: "GET", params: () => ({ id: ids.client }) },
+    { address: "/api/walker/clients/[id]/erase", method: "POST", params: () => ({ id: ids.client }), json: () => ({ confirm: true }), intact: async () => expect(await query("SELECT 1 FROM clients WHERE id = $1 AND erased_at IS NULL", [ids.client])).toHaveLength(1) },
     { address: "/api/walker/clients/[id]/notes", method: "POST", params: () => ({ id: ids.client }), json: () => ({ body: "x" }), intact: async () => expect(await query("SELECT 1 FROM client_notes WHERE client_id = $1", [ids.client])).toHaveLength(0) },
     { address: "/api/walker/hours/[id]", method: "DELETE", params: () => ({ id: ids.hour }), idempotent: true, intact: async () => expect(await query("SELECT 1 FROM schedules WHERE id = $1", [ids.hour])).toHaveLength(1) },
     { address: "/api/walker/invoices/[id]/payments", method: "POST", params: () => ({ id: ids.invoice }), json: () => ({ amountCents: 100, method: "cash", receivedOn: "2026-10-23" }) },

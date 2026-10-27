@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 
 import { ClientFilePanel } from "@/components/app/ClientFilePanel";
 import { ClientNav } from "@/components/app/ClientNav";
+import { ClientPrivacyPanel } from "@/components/app/ClientPrivacyPanel";
 import { ClientRequestsPanel } from "@/components/app/ClientRequestsPanel";
 import { readClientFileTab } from "@/lib/clients-view";
 import { db } from "@/lib/db";
@@ -47,6 +48,7 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
       detail={
         <div className="flex flex-col gap-5">
           <ClientFilePanel file={file} notes={notes} tab={readClientFileTab((await searchParams).tab)} today={localDay(now, shop.timezone)} timeZone={shop.timezone} nowIso={now.toISOString()} mayInvoice={may(role, "invoices")} organize={organized.data} tags={worn} />
+          {may(role, "privacy") ? <ClientPrivacyPanel clientId={id} /> : null}
           <ClientRequestsPanel requests={requests.map((r) => ({ id: r.id, title: r.title, note: r.note, service: { fr: r.serviceNameFr, en: r.serviceNameEn }, staffName: r.staffName, files: r.files }))} />
         </div>
       }

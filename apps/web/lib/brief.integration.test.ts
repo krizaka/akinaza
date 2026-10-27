@@ -33,7 +33,7 @@ describe.runIf(enabled)("the Monday brief's invitation (#200)", () => {
     const [svc] = await query<{ id: string }>("INSERT INTO services (shop_id, name_fr, name_en, duration_minutes, price_cents) VALUES ($1, 'Coupe', 'Cut', 60, 5000) RETURNING id", [shop.id]);
     const [c] = await query<{ id: string }>("INSERT INTO clients (shop_id, full_name, email, language) VALUES ($1, 'Camille Tremblay', $2, 'fr') RETURNING id", [shop.id, `camille-${stamp}@akinaza.test`]);
     regular = c!.id;
-    await query("INSERT INTO client_consents (client_id, purpose, granted, text_version) VALUES ($1, 'marketing', true, '2026-10-01')", [regular]);
+    await query("INSERT INTO privacy.consent (id, subject_kind, subject_id, purpose, version, granted, at) VALUES (gen_random_uuid(), 'client', $1, 'marketing', '2026-10-01', true, now())", [regular]);
     // Twelve done visits 43 to 54 days ago: a regular who stopped coming, enough history to speak.
     for (let d = 43; d <= 54; d++) {
       const start = subDays(now, d);
