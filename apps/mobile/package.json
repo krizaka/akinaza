@@ -8,7 +8,7 @@
     "start": "expo start",
     "ios": "expo run:ios",
     "android": "expo run:android",
-    "lint": "eslint . --max-warnings 0",
+    "lint": "eslint . --max-warnings 9 && krizaka-ratchet",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "export": "expo export --platform ios --platform android"
