@@ -1,5 +1,28 @@
 {
   "product": "akinaza",
   "cdn": "https://krizaka-assets.b-cdn.net/site",
-  "videos": []
+  "videos": [
+    {
+      "platform": "web",
+      "flow": "composer",
+      "seconds": 11.1,
+      "capturedAt": "2026-10-27T14:44:14.855Z",
+      "files": {
+        "webm": "products/akinaza/download/web-composer.104c2a628e.webm",
+        "mp4": "products/akinaza/download/web-composer.f29b1bbd3f.mp4",
+        "poster": "products/akinaza/download/web-composer.81a1bde67a.jpg"
+      }
+    },
+    {
+      "platform": "web",
+      "flow": "storefront",
+      "seconds": 15.2,
+      "capturedAt": "2026-10-27T14:44:22.436Z",
+      "files": {
+        "webm": "products/akinaza/download/web-storefront.80da42e84b.webm",
+        "mp4": "products/akinaza/download/web-storefront.8921b56460.mp4",
+        "poster": "products/akinaza/download/web-storefront.edb3da12a5.jpg"
+      }
+    }
+  ]
 }
