@@ -85,3 +85,43 @@ export function sanitizeThresholds(t: FigureThresholds): FigureThresholds {
     maxActions: Math.max(0, Math.round(t.maxActions)),
   };
 }
+
+/**
+ * What the owner may tune for their own shop (#260): the eight judgement thresholds and the tax reminder's lead time. The administrator's
+ * settings are the defaults; an owner's value replaces one inside these bounds (the administrator can also switch tuning off). Nothing about the
+ * ledger, the formulas or the amounts is tunable: only when a figure asks for a look.
+ */
+export const OWNER_TUNABLE = ["overdueWatchPct", "overdueAlertPct", "collectedWatchPct", "collectedAlertPct", "marginWatchPct", "marginAlertPct", "noShowWatchPct", "noShowAlertPct", "taxPeriodSoonDays"] as const;
+export type OwnerTunable = (typeof OWNER_TUNABLE)[number];
+export type OwnerOverrides = Partial<Record<OwnerTunable, number>>;
+
+const PERCENT = { min: 1, max: 99 } as const;
+export const OWNER_BOUNDS: Readonly<Record<OwnerTunable, { min: number; max: number }>> = {
+  overdueWatchPct: PERCENT,
+  overdueAlertPct: PERCENT,
+  collectedWatchPct: PERCENT,
+  collectedAlertPct: PERCENT,
+  marginWatchPct: PERCENT,
+  marginAlertPct: PERCENT,
+  noShowWatchPct: PERCENT,
+  noShowAlertPct: PERCENT,
+  taxPeriodSoonDays: { min: 1, max: 60 },
+};
+
+/** The owner's overrides as they may be kept: only tunable keys, whole numbers, inside the bounds. Anything else is dropped, never rounded into range. */
+export function parseOwnerOverrides(input: unknown): OwnerOverrides {
+  const out: OwnerOverrides = {};
+  if (typeof input !== "object" || input === null) return out;
+  const raw = input as Record<string, unknown>;
+  for (const key of OWNER_TUNABLE) {
+    const value = raw[key];
+    const { min, max } = OWNER_BOUNDS[key];
+    if (typeof value === "number" && Number.isInteger(value) && value >= min && value <= max) out[key] = value;
+  }
+  return out;
+}
+
+/** The administrator's thresholds with the owner's on top, then straightened so the result cannot contradict itself. */
+export function applyOwnerOverrides(base: FigureThresholds, overrides: OwnerOverrides): FigureThresholds {
+  return sanitizeThresholds({ ...base, ...parseOwnerOverrides(overrides) });
+}

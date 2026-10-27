@@ -1610,7 +1610,8 @@
         "languages": "Languages",
         "team": "Team",
         "invoices": "Invoice e-mails",
-        "shops": "Your shops"
+        "shops": "Your shops",
+        "figures": "Figure thresholds"
       },
       "invoices": {
         "title": "Invoice e-mails",
@@ -1622,6 +1623,10 @@
         "current": "This shop",
         "open": "Open this shop",
         "add": "Add a shop"
+      },
+      "figures": {
+        "title": "Figure thresholds",
+        "lead": "When a figure asks for a look, and when it asks for action. Only this changes: the amounts and the formulas never do."
       }
     },
     "shopPage": {
@@ -2460,7 +2465,28 @@
       "lexiconTerms": "Words used here",
       "never": "Akinaza prepares these figures. You check them and you file your returns yourself.",
       "formulaHere": "{formula} Here: {terms}.",
-      "updatedLabel": "Updated"
+      "updatedLabel": "Updated",
+      "rules": {
+        "title": "When a figure needs your attention",
+        "hint": "Usual value {usual}. You can set it between {min} and {max}.",
+        "hintDays": "Usual value {usual} days. You can set it between {min} and {max}.",
+        "fields": {
+          "overdueWatchPct": "Overdue invoices: keep an eye on it above (%)",
+          "overdueAlertPct": "Overdue invoices: needs action above (%)",
+          "collectedWatchPct": "Collected from what you invoiced: keep an eye on it below (%)",
+          "collectedAlertPct": "Collected from what you invoiced: needs action below (%)",
+          "marginWatchPct": "Margin on your revenue: keep an eye on it below (%)",
+          "marginAlertPct": "Margin on your revenue: needs action below (%)",
+          "noShowWatchPct": "Missed appointments: keep an eye on it above (%)",
+          "noShowAlertPct": "Missed appointments: needs action above (%)",
+          "taxPeriodSoonDays": "Remind me to prepare the GST/QST return this many days before the period ends"
+        },
+        "fixed": "These values are set by Akinaza and cannot be changed for now. Each figure still shows how it is judged.",
+        "save": "Save my thresholds",
+        "reset": "Back to the usual values",
+        "saved": "Saved. Your figures now use these thresholds.",
+        "evenness": "If an action threshold would be gentler than its watch threshold, it is moved to match, so a figure never contradicts itself."
+      }
     },
     "lexicon": {
       "title": "Lexique",

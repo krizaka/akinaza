@@ -267,6 +267,13 @@
       "when": 1795000006000,
       "tag": "0037_privacy",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1795000007000,
+      "tag": "0038_shop_figure_rules",
+      "breakpoints": true
     }
   ]
 }

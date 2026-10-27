@@ -41,6 +41,7 @@ export function BoutiqueHub({ locale, shopId, allowed, tabs, preview, current, s
       languages: say("boutique.sections.languages"),
       team: say("boutique.sections.team"),
       invoices: say("boutique.sections.invoices"),
+      figures: say("boutique.sections.figures"),
       shops: say("boutique.sections.shops"),
     },
   });

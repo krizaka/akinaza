@@ -1610,7 +1610,8 @@
         "languages": "Langues",
         "team": "Équipe",
         "invoices": "Courriels de facture",
-        "shops": "Vos boutiques"
+        "shops": "Vos boutiques",
+        "figures": "Seuils des chiffres"
       },
       "invoices": {
         "title": "Courriels de facture",
@@ -1622,6 +1623,10 @@
         "current": "Cette boutique",
         "open": "Ouvrir cette boutique",
         "add": "Ajouter une boutique"
+      },
+      "figures": {
+        "title": "Seuils des chiffres",
+        "lead": "Quand un chiffre demande un coup d’œil, et quand il demande d’agir. Seul cela change : les montants et les formules, jamais."
       }
     },
     "shopPage": {
@@ -2460,7 +2465,28 @@
       "lexiconTerms": "Les mots employés ici",
       "never": "Akinaza prépare ces chiffres. Vous les vérifiez et vous produisez vos déclarations vous-même.",
       "formulaHere": "{formula} Ici : {terms}.",
-      "updatedLabel": "Mis à jour"
+      "updatedLabel": "Mis à jour",
+      "rules": {
+        "title": "Quand un chiffre demande votre attention",
+        "hint": "Valeur habituelle {usual}. Vous pouvez la régler entre {min} et {max}.",
+        "hintDays": "Valeur habituelle {usual} jours. Vous pouvez la régler entre {min} et {max}.",
+        "fields": {
+          "overdueWatchPct": "Factures en retard : à surveiller au-dessus de (%)",
+          "overdueAlertPct": "Factures en retard : à traiter au-dessus de (%)",
+          "collectedWatchPct": "Encaissé sur ce que vous avez facturé : à surveiller sous (%)",
+          "collectedAlertPct": "Encaissé sur ce que vous avez facturé : à traiter sous (%)",
+          "marginWatchPct": "Marge sur votre chiffre d’affaires : à surveiller sous (%)",
+          "marginAlertPct": "Marge sur votre chiffre d’affaires : à traiter sous (%)",
+          "noShowWatchPct": "Rendez-vous manqués : à surveiller au-dessus de (%)",
+          "noShowAlertPct": "Rendez-vous manqués : à traiter au-dessus de (%)",
+          "taxPeriodSoonDays": "Me rappeler de préparer la déclaration TPS/TVQ ce nombre de jours avant la fin de la période"
+        },
+        "fixed": "Ces valeurs sont fixées par Akinaza et ne peuvent pas être changées pour l’instant. Chaque chiffre montre quand même comment il est jugé.",
+        "save": "Enregistrer mes seuils",
+        "reset": "Revenir aux valeurs habituelles",
+        "saved": "Enregistré. Vos chiffres utilisent maintenant ces seuils.",
+        "evenness": "Si un seuil « à traiter » était plus doux que le seuil « à surveiller », il est ramené au même niveau : un chiffre ne se contredit jamais."
+      }
     },
     "lexicon": {
       "title": "Lexique",
