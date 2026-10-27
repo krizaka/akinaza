@@ -34,6 +34,7 @@ export const routes = {
   invoices: (locale: Locale, shop: string) => app(locale, shop, "invoices"),
   newInvoice: (locale: Locale, shop: string, client?: string) => `${app(locale, shop, "invoices", "new")}${query({ client })}`,
   books: (locale: Locale, shop: string, period?: string) => `${app(locale, shop, "books")}${query({ period })}`,
+  figures: (locale: Locale, shop: string) => app(locale, shop, "figures"),
   boutique: (locale: Locale, shop: string) => app(locale, shop, "boutique"),
   profile: (locale: Locale) => app(locale, "profile"),
 } as const;

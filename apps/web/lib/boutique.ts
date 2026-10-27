@@ -8,23 +8,23 @@ import type { SettingsNavGroup } from "@krizaka/ui/settings-layout";
  */
 
 /** The sections of « Ma page boutique » (#265, #266) and the shop as a place (B45: the wall, the video and profiles, the board, the reviews), each one save of its own. */
-export const PAGE_TABS = ["identity", "texts", "contact", "offer", "media", "look", "wall", "reels", "board", "reviews", "publish"] as const;
+export const PAGE_TABS = ["identity", "texts", "contact", "offer", "media", "composer", "look", "wall", "reels", "board", "reviews", "publish"] as const;
 export type PageTab = (typeof PAGE_TABS)[number];
 
 /** The permission each tab takes: the shop's identity and publication are the owner's (`settings`); what is pinned on the page is the owner's and the manager's (`catalogue`, #180). */
-export const PAGE_TAB_NEEDS: Record<PageTab, ShopPermission> = { identity: "settings", texts: "settings", contact: "settings", offer: "settings", media: "settings", look: "settings", wall: "catalogue", reels: "catalogue", board: "catalogue", reviews: "catalogue", publish: "settings" };
+export const PAGE_TAB_NEEDS: Record<PageTab, ShopPermission> = { identity: "settings", texts: "settings", contact: "settings", offer: "settings", media: "settings", composer: "catalogue", look: "settings", wall: "catalogue", reels: "catalogue", board: "catalogue", reviews: "catalogue", publish: "settings" };
 
 /** The tabs a role may open, in the hub's order. */
 export const pageTabsAllowed = (allows: (permission: ShopPermission) => boolean): PageTab[] => PAGE_TABS.filter((tab) => allows(PAGE_TAB_NEEDS[tab]));
 
-export const BOUTIQUE_SECTIONS = ["page", "languages", "team", "invoices", "shops"] as const;
+export const BOUTIQUE_SECTIONS = ["page", "languages", "team", "invoices", "agenda", "figures", "data", "shops"] as const;
 export type BoutiqueSection = (typeof BOUTIQUE_SECTIONS)[number];
 
 export const isBoutiqueSection = (value: string): value is BoutiqueSection => (BOUTIQUE_SECTIONS as readonly string[]).includes(value);
 export const isPageTab = (value: string | undefined): value is PageTab => (PAGE_TABS as readonly string[]).includes(value ?? "");
 
 /** The permission each section takes (the role table decides who holds it). The team is the manager's; the shop's settings are the owner's. */
-export const BOUTIQUE_NEEDS: Record<BoutiqueSection, ShopPermission> = { page: "catalogue", languages: "settings", team: "team", invoices: "settings", shops: "settings" };
+export const BOUTIQUE_NEEDS: Record<BoutiqueSection, ShopPermission> = { page: "catalogue", languages: "settings", team: "team", invoices: "settings", agenda: "bookings", figures: "settings", data: "privacy", shops: "settings" };
 
 /** The sections a role may open, in the hub's order. A staff member opens none: the rail does not offer Boutique to them. */
 export function boutiqueSectionsAllowed(allows: (permission: ShopPermission) => boolean): BoutiqueSection[] {
@@ -40,6 +40,9 @@ export interface BoutiqueNavWords {
   languages: string;
   team: string;
   invoices: string;
+  agenda: string;
+  figures: string;
+  data: string;
   shops: string;
 }
 
@@ -56,6 +59,9 @@ export function boutiqueGroups({ allowed, tabs = PAGE_TABS, href, current, words
   const business = [
     ...(has("team") ? [{ id: "team", label: words.team, href: href("team"), current: current.section === "team" }] : []),
     ...(has("invoices") ? [{ id: "invoices", label: words.invoices, href: href("invoices"), current: current.section === "invoices" }] : []),
+    ...(has("agenda") ? [{ id: "agenda", label: words.agenda, href: href("agenda"), current: current.section === "agenda" }] : []),
+    ...(has("figures") ? [{ id: "figures", label: words.figures, href: href("figures"), current: current.section === "figures" }] : []),
+    ...(has("data") ? [{ id: "data", label: words.data, href: href("data"), current: current.section === "data" }] : []),
     ...(has("shops") ? [{ id: "shops", label: words.shops, href: href("shops"), current: current.section === "shops" }] : []),
   ];
   return [

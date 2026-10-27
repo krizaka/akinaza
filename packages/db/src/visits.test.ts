@@ -7,7 +7,8 @@ import { dependants, mailOutbox, staff, visitReports } from "./schema";
 import { addStaff, addWindow, bookVisit, ShopError, revealAccessNotes, setAccessNotes } from "./service-shop";
 import { freshDatabase, refusal } from "./test/db";
 import { account, NOW, walkerShop } from "./test/fixtures";
-import { checkIn, checkOut, clientBookings, dayVisits, visitDays, enqueueMail, exportClient, issueReportLink, markMailAttempt, markMailSent, pendingMail, reportByToken, reportForClient, reportPhoto, saveReport, shopClients } from "./visits";
+import { checkIn, checkOut, clientBookings, dayVisits, visitDays, enqueueMail, issueReportLink, markMailAttempt, markMailSent, pendingMail, reportByToken, reportForClient, reportPhoto, saveReport, shopClients } from "./visits";
+import { exportClient } from "./privacy";
 import { eraseClient, issueInvoice, recordConsent } from "./shop-ops";
 
 let t: Awaited<ReturnType<typeof freshDatabase>>;
@@ -183,11 +184,14 @@ describe("Loi 25 — access and erasure", () => {
     await checkOut(t.db, w.shopId, appointmentId, afterWalk);
     await saveReport(t.db, { shopId: w.shopId, bookingId: rex, note: "Belle sortie", photo: { bytes: JPEG } });
     const data = await exportClient(t.db, key, w.camille.clientId);
-    expect(data.file).toMatchObject({ fullName: "Camille Tremblay", email: "camille-export@example.test", accessNotes: "Code 1234" });
-    expect(data.dependants).toEqual([{ kind: "dog", name: "Rex", profile: { breed: "Labrador", size: "large" } }]);
-    expect(data.consents.map((c) => c.purpose)).toEqual(["service", "reminders"]);
-    expect(data.bookings[0]).toMatchObject({ dependant: "Rex", report: { note: "Belle sortie", durationMinutes: 108 } });
-    expect(Buffer.from(data.photos[0]!.base64, "base64").equals(JPEG)).toBe(true);
+    const m = data.modules as { client_file: { file: unknown; dependants: unknown }; consents: Array<{ purpose: string }>; visits: { bookings: unknown[]; photos: Array<{ base64: string }> } };
+    expect(data).toMatchObject({ format: 1, subject: { kind: "client", id: w.camille.clientId } });
+    expect(Object.keys(data.modules)).toEqual(["client_file", "visits", "invoices", "requests", "consents"]);
+    expect(m.client_file.file).toMatchObject({ fullName: "Camille Tremblay", email: "camille-export@example.test", accessNotes: "Code 1234" });
+    expect(m.client_file.dependants).toEqual([{ kind: "dog", name: "Rex", profile: { breed: "Labrador", size: "large" } }]);
+    expect(m.consents.map((c) => c.purpose)).toEqual(["service", "reminders"]);
+    expect(m.visits.bookings[0]).toMatchObject({ dependant: "Rex", report: { note: "Belle sortie", durationMinutes: 108 } });
+    expect(Buffer.from(m.visits.photos[0]!.base64, "base64").equals(JPEG)).toBe(true);
     // Not another client's data.
     expect(JSON.stringify(data)).not.toContain("Luna");
   });

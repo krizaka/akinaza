@@ -1,12 +1,13 @@
 import { createHash, randomBytes } from "node:crypto";
 
-import { consentsInForce, type DependantProfile, localDay, sniffImage, visitMinutes } from "@akinaza/core";
+import { type ConsentPurpose, consentsInForce, type DependantProfile, localDay, sniffImage, visitMinutes } from "@akinaza/core";
 import { addDays } from "date-fns";
 import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 
 import type { Db } from "./client";
+import { agendaConflicts } from "./calendar-connections";
 import { openField } from "./crypto";
-import { appointments, bookings, clientConsents, clients, dependants, mailOutbox, services, shops, shopZones, staff, visitReports } from "./schema";
+import { appointments, bookings, clients, dependants, mailOutbox, services, shops, shopZones, staff, visitReports } from "./schema";
 import { ShopError } from "./service-shop";
 
 /**
@@ -39,6 +40,8 @@ export interface DayVisit {
   checkedInAt: string | null;
   checkedOutAt: string | null;
   bookings: DayBooking[];
+  /** The label of the owner's other calendar this visit overlaps (« Google »…), or null: Akinaza flags it and deletes neither side (ADR-004). */
+  agendaConflict: string | null;
 }
 
 /** The worker's visits of one local day (cancelled ones excluded), with who and what is booked on each. */
@@ -60,6 +63,7 @@ export async function dayVisits(db: Db, shopId: string, day: string, scope: Agen
     .where(and(eq(appointments.shopId, shopId), scope.staffAccountId ? assignedTo(scope.staffAccountId) : undefined, sql`${appointments.status} <> 'cancelled'`, sql`(lower(${appointments.during}) AT TIME ZONE ${shop.timezone})::date = ${day}::date`))
     .orderBy(sql`lower(${appointments.during})`);
   if (visits.length === 0) return [];
+  const conflicts = await agendaConflicts(db, visits.map((v) => v.a.id));
   const rows = await db
     .select({
       bookingId: bookings.id,
@@ -92,6 +96,7 @@ export async function dayVisits(db: Db, shopId: string, day: string, scope: Agen
     zone: v.zone,
     checkedInAt: v.a.checkedInAt?.toISOString() ?? null,
     checkedOutAt: v.a.checkedOutAt?.toISOString() ?? null,
+    agendaConflict: conflicts.get(v.a.id) ?? null,
     bookings: rows
       .filter((r) => r.appointmentId === v.a.id)
       .map((r) => ({
@@ -255,8 +260,9 @@ export async function issueReportLink(db: Db, shopId: string, bookingId: string,
       | undefined;
     if (!row) return refuse("AK_NO_REPORT");
     if (row.erased_at || !row.email) return refuse("AK_CLIENT_UNREACHABLE");
-    const history = await tx.select().from(clientConsents).where(eq(clientConsents.clientId, row.client_id)).orderBy(desc(clientConsents.id));
-    if (!consentsInForce(history.map((h) => ({ purpose: h.purpose, granted: h.granted, textVersion: h.textVersion, at: h.at }))).service) refuse("AK_NO_CONSENT");
+    // The consents live in the privacy module (akinaza#370): the last word on the service purpose is the one in force.
+    const history = await tx.execute(sql`SELECT purpose, granted, version, at FROM privacy.consent WHERE subject_kind = 'client' AND subject_id = ${row.client_id} ORDER BY seq DESC`);
+    if (!consentsInForce((history.rows as Array<{ purpose: ConsentPurpose; granted: boolean; version: string; at: Date | string }>).map((h) => ({ purpose: h.purpose, granted: h.granted, textVersion: h.version, at: new Date(h.at) }))).service) refuse("AK_NO_CONSENT");
     const token = `rp1.${randomBytes(32).toString("base64url")}`;
     const expiresAt = addDays(now, row.report_link_days);
     await tx.update(visitReports).set({ viewTokenHash: reportTokenHash(token), tokenExpiresAt: expiresAt }).where(eq(visitReports.id, row.report_id));
@@ -407,22 +413,3 @@ export async function markMailAttempt(db: Db, id: string, error: string, maxAtte
   return (result.rows[0] as { status: "pending" | "failed" }).status;
 }
 
-/** Everything held about a client, in one object — their right of access (Loi 25). Access notes are opened for them. */
-export async function exportClient(db: Db, key: Buffer, clientId: string) {
-  const [client] = await db.select().from(clients).where(eq(clients.id, clientId));
-  if (!client || client.erasedAt) return refuse("AK_CLIENT_UNKNOWN");
-  const [shop] = await db.select({ name: shops.name }).from(shops).where(eq(shops.id, client.shopId));
-  const consents = await db.select().from(clientConsents).where(eq(clientConsents.clientId, clientId)).orderBy(asc(clientConsents.id));
-  const pets = await db.select().from(dependants).where(eq(dependants.clientId, clientId)).orderBy(asc(dependants.name));
-  const visits = await clientBookings(db, clientId);
-  const photos = await db.execute(sql`SELECT r.id, encode(r.photo, 'base64') AS data, r.photo_type FROM visit_reports r JOIN bookings b ON b.id = r.booking_id WHERE b.client_id = ${clientId} AND r.photo IS NOT NULL`);
-  return {
-    exportedFor: "Loi 25 — right of access",
-    shop: shop?.name ?? null,
-    file: { fullName: client.fullName, email: client.email, phone: client.phone, language: client.language, notes: client.notes, createdAt: client.createdAt.toISOString(), accessNotes: client.accessNotesEnc ? openField(client.accessNotesEnc, key, clientId) : null },
-    consents: consents.map((c) => ({ purpose: c.purpose, granted: c.granted, textVersion: c.textVersion, at: c.at.toISOString() })),
-    dependants: pets.map((p) => ({ kind: p.kind, name: p.name, profile: p.profile })),
-    bookings: visits.map((v) => ({ startsAt: v.startsAt, service: v.service, zone: v.zone, dependant: v.dependantName, status: v.status, report: v.report ? { note: v.report.note, durationMinutes: v.report.durationMinutes, photoId: v.report.hasPhoto ? v.report.id : null } : null })),
-    photos: (photos.rows as { id: string; data: string; photo_type: string }[]).map((p) => ({ reportId: p.id, type: p.photo_type, base64: p.data })),
-  };
-}

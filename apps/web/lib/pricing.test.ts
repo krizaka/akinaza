@@ -16,7 +16,7 @@ import { SETTINGS } from "./settings";
 
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const read = (p: string) => readFileSync(join(ROOT, p), "utf8");
-const catalogue = JSON.parse(read("payments/catalogue.json")) as { plans: Array<Record<string, unknown>> };
+const catalogue = JSON.parse(read("infra/payments/catalogue.json")) as { plans: Array<Record<string, unknown>> };
 
 /** Every source file under a folder (tests excluded), for the « never a fee » scan. */
 function sources(dir: string): string[] {

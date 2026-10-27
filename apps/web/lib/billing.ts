@@ -1,4 +1,4 @@
-import { applyOnce, type PaymentEvent, pgEventStore } from "@krizaka/payments";
+import { applyOnceInTransaction, type PaymentEvent, type Query as TxQuery } from "@krizaka/payments";
 import type { QueryResultRow } from "pg";
 
 /**
@@ -75,14 +75,21 @@ export async function soldVersionOf(query: Query, accountId: string): Promise<st
   return r?.version ?? null;
 }
 
-/** Applies a verified payment event once (@krizaka/payments records its id first): a replay changes nothing. */
-export function applyPaymentEvent(query: Query, event: PaymentEvent): Promise<"applied" | "duplicate" | "ignored"> {
-  return applyOnce(pgEventStore(query), event, {
-    async subscription_started(e) {
+/** The transaction runner of the product's pool (`transaction` of `lib/db`): commit when the work returns, roll back when it throws. */
+export type Transaction = <T>(work: (query: TxQuery) => Promise<T>) => Promise<T>;
+
+/**
+ * Applies a verified payment event once, recording its id and writing its effect in ONE transaction (akinaza#269): a handler
+ * that throws rolls both back, so the processor's retry applies the event; a replay changes nothing. The record is the
+ * `payment_events` table.
+ */
+export function applyPaymentEvent(transaction: Transaction, event: PaymentEvent): Promise<"applied" | "duplicate" | "ignored"> {
+  return applyOnceInTransaction(transaction, event, {
+    async subscription_started(e, query) {
       if (e.customerId) await query("UPDATE accounts SET payment_customer_id = COALESCE(payment_customer_id, $2) WHERE id = $1", [e.accountId, e.customerId]);
       await query("UPDATE accounts SET payment_subscription_id = $2, subscription_status = COALESCE(subscription_status, 'active') WHERE id = $1", [e.accountId, e.subscriptionId]);
     },
-    async subscription_changed(e) {
+    async subscription_changed(e, query) {
       const rows = await query(
         `UPDATE accounts SET subscription_status = $3, payment_subscription_id = $4, current_period_end = to_timestamp($5)
            WHERE payment_customer_id = $1 OR id::text = $2 RETURNING id`,
@@ -90,5 +97,5 @@ export function applyPaymentEvent(query: Query, event: PaymentEvent): Promise<"a
       );
       return rows.length ? undefined : "ignored";
     },
-  });
+  }, { table: { schema: "public", table: "payment_events" } });
 }

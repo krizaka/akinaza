@@ -101,3 +101,35 @@ export const meAnswer = z.object({
   account: z.object({ id: z.string().optional(), name: z.string().nullable(), email: z.string(), avatarSeed: z.string().nullable() }).optional(),
 });
 export type MeAnswer = z.infer<typeof meAnswer>;
+
+// ---- the explained figures (#260): what GET /api/walker/figures answers -------------------------------------------------------------------------
+
+const figureTerm = z.object({ label: z.string(), value: z.number(), unit: z.enum(["cents", "count", "percent"]), op: z.enum(["+", "−", "×", "÷"]).optional() });
+export const figureAnswer = z.object({
+  id: z.string(),
+  value: z.number(),
+  unit: z.enum(["cents", "count", "percent"]),
+  rate: z.number().nullable(),
+  formula: z.array(figureTerm),
+  lexicon: z.array(z.string()),
+  sources: z.array(z.object({ kind: z.enum(["invoice", "expense", "payment", "appointment"]), ids: z.array(z.string()), count: z.number() })),
+  period: z.object({ start: z.string(), end: z.string() }).nullable(),
+  computedAt: z.string(),
+  cadence: z.enum(["onChange", "daily"]),
+  staleAfterHours: z.number(),
+  state: z.enum(["good", "watch", "alert", "info"]),
+});
+export type FigureAnswer = z.infer<typeof figureAnswer>;
+
+export const nextActionAnswer = z.object({
+  kind: z.string(),
+  urgency: z.enum(["now", "soon", "week"]),
+  impactCents: z.number(),
+  why: z.record(z.string(), z.union([z.string(), z.number()])),
+  target: z.object({ route: z.enum(["invoice", "invoices", "books", "hours"]) }).passthrough(),
+  evidence: z.array(z.string()),
+});
+export type NextActionAnswer = z.infer<typeof nextActionAnswer>;
+
+export const figuresAnswer = z.object({ period: z.object({ start: z.string(), end: z.string() }), figures: z.array(figureAnswer), actions: z.array(nextActionAnswer) });
+export type FiguresAnswer = z.infer<typeof figuresAnswer>;

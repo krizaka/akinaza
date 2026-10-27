@@ -1,18 +1,21 @@
 
-import { localDay } from "@akinaza/core";
-import { communityOf, teamDay } from "@akinaza/db";
+import { demoLookDocument, demoLooksOf, localDay } from "@akinaza/core";
+import { communityOf, publishedShopPage, shopAccentOf, teamDay } from "@akinaza/db";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
-import { Storefront } from "@/components/shop/Storefront";
+import { DemoLookSwitch } from "@/components/shop/DemoLookSwitch";
+import { ShopPageView } from "@/components/shop/ShopPageView";
 import { StorefrontLive } from "@/components/shop/StorefrontLive";
-import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { reviewRules } from "@/lib/community";
 import { buildCommunity } from "@/lib/community-view";
 import { db } from "@/lib/db";
 import { proposedDefaults } from "@/lib/default-media-settings";
 import { asLocale, asPageLocale, getDictionary, uiLocaleOf } from "@/lib/i18n";
+import { SESSION_COOKIE } from "@/lib/session";
 import { appSettings, shopSectionFeatures } from "@/lib/settings";
 import { loadPublicShop, loadPublicShopOrMove } from "@/lib/shop-page";
 import { buildStorefront } from "@/lib/storefront";
@@ -31,8 +34,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /** A shop's public page: the cover, the services as cards, the next free times (the real availability), the hours, the areas on a map, who you will meet, the way in. */
-export default async function ShopPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+export default async function ShopPage({ params, searchParams }: { params: Promise<{ locale: string; slug: string }>; searchParams: Promise<{ look?: string }> }) {
   const { locale: raw, slug } = await params;
+  const { look } = await searchParams;
   const content = asPageLocale(raw);
   const locale = uiLocaleOf(content);
   const page = await loadPublicShopOrMove(content, slug);
@@ -40,15 +44,24 @@ export default async function ShopPage({ params }: { params: Promise<{ locale: s
   // A language the owner has not turned on is the source language (the address of a language that is off never 404s, never shows a half page).
   if (!page.languages.enabled.includes(content)) redirect(`/${page.languages.source}/s/${slug}`);
   const now = new Date();
+  // No session cookie: the bar is the signed-out one with no script for the session (the island asks `/api/me` only for someone who may be signed in).
+  const anonymous = !(await cookies()).has(SESSION_COOKIE);
+  const live = await appSettings().get("realtime.storefront.enabled");
   // Who is here today, computed on the server from bare time ranges: the page receives a state per first name, nothing else.
-  const [team, enabledUpcomingSections, community, rules] = await Promise.all([teamDay(db(), page.shop.id, now), shopSectionFeatures(), communityOf(db(), page.shop.id), reviewRules()]);
+  const [team, enabledUpcomingSections, community, rules, document] = await Promise.all([teamDay(db(), page.shop.id, now), shopSectionFeatures(), communityOf(db(), page.shop.id), reviewRules(), publishedShopPage(db(), page.shop.id)]);
+  const accent = (await shopAccentOf(db(), page.shop.id)) ?? undefined;
   const placed = buildCommunity({ community, locale, today: localDay(now, page.shop.timezone), rules, enabled: enabledUpcomingSections });
   const view = buildStorefront({ page, locale, contentLocale: content, now, teamDay: team, enabledUpcomingSections, community: placed, defaults: await proposedDefaults(page) });
+  // The demo shops offer the other compositions of Krizaka UI (`?look=`); any other shop ignores the parameter.
+  const other = demoLookDocument(slug, look);
+  const looks = demoLooksOf(slug);
+  const shown = other ? looks.find((l) => l.id === look)!.id : looks[0]?.id ?? "";
   return (
     <>
-      <SiteHeader locale={locale} current="home" path={`/${content}/s/${slug}`} languages={page.languages.enabled} contentLocale={content} />
-      <StorefrontLive slug={slug} enabled={await appSettings().get("realtime.storefront.enabled")} />
-      <Storefront view={view} locale={locale} />
+      <SiteHeader locale={locale} current="home" path={`/${content}/s/${slug}`} languages={page.languages.enabled} contentLocale={content} anonymous={anonymous} />
+      {live ? <StorefrontLive slug={slug} enabled /> : null}
+      <DemoLookSwitch slug={slug} current={shown} path={`/${content}/s/${slug}`} locale={locale} />
+      <main id="content" data-shop-look={shown || undefined}><ShopPageView page={other ?? document.page} view={view} locale={locale} accent={other ? undefined : accent} today={localDay(now, page.shop.timezone)} /></main>
       <SiteFooter locale={locale} />
     </>
   );

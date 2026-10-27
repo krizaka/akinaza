@@ -6,6 +6,8 @@
 const WEBHOOK_TICK_MS = 10_000;
 // @fixed: how often the Monday brief e-mails are looked at (each is due from Monday 7:00 in its shop's zone), in milliseconds
 const BRIEF_TICK_MS = 900_000;
+// @fixed: how often the connected calendars that are due are looked at, in milliseconds (each has its own interval, set by the administrator)
+const CALENDAR_TICK_MS = 60_000;
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
@@ -25,4 +27,9 @@ export async function register() {
   // The Monday brief by e-mail: claimed per shop and week in the database, so several instances never send twice.
   const { sendDueBriefsAt } = await import("./app/brief-edge");
   setInterval(() => void sendDueBriefsAt(systemClock.now()).catch((error) => console.error("[akinaza] brief tick failed", error)), BRIEF_TICK_MS).unref();
+  // The owner's other calendars (ADR-004): the due ones are read, leased in the database so several instances never read the same one.
+  const { syncDueCalendars } = await import("./lib/calendar/sync");
+  const { dataKey } = await import("./lib/env");
+  const { calendarSourceMaker } = await import("./app/calendar-edge");
+  setInterval(() => void calendarSourceMaker().then((make) => syncDueCalendars(systemClock.now(), dataKey(), make)).catch((error) => console.error("[akinaza] calendar tick failed", error)), CALENDAR_TICK_MS).unref();
 }

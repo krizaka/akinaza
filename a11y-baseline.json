@@ -1,0 +1,21 @@
+{
+  "app": "akinaza",
+  "rules": {
+    "heading-order": {
+      "impact": "moderate",
+      "count": 8
+    },
+    "landmark-complementary-is-top-level": {
+      "impact": "moderate",
+      "count": 12
+    },
+    "landmark-unique": {
+      "impact": "moderate",
+      "count": 4
+    },
+    "region": {
+      "impact": "moderate",
+      "count": 12
+    }
+  }
+}

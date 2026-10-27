@@ -13,11 +13,11 @@ export function accountSectionsFor(role: ShopRole | null): AccountSection[] {
   return ACCOUNT_SECTIONS.filter((id) => id !== "subscription" || role === null || may(role, "billing"));
 }
 
-type RoleWords = { roleAdmin: string; roleUser: string; roleIn: string; shopRoles: Record<ShopRole, string> };
+type RoleWords = { roleAdmin: string; roleIn: string; shopRoles: Record<ShopRole, string> };
 
-/** What the account is, read only on the profile: an administrator, « Propriétaire chez <shop> » / « Employé chez <shop> », or a member. */
-export function accountRoleLine(words: RoleWords, who: { admin: boolean; member: { role: ShopRole; shop: { name: string } } | null }): string {
+/** What the account is, read only on the profile: an administrator, « Propriétaire chez <shop> » / « Employé chez <shop> »; nothing for a client, who holds no role anywhere (akinaza#440). */
+export function accountRoleLine(words: RoleWords, who: { admin: boolean; member: { role: ShopRole; shop: { name: string } } | null }): string | null {
   if (who.admin) return words.roleAdmin;
-  if (!who.member) return words.roleUser;
+  if (!who.member) return null;
   return format(words.roleIn, { role: words.shopRoles[who.member.role], shop: who.member.shop.name });
 }

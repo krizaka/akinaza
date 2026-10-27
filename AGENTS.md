@@ -15,8 +15,9 @@
   `fetch` in a client `useEffect`, no hand-written `<table>` or multi-field `<form>`.
 
 - **Storefront photos are uploaded by the owner** (`/api/walker/media/upload`): JPEG/PNG/WebP checked by bytes, ≤ 2 MB after the
-  phone redraws them, stored content-hashed under `user/akinaza/shops/<shop>/` of the media storage (`MEDIA_STORAGE_*`,
-  `MEDIA_CDN_HOSTNAME`), only the CDN address kept. Off (503, the owner pastes an address) until the storage is configured.
+  phone redraws them, stored content-hashed under `user/akinaza/shops/<shop>/` of the media storage by `@krizaka/storage` (`lib/media-storage.ts`; the
+  administrator's `storage.*` settings over `MEDIA_STORAGE_*` / `MEDIA_CDN_HOSTNAME`; no local copy of the upload code, nothing
+  encrypted since the files are public on the CDN), only the CDN address kept; the keys published before the package stay valid. Off (503, the owner pastes an address) until the storage is configured.
 
 - **Proposed images and videos (#267).** So that no section of a storefront is empty, each trade (`SHOP_TYPES` in `@akinaza/core`: salon, coaching,
   workshop, cleaning, pets, consulting - never a restaurant or a bar) has default media for the slots `cover` (image + silent loop), `gallery` and `service`
@@ -52,9 +53,16 @@
   difference is shown — never silently adopted.
 - **Restaurants, cafés, bars and bakeries are excluded** (a sales recording system certified MEV-WEB is required in Québec): the database refuses those shop kinds. Akinaza targets service businesses only.
   The point of sale stays a stub behind `APP_POS_ENABLED`. **Subscription payments (prices are a catalogue the administrator edits at `/console/prices`, ADR-009, akinaza#371: the founder offer 39 $ CAD/month plus taxes for the first businesses by its `founderCap` limit; Starter 45 $ and Scale B2B 99 $ plus taxes, public, Scale's B2B features « soon »; 0 % on cards, a capped debit fee per order; the seed in `apps/web/lib/pricing.ts`, read only through `lib/price-catalogue.ts`; a subscription keeps the version it was sold at) go through a payments port** (`apps/web/lib/payments`, ADR-003): the vendor is configuration (`PAYMENTS_PROVIDER`), the price is data at the vendor, the webhook is verified and idempotent; the offer shows only when `APP_FOUNDER_OFFER_ENABLED`. No merchant payment (the shop's own sales) is wired.
-- **Loi 25 by design.** Data in Canada, encrypted at rest (the managed database's volumes); consent per purpose, never
-  pre-ticked, append-only; erasure blanks every personal field and keeps the invoices tax law requires (six years). The
-  Loi 25 pack of Orazaka (orazaka-packs#14) is reused for the consent texts and the incident register when it lands.
+- **Loi 25 by design.** Consent per purpose, never pre-ticked, append-only; the access, portability and erasure of a client file are
+  `@krizaka/privacy` (akinaza#370): the subject is `{ kind: "client", id }`, `packages/db/src/privacy.ts` registers one contributor per
+  module (the file, the visits, the invoices, the requests, the consents), `exportClient` assembles the document, `eraseClient` runs every
+  contributor in one transaction and withdraws the live consents; the shop's owner answers a client from the console
+  (`/api/walker/clients/[id]/export` and `/erase`, permission `privacy`, audited). Retention is data (`RETENTION_RULES`,
+  `@akinaza/core`): invoices, their lines, payments and the tax ledger stay six years (the erasure blanks the person, keeps the row); a
+  new table that holds personal data gets a contributor and a rule. The privacy impact assessment, the register of transfers outside
+  Québec (`docs/privacy/`, tested against `deploy/digitalocean/app.yaml`) and the claims the lawyer reads (krizaka/.github#250) are the
+  published position: a public text states a place or a flow only where the code or the spec proves it (`public-claims.test.ts`,
+  `transfers.test.ts`). Canadian hosting is planned, not claimed.
 - **No AI in the product, in its screens or its words.** Akinaza says what it does (appointments, invoices, tax figures) in plain words; never « IA », « intelligent » or « révolutionnaire ». If a model is ever needed, it goes through Orazaka, behind a port, and the epic krizaka/akinaza#161 is reopened first.
   **One model is now involved (2026-10-23, #258, decision recorded on #161): translating the shop page's texts.** It goes through the `TranslationPort`
   (`packages/db/src/translation-port.ts`; the adapter in `apps/web/lib/translation.ts` calls the Orazaka Studio `text-translation`, krizaka/orazaka-packs#119).
@@ -172,3 +180,5 @@ These are the defects code review found most often on 2026-10-23. Check them you
 - **A bug means a missing guard** ([standard](https://github.com/krizaka/.github/blob/main/docs/standards/bug-means-missing-guard.md)): the fix PR first adds a guard that fails on `main`, then fixes the bug; the bug issue says why the guards missed it.
 
 - **Default media** (avatars, banners, logos): their URLs come from the Krizaka org JSON (`@krizaka/org`: `listDefaults(kind)`, `defaultFor(kind, seed)`) — never hard-coded or bundled in this repository; a folder is never given a person. [Standard](https://github.com/krizaka/.github/blob/main/docs/standards/default-media.md).
+
+**Repository layout:** the root follows [krizaka/.github `docs/standards/repo-layout.md`](https://github.com/krizaka/.github/blob/main/docs/standards/repo-layout.md); the CI guard `check-repo-layout` fails on a stray root file, and a justified extra is declared in `.repo-layout.json` with its why.

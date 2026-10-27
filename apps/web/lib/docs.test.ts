@@ -42,8 +42,8 @@ describe("the owner's guide (akinaza#382)", () => {
     expect(pagePath("en", "docs")).toBe("/en/docs");
   });
 
-  it("is in the bar (Product menu) and the footer", () => {
-    expect(read("components/SiteChrome.tsx")).toContain('page: "docs"');
+  it("is in the bar (a flat link) and the footer", () => {
+    expect(read("components/SiteChrome.tsx")).toContain('docs: pagePath(locale, "docs")');
     expect(read("components/SiteFooter.tsx")).toContain('pagePath(locale, "docs")');
   });
 
@@ -77,5 +77,14 @@ describe("the owner's guide (akinaza#382)", () => {
     expect(c.boutique.sections.languages).toBe("Languages");
     expect(c.boutique.sections.invoices).toBe("Invoice e-mails");
     expect(c.account.data.export).toBe("Export");
+  });
+});
+
+describe("the guide's hub lists the five pages once (akinaza#440)", () => {
+  it("keeps the list and drops the chips of the card above it", () => {
+    const hub = read("app/[locale]/docs/page.tsx");
+    expect(hub).toContain("links: []");
+    expect(hub.match(/DOC_IDS\.map/g)).toHaveLength(1);
+    expect(hub).toContain("popular={{");
   });
 });

@@ -1,8 +1,9 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { book, eraseClient, issueInvoice, recordConsent } from "./shop-ops";
-import { appointments, clientConsents, clients } from "./schema";
+import { consentHistoryOf } from "./privacy";
+import { appointments, clients } from "./schema";
 import { freshDatabase, refusal } from "./test/db";
 import { salon } from "./test/fixtures";
 
@@ -43,9 +44,9 @@ describe("the client file and Loi 25 (real PostgreSQL 16)", () => {
     const s = await salon(t.db);
     await recordConsent(t.db, s.client.id, "reminders", true, "2026-10-15");
     await recordConsent(t.db, s.client.id, "reminders", false, "2026-10-15");
-    const rows = await t.db.select().from(clientConsents).where(eq(clientConsents.clientId, s.client.id));
+    const rows = await consentHistoryOf(t.db, s.client.id);
     expect(rows.map((r) => r.granted)).toEqual([true, false]);
-    expect(await refusal(t.db.update(clientConsents).set({ granted: true }).where(eq(clientConsents.clientId, s.client.id)))).toMatch(/AK_WRITTEN_ONCE/);
+    expect(await refusal(t.db.execute(sql`UPDATE privacy.consent SET granted = true WHERE subject_id = ${s.client.id}`))).toMatch(/written once/);
   });
 
   it("erases a client's personal information but keeps the invoices that name them", async () => {

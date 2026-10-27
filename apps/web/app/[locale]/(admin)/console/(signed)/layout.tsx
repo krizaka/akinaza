@@ -11,7 +11,7 @@ export default async function SignedAdmin({ children, params }: { children: Reac
   if (!session) redirect(`/${locale}/sign-in`);
   if (!(await pageAdmin())) notFound();
   return (
-    <AppFrame locale={locale} email={session.account.email} base={`/${locale}`} items={["overview", "users", "shops", "invoices", "ledger", "operations", "organize", "prices", "audit"]} admin>
+    <AppFrame locale={locale} email={session.account.email} base={`/${locale}`} items={["overview", "users", "shops", "invoices", "ledger", "operations", "organize", "prices", "incidents", "audit"]}>
       {children}
     </AppFrame>
   );

@@ -10,8 +10,14 @@ export const HOME_SECTIONS = ["hero", "screens", "offer", "trust"] as const;
 /** The demo shop of the first proof: a dog walker in Saint-Henri (fictional, seeded). Its public page is real. */
 export const DEMO_SHOP = "pattes-saint-henri";
 
-/** The three jobs, each shown on a real screen of the app (lib/tour.ts has the captures). */
-export const SCREENS = [{ id: "book" }, { id: "invoice" }, { id: "books" }] as const;
+/**
+ * The three jobs, each shown by the real component of the app drawn with demo data (components/home/previews, lib/landing-demo.ts).
+ */
+export const SCREENS = [
+  { id: "book" },
+  { id: "invoice" },
+  { id: "books" },
+] as const;
 
 type DevPreview = { criteria: Record<string, { evidence?: string | null; na?: boolean | string }> };
 

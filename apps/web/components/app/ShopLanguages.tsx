@@ -47,7 +47,6 @@ function TextRow({ field, locale, translationOn }: { field: FieldView; locale: P
       <Field.Root>
         <Field.Label htmlFor={`${field.key}-${locale}`} className="sr-only">{label}</Field.Label>
         <Textarea id={`${field.key}-${locale}`} rows={field.field === "bio" ? 4 : 2} maxLength={2000} value={text} readOnly={!writable} onChange={(e) => setText(e.target.value)} />
-        {current.state === "own" ? <Field.Hint>{t("ownHint")}</Field.Hint> : null}
         {current.state === "stale" ? <Field.Hint>{t("staleHint")}</Field.Hint> : null}
       </Field.Root>
       {writable ? (
@@ -117,6 +116,7 @@ export function ShopLanguages({ data }: { data: LanguagesData }) {
             {data.translationOn ? <TranslateButton locale={l} label={t("translate")} /> : null}
           </div>
           <p className="m-0 text-sm text-fg-muted">{t("autoMark")}</p>
+          {data.fields.some((f) => f.languages[l]?.state === "own") ? <p className="m-0 text-sm text-fg-muted">{t("ownHint")}</p> : null}
           {data.translationOn ? <p className="m-0 text-xs text-fg-muted">{t("runs", { used: data.usedToday, limit: data.dailyLimit })}</p> : null}
           {data.fields.length ? (
             <ul className="m-0 flex list-none flex-col gap-4 p-0">

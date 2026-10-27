@@ -9,6 +9,7 @@ import Today from "../../app/[locale]/app/[shop]/aujourdhui";
 import Books from "../../app/[locale]/app/[shop]/books";
 import Boutique from "../../app/[locale]/app/[shop]/boutique";
 import Clients from "../../app/[locale]/app/[shop]/clients";
+import Figures from "../../app/[locale]/app/[shop]/figures";
 import Invoices from "../../app/[locale]/app/[shop]/invoices/index";
 import Home from "../../app/[locale]/app/index";
 
@@ -30,13 +31,13 @@ jest.mock("expo-linking", () => ({ openURL: jest.fn() }));
 
 /** The server, as the screens read it: one function per query, each test says what it answers. */
 jest.mock("@/config", () => {
-  const api = { day: jest.fn(), calendar: jest.fn(), clients: jest.fn(), invoices: jest.fn(), shop: jest.fn(), books: jest.fn(), me: jest.fn() };
+  const api = { day: jest.fn(), calendar: jest.fn(), clients: jest.fn(), invoices: jest.fn(), shop: jest.fn(), books: jest.fn(), figures: jest.fn(), me: jest.fn() };
   const q = (name: keyof typeof api) => (...args: unknown[]) => ({ queryKey: ["akinaza", name, ...args.map((a) => a ?? "-")], queryFn: () => (api[name] as (...a: unknown[]) => unknown)(...args) });
   return {
     api,
     akinaza: { checkIn: jest.fn(), checkOut: jest.fn() },
     webUrl: (path: string) => `https://www.akinaza.com${path}`,
-    queries: { day: q("day"), calendar: q("calendar"), clients: q("clients"), invoices: q("invoices"), shop: q("shop"), books: q("books"), me: q("me") },
+    queries: { day: q("day"), calendar: q("calendar"), clients: q("clients"), invoices: q("invoices"), shop: q("shop"), books: q("books"), figures: q("figures"), me: q("me") },
   };
 });
 const { api } = jest.requireMock("@/config") as { api: Record<string, jest.Mock> };
@@ -84,6 +85,63 @@ describe("the phone app's five tabs, each with its three states (D8)", () => {
     expect(api.day).toHaveBeenCalledWith("2026-10-20", SHOP);
     expect(api.calendar).toHaveBeenCalledWith("2026-10-17", "2026-10-30", SHOP);
     expect(screen.getByLabelText("Jour affiché")).toBeTruthy();
+  });
+
+  it("Aujourd'hui: a visit opens into its detail in the URL, and the detail begins it", async () => {
+    mockParams = { day: "2026-10-20", visit: "a1" };
+    api.day!.mockResolvedValue(day([{ ...visit, zone: "Saint-Henri", bookings: [{ bookingId: "b1", clientId: "c1", clientName: "Camille", clientPhone: "514-555-0199", dependant: { name: "Nelson", kind: "dog", profile: null }, hasAccessNotes: false, report: null }] }]));
+    await show(<Today />);
+    expect(await screen.findByText("Saint-Henri")).toBeTruthy();
+    expect(screen.getByText("Nelson · Camille")).toBeTruthy();
+    await fireEvent.press(screen.getByText("Commencer"));
+    const { akinaza } = jest.requireMock("@/config") as { akinaza: Record<string, jest.Mock> };
+    expect(akinaza.checkIn).toHaveBeenCalledWith("a1", SHOP);
+  });
+
+  it("Aujourd'hui: pressing a row of the list opens it (visit in the URL)", async () => {
+    mockParams = { day: "2026-10-20" };
+    api.day!.mockResolvedValue(day([visit]));
+    await show(<Today />);
+    await fireEvent.press(await screen.findByRole("button", { name: /Coupe/ }));
+    expect(mockRouter.setParams).toHaveBeenCalledWith({ visit: "a1" });
+  });
+
+  it("Vos chiffres: what to do now and each figure with its meaning, formula and sources; nothing is filed", async () => {
+    mockParams = {};
+    api.figures!.mockResolvedValue({
+      period: { start: "2026-07-01", end: "2026-09-30" },
+      figures: [{ id: "invoiced", value: 100_000, unit: "cents", rate: null, formula: [{ label: "invoicesSubtotal", value: 100_000, unit: "cents" }], lexicon: [], sources: [{ kind: "invoice", ids: ["i1"], count: 3 }], period: { start: "2026-07-01", end: "2026-09-30" }, computedAt: "2026-10-20T12:00:00.000Z", cadence: "onChange", staleAfterHours: 24, state: "good" }],
+      actions: [{ kind: "chase", urgency: "now", impactCents: 5_000, why: { number: "F-12", days: 9, amountCents: 5_000, others: 0, totalCents: 5_000 }, target: { route: "invoice", invoiceId: "i9" }, evidence: ["i9"] }],
+    });
+    await show(<Figures />);
+    expect(await screen.findByText("Relancer la facture F-12")).toBeTruthy();
+    expect(screen.getByText("Facturé")).toBeTruthy();
+    expect(screen.getByText("Sur la bonne voie")).toBeTruthy();
+    expect(screen.getByText(/vous produisez vos déclarations vous-même/)).toBeTruthy();
+    expect(api.figures).toHaveBeenCalledWith(SHOP);
+  });
+
+  it("Vos chiffres: a figure opens into its detail (formula, sources, freshness, lexique) from the URL", async () => {
+    mockParams = { figure: "margin" };
+    api.figures!.mockResolvedValue({
+      period: { start: "2026-07-01", end: "2026-09-30" },
+      figures: [{ id: "margin", value: 80_000, unit: "cents", rate: 80, formula: [{ label: "invoicesSubtotal", value: 100_000, unit: "cents" }, { label: "expensesBusinessShare", value: 20_000, unit: "cents", op: "−" }], lexicon: ["margin"], sources: [{ kind: "invoice", ids: ["i1"], count: 3 }], period: { start: "2026-07-01", end: "2026-09-30" }, computedAt: "2020-10-20T12:00:00.000Z", cadence: "onChange", staleAfterHours: 24, state: "watch" }],
+      actions: [],
+    });
+    await show(<Figures />);
+    expect(await screen.findByText("Comment c'est calculé")).toBeTruthy();
+    expect(screen.getByText(/3 factures/)).toBeTruthy();
+    expect(screen.getAllByText("Marge").length).toBe(2);
+    expect(screen.getByText(/Peut être périmé/)).toBeTruthy();
+    expect(screen.getByText("À valider par votre comptable.")).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "Vos chiffres" }));
+    expect(mockRouter.setParams).toHaveBeenCalledWith({ figure: undefined });
+  });
+
+  it("Vos chiffres: nothing to do says so", async () => {
+    api.figures!.mockResolvedValue({ period: { start: "2026-07-01", end: "2026-09-30" }, figures: [], actions: [] });
+    await show(<Figures />);
+    expect(await screen.findByText("Rien ne vous attend pour l'instant.")).toBeTruthy();
   });
 
   it("Aujourd'hui: empty says what will fill it", async () => {
@@ -137,6 +195,8 @@ describe("the phone app's five tabs, each with its three states (D8)", () => {
     expect(screen.getByText("À réclamer")).toBeTruthy();
     expect(api.books).toHaveBeenCalledWith("2026-Q3", SHOP);
     expect(screen.getByText(/vous la vérifiez et la produisez vous-même/)).toBeTruthy();
+    await fireEvent.press(screen.getByRole("button", { name: "Voir vos chiffres" }));
+    expect(mockRouter.navigate).toHaveBeenCalledWith(`/fr/app/${SHOP}/figures`);
     await fireEvent.press(screen.getByText("2026 Q2"));
     expect(mockRouter.setParams).toHaveBeenCalledWith({ period: "2026-Q2" });
   });

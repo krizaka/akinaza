@@ -4,7 +4,7 @@ import { AVAILABILITY, definePrices, type Price, type PriceSeed, UNIT } from "@k
  * Akinaza's prices are data (ADR-009, krizaka/.github#253; akinaza#371): this module is only the **seed** of the catalogue
  * (`@krizaka/settings`), the values in force until the administrator schedules a change from the console (`/console/prices`).
  * Every page reads the catalogue (`lib/price-catalogue.ts`), never this file. Amounts are Canadian cents, **plus taxes**
- * (GST and QST are the processor's automatic tax). The processor's catalogue (`payments/catalogue.json`, created by
+ * (GST and QST are the processor's automatic tax). The processor's catalogue (`infra/payments/catalogue.json`, created by
  * `pnpm run payments:setup`) sells the same amounts, and `pricing.test.ts` keeps them equal.
  *
  * Limits, read by the code: `founderCap` (the founder entry: how many businesses it is offered to — it replaces the former
@@ -28,7 +28,7 @@ export const PRICE_SEED = [
 
 export const PRICES = definePrices(PRICE_SEED);
 
-/** The processor's plan of each entry: the kind the payments port knows and the lookup key of its price (`payments/catalogue.json`). */
+/** The processor's plan of each entry: the kind the payments port knows and the lookup key of its price (`infra/payments/catalogue.json`). */
 export const PROCESSOR_PLANS = {
   [FOUNDER]: { kind: "founder", lookupKey: "akinaza_founder_monthly_cad" },
   [STARTER]: { kind: "starter", lookupKey: "akinaza_starter_monthly_cad" },

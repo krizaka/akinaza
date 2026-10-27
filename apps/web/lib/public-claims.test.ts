@@ -110,6 +110,23 @@ describe("a public place claim follows the configured region (akinaza#362)", () 
   });
 });
 
+describe("the notice describes only the flows the code has (akinaza#364)", () => {
+  it("does not say the tax ledger is sent to another service: the figures are computed inside Akinaza", () => {
+    for (const m of [en, fr]) expect(m.privacy.body).not.toMatch(/orazaka|envoy|sent to/i);
+  });
+
+  it("does not say « shared » when providers receive data, and does not say « sold » of anything but the negation", () => {
+    expect(en.privacy.body).not.toMatch(/shared/i);
+    expect(fr.privacy.body).not.toMatch(/partag/i);
+  });
+
+  it("says the client's information is in a database in Canada, never « processed in Canada » (the media store is in New York)", () => {
+    expect(en.terms.sections[6]!.p).not.toMatch(/behalf, in Canada/);
+    expect(fr.terms.sections[6]!.p).not.toMatch(/votre compte, au Canada/);
+    expect(en.docs.pages.data.sections[2]!.p[0]).not.toMatch(/Data is kept in Canada/);
+  });
+});
+
 describe("no public text promises conformity to a law (akinaza#362)", () => {
   it("refuses the promise in every message, en and fr", () => {
     const hits = [...leaves(en), ...leaves(fr)].filter(([, text]) => LEGAL_PROMISE.test(text)).map(([path]) => path);

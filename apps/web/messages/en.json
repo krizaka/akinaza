@@ -46,6 +46,10 @@
     "preferences": "Preferences",
     "version": "v{version}"
   },
+  "stage": {
+    "title": "Development version",
+    "message": "Data can be reset at any time. This is not a commercial offer yet."
+  },
   "landing": {
     "title": "Your appointments, invoices and taxes, sorted.",
     "lead": "Clients book, you invoice, your tax figures are ready. In French and in English.",
@@ -84,7 +88,7 @@
       },
       "plans": {
         "starter": "Starter",
-        "scale": "Scale B2B",
+        "scale": "Pro",
         "price": "{price} a month plus taxes",
         "preparing": "in preparation",
         "scaleSoon": "its B2B features are coming soon"
@@ -111,7 +115,24 @@
       "line": "Records in a database in Canada · Consent noted by purpose · Taxes prepared, return filed by you",
       "scope": "For studios, salons and the self-employed. Not for restaurants, cafés, bars or bakeries with on-site consumption."
     },
-    "visualLabel": "dev.akinaza.com"
+    "visualLabel": "www.akinaza.com",
+    "feed": {
+      "title": "Posted in your neighbourhood",
+      "lead": "The flyers shops pin on their own page: an open day, a new service, a place left. Nothing here is advertising we sell.",
+      "filterLabel": "Choose a neighbourhood",
+      "all": "All neighbourhoods",
+      "boardLabel": "Flyers pinned by the shops of the neighbourhood",
+      "visit": "See {shop}",
+      "demo": "See the demo shop",
+      "empty": "No flyer up in this neighbourhood yet.",
+      "error": "The flyers could not be loaded. Try again in a moment."
+    },
+    "preview": {
+      "demo": "Demo data",
+      "slotsLabel": "Free times",
+      "slotsEmpty": "No free time this week",
+      "invoiceLine": "Group walks, October"
+    }
   },
   "docs": {
     "title": "Owner's guide",
@@ -319,7 +340,7 @@
             "id": "clients",
             "h": "Your clients' data",
             "p": [
-              "A client's consent is recorded for each purpose and can be withdrawn. Erasing a client blanks their personal fields and keeps the invoices that the law requires. Data is kept in Canada, encrypted at rest, and visible to your shop only."
+              "A client's consent is recorded for each purpose and can be withdrawn. Erasing a client blanks their personal fields and keeps the invoices that the law requires. Records are kept in a database in Canada, encrypted at rest, and visible to your shop only."
             ],
             "items": []
           },
@@ -341,16 +362,18 @@
     "plansLabel": "Plans",
     "perMonth": "a month plus taxes",
     "preparing": "in preparation",
-    "soon": "soon",
+    "soon": "Soon",
+    "plannedTitle": "Coming soon",
     "badgeFounder": "Founder offer",
     "badgeFounderLimit": "First {limit} businesses",
     "founderNote": "Setup included: your services, your hours, your first invoices.",
     "plans": {
       "founder": "Founder",
       "starter": "Starter",
-      "scale": "Scale B2B"
+      "scale": "Pro"
     },
     "features": {
+      "inherits": "Everything in {plan}, plus the features below as they ship",
       "booking": "Your shop page and bookings, with the times you really have",
       "invoices": "Bilingual invoices with GST and QST exact to the cent",
       "books": "The books and the tax figures of each period, prepared for you to file",
@@ -379,14 +402,78 @@
       }
     ]
   },
+  "download": {
+    "title": "The apps",
+    "lead": "Akinaza in your pocket and on the web, recorded by our own tests on the demo shop. Nothing here is a store listing: no app is offered for download yet.",
+    "videos": {
+      "title": "See the apps at work",
+      "lead": "Each video is recorded by the automated tests on the latest version, with demo data only.",
+      "play": "Play",
+      "recorded": "Recorded {date}",
+      "seconds": "{seconds} s",
+      "items": {
+        "web-storefront": {
+          "name": "The shop's public page",
+          "body": "A demo shop's page, then the same shop in other compositions of Krizaka UI."
+        },
+        "web-composer": {
+          "name": "The page composer",
+          "body": "A section moved with the keyboard, the style changed. Nothing is published."
+        },
+        "android-today-books": {
+          "name": "Today and the books, on the phone",
+          "body": "The day's board and the books on the Android app, with demo data."
+        }
+      }
+    }
+  },
   "privacy": {
     "title": "Privacy",
     "updated": "Updated {date}",
-    "body": "Akinaza is in development: only the accounts our team creates can sign in. A shop's data — its clients, appointments, invoices and tax ledger — is kept in Akinaza's database in Canada, encrypted at rest, visible to that shop only. Client consent is recorded per purpose and can be withdrawn; a client's personal information can be erased, while the invoices tax law requires are kept. When a merchant asks to prepare a tax return, the period's ledger is sent to Orazaka, Krizaka's engine, over HTTPS; nothing is filed or transmitted to any government. Nothing is sold or shared. To ask a question or have your data removed, use the contact form.",
+    "body": "Akinaza is in development: only the accounts our team creates can sign in. A shop's data — its clients, appointments, invoices and tax ledger — is kept in Akinaza's database in Canada, encrypted at rest, visible to that shop only. Client consent is recorded per purpose and can be withdrawn; a client's personal information can be erased, while the invoices tax law requires are kept. The tax figures Akinaza prepares are computed from the period's ledger inside Akinaza; nothing is produced for, filed with or transmitted to any government. Nothing is sold. To ask a question or have your data removed, use the contact form.",
     "officer": {
       "title": "Privacy officer",
       "role": "Privacy Officer (« Responsable de la protection des renseignements personnels »)",
       "text": "The person in charge of the protection of personal information is published here. Role: {role}, Technologies Krizaka Inc., Montréal, Québec, Canada. Contact: contact@krizaka.com, to access, correct or erase your information, withdraw a consent or file a complaint; we answer within 30 days."
+    },
+    "processors": {
+      "title": "Who processes information for us",
+      "lead": "Akinaza uses service providers under written contracts, only to run the service. Where a provider stores data is stated here only once we have confirmed it.",
+      "items": [
+        {
+          "h": "Hosting",
+          "p": "The application and its database run with a cloud hosting provider."
+        },
+        {
+          "h": "Media storage and delivery",
+          "p": "The photos and files you add (a shop's photos, the files of a client's request) are stored with a media storage and delivery provider. In development, that store is in New York, United States."
+        },
+        {
+          "h": "E-mail delivery",
+          "p": "Mails such as walk reports and invoices go through an e-mail delivery provider, only when sending is turned on."
+        },
+        {
+          "h": "Payments",
+          "p": "A subscription is paid on the hosted page of a payment processor; Akinaza never sees or keeps a card number."
+        },
+        {
+          "h": "Translation",
+          "p": "If translating a shop page is turned on, the page's own texts are sent to Krizaka's engine, Orazaka. Nothing about a client is sent."
+        }
+      ],
+      "register": "The register of these transfers outside Québec, with the assessment we wrote before opening, is public:",
+      "registerLink": "Register of transfers",
+      "assessmentLink": "Privacy impact assessment"
+    },
+    "governance": {
+      "title": "How we handle personal information",
+      "items": [
+        "Why we collect it: to run a shop's bookings, invoices and tax figures, and the account of the person who signs in. Nothing else.",
+        "Who can see it: the shop that holds it, and the few people who run the service. A shop never sees another shop's data.",
+        "How long we keep it: invoices and the tax ledger for six years, as tax law requires; the rest until it is erased at your request.",
+        "Your rights: to see it, correct it, take a copy in a common format, withdraw a consent or have it erased. Write to the person in charge above; we answer within 30 days.",
+        "If something goes wrong: we follow a written procedure for confidentiality incidents, and we tell the Commission d'accès à l'information and the persons concerned when the law asks us to."
+      ]
     }
   },
   "terms": {
@@ -421,7 +508,7 @@
       },
       {
         "h": "7. Your personal information",
-        "p": "The information about your clients that you enter stays yours: you are responsible for it and Akinaza processes it on your behalf, in Canada, encrypted at rest, visible to your shop only. Consent is asked per purpose, never pre-ticked, and can be withdrawn; erasure blanks the personal fields and keeps the invoices tax law requires us to keep (six years). All of this falls under the Act respecting the protection of personal information in the private sector (CQLR, c. P-39.1), as amended by the Act to modernize legislative provisions as regards the protection of personal information (S.Q. 2021, c. 25). The details, the person in charge of the protection of personal information and how to exercise your rights are in the privacy notice."
+        "p": "The information about your clients that you enter stays yours: you are responsible for it and Akinaza processes it on your behalf, in a database in Canada, encrypted at rest, visible to your shop only; the photos and files you add are stored with a media provider, named in the privacy notice. Consent is asked per purpose, never pre-ticked, and can be withdrawn; erasure blanks the personal fields and keeps the invoices tax law requires us to keep (six years). All of this falls under the Act respecting the protection of personal information in the private sector (CQLR, c. P-39.1), as amended by the Act to modernize legislative provisions as regards the protection of personal information (S.Q. 2021, c. 25). The details, the person in charge of the protection of personal information and how to exercise your rights are in the privacy notice."
       },
       {
         "h": "8. Our liability",
@@ -512,6 +599,7 @@
       "openMenu": "Open the menu",
       "collapse": "Fold the menu",
       "expand": "Unfold the menu",
+      "yourAccount": "Your account",
       "signedInAs": "Signed in as {email}",
       "devBuild": "DEV · v{version}",
       "language": "Language",
@@ -552,7 +640,8 @@
         "toCollect": "to collect: {count}"
       },
       "organize": "Tags and views",
-      "prices": "Prices"
+      "prices": "Prices",
+      "incidents": "Incidents"
     },
     "admin": {
       "health": "Health",
@@ -786,6 +875,81 @@
         "history": "History",
         "seedLine": "Starting value: {price}",
         "historyLine": "{at}, {actor}: {before} → {after}, from {from}"
+      },
+      "incidents": {
+        "title": "Confidentiality incidents",
+        "lead": "The register required by the Act respecting the protection of personal information in the private sector (ss. 3.5 to 3.8): every incident, serious or not, kept five years. It holds facts and categories of information, never a person's data. Assess the risk of serious injury; if there is one, notify the Commission d'accès à l'information and the people concerned, then close. It covers Akinaza's data: shop customers' files, invoices and tax slips.",
+        "exportCsv": "Export CSV",
+        "exportJson": "Export JSON",
+        "register": "Register",
+        "empty": "No incident recorded.",
+        "awareAt": "Aware on",
+        "kind": "What happened",
+        "status": "Status",
+        "risk": "Risk of serious injury",
+        "serious": "Serious",
+        "notSerious": "Not serious",
+        "drill": "Drill",
+        "drillBadge": "Drill",
+        "description": "What happened, in facts",
+        "details": "Details",
+        "hide": "Hide",
+        "kinds": {
+          "access": "Unauthorised access",
+          "use": "Unauthorised use",
+          "communication": "Unauthorised communication",
+          "loss": "Loss"
+        },
+        "statuses": {
+          "open": "Open",
+          "assessed": "Assessed",
+          "closed": "Closed"
+        },
+        "levels": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
+        },
+        "open": "Open an incident",
+        "openSubmit": "Open",
+        "cancel": "Cancel",
+        "descriptionHint": "Facts only. No name, e-mail or document content.",
+        "information": "Categories of information concerned",
+        "informationHint": "Comma-separated, e.g. invoices, tax slips. Never the information itself.",
+        "persons": "People concerned (if known)",
+        "drillLabel": "This is a drill",
+        "markDrill": "Mark as a drill",
+        "unmarkDrill": "Not a drill",
+        "assess": "Assess the risk",
+        "assessSubmit": "Save the assessment",
+        "sensitivity": "Sensitivity of the information",
+        "consequences": "Seriousness of the consequences",
+        "likelihood": "Likelihood of misuse",
+        "seriousInjury": "Risk of serious injury",
+        "rationale": "Reasons for the decision",
+        "measure": "Measures taken",
+        "measureText": "A measure to reduce the risk or prevent a new incident",
+        "measureSubmit": "Record the measure",
+        "notice": "Record a notice sent",
+        "target": "Sent to",
+        "targets": {
+          "cai": "Commission d'accès à l'information",
+          "persons": "People concerned"
+        },
+        "channel": "How",
+        "channels": {
+          "form": "Commission form",
+          "email": "E-mail",
+          "letter": "Letter",
+          "public": "Public notice"
+        },
+        "reference": "Acknowledgement reference (if any)",
+        "noticeSubmit": "Record the notice",
+        "caiNotice": "Notice to the Commission",
+        "personsNotice": "Notice to the people concerned",
+        "retain": "Kept in the register until {date}.",
+        "close": "Close the incident",
+        "closedNote": "This entry is closed. It stays in the register and is never edited again."
       }
     },
     "errors": {
@@ -889,7 +1053,20 @@
       "UPLOAD_NOT_VIDEO": "This is not an MP4 or a WebM video.",
       "SOCIAL_LINK": "This address is not a page of that platform.",
       "ANNOUNCEMENT_LIMIT": "You keep thirty flyers at most. Take one down first.",
-      "REVIEW_REMOVED": "This review was removed by the administrator."
+      "REVIEW_REMOVED": "This review was removed by the administrator.",
+      "CAL_INVALID": "This is not a calendar address we can read.",
+      "CAL_UNREACHABLE": "The calendar could not be reached. We will try again.",
+      "CAL_REFUSED": "The calendar refused us: check the address.",
+      "CAL_TOO_LARGE": "This calendar is too big to read.",
+      "CAL_UNAUTHORIZED": "The calendar needs you to connect again.",
+      "CAL_RATE_LIMITED": "The calendar asked us to slow down. We will try again.",
+      "CALENDAR_LIMIT": "You reached the number of calendars allowed.",
+      "INCIDENT_BAD_INPUT": "The incident is incomplete or invalid.",
+      "INCIDENT_UNKNOWN": "This incident does not exist.",
+      "INCIDENT_CLOSED": "This incident is closed and can no longer change.",
+      "INCIDENT_NOT_ASSESSED": "Assess the risk first.",
+      "INCIDENT_NO_NOTICE_DUE": "No notice is due: the risk of serious injury was not retained.",
+      "INCIDENT_NOTICES_MISSING": "Both notices must be recorded before closing."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -957,8 +1134,9 @@
       },
       "week": "Week {week} · {date}",
       "calendar": "Calendar",
-      "binder": {
-        "title": "The binder",
+      "glance": {
+        "title": "Your day at a glance",
+        "hint": "Each count opens its list.",
         "appointments": "Appointments {count}",
         "toBill": "To bill {count}",
         "toCollect": "To collect {count}",
@@ -976,14 +1154,17 @@
         "days": "{days} d",
         "invoiced": "Invoiced",
         "collected": "Collected",
-        "appointments": "Appointments done"
+        "appointments": "Appointments done",
+        "daysLong": "{days} days"
       },
       "balance": {
         "title": "To collect",
         "owed": "Still owed: {amount}",
         "overdue": "Of which {amount} overdue",
         "noneLate": "Nothing overdue."
-      }
+      },
+      "conflict": "Overlaps your {calendar} calendar",
+      "conflictDetail": "This appointment overlaps a busy time in your {calendar} calendar. Nothing was changed on either side: keep it, or move one of them yourself."
     },
     "account": {
       "forgot": {
@@ -1022,12 +1203,12 @@
         "accountTitle": "My account",
         "description": "Your profile, your preferences, your security and your data.",
         "profileDescription": "Your name and your picture, as your team sees them.",
+        "profileDescriptionClient": "Your name and your picture.",
         "avatar": "Profile picture",
         "email": "E-mail",
         "language": "Language",
         "role": "Role",
         "roleIn": "{role} at {shop}",
-        "roleUser": "Member",
         "roleAdmin": "Administrator",
         "lastSeen": "Last seen",
         "passwordTitle": "Change your password",
@@ -1064,6 +1245,7 @@
       "name": {
         "label": "Name",
         "hint": "Shown in the account menu and to your team.",
+        "hintClient": "Shown in your account menu.",
         "missing": "No name yet"
       },
       "avatar": {
@@ -1282,7 +1464,8 @@
         "label": "Your clients at a glance",
         "count": "{count} clients",
         "owedLabel": "To collect",
-        "upToDate": "{count} of {total} up to date"
+        "upToDate": "{count} of {total} up to date",
+        "upToDateHint": "Up to date means nothing owed."
       },
       "search": "Search a client",
       "searchPlaceholder": "Name, e-mail or phone",
@@ -1291,13 +1474,23 @@
       "filter": {
         "all": "All",
         "due": "Still owed",
-        "upcoming": "Coming back"
+        "upcoming": "Next visit booked"
       },
       "selection": {
         "export": "Export the selection (CSV)"
       },
       "exportFile": "clients.csv",
-      "noMatch": "No client matches."
+      "noMatch": "No client matches.",
+      "privacy": {
+        "title": "Their privacy requests",
+        "lead": "When this person asks to see, take a copy of or erase what you hold about them, answer here, within 30 days. Akinaza holds the file for your shop.",
+        "export": "Download their data",
+        "erase": "Erase their file",
+        "eraseConfirm": "Erase this client's file?",
+        "eraseDescription": "Their details, their dependants, your notes, the reports and photos are erased for good, and their consents are withdrawn. Invoices and the tax ledger are kept for six years, as tax law requires. This cannot be undone.",
+        "eraseYes": "Erase for good",
+        "keep": "Keep the file"
+      }
     },
     "shopSetup": {
       "title": "Your shop page",
@@ -1334,7 +1527,7 @@
         "legalName": "Legal name",
         "address": "Address",
         "slug": "Page address",
-        "slugHint": "Lowercase words joined by hyphens, e.g. pattes-saint-henri You can change it: the old address still leads to your page.",
+        "slugHint": "Lowercase words joined by hyphens, e.g. pattes-saint-henri. You can change it: the old address still leads to your page.",
         "ownerName": "Your first name",
         "taglineFr": "One line, in French",
         "taglineEn": "One line, in English",
@@ -1357,7 +1550,8 @@
         "businessTypes": {
           "professional": "Professional services (studio, consulting, repairs…)",
           "pets": "Pet care (walks, grooming…)"
-        }
+        },
+        "ownerNameHint": "Your name in the agenda and on your appointments."
       },
       "zones": {
         "title": "Zones you serve",
@@ -1464,7 +1658,8 @@
           "wall": "The wall",
           "board": "Bulletin board",
           "reels": "Video and profiles",
-          "reviews": "Reviews"
+          "reviews": "Reviews",
+          "composer": "Layout"
         },
         "identity": {
           "title": "Identity",
@@ -1550,6 +1745,54 @@
         "updateTemplateOrder": "Update with its order"
       }
     },
+    "exports": {
+      "columns": {
+        "appointments": {
+          "id": "Id",
+          "start": "Start",
+          "end": "End",
+          "status": "Status",
+          "service": "Service",
+          "staff": "Staff",
+          "client": "Client",
+          "price": "Price"
+        },
+        "clients": {
+          "id": "Id",
+          "name": "Name",
+          "email": "E-mail",
+          "phone": "Phone",
+          "language": "Language",
+          "since": "Client since",
+          "dependants": "Dependants"
+        },
+        "invoices": {
+          "number": "Number",
+          "issuedOn": "Issued on",
+          "dueOn": "Due on",
+          "client": "Client",
+          "subtotal": "Subtotal",
+          "gst": "GST",
+          "qst": "QST",
+          "total": "Total",
+          "paid": "Paid",
+          "creditOf": "Credit note of",
+          "state": "State",
+          "language": "Language"
+        }
+      },
+      "status": {
+        "booked": "Booked",
+        "done": "Done",
+        "cancelled": "Cancelled",
+        "noShow": "No-show"
+      },
+      "invoiceState": {
+        "open": "Open",
+        "paid": "Paid",
+        "superseded": "Replaced or credited"
+      }
+    },
     "boutique": {
       "title": "Your shop",
       "navLabel": "Sections of your shop",
@@ -1561,7 +1804,39 @@
         "languages": "Languages",
         "team": "Team",
         "invoices": "Invoice e-mails",
-        "shops": "Your shops"
+        "shops": "Your shops",
+        "figures": "Figure thresholds",
+        "data": "Your data",
+        "agenda": "Calendar"
+      },
+      "data": {
+        "title": "Your data",
+        "lead": "Download what the shop holds, to open in your own tools. Only what you already see here; nothing of another shop, no access note, no erased person.",
+        "download": "Download",
+        "audited": "Each download is recorded in the shop's journal. Only the owner can make one.",
+        "off": "The administrator switched the data downloads off.",
+        "files": {
+          "appointmentsCsv": {
+            "group": "Appointments",
+            "label": "Spreadsheet (CSV)",
+            "hint": "Every appointment, with its service, staff member and client. The ICS opens in Apple, Google or Outlook calendars."
+          },
+          "appointmentsIcs": {
+            "group": "Appointments",
+            "label": "Calendar file (ICS)",
+            "hint": "Every appointment, with its service, staff member and client. The ICS opens in Apple, Google or Outlook calendars."
+          },
+          "clientsCsv": {
+            "group": "Clients",
+            "label": "Spreadsheet (CSV)",
+            "hint": "Names, e-mail, phone, language and dependants."
+          },
+          "invoicesCsv": {
+            "group": "Invoices",
+            "label": "Spreadsheet (CSV)",
+            "hint": "Invoices and credit notes in the order of the books, amounts in dollars with GST and QST."
+          }
+        }
       },
       "invoices": {
         "title": "Invoice e-mails",
@@ -1573,6 +1848,70 @@
         "current": "This shop",
         "open": "Open this shop",
         "add": "Add a shop"
+      },
+      "figures": {
+        "title": "Figure thresholds",
+        "lead": "When a figure asks for a look, and when it asks for action. Only this changes: the amounts and the formulas never do."
+      },
+      "agenda": {
+        "title": "Your calendar on your phone",
+        "lead": "A private link your phone subscribes to, so your appointments show in the calendar you already use. It carries the time, the service and first names only: never a phone number, an e-mail or a note.",
+        "feed": {
+          "shop": "The whole shop",
+          "live": "Link active",
+          "none": "No link yet",
+          "since": "Made {when}",
+          "create": "Make the link",
+          "rotate": "Make a new link",
+          "revoke": "Turn off",
+          "revokeConfirm": "Turn off this link? The calendars that use it stop updating.",
+          "once": "Copy this link now: it is shown only once. Making a new link turns the old one off at once.",
+          "copy": "Copy the link",
+          "copied": "Link copied",
+          "qrLabel": "QR code of the private calendar link for {name}: scan it with your phone to subscribe",
+          "url": "Private link of {name}",
+          "howTitle": "How to add it",
+          "how": "Apple Calendar: File, New Calendar Subscription. Google Calendar: Other calendars, From URL. Outlook: Add calendar, Subscribe from web. Anyone who has the link can read these times: share it with nobody.",
+          "off": "The administrator has switched the calendar links off.",
+          "nobody": "No team member yet."
+        },
+        "sources": {
+          "title": "Your other calendars",
+          "lead": "Akinaza reads the times you are busy in the calendar you already use, and keeps them free of bookings. It reads only the times: never a title, a guest or a note, and it never changes your calendar.",
+          "wholeShop": "The whole shop",
+          "add": "Connect a calendar",
+          "label": "Name",
+          "labelHint": "For you only, e.g. Google or Dentist.",
+          "whose": "Blocks the times of",
+          "url": "Calendar address (ICS)",
+          "urlHint": "Google Calendar: Settings, your calendar, Secret address in iCal format. Apple and Outlook give one too when you publish or share a calendar. Anyone with this address can read that calendar: it is kept sealed here and shown to nobody.",
+          "consent": "I agree that Akinaza reads the times I am busy in this calendar, to keep them free of bookings. I can disconnect at any time: those times are then deleted.",
+          "needConsent": "Tick the box to connect the calendar.",
+          "connect": "Connect",
+          "none": "No calendar connected.",
+          "state": {
+            "ok": "Read",
+            "error": "Cannot read",
+            "pending": "Waiting"
+          },
+          "lastRead": "Read {when}",
+          "neverRead": "Not read yet.",
+          "refresh": "Read again",
+          "remove": "Disconnect",
+          "removeConfirm": "Disconnect this calendar? Its busy times are deleted and those slots open again.",
+          "off": "The administrator has switched calendar connections off.",
+          "providers": {
+            "title": "Connect Google or Outlook",
+            "lead": "You agree at Google's or Microsoft's own page, and Akinaza receives only the times you are busy: never a title, a guest or a note. You can take the permission back there too.",
+            "google": "Connect Google Calendar",
+            "outlook": "Connect Outlook"
+          },
+          "outcome": {
+            "connected": "Calendar connected. Its busy times now keep those slots free.",
+            "denied": "Nothing was connected: you did not give the permission.",
+            "error": "The calendar could not be connected. Try again."
+          }
+        }
       }
     },
     "shopPage": {
@@ -1691,6 +2030,16 @@
         "error": "This video cannot play",
         "retry": "Try again",
         "time": "{time} of {duration}"
+      },
+      "faqTitle": "Questions",
+      "looks": {
+        "label": "See it another way",
+        "note": "This is a demo shop: the same shop, drawn with another composition of Krizaka UI.",
+        "compact": "Compact",
+        "editorial": "Editorial",
+        "gallery": "Gallery",
+        "route": "Route",
+        "journal": "Journal"
       }
     },
     "book": {
@@ -1835,6 +2184,7 @@
         "zero": "Nothing to remit"
       },
       "sources": "{count} documents behind this figure",
+      "sourcesOne": "1 document behind this figure",
       "kinds": {
         "invoice": "Invoice",
         "expense": "Expense"
@@ -1868,7 +2218,15 @@
           "label": "Net QST"
         }
       },
-      "footnote": "Akinaza prepares these figures from your invoices and expenses. You file the return with Revenu Québec yourself, after checking each figure."
+      "footnote": "Akinaza prepares these figures from your invoices and expenses. You file the return with Revenu Québec yourself, after checking each figure.",
+      "figuresTitle": "Your GST and QST figures",
+      "remitHint": "Prepared from your invoices and expenses; you file it with Revenu Québec.",
+      "periodHint": "The latest finished quarter is the one to file now; the current quarter is still open.",
+      "empty": {
+        "title": "Nothing to prepare for this period yet",
+        "body": "The figures appear here as soon as you issue invoices or record expenses in this period.",
+        "action": "See the invoices"
+      }
     },
     "invoices": {
       "title": "Invoices",
@@ -2069,7 +2427,7 @@
         },
         "shopSetup": {
           "page": {
-            "slugHint": "Lowercase words joined by hyphens, e.g. my-studio You can change it: the old address still leads to your page.",
+            "slugHint": "Lowercase words joined by hyphens, e.g. my-studio. You can change it: the old address still leads to your page.",
             "areaHint": "Montréal — never the street address.",
             "seatUnitHint": "For a group service: « Up to 5 people ». Empty: « places »."
           },
@@ -2262,7 +2620,7 @@
       "autoMark": "Texts marked « translated automatically » have not been read by you yet: read them and edit them if needed.",
       "runs": "{used} of {limit} translations used today.",
       "nothing": "Nothing to translate yet: fill in your tagline, your story and your services first.",
-      "ownHint": "You wrote this text yourself in this language: change it from the shop page.",
+      "ownHint": "You wrote these texts yourself in this language: change them from the shop page.",
       "staleHint": "Your original text changed since this translation was made.",
       "fields": {
         "tagline": "Tagline",
@@ -2387,6 +2745,50 @@
           "why": "Only {booked} of {offered} of these slots were booked lately.",
           "cta": "Open the hours"
         }
+      },
+      "title": "Your figures",
+      "lead": "Each figure says what it means, how it is computed from your invoices and where it comes from.",
+      "rateOf": {
+        "collected": "That is {rate} % of what you invoiced with taxes.",
+        "toCollect": "{rate} % of it is overdue.",
+        "margin": "That is {rate} % of your revenue.",
+        "noShows": "That is {rate} % of the appointments that were due."
+      },
+      "source": "Where it comes from",
+      "urgency": {
+        "now": "Now",
+        "soon": "Soon",
+        "week": "This week"
+      },
+      "lexiconLead": "Words that need an accountant are marked.",
+      "print": "Print or save as PDF",
+      "printHint": "A clean copy for your accountant: the figures, their formulas and their sources.",
+      "forPeriod": "For the period {start} to {end}",
+      "computed": "Computed {when}",
+      "lexiconTerms": "Words used here",
+      "never": "Akinaza prepares these figures. You check them and you file your returns yourself.",
+      "formulaHere": "{formula} Here: {terms}.",
+      "updatedLabel": "Updated",
+      "rules": {
+        "title": "When a figure needs your attention",
+        "hint": "Usual value {usual}. You can set it between {min} and {max}.",
+        "hintDays": "Usual value {usual} days. You can set it between {min} and {max}.",
+        "fields": {
+          "overdueWatchPct": "Overdue invoices: keep an eye on it above (%)",
+          "overdueAlertPct": "Overdue invoices: needs action above (%)",
+          "collectedWatchPct": "Collected from what you invoiced: keep an eye on it below (%)",
+          "collectedAlertPct": "Collected from what you invoiced: needs action below (%)",
+          "marginWatchPct": "Margin on your revenue: keep an eye on it below (%)",
+          "marginAlertPct": "Margin on your revenue: needs action below (%)",
+          "noShowWatchPct": "Missed appointments: keep an eye on it above (%)",
+          "noShowAlertPct": "Missed appointments: needs action above (%)",
+          "taxPeriodSoonDays": "Remind me to prepare the GST/QST return this many days before the period ends"
+        },
+        "fixed": "These values are set by Akinaza and cannot be changed for now. Each figure still shows how it is judged.",
+        "save": "Save my thresholds",
+        "reset": "Back to the usual values",
+        "saved": "Saved. Your figures now use these thresholds.",
+        "evenness": "If an action threshold would be gentler than its watch threshold, it is moved to match, so a figure never contradicts itself."
       }
     },
     "lexicon": {
@@ -2610,7 +3012,11 @@
         "body": "The rest of the page works. Try again in a moment."
       },
       "retry": "Try again",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "page": {
+        "title": "This page could not load.",
+        "body": "Nothing is lost. Try again in a moment."
+      }
     },
     "organize": {
       "close": "Close",
@@ -2813,6 +3219,205 @@
         "show": "Show again",
         "saved": "Done."
       }
+    },
+    "composer": {
+      "title": "Shop page",
+      "sections": "Sections",
+      "addSection": "Add a section",
+      "addSectionHint": "Choose what to add to your page.",
+      "toggleVisible": "Show {name}",
+      "sectionMenu": "Actions for {name}",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "moveTop": "Move to top",
+      "remove": "Remove",
+      "announceMoved": "{name} moved to position {n} of {total}",
+      "announceCannotMove": "{name} cannot move further",
+      "announceAdded": "{name} added at position {n}",
+      "announceRemoved": "{name} removed",
+      "announceShown": "{name} is shown",
+      "announceHidden": "{name} is hidden",
+      "announceUndone": "Undone",
+      "announceRedone": "Redone",
+      "hiddenNote": "hidden",
+      "inspector": "Section",
+      "noSelection": "Choose a section to change how it is drawn.",
+      "backToSections": "Back to sections",
+      "variant": "How it is drawn",
+      "settings": "Settings",
+      "words": "Your words",
+      "titleField": "Title",
+      "leadField": "Line under the title",
+      "french": "French",
+      "english": "English",
+      "blocks": "Items",
+      "addBlock": "Add",
+      "removeBlock": "Remove {name}",
+      "look": "Look",
+      "preset": "Style",
+      "density": "Spacing",
+      "densityCompact": "Compact",
+      "densityAiry": "Airy",
+      "undo": "Undo",
+      "redo": "Redo",
+      "saved": "Saved",
+      "saving": "Saving…",
+      "saveFailed": "Not saved",
+      "publish": "Publish",
+      "discard": "Discard the draft",
+      "preview": "Preview",
+      "previewTitle": "Live preview of your page",
+      "phone": "Phone",
+      "desktop": "Desktop",
+      "viewPreview": "View",
+      "closePreview": "Close",
+      "publishTitle": "Publish this page",
+      "publishWhat": "What changes",
+      "publishNothing": "Nothing has changed since the last publication.",
+      "publishConfirm": "Publish",
+      "cancel": "Cancel",
+      "problemsTitle": "Fix {n} problem before publishing",
+      "problemIn": "{name}",
+      "sectionNames": {
+        "hero": "Hero",
+        "services": "Services",
+        "booking": "Booking",
+        "gallery": "Photos",
+        "video": "Video",
+        "reviews": "Reviews",
+        "bulletin": "News",
+        "team": "Team",
+        "visit": "Visit",
+        "story": "Story",
+        "social": "Social",
+        "faq": "Questions",
+        "policies": "Policies"
+      },
+      "variantNames": {
+        "hero.poster": "Poster",
+        "hero.split": "Split",
+        "hero.banner": "Banner",
+        "hero.tv": "Television",
+        "services.menu": "Menu",
+        "services.cards": "Cards",
+        "services.index": "Index cards",
+        "services.carousel": "Carousel",
+        "booking.strip": "Next times",
+        "booking.panel": "Closing call",
+        "booking.sticky": "Phone bar",
+        "gallery.mosaic": "Mosaic",
+        "gallery.filmstrip": "Filmstrip",
+        "gallery.wall": "Wall",
+        "gallery.grid": "Grid",
+        "video.tv": "Television",
+        "video.shorts": "Reels",
+        "reviews.summary-cards": "Score and reviews",
+        "reviews.quote": "One quote",
+        "reviews.strip": "Score line",
+        "bulletin.board": "Board",
+        "bulletin.banner": "Banner line",
+        "team.row": "Row",
+        "team.cards": "Cards",
+        "visit.card": "Card",
+        "visit.map": "Map",
+        "visit.split": "Hours and map",
+        "story.quote": "Quote",
+        "story.owner": "Owner",
+        "social.links": "Links",
+        "social.facade": "Latest reel",
+        "faq.list": "List",
+        "policies.inline": "Inline"
+      },
+      "blockNames": {
+        "fact": "Fact",
+        "service": "Service",
+        "photo": "Photo",
+        "note": "Note",
+        "sign": "Sign",
+        "reel": "Reel",
+        "flyer": "Flyer",
+        "member": "Member",
+        "link": "Link",
+        "question": "Question"
+      },
+      "settingNames": {
+        "media": "Photo",
+        "focus": "Crop",
+        "source": "Source",
+        "groupBy": "Group by",
+        "columns": "Columns",
+        "aside": "Beside the list",
+        "serviceId": "Service",
+        "count": "How many",
+        "texture": "Wall",
+        "cabinet": "Cabinet",
+        "channel": "Channel",
+        "rule": "Which reviews",
+        "showPhone": "Show the phone number",
+        "body": "Text",
+        "show": "Show"
+      },
+      "optionNames": {
+        "center": "Centre",
+        "top": "Top",
+        "bottom": "Bottom",
+        "all": "All",
+        "pick": "Pick",
+        "category": "Category",
+        "none": "None",
+        "hours": "Hours",
+        "plaster": "Plaster",
+        "brick": "Brick",
+        "ridge": "Ridge",
+        "zellige": "Zellige",
+        "cabinet": "Cabinet",
+        "portable": "Portable",
+        "best": "Best",
+        "latest": "Latest",
+        "cancellation": "Cancellation",
+        "prices": "Prices",
+        "booking-window": "Booking window"
+      },
+      "diff": {
+        "added": "{name} added",
+        "removed": "{name} removed",
+        "moved": "{name} moved from {from} to {to}",
+        "variant": "{name} drawn as {to} (was {from})",
+        "settings": "{name}: settings changed",
+        "blocks": "{name}: items changed",
+        "text": "{name}: words changed",
+        "disabled": "{name} hidden",
+        "enabled": "{name} shown",
+        "preset": "Style changed to {to} (was {from})",
+        "density": "Spacing changed to {to} (was {from})"
+      }
+    },
+    "composerPanel": {
+      "accent": "Accent colour",
+      "accentOwn": "The style's own",
+      "accentSaved": "Accent saved.",
+      "accentNote": "Only the colours tested for this style are offered.",
+      "versions": "History",
+      "versionsLead": "The page now live, the draft, and the last versions. Restoring one publishes it again as a new version.",
+      "versionDraft": "Draft",
+      "versionPublished": "Live",
+      "versionArchived": "Older",
+      "versionN": "Version {n}",
+      "restore": "Restore",
+      "restoredKept": "Version {n} is live again. Your draft is unchanged.",
+      "keepDraft": "Keep my draft when I restore",
+      "discardAsk": "Throw the draft away and go back to the live page?",
+      "discardYes": "Yes, discard",
+      "discardNo": "Keep editing",
+      "discarded": "Changes discarded. The composer shows your live page.",
+      "restored": "Version {n} is live again. Your draft was reset to it.",
+      "noVersions": "Nothing has been published yet: your page shows the starter of your trade.",
+      "readOnly": "You can read the page; the owner and the manager change it.",
+      "published": "Published. Your page is live.",
+      "publishFailed": "Not published.",
+      "problems": "The page cannot be saved: {issues}",
+      "loading": "Loading the history…",
+      "openPreview": "Open the preview in a new tab"
     }
   },
   "notFound": {

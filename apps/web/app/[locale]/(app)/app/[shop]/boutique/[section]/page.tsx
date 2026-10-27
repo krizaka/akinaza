@@ -1,12 +1,18 @@
-import { localDay, reviewScore, shopTypeOf, WALL_LIMITS } from "@akinaza/core";
-import { announcementsOf, invoiceMailSettings, loadShop, reelsOf, reviewsOf, SHOP_ROLES, shopMediaOf, shopPageConfigOf, shopStaff, socialLinksOf, teamTimeOff, translationRows, translationRunsOn,wallOf } from "@akinaza/db";
+import { localDay, OWNER_BOUNDS, OWNER_TUNABLE, type OwnerTunable, reviewScore, shopTypeOf, WALL_LIMITS } from "@akinaza/core";
+import { announcementsOf, draftShopPage, invoiceMailSettings, loadShop, publishedShopPage, reelsOf, reviewsOf, SHOP_ROLES, shopAccentOf, shopFigureOverrides, shopMediaOf, shopPageConfigOf, shopPageVersionsOf, shopStaff, socialLinksOf, teamTimeOff, translationRows, translationRunsOn,wallOf } from "@akinaza/db";
+import { shopPresets } from "@krizaka/tokens/shop-presets";
 import { Button } from "@krizaka/ui/button";
 import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { configuredKinds } from "@/app/calendar-edge";
 import { BoardEditor } from "@/components/app/BoardEditor";
+import { CalendarSources } from "@/components/app/CalendarSources";
+import { DataExports } from "@/components/app/DataExports";
+import { FeedLinks } from "@/components/app/FeedLinks";
+import { FigureRules } from "@/components/app/FigureRules";
 import { InvoiceMailSettings } from "@/components/app/InvoiceMailSettings";
 import { ReelsEditor } from "@/components/app/ReelsEditor";
 import { ReviewsPanel } from "@/components/app/ReviewsPanel";
@@ -16,16 +22,22 @@ import { TeamPanel } from "@/components/app/TeamPanel";
 import { TimeOffCard } from "@/components/app/TimeOffCard";
 import { WallEditor } from "@/components/app/WallEditor";
 import { BoutiqueHub } from "@/components/boutique/BoutiqueHub";
-import { pageSession } from "@/lib/access";
+import { ShopComposerPanel } from "@/components/boutique/ShopComposerPanel";
+import { agendaScope, pageSession } from "@/lib/access";
 import { BOUTIQUE_NEEDS, type BoutiqueSection, boutiqueSectionsAllowed, isBoutiqueSection, isPageTab, type PageTab, pageTabsAllowed } from "@/lib/boutique";
+import { calendarOverview } from "@/lib/calendar/overview";
 import { communityLimits, reviewRules } from "@/lib/community";
 import { db } from "@/lib/db";
 import { proposalsFor } from "@/lib/default-media-proposals";
 import { defaultMediaSettings } from "@/lib/default-media-settings";
 import { readEnv } from "@/lib/env";
+import { feedOverview } from "@/lib/feed-overview";
+import { adminFigureRules } from "@/lib/figure-rules";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { may, memberShop, shopsOf } from "@/lib/member-shop";
 import { type RouteLocale, shopRoutes } from "@/lib/routes";
+import { appSettings } from "@/lib/settings";
+import { accentsByLook } from "@/lib/shop-accents";
 import { team } from "@/lib/team";
 import { templateChoices } from "@/lib/template-choices";
 import { templateRules } from "@/lib/template-rules";
@@ -40,7 +52,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 const line = (m: { url: string; altFr: string; altEn: string; captionFr: string | null; captionEn: string | null; webmUrl: string | null; mp4Url: string | null; wide: boolean }) => ({ url: m.url, altFr: m.altFr, altEn: m.altEn, ...(m.captionFr ? { captionFr: m.captionFr } : {}), ...(m.captionEn ? { captionEn: m.captionEn } : {}), webmUrl: m.webmUrl, mp4Url: m.mp4Url, wide: m.wide });
 
 /** Boutique › Page: the shop as the walker builds its public page (identity, texts, zones, services, hours, rules, media, look, publish). */
-async function PageSection({ locale, shopId, tab }: { locale: RouteLocale; shopId: string; tab: PageTab }) {
+async function PageSection({ locale, shopId, tab }: Readonly<{ locale: RouteLocale; shopId: string; tab: PageTab }>) {
   const { shop } = await memberShop(shopId, "settings");
   const base = readEnv().APP_PUBLIC_URL;
   const setup = await loadShop(db(), shop);
@@ -62,6 +74,26 @@ async function PageSection({ locale, shopId, tab }: { locale: RouteLocale; shopI
     rules: { cancellationHours: setup.rules.cancellationHours, bookingHorizonDays: setup.rules.bookingHorizonDays, slotStepMinutes: setup.rules.slotStepMinutes, minNoticeMinutes: setup.rules.minNoticeMinutes, reportLinkDays: setup.rules.reportLinkDays, paymentTermsDays: shop.paymentTermsDays },
   };
   return <ShopSetupView data={data} tab={tab} />;
+}
+
+/** Boutique › Page › Layout (akinaza#402): the composer on the shop's draft, with what is live for the diff, the history and the accent. */
+async function ComposerTab({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
+  const { shop } = await memberShop(shopId, "catalogue");
+  const [draft, live, accent, versions, pageConfig] = await Promise.all([draftShopPage(db(), shop.id), publishedShopPage(db(), shop.id), shopAccentOf(db(), shop.id), shopPageVersionsOf(db(), shop.id), shopPageConfigOf(db(), shop.id)]);
+  const trade = shopTypeOf(shop.businessType, pageConfig.shopType);
+  const looks = shopPresets.filter((p) => p.trades.includes(trade));
+  return (
+    <ShopComposerPanel
+      canWrite
+      draft={draft.page}
+      published={live.page}
+      accent={accent}
+      accents={accentsByLook()}
+      presets={looks.map((p) => ({ id: p.id, version: p.version, name: p.name, density: p.density, variants: p.variants }))}
+      previewUrl={`/${locale}/preview/${shop.id}`}
+      versions={versions.map((v) => ({ version: v.version, status: v.status, createdAt: v.createdAt.toISOString() }))}
+    />
+  );
 }
 
 /** The tabs that pin something on the public page: the owner's and the manager's, each with the live preview beside it. */
@@ -89,7 +121,7 @@ async function CommunityTab({ shopId, tab }: Readonly<{ shopId: string; tab: "wa
 }
 
 /** Boutique › Langues: the languages on, each text in each of them (#258). */
-async function LanguagesSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
+async function LanguagesSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   const { shop } = await memberShop(shopId, "settings");
   const [rows, rules, used] = await Promise.all([translationRows(db(), shop.id), translationRules(), translationRunsOn(db(), shop.id, localDay(new Date(), shop.timezone))]);
   const data: LanguagesData = { source: rows.source as "fr" | "en", enabled: rows.enabled, allowed: rules.allowed, translationOn: rules.enabled, dailyLimit: rules.dailyLimit, usedToday: used, fields: rows.fields, setupHref: shopRoutes(locale, shop.id).setup };
@@ -97,7 +129,7 @@ async function LanguagesSection({ locale, shopId }: { locale: RouteLocale; shopI
 }
 
 /** Boutique › Équipe: the members and the invitations, and the team's time off (a date range). */
-async function TeamSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
+async function TeamSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   const { session, shop, role } = await memberShop(shopId, "team");
   const roles = team();
   const now = new Date();
@@ -118,7 +150,7 @@ async function TeamSection({ locale, shopId }: { locale: RouteLocale; shopId: st
 }
 
 /** Boutique › Factures: the e-mail defaults of the invoices the shop sends (the owner's; they moved here from the list, K4). */
-async function InvoicesSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
+async function InvoicesSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   const { shop } = await memberShop(shopId, "settings");
   const t = getDictionary(locale).console.boutique.invoices;
   const mail = await invoiceMailSettings(db(), shop.id);
@@ -130,8 +162,50 @@ async function InvoicesSection({ locale, shopId }: { locale: RouteLocale; shopId
   );
 }
 
+/** Boutique › Agenda: the owner's other calendars (read, to block slots) and the private calendar links of the shop and of each team member (#282, ADR-004). */
+async function AgendaSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
+  const { shop, role, session } = await memberShop(shopId, "bookings");
+  const t = getDictionary(locale).console.boutique.agenda;
+  const scope = agendaScope(role, session.account.id);
+  const [overview, calendars] = await Promise.all([feedOverview(shop.id, scope), calendarOverview(shop.id, scope, configuredKinds())]);
+  return (
+    <div className="flex flex-col gap-5">
+      <PageHeader as="h2" title={t.title} description={t.lead} />
+      <CalendarSources overview={calendars} />
+      <FeedLinks overview={overview} shopName={shop.name} />
+    </div>
+  );
+}
+
+/** Boutique › Seuils des chiffres: when a figure asks for a look or for action, the administrator's usual values and the owner's own (#260). */
+async function FiguresSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
+  const { shop } = await memberShop(shopId, "settings");
+  const t = getDictionary(locale).console.boutique.figures;
+  const [{ defaults }, tunable, overrides] = await Promise.all([adminFigureRules(), appSettings().get("figures.ownerTunable"), shopFigureOverrides(db(), shop.id)]);
+  const usual = Object.fromEntries(OWNER_TUNABLE.map((key) => [key, defaults[key]])) as Record<OwnerTunable, number>;
+  return (
+    <div className="flex flex-col gap-5">
+      <PageHeader as="h2" title={t.title} description={t.lead} />
+      <FigureRules tunable={tunable} usual={usual} overrides={overrides} bounds={OWNER_BOUNDS} />
+    </div>
+  );
+}
+
+/** Boutique › Vos données: the owner's appointments, clients and invoices to download (#420, ADR-004 §5). */
+async function DataSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
+  await memberShop(shopId, "privacy");
+  const t = getDictionary(locale).console.boutique.data;
+  const enabled = await appSettings().get("exports.data.enabled");
+  return (
+    <div className="flex flex-col gap-5">
+      <PageHeader as="h2" title={t.title} description={t.lead} />
+      <DataExports words={t} enabled={enabled} href={(file) => `/api/walker/exports/${file}?shopId=${shopId}&locale=${locale}`} />
+    </div>
+  );
+}
+
 /** Boutique › Boutiques: the shops the account works in, and « Add a shop » (one more, unpublished). */
-async function ShopsSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
+async function ShopsSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   await memberShop(shopId, "settings");
   const { account } = (await pageSession())!;
   const t = getDictionary(locale).console.boutique.shops;
@@ -158,10 +232,14 @@ async function ShopsSection({ locale, shopId }: { locale: RouteLocale; shopId: s
 
 /** The body of one section of Boutique. */
 function boutiqueBody({ section, tab, community, locale, shopId }: Readonly<{ section: BoutiqueSection; tab: PageTab; community: boolean; locale: RouteLocale; shopId: string }>) {
+  if (section === "page" && tab === "composer") return <ComposerTab locale={locale} shopId={shopId} />;
   if (section === "page") return community ? <CommunityTab shopId={shopId} tab={tab as "wall" | "reels" | "board" | "reviews"} /> : <PageSection locale={locale} shopId={shopId} tab={tab} />;
   if (section === "languages") return <LanguagesSection locale={locale} shopId={shopId} />;
   if (section === "team") return <TeamSection locale={locale} shopId={shopId} />;
   if (section === "invoices") return <InvoicesSection locale={locale} shopId={shopId} />;
+  if (section === "agenda") return <AgendaSection locale={locale} shopId={shopId} />;
+  if (section === "figures") return <FiguresSection locale={locale} shopId={shopId} />;
+  if (section === "data") return <DataSection locale={locale} shopId={shopId} />;
   return <ShopsSection locale={locale} shopId={shopId} />;
 }
 

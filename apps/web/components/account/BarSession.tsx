@@ -2,11 +2,11 @@
 
 import { krizakaFetch, QueryClient, QueryClientProvider, useMutation, useQuery, useQueryClient } from "@krizaka/query";
 import { Button } from "@krizaka/ui/button";
-import { ProductBarActions } from "@krizaka/ui/nav-bar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { type AccountMenuWords,AkinazaAccountMenu } from "@/components/account/AkinazaAccountMenu";
+import { SignedOutActions } from "@/components/account/SignedOutActions";
 import { type Me, meSchema } from "@/lib/me";
 
 export const ME_KEY = ["me"] as const;
@@ -54,7 +54,7 @@ export function BarActionsView({ me, locale, words, placement, onSignOut }: { me
       </>
     );
   }
-  return <ProductBarActions placement={placement} signupOpen={me.signupOpen} linkAs={Link} signIn={{ href: `/${locale}/sign-in`, label: words.signIn }} tryIt={{ href: `/${locale}/sign-up`, label: words.tryIt }} />;
+  return <SignedOutActions locale={locale} placement={placement} signupOpen={me.signupOpen} signIn={words.signIn} tryIt={words.tryIt} />;
 }
 
 function Island({ locale, words, placement }: { locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel" }) {

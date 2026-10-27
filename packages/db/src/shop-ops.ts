@@ -3,7 +3,7 @@ import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { Db, Tx } from "./client";
-import { appointments, bookings, clientConsents, clientNotes, clients, dependants, expenses, invoiceDeliveries, invoiceLines, invoices, mailOutbox, services, shopReviews, shops, taxLedger, visitReports } from "./schema";
+import { appointments, bookings, clients, expenses, invoiceLines, invoices, services, shops, taxLedger } from "./schema";
 import { ShopError } from "./errors";
 
 const post = (tx: Tx, shopId: string, entries: LedgerEntry[]) =>
@@ -71,37 +71,8 @@ export async function book(db: Db, input: { shopId: string; staffId: string; ser
   return { id: row!.id, event: { type: "slot", shopId: input.shopId, staffId: input.staffId, startsAt: input.startsAt.toISOString(), endsAt: endsAt.toISOString(), status: "taken" } };
 }
 
-/** A consent decision (Loi 25), appended — never edited. */
-export async function recordConsent(db: Db, clientId: string, purpose: "service" | "reminders" | "marketing", granted: boolean, textVersion: string) {
-  await db.insert(clientConsents).values({ clientId, purpose, granted, textVersion });
-}
-
-/**
- * Erases a client's personal information (Loi 25): name replaced, contact, notes and access notes blanked, the sign-in
- * account unlinked, every dependant blanked, the notes and photos of the visit reports removed and their mails deleted,
- * every consent withdrawn — the row stays because the invoices that name it are kept (six years, tax law), and a visit
- * that happened stays as an anonymous fact. Returns false if already erased.
- */
-export async function eraseClient(db: Db, clientId: string, textVersion: string): Promise<boolean> {
-  return db.transaction(async (tx) => {
-    const [row] = await tx.update(clients).set({ fullName: "—", email: null, phone: null, notes: null, accessNotesEnc: null, accountId: null, erasedAt: sql`now()` }).where(and(eq(clients.id, clientId), isNull(clients.erasedAt))).returning({ id: clients.id });
-    if (!row) return false;
-    await tx.update(dependants).set({ name: "—", profile: {}, erasedAt: sql`now()` }).where(eq(dependants.clientId, clientId));
-    // The shop's notes on the client (D5) are personal information: gone with the file.
-    await tx.delete(clientNotes).where(eq(clientNotes.clientId, clientId));
-    // Their review keeps its rating (the score) but loses the name and the words, and the link to the file (Loi 25).
-    await tx.update(shopReviews).set({ firstName: "—", lastInitial: "", body: "", clientId: null }).where(eq(shopReviews.clientId, clientId));
-    const reports = tx.select({ id: visitReports.id }).from(visitReports).innerJoin(bookings, eq(bookings.id, visitReports.bookingId)).where(eq(bookings.clientId, clientId));
-    await tx.delete(mailOutbox).where(and(eq(mailOutbox.relatedKind, "visit_report"), inArray(mailOutbox.relatedId, reports)));
-    const invoiceIds = tx.select({ id: invoices.id }).from(invoices).where(eq(invoices.clientId, clientId));
-    const deliveryIds = tx.select({ id: invoiceDeliveries.id }).from(invoiceDeliveries).innerJoin(invoices, eq(invoices.id, invoiceDeliveries.invoiceId)).where(eq(invoices.clientId, clientId));
-    await tx.delete(mailOutbox).where(and(eq(mailOutbox.relatedKind, "invoice_delivery"), inArray(mailOutbox.relatedId, deliveryIds)));
-    await tx.update(invoiceDeliveries).set({ revokedAt: sql`now()`, toEmail: "—" }).where(inArray(invoiceDeliveries.invoiceId, invoiceIds));
-    await tx.update(visitReports).set({ note: "—", photo: null, photoType: null, tokenExpiresAt: sql`now()`, viewTokenHash: sql`encode(sha256(gen_random_uuid()::text::bytea), 'hex')`, sentAt: null }).where(inArray(visitReports.bookingId, tx.select({ id: bookings.id }).from(bookings).where(eq(bookings.clientId, clientId))));
-    await tx.insert(clientConsents).values((["service", "reminders", "marketing"] as const).map((purpose) => ({ clientId, purpose, granted: false, textVersion })));
-    return true;
-  });
-}
+// The consents and the erasure of a client are the privacy module's (akinaza#370, privacy.ts): re-exported where they were.
+export { eraseClient, recordConsent } from "./privacy";
 
 /** The prepared GST/QST return of a shop over a period, from its ledger and its invoices (supplies, line 101). */
 export async function prepareShopReturn(db: Db, shopId: string, periodStart: string, periodEnd: string): Promise<PreparedReturn> {
@@ -150,6 +121,17 @@ export const invoiceInputSchema = z.object({
 });
 export type InvoiceInput = z.input<typeof invoiceInputSchema>;
 
+/** One free or service line of an invoice input, resolved against the shop's services (a service of another shop is unknown). */
+async function resolveLine(db: Db | Tx, shopId: string, l: InvoiceInput["lines"][number]): Promise<LineInput> {
+  if (!l.serviceId) {
+    if (l.unitPriceCents === undefined) throw new ShopError("AK_LINE_PRICE", "AK_LINE_PRICE: a free line needs a price");
+    return { description: l.description!, quantity: l.quantity, unitPriceCents: l.unitPriceCents, category: l.category ?? "standard" };
+  }
+  const [service] = await db.select().from(services).where(and(eq(services.id, l.serviceId), eq(services.shopId, shopId)));
+  if (!service) throw new ShopError("AK_SERVICE_UNKNOWN", `AK_SERVICE_UNKNOWN: ${l.serviceId}`);
+  return { description: l.description ?? `${service.nameFr} / ${service.nameEn}`, quantity: l.quantity, unitPriceCents: l.unitPriceCents ?? service.priceCents, category: l.category ?? service.taxCategory };
+}
+
 /** Issues an invoice for the shop from its services and free lines (the same transaction as `issueInvoice`). */
 export async function issueShopInvoice(db: Db | Tx, shopId: string, raw: InvoiceInput, link: { replaces?: string } = {}) {
   const input = invoiceInputSchema.parse(raw);
@@ -162,16 +144,7 @@ export async function issueShopInvoice(db: Db | Tx, shopId: string, raw: Invoice
     if (!appointment) throw new ShopError("AK_APPOINTMENT_UNKNOWN", `AK_APPOINTMENT_UNKNOWN: ${input.appointmentId}`);
   }
   const lines: LineInput[] = [];
-  for (const l of input.lines) {
-    if (l.serviceId) {
-      const [service] = await db.select().from(services).where(and(eq(services.id, l.serviceId), eq(services.shopId, shopId)));
-      if (!service) throw new ShopError("AK_SERVICE_UNKNOWN", `AK_SERVICE_UNKNOWN: ${l.serviceId}`);
-      lines.push({ description: l.description ?? `${service.nameFr} / ${service.nameEn}`, quantity: l.quantity, unitPriceCents: l.unitPriceCents ?? service.priceCents, category: l.category ?? service.taxCategory });
-    } else {
-      if (l.unitPriceCents === undefined) throw new ShopError("AK_LINE_PRICE", "AK_LINE_PRICE: a free line needs a price");
-      lines.push({ description: l.description!, quantity: l.quantity, unitPriceCents: l.unitPriceCents, category: l.category ?? "standard" });
-    }
-  }
+  for (const l of input.lines) lines.push(await resolveLine(db, shopId, l));
   return issueInvoice(db, { shopId, clientId: input.clientId ?? null, appointmentId: input.appointmentId ?? null, language: input.language, issuedOn: input.issuedOn, termsDays: input.termsDays ?? null, lines, replaces: link.replaces ?? null });
 }
 

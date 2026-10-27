@@ -93,7 +93,7 @@ try {
   check(true, "the administrator signs in from an allowed address");
 
   if (process.env.E2E_SHOTS) mkdirSync(process.env.E2E_SHOTS, { recursive: true });
-  const pages = [["", "Health"], ["/users", null], [`/users/${ids.USER}`, member], ["/shops", "Salon Laurier"], ["/invoices", "Salon Laurier"], ["/ledger", "Salon Laurier"], ["/operations", "Database budget"], ["/audit", null]];
+  const pages = [["", "Health"], ["/users", null], [`/users/${ids.USER}`, member], ["/shops", "Salon Laurier"], ["/invoices", "Salon Laurier"], ["/ledger", "Salon Laurier"], ["/operations", "Database budget"], ["/incidents", "Confidentiality incidents"], ["/audit", null]];
   for (const [path, text] of pages) {
     await page.goto(`${BASE}/en${path}`, { waitUntil: "networkidle" });
     if (text) check(await page.getByText(text).first().isVisible(), `/en${path || ""} shows "${text}"`);

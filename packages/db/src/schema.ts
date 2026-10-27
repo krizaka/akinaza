@@ -246,9 +246,111 @@ export const shopPage = pgTable(
     sectionsCustom: boolean("sections_custom").notNull().default(false),
     /** The owner's text-style overrides per role (title, body, price). */
     style: jsonb("style").$type<Record<string, unknown>>().notNull().default(sql`'{}'::jsonb`),
+    /** The accent the owner chose within the look (one of the preset's tested accents, akinaza#402); null = the look's own. */
+    accent: text("accent"),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
+  (t) => [check("shop_page_accent", sql`${t.accent} IS NULL OR ${t.accent} ~ '^[a-z0-9:-]{1,40}$'`), check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
+);
+
+/** The shop page as a document (akinaza#400): one draft, one published, the rest archived (the last 20 kept). The published one IS the page. */
+export const shopPageVersions = pgTable(
+  "shop_page_versions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    version: integer("version").notNull(),
+    status: text("status", { enum: ["draft", "published", "archived"] }).notNull(),
+    schema: integer("schema").notNull(),
+    doc: jsonb("doc").$type<Record<string, unknown>>().notNull(),
+    authorId: uuid("author_id"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
+  },
+  (t) => [unique("shop_page_versions_shop_id_version_key").on(t.shopId, t.version)],
+);
+
+/** The owner's own figure thresholds (#260): only the keys they changed; no row = the administrator's defaults. Bounds are checked by the application and the shape by the database. */
+export const shopFigureRules = pgTable(
+  "shop_figure_rules",
+  {
+    shopId: uuid("shop_id").primaryKey().references(() => shops.id, { onDelete: "cascade" }),
+    overrides: jsonb("overrides").$type<Record<string, number>>().notNull().default(sql`'{}'::jsonb`),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check("shop_figure_rules_object", sql`jsonb_typeof(${t.overrides}) = 'object'`)],
+);
+
+/**
+ * The private calendar feeds of a shop and of its staff members (ADR-004, #282): one active token per feed. Only the keyed hash of the token is kept,
+ * so a leaked table opens nothing; rotating revokes the old row and adds a new one, revoking only revokes. `staff_id` null = the whole shop's feed.
+ */
+export const feedTokens = pgTable(
+  "feed_tokens",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    staffId: uuid("staff_id").references(() => staff.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull(),
+    createdAt: created(),
+    /** When this token replaced an earlier one (null = the feed's first token). */
+    rotatedAt: timestamp("rotated_at", { withTimezone: true }),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("feed_tokens_hash").on(t.tokenHash),
+    index("feed_tokens_shop").on(t.shopId),
+    uniqueIndex("feed_tokens_active_shop").on(t.shopId).where(sql`${t.staffId} IS NULL AND ${t.revokedAt} IS NULL`),
+    uniqueIndex("feed_tokens_active_staff").on(t.shopId, t.staffId).where(sql`${t.staffId} IS NOT NULL AND ${t.revokedAt} IS NULL`),
+    check("feed_tokens_hash_shape", sql`${t.tokenHash} ~ '^[0-9a-f]{64}$'`),
+  ],
+);
+
+/**
+ * A calendar the owner already uses, read-only (ADR-004, #282). `staff_id` null blocks everyone's slots, a staff id only that person's.
+ * `secret_enc` is the ICS address or the provider grant, sealed with the data key (the row's id as additional data).
+ */
+export const calendarConnections = pgTable(
+  "calendar_connections",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    staffId: uuid("staff_id").references(() => staff.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: ["ics", "google", "outlook", "caldav"] }).notNull(),
+    label: text("label").notNull(),
+    secretEnc: text("secret_enc").notNull(),
+    consentTextVersion: text("consent_text_version").notNull(),
+    consentedAt: timestamp("consented_at", { withTimezone: true }).notNull(),
+    etag: text("etag"),
+    lastModified: text("last_modified"),
+    state: text("state", { enum: ["pending", "ok", "error"] }).notNull().default("pending"),
+    failures: integer("failures").notNull().default(0),
+    lastError: text("last_error"),
+    lastAttemptAt: timestamp("last_attempt_at", { withTimezone: true }),
+    lastSuccessAt: timestamp("last_success_at", { withTimezone: true }),
+    nextSyncAt: timestamp("next_sync_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: created(),
+  },
+  (t) => [
+    index("calendar_connections_shop").on(t.shopId),
+    index("calendar_connections_due").on(t.nextSyncAt),
+    check("calendar_connections_kind", sql`${t.kind} IN ('ics','google','outlook','caldav')`),
+    check("calendar_connections_state", sql`${t.state} IN ('pending','ok','error')`),
+    check("calendar_connections_label", sql`char_length(${t.label}) BETWEEN 1 AND 80`),
+  ],
+);
+
+/** What the owner is busy with elsewhere: a stretch of time, no title, no attendee. Replaced at each sync, deleted with its connection. */
+export const busyIntervals = pgTable(
+  "busy_intervals",
+  {
+    id: id(),
+    connectionId: uuid("connection_id").notNull().references(() => calendarConnections.id, { onDelete: "cascade" }),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    staffId: uuid("staff_id").references(() => staff.id, { onDelete: "cascade" }),
+    during: tstzrange("during").notNull(),
+  },
+  (t) => [index("busy_intervals_shop").on(t.shopId, t.staffId), index("busy_intervals_connection").on(t.connectionId), index("busy_intervals_during").using("gist", t.during), check("busy_intervals_bounded", sql`NOT isempty(${t.during}) AND NOT lower_inf(${t.during}) AND NOT upper_inf(${t.during})`)],
 );
 
 /** The wall of the public page (B45, #310): its texture; no row = plaster and no item. */
@@ -493,20 +595,6 @@ export const clients = pgTable(
     check("clients_erased", sql`${t.erasedAt} IS NULL OR (${t.email} IS NULL AND ${t.phone} IS NULL AND ${t.notes} IS NULL AND ${t.accessNotesEnc} IS NULL AND ${t.accountId} IS NULL)`),
     check("clients_access_notes_sealed", sql`${t.accessNotesEnc} IS NULL OR ${t.accessNotesEnc} ~ '^v[0-9]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$'`),
   ],
-);
-
-/** Every consent decision, per purpose and text version — append-only (trigger). */
-export const clientConsents = pgTable(
-  "client_consents",
-  {
-    id: bigserial("id", { mode: "number" }).primaryKey(),
-    clientId: uuid("client_id").notNull().references(() => clients.id, { onDelete: "cascade" }),
-    purpose: text("purpose", { enum: ["service", "reminders", "marketing"] }).notNull(),
-    granted: boolean("granted").notNull(),
-    textVersion: text("text_version").notNull(),
-    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [check("client_consents_purpose", sql`${t.purpose} IN ('service','reminders','marketing')`)],
 );
 
 export const appointments = pgTable(

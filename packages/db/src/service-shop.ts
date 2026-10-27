@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import type { Db, Tx } from "./client";
 import { openField, sealField } from "./crypto";
+import { busyBetween } from "./calendar-connections";
 import { ShopError } from "./errors";
 import { type CommunityView, communityOf } from "./shop-community";
 import { shopPageConfigOf, type ShopPageConfig } from "./shop-page";
@@ -430,7 +431,16 @@ export async function currentSlugOf(db: Db, formerSlug: string): Promise<string 
 
 export async function publicShop(db: Db, slug: string): Promise<PublicShop | null> {
   const [row] = await db.select().from(shops).where(and(eq(shops.slug, slug), eq(shops.published, true)));
-  if (!row) return null;
+  return row ? publicShopOf(db, row) : null;
+}
+
+/** The shop as its page would show it, published or not: the owner's preview of the draft (akinaza#402). The caller checked the member. */
+export async function previewShop(db: Db, shopId: string): Promise<PublicShop | null> {
+  const [row] = await db.select().from(shops).where(eq(shops.id, shopId));
+  return row?.slug ? publicShopOf(db, row) : null;
+}
+
+async function publicShopOf(db: Db, row: typeof shops.$inferSelect): Promise<PublicShop> {
   const full = await loadShop(db, row);
   const team = await activeStaff(db, row.id);
   const everyone = team.length > 1 ? await db.select().from(schedules).where(inArray(schedules.staffId, team.map((m) => m.id))) : full.windows;
@@ -572,6 +582,7 @@ export async function listSlots(db: Reader, query: SlotQuery): Promise<StaffSlot
   for (const member of members) {
     const [windows, off] = await Promise.all([db.select().from(schedules).where(eq(schedules.staffId, member.id)), db.select({ d: daysOff.onDate }).from(daysOff).where(eq(daysOff.staffId, member.id))]);
     const visits = await takenVisits(db, member.id, rangeStart, rangeEnd);
+    const busy = await busyBetween(db, shop.id, member.id, { from: rangeStart, to: rangeEnd });
     const asWindows: WeeklyWindow[] = windows.map((w) => ({ weekday: w.weekday, startsAt: w.startsAt.slice(0, 5), endsAt: w.endsAt.slice(0, 5) }));
     const open = openSlots({
       timezone: shop.timezone,
@@ -587,6 +598,7 @@ export async function listSlots(db: Reader, query: SlotQuery): Promise<StaffSlot
       capacity: service.capacity,
       minNoticeMinutes: rules.minNoticeMinutes,
       visits,
+      busy,
     });
     // « Anyone »: a time is offered once; a group visit already started is preferred (it fills the visit), else the first who joined.
     for (const slot of open) {

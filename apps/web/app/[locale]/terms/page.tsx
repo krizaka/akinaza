@@ -4,8 +4,8 @@ import { PageHero } from "@krizaka/ui/page-hero";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { pagePath, TERMS_VERSION } from "@/lib/site";

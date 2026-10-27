@@ -46,6 +46,10 @@
     "preferences": "Préférences",
     "version": "v{version}"
   },
+  "stage": {
+    "title": "Version de développement",
+    "message": "Les données peuvent être réinitialisées à tout moment. Ce n’est pas encore une offre commerciale."
+  },
   "landing": {
     "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
     "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",
@@ -84,7 +88,7 @@
       },
       "plans": {
         "starter": "Starter",
-        "scale": "Scale B2B",
+        "scale": "Pro",
         "price": "{price} par mois plus taxes",
         "preparing": "en préparation",
         "scaleSoon": "ses fonctions B2B arrivent bientôt"
@@ -111,7 +115,24 @@
       "line": "Dossiers dans une base de données au Canada · Consentement noté par finalité · Taxes préparées, déclaration produite par vous",
       "scope": "Pour les studios, salons et travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place."
     },
-    "visualLabel": "dev.akinaza.com"
+    "visualLabel": "www.akinaza.com",
+    "feed": {
+      "title": "Affiché dans votre quartier",
+      "lead": "Les affichettes que les commerces épinglent sur leur propre page : une porte ouverte, un nouveau service, une place libérée. Rien ici n’est de la publicité que nous vendons.",
+      "filterLabel": "Choisir un quartier",
+      "all": "Tous les quartiers",
+      "boardLabel": "Affichettes épinglées par les commerces du quartier",
+      "visit": "Voir {shop}",
+      "demo": "Voir la boutique de démonstration",
+      "empty": "Aucune affichette dans ce quartier pour le moment.",
+      "error": "Impossible de charger les affichettes. Réessayez dans un instant."
+    },
+    "preview": {
+      "demo": "Données de démonstration",
+      "slotsLabel": "Heures libres",
+      "slotsEmpty": "Aucune heure libre cette semaine",
+      "invoiceLine": "Promenades de groupe, octobre"
+    }
   },
   "docs": {
     "title": "Guide du propriétaire",
@@ -319,7 +340,7 @@
             "id": "clients",
             "h": "Les données de vos clients",
             "p": [
-              "Le consentement d'un client est consigné pour chaque finalité et peut être retiré. Effacer un client vide ses champs personnels et garde les factures que la loi oblige à conserver. Les données sont gardées au Canada, chiffrées au repos, et visibles de votre boutique seulement."
+              "Le consentement d'un client est consigné pour chaque finalité et peut être retiré. Effacer un client vide ses champs personnels et garde les factures que la loi oblige à conserver. Les dossiers sont gardés dans une base de données au Canada, chiffrés au repos, et visibles de votre boutique seulement."
             ],
             "items": []
           },
@@ -341,16 +362,18 @@
     "plansLabel": "Plans",
     "perMonth": "par mois, taxes en sus",
     "preparing": "en préparation",
-    "soon": "bientôt",
+    "soon": "Bientôt",
+    "plannedTitle": "À venir",
     "badgeFounder": "Offre fondatrice",
     "badgeFounderLimit": "Les {limit} premières entreprises",
     "founderNote": "Mise en route incluse : vos services, vos heures, vos premières factures.",
     "plans": {
       "founder": "Fondatrice",
       "starter": "Starter",
-      "scale": "Scale B2B"
+      "scale": "Pro"
     },
     "features": {
+      "inherits": "Tout ce qu’inclut {plan}, plus les fonctions ci-dessous à mesure qu’elles arrivent",
       "booking": "Votre page de boutique et vos réservations, avec les heures que vous avez vraiment",
       "invoices": "Des factures bilingues avec la TPS et la TVQ exactes au sou",
       "books": "Les livres et les chiffres de taxes de chaque période, préparés pour que vous les déclariez",
@@ -379,14 +402,78 @@
       }
     ]
   },
+  "download": {
+    "title": "Les applications",
+    "lead": "Akinaza dans votre poche et sur le web, enregistré par nos propres tests sur la boutique de démonstration. Ce n'est pas une fiche de boutique d'applications : aucune application n'est encore proposée au téléchargement.",
+    "videos": {
+      "title": "Les applications à l'œuvre",
+      "lead": "Chaque vidéo est enregistrée par les tests automatisés sur la dernière version, avec des données de démonstration seulement.",
+      "play": "Lire",
+      "recorded": "Enregistrée le {date}",
+      "seconds": "{seconds} s",
+      "items": {
+        "web-storefront": {
+          "name": "La page publique de la boutique",
+          "body": "La page d'une boutique de démonstration, puis la même boutique dans d'autres compositions de Krizaka UI."
+        },
+        "web-composer": {
+          "name": "Le compositeur de page",
+          "body": "Une section déplacée au clavier, le style changé. Rien n'est publié."
+        },
+        "android-today-books": {
+          "name": "Aujourd'hui et les livres, sur le téléphone",
+          "body": "Le tableau du jour et les livres dans l'application Android, avec des données de démonstration."
+        }
+      }
+    }
+  },
   "privacy": {
     "title": "Confidentialité",
     "updated": "Mis à jour le {date}",
-    "body": "Akinaza est en développement : seuls les comptes créés par notre équipe peuvent se connecter. Les données d'une boutique — ses clients, rendez-vous, factures et registre des taxes — sont gardées dans la base de données d'Akinaza au Canada, chiffrées au repos, visibles de cette boutique seulement. Le consentement des clients est noté par finalité et peut être retiré ; les renseignements personnels d'un client peuvent être effacés, les factures qu'exige la loi fiscale étant gardées. Quand un commerçant demande de préparer une déclaration, le registre de la période est envoyé à Orazaka, le moteur de Krizaka, par HTTPS ; rien n'est produit ni transmis à un gouvernement. Rien n'est vendu ni partagé. Pour poser une question ou faire supprimer vos données, utilisez le formulaire de contact.",
+    "body": "Akinaza est en développement : seuls les comptes créés par notre équipe peuvent se connecter. Les données d'une boutique — ses clients, rendez-vous, factures et registre des taxes — sont gardées dans la base de données d'Akinaza au Canada, chiffrées au repos, visibles de cette boutique seulement. Le consentement des clients est noté par finalité et peut être retiré ; les renseignements personnels d'un client peuvent être effacés, les factures qu'exige la loi fiscale étant gardées. Les chiffres de taxes préparés par Akinaza sont calculés à partir du registre de la période, dans Akinaza ; rien n'est produit pour un gouvernement, ni déposé auprès de lui, ni transmis. Rien n'est vendu. Pour poser une question ou faire supprimer vos données, utilisez le formulaire de contact.",
     "officer": {
       "title": "Responsable de la protection des renseignements personnels",
       "role": "Responsable de la protection des renseignements personnels",
       "text": "La personne responsable de la protection des renseignements personnels est publiée ici. Titre : {role}, Technologies Krizaka Inc., Montréal (Québec), Canada. Contact : contact@krizaka.com, pour accéder à vos renseignements, les corriger ou les effacer, retirer un consentement ou déposer une plainte ; nous répondons dans un délai de 30 jours."
+    },
+    "processors": {
+      "title": "Qui traite des renseignements pour nous",
+      "lead": "Akinaza fait appel à des fournisseurs de services, par contrat écrit, seulement pour faire fonctionner le service. L'endroit où un fournisseur garde des données n'est indiqué ici qu'une fois confirmé.",
+      "items": [
+        {
+          "h": "Hébergement",
+          "p": "L'application et sa base de données fonctionnent chez un fournisseur d'hébergement infonuagique."
+        },
+        {
+          "h": "Stockage et diffusion des médias",
+          "p": "Les photos et fichiers que vous ajoutez (photos d'une boutique, fichiers d'une demande de client) sont stockés chez un fournisseur de stockage et de diffusion de médias. En développement, ce stockage est à New York, aux États-Unis."
+        },
+        {
+          "h": "Envoi de courriels",
+          "p": "Les courriels comme les rapports de visite et les factures passent par un fournisseur d'envoi de courriels, seulement lorsque l'envoi est activé."
+        },
+        {
+          "h": "Paiements",
+          "p": "Un abonnement se paie sur la page hébergée d'un processeur de paiement ; Akinaza ne voit ni ne garde jamais un numéro de carte."
+        },
+        {
+          "h": "Traduction",
+          "p": "Si la traduction d'une page de boutique est activée, les textes de la page sont envoyés au moteur de Krizaka, Orazaka. Rien sur un client n'est envoyé."
+        }
+      ],
+      "register": "Le registre de ces transferts hors Québec, avec l'évaluation rédigée avant l'ouverture, est public :",
+      "registerLink": "Registre des transferts",
+      "assessmentLink": "Évaluation des facteurs relatifs à la vie privée"
+    },
+    "governance": {
+      "title": "Comment nous traitons les renseignements personnels",
+      "items": [
+        "Pourquoi nous les recueillons : pour faire fonctionner les rendez-vous, les factures et les chiffres de taxes d'une boutique, et le compte de la personne qui se connecte. Rien d'autre.",
+        "Qui peut les voir : la boutique qui les détient, et les rares personnes qui exploitent le service. Une boutique ne voit jamais les données d'une autre.",
+        "Combien de temps nous les gardons : les factures et le registre des taxes six ans, comme l'exige la loi fiscale ; le reste jusqu'à son effacement à votre demande.",
+        "Vos droits : les consulter, les corriger, en obtenir une copie dans un format courant, retirer un consentement ou les faire effacer. Écrivez à la personne responsable ci-dessus ; nous répondons dans un délai de 30 jours.",
+        "En cas de problème : nous suivons une procédure écrite pour les incidents de confidentialité, et nous avisons la Commission d'accès à l'information et les personnes concernées lorsque la loi l'exige."
+      ]
     }
   },
   "terms": {
@@ -421,7 +508,7 @@
       },
       {
         "h": "7. Vos renseignements personnels",
-        "p": "Les renseignements de vos clients que vous saisissez restent les vôtres : vous en êtes responsable et Akinaza les traite pour votre compte, au Canada, chiffrés au repos, visibles de votre boutique seulement. Les consentements sont demandés par finalité, jamais pré-cochés, et peuvent être retirés ; l'effacement vide les champs personnels et garde les factures que la loi fiscale oblige à conserver (six ans). Le tout est encadré par la Loi sur la protection des renseignements personnels dans le secteur privé (RLRQ, c. P-39.1), telle que modifiée par la Loi modernisant des dispositions législatives en matière de protection des renseignements personnels (L.Q. 2021, c. 25). Le détail, le responsable de la protection des renseignements personnels et la façon d'exercer vos droits sont dans l'avis de confidentialité."
+        "p": "Les renseignements de vos clients que vous saisissez restent les vôtres : vous en êtes responsable et Akinaza les traite pour votre compte, dans une base de données au Canada, chiffrés au repos, visibles de votre boutique seulement ; les photos et fichiers que vous ajoutez sont stockés chez un fournisseur de médias, nommé dans l'avis de confidentialité. Les consentements sont demandés par finalité, jamais pré-cochés, et peuvent être retirés ; l'effacement vide les champs personnels et garde les factures que la loi fiscale oblige à conserver (six ans). Le tout est encadré par la Loi sur la protection des renseignements personnels dans le secteur privé (RLRQ, c. P-39.1), telle que modifiée par la Loi modernisant des dispositions législatives en matière de protection des renseignements personnels (L.Q. 2021, c. 25). Le détail, le responsable de la protection des renseignements personnels et la façon d'exercer vos droits sont dans l'avis de confidentialité."
       },
       {
         "h": "8. Notre responsabilité",
@@ -512,6 +599,7 @@
       "openMenu": "Ouvrir le menu",
       "collapse": "Replier le menu",
       "expand": "Déplier le menu",
+      "yourAccount": "Votre compte",
       "signedInAs": "Connecté en tant que {email}",
       "devBuild": "DEV · v{version}",
       "language": "Langue",
@@ -552,7 +640,8 @@
         "toCollect": "à encaisser : {count}"
       },
       "organize": "Étiquettes et vues",
-      "prices": "Prix"
+      "prices": "Prix",
+      "incidents": "Incidents"
     },
     "admin": {
       "health": "Santé",
@@ -786,6 +875,81 @@
         "history": "Historique",
         "seedLine": "Valeur de départ : {price}",
         "historyLine": "{at}, {actor} : {before} → {after}, à partir du {from}"
+      },
+      "incidents": {
+        "title": "Incidents de confidentialité",
+        "lead": "Le registre exigé par la Loi sur la protection des renseignements personnels dans le secteur privé (art. 3.5 à 3.8) : tous les incidents, graves ou non, conservés cinq ans. Il contient des faits et des catégories de renseignements, jamais les données d'une personne. Évaluez le risque de préjudice sérieux ; s'il existe, avisez la Commission d'accès à l'information et les personnes concernées, puis fermez. Il couvre les données d'Akinaza : fiches de clients des boutiques, factures et relevés fiscaux.",
+        "exportCsv": "Exporter en CSV",
+        "exportJson": "Exporter en JSON",
+        "register": "Registre",
+        "empty": "Aucun incident consigné.",
+        "awareAt": "Constaté le",
+        "kind": "Ce qui s'est passé",
+        "status": "Statut",
+        "risk": "Risque de préjudice sérieux",
+        "serious": "Sérieux",
+        "notSerious": "Non sérieux",
+        "drill": "Exercice",
+        "drillBadge": "Exercice",
+        "description": "Ce qui s'est passé, en faits",
+        "details": "Détails",
+        "hide": "Masquer",
+        "kinds": {
+          "access": "Accès non autorisé",
+          "use": "Utilisation non autorisée",
+          "communication": "Communication non autorisée",
+          "loss": "Perte"
+        },
+        "statuses": {
+          "open": "Ouvert",
+          "assessed": "Évalué",
+          "closed": "Fermé"
+        },
+        "levels": {
+          "low": "Faible",
+          "medium": "Moyen",
+          "high": "Élevé"
+        },
+        "open": "Ouvrir un incident",
+        "openSubmit": "Ouvrir",
+        "cancel": "Annuler",
+        "descriptionHint": "Des faits seulement. Ni nom, ni courriel, ni contenu de document.",
+        "information": "Catégories de renseignements concernés",
+        "informationHint": "Séparées par des virgules, p. ex. factures, relevés fiscaux. Jamais l'information elle-même.",
+        "persons": "Personnes concernées (si connu)",
+        "drillLabel": "Il s'agit d'un exercice",
+        "markDrill": "Marquer comme exercice",
+        "unmarkDrill": "Pas un exercice",
+        "assess": "Évaluer le risque",
+        "assessSubmit": "Enregistrer l'évaluation",
+        "sensitivity": "Sensibilité des renseignements",
+        "consequences": "Gravité des conséquences",
+        "likelihood": "Probabilité d'utilisation malveillante",
+        "seriousInjury": "Risque de préjudice sérieux",
+        "rationale": "Motifs de la décision",
+        "measure": "Mesures prises",
+        "measureText": "Une mesure pour réduire le risque ou éviter un nouvel incident",
+        "measureSubmit": "Consigner la mesure",
+        "notice": "Consigner un avis envoyé",
+        "target": "Envoyé à",
+        "targets": {
+          "cai": "Commission d'accès à l'information",
+          "persons": "Personnes concernées"
+        },
+        "channel": "Comment",
+        "channels": {
+          "form": "Formulaire de la Commission",
+          "email": "Courriel",
+          "letter": "Lettre",
+          "public": "Avis public"
+        },
+        "reference": "Référence de l'accusé de réception (s'il y a lieu)",
+        "noticeSubmit": "Consigner l'avis",
+        "caiNotice": "Avis à la Commission",
+        "personsNotice": "Avis aux personnes concernées",
+        "retain": "Conservé au registre jusqu'au {date}.",
+        "close": "Fermer l'incident",
+        "closedNote": "Cette entrée est fermée. Elle reste au registre et n'est plus jamais modifiée."
       }
     },
     "errors": {
@@ -889,7 +1053,20 @@
       "UPLOAD_NOT_VIDEO": "Ce n'est pas une vidéo MP4 ou WebM.",
       "SOCIAL_LINK": "Cette adresse n'est pas une page de cette plateforme.",
       "ANNOUNCEMENT_LIMIT": "Vous gardez trente affichettes au plus. Retirez-en une d'abord.",
-      "REVIEW_REMOVED": "Cet avis a été retiré par l'administration."
+      "REVIEW_REMOVED": "Cet avis a été retiré par l'administration.",
+      "CAL_INVALID": "Cette adresse n'est pas un agenda que nous pouvons lire.",
+      "CAL_UNREACHABLE": "L'agenda est injoignable. Nous réessaierons.",
+      "CAL_REFUSED": "L'agenda nous a refusé l'accès : vérifiez l'adresse.",
+      "CAL_TOO_LARGE": "Cet agenda est trop volumineux pour être lu.",
+      "CAL_UNAUTHORIZED": "L'agenda demande de vous reconnecter.",
+      "CAL_RATE_LIMITED": "L'agenda nous demande de ralentir. Nous réessaierons.",
+      "CALENDAR_LIMIT": "Vous avez atteint le nombre d'agendas permis.",
+      "INCIDENT_BAD_INPUT": "L'incident est incomplet ou invalide.",
+      "INCIDENT_UNKNOWN": "Cet incident n'existe pas.",
+      "INCIDENT_CLOSED": "Cet incident est fermé et ne peut plus changer.",
+      "INCIDENT_NOT_ASSESSED": "Évaluez d'abord le risque.",
+      "INCIDENT_NO_NOTICE_DUE": "Aucun avis n'est requis : le risque de préjudice sérieux n'a pas été retenu.",
+      "INCIDENT_NOTICES_MISSING": "Les deux avis doivent être consignés avant la fermeture."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -957,8 +1134,9 @@
       },
       "week": "Semaine {week} · {date}",
       "calendar": "Calendrier",
-      "binder": {
-        "title": "Le classeur",
+      "glance": {
+        "title": "Votre journée en bref",
+        "hint": "Chaque nombre ouvre sa liste.",
         "appointments": "Rendez-vous {count}",
         "toBill": "À facturer {count}",
         "toCollect": "À encaisser {count}",
@@ -976,14 +1154,17 @@
         "days": "{days} j",
         "invoiced": "Facturé",
         "collected": "Encaissé",
-        "appointments": "Rendez-vous faits"
+        "appointments": "Rendez-vous faits",
+        "daysLong": "{days} jours"
       },
       "balance": {
         "title": "À encaisser",
         "owed": "Reste dû : {amount}",
         "overdue": "Dont {amount} en retard",
         "noneLate": "Rien en retard."
-      }
+      },
+      "conflict": "Chevauche votre agenda {calendar}",
+      "conflictDetail": "Ce rendez-vous chevauche une plage occupée de votre agenda {calendar}. Rien n'a été modifié de part ni d'autre : gardez-le, ou déplacez l'un des deux vous-même."
     },
     "account": {
       "forgot": {
@@ -1022,12 +1203,12 @@
         "accountTitle": "Mon compte",
         "description": "Votre profil, vos préférences, votre sécurité et vos données.",
         "profileDescription": "Votre nom et votre image, tels que votre équipe les voit.",
+        "profileDescriptionClient": "Votre nom et votre image.",
         "avatar": "Photo de profil",
         "email": "Courriel",
         "language": "Langue",
         "role": "Rôle",
         "roleIn": "{role} chez {shop}",
-        "roleUser": "Membre",
         "roleAdmin": "Administrateur",
         "lastSeen": "Dernière visite",
         "passwordTitle": "Changer votre mot de passe",
@@ -1064,6 +1245,7 @@
       "name": {
         "label": "Nom",
         "hint": "Affiché dans le menu du compte et à votre équipe.",
+        "hintClient": "Affiché dans le menu de votre compte.",
         "missing": "Pas encore de nom"
       },
       "avatar": {
@@ -1282,7 +1464,8 @@
         "label": "Vos clients en bref",
         "count": "{count} clients",
         "owedLabel": "À encaisser",
-        "upToDate": "{count} sur {total} à jour"
+        "upToDate": "{count} sur {total} à jour",
+        "upToDateHint": "À jour : rien n’est dû."
       },
       "search": "Rechercher un client",
       "searchPlaceholder": "Nom, courriel ou téléphone",
@@ -1291,13 +1474,23 @@
       "filter": {
         "all": "Tous",
         "due": "Reste dû",
-        "upcoming": "À venir"
+        "upcoming": "Prochain rendez-vous pris"
       },
       "selection": {
         "export": "Exporter la sélection (CSV)"
       },
       "exportFile": "clients.csv",
-      "noMatch": "Aucun client ne correspond."
+      "noMatch": "Aucun client ne correspond.",
+      "privacy": {
+        "title": "Leurs demandes de confidentialité",
+        "lead": "Quand cette personne demande à voir, à obtenir une copie ou à effacer ce que vous détenez sur elle, répondez ici, dans un délai de 30 jours. Akinaza détient le dossier pour votre boutique.",
+        "export": "Télécharger ses données",
+        "erase": "Effacer son dossier",
+        "eraseConfirm": "Effacer le dossier de ce client ?",
+        "eraseDescription": "Ses coordonnées, ses personnes à charge, vos notes, les rapports et les photos sont effacés pour de bon, et ses consentements sont retirés. Les factures et le registre des taxes sont gardés six ans, comme l'exige la loi fiscale. Cette action est définitive.",
+        "eraseYes": "Effacer pour de bon",
+        "keep": "Garder le dossier"
+      }
     },
     "shopSetup": {
       "title": "Votre page boutique",
@@ -1334,7 +1527,7 @@
         "legalName": "Raison sociale",
         "address": "Adresse",
         "slug": "Adresse de la page",
-        "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. pattes-saint-henri Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
+        "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. pattes-saint-henri. Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
         "ownerName": "Votre prénom",
         "taglineFr": "Une ligne, en français",
         "taglineEn": "Une ligne, en anglais",
@@ -1357,7 +1550,8 @@
         "businessTypes": {
           "professional": "Services professionnels (studio, conseil, réparation…)",
           "pets": "Soins aux animaux (promenades, toilettage…)"
-        }
+        },
+        "ownerNameHint": "Votre nom dans l’agenda et sur vos rendez-vous."
       },
       "zones": {
         "title": "Zones desservies",
@@ -1464,7 +1658,8 @@
           "wall": "Le mur",
           "board": "Le babillard",
           "reels": "Vidéo et profils",
-          "reviews": "Avis"
+          "reviews": "Avis",
+          "composer": "Composition"
         },
         "identity": {
           "title": "Identité",
@@ -1550,6 +1745,54 @@
         "updateTemplateOrder": "Mettre à jour avec son ordre"
       }
     },
+    "exports": {
+      "columns": {
+        "appointments": {
+          "id": "Id",
+          "start": "Début",
+          "end": "Fin",
+          "status": "Statut",
+          "service": "Service",
+          "staff": "Employé",
+          "client": "Client",
+          "price": "Prix"
+        },
+        "clients": {
+          "id": "Id",
+          "name": "Nom",
+          "email": "Courriel",
+          "phone": "Téléphone",
+          "language": "Langue",
+          "since": "Client depuis",
+          "dependants": "Dépendants"
+        },
+        "invoices": {
+          "number": "Numéro",
+          "issuedOn": "Émise le",
+          "dueOn": "Échéance",
+          "client": "Client",
+          "subtotal": "Sous-total",
+          "gst": "TPS",
+          "qst": "TVQ",
+          "total": "Total",
+          "paid": "Payé",
+          "creditOf": "Note de crédit de",
+          "state": "État",
+          "language": "Langue"
+        }
+      },
+      "status": {
+        "booked": "Réservé",
+        "done": "Terminé",
+        "cancelled": "Annulé",
+        "noShow": "Absent"
+      },
+      "invoiceState": {
+        "open": "Ouverte",
+        "paid": "Payée",
+        "superseded": "Remplacée ou créditée"
+      }
+    },
     "boutique": {
       "title": "Votre boutique",
       "navLabel": "Sections de votre boutique",
@@ -1561,7 +1804,39 @@
         "languages": "Langues",
         "team": "Équipe",
         "invoices": "Courriels de facture",
-        "shops": "Vos boutiques"
+        "shops": "Vos boutiques",
+        "figures": "Seuils des chiffres",
+        "data": "Vos données",
+        "agenda": "Agenda"
+      },
+      "data": {
+        "title": "Vos données",
+        "lead": "Téléchargez ce que la boutique détient, pour l’ouvrir dans vos propres outils. Seulement ce que vous voyez déjà ici ; rien d’une autre boutique, aucune note d’accès, aucune personne effacée.",
+        "download": "Télécharger",
+        "audited": "Chaque téléchargement est consigné dans le journal de la boutique. Seul le propriétaire peut en faire un.",
+        "off": "L’administrateur a désactivé les téléchargements de données.",
+        "files": {
+          "appointmentsCsv": {
+            "group": "Rendez-vous",
+            "label": "Tableur (CSV)",
+            "hint": "Chaque rendez-vous, avec son service, son employé et son client. Le fichier ICS s’ouvre dans les agendas Apple, Google ou Outlook."
+          },
+          "appointmentsIcs": {
+            "group": "Rendez-vous",
+            "label": "Fichier d’agenda (ICS)",
+            "hint": "Chaque rendez-vous, avec son service, son employé et son client. Le fichier ICS s’ouvre dans les agendas Apple, Google ou Outlook."
+          },
+          "clientsCsv": {
+            "group": "Clients",
+            "label": "Tableur (CSV)",
+            "hint": "Noms, courriel, téléphone, langue et dépendants."
+          },
+          "invoicesCsv": {
+            "group": "Factures",
+            "label": "Tableur (CSV)",
+            "hint": "Factures et notes de crédit dans l’ordre des livres, montants en dollars avec TPS et TVQ."
+          }
+        }
       },
       "invoices": {
         "title": "Courriels de facture",
@@ -1573,6 +1848,70 @@
         "current": "Cette boutique",
         "open": "Ouvrir cette boutique",
         "add": "Ajouter une boutique"
+      },
+      "figures": {
+        "title": "Seuils des chiffres",
+        "lead": "Quand un chiffre demande un coup d’œil, et quand il demande d’agir. Seul cela change : les montants et les formules, jamais."
+      },
+      "agenda": {
+        "title": "Votre agenda sur votre téléphone",
+        "lead": "Un lien privé auquel votre téléphone s’abonne, pour voir vos rendez-vous dans l’agenda que vous utilisez déjà. Il ne porte que l’heure, le service et les prénoms : jamais un téléphone, un courriel ou une note.",
+        "feed": {
+          "shop": "Toute la boutique",
+          "live": "Lien actif",
+          "none": "Pas encore de lien",
+          "since": "Créé {when}",
+          "create": "Créer le lien",
+          "rotate": "Créer un nouveau lien",
+          "revoke": "Désactiver",
+          "revokeConfirm": "Désactiver ce lien ? Les agendas qui l’utilisent cessent de se mettre à jour.",
+          "once": "Copiez ce lien maintenant : il n’est affiché qu’une fois. Créer un nouveau lien désactive l’ancien aussitôt.",
+          "copy": "Copier le lien",
+          "copied": "Lien copié",
+          "qrLabel": "Code QR du lien d’agenda privé de {name} : scannez-le avec votre téléphone pour vous abonner",
+          "url": "Lien privé de {name}",
+          "howTitle": "Comment l’ajouter",
+          "how": "Calendrier Apple : Fichier, Nouvel abonnement à un calendrier. Google Agenda : Autres agendas, À partir de l’URL. Outlook : Ajouter un calendrier, S’abonner à partir du Web. Quiconque a le lien peut lire ces heures : ne le partagez avec personne.",
+          "off": "L’administrateur a désactivé les liens d’agenda.",
+          "nobody": "Pas encore de membre d’équipe."
+        },
+        "sources": {
+          "title": "Vos autres agendas",
+          "lead": "Akinaza lit les plages où vous êtes occupé dans l'agenda que vous utilisez déjà, et les garde libres de réservations. Il ne lit que les heures : jamais un titre, un invité ou une note, et il ne modifie jamais votre agenda.",
+          "wholeShop": "Toute la boutique",
+          "add": "Connecter un agenda",
+          "label": "Nom",
+          "labelHint": "Pour vous seulement, par exemple Google ou Dentiste.",
+          "whose": "Bloque les heures de",
+          "url": "Adresse de l'agenda (ICS)",
+          "urlHint": "Google Agenda : Paramètres, votre agenda, Adresse secrète au format iCal. Apple et Outlook en donnent une aussi quand vous publiez ou partagez un agenda. Quiconque a cette adresse peut lire cet agenda : elle est gardée chiffrée ici et n'est montrée à personne.",
+          "consent": "J'accepte qu'Akinaza lise les plages où je suis occupé dans cet agenda, pour les garder libres de réservations. Je peux me déconnecter à tout moment : ces plages sont alors supprimées.",
+          "needConsent": "Cochez la case pour connecter l'agenda.",
+          "connect": "Connecter",
+          "none": "Aucun agenda connecté.",
+          "state": {
+            "ok": "Lu",
+            "error": "Illisible",
+            "pending": "En attente"
+          },
+          "lastRead": "Lu {when}",
+          "neverRead": "Pas encore lu.",
+          "refresh": "Relire",
+          "remove": "Déconnecter",
+          "removeConfirm": "Déconnecter cet agenda ? Ses plages occupées sont supprimées et ces créneaux se rouvrent.",
+          "off": "L'administrateur a désactivé la connexion d'agendas.",
+          "providers": {
+            "title": "Connecter Google ou Outlook",
+            "lead": "Vous donnez votre accord sur la page de Google ou de Microsoft, et Akinaza ne reçoit que les plages où vous êtes occupé : jamais un titre, un invité ou une note. Vous pouvez aussi y retirer l'autorisation.",
+            "google": "Connecter Google Agenda",
+            "outlook": "Connecter Outlook"
+          },
+          "outcome": {
+            "connected": "Agenda connecté. Ses plages occupées gardent désormais ces créneaux libres.",
+            "denied": "Rien n'a été connecté : vous n'avez pas donné l'autorisation.",
+            "error": "L'agenda n'a pas pu être connecté. Réessayez."
+          }
+        }
       }
     },
     "shopPage": {
@@ -1691,6 +2030,16 @@
         "error": "Cette vidéo ne peut pas être lue",
         "retry": "Réessayer",
         "time": "{time} sur {duration}"
+      },
+      "faqTitle": "Questions fréquentes",
+      "looks": {
+        "label": "Voir autrement",
+        "note": "Ceci est une boutique de démonstration : la même boutique, dessinée avec une autre composition de Krizaka UI.",
+        "compact": "Compact",
+        "editorial": "Éditorial",
+        "gallery": "Galerie",
+        "route": "Parcours",
+        "journal": "Journal"
       }
     },
     "book": {
@@ -1835,6 +2184,7 @@
         "zero": "Rien à remettre"
       },
       "sources": "{count} documents derrière ce chiffre",
+      "sourcesOne": "1 document derrière ce chiffre",
       "kinds": {
         "invoice": "Facture",
         "expense": "Dépense"
@@ -1868,7 +2218,15 @@
           "label": "TVQ nette"
         }
       },
-      "footnote": "Akinaza prépare ces chiffres à partir de vos factures et de vos dépenses. C'est vous qui produisez la déclaration auprès de Revenu Québec, après avoir vérifié chaque chiffre."
+      "footnote": "Akinaza prépare ces chiffres à partir de vos factures et de vos dépenses. C'est vous qui produisez la déclaration auprès de Revenu Québec, après avoir vérifié chaque chiffre.",
+      "figuresTitle": "Vos chiffres de TPS et de TVQ",
+      "remitHint": "Préparé à partir de vos factures et dépenses ; vous le produisez vous-même auprès de Revenu Québec.",
+      "periodHint": "Le dernier trimestre terminé est celui à produire maintenant ; le trimestre en cours est encore ouvert.",
+      "empty": {
+        "title": "Rien à préparer pour cette période",
+        "body": "Les chiffres apparaissent ici dès que vous émettez des factures ou saisissez des dépenses sur cette période.",
+        "action": "Voir les factures"
+      }
     },
     "invoices": {
       "title": "Factures",
@@ -2069,7 +2427,7 @@
         },
         "shopSetup": {
           "page": {
-            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
+            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio. Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
             "areaHint": "Montréal — jamais l'adresse civique.",
             "seatUnitHint": "Pour un service de groupe : « Jusqu'à 5 personnes ». Vide : « places »."
           },
@@ -2262,7 +2620,7 @@
       "autoMark": "Les textes marqués « traduit automatiquement » n'ont pas encore été relus par vous : relisez-les et modifiez-les au besoin.",
       "runs": "{used} traductions sur {limit} utilisées aujourd'hui.",
       "nothing": "Rien à traduire pour l'instant : remplissez d'abord votre accroche, votre histoire et vos services.",
-      "ownHint": "Vous avez écrit ce texte vous-même dans cette langue : modifiez-le depuis la page boutique.",
+      "ownHint": "Vous avez écrit ces textes vous-même dans cette langue : modifiez-les depuis la page de la boutique.",
       "staleHint": "Votre texte d'origine a changé depuis cette traduction.",
       "fields": {
         "tagline": "Accroche",
@@ -2387,6 +2745,50 @@
           "why": "Seulement {booked} de ces {offered} plages ont été réservées récemment.",
           "cta": "Ouvrir les heures"
         }
+      },
+      "title": "Vos chiffres",
+      "lead": "Chaque chiffre dit ce qu'il signifie, comment il est calculé à partir de vos factures et d'où il vient.",
+      "rateOf": {
+        "collected": "Cela représente {rate} % de ce que vous avez facturé, taxes comprises.",
+        "toCollect": "{rate} % est en retard.",
+        "margin": "Cela représente {rate} % de votre revenu.",
+        "noShows": "Cela représente {rate} % des rendez-vous qui étaient dus."
+      },
+      "source": "D'où il vient",
+      "urgency": {
+        "now": "Maintenant",
+        "soon": "Bientôt",
+        "week": "Cette semaine"
+      },
+      "lexiconLead": "Les mots qui demandent un comptable sont signalés.",
+      "print": "Imprimer ou enregistrer en PDF",
+      "printHint": "Une copie propre pour votre comptable : les chiffres, leurs formules et leurs sources.",
+      "forPeriod": "Pour la période du {start} au {end}",
+      "computed": "Calculé {when}",
+      "lexiconTerms": "Les mots employés ici",
+      "never": "Akinaza prépare ces chiffres. Vous les vérifiez et vous produisez vos déclarations vous-même.",
+      "formulaHere": "{formula} Ici : {terms}.",
+      "updatedLabel": "Mis à jour",
+      "rules": {
+        "title": "Quand un chiffre demande votre attention",
+        "hint": "Valeur habituelle {usual}. Vous pouvez la régler entre {min} et {max}.",
+        "hintDays": "Valeur habituelle {usual} jours. Vous pouvez la régler entre {min} et {max}.",
+        "fields": {
+          "overdueWatchPct": "Factures en retard : à surveiller au-dessus de (%)",
+          "overdueAlertPct": "Factures en retard : à traiter au-dessus de (%)",
+          "collectedWatchPct": "Encaissé sur ce que vous avez facturé : à surveiller sous (%)",
+          "collectedAlertPct": "Encaissé sur ce que vous avez facturé : à traiter sous (%)",
+          "marginWatchPct": "Marge sur votre chiffre d’affaires : à surveiller sous (%)",
+          "marginAlertPct": "Marge sur votre chiffre d’affaires : à traiter sous (%)",
+          "noShowWatchPct": "Rendez-vous manqués : à surveiller au-dessus de (%)",
+          "noShowAlertPct": "Rendez-vous manqués : à traiter au-dessus de (%)",
+          "taxPeriodSoonDays": "Me rappeler de préparer la déclaration TPS/TVQ ce nombre de jours avant la fin de la période"
+        },
+        "fixed": "Ces valeurs sont fixées par Akinaza et ne peuvent pas être changées pour l’instant. Chaque chiffre montre quand même comment il est jugé.",
+        "save": "Enregistrer mes seuils",
+        "reset": "Revenir aux valeurs habituelles",
+        "saved": "Enregistré. Vos chiffres utilisent maintenant ces seuils.",
+        "evenness": "Si un seuil « à traiter » était plus doux que le seuil « à surveiller », il est ramené au même niveau : un chiffre ne se contredit jamais."
       }
     },
     "lexicon": {
@@ -2610,7 +3012,11 @@
         "body": "Le reste de la page fonctionne. Réessayez dans un instant."
       },
       "retry": "Réessayer",
-      "loading": "Chargement…"
+      "loading": "Chargement…",
+      "page": {
+        "title": "Cette page n’a pas pu se charger.",
+        "body": "Rien n’est perdu. Réessayez dans un instant."
+      }
     },
     "organize": {
       "close": "Fermer",
@@ -2813,6 +3219,205 @@
         "show": "Afficher de nouveau",
         "saved": "C'est fait."
       }
+    },
+    "composer": {
+      "title": "Page de la boutique",
+      "sections": "Sections",
+      "addSection": "Ajouter une section",
+      "addSectionHint": "Choisissez ce que vous ajoutez à votre page.",
+      "toggleVisible": "Afficher {name}",
+      "sectionMenu": "Actions pour {name}",
+      "moveUp": "Monter",
+      "moveDown": "Descendre",
+      "moveTop": "Placer en haut",
+      "remove": "Retirer",
+      "announceMoved": "{name} déplacée en position {n} sur {total}",
+      "announceCannotMove": "{name} ne peut pas aller plus loin",
+      "announceAdded": "{name} ajoutée en position {n}",
+      "announceRemoved": "{name} retirée",
+      "announceShown": "{name} est affichée",
+      "announceHidden": "{name} est masquée",
+      "announceUndone": "Annulé",
+      "announceRedone": "Rétabli",
+      "hiddenNote": "masquée",
+      "inspector": "Section",
+      "noSelection": "Choisissez une section pour changer sa présentation.",
+      "backToSections": "Retour aux sections",
+      "variant": "Présentation",
+      "settings": "Réglages",
+      "words": "Vos mots",
+      "titleField": "Titre",
+      "leadField": "Ligne sous le titre",
+      "french": "Français",
+      "english": "Anglais",
+      "blocks": "Éléments",
+      "addBlock": "Ajouter",
+      "removeBlock": "Retirer {name}",
+      "look": "Style",
+      "preset": "Allure",
+      "density": "Espacement",
+      "densityCompact": "Compact",
+      "densityAiry": "Aéré",
+      "undo": "Annuler",
+      "redo": "Rétablir",
+      "saved": "Enregistré",
+      "saving": "Enregistrement…",
+      "saveFailed": "Non enregistré",
+      "publish": "Publier",
+      "discard": "Abandonner le brouillon",
+      "preview": "Aperçu",
+      "previewTitle": "Aperçu en direct de votre page",
+      "phone": "Téléphone",
+      "desktop": "Ordinateur",
+      "viewPreview": "Voir",
+      "closePreview": "Fermer",
+      "publishTitle": "Publier cette page",
+      "publishWhat": "Ce qui change",
+      "publishNothing": "Rien n'a changé depuis la dernière publication.",
+      "publishConfirm": "Publier",
+      "cancel": "Annuler",
+      "problemsTitle": "Corrigez {n} problème avant de publier",
+      "problemIn": "{name}",
+      "sectionNames": {
+        "hero": "Couverture",
+        "services": "Services",
+        "booking": "Réservation",
+        "gallery": "Photos",
+        "video": "Vidéo",
+        "reviews": "Avis",
+        "bulletin": "Nouvelles",
+        "team": "Équipe",
+        "visit": "Venir",
+        "story": "Histoire",
+        "social": "Réseaux",
+        "faq": "Questions",
+        "policies": "Conditions"
+      },
+      "variantNames": {
+        "hero.poster": "Affiche",
+        "hero.split": "Partagée",
+        "hero.banner": "Bandeau",
+        "hero.tv": "Télévision",
+        "services.menu": "Carte",
+        "services.cards": "Cartes",
+        "services.index": "Fiches",
+        "services.carousel": "Carrousel",
+        "booking.strip": "Prochains créneaux",
+        "booking.panel": "Appel final",
+        "booking.sticky": "Barre mobile",
+        "gallery.mosaic": "Mosaïque",
+        "gallery.filmstrip": "Pellicule",
+        "gallery.wall": "Mur",
+        "gallery.grid": "Grille",
+        "video.tv": "Télévision",
+        "video.shorts": "Reels",
+        "reviews.summary-cards": "Note et avis",
+        "reviews.quote": "Une citation",
+        "reviews.strip": "Ligne de note",
+        "bulletin.board": "Tableau",
+        "bulletin.banner": "Ligne d'annonce",
+        "team.row": "Rangée",
+        "team.cards": "Cartes",
+        "visit.card": "Carte",
+        "visit.map": "Plan",
+        "visit.split": "Horaires et plan",
+        "story.quote": "Citation",
+        "story.owner": "Propriétaire",
+        "social.links": "Liens",
+        "social.facade": "Dernier reel",
+        "faq.list": "Liste",
+        "policies.inline": "En ligne"
+      },
+      "blockNames": {
+        "fact": "Fait",
+        "service": "Service",
+        "photo": "Photo",
+        "note": "Note",
+        "sign": "Enseigne",
+        "reel": "Reel",
+        "flyer": "Affichette",
+        "member": "Membre",
+        "link": "Lien",
+        "question": "Question"
+      },
+      "settingNames": {
+        "media": "Photo",
+        "focus": "Cadrage",
+        "source": "Source",
+        "groupBy": "Regrouper par",
+        "columns": "Colonnes",
+        "aside": "À côté de la liste",
+        "serviceId": "Service",
+        "count": "Combien",
+        "texture": "Mur",
+        "cabinet": "Meuble",
+        "channel": "Chaîne",
+        "rule": "Quels avis",
+        "showPhone": "Afficher le téléphone",
+        "body": "Texte",
+        "show": "Afficher"
+      },
+      "optionNames": {
+        "center": "Centre",
+        "top": "Haut",
+        "bottom": "Bas",
+        "all": "Tous",
+        "pick": "Choisir",
+        "category": "Catégorie",
+        "none": "Aucun",
+        "hours": "Horaires",
+        "plaster": "Plâtre",
+        "brick": "Brique",
+        "ridge": "Crête",
+        "zellige": "Zellige",
+        "cabinet": "Meuble",
+        "portable": "Portable",
+        "best": "Les meilleurs",
+        "latest": "Les derniers",
+        "cancellation": "Annulation",
+        "prices": "Prix",
+        "booking-window": "Délai de réservation"
+      },
+      "diff": {
+        "added": "{name} ajoutée",
+        "removed": "{name} retirée",
+        "moved": "{name} déplacée de {from} à {to}",
+        "variant": "{name} présentée en {to} (était {from})",
+        "settings": "{name} : réglages modifiés",
+        "blocks": "{name} : éléments modifiés",
+        "text": "{name} : mots modifiés",
+        "disabled": "{name} masquée",
+        "enabled": "{name} affichée",
+        "preset": "Allure changée en {to} (était {from})",
+        "density": "Espacement changé en {to} (était {from})"
+      }
+    },
+    "composerPanel": {
+      "accent": "Couleur d'accent",
+      "accentOwn": "Celle du style",
+      "accentSaved": "Accent enregistré.",
+      "accentNote": "Seules les couleurs testées pour ce style sont proposées.",
+      "versions": "Historique",
+      "versionsLead": "La page en ligne, le brouillon et les dernières versions. Restaurer une version la republie comme une nouvelle version.",
+      "versionDraft": "Brouillon",
+      "versionPublished": "En ligne",
+      "versionArchived": "Ancienne",
+      "versionN": "Version {n}",
+      "restore": "Restaurer",
+      "restoredKept": "La version {n} est de nouveau en ligne. Votre brouillon n'a pas changé.",
+      "keepDraft": "Garder mon brouillon quand je restaure",
+      "discardAsk": "Jeter le brouillon et revenir à la page en ligne ?",
+      "discardYes": "Oui, annuler",
+      "discardNo": "Continuer à modifier",
+      "discarded": "Modifications annulées. Le composeur montre votre page en ligne.",
+      "restored": "La version {n} est de nouveau en ligne. Votre brouillon y a été remis.",
+      "noVersions": "Rien n'a encore été publié : votre page montre le modèle de votre métier.",
+      "readOnly": "Vous pouvez lire la page ; le propriétaire et le gérant la modifient.",
+      "published": "Publié. Votre page est en ligne.",
+      "publishFailed": "Non publié.",
+      "problems": "La page ne peut pas être enregistrée : {issues}",
+      "loading": "Chargement de l'historique…",
+      "openPreview": "Ouvrir l'aperçu dans un nouvel onglet"
     }
   },
   "notFound": {

@@ -62,6 +62,10 @@ services:
       - key: APP_COMMIT_SHA
         scope: BUILD_TIME
         value: ${_self.COMMIT_HASH}
+      # The stage: `dev` shows the « Development version » notice on every page (the pages are static: at build too); a production spec says `prod`.
+      - key: APP_ENVIRONMENT
+        scope: RUN_AND_BUILD_TIME
+        value: "dev"
       # Every dev deployment: noindex and a closed robots.txt on every host but www (the public address), the development notice in the footer.
       - key: APP_SEARCH_INDEXING
         scope: RUN_AND_BUILD_TIME

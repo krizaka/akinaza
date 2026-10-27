@@ -1,6 +1,7 @@
 import { type ShopType, TEMPLATES } from "@akinaza/core";
 import { PASSWORD_RESET_MAX_MINUTES, PASSWORD_RESET_MIN_MINUTES, PASSWORD_RESET_TTL_MINUTES } from "@krizaka/auth";
 import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, type SettingsService, subset, WORKSPACE_SCOPES } from "@krizaka/settings";
+import { storageSettings } from "@krizaka/storage/settings";
 
 import { query } from "./db";
 import { refuse } from "./http";
@@ -44,7 +45,22 @@ export const SETTINGS = {
   "features.storefrontTranslation": flag("features", false, GLOBAL_ONLY),
   "storefront.languages.allowed": subset("storefront", ["fr", "en", "es"] as const, ["fr", "en", "es"], GLOBAL_ONLY),
   "limits.translationsPerShopPerDay": integer("limits", 20, { min: 1, max: 500, unit: "runs" }, GLOBAL_ONLY),
+  // The private calendar feeds of the shop and its staff (#282, ADR-004): off, every feed address answers 404 and none can be made.
+  "exports.icsFeed.enabled": flag("exports", true, GLOBAL_ONLY),
+  // The owner's data downloads (#420, ADR-004 §5): appointments (CSV, ICS), clients and invoices (CSV). Off, none is served.
+  "exports.data.enabled": flag("exports", true, GLOBAL_ONLY),
+  // The owner's other calendars, read-only (#282, ADR-004): busy times block slots. The ICS address is on; the providers wait for their OAuth apps (off until the administrator turns them on).
+  "features.calendarSync": flag("features", true, GLOBAL_ONLY),
+  "calendarSync.ics.enabled": flag("calendarSync", true, GLOBAL_ONLY),
+  "calendarSync.google.enabled": flag("calendarSync", false, GLOBAL_ONLY),
+  "calendarSync.outlook.enabled": flag("calendarSync", false, GLOBAL_ONLY),
+  "calendarSync.caldav.enabled": flag("calendarSync", false, GLOBAL_ONLY),
+  "calendarSync.intervalMinutes": integer("calendarSync", 30, { min: 5, max: 1440, unit: "minutes" }, GLOBAL_ONLY),
+  "calendarSync.maxCalendarsPerShop": integer("calendarSync", 5, { min: 1, max: 20, unit: "calendars" }, GLOBAL_ONLY),
+  "calendarSync.windowDays": integer("calendarSync", 60, { min: 7, max: 120, unit: "days" }, GLOBAL_ONLY),
   // The owner's figures (#260): the default thresholds each figure is judged against, and the actions « que faire maintenant » may offer.
+  // Whether an owner may tune the thresholds of their own shop (#260), inside the bounds of @akinaza/core.
+  "figures.ownerTunable": flag("figures", true, GLOBAL_ONLY),
   "figures.overdueWatchPct": integer("figures", 10, { min: 0, max: 100, unit: "%" }, GLOBAL_ONLY),
   "figures.overdueAlertPct": integer("figures", 25, { min: 0, max: 100, unit: "%" }, GLOBAL_ONLY),
   "figures.collectedWatchPct": integer("figures", 80, { min: 0, max: 100, unit: "%" }, GLOBAL_ONLY),
@@ -72,6 +88,8 @@ export const SETTINGS = {
   "storefront.templates.default.consulting": defaultTemplate("consulting"),
   // The account (@krizaka/auth): how long a password reset link lives; the expiry and the mailed text both read it.
   "auth.passwordResetTtlMinutes": integer("auth", PASSWORD_RESET_TTL_MINUTES, { min: PASSWORD_RESET_MIN_MINUTES, max: PASSWORD_RESET_MAX_MINUTES, unit: "minutes" }, GLOBAL_ONLY),
+  // Where the owners' and clients' files live (ADR-010): the provider and its coordinates, chosen by the administrator; `local` (the default) follows the deployment's environment.
+  ...storageSettings,
   "realtime.storefront.enabled": flag("realtime", true, GLOBAL_ONLY),
   "realtime.storefront.heartbeatSeconds": integer("realtime", 15, { min: 5, max: 60, unit: "seconds" }, GLOBAL_ONLY),
   "realtime.storefront.maxStreamsPerPage": integer("realtime", 100, { min: 1, max: 1000, unit: "streams" }, GLOBAL_ONLY),

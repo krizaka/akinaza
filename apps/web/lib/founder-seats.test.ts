@@ -1,3 +1,4 @@
+import type { PaymentEvent } from "@krizaka/payments";
 import { memoryPriceStore, priceCatalogue } from "@krizaka/settings";
 import { describe, expect, it } from "vitest";
 
@@ -39,6 +40,8 @@ describe("the founder offer closes at its limit (akinaza#363)", () => {
   });
 });
 
+const paid = { checkoutRef: null, paymentRef: null, invoiceRef: null, amountTotal: null, amountDiscount: 0, currency: null, metadata: {} };
+
 describe("a founder keeps the founder price as long as the subscription runs (akinaza#363)", () => {
   it("the notifications of the processor write the state of the subscription, never its price or plan", async () => {
     const { query, sql } = accounts([]);
@@ -47,7 +50,7 @@ describe("a founder keeps the founder price as long as the subscription runs (ak
       { id: "e2", type: "subscription_changed", accountId: "a1", customerId: "cus_1", subscriptionId: "sub_1", status: "active", active: true, periodEnd: 1_800_000_000 },
       { id: "e3", type: "subscription_changed", accountId: "a1", customerId: "cus_1", subscriptionId: "sub_1", status: "past_due", active: false, periodEnd: 1_800_000_000 },
     ] as const;
-    for (const event of events) await applyPaymentEvent(query, event);
+    for (const event of events) await applyPaymentEvent((work) => work(query as never), { ...paid, ...event } as PaymentEvent);
     const writes = sql.filter((s) => /^\s*UPDATE/i.test(s));
     expect(writes.length).toBeGreaterThan(0);
     for (const write of writes) expect(write, write).not.toMatch(/price|plan|amount|lookup/i);
@@ -56,7 +59,9 @@ describe("a founder keeps the founder price as long as the subscription runs (ak
   it("the port has no way to change a subscription's price: it creates, opens the hosted page and reads", async () => {
     const { stripeAdapter } = await import("@krizaka/payments");
     const port = stripeAdapter({ secretKey: "x", webhookSecret: "y", plans: { founder: { lookupKey: "k", mode: "subscription" } } });
-    expect(Object.keys(port).sort()).toEqual(["checkout", "createCustomer", "parseWebhook", "portal", "price"]);
+    const methods = Object.keys(port);
+    expect(methods).toEqual(expect.arrayContaining(["checkout", "createCustomer", "parseWebhook", "portal", "price"]));
+    expect(methods.filter((name) => /update|change|modify|reprice|swap/i.test(name))).toEqual([]);
   });
 });
 
@@ -82,7 +87,7 @@ describe("a subscription keeps the catalogue's version it was sold at (akinaza#3
     const { query, row } = account();
     const sold = await prices.entry(FOUNDER, now);
     await recordOfferedVersion(query, "a1", sold.versionId);
-    await applyPaymentEvent(query, { id: "e1", type: "subscription_started", accountId: "a1", customerId: "cus_1", subscriptionId: "sub_1" });
+    await applyPaymentEvent((work) => work(query as never), { ...paid, id: "e1", type: "subscription_started", accountId: "a1", customerId: "cus_1", subscriptionId: "sub_1" });
     // Later: the price changes, and the founder opens a checkout again — the version kept is not rewritten.
     const next = await prices.schedule({ id: null, label: "admin" }, FOUNDER, { amountCents: 6000 }, now, now);
     await recordOfferedVersion(query, "a1", next.versionId);

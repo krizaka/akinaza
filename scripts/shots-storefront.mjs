@@ -19,6 +19,8 @@ export const SCENES = {
   new: { path: (locale, shop) => `/${locale}/app/${shop.id}/shop/new`, expect: { fr: "Votre métier", en: "Your trade" }, signedIn: true },
   // The public pages wait for the shop's name (its heading, there on every device); a button's words move with the layout.
   storefront: { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Pattes de Saint-Henri", en: "Pattes de Saint-Henri" }, signedIn: false },
+  // The home's neighbourhood feed (akinaza#318): the flyers the demo shops pinned, shot as the section alone.
+  home: { path: (locale) => `/${locale}`, expect: { fr: "Affiché dans votre quartier", en: "Posted in your neighbourhood" }, signedIn: false, element: "section:has([data-testid=neighbourhood-feed])" },
   // The demo shops (packages/db/src/demo-shops.ts), each on a template of its trade (#261, step 6).
   salon: { path: (locale) => `/${locale}/s/cedre-ciseaux`, expect: { fr: "Salon Cèdre & Ciseaux", en: "Salon Cèdre & Ciseaux" }, signedIn: false },
   workshop: { path: (locale) => `/${locale}/s/encre-vive`, expect: { fr: "Encre Vive Studio", en: "Encre Vive Studio" }, signedIn: false },
@@ -28,6 +30,13 @@ export const SCENES = {
   "docs-bookings": { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Pattes de Saint-Henri", en: "Pattes de Saint-Henri" }, signedIn: false },
   "docs-invoices": { path: (locale, shop) => `/${locale}/app/${shop.id}/invoices/new`, expect: { fr: "Nouvelle facture", en: "New invoice" }, signedIn: true },
   "docs-books": { path: (locale, shop) => `/${locale}/app/${shop.id}/books`, expect: { fr: "Vos livres", en: "Your books" }, signedIn: true },
+  // The owner's figures (#260): what to do now on Today, the figures with their formulas on the books, and the thresholds the owner tunes.
+  "figures-today": { path: (locale, shop) => `/${locale}/app/${shop.id}/aujourdhui`, expect: { fr: "Que faire maintenant", en: "What to do now" }, signedIn: true },
+  "figures-books": { path: (locale, shop) => `/${locale}/app/${shop.id}/books`, expect: { fr: "Vos chiffres", en: "Your figures" }, signedIn: true },
+  "figures-thresholds": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/figures`, expect: { fr: "Quand un chiffre demande votre attention", en: "When a figure needs your attention" }, signedIn: true },
+  // The private calendar links (#282, ADR-004).
+  "agenda-sources": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/agenda`, expect: { fr: "Vos autres agendas", en: "Your other calendars" }, signedIn: true },
+  "agenda-feed": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/agenda`, expect: { fr: "Votre agenda sur votre téléphone", en: "Your calendar on your phone" }, signedIn: true },
   "docs-data": { path: (locale) => `/${locale}/app/profile/data`, expect: { fr: "Vos données", en: "Your data" }, signedIn: true },
 };
 /** The scenes of the owner's guide, one per page of it (`docs.pages.<id>`). */
@@ -52,6 +61,94 @@ const need = (name) => {
   if (!process.env[name]) throw new Error(`${name} is required`);
   return process.env[name];
 };
+
+/** A pg Client that failed to connect cannot try again: a fresh one per attempt, until the container answers. */
+async function connectWhenUp(pg, connectionString) {
+  const attempts = 60;
+  for (let i = 0; i <= attempts; i += 1) {
+    const attempt = new pg.Client({ connectionString });
+    try {
+      await attempt.connect();
+      return attempt;
+    } catch (error) {
+      if (i === attempts) throw error;
+      await sleep(1000);
+    }
+  }
+  throw new Error("unreachable");
+}
+
+/** Waits for the dev server, then asks for a page until the app has migrated the schema (it migrates on start). */
+async function waitForApp(db, base, locale) {
+  for (let i = 0; i < 180; i += 1) {
+    try {
+      if ((await fetch(`${base}/robots.txt`)).ok) break;
+    } catch {
+      /* starting */
+    }
+    await sleep(1000);
+  }
+  for (let i = 0; i < 60; i += 1) {
+    const { rows } = await db.query("SELECT to_regclass('shop_page') AS t");
+    if (rows[0].t) break;
+    await fetch(`${base}/${locale}/sign-in`).catch(() => undefined);
+    await sleep(1000);
+  }
+}
+
+/** Signs the owner in once; every other context starts from that session. */
+async function signInOnce(browser, { base, locale, owner }) {
+  const first = await browser.newContext({ viewport: DEVICES.desktop, locale: locale === "fr" ? "fr-CA" : "en-CA" });
+  const page = await first.newPage();
+  await page.goto(`${base}/${locale}/sign-in`, { waitUntil: "networkidle" });
+  await page.waitForTimeout(1500);
+  await page.getByLabel(locale === "fr" ? "Courriel" : "E-mail").fill(owner.email);
+  await page.getByLabel(locale === "fr" ? "Mot de passe" : "Password").fill(owner.password);
+  await page.getByRole("button", { name: locale === "fr" ? "Se connecter" : "Sign in" }).click();
+  await page.waitForURL((url) => !url.pathname.endsWith("/sign-in"), { timeout: 120_000 });
+  const storageState = await first.storageState();
+  await first.close();
+  return storageState;
+}
+
+/** One scene: open it, wait for its text, walk the page once so that anything that waits to be seen has been, then shoot. */
+async function shoot(p, { base, locale, shop, shot, outDir }) {
+  const scene = SCENES[shot.scene];
+  await p.goto(`${base}${scene.path(locale, shop)}`, { waitUntil: "networkidle", timeout: 120_000 });
+  await p.getByText(scene.expect[locale]).first().waitFor({ timeout: 60_000 });
+  await p.evaluate(async () => {
+    for (let y = 0; y < document.body.scrollHeight; y += 600) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 60));
+    }
+    window.scrollTo(0, 0);
+  });
+  await p.waitForTimeout(800); // fonts and the reveal
+  const file = path.join(outDir, shot.file);
+  await (scene.element ? p.locator(scene.element).screenshot({ path: file }) : p.screenshot({ path: file, fullPage: true }));
+}
+
+/** Every planned capture of one device in one theme, in one context. */
+async function captureTheme(browser, { device, viewport, theme, scenes, storageState, ctx, out }) {
+  // Reduced motion: what the page reveals on scroll is there at once, as for a person who asked for it; the shot shows the whole page.
+  const context = await browser.newContext({ viewport, colorScheme: theme, reducedMotion: "reduce", storageState, locale: ctx.locale === "fr" ? "fr-CA" : "en-CA", deviceScaleFactor: device === "phone" ? 2 : 1 });
+  await context.addInitScript((t) => {
+    try {
+      localStorage.setItem("kz-theme", t);
+    } catch {
+      /* none */
+    }
+  }, theme);
+  const p = await context.newPage();
+  const taken = [];
+  for (const shot of scenes.filter((s) => s.device === device && s.theme === theme)) {
+    await shoot(p, { ...ctx, shot });
+    taken.push(shot);
+    out(`shots: ${shot.file}`);
+  }
+  await context.close();
+  return taken;
+}
 
 async function main() {
   const require = createRequire(import.meta.url);
@@ -88,36 +185,11 @@ async function main() {
   let app = null;
   const out = (line) => process.stdout.write(`${line}\n`);
   try {
-    // A pg Client that failed to connect cannot try again: a fresh one per attempt, until the container answers.
-    let db = null;
-    for (let i = 0; db === null; i += 1) {
-      const attempt = new pg.Client({ connectionString: DATABASE_URL });
-      try {
-        await attempt.connect();
-        db = attempt;
-      } catch (error) {
-        if (i >= 60) throw error;
-        await sleep(1000);
-      }
-    }
+    const db = await connectWhenUp(pg, DATABASE_URL);
     out("shots: database up");
 
     app = spawn("pnpm", ["--filter", "@akinaza/web", "exec", "next", "dev", "-p", String(PORT)], { cwd: root, env, stdio: "ignore" });
-    for (let i = 0; i < 180; i += 1) {
-      try {
-        if ((await fetch(`${BASE}/robots.txt`)).ok) break;
-      } catch {
-        /* starting */
-      }
-      await sleep(1000);
-    }
-    // The app migrates on start: ask for a page until the schema is there.
-    for (let i = 0; i < 60; i += 1) {
-      const { rows } = await db.query("SELECT to_regclass('shop_page') AS t");
-      if (rows[0].t) break;
-      await fetch(`${BASE}/${LOCALE}/sign-in`).catch(() => undefined);
-      await sleep(1000);
-    }
+    await waitForApp(db, BASE, LOCALE);
     out("shots: app up, schema there");
 
     const run = (args, extra = {}) => {
@@ -135,52 +207,14 @@ async function main() {
     out(`shots: seeded ${shop.slug}`);
 
     const browser = await chromium.launch();
-    // Sign in once; every other context starts from that session.
-    const first = await browser.newContext({ viewport: DEVICES.desktop, locale: LOCALE === "fr" ? "fr-CA" : "en-CA" });
-    const page = await first.newPage();
-    await page.goto(`${BASE}/${LOCALE}/sign-in`, { waitUntil: "networkidle" });
-    await page.waitForTimeout(1500);
-    await page.getByLabel(LOCALE === "fr" ? "Courriel" : "E-mail").fill(owner.email);
-    await page.getByLabel(LOCALE === "fr" ? "Mot de passe" : "Password").fill(owner.password);
-    await page.getByRole("button", { name: LOCALE === "fr" ? "Se connecter" : "Sign in" }).click();
-    await page.waitForURL((url) => !url.pathname.endsWith("/sign-in"), { timeout: 120_000 });
-    const storageState = await first.storageState();
-    await first.close();
+    const storageState = await signInOnce(browser, { base: BASE, locale: LOCALE, owner });
     out("shots: signed in");
 
     const taken = [];
+    const ctx = { base: BASE, locale: LOCALE, shop, outDir: OUT };
     for (const [device, viewport] of Object.entries(DEVICES)) {
       if (!scenes.some((s) => s.device === device)) continue;
-      for (const theme of THEMES) {
-        // Reduced motion: what the page reveals on scroll is there at once, as for a person who asked for it; the shot shows the whole page.
-        const context = await browser.newContext({ viewport, colorScheme: theme, reducedMotion: "reduce", storageState, locale: LOCALE === "fr" ? "fr-CA" : "en-CA", deviceScaleFactor: device === "phone" ? 2 : 1 });
-        await context.addInitScript((t) => {
-          try {
-            localStorage.setItem("kz-theme", t);
-          } catch {
-            /* none */
-          }
-        }, theme);
-        const p = await context.newPage();
-        for (const shot of scenes.filter((s) => s.device === device && s.theme === theme)) {
-          const scene = SCENES[shot.scene];
-          await p.goto(`${BASE}${scene.path(LOCALE, shop)}`, { waitUntil: "networkidle", timeout: 120_000 });
-          await p.getByText(scene.expect[LOCALE]).first().waitFor({ timeout: 60_000 });
-          // Walk the page once so that anything that waits to be seen has been, then back to the top.
-          await p.evaluate(async () => {
-            for (let y = 0; y < document.body.scrollHeight; y += 600) {
-              window.scrollTo(0, y);
-              await new Promise((r) => setTimeout(r, 60));
-            }
-            window.scrollTo(0, 0);
-          });
-          await p.waitForTimeout(800); // fonts and the reveal
-          await p.screenshot({ path: path.join(OUT, shot.file), fullPage: true });
-          taken.push(shot);
-          out(`shots: ${shot.file}`);
-        }
-        await context.close();
-      }
+      for (const theme of THEMES) taken.push(...(await captureTheme(browser, { device, viewport, theme, scenes, storageState, ctx, out })));
     }
     await browser.close();
     writeFileSync(path.join(OUT, "scenes.json"), `${JSON.stringify({ locale: LOCALE, shop: shop.slug, shots: taken }, null, 2)}\n`);
