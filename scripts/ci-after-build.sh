@@ -27,4 +27,6 @@ node scripts/sync-brand-icons.mjs --check
 pnpm run check:overflow -- --base http://localhost:3000
 # One rendering for the server and the browser: no React hydration error on any page, signed out, as a client, as an owner.
 pnpm run check:hydration -- --base http://localhost:3000
+# The shop page composer end to end (akinaza#427): reorder, autosave, publish, rollback resets the draft, discard; no overflow.
+E2E_BASE=http://localhost:3000 E2E_OWNER_EMAIL="$HYDRATION_OWNER_EMAIL" E2E_OWNER_PASS="$HYDRATION_OWNER_PASSWORD" E2E_OUT=e2e-composer-out pnpm run e2e:composer
 test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3000/api/auth/sign-up)" = "403"

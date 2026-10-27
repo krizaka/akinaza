@@ -25,6 +25,7 @@
     "sg:ratchet:update": "node scripts/sg-ratchet.mjs --update",
     "sg:fix": "node scripts/sg-fix.mjs",
     "e2e:walker": "node scripts/e2e-walker.mjs",
+    "e2e:composer": "node scripts/e2e-composer.mjs",
     "shots:storefront": "node scripts/shots-storefront.mjs",
     "shots:docs": "SHOTS_DEVICES=desktop SHOTS_SCENES=docs-shop,docs-bookings,docs-invoices,docs-books,docs-data node scripts/shots-storefront.mjs",
     "payments:setup": "krizaka-payments-setup --catalogue infra/payments/catalogue.json"

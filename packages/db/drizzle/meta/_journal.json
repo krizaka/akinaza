@@ -267,6 +267,20 @@
       "when": 1795000006000,
       "tag": "0037_privacy",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1795000007000,
+      "tag": "0038_shop_page_document",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1795000008000,
+      "tag": "0039_shop_page_accent",
+      "breakpoints": true
     }
   ]
 }
