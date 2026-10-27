@@ -130,7 +130,8 @@
     "preview": {
       "demo": "Demo data",
       "slotsLabel": "Free times",
-      "slotsEmpty": "No free time this week"
+      "slotsEmpty": "No free time this week",
+      "invoiceLine": "Group walks, October"
     }
   },
   "docs": {
