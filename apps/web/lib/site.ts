@@ -5,7 +5,7 @@ export const REPO_URL = "https://github.com/krizaka/akinaza";
 export const KRIZAKA_URL = "https://www.krizaka.com";
 export const PRIVACY_UPDATED = "2026-10-15";
 /** The version of the terms of use (its date): kept in the audit trail when a subscription is started, so the accepted version is known. */
-export const TERMS_VERSION = "2026-10-26";
+export const TERMS_VERSION = "2026-10-27";
 export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "0.1.0";
 
 /** The public pages, in both languages (sitemap, hreflang). */
