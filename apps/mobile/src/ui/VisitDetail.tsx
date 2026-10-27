@@ -21,7 +21,7 @@ export function VisitDetail({ visit, timeZone, busy, onCheckIn, onCheckOut }: { 
     ...(visit.checkedInAt ? [{ term: t("today.in", { time: clock(visit.checkedInAt) }), details: visit.checkedOutAt ? t("today.out", { time: clock(visit.checkedOutAt) }) : "" }] : []),
   ];
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16, gap: 16 }}>
+    <ScrollView contentContainerStyle={{ padding: 16, gap: 16 }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
         <Txt variant="title">{visit.service[locale]}</Txt>
         <Badge tone={STATUS_TONE[visit.status]}>{t(`today.${visit.status}`)}</Badge>
