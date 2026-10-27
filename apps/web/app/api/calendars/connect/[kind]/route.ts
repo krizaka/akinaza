@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-import { systemClock } from "@/app/system-clock";
 import { oauthApps } from "@/app/calendar-edge";
+import { systemClock } from "@/app/system-clock";
 import { agendaScope, requireShop } from "@/lib/access";
-import { CALENDAR_CONSENT_VERSION, calendarOverview } from "@/lib/calendar/overview";
 import { isOAuthKind, newPkce, pkceCookie, signState } from "@/lib/calendar/oauth-state";
+import { CALENDAR_CONSENT_VERSION, calendarOverview } from "@/lib/calendar/overview";
 import { connectable } from "@/lib/calendar/registry";
 import { env, sessionSecret } from "@/lib/env";
 import { handle, readJson, refuse } from "@/lib/http";

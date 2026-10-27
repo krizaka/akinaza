@@ -5,7 +5,7 @@ import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { appSettings } from "@/lib/settings";
 
-import { type SourceMaker, sourceFor } from "./registry";
+import { sourceFor,type SourceMaker } from "./registry";
 
 // @fixed: connections read per tick, and the lease that keeps another instance (or the next tick) from reading the same one meanwhile
 const BATCH = 20;
