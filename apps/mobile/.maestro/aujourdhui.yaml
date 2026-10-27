@@ -1,4 +1,6 @@
-# Aujourd'hui (D8): the day strip and the visits of the day, as the demo shop's owner.
+# Aujourd'hui (D8, #168): the day strip and the day's appointments as a list that opens into a detail, then the two moves of a
+# visit (start, finish). The demo shop's next group walk is today only when CI runs before its 14:00 slot, so the detail and the
+# moves are exercised when a visit is listed, and the empty state is asserted otherwise: never a flow that fails on the clock.
 appId: com.krizaka.akinaza
 tags:
   - ci
@@ -9,3 +11,30 @@ tags:
 - assertVisible: "Aujourd'hui|Today"
 - waitForAnimationToEnd
 - takeScreenshot: aujourdhui
+- runFlow:
+    when:
+      notVisible: "Promenade en groupe.*|Group walk.*"
+    commands:
+      - assertVisible: "Aucune visite ce jour-là.|No visit that day."
+- runFlow:
+    when:
+      visible: "Promenade en groupe.*|Group walk.*"
+    commands:
+      # The list opens into the appointment's detail (the visit is in the URL): who, where, when.
+      - tapOn: "Promenade en groupe.*|Group walk.*"
+      - assertVisible: "Qui|Who"
+      - takeScreenshot: aujourdhui-detail
+      - runFlow:
+          when:
+            visible: "Commencer|Start"
+          commands:
+            - tapOn: "Commencer|Start"
+            - extendedWaitUntil:
+                visible: "Terminer|Finish"
+                timeout: 30000
+            - takeScreenshot: aujourdhui-checked-in
+            - tapOn: "Terminer|Finish"
+            - extendedWaitUntil:
+                visible: "Terminée|Done"
+                timeout: 30000
+            - takeScreenshot: aujourdhui-checked-out
