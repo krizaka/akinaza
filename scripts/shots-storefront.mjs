@@ -19,6 +19,8 @@ export const SCENES = {
   new: { path: (locale, shop) => `/${locale}/app/${shop.id}/shop/new`, expect: { fr: "Votre métier", en: "Your trade" }, signedIn: true },
   // The public pages wait for the shop's name (its heading, there on every device); a button's words move with the layout.
   storefront: { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Pattes de Saint-Henri", en: "Pattes de Saint-Henri" }, signedIn: false },
+  // The home's neighbourhood feed (akinaza#318): the flyers the demo shops pinned, shot as the section alone.
+  home: { path: (locale) => `/${locale}`, expect: { fr: "Affiché dans votre quartier", en: "Posted in your neighbourhood" }, signedIn: false, element: "section:has([data-testid=neighbourhood-feed])" },
   // The demo shops (packages/db/src/demo-shops.ts), each on a template of its trade (#261, step 6).
   salon: { path: (locale) => `/${locale}/s/cedre-ciseaux`, expect: { fr: "Salon Cèdre & Ciseaux", en: "Salon Cèdre & Ciseaux" }, signedIn: false },
   workshop: { path: (locale) => `/${locale}/s/encre-vive`, expect: { fr: "Encre Vive Studio", en: "Encre Vive Studio" }, signedIn: false },
@@ -175,7 +177,7 @@ async function main() {
             window.scrollTo(0, 0);
           });
           await p.waitForTimeout(800); // fonts and the reveal
-          await p.screenshot({ path: path.join(OUT, shot.file), fullPage: true });
+          await (scene.element ? p.locator(scene.element).screenshot({ path: path.join(OUT, shot.file) }) : p.screenshot({ path: path.join(OUT, shot.file), fullPage: true }));
           taken.push(shot);
           out(`shots: ${shot.file}`);
         }
