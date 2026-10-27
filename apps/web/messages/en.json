@@ -88,7 +88,7 @@
       },
       "plans": {
         "starter": "Starter",
-        "scale": "Scale B2B",
+        "scale": "Pro",
         "price": "{price} a month plus taxes",
         "preparing": "in preparation",
         "scaleSoon": "its B2B features are coming soon"
@@ -355,16 +355,18 @@
     "plansLabel": "Plans",
     "perMonth": "a month plus taxes",
     "preparing": "in preparation",
-    "soon": "soon",
+    "soon": "Soon",
+    "plannedTitle": "Coming soon",
     "badgeFounder": "Founder offer",
     "badgeFounderLimit": "First {limit} businesses",
     "founderNote": "Setup included: your services, your hours, your first invoices.",
     "plans": {
       "founder": "Founder",
       "starter": "Starter",
-      "scale": "Scale B2B"
+      "scale": "Pro"
     },
     "features": {
+      "inherits": "Everything in {plan}, plus the features below as they ship",
       "booking": "Your shop page and bookings, with the times you really have",
       "invoices": "Bilingual invoices with GST and QST exact to the cent",
       "books": "The books and the tax figures of each period, prepared for you to file",

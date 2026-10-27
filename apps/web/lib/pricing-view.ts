@@ -7,8 +7,12 @@ import { FOUNDER, SCALE, STARTER } from "./pricing";
  * The public pricing page's plans, built from the catalogue's public view (akinaza#380): every price, rate and cap is read from the
  * entries and formatted with the visitor's locale, never typed in a message. A feature that is not built says « soon » and carries
  * no figure; the founder plan appears only while its offer is on sale.
+ *
+ * What runs (`soon: false`) is listed with a tick; what is planned (`soon: true`) is shown apart under « Soon », with no tick
+ * (akinaza#440): the client payments and the terms that depend on them (the fees), the signed order contract, the B2B transfers.
+ * The plan above Starter lists only what differs: « Everything in Starter », then its planned features.
  */
-export type FeatureId = "booking" | "invoices" | "books" | "payments" | "fees" | "contract" | "transfers";
+export type FeatureId = "inherits" | "booking" | "invoices" | "books" | "payments" | "fees" | "contract" | "transfers";
 
 export interface PlanFeature {
   id: FeatureId;
@@ -31,13 +35,14 @@ const KEYS = { founder: FOUNDER, starter: STARTER, scale: SCALE } as const;
 const built = (id: FeatureId): PlanFeature => ({ id, soon: false, vars: {} });
 const soon = (id: FeatureId): PlanFeature => ({ id, soon: true, vars: {} });
 
-function featuresOf(plan: PlanView["id"], entry: PublicPrice, locale: "en" | "fr"): PlanFeature[] {
+function featuresOf(plan: PlanView["id"], entry: PublicPrice, locale: "en" | "fr", inheritsStarter: boolean): PlanFeature[] {
   const limits = entry.limits;
   const fees: PlanFeature[] =
     limits.cardFeeBps !== undefined && limits.directDebitBps !== undefined && limits.directDebitCapCents !== undefined
-      ? [{ id: "fees", soon: false, vars: { cardRate: rateText(limits.cardFeeBps, locale), debitRate: rateText(limits.directDebitBps, locale), debitCap: centsText(limits.directDebitCapCents, locale) } }]
+      ? [{ id: "fees", soon: true, vars: { cardRate: rateText(limits.cardFeeBps, locale), debitRate: rateText(limits.directDebitBps, locale), debitCap: centsText(limits.directDebitCapCents, locale) } }]
       : [];
-  return [built("booking"), built("invoices"), built("books"), soon("payments"), ...fees, ...(plan === "scale" ? [soon("contract"), soon("transfers")] : [])];
+  const running = plan === "scale" && inheritsStarter ? [built("inherits")] : [built("booking"), built("invoices"), built("books")];
+  return [...running, soon("payments"), ...fees, ...(plan === "scale" ? [soon("contract"), soon("transfers")] : [])];
 }
 
 /** The plans to show, in order: the founder offer first while it is on sale, then Starter and Scale B2B when the catalogue shows them. */
@@ -51,7 +56,7 @@ export function pricingPlans(entries: readonly PublicPrice[], locale: "en" | "fr
       id,
       price: entry.availability === AVAILABILITY.preparing ? null : priceText(entry, locale),
       limit: id === "founder" ? (entry.limits.founderCap ?? null) : null,
-      features: featuresOf(id, entry, locale),
+      features: featuresOf(id, entry, locale, entries.some((e) => e.key === KEYS.starter)),
     });
   }
   return plans;

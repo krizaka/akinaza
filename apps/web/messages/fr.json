@@ -88,7 +88,7 @@
       },
       "plans": {
         "starter": "Starter",
-        "scale": "Scale B2B",
+        "scale": "Pro",
         "price": "{price} par mois plus taxes",
         "preparing": "en préparation",
         "scaleSoon": "ses fonctions B2B arrivent bientôt"
@@ -355,16 +355,18 @@
     "plansLabel": "Plans",
     "perMonth": "par mois, taxes en sus",
     "preparing": "en préparation",
-    "soon": "bientôt",
+    "soon": "Bientôt",
+    "plannedTitle": "À venir",
     "badgeFounder": "Offre fondatrice",
     "badgeFounderLimit": "Les {limit} premières entreprises",
     "founderNote": "Mise en route incluse : vos services, vos heures, vos premières factures.",
     "plans": {
       "founder": "Fondatrice",
       "starter": "Starter",
-      "scale": "Scale B2B"
+      "scale": "Pro"
     },
     "features": {
+      "inherits": "Tout ce qu’inclut {plan}, plus les fonctions ci-dessous à mesure qu’elles arrivent",
       "booking": "Votre page de boutique et vos réservations, avec les heures que vous avez vraiment",
       "invoices": "Des factures bilingues avec la TPS et la TVQ exactes au sou",
       "books": "Les livres et les chiffres de taxes de chaque période, préparés pour que vous les déclariez",
