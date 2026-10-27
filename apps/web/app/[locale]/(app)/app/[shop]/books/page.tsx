@@ -9,10 +9,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BooksLines } from "@/components/app/BooksLines";
-import { ButtonLink } from "@/components/ButtonLink";
 import { FiguresPanel } from "@/components/app/FiguresPanel";
 import { LexiconSection } from "@/components/app/LexiconSection";
 import { PrintInvoiceButton } from "@/components/app/PrintInvoiceButton";
+import { ButtonLink } from "@/components/ButtonLink";
 import { booksIsEmpty, booksView, periodChoices, periodFor } from "@/lib/books";
 import { db } from "@/lib/db";
 import { loadFigures } from "@/lib/figures";
