@@ -9,7 +9,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { migrate } from "./migrate";
 import { SHOP_PAGE_DOCUMENT_MIGRATION_SQL } from "./shop-page-document-migration";
-import { draftShopPage, publishedShopPage, publishShopPageDraft, readShopPage, rollbackShopPage, SHOP_PAGE_ARCHIVE_KEEP, saveShopPageDraft, setShopAccent, ShopPageInvalidError, shopAccentOf, shopPageVersionsOf } from "./shop-page-versions";
+import { discardShopPageDraft, draftShopPage, publishedShopPage, publishShopPageDraft, readShopPage, rollbackShopPage, SHOP_PAGE_ARCHIVE_KEEP, saveShopPageDraft, setShopAccent, ShopPageInvalidError, shopAccentOf, shopPageVersionsOf } from "./shop-page-versions";
 import { freshDatabase, freshEmptyDatabase } from "./test/db";
 import { walkerShop } from "./test/fixtures";
 
@@ -43,7 +43,7 @@ describe("the shop page document", () => {
     expect((await publishedShopPage(t.db, shop.shopId)).version).toBe(2);
     expect(await publishShopPageDraft(t.db, shop.shopId, shop.owner.id)).toEqual({ version: 4 });
     expect((await shopPageVersionsOf(t.db, shop.shopId)).map((v) => [v.version, v.status])).toEqual([[4, "published"], [2, "archived"]]);
-    expect(await rollbackShopPage(t.db, shop.shopId, 2, shop.owner.id)).toEqual({ version: 5 });
+    expect(await rollbackShopPage(t.db, shop.shopId, 2, shop.owner.id)).toEqual({ version: 5, draftReset: false });
     expect((await publishedShopPage(t.db, shop.shopId)).page.sections.some((s) => s.disabled)).toBe(false);
     await expect(publishShopPageDraft(t.db, shop.shopId, null)).rejects.toMatchObject({ code: "AK_SHOP_PAGE_NO_DRAFT" });
   });
@@ -87,6 +87,45 @@ describe("the shop page document", () => {
     await publishShopPageDraft(t.db, other.shopId, null);
     await expect(rollbackShopPage(t.db, mine.shopId, 1, null)).rejects.toMatchObject({ code: "AK_NOT_FOUND" });
     expect(await shopPageVersionsOf(t.db, mine.shopId)).toEqual([]);
+  });
+});
+
+describe("rollback and discard against the draft (akinaza#427)", () => {
+  const edited = (n: number) => ({ ...documentFromLegacy({ sections: full(), trade: "pets" }), sections: documentFromLegacy({ sections: full(), trade: "pets" }).sections.slice(0, n) });
+  async function twoVersions(label: string) {
+    const shop = await walkerShop(t.db, label);
+    await saveShopPageDraft(t.db, shop.shopId, edited(3), null);
+    await publishShopPageDraft(t.db, shop.shopId, null);
+    await saveShopPageDraft(t.db, shop.shopId, edited(4), null);
+    await publishShopPageDraft(t.db, shop.shopId, null);
+    return shop;
+  }
+
+  it("resets the draft with the rollback by default, so the composer shows the restored page", async () => {
+    const shop = await twoVersions("doc-rb-reset");
+    await saveShopPageDraft(t.db, shop.shopId, edited(2), null);
+    const back = await rollbackShopPage(t.db, shop.shopId, 2, null);
+    expect(back.draftReset).toBe(true);
+    const draft = await draftShopPage(t.db, shop.shopId);
+    expect(draft.draft).toBe(false);
+    expect(draft.page).toEqual((await publishedShopPage(t.db, shop.shopId)).page);
+  });
+
+  it("keeps the draft when asked", async () => {
+    const shop = await twoVersions("doc-rb-keep");
+    await saveShopPageDraft(t.db, shop.shopId, edited(2), null);
+    expect((await rollbackShopPage(t.db, shop.shopId, 2, null, { keepDraft: true })).draftReset).toBe(false);
+    const draft = await draftShopPage(t.db, shop.shopId);
+    expect(draft.draft).toBe(true);
+    expect(draft.page.sections).toHaveLength(2);
+  });
+
+  it("discards the draft: it then equals the published page; nothing to discard is not an error", async () => {
+    const shop = await twoVersions("doc-discard");
+    await saveShopPageDraft(t.db, shop.shopId, edited(2), null);
+    expect(await discardShopPageDraft(t.db, shop.shopId)).toEqual({ discarded: true });
+    expect((await draftShopPage(t.db, shop.shopId)).page).toEqual((await publishedShopPage(t.db, shop.shopId)).page);
+    expect(await discardShopPageDraft(t.db, shop.shopId)).toEqual({ discarded: false });
   });
 });
 

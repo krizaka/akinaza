@@ -6,6 +6,7 @@ import { migrate, query } from "@/lib/db";
 import { resetRateLimits } from "@/lib/rate-limit";
 
 import { apiCall, closeSuite, type Handler, openBookableShop, testAccount } from "./test-api";
+import { POST as discard } from "./walker/page/discard/route";
 import { GET as getDraft, PUT as putDraft } from "./walker/page/draft/route";
 import { POST as publish } from "./walker/page/publish/route";
 import { POST as rollback } from "./walker/page/rollback/route";
@@ -72,5 +73,19 @@ describe.runIf(enabled)("the shop page document over HTTP", () => {
     expect(back.status).toBe(200);
     expect(back.body.version).toBeGreaterThan(second);
     expect(await audits("shop.page_rolled_back")).toBe(1);
+  });
+
+  it("discards the draft (audited once, owner and manager only) and resets it on rollback unless asked to keep it", async () => {
+    const doc = (await call(getDraft, "GET", people.owner.token)).body.page;
+    await call(putDraft, "PUT", people.owner.token, doc);
+    expect((await call(discard, "POST", people.staff.token)).status).toBe(403);
+    expect((await call(discard, "POST", people.manager.token)).body).toEqual({ discarded: true });
+    expect((await call(discard, "POST", people.manager.token)).body).toEqual({ discarded: false });
+    expect(await audits("shop.page_draft_discarded")).toBe(1);
+    expect((await call(getDraft, "GET", people.owner.token)).body.draft).toBe(false);
+    await call(putDraft, "PUT", people.owner.token, doc);
+    const archived = (await call(versions, "GET", people.owner.token)).body.versions.find((v: { status: string }) => v.status === "archived");
+    expect((await call(rollback, "POST", people.owner.token, { version: archived.version })).body.draftReset).toBe(true);
+    expect((await call(getDraft, "GET", people.owner.token)).body.draft).toBe(false);
   });
 });
