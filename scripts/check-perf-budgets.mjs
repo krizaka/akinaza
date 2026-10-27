@@ -75,16 +75,33 @@ const arg = (name, fallback) => {
   return i >= 0 ? process.argv[i + 1] : fallback;
 };
 
-/** In the page, before any script: collects the LCP (and whether its element is in the hero) and the layout shifts without recent input. */
+/** In the page, before any script: collects the LCP (and whether its element is in the hero) with its attribution (the web-vitals
+ *  split: TTFB, resource load delay, resource load duration, element render delay) and the layout shifts without recent input, with their sources. */
 function observe(heroSelector) {
-  window.__perf = { lcp: 0, hero: false, cls: 0 };
+  const describe = (n) => (n ? `${n.nodeName.toLowerCase()}${n.id ? `#${n.id}` : ""}${typeof n.className === "string" && n.className ? `.${n.className.trim().split(/\s+/).slice(0, 2).join(".")}` : ""}` : "(removed)");
+  window.__perf = { lcp: 0, hero: false, cls: 0, attribution: null, shifts: [] };
   new PerformanceObserver((list) => {
     const e = list.getEntries().at(-1);
     window.__perf.lcp = e.startTime;
     window.__perf.hero = !!(e.element && e.element.closest(heroSelector));
+    const nav = performance.getEntriesByType("navigation")[0];
+    const res = e.url ? performance.getEntriesByName(e.url).at(-1) : null;
+    const ttfb = nav ? nav.responseStart : 0;
+    const loadStart = res ? Math.max(ttfb, res.requestStart) : ttfb;
+    const loadEnd = res ? res.responseEnd : loadStart;
+    window.__perf.attribution = {
+      element: describe(e.element), url: e.url || null, size: e.size, startTime: Math.round(e.startTime),
+      ttfb: Math.round(ttfb), resourceLoadDelay: Math.round(loadStart - ttfb), resourceLoadDuration: Math.round(loadEnd - loadStart),
+      elementRenderDelay: Math.round(e.startTime - loadEnd),
+      transferSize: res ? res.transferSize : null, encodedBodySize: res ? res.encodedBodySize : null, decodedBodySize: res ? res.decodedBodySize : null,
+    };
   }).observe({ type: "largest-contentful-paint", buffered: true });
   new PerformanceObserver((list) => {
-    for (const e of list.getEntries()) if (!e.hadRecentInput) window.__perf.cls += e.value;
+    for (const e of list.getEntries()) {
+      if (e.hadRecentInput) continue;
+      window.__perf.cls += e.value;
+      window.__perf.shifts.push({ value: Math.round(e.value * 1000) / 1000, at: Math.round(e.startTime), sources: (e.sources || []).map((x) => ({ node: describe(x.node), from: x.previousRect && [x.previousRect.x, x.previousRect.y, x.previousRect.width, x.previousRect.height].map(Math.round), to: x.currentRect && [x.currentRect.x, x.currentRect.y, x.currentRect.width, x.currentRect.height].map(Math.round) })) });
+    }
   }).observe({ type: "layout-shift", buffered: true });
 }
 
@@ -107,8 +124,14 @@ async function sample(browser, url) {
   const height = await page.evaluate(() => document.documentElement.scrollHeight);
   await Promise.all(pending);
   const perf = await page.evaluate(() => window.__perf);
+  // The LCP resource's response headers (format, size, cache) as the CDN serves them.
+  let headers = null;
+  if (perf.attribution?.url) {
+    const r = await context.request.head(perf.attribution.url).catch(() => null);
+    if (r) headers = Object.fromEntries(["content-type", "content-length", "cache-control", "age", "cdn-cache", "server"].map((h) => [h, r.headers()[h]]));
+  }
   await context.close();
-  return { lcpMs: perf.lcp, cls: perf.cls, screens: screensOf(height), heroLcp: perf.hero, jsBytes };
+  return { attribution: perf.attribution && { ...perf.attribution, headers }, shifts: perf.shifts, lcpMs: perf.lcp, cls: perf.cls, screens: screensOf(height), heroLcp: perf.hero, jsBytes };
 }
 
 async function main() {
@@ -123,6 +146,9 @@ async function main() {
     for (let i = 0; i < runs; i += 1) samples.push(await sample(browser, base + route));
     report[route] = { ...summarise(samples), samples };
     const s = report[route];
+    const last = samples.at(-1);
+    console.log(`  attribution ${route}: ${JSON.stringify(last.attribution)}`);
+    console.log(`  shifts ${route}: ${JSON.stringify(last.shifts)}`);
     console.log(`${route}: LCP ${s.lcpMs} ms (spread ${s.lcpSpreadMs}), hero ${s.heroLcp}, CLS ${s.cls} (spread ${s.clsSpread}), ${s.screens} screens, JS ${s.jsBytes} B`);
   }
   await browser.close();
