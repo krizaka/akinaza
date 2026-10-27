@@ -40,6 +40,8 @@ export default function ShopTabs() {
       {TABS.map((tab) => (
         <Tabs.Screen key={tab.name} name={tab.name} />
       ))}
+      {/* « Vos chiffres » is opened from Livres, never from the bar: still a place of this navigator, declared, or the router leaves it for the first tab. */}
+      <Tabs.Screen name="figures" />
     </Tabs>
   );
 }
