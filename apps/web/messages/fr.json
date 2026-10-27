@@ -1740,7 +1740,8 @@
         "error": "Cette vidéo ne peut pas être lue",
         "retry": "Réessayer",
         "time": "{time} sur {duration}"
-      }
+      },
+      "faqTitle": "Questions fréquentes"
     },
     "book": {
       "title": "Réserver une promenade avec {shop}",

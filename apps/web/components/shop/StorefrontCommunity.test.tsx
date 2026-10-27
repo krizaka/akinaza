@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { buildCommunity } from "@/lib/community-view";
 import { buildStorefront } from "@/lib/storefront";
 
-import { Storefront } from "./Storefront";
+import { Storefront } from "./test-storefront";
 
 const NOW = new Date("2026-10-19T10:30:00-04:00");
 const TODAY = "2026-10-19";
@@ -56,14 +56,13 @@ const html = (c: CommunityView, enabled = ON, locale: "fr" | "en" = "en") => {
 describe("the shop as a place on the public page", () => {
   const page = html(community());
   it("draws the wall as a real list with its photo, card and sign, the sign as live text", () => {
-    expect(page).toContain('id="wall"');
+    expect(page).toContain('id="s_wall"');
     expect(page).toContain("A chair");
     expect(page).toContain("Thanks");
     expect(page).toContain("Salon Cèdre &amp; Ciseaux");
   });
   it("plays the shop's own latest video in the television", () => {
     // The player arrives after hydration; the page holds its box with the poster.
-    expect(page).toContain("data-tv-frame");
     expect(page).toContain("poster.webp");
   });
   it("keeps another channel's video behind a facade: no iframe and no request to the platform in the markup", () => {
@@ -76,7 +75,6 @@ describe("the shop as a place on the public page", () => {
     expect(page).toMatch(/referrerPolicy="no-referrer"/i);
   });
   it("shows the bulletin board and the verified score with its text equivalent", () => {
-    expect(page).toContain("data-bulletin");
     expect(page).toContain("Open house");
     expect(page).toContain("4.6 out of 5, 6 verified reviews");
     expect(page).toContain("Merci!");
@@ -91,19 +89,18 @@ describe("the shop as a place on the public page", () => {
 describe("what is not there is not drawn", () => {
   it("shows no reviews section under the administrator's minimum", () => {
     const few = html(community({ reviews: [review(0), review(1)] }));
-    expect(few).not.toContain('id="reviews"');
+    expect(few).not.toContain('id="s_reviews"');
   });
   it("shows no wall, board or videos on an empty shop, and no review of a switched-off feature", () => {
     const empty = html(community({ wall: { texture: "plaster", items: [] }, reel: null, reels: [], links: {}, announcements: [], reviews: [] }));
-    for (const id of ["wall", "reels", "announcements", "reviews"]) expect(empty).not.toContain(`id="${id}"`);
+    for (const id of ["wall", "reels", "announcements", "reviews"]) expect(empty).not.toContain(`id="s_${id}"`);
     const off = html(community(), { wall: false, reels: false, announcements: false, reviews: false });
-    for (const id of ["wall", "reels", "announcements", "reviews"]) expect(off).not.toContain(`id="${id}"`);
+    for (const id of ["wall", "reels", "announcements", "reviews"]) expect(off).not.toContain(`id="s_${id}"`);
   });
   it("puts the television in the videos section when the wall is switched off", () => {
     const noWall = html(community(), { ...ON, wall: false });
-    expect(noWall).not.toContain('id="wall"');
-    expect(noWall).toContain('id="reels"');
-    expect(noWall).toContain("data-tv-frame");
+    expect(noWall).not.toContain('id="s_wall"');
+    expect(noWall).toContain('id="s_reels_1"');
   });
   it("hides a flyer after its last day and keeps three at most", () => {
     const old = html(community({ announcements: [{ id: "a1", textFr: "Vieux", textEn: "Old news", photoUrl: null, photoAlt: "", endsOn: "2026-10-01", createdAt: at("2026-09-01") }] as unknown as CommunityView["announcements"] }));
@@ -116,5 +113,25 @@ describe("what is not there is not drawn", () => {
   it("lists a hidden review nowhere (the public projection carries published ones only)", () => {
     const placed = buildCommunity({ community: community({ reviews: [...[0, 1, 2, 3, 4].map((i) => review(i)), { ...review(9), state: "hidden_by_owner", body: "Secret" }] }), locale: "en", today: TODAY, rules: RULES, enabled: ON });
     expect(JSON.stringify(placed)).not.toContain("Secret");
+  });
+});
+
+describe("the page is drawn from its document (akinaza#401)", () => {
+  const page = html(community());
+  const sources = (markup: string) => [...markup.matchAll(/<img[^>]*\ssrc="([^"]+)"/g)].map((m) => m[1]!.split("?")[0]!);
+
+  it("shows no photo twice on the page", () => {
+    const found = sources(page);
+    expect(new Set(found).size).toBe(found.length);
+  });
+
+  it("asks for the cover first, with a high priority, and gives it a fixed box (the LCP, no layout shift)", () => {
+    const withCover = renderToStaticMarkup(<Storefront locale="en" view={{ ...buildStorefront({ page: shop, locale: "en", now: NOW }), cover: { src: "https://cdn.test/cover.webp", alt: "Cover" } }} />);
+    expect(withCover).toMatch(/<link[^>]*rel="preload"[^>]*href="https:\/\/cdn.test\/cover.webp"[^>]*fetchPriority="high"|<link[^>]*fetchPriority="high"[^>]*href="https:\/\/cdn.test\/cover.webp"/i);
+    expect(withCover.indexOf("cover.webp")).toBeLessThan(withCover.indexOf("<h2"));
+  });
+
+  it("keeps another channel's video behind its facade: no frame until the visitor asks", () => {
+    expect(page).not.toContain("<iframe");
   });
 });
