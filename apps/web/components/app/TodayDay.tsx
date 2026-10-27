@@ -396,7 +396,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
           </div>
         }
       >
-        <Widget span={3} title={say("today.agendaLabel")} id="agenda">
+        <Widget span={3} title={say("today.agendaLabel")} id="agenda" className="self-start">
           {/* TODO(krizaka-ui#680): a changed appointment washes once when `Agenda` can mark its row (`data-kz-arrive` on the `li`);
               until then only the step that succeeded rings (VisitAction). */}
           <Agenda
