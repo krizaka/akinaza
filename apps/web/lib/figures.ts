@@ -1,5 +1,5 @@
 import { computeFigures, declarationPeriod, type Figure, type FigureId, FILING, type NextAction, nextActions, type Period } from "@akinaza/core";
-import { figuresSnapshot } from "@akinaza/db";
+import { figuresSnapshot, shopFigureOverrides } from "@akinaza/db";
 
 import { db } from "./db";
 import { figureRules } from "./figure-rules";
@@ -18,7 +18,7 @@ export interface ShopFigures {
 export async function loadFigures(shop: { id: string }, today: string, now: Date, period?: Period): Promise<ShopFigures> {
   const range = period ?? declarationPeriod(today, FILING.quarterly);
   const { input, slots } = await figuresSnapshot(db(), shop.id, { today, computedAt: now.toISOString(), period: range });
-  const { thresholds, offered } = await figureRules();
+  const { thresholds, offered } = await figureRules(() => shopFigureOverrides(db(), shop.id));
   return {
     figures: computeFigures(input, thresholds),
     // The return is prepared on demand from the ledger and never stored, so « prepare the return » stays offered while the period ends.

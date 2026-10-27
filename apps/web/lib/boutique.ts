@@ -17,14 +17,14 @@ export const PAGE_TAB_NEEDS: Record<PageTab, ShopPermission> = { identity: "sett
 /** The tabs a role may open, in the hub's order. */
 export const pageTabsAllowed = (allows: (permission: ShopPermission) => boolean): PageTab[] => PAGE_TABS.filter((tab) => allows(PAGE_TAB_NEEDS[tab]));
 
-export const BOUTIQUE_SECTIONS = ["page", "languages", "team", "invoices", "shops"] as const;
+export const BOUTIQUE_SECTIONS = ["page", "languages", "team", "invoices", "figures", "shops"] as const;
 export type BoutiqueSection = (typeof BOUTIQUE_SECTIONS)[number];
 
 export const isBoutiqueSection = (value: string): value is BoutiqueSection => (BOUTIQUE_SECTIONS as readonly string[]).includes(value);
 export const isPageTab = (value: string | undefined): value is PageTab => (PAGE_TABS as readonly string[]).includes(value ?? "");
 
 /** The permission each section takes (the role table decides who holds it). The team is the manager's; the shop's settings are the owner's. */
-export const BOUTIQUE_NEEDS: Record<BoutiqueSection, ShopPermission> = { page: "catalogue", languages: "settings", team: "team", invoices: "settings", shops: "settings" };
+export const BOUTIQUE_NEEDS: Record<BoutiqueSection, ShopPermission> = { page: "catalogue", languages: "settings", team: "team", invoices: "settings", figures: "settings", shops: "settings" };
 
 /** The sections a role may open, in the hub's order. A staff member opens none: the rail does not offer Boutique to them. */
 export function boutiqueSectionsAllowed(allows: (permission: ShopPermission) => boolean): BoutiqueSection[] {
@@ -40,6 +40,7 @@ export interface BoutiqueNavWords {
   languages: string;
   team: string;
   invoices: string;
+  figures: string;
   shops: string;
 }
 
@@ -56,6 +57,7 @@ export function boutiqueGroups({ allowed, tabs = PAGE_TABS, href, current, words
   const business = [
     ...(has("team") ? [{ id: "team", label: words.team, href: href("team"), current: current.section === "team" }] : []),
     ...(has("invoices") ? [{ id: "invoices", label: words.invoices, href: href("invoices"), current: current.section === "invoices" }] : []),
+    ...(has("figures") ? [{ id: "figures", label: words.figures, href: href("figures"), current: current.section === "figures" }] : []),
     ...(has("shops") ? [{ id: "shops", label: words.shops, href: href("shops"), current: current.section === "shops" }] : []),
   ];
   return [

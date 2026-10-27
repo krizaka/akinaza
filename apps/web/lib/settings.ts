@@ -45,6 +45,8 @@ export const SETTINGS = {
   "storefront.languages.allowed": subset("storefront", ["fr", "en", "es"] as const, ["fr", "en", "es"], GLOBAL_ONLY),
   "limits.translationsPerShopPerDay": integer("limits", 20, { min: 1, max: 500, unit: "runs" }, GLOBAL_ONLY),
   // The owner's figures (#260): the default thresholds each figure is judged against, and the actions « que faire maintenant » may offer.
+  // Whether an owner may tune the thresholds of their own shop (#260), inside the bounds of @akinaza/core.
+  "figures.ownerTunable": flag("figures", true, GLOBAL_ONLY),
   "figures.overdueWatchPct": integer("figures", 10, { min: 0, max: 100, unit: "%" }, GLOBAL_ONLY),
   "figures.overdueAlertPct": integer("figures", 25, { min: 0, max: 100, unit: "%" }, GLOBAL_ONLY),
   "figures.collectedWatchPct": integer("figures", 80, { min: 0, max: 100, unit: "%" }, GLOBAL_ONLY),

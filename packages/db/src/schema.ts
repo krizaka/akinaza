@@ -251,6 +251,17 @@ export const shopPage = pgTable(
   (t) => [check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
 );
 
+/** The owner's own figure thresholds (#260): only the keys they changed; no row = the administrator's defaults. Bounds are checked by the application and the shape by the database. */
+export const shopFigureRules = pgTable(
+  "shop_figure_rules",
+  {
+    shopId: uuid("shop_id").primaryKey().references(() => shops.id, { onDelete: "cascade" }),
+    overrides: jsonb("overrides").$type<Record<string, number>>().notNull().default(sql`'{}'::jsonb`),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check("shop_figure_rules_object", sql`jsonb_typeof(${t.overrides}) = 'object'`)],
+);
+
 /** The wall of the public page (B45, #310): its texture; no row = plaster and no item. */
 export const shopWall = pgTable(
   "shop_wall",

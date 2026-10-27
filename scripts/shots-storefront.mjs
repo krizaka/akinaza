@@ -28,6 +28,10 @@ export const SCENES = {
   "docs-bookings": { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Pattes de Saint-Henri", en: "Pattes de Saint-Henri" }, signedIn: false },
   "docs-invoices": { path: (locale, shop) => `/${locale}/app/${shop.id}/invoices/new`, expect: { fr: "Nouvelle facture", en: "New invoice" }, signedIn: true },
   "docs-books": { path: (locale, shop) => `/${locale}/app/${shop.id}/books`, expect: { fr: "Vos livres", en: "Your books" }, signedIn: true },
+  // The owner's figures (#260): what to do now on Today, the figures with their formulas on the books, and the thresholds the owner tunes.
+  "figures-today": { path: (locale, shop) => `/${locale}/app/${shop.id}/aujourdhui`, expect: { fr: "Que faire maintenant", en: "What to do now" }, signedIn: true },
+  "figures-books": { path: (locale, shop) => `/${locale}/app/${shop.id}/books`, expect: { fr: "Vos chiffres", en: "Your figures" }, signedIn: true },
+  "figures-thresholds": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/figures`, expect: { fr: "Quand un chiffre demande votre attention", en: "When a figure needs your attention" }, signedIn: true },
   "docs-data": { path: (locale) => `/${locale}/app/profile/data`, expect: { fr: "Vos données", en: "Your data" }, signedIn: true },
 };
 /** The scenes of the owner's guide, one per page of it (`docs.pages.<id>`). */

@@ -1,5 +1,5 @@
-import { localDay, reviewScore, shopTypeOf, WALL_LIMITS } from "@akinaza/core";
-import { announcementsOf, invoiceMailSettings, loadShop, reelsOf, reviewsOf, SHOP_ROLES, shopMediaOf, shopPageConfigOf, shopStaff, socialLinksOf, teamTimeOff, translationRows, translationRunsOn,wallOf } from "@akinaza/db";
+import { localDay, OWNER_BOUNDS, OWNER_TUNABLE, type OwnerTunable, reviewScore, shopTypeOf, WALL_LIMITS } from "@akinaza/core";
+import { announcementsOf, invoiceMailSettings, loadShop, reelsOf, reviewsOf, SHOP_ROLES, shopFigureOverrides, shopMediaOf, shopPageConfigOf, shopStaff, socialLinksOf, teamTimeOff, translationRows, translationRunsOn,wallOf } from "@akinaza/db";
 import { Button } from "@krizaka/ui/button";
 import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
@@ -7,6 +7,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { BoardEditor } from "@/components/app/BoardEditor";
+import { FigureRules } from "@/components/app/FigureRules";
 import { InvoiceMailSettings } from "@/components/app/InvoiceMailSettings";
 import { ReelsEditor } from "@/components/app/ReelsEditor";
 import { ReviewsPanel } from "@/components/app/ReviewsPanel";
@@ -23,9 +24,11 @@ import { db } from "@/lib/db";
 import { proposalsFor } from "@/lib/default-media-proposals";
 import { defaultMediaSettings } from "@/lib/default-media-settings";
 import { readEnv } from "@/lib/env";
+import { adminFigureRules } from "@/lib/figure-rules";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { may, memberShop, shopsOf } from "@/lib/member-shop";
 import { type RouteLocale, shopRoutes } from "@/lib/routes";
+import { appSettings } from "@/lib/settings";
 import { team } from "@/lib/team";
 import { templateChoices } from "@/lib/template-choices";
 import { templateRules } from "@/lib/template-rules";
@@ -130,6 +133,20 @@ async function InvoicesSection({ locale, shopId }: { locale: RouteLocale; shopId
   );
 }
 
+/** Boutique › Seuils des chiffres: when a figure asks for a look or for action, the administrator's usual values and the owner's own (#260). */
+async function FiguresSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
+  const { shop } = await memberShop(shopId, "settings");
+  const t = getDictionary(locale).console.boutique.figures;
+  const [{ defaults }, tunable, overrides] = await Promise.all([adminFigureRules(), appSettings().get("figures.ownerTunable"), shopFigureOverrides(db(), shop.id)]);
+  const usual = Object.fromEntries(OWNER_TUNABLE.map((key) => [key, defaults[key]])) as Record<OwnerTunable, number>;
+  return (
+    <div className="flex flex-col gap-5">
+      <PageHeader as="h2" title={t.title} description={t.lead} />
+      <FigureRules tunable={tunable} usual={usual} overrides={overrides} bounds={OWNER_BOUNDS} />
+    </div>
+  );
+}
+
 /** Boutique › Boutiques: the shops the account works in, and « Add a shop » (one more, unpublished). */
 async function ShopsSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
   await memberShop(shopId, "settings");
@@ -162,6 +179,7 @@ function boutiqueBody({ section, tab, community, locale, shopId }: Readonly<{ se
   if (section === "languages") return <LanguagesSection locale={locale} shopId={shopId} />;
   if (section === "team") return <TeamSection locale={locale} shopId={shopId} />;
   if (section === "invoices") return <InvoicesSection locale={locale} shopId={shopId} />;
+  if (section === "figures") return <FiguresSection locale={locale} shopId={shopId} />;
   return <ShopsSection locale={locale} shopId={shopId} />;
 }
 

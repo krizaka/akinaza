@@ -579,3 +579,12 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Cost**: a longer card; the quarter is assumed for the period until the shop's filing frequency is captured.
 - **Wrong if**: owners ignore the formula row (nobody opens the source link) - then fold it.
 - Akinaza prepares; the owner files. Print: « Imprimer ou enregistrer en PDF » on the books page (print styles hide controls).
+
+## The owner tunes when a figure asks for attention (#260)
+
+- **Decision**: Boutique › « Seuils des chiffres » lets the owner move the eight judgement thresholds and the tax reminder's lead time for their own shop, inside fixed bounds (1-99 %, 1-60 days). The administrator's `figures.*` settings stay the usual values; `figures.ownerTunable` switches the tuning off (the screen then shows the values read only, with the reason). « Revenir aux valeurs habituelles » removes the shop's row, so a later change of the usual values reaches it again.
+- **Problem**: a barber and a coach do not have the same idea of a late payment or a healthy margin; one global threshold is wrong for one of them.
+- **Principle**: user control and freedom, with a visible default (the usual value and the bounds are written under each field).
+- **Refused**: letting the owner change a formula or an amount (only when a figure asks for a look moves); a slider (no precision on a phone, no keyboard value).
+- **Cost**: nine fields on a screen; an alert threshold gentler than its watch threshold is moved to match (said on the screen).
+- **Wrong if**: owners tune and never come back to read the state words - then show the tuned value on the figure itself.

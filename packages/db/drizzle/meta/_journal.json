@@ -266,6 +266,7 @@
       "version": "7",
       "when": 1795000006000,
       "tag": "0037_privacy",
+      "tag": "0037_shop_figure_rules",
       "breakpoints": true
     }
   ]
