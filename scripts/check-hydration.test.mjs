@@ -11,7 +11,7 @@ describe("the hydration crawl (one rendering for the server and the browser, K0)
   });
 
   it("covers every screen the review found broken: the legal page, the storefronts, the owner's day, clients, invoices, books, team, the account", () => {
-    for (const page of ["/fr/privacy", "/fr/s/cedre-ciseaux", "/fr/s/encre-vive", "/fr/s/pattes-saint-henri", "/fr", "/fr/sign-in", "/fr/nope"]) expect(PUBLIC_PAGES).toContain(page);
+    for (const page of ["/fr/privacy", "/fr/s/cedre-ciseaux", "/fr/s/encre-vive", "/fr/s/pattes-saint-henri", "/en/s/pattes-saint-henri?look=journal", "/fr/s/cedre-ciseaux?look=gallery", "/fr", "/fr/sign-in", "/fr/nope"]) expect(PUBLIC_PAGES).toContain(page);
     for (const page of ["/aujourdhui", "/clients", "/invoices", "/invoices/new", "/books", "/team", "/shop"]) expect(OWNER_PAGES).toContain(page);
     for (const page of ["/app/profile", "/app/profile/security"]) expect(ACCOUNT_PAGES).toContain(page);
     expect(THEMES).toEqual(["dark", "light"]);

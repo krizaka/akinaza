@@ -14,7 +14,9 @@ import { chromium } from "playwright-core";
 const SETTLE_MS = 600;
 export const WIDTHS = [360, 390, 430, 768, 1024, 1440];
 export const THEMES = ["dark", "light"];
-export const PAGES = ["/en", "/fr", "/en/privacy", "/fr/privacy", "/en/changelog", "/fr/changelog", "/en/sign-in", "/fr/sign-in"];
+/** The two demo shops and every composition they offer (akinaza#404): the Krizaka UI showcase must not overflow at any width. */
+export const SHOP_PAGES = ["/en/s/cedre-ciseaux", "/fr/s/cedre-ciseaux?look=editorial", "/en/s/cedre-ciseaux?look=gallery", "/fr/s/pattes-saint-henri", "/en/s/pattes-saint-henri?look=journal"];
+export const PAGES = ["/en", "/fr", "/en/privacy", "/fr/privacy", "/en/changelog", "/fr/changelog", "/en/sign-in", "/fr/sign-in", ...SHOP_PAGES];
 
 const arg = (name, fallback) => {
   const i = process.argv.indexOf(`--${name}`);

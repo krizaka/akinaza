@@ -36,6 +36,10 @@ export const PUBLIC_PAGES = [
   "/fr/s/ferland-conseil",
   "/fr/s/pattes-saint-henri",
   "/en/s/pattes-saint-henri",
+  // The compositions the two demo shops offer (akinaza#404): the television of the journal once hydrated differently on the server.
+  "/fr/s/cedre-ciseaux?look=editorial",
+  "/fr/s/cedre-ciseaux?look=gallery",
+  "/en/s/pattes-saint-henri?look=journal",
   "/fr/s/nope",
   "/fr/nope",
 ];

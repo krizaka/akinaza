@@ -14,7 +14,7 @@ export function DemoLookSwitch({ slug, current, path, locale }: Readonly<{ slug:
   if (looks.length < 2) return null;
   const t = translator(locale);
   return (
-    <nav aria-label={t("console.shopPage.looks.label")} data-demo-looks className="mx-auto flex w-full max-w-(--kz-page-max,72rem) flex-wrap items-center gap-x-4 gap-y-2 px-(--kz-page-gutter,1rem) py-3 text-sm">
+    <nav aria-label={t("console.shopPage.looks.label")} data-demo-looks className="mx-auto flex w-full max-w-(--kz-page-max,72rem) flex-wrap items-center gap-x-4 gap-y-2 px-(--kz-page-gutter,1rem) pb-3 pt-24 text-sm">
       <span className="font-semibold text-fg">{t("console.shopPage.looks.label")}</span>
       <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
         {looks.map((look, i) => (

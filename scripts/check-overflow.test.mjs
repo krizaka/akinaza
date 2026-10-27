@@ -6,7 +6,7 @@ import { PAGES, THEMES, WIDTHS } from "./check-overflow.mjs";
 
 describe("the dev-preview crawl (ui.themes-devices)", () => {
   it("covers both languages of the public pages and the sign-in, in both themes, from a phone to a desktop", () => {
-    for (const page of ["/en", "/fr", "/en/sign-in", "/fr/sign-in", "/en/changelog", "/fr/privacy"]) expect(PAGES).toContain(page);
+    for (const page of ["/en", "/fr", "/en/sign-in", "/fr/sign-in", "/en/changelog", "/fr/privacy", "/fr/s/cedre-ciseaux?look=editorial", "/en/s/pattes-saint-henri?look=journal"]) expect(PAGES).toContain(page);
     expect(THEMES).toEqual(["dark", "light"]);
     expect(Math.min(...WIDTHS)).toBeLessThanOrEqual(360);
     expect(Math.max(...WIDTHS)).toBeGreaterThanOrEqual(1440);
