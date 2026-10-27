@@ -115,7 +115,7 @@
       "line": "Dossiers dans une base de données au Canada · Consentement noté par finalité · Taxes préparées, déclaration produite par vous",
       "scope": "Pour les studios, salons et travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place."
     },
-    "visualLabel": "dev.akinaza.com",
+    "visualLabel": "www.akinaza.com",
     "feed": {
       "title": "Affiché dans votre quartier",
       "lead": "Les affichettes que les commerces épinglent sur leur propre page : une porte ouverte, un nouveau service, une place libérée. Rien ici n’est de la publicité que nous vendons.",
@@ -123,6 +123,7 @@
       "all": "Tous les quartiers",
       "boardLabel": "Affichettes épinglées par les commerces du quartier",
       "visit": "Voir {shop}",
+      "demo": "Voir la boutique de démonstration",
       "empty": "Aucune affichette dans ce quartier pour le moment.",
       "error": "Impossible de charger les affichettes. Réessayez dans un instant."
     }
