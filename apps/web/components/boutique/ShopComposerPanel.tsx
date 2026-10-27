@@ -54,6 +54,10 @@ export function ShopComposerPanel({ draft, published, accent, accents, presets, 
   const [current, setCurrent] = useState<DocumentPage>(draft);
   const [chosen, setChosen] = useState<string | null>(accent);
   const [note, setNote] = useState<string | null>(null);
+  const [keepDraft, setKeepDraft] = useState(false);
+  const [confirming, setConfirming] = useState(false);
+  /** The document the composer holds; `revision` remounts it when the server changed the draft under it (discard, rollback that resets it). */
+  const [loaded, setLoaded] = useState<{ page: DocumentPage; revision: number }>({ page: draft, revision: 0 });
   const keys = { versions: ["shop-page", "versions", routes.api("")] as const };
 
   const refreshPreview = useCallback(() => {
@@ -80,9 +84,24 @@ export function ShopComposerPanel({ draft, published, accent, accents, presets, 
     onSuccess: () => { setNote(say("composerPanel.published")); void client.invalidateQueries({ queryKey: keys.versions }); refreshPreview(); },
     onError: (error) => setNote(`${say("composerPanel.publishFailed")} ${issuesOf(error) ?? ""}`.trim()),
   });
+  const reload = useCallback(async () => {
+    const { page } = (await krizakaFetch(routes.api("/api/walker/page/draft"))) as { page: DocumentPage };
+    setCurrent(page);
+    setLoaded((l) => ({ page, revision: l.revision + 1 }));
+  }, [routes]);
   const restore = useMutation({
-    mutationFn: (version: number) => krizakaFetch(routes.api("/api/walker/page/rollback"), { method: "POST", json: { version } }),
-    onSuccess: (_done, from) => { setNote(say("composerPanel.restored", { n: from })); void client.invalidateQueries({ queryKey: keys.versions }); refreshPreview(); },
+    mutationFn: (version: number) => krizakaFetch(routes.api("/api/walker/page/rollback"), { method: "POST", json: { version, keepDraft } }) as Promise<{ draftReset: boolean }>,
+    onSuccess: async (done, from) => {
+      if (done.draftReset) await reload();
+      setNote(say(done.draftReset ? "composerPanel.restored" : "composerPanel.restoredKept", { n: from }));
+      void client.invalidateQueries({ queryKey: keys.versions });
+      refreshPreview();
+    },
+    onError: (error) => setNote(say(`errors.${isKrizakaApiError(error) ? error.code : "server"}`)),
+  });
+  const discard = useMutation({
+    mutationFn: () => krizakaFetch(routes.api("/api/walker/page/discard"), { method: "POST" }),
+    onSuccess: async () => { setConfirming(false); await reload(); setNote(say("composerPanel.discarded")); void client.invalidateQueries({ queryKey: keys.versions }); refreshPreview(); },
     onError: (error) => setNote(say(`errors.${isKrizakaApiError(error) ? error.code : "server"}`)),
   });
   const pickAccent = useMutation({
@@ -108,19 +127,29 @@ export function ShopComposerPanel({ draft, published, accent, accents, presets, 
         <p className="m-0 text-xs text-fg-muted">{say("composerPanel.accentNote")}</p>
       </section>
       <p role="status" aria-live="polite" className="m-0 min-h-5 text-sm text-fg-secondary">{note}</p>
+      {confirming ? (
+        <div role="alertdialog" aria-label={say("composerPanel.discardAsk")} className="flex flex-wrap items-center gap-2" data-testid="composer-discard">
+          <span className="text-sm text-fg-secondary">{say("composerPanel.discardAsk")}</span>
+          <Button variant="secondary" size="sm" disabled={discard.isPending} onClick={() => discard.mutate()}>{say("composerPanel.discardYes")}</Button>
+          <Button variant="ghost" size="sm" onClick={() => setConfirming(false)}>{say("composerPanel.discardNo")}</Button>
+        </div>
+      ) : null}
       <ShopComposer
+        resetKey={loaded.revision}
         className="h-[85dvh] min-h-[32rem] rounded-lg border border-border-default"
-        value={draft}
+        value={loaded.page}
         published={published}
         previewUrl={previewUrl}
         presets={presets}
         messages={messages.console.composer as unknown as ShopComposerMessages}
         onChange={async (page) => { setCurrent(page); await save.mutateAsync(page); }}
+        onDiscard={() => setConfirming(true)}
         onPublish={async (page) => { setCurrent(page); await publish.mutateAsync(page).catch(() => undefined); }}
       />
       <details className="rounded-lg border border-border-default p-3">
         <summary className="cursor-pointer font-display text-base font-bold text-fg">{say("composerPanel.versions")}</summary>
         <p className="mb-2 mt-2 text-sm text-fg-secondary">{say("composerPanel.versionsLead")}</p>
+        <label className="mb-2 flex items-center gap-2 text-sm text-fg-secondary"><input type="checkbox" checked={keepDraft} onChange={(e) => setKeepDraft(e.target.checked)} />{say("composerPanel.keepDraft")}</label>
         {history.data.length === 0 ? <p className="m-0 text-sm text-fg-secondary">{say("composerPanel.noVersions")}</p> : (
           <ul className="m-0 flex list-none flex-col divide-y divide-border-default p-0">
             {history.data.map((v) => (
