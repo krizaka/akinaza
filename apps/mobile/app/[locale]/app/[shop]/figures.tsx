@@ -58,11 +58,11 @@ export default function Figures() {
               {f.figures.map((figure) => (
                 <Card.Root key={figure.id}>
                   <Card.Body>
-                    <Txt variant="label">{t(`figures.${figure.id}.name`)}</Txt>
-                    <Txt variant="title">{valueText(figure, locale)}</Txt>
+                    <Txt variant="label" testID={`figure-name-${figure.id}`}>{t(`figures.${figure.id}.name`)}</Txt>
+                    <Txt variant="title" testID={`figure-${figure.id}`}>{valueText(figure, locale)}</Txt>
                     <Badge tone={toneOf(figure.state)}>{t(`figures.state.${figure.state}`)}</Badge>
                     <Txt>{meaningText(figure, t)}</Txt>
-                    <Button variant="ghost" size="sm" label={t("figures.details")} onPress={() => router.setParams({ figure: figure.id })} />
+                    <Button testID={`figure-details-${figure.id}`} variant="ghost" size="sm" label={t("figures.details")} onPress={() => router.setParams({ figure: figure.id })} />
                   </Card.Body>
                 </Card.Root>
               ))}

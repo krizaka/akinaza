@@ -41,7 +41,7 @@ export default function Today() {
   });
   return (
     <Screen header={<AppHeader title={t("today.title")} />} scroll={false}>
-      <DayStrip label={t("today.strip")} locale={LANGUAGE_TAG[locale]} value={shown} start={strip.start} today={today} isDateMarked={(d) => marked.has(d)} markedLabel={t("today.marked")} onValueChange={(next) => router.setParams({ day: next, visit: undefined })} />
+      <DayStrip label={t("today.strip")} style={{ flexGrow: 0 }} locale={LANGUAGE_TAG[locale]} value={shown} start={strip.start} today={today} isDateMarked={(d) => marked.has(d)} markedLabel={t("today.marked")} onValueChange={(next) => router.setParams({ day: next, visit: undefined })} />
       <QueryStates query={day} isEmpty={(d) => d.visits.length === 0} empty={{ title: t("today.empty"), description: t("today.emptyLead") }}>
         {(d) => {
           const open = d.visits.find((v) => v.appointmentId === openId);
