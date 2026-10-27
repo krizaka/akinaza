@@ -102,8 +102,9 @@ function parseMoment(prop: Prop, shopZone: string): Moment | null {
   if (m[4] === undefined || prop.params.VALUE === "DATE") return { at: localInstant(dayOf(y, mo, d), 0, shopZone).getTime(), tz: shopZone, allDay: true };
   const [h, mi, s] = [Number(m[4]), Number(m[5]), Number(m[6] ?? 0)];
   if (m[7]) return { at: Date.UTC(y, mo - 1, d, h, mi, s), tz: "UTC", allDay: false };
+  // A zoned time is read to the minute: calendar apps write whole minutes.
   const tz = validZone(prop.params.TZID, shopZone);
-  return { at: localInstant(dayOf(y, mo, d), h * 60 + mi, tz).getTime() + s * 1_000, tz, allDay: false };
+  return { at: localInstant(dayOf(y, mo, d), h * 60 + mi, tz).getTime(), tz, allDay: false };
 }
 
 function parseDuration(value: string): number | null {
@@ -117,7 +118,7 @@ interface Rule {
   freq: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY";
   interval: number;
   count: number | null;
-  /** Inclusive, epoch milliseconds. */
+  /** Exclusive, epoch milliseconds: the first instant the rule no longer reaches. */
   until: number | null;
   byDay: number[];
 }
@@ -126,8 +127,8 @@ function parseRule(value: string, zone: string): Rule | null {
   const parts = Object.fromEntries(value.split(";").map((p) => p.split("=") as [string, string]));
   if (!["DAILY", "WEEKLY", "MONTHLY", "YEARLY"].includes(parts.FREQ ?? "")) return null;
   const until = parts.UNTIL ? parseMoment({ params: {}, value: parts.UNTIL }, zone) : null;
-  // A date-only UNTIL is that whole day: inclusive up to the next midnight.
-  const untilMs = until ? (until.allDay ? localInstant(addLocalDays(localDay(new Date(until.at), until.tz), 1), 0, until.tz).getTime() - 1 : until.at) : null;
+  // UNTIL is inclusive: a date-only one is that whole day (up to the next midnight), a time is itself (up to the next millisecond).
+  const untilMs = until ? (until.allDay ? localInstant(addLocalDays(localDay(new Date(until.at), until.tz), 1), 0, until.tz).getTime() : until.at + 1) : null;
   return {
     freq: parts.FREQ as Rule["freq"],
     interval: Math.max(1, Number(parts.INTERVAL ?? 1) || 1),
@@ -161,7 +162,7 @@ function occurrenceStarts(first: Moment, rule: Rule, untilMs: number): number[] 
     for (const day of days) {
       if (day < startDay) continue;
       const start = startOf(day);
-      if (start >= untilMs || (rule.until !== null && start > rule.until)) return out;
+      if (start >= untilMs || (rule.until !== null && start >= rule.until)) return out;
       out.push(start);
       if (rule.count !== null && out.length >= rule.count) return out;
     }
