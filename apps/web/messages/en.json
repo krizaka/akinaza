@@ -872,7 +872,7 @@
       },
       "incidents": {
         "title": "Confidentiality incidents",
-        "lead": "The register required by Law 25 (ss. 3.5 to 3.8): every incident, serious or not, kept five years. It holds facts and categories of information, never a person's data. Assess the risk of serious injury; if there is one, notify the Commission d'accès à l'information and the people concerned, then close. It covers Akinaza's data: shop customers' files, invoices and tax slips.",
+        "lead": "The register required by the Act respecting the protection of personal information in the private sector (ss. 3.5 to 3.8): every incident, serious or not, kept five years. It holds facts and categories of information, never a person's data. Assess the risk of serious injury; if there is one, notify the Commission d'accès à l'information and the people concerned, then close. It covers Akinaza's data: shop customers' files, invoices and tax slips.",
         "exportCsv": "Export CSV",
         "exportJson": "Export JSON",
         "register": "Register",

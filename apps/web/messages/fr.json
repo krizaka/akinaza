@@ -872,7 +872,7 @@
       },
       "incidents": {
         "title": "Incidents de confidentialité",
-        "lead": "Le registre exigé par la Loi 25 (art. 3.5 à 3.8) : tous les incidents, graves ou non, conservés cinq ans. Il contient des faits et des catégories de renseignements, jamais les données d'une personne. Évaluez le risque de préjudice sérieux ; s'il existe, avisez la Commission d'accès à l'information et les personnes concernées, puis fermez. Il couvre les données d'Akinaza : fiches de clients des boutiques, factures et relevés fiscaux.",
+        "lead": "Le registre exigé par la Loi sur la protection des renseignements personnels dans le secteur privé (art. 3.5 à 3.8) : tous les incidents, graves ou non, conservés cinq ans. Il contient des faits et des catégories de renseignements, jamais les données d'une personne. Évaluez le risque de préjudice sérieux ; s'il existe, avisez la Commission d'accès à l'information et les personnes concernées, puis fermez. Il couvre les données d'Akinaza : fiches de clients des boutiques, factures et relevés fiscaux.",
         "exportCsv": "Exporter en CSV",
         "exportJson": "Exporter en JSON",
         "register": "Registre",
