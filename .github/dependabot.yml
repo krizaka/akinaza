@@ -20,6 +20,8 @@ updates:
       prefix: "ci(deps)"
     labels: ["area:deps"]
     open-pull-requests-limit: 1
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: npm
     directory: "/"
@@ -48,6 +50,8 @@ updates:
       prefix-development: "chore(deps-dev)"
     labels: ["area:deps"]
     open-pull-requests-limit: 1
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: docker
     directory: "/deploy/docker"
@@ -69,3 +73,5 @@ updates:
       # Node majors are a decision, not a bump: LTS only (22/24), moved by hand
       - dependency-name: "node"
         update-types: ["version-update:semver-major"]
+    cooldown:
+      default-days: 7

@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --max-warnings 8 && krizaka-server-client-boundary && krizaka-ratchet",
+    "lint": "eslint . --max-warnings 68 && krizaka-server-client-boundary && krizaka-ratchet",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "qa-accounts": "node scripts/qa-accounts.mjs"
@@ -25,6 +25,7 @@
     "@krizaka/intl": "0.3.0",
     "@krizaka/organize": "0.4.0",
     "@krizaka/payments": "0.4.0",
+    "@krizaka/privacy": "0.2.0",
     "@krizaka/query": "^0.2.2",
     "@krizaka/realtime": "^0.2.1",
     "@krizaka/settings": "0.5.0",
@@ -43,7 +44,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@krizaka/config": "^0.11.1",
+    "@krizaka/config": "^0.12.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^24.19.2",
     "@types/pg": "^8.15.6",

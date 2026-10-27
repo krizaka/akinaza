@@ -4,7 +4,7 @@
 name: Download videos
 
 on:
-  workflow_run:
+  workflow_run: # zizmor: ignore[dangerous-triggers] the job runs only for a successful main run of this repository and checks out nothing from the triggering run
     workflows: ["Mobile CI"]
     types: [completed]
 
@@ -35,7 +35,7 @@ jobs:
       - run: pnpm install --frozen-lockfile --prefer-offline
       - run: pnpm exec playwright-core install --with-deps chromium
       - name: The demo persona (masked, for this run only) and its backend
-        run: |
+        run: | # zizmor: ignore[github-env] values generated in this run and masked; nothing untrusted reaches GITHUB_ENV
           generated="$(openssl rand -hex 16)"
           echo "::add-mask::$generated"
           echo "DEMO_ACCOUNT_EMAIL=lea.beaulieu@akinaza.test" >> "$GITHUB_ENV"
@@ -88,4 +88,4 @@ jobs:
       artifacts: |
         showcase-web
         maestro-showcase
-    secrets: inherit
+    secrets: inherit # zizmor: ignore[secrets-inherit] the org's own reusable workflow, pinned by SHA
