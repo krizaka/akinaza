@@ -23,8 +23,8 @@ for _ in $(seq 1 60); do curl -sf http://localhost:3000/api/healthz && break; sl
 pnpm run seo:check
 # The brand icons and their lock = the CDN manifest (the unit test checks icons = lock offline).
 node scripts/sync-brand-icons.mjs --check
-# Responsive guard: no horizontal overflow at 360–1440 px in both themes.
-pnpm run check:overflow -- --base http://localhost:3000
+# Responsive guard: no horizontal overflow at 360–1440 px in both themes, and the accessibility guard (axe-core, contrast included).
+pnpm run check:overflow -- --base http://localhost:3000   # also axe-core WCAG 2.1 AA, ratcheted by a11y-baseline.json (--a11y-update lowers it)
 # One rendering for the server and the browser: no React hydration error on any page, signed out, as a client, as an owner.
 pnpm run check:hydration -- --base http://localhost:3000
 # The shop page composer end to end (akinaza#427): reorder, autosave, publish, rollback resets the draft, discard; no overflow.

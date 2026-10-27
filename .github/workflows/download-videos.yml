@@ -17,7 +17,7 @@ jobs:
   # The web: scripts/showcase-web.mjs on the same throwaway backend as the phone's flows (the demo shops, the Saint-Henri walker).
   showcase-web:
     name: Showcase videos (web)
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -53,10 +53,10 @@ jobs:
   # apps/mobile/.maestro-showcase (startRecording / stopRecording); the whole-run recorder is off (two recorders fight).
   mobile-showcase:
     name: Showcase video (phone)
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.full_name == github.repository
     permissions:
       contents: read
-    uses: krizaka/.github/.github/workflows/mobile-e2e.yml@207717e5fbc0f69eef10668496d6e83f8a4cd89f # main (krizaka/.github#318)
+    uses: krizaka/.github/.github/workflows/mobile-e2e.yml@eabd6ab14d91febe8e0ebd7bfba6be98df5ae492 # main (krizaka/.github#318)
     with:
       app-id: com.krizaka.akinaza
       app-directory: apps/mobile
@@ -77,11 +77,11 @@ jobs:
   app-videos:
     name: Download page videos
     needs: [showcase-web, mobile-showcase]
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.full_name == github.repository
     permissions:
       contents: write
       pull-requests: write
-    uses: krizaka/.github/.github/workflows/app-videos.yml@4749d988b400b5a184f2e2216946c50f9d9b5e98 # main (krizaka/.github#316)
+    uses: krizaka/.github/.github/workflows/app-videos.yml@d96437b6681524d470ca5050f91c1961a45c5906 # main (krizaka/.github#316)
     with:
       product: akinaza
       manifest: apps/web/content/app-videos.json
