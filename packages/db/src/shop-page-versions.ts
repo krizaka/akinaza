@@ -102,7 +102,7 @@ export async function publishShopPageDraft(db: Db, shopId: string, authorId: str
 }
 
 /** Puts an archived version back as a NEW published version (history is never rewritten). 404 for a version that is not this shop's archive. */
-export async function rollbackShopPage(db: Db, shopId: string, version: number, authorId: string | null): Promise<{ version: number }> {
+export async function rollbackShopPage(db: Db, shopId: string, version: number, authorId: string | null, options: { keepDraft?: boolean } = {}): Promise<{ version: number; draftReset: boolean }> {
   return db.transaction(async (tx) => {
     await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`shop_page:${shopId}`}, 0))`);
     const [target] = await tx.select().from(shopPageVersions).where(and(eq(shopPageVersions.shopId, shopId), eq(shopPageVersions.version, version), eq(shopPageVersions.status, "archived")));
@@ -112,7 +112,18 @@ export async function rollbackShopPage(db: Db, shopId: string, version: number, 
     await tx.update(shopPageVersions).set({ status: "archived" }).where(and(eq(shopPageVersions.shopId, shopId), eq(shopPageVersions.status, "published")));
     await tx.insert(shopPageVersions).values({ shopId, version: next, status: "published", schema: page.schema, doc: page, authorId, publishedAt: sql`now()` });
     await pruneArchive(tx as unknown as Db, shopId);
-    return { version: next };
+    // The draft is what the owner was editing BEFORE the restore: unless asked to keep it, it goes, so the composer shows the restored page.
+    const draftReset = options.keepDraft ? false : (await tx.delete(shopPageVersions).where(and(eq(shopPageVersions.shopId, shopId), eq(shopPageVersions.status, "draft"))).returning({ id: shopPageVersions.id })).length > 0;
+    return { version: next, draftReset };
+  });
+}
+
+/** Throws the draft away: the composer then shows the published page again. Nothing to discard is not an error (`discarded: false`). */
+export async function discardShopPageDraft(db: Db, shopId: string): Promise<{ discarded: boolean }> {
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`shop_page:${shopId}`}, 0))`);
+    const gone = await tx.delete(shopPageVersions).where(and(eq(shopPageVersions.shopId, shopId), eq(shopPageVersions.status, "draft"))).returning({ id: shopPageVersions.id });
+    return { discarded: gone.length > 0 };
   });
 }
 
