@@ -245,6 +245,40 @@
       "meaning": "Les rendez-vous où le client ne s'est pas présenté, sur ceux qui étaient prévus.",
       "formula": "Absences sur les rendez-vous terminés plus les absences."
     },
-    "open": "Voir vos chiffres"
+    "open": "Voir vos chiffres",
+    "details": "Détails",
+    "backToList": "Vos chiffres",
+    "lexiconTitle": "Ce que les mots veulent dire"
+  },
+  "lexicon": {
+    "title": "Lexique",
+    "intro": "Les mots de vos chiffres, en langage simple.",
+    "accountant": "À valider par votre comptable.",
+    "terms": {
+      "tpsTvq": {
+        "term": "TPS / TVQ",
+        "definition": "Deux taxes de vente que vous chargez à vos clients et remettez au gouvernement : la TPS (5 %, fédérale) et la TVQ (9,975 %, Québec). Vous les percevez ; vous remettez ce que vous avez perçu moins ce que vous avez payé sur vos dépenses d'entreprise."
+      },
+      "htTtc": {
+        "term": "Avant taxes / taxes comprises",
+        "definition": "Avant taxes, c'est le prix sans TPS ni TVQ ; taxes comprises, c'est ce que le client paie. Vos revenus se comptent avant taxes, parce que les taxes ne sont pas à vous."
+      },
+      "margin": {
+        "term": "Marge",
+        "definition": "Ce qui reste de vos revenus après vos dépenses, avant les taxes. Ici, seules les dépenses que vous avez notées comptent : votre salaire, votre impôt sur le revenu et les coûts non saisis n'y sont pas."
+      },
+      "collectedVsInvoiced": {
+        "term": "Encaissé vs facturé",
+        "definition": "Le facturé, c'est ce que vous avez demandé ; l'encaissé, c'est l'argent réellement reçu. L'écart, c'est ce que les clients vous doivent encore."
+      },
+      "declarationPeriod": {
+        "term": "Période de déclaration",
+        "definition": "La durée (un mois, un trimestre ou une année, selon votre fréquence de production) couverte par une déclaration de TPS/TVQ. Akinaza en prépare les chiffres ; vous la vérifiez et la produisez vous-même."
+      },
+      "noShow": {
+        "term": "Absence (no-show)",
+        "definition": "Un rendez-vous où le client ne s'est pas présenté et n'a pas annulé."
+      }
+    }
   }
 }
