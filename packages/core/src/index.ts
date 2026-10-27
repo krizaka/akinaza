@@ -17,3 +17,4 @@ export * from "./storefront-templates";
 export * from "./today-board";
 export * from "./community";
 export * from "./retention";
+export * from "./calendar";

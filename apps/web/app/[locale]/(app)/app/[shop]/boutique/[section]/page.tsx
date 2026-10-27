@@ -7,6 +7,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { BoardEditor } from "@/components/app/BoardEditor";
+import { CalendarSources } from "@/components/app/CalendarSources";
 import { FeedLinks } from "@/components/app/FeedLinks";
 import { FigureRules } from "@/components/app/FigureRules";
 import { InvoiceMailSettings } from "@/components/app/InvoiceMailSettings";
@@ -20,6 +21,7 @@ import { WallEditor } from "@/components/app/WallEditor";
 import { BoutiqueHub } from "@/components/boutique/BoutiqueHub";
 import { agendaScope, pageSession } from "@/lib/access";
 import { BOUTIQUE_NEEDS, type BoutiqueSection, boutiqueSectionsAllowed, isBoutiqueSection, isPageTab, type PageTab, pageTabsAllowed } from "@/lib/boutique";
+import { calendarOverview } from "@/lib/calendar/overview";
 import { communityLimits, reviewRules } from "@/lib/community";
 import { db } from "@/lib/db";
 import { proposalsFor } from "@/lib/default-media-proposals";
@@ -135,14 +137,16 @@ async function InvoicesSection({ locale, shopId }: { locale: RouteLocale; shopId
   );
 }
 
-/** Boutique › Agenda: the private calendar links of the shop and of each team member (#282, ADR-004). */
+/** Boutique › Agenda: the owner's other calendars (read, to block slots) and the private calendar links of the shop and of each team member (#282, ADR-004). */
 async function AgendaSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
   const { shop, role, session } = await memberShop(shopId, "bookings");
   const t = getDictionary(locale).console.boutique.agenda;
-  const overview = await feedOverview(shop.id, agendaScope(role, session.account.id));
+  const scope = agendaScope(role, session.account.id);
+  const [overview, calendars] = await Promise.all([feedOverview(shop.id, scope), calendarOverview(shop.id, scope)]);
   return (
     <div className="flex flex-col gap-5">
       <PageHeader as="h2" title={t.title} description={t.lead} />
+      <CalendarSources overview={calendars} />
       <FeedLinks overview={overview} shopName={shop.name} />
     </div>
   );

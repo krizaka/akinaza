@@ -928,7 +928,14 @@
       "UPLOAD_NOT_VIDEO": "This is not an MP4 or a WebM video.",
       "SOCIAL_LINK": "This address is not a page of that platform.",
       "ANNOUNCEMENT_LIMIT": "You keep thirty flyers at most. Take one down first.",
-      "REVIEW_REMOVED": "This review was removed by the administrator."
+      "REVIEW_REMOVED": "This review was removed by the administrator.",
+      "CAL_INVALID": "This is not a calendar address we can read.",
+      "CAL_UNREACHABLE": "The calendar could not be reached. We will try again.",
+      "CAL_REFUSED": "The calendar refused us: check the address.",
+      "CAL_TOO_LARGE": "This calendar is too big to read.",
+      "CAL_UNAUTHORIZED": "The calendar needs you to connect again.",
+      "CAL_RATE_LIMITED": "The calendar asked us to slow down. We will try again.",
+      "CALENDAR_LIMIT": "You reached the number of calendars allowed."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -1022,7 +1029,9 @@
         "owed": "Still owed: {amount}",
         "overdue": "Of which {amount} overdue",
         "noneLate": "Nothing overdue."
-      }
+      },
+      "conflict": "Overlaps your {calendar} calendar",
+      "conflictDetail": "This appointment overlaps a busy time in your {calendar} calendar. Nothing was changed on either side: keep it, or move one of them yourself."
     },
     "account": {
       "forgot": {
@@ -1649,6 +1658,32 @@
           "how": "Apple Calendar: File, New Calendar Subscription. Google Calendar: Other calendars, From URL. Outlook: Add calendar, Subscribe from web. Anyone who has the link can read these times: share it with nobody.",
           "off": "The administrator has switched the calendar links off.",
           "nobody": "No team member yet."
+        },
+        "sources": {
+          "title": "Your other calendars",
+          "lead": "Akinaza reads the times you are busy in the calendar you already use, and keeps them free of bookings. It reads only the times: never a title, a guest or a note, and it never changes your calendar.",
+          "wholeShop": "The whole shop",
+          "add": "Connect a calendar",
+          "label": "Name",
+          "labelHint": "For you only, e.g. Google or Dentist.",
+          "whose": "Blocks the times of",
+          "url": "Calendar address (ICS)",
+          "urlHint": "Google Calendar: Settings, your calendar, Secret address in iCal format. Apple and Outlook give one too when you publish or share a calendar. Anyone with this address can read that calendar: it is kept sealed here and shown to nobody.",
+          "consent": "I agree that Akinaza reads the times I am busy in this calendar, to keep them free of bookings. I can disconnect at any time: those times are then deleted.",
+          "needConsent": "Tick the box to connect the calendar.",
+          "connect": "Connect",
+          "none": "No calendar connected.",
+          "state": {
+            "ok": "Read",
+            "error": "Cannot read",
+            "pending": "Waiting"
+          },
+          "lastRead": "Read {when}",
+          "neverRead": "Not read yet.",
+          "refresh": "Read again",
+          "remove": "Disconnect",
+          "removeConfirm": "Disconnect this calendar? Its busy times are deleted and those slots open again.",
+          "off": "The administrator has switched calendar connections off."
         }
       }
     },
