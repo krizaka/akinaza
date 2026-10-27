@@ -1,25 +1,26 @@
 import { ForwardIcon } from "@krizaka/icons";
 import { Button } from "@krizaka/ui/button";
-import { cn } from "@krizaka/ui/cn";
 import { LandingPage } from "@krizaka/ui/landing-page";
 import { Section } from "@krizaka/ui/page";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { preconnect } from "react-dom";
 
 import { FounderOffer } from "@/components/home/FounderOffer";
 import { HeroPhone } from "@/components/home/HeroPhone";
 import { NeighbourhoodFeed } from "@/components/home/NeighbourhoodFeed";
-import { SiteHeader } from "@/components/SiteChrome";
+import { BookPreview } from "@/components/home/previews/BookPreview";
+import { BooksPreview } from "@/components/home/previews/BooksPreview";
+import { InvoicePreview } from "@/components/home/previews/InvoicePreview";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { pageSession } from "@/lib/access";
 import { env } from "@/lib/env";
 import { homeFeed } from "@/lib/home-feed";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { DEMO_SHOP, heroActions, productStatus, SCREENS } from "@/lib/landing";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
-import { heroTake, MEDIA_CDN, screenStill } from "@/lib/tour";
+import { heroTake, MEDIA_CDN } from "@/lib/tour";
 
 import preview from "../../../../dev-preview.json";
 
@@ -40,6 +41,8 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   // The hero's action follows the session, rendered on the server: no flash of the signed-out action.
   const feed = await homeFeed(locale);
   const hero = heroActions(locale, Boolean(await pageSession().catch(() => null)));
+  // The three jobs are the real components of the app, drawn with demo data (akinaza#470): below the fold, never the LCP.
+  const previews = { book: <BookPreview locale={locale} />, invoice: <InvoicePreview locale={locale} />, books: <BooksPreview locale={locale} /> };
   return (
     <>
       <link rel="preload" as="image" href={heroTake(locale).poster} fetchPriority="high" />
@@ -72,12 +75,12 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               </p>
             </>
           }
-          features={SCREENS.map(({ id, crop }) => ({
+          features={SCREENS.map(({ id }) => ({
             id,
             icon: null,
             title: d.screens[id].title,
             text: d.screens[id].text,
-            visual: <Image src={screenStill(id, locale)} alt={d.screens[id].alt} width={780} height={1688} unoptimized loading="lazy" className={cn("h-72 w-full rounded-lg border border-border-default object-cover", crop)} />,
+            visual: previews[id],
           }))}
         >
           {env().APP_FOUNDER_OFFER_ENABLED && <FounderOffer locale={locale} />}

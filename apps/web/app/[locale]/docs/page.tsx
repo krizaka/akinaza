@@ -2,8 +2,8 @@ import { DocsHubPage } from "@krizaka/ui/docs-hub-page";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { docHref } from "@/lib/docs";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";

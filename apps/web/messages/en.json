@@ -126,6 +126,12 @@
       "demo": "See the demo shop",
       "empty": "No flyer up in this neighbourhood yet.",
       "error": "The flyers could not be loaded. Try again in a moment."
+    },
+    "preview": {
+      "demo": "Demo data",
+      "slotsLabel": "Free times",
+      "slotsEmpty": "No free time this week",
+      "invoiceLine": "Group walks, October"
     }
   },
   "docs": {
@@ -634,7 +640,8 @@
         "toCollect": "to collect: {count}"
       },
       "organize": "Tags and views",
-      "prices": "Prices"
+      "prices": "Prices",
+      "incidents": "Incidents"
     },
     "admin": {
       "health": "Health",
@@ -868,6 +875,81 @@
         "history": "History",
         "seedLine": "Starting value: {price}",
         "historyLine": "{at}, {actor}: {before} → {after}, from {from}"
+      },
+      "incidents": {
+        "title": "Confidentiality incidents",
+        "lead": "The register required by the Act respecting the protection of personal information in the private sector (ss. 3.5 to 3.8): every incident, serious or not, kept five years. It holds facts and categories of information, never a person's data. Assess the risk of serious injury; if there is one, notify the Commission d'accès à l'information and the people concerned, then close. It covers Akinaza's data: shop customers' files, invoices and tax slips.",
+        "exportCsv": "Export CSV",
+        "exportJson": "Export JSON",
+        "register": "Register",
+        "empty": "No incident recorded.",
+        "awareAt": "Aware on",
+        "kind": "What happened",
+        "status": "Status",
+        "risk": "Risk of serious injury",
+        "serious": "Serious",
+        "notSerious": "Not serious",
+        "drill": "Drill",
+        "drillBadge": "Drill",
+        "description": "What happened, in facts",
+        "details": "Details",
+        "hide": "Hide",
+        "kinds": {
+          "access": "Unauthorised access",
+          "use": "Unauthorised use",
+          "communication": "Unauthorised communication",
+          "loss": "Loss"
+        },
+        "statuses": {
+          "open": "Open",
+          "assessed": "Assessed",
+          "closed": "Closed"
+        },
+        "levels": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
+        },
+        "open": "Open an incident",
+        "openSubmit": "Open",
+        "cancel": "Cancel",
+        "descriptionHint": "Facts only. No name, e-mail or document content.",
+        "information": "Categories of information concerned",
+        "informationHint": "Comma-separated, e.g. invoices, tax slips. Never the information itself.",
+        "persons": "People concerned (if known)",
+        "drillLabel": "This is a drill",
+        "markDrill": "Mark as a drill",
+        "unmarkDrill": "Not a drill",
+        "assess": "Assess the risk",
+        "assessSubmit": "Save the assessment",
+        "sensitivity": "Sensitivity of the information",
+        "consequences": "Seriousness of the consequences",
+        "likelihood": "Likelihood of misuse",
+        "seriousInjury": "Risk of serious injury",
+        "rationale": "Reasons for the decision",
+        "measure": "Measures taken",
+        "measureText": "A measure to reduce the risk or prevent a new incident",
+        "measureSubmit": "Record the measure",
+        "notice": "Record a notice sent",
+        "target": "Sent to",
+        "targets": {
+          "cai": "Commission d'accès à l'information",
+          "persons": "People concerned"
+        },
+        "channel": "How",
+        "channels": {
+          "form": "Commission form",
+          "email": "E-mail",
+          "letter": "Letter",
+          "public": "Public notice"
+        },
+        "reference": "Acknowledgement reference (if any)",
+        "noticeSubmit": "Record the notice",
+        "caiNotice": "Notice to the Commission",
+        "personsNotice": "Notice to the people concerned",
+        "retain": "Kept in the register until {date}.",
+        "close": "Close the incident",
+        "closedNote": "This entry is closed. It stays in the register and is never edited again."
       }
     },
     "errors": {
@@ -978,7 +1060,13 @@
       "CAL_TOO_LARGE": "This calendar is too big to read.",
       "CAL_UNAUTHORIZED": "The calendar needs you to connect again.",
       "CAL_RATE_LIMITED": "The calendar asked us to slow down. We will try again.",
-      "CALENDAR_LIMIT": "You reached the number of calendars allowed."
+      "CALENDAR_LIMIT": "You reached the number of calendars allowed.",
+      "INCIDENT_BAD_INPUT": "The incident is incomplete or invalid.",
+      "INCIDENT_UNKNOWN": "This incident does not exist.",
+      "INCIDENT_CLOSED": "This incident is closed and can no longer change.",
+      "INCIDENT_NOT_ASSESSED": "Assess the risk first.",
+      "INCIDENT_NO_NOTICE_DUE": "No notice is due: the risk of serious injury was not retained.",
+      "INCIDENT_NOTICES_MISSING": "Both notices must be recorded before closing."
     },
     "today": {
       "noShopTitle": "No shop yet",
