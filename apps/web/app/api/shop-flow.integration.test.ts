@@ -277,8 +277,10 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
   it("gives the client their data and erases it on request — the private link dies with it", async () => {
     expect((await call(reportPhoto, "GET", `/api/report/${ids.token}/photo`, { params: { token: ids.token! } })).status).toBe(200);
     const data = await call(exportData, "GET", `/api/me/export?clientId=${ids.clientFile}`, { token: client });
-    expect(data.body.file).toMatchObject({ fullName: "Camille Tremblay", accessNotes: "Code 4821, clé sous le pot" });
-    expect(data.body.dependants[0]).toMatchObject({ name: "Rex" });
+    // The document is the privacy package's: one entry per module that holds the client's data.
+    const file = data.body.modules.client_file;
+    expect(file.file).toMatchObject({ fullName: "Camille Tremblay", accessNotes: "Code 4821, clé sous le pot" });
+    expect(file.dependants[0]).toMatchObject({ name: "Rex" });
     expect((await call(exportData, "GET", `/api/me/export?clientId=${ids.clientFile}`, { token: other })).status).toBe(404);
     expect((await call(erase, "POST", "/api/me/erase", { token: client, json: { clientId: ids.clientFile, confirmEmail: "someone@else.test" } })).body).toMatchObject({ code: "CONFIRM_MISMATCH" });
     expect((await call(erase, "POST", "/api/me/erase", { token: client, json: { clientId: ids.clientFile, confirmEmail: accounts.client.email.toUpperCase() } })).status).toBe(200);
