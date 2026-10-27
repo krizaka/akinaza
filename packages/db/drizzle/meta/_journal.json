@@ -274,6 +274,13 @@
       "when": 1795000007000,
       "tag": "0038_shop_figure_rules",
       "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1795000008000,
+      "tag": "0039_feed_tokens",
+      "breakpoints": true
     }
   ]
 }

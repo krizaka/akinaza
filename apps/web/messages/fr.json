@@ -1611,7 +1611,8 @@
         "team": "Équipe",
         "invoices": "Courriels de facture",
         "shops": "Vos boutiques",
-        "figures": "Seuils des chiffres"
+        "figures": "Seuils des chiffres",
+        "agenda": "Agenda"
       },
       "invoices": {
         "title": "Courriels de facture",
@@ -1627,6 +1628,28 @@
       "figures": {
         "title": "Seuils des chiffres",
         "lead": "Quand un chiffre demande un coup d’œil, et quand il demande d’agir. Seul cela change : les montants et les formules, jamais."
+      },
+      "agenda": {
+        "title": "Votre agenda sur votre téléphone",
+        "lead": "Un lien privé auquel votre téléphone s’abonne, pour voir vos rendez-vous dans l’agenda que vous utilisez déjà. Il ne porte que l’heure, le service et les prénoms : jamais un téléphone, un courriel ou une note.",
+        "feed": {
+          "shop": "Toute la boutique",
+          "live": "Lien actif",
+          "none": "Pas encore de lien",
+          "since": "Créé {when}",
+          "create": "Créer le lien",
+          "rotate": "Créer un nouveau lien",
+          "revoke": "Désactiver",
+          "revokeConfirm": "Désactiver ce lien ? Les agendas qui l’utilisent cessent de se mettre à jour.",
+          "once": "Copiez ce lien maintenant : il n’est affiché qu’une fois. Créer un nouveau lien désactive l’ancien aussitôt.",
+          "copy": "Copier le lien",
+          "copied": "Lien copié",
+          "url": "Lien privé de {name}",
+          "howTitle": "Comment l’ajouter",
+          "how": "Calendrier Apple : Fichier, Nouvel abonnement à un calendrier. Google Agenda : Autres agendas, À partir de l’URL. Outlook : Ajouter un calendrier, S’abonner à partir du Web. Quiconque a le lien peut lire ces heures : ne le partagez avec personne.",
+          "off": "L’administrateur a désactivé les liens d’agenda.",
+          "nobody": "Pas encore de membre d’équipe."
+        }
       }
     },
     "shopPage": {

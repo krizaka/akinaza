@@ -9,6 +9,7 @@ const WORDS: BoutiqueNavWords = {
   languages: "Languages",
   team: "Team",
   invoices: "Invoice e-mails",
+  agenda: "Calendar",
   figures: "Figure thresholds",
   shops: "Your shops",
 };
@@ -19,13 +20,13 @@ const allowedFor = (role: "owner" | "manager" | "staff") => boutiqueSectionsAllo
 describe("Boutique, the hub of the shop's configuration (K4)", () => {
   it("holds the sections of the shop page and the shop as a place", () => {
     expect(PAGE_TABS).toEqual(["identity", "texts", "contact", "offer", "media", "look", "wall", "reels", "board", "reviews", "publish"]);
-    expect(BOUTIQUE_SECTIONS).toEqual(["page", "languages", "team", "invoices", "figures", "shops"]);
+    expect(BOUTIQUE_SECTIONS).toEqual(["page", "languages", "team", "invoices", "agenda", "figures", "shops"]);
   });
 
   it("reads what a role may open from the role table (packages/db/src/roles.ts), never from a role name", () => {
-    expect(BOUTIQUE_NEEDS).toEqual({ page: "catalogue", languages: "settings", team: "team", invoices: "settings", figures: "settings", shops: "settings" });
-    expect(allowedFor("owner")).toEqual(["page", "languages", "team", "invoices", "figures", "shops"]);
-    expect(allowedFor("manager")).toEqual(["page", "team"]);
+    expect(BOUTIQUE_NEEDS).toEqual({ page: "catalogue", languages: "settings", team: "team", invoices: "settings", agenda: "bookings", figures: "settings", shops: "settings" });
+    expect(allowedFor("owner")).toEqual(["page", "languages", "team", "invoices", "agenda", "figures", "shops"]);
+    expect(allowedFor("manager")).toEqual(["page", "team", "agenda"]);
     expect(tabsFor("manager")).toEqual(["wall", "reels", "board", "reviews"]);
     expect(tabsFor("owner")).toEqual([...PAGE_TABS]);
     expect(tabsFor("staff")).toEqual([]);
@@ -50,7 +51,7 @@ describe("Boutique, the hub of the shop's configuration (K4)", () => {
     const groups = boutiqueGroups({ allowed: allowedFor("owner"), href, current: { section: "page", tab: "contact" }, words: WORDS });
     expect(groups.map((g) => g.id)).toEqual(["page", "business"]);
     expect(groups[0]!.items.map((i) => i.id)).toEqual(["page-identity", "page-texts", "page-contact", "page-offer", "page-media", "page-look", "page-wall", "page-reels", "page-board", "page-reviews", "page-publish", "languages"]);
-    expect(groups[1]!.items.map((i) => i.id)).toEqual(["team", "invoices", "figures", "shops"]);
+    expect(groups[1]!.items.map((i) => i.id)).toEqual(["team", "invoices", "agenda", "figures", "shops"]);
   });
 
   it("marks the open section and its tab, and gives each item its address", () => {
@@ -63,7 +64,7 @@ describe("Boutique, the hub of the shop's configuration (K4)", () => {
 
   it("shows a manager what is pinned on the page and the team, and a staff member no group at all", () => {
     const manager = boutiqueGroups({ allowed: allowedFor("manager"), tabs: tabsFor("manager"), href, current: { section: "team" }, words: WORDS });
-    expect(manager.map((g) => g.items.map((i) => i.id))).toEqual([["page-wall", "page-reels", "page-board", "page-reviews"], ["team"]]);
+    expect(manager.map((g) => g.items.map((i) => i.id))).toEqual([["page-wall", "page-reels", "page-board", "page-reviews"], ["team", "agenda"]]);
     expect(manager[1]!.items[0]!.current).toBe(true);
     expect(boutiqueGroups({ allowed: allowedFor("staff"), href, current: { section: "team" }, words: WORDS })).toEqual([]);
   });

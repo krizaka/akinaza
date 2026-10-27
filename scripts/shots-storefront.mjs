@@ -32,6 +32,8 @@ export const SCENES = {
   "figures-today": { path: (locale, shop) => `/${locale}/app/${shop.id}/aujourdhui`, expect: { fr: "Que faire maintenant", en: "What to do now" }, signedIn: true },
   "figures-books": { path: (locale, shop) => `/${locale}/app/${shop.id}/books`, expect: { fr: "Vos chiffres", en: "Your figures" }, signedIn: true },
   "figures-thresholds": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/figures`, expect: { fr: "Quand un chiffre demande votre attention", en: "When a figure needs your attention" }, signedIn: true },
+  // The private calendar links (#282, ADR-004).
+  "agenda-feed": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/agenda`, expect: { fr: "Votre agenda sur votre téléphone", en: "Your calendar on your phone" }, signedIn: true },
   "docs-data": { path: (locale) => `/${locale}/app/profile/data`, expect: { fr: "Vos données", en: "Your data" }, signedIn: true },
 };
 /** The scenes of the owner's guide, one per page of it (`docs.pages.<id>`). */

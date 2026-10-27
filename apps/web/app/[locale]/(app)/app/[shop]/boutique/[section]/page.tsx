@@ -7,6 +7,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { BoardEditor } from "@/components/app/BoardEditor";
+import { FeedLinks } from "@/components/app/FeedLinks";
 import { FigureRules } from "@/components/app/FigureRules";
 import { InvoiceMailSettings } from "@/components/app/InvoiceMailSettings";
 import { ReelsEditor } from "@/components/app/ReelsEditor";
@@ -17,13 +18,14 @@ import { TeamPanel } from "@/components/app/TeamPanel";
 import { TimeOffCard } from "@/components/app/TimeOffCard";
 import { WallEditor } from "@/components/app/WallEditor";
 import { BoutiqueHub } from "@/components/boutique/BoutiqueHub";
-import { pageSession } from "@/lib/access";
+import { agendaScope, pageSession } from "@/lib/access";
 import { BOUTIQUE_NEEDS, type BoutiqueSection, boutiqueSectionsAllowed, isBoutiqueSection, isPageTab, type PageTab, pageTabsAllowed } from "@/lib/boutique";
 import { communityLimits, reviewRules } from "@/lib/community";
 import { db } from "@/lib/db";
 import { proposalsFor } from "@/lib/default-media-proposals";
 import { defaultMediaSettings } from "@/lib/default-media-settings";
 import { readEnv } from "@/lib/env";
+import { feedOverview } from "@/lib/feed-overview";
 import { adminFigureRules } from "@/lib/figure-rules";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { may, memberShop, shopsOf } from "@/lib/member-shop";
@@ -133,6 +135,19 @@ async function InvoicesSection({ locale, shopId }: { locale: RouteLocale; shopId
   );
 }
 
+/** Boutique › Agenda: the private calendar links of the shop and of each team member (#282, ADR-004). */
+async function AgendaSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
+  const { shop, role, session } = await memberShop(shopId, "bookings");
+  const t = getDictionary(locale).console.boutique.agenda;
+  const overview = await feedOverview(shop.id, agendaScope(role, session.account.id));
+  return (
+    <div className="flex flex-col gap-5">
+      <PageHeader as="h2" title={t.title} description={t.lead} />
+      <FeedLinks overview={overview} shopName={shop.name} />
+    </div>
+  );
+}
+
 /** Boutique › Seuils des chiffres: when a figure asks for a look or for action, the administrator's usual values and the owner's own (#260). */
 async function FiguresSection({ locale, shopId }: { locale: RouteLocale; shopId: string }) {
   const { shop } = await memberShop(shopId, "settings");
@@ -179,6 +194,7 @@ function boutiqueBody({ section, tab, community, locale, shopId }: Readonly<{ se
   if (section === "languages") return <LanguagesSection locale={locale} shopId={shopId} />;
   if (section === "team") return <TeamSection locale={locale} shopId={shopId} />;
   if (section === "invoices") return <InvoicesSection locale={locale} shopId={shopId} />;
+  if (section === "agenda") return <AgendaSection locale={locale} shopId={shopId} />;
   if (section === "figures") return <FiguresSection locale={locale} shopId={shopId} />;
   return <ShopsSection locale={locale} shopId={shopId} />;
 }
