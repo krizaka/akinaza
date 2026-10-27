@@ -1,10 +1,10 @@
 
 import { localDay } from "@akinaza/core";
-import { communityOf, teamDay } from "@akinaza/db";
+import { communityOf, publishedShopPage, teamDay } from "@akinaza/db";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
-import { Storefront } from "@/components/shop/Storefront";
+import { ShopPageView } from "@/components/shop/ShopPageView";
 import { StorefrontLive } from "@/components/shop/StorefrontLive";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -41,14 +41,14 @@ export default async function ShopPage({ params }: { params: Promise<{ locale: s
   if (!page.languages.enabled.includes(content)) redirect(`/${page.languages.source}/s/${slug}`);
   const now = new Date();
   // Who is here today, computed on the server from bare time ranges: the page receives a state per first name, nothing else.
-  const [team, enabledUpcomingSections, community, rules] = await Promise.all([teamDay(db(), page.shop.id, now), shopSectionFeatures(), communityOf(db(), page.shop.id), reviewRules()]);
+  const [team, enabledUpcomingSections, community, rules, document] = await Promise.all([teamDay(db(), page.shop.id, now), shopSectionFeatures(), communityOf(db(), page.shop.id), reviewRules(), publishedShopPage(db(), page.shop.id)]);
   const placed = buildCommunity({ community, locale, today: localDay(now, page.shop.timezone), rules, enabled: enabledUpcomingSections });
   const view = buildStorefront({ page, locale, contentLocale: content, now, teamDay: team, enabledUpcomingSections, community: placed, defaults: await proposedDefaults(page) });
   return (
     <>
       <SiteHeader locale={locale} current="home" path={`/${content}/s/${slug}`} languages={page.languages.enabled} contentLocale={content} />
       <StorefrontLive slug={slug} enabled={await appSettings().get("realtime.storefront.enabled")} />
-      <Storefront view={view} locale={locale} />
+      <main id="content"><ShopPageView page={document.page} view={view} locale={locale} today={localDay(now, page.shop.timezone)} /></main>
       <SiteFooter locale={locale} />
     </>
   );

@@ -137,3 +137,17 @@ it("0038_shop_page_document.sql is the generator's output (never edited by hand)
   const file = readFileSync(fileURLToPath(new URL("../drizzle/0038_shop_page_document.sql", import.meta.url)), "utf8");
   expect(file).toBe(SHOP_PAGE_DOCUMENT_MIGRATION_SQL);
 });
+
+describe("the page is parsed at read time (akinaza#401)", () => {
+  it("refuses to draw a stored document that no longer parses, naming the path, instead of drawing half a page", async () => {
+    const shop = await walkerShop(t.db, "doc-read");
+    const doc = documentFromLegacy({ sections: full(), trade: "pets" });
+    await t.pool.query(`INSERT INTO shop_page_versions (shop_id, version, status, schema, doc, published_at) VALUES ($1, 1, 'published', 1, $2::jsonb, now())`, [shop.shopId, JSON.stringify({ ...doc, sections: [{ ...doc.sections[0], variant: "nope" }] })]);
+    await expect(publishedShopPage(t.db, shop.shopId)).rejects.toBeInstanceOf(ShopPageInvalidError);
+  });
+
+  it("brings a document through migrateShopPage before parsing it", async () => {
+    const doc = documentFromLegacy({ sections: full(), trade: "pets" });
+    expect(readShopPage(JSON.parse(JSON.stringify(doc))).schema).toBe(1);
+  });
+});

@@ -1750,7 +1750,8 @@
         "error": "This video cannot play",
         "retry": "Try again",
         "time": "{time} of {duration}"
-      }
+      },
+      "faqTitle": "Questions"
     },
     "book": {
       "title": "Book a walk with {shop}",
