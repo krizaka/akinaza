@@ -35,14 +35,18 @@ describe("the home after the pages review (akinaza#440)", () => {
   });
 });
 
-describe("the three cards show their screen's content, not an empty band (akinaza#440)", () => {
-  it("starts the booking's card under the capture's empty band, and the others at the top", () => {
-    expect(SCREENS.map((s) => [s.id, s.crop])).toEqual([
-      ["book", "object-[50%_36%]"],
-      ["invoice", "object-top"],
-      ["books", "object-top"],
-    ]);
-    expect(home).toContain("object-cover\", crop)");
+describe("the three cards draw the app's real components with demo data (akinaza#470)", () => {
+  it("renders a preview per job, not a screenshot", () => {
+    expect(SCREENS.map((s) => s.id)).toEqual(["book", "invoice", "books"]);
+    for (const part of ["BookPreview", "InvoicePreview", "BooksPreview"]) expect(home).toContain(part);
+    expect(home).not.toContain("<Image");
+  });
+
+  it("keeps each picture inert and aria-hidden, with a text alternative", () => {
+    const frame = readFileSync(new URL("../components/home/previews/PreviewFrame.tsx", import.meta.url), "utf8");
+    expect(frame).toContain('aria-hidden="true"');
+    expect(frame).toContain("inert: true");
+    expect(frame).toContain("sr-only");
   });
 });
 
