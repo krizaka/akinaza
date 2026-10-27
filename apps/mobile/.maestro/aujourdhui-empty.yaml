@@ -1,0 +1,18 @@
+# Aujourd'hui, a day with no visit (#433): the empty state. The day strip marks the days that have appointments ("has appointments"
+# in the label of the day); the flow waits for today's mark (the test visit), so the marks are loaded, then opens a day that has none.
+appId: com.krizaka.akinaza
+tags:
+  - ci
+---
+- runFlow: shared/launch.yaml
+- runFlow: shared/sign-in.yaml
+- assertVisible: "Aujourd'hui|Today"
+- extendedWaitUntil:
+    visible: ".*(des rendez-vous|has appointments).*"
+    timeout: 30000
+# A day's label is « October 24, 2026 » (en) or « 24 octobre 2026 » (fr), plus « , has appointments » when marked.
+- tapOn: "^(?!.*(des rendez-vous|has appointments)).*\\d{4}$"
+- extendedWaitUntil:
+    visible: "Aucune visite ce jour-là.|No visit that day."
+    timeout: 30000
+- takeScreenshot: aujourdhui-empty

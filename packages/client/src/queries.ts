@@ -16,6 +16,7 @@ export const keys = defineKeys("akinaza", {
   invoices: (shopId?: string) => [of(shopId)],
   shop: (shopId?: string) => [of(shopId)],
   books: (period: string | undefined, shopId?: string) => [of(shopId), period ?? "latest"],
+  figures: (shopId?: string) => [of(shopId)],
   me: () => [],
 });
 
@@ -32,5 +33,6 @@ export function createQueries(api: AkinazaApi) {
     invoices: (shopId?: string) => queryOptions({ queryKey: keys.invoices(shopId), queryFn: () => api.invoices(shopId) }),
     shop: (shopId?: string) => queryOptions({ queryKey: keys.shop(shopId), queryFn: () => api.shop(shopId) }),
     books: (period?: string, shopId?: string) => queryOptions({ queryKey: keys.books(period, shopId), queryFn: () => api.books(period, shopId) }),
+    figures: (shopId?: string) => queryOptions({ queryKey: keys.figures(shopId), queryFn: () => api.figures(shopId) }),
   };
 }

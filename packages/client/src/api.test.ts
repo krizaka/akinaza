@@ -44,3 +44,18 @@ describe("the owner's API is the shop's of the address (D8: the app's paths carr
     expect(keys.books("2026-Q3", "s1")).not.toEqual(keys.books("2026-Q3", "s2"));
   });
 });
+
+describe("« Vos chiffres » (#260)", () => {
+  const ANSWER = { period: { start: "2026-07-01", end: "2026-09-30" }, figures: [], actions: [] };
+
+  it("reads the explained figures of the shop of the address", async () => {
+    const { api, asked } = fake(ANSWER);
+    expect(await api.figures("s1")).toEqual(ANSWER);
+    expect(asked[0]!.path).toBe("/api/walker/figures?shopId=s1");
+  });
+
+  it("stops at the edge a figure the server did not promise", async () => {
+    const { api } = fake({ ...ANSWER, figures: [{ id: "margin", value: "lots" }] });
+    await expect(api.figures("s1")).rejects.toThrow();
+  });
+});

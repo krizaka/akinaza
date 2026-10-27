@@ -1,9 +1,9 @@
 import { localDay, localInstant } from "@akinaza/core";
-import { addDays, addMinutes, addMonths } from "date-fns";
-import { and, eq } from "drizzle-orm";
+import { addDays, addHours, addMinutes, addMonths } from "date-fns";
+import { and, eq, sql } from "drizzle-orm";
 
 import type { Db } from "./client";
-import { accounts, clients, invoices, services, shops, shopZones } from "./schema";
+import { accounts, appointments, bookings, clients, dependants, invoices, services, shops, shopZones, staff } from "./schema";
 import { issueInvoice, recordExpense } from "./shop-ops";
 import { addDependant, addWindow, addZone, bookVisit, joinShop, listSlots, saveShopMedia, saveShopPage, saveService, setAccessNotes, shopOfOwner } from "./service-shop";
 import { seedDemoCommunity } from "./demo-community";
@@ -200,4 +200,38 @@ export async function seedSaintHenri(db: Db, key: Buffer, now: Date): Promise<{ 
 
 export async function shopExists(db: Db, slug: string): Promise<boolean> {
   return (await db.select({ id: shops.id }).from(shops).where(eq(shops.slug, slug))).length > 0;
+}
+
+/** The tester's own walker (a staff row of its own, so it never overlaps the shop's 14:00 group walk). */
+const TEST_WALKER = "Marche de test";
+/** The one service the test visit uses: no other visit of the demo shop is named like it, so a flow finds it by name. */
+const TEST_VISIT_SERVICE = "Puppy visit 20 min";
+
+/**
+ * A test-only visit TODAY for the demo owner, whatever time the suite runs at (krizaka/akinaza#433): a puppy visit one hour after
+ * the injected clock, kept on the shop's current day (after 23:00 local it falls back to 22:30). The phone's Maestro flow then always
+ * goes list, detail, start, finish. Not a slot offered to clients: it is inserted directly, once (a re-run finds it). Dev and CI only.
+ */
+export async function seedTodayVisit(db: Db, now: Date): Promise<{ appointmentId: string; startsAt: Date; created: boolean }> {
+  const [owner] = await db.select().from(accounts).where(eq(accounts.email, SAINT_HENRI_EMAILS[0]));
+  const shop = owner ? await shopOfOwner(db, owner.id) : undefined;
+  if (!shop) throw new Error(`no shop for ${SAINT_HENRI_EMAILS[0]}: seed the Saint-Henri walker first`);
+  const zone = shop.timezone;
+  const today = localDay(now, zone);
+  const soon = addHours(now, 1);
+  const startsAt = localDay(soon, zone) === today ? soon : localInstant(today, 22 * 60 + 30, zone);
+  const [service] = await db.select().from(services).where(and(eq(services.shopId, shop.id), eq(services.nameEn, TEST_VISIT_SERVICE), eq(services.active, true)));
+  if (!service) throw new Error(`the shop has no "${TEST_VISIT_SERVICE}" service`);
+  const endsAt = addMinutes(startsAt, service.durationMinutes);
+  const [client] = await db.select().from(clients).where(and(eq(clients.shopId, shop.id), eq(clients.email, SAINT_HENRI.clients[0]!.email)));
+  const [dog] = client ? await db.select().from(dependants).where(eq(dependants.clientId, client.id)) : [];
+  if (!client || !dog) throw new Error("the Saint-Henri clients are not seeded");
+  const found = await db.select({ id: appointments.id }).from(appointments).where(and(eq(appointments.shopId, shop.id), eq(appointments.serviceId, service.id), eq(appointments.clientId, client.id), sql`lower(${appointments.during}) = ${startsAt.toISOString()}::timestamptz`));
+  if (found[0]) return { appointmentId: found[0].id, startsAt, created: false };
+  const walker =
+    (await db.select().from(staff).where(and(eq(staff.shopId, shop.id), eq(staff.name, TEST_WALKER))))[0] ??
+    (await db.insert(staff).values({ shopId: shop.id, name: TEST_WALKER }).returning())[0]!;
+  const [row] = await db.insert(appointments).values({ shopId: shop.id, staffId: walker.id, serviceId: service.id, clientId: client.id, during: `[${startsAt.toISOString()},${endsAt.toISOString()})` }).returning({ id: appointments.id });
+  await db.insert(bookings).values({ appointmentId: row!.id, clientId: client.id, dependantId: dog.id });
+  return { appointmentId: row!.id, startsAt, created: true };
 }
