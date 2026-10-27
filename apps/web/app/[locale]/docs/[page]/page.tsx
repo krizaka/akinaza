@@ -4,8 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { DocsSidebar } from "@/components/docs/DocsSidebar";
-import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { docHref, isDocId, neighbours } from "@/lib/docs";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";

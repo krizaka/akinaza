@@ -26,6 +26,10 @@ pnpm run seo:check
 node scripts/sync-brand-icons.mjs --check
 # Responsive guard: no horizontal overflow at 360–1440 px in both themes, and the accessibility guard (axe-core, contrast included).
 pnpm run check:overflow -- --base http://localhost:3000   # also axe-core WCAG 2.1 AA, ratcheted by a11y-baseline.json (--a11y-update lowers it)
+# Performance budgets of the public shop pages (akinaza#401, ADR-004): LCP, CLS, phone screens, and the client JS ratchet (perf-budgets.json).
+# The absolute budgets are reported without failing (PERF_BLOCKING=0) until the variance of three runs is read; the JS ratchet always fails.
+PERF_BLOCKING=0 pnpm run check:perf -- --base http://localhost:3000
+cat perf-report.json | head -c 6000
 # One rendering for the server and the browser: no React hydration error on any page, signed out, as a client, as an owner.
 pnpm run check:hydration -- --base http://localhost:3000
 # The shop page composer end to end (akinaza#427): reorder, autosave, publish, rollback resets the draft, discard; no overflow.

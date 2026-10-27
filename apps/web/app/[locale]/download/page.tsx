@@ -5,8 +5,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AppVideoPlayer } from "@/components/download/AppVideoPlayer";
-import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import { APP_VIDEOS, videoId, videoUrl } from "@/lib/app-videos";
 import { downloadPageOpen } from "@/lib/downloads";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
