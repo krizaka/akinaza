@@ -2,6 +2,7 @@ import "../globals.css";
 import "@krizaka/ui/blocks.css";
 import "@krizaka/ui/story.css"; // the story pieces the storefront work draws: the template picker's tiles (ChoiceGrid)
 
+import { cn } from "@krizaka/ui/cn";
 import { MotionObserver } from "@krizaka/ui/motion";
 import { ThemeProvider, ThemeScript } from "@krizaka/ui/theme";
 import type { Metadata, Viewport } from "next";
@@ -10,6 +11,7 @@ import { notFound } from "next/navigation";
 import { RoutePageTransition } from "@/components/RoutePageTransition";
 import { StageNotice } from "@/components/StageNotice";
 import { getDictionary, type Locale, LOCALES, PAGE_LOCALES, type PageLocale, uiLocaleOf } from "@/lib/i18n";
+import { shopDisplay, shopSans } from "@/lib/shop-fonts";
 import { SITE_URL } from "@/lib/site";
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover" };
@@ -41,7 +43,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
       <head>
         <ThemeScript defaultMode="dark" />
       </head>
-      <body className="min-h-screen bg-surface-0 text-fg antialiased selection:bg-accent selection:text-on-accent">
+      <body className={cn(shopSans.variable, shopDisplay.variable, "kz-shop-fonts min-h-screen bg-surface-0 text-fg antialiased selection:bg-accent selection:text-on-accent")}>
         <ThemeProvider defaultMode="dark">
           <StageNotice locale={uiLocaleOf(locale as PageLocale)} />
           <RoutePageTransition>{children}</RoutePageTransition>
