@@ -1,6 +1,6 @@
-# Aujourd'hui (D8, #168): the day strip and the day's appointments as a list that opens into a detail, then the two moves of a
-# visit (start, finish). The demo shop's next group walk is today only when CI runs before its 14:00 slot, so the detail and the
-# moves are exercised when a visit is listed, and the empty state is asserted otherwise: never a flow that fails on the clock.
+# Aujourd'hui (D8, #168, #433): the day's appointments as a list that opens into a detail, then the two moves of a visit (start, finish).
+# Never a flow that depends on the clock: the CI backend (scripts/ci-mobile-backend.sh → seed-today-visit.mjs) books a puppy visit
+# today at "now + 1 h" for the demo owner, so the visit is always listed. The empty day is aujourdhui-empty.yaml.
 appId: com.krizaka.akinaza
 tags:
   - ci
@@ -8,32 +8,21 @@ tags:
 - runFlow: shared/launch.yaml
 - runFlow: shared/sign-in.yaml
 - assertVisible: "Aujourd'hui|Today"
-- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible: ".*Visite chiot.*|.*Puppy visit.*"
+    timeout: 30000
 - takeScreenshot: aujourdhui
-- runFlow:
-    when:
-      notVisible: "Promenade en groupe.*|Group walk.*"
-    commands:
-      - assertVisible: "Aucune visite ce jour-là.|No visit that day."
-- runFlow:
-    when:
-      visible: "Promenade en groupe.*|Group walk.*"
-    commands:
-      # The list opens into the appointment's detail (the visit is in the URL): who, where, when.
-      - tapOn: "Promenade en groupe.*|Group walk.*"
-      - assertVisible: "Qui|Who"
-      - takeScreenshot: aujourdhui-detail
-      - runFlow:
-          when:
-            visible: "Commencer|Start"
-          commands:
-            - tapOn: "Commencer|Start"
-            - extendedWaitUntil:
-                visible: "Terminer|Finish"
-                timeout: 30000
-            - takeScreenshot: aujourdhui-checked-in
-            - tapOn: "Terminer|Finish"
-            - extendedWaitUntil:
-                visible: "Terminée|Done"
-                timeout: 30000
-            - takeScreenshot: aujourdhui-checked-out
+# The list opens into the appointment's detail (the visit is in the URL): who, where, when.
+- tapOn: ".*Visite chiot.*|.*Puppy visit.*"
+- assertVisible: "Qui|Who"
+- takeScreenshot: aujourdhui-detail
+- tapOn: "Commencer|Start"
+- extendedWaitUntil:
+    visible: "Terminer|Finish"
+    timeout: 30000
+- takeScreenshot: aujourdhui-checked-in
+- tapOn: "Terminer|Finish"
+- extendedWaitUntil:
+    visible: "Terminée|Done"
+    timeout: 30000
+- takeScreenshot: aujourdhui-checked-out

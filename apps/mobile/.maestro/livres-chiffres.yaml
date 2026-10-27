@@ -1,22 +1,38 @@
-# Livres → « Vos chiffres » (#168, #260): the period's GST/QST nets, then the explained figures, one opened into its detail with the
-# lexique's words (the same wording as the web's console). Akinaza prepares; nothing is filed from here.
+# Livres → « Vos chiffres » (#168, #260, #433): the period's GST/QST nets, then the explained figures, one opened into its detail with the
+# lexique's words (the same wording as the web's console). Akinaza prepares; nothing is filed from here. The figures are found by
+# their id (`figure-<id>`), never by their wording; the backend (scripts/ci-mobile-backend.sh) serves them from the demo shop's invoices.
 appId: com.krizaka.akinaza
 tags:
   - ci
 ---
-- launchApp:
-    clearState: true
+- runFlow: shared/launch.yaml
 - runFlow: shared/sign-in.yaml
 - tapOn: "Livres|Books"
 - assertVisible: "TPS nette|Net GST"
 - takeScreenshot: livres
 - tapOn: "Voir vos chiffres|See your figures"
-- assertVisible: "Facturé|Invoiced"
-- assertVisible: "Akinaza prépare ces chiffres.*|Akinaza prepares these figures.*"
+# The figures the dashboard really draws: the cards the API answers with (invoiced, collected, to collect…).
+- extendedWaitUntil:
+    visible:
+      id: figure-invoiced
+    timeout: 30000
+- assertVisible:
+    id: figure-name-invoiced
+- scrollUntilVisible:
+    element:
+      id: figure-collected
+- scrollUntilVisible:
+    element:
+      id: figure-toCollect
+- scrollUntilVisible:
+    element: "Akinaza prépare ces chiffres.*|Akinaza prepares these figures.*"
 - takeScreenshot: chiffres
+- scrollUntilVisible:
+    element:
+      id: figure-details-invoiced
+    direction: UP
 - tapOn:
-    text: "Détails|Details"
-    index: 0
+    id: figure-details-invoiced
 - assertVisible: "Comment c'est calculé|How it is computed"
 - assertVisible: "D'où ça vient|Where it comes from"
 - scrollUntilVisible:

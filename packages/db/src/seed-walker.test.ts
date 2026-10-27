@@ -5,7 +5,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { prepareShopReturn } from "./shop-ops";
 import { accounts } from "./schema";
-import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri } from "./seed-walker";
+import { localDay } from "@akinaza/core";
+import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri, seedTodayVisit } from "./seed-walker";
 import { shopPageConfigOf } from "./shop-page";
 import { listSlots, publicShop, revealAccessNotes, shopOfOwner } from "./service-shop";
 import { freshDatabase } from "./test/db";
@@ -88,5 +89,24 @@ describe("the Saint-Henri walker persona", () => {
     const n = await t.db.execute(sql`SELECT count(*)::int AS n FROM invoices`);
     await seedSaintHenri(t.db, randomBytes(32), NOW);
     expect(((await t.db.execute(sql`SELECT count(*)::int AS n FROM invoices`)).rows[0] as { n: number }).n).toBe((n.rows[0] as { n: number }).n);
+  });
+
+  it("books a test visit TODAY at the injected clock + 1 h, whatever the hour, once (#433)", async () => {
+    const owner = (await t.db.select().from(accounts).where(eq(accounts.email, SAINT_HENRI_EMAILS[0])))[0]!;
+    const shop = (await shopOfOwner(t.db, owner.id))!;
+    // 11:00, 15:00 (Montréal) and 23:30 (the hour would cross midnight: the visit stays on the day).
+    for (const [now, day] of [["2026-10-21T15:00:00Z", "2026-10-21"], ["2026-10-21T19:00:00Z", "2026-10-21"], ["2026-10-22T03:30:00Z", "2026-10-21"]] as const) {
+      const first = await seedTodayVisit(t.db, new Date(now));
+      expect(first.created).toBe(true);
+      expect(localDay(first.startsAt, shop.timezone)).toBe(day);
+      const again = await seedTodayVisit(t.db, new Date(now));
+      expect(again).toMatchObject({ created: false, appointmentId: first.appointmentId });
+      const listed = (await dayVisits(t.db, shop.id, day)).filter((v) => v.appointmentId === first.appointmentId);
+      expect(listed).toHaveLength(1);
+      expect(listed[0]).toMatchObject({ status: "booked", service: { en: "Puppy visit 20 min" } });
+      expect(listed[0]!.bookings.map((b) => b.dependant.name)).toEqual(["Rex"]);
+    }
+    const first = await seedTodayVisit(t.db, new Date("2026-10-21T15:00:00Z"));
+    expect(first.startsAt.toISOString()).toBe("2026-10-21T16:00:00.000Z");
   });
 });
