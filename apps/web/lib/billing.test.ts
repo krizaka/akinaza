@@ -1,38 +1,63 @@
+import type { PaymentEvent } from "@krizaka/payments";
 import { describe, expect, it } from "vitest";
 
 import { applyPaymentEvent, customerOf, subscriptionOf } from "./billing";
 
 type Row = Record<string, unknown>;
-/** A tiny in-memory stand-in for the two tables, enough to prove the domain's rules (the SQL itself runs in the proof against PostgreSQL). */
-function fake() {
-  const seen = new Set<string>();
-  const log: string[] = [];
-  const query = (async (text: string, values: unknown[] = []) => {
-    log.push(text.split("\n")[0]!.slice(0, 40));
-    if (text.startsWith("INSERT INTO payment_events")) {
-      const id = String(values[0]);
-      if (seen.has(id)) return [];
-      seen.add(id);
-      return [{ id }];
-    }
-    return [{ id: "a1" }] as Row[];
+/**
+ * A tiny in-memory stand-in for the two tables with real transaction semantics: a write inside `transaction` is visible only
+ * when the work returns, and is dropped when it throws (the SQL itself runs in the proof against PostgreSQL).
+ */
+function fake(failNext = { value: false }) {
+  const committed = { events: new Set<string>(), accounts: 0 };
+  const transaction = (async (work: (q: never) => Promise<unknown>) => {
+    const staged = { events: new Set(committed.events), accounts: committed.accounts };
+    const query = (async (text: string, values: unknown[] = []) => {
+      if (text.includes("INSERT INTO") && text.includes("payment_events")) {
+        const id = String(values[0]);
+        if (staged.events.has(id)) return [];
+        staged.events.add(id);
+        return [{ id }];
+      }
+      if (text.startsWith("UPDATE accounts SET payment_subscription_id")) {
+        if (failNext.value) throw new Error("database went away");
+        staged.accounts += 1;
+      }
+      return [{ id: "a1" }] as Row[];
+    }) as never;
+    const result = await work(query);
+    committed.events = staged.events;
+    committed.accounts = staged.accounts;
+    return result;
   }) as never;
-  return { query, log, seen };
+  return { transaction, committed };
 }
+
+const paid = { checkoutRef: null, paymentRef: null, invoiceRef: null, amountTotal: null, amountDiscount: 0, currency: null, metadata: {} };
+const started: PaymentEvent = { id: "evt_1", type: "subscription_started", accountId: "a1", customerId: "cus_1", subscriptionId: "sub_1", ...paid };
 
 describe("payment events are applied once", () => {
   it("a replayed event changes nothing", async () => {
-    const { query, log } = fake();
-    const event = { id: "evt_1", type: "subscription_started", accountId: "a1", customerId: "cus_1", subscriptionId: "sub_1" } as const;
-    expect(await applyPaymentEvent(query, event)).toBe("applied");
-    const writes = log.length;
-    expect(await applyPaymentEvent(query, event)).toBe("duplicate");
-    expect(log.length).toBe(writes + 1); // only the id insert, which found it
+    const { transaction, committed } = fake();
+    expect(await applyPaymentEvent(transaction, started)).toBe("applied");
+    expect(await applyPaymentEvent(transaction, started)).toBe("duplicate");
+    expect(committed.accounts).toBe(1);
   });
   it("an ignored event is not even recorded", async () => {
-    const { query, seen } = fake();
-    expect(await applyPaymentEvent(query, { id: "evt_x", type: "ignored" })).toBe("ignored");
-    expect(seen.size).toBe(0);
+    const { transaction, committed } = fake();
+    expect(await applyPaymentEvent(transaction, { id: "evt_x", type: "ignored" })).toBe("ignored");
+    expect(committed.events.size).toBe(0);
+  });
+  it("a throwing handler leaves no record and no state change, and the redelivery applies once", async () => {
+    const failing = { value: true };
+    const { transaction, committed } = fake(failing);
+    await expect(applyPaymentEvent(transaction, started)).rejects.toThrow("database went away");
+    expect(committed.events.size).toBe(0);
+    expect(committed.accounts).toBe(0);
+    failing.value = false;
+    expect(await applyPaymentEvent(transaction, started)).toBe("applied");
+    expect(await applyPaymentEvent(transaction, started)).toBe("duplicate");
+    expect(committed.accounts).toBe(1);
   });
 });
 

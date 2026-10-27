@@ -184,8 +184,8 @@ importers:
         specifier: 0.4.0
         version: 0.4.0(vitest@4.1.11)
       '@krizaka/payments':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.4.0
+        version: 0.4.0(vitest@4.1.11)(zod@4.6.7)
       '@krizaka/query':
         specifier: ^0.2.2
         version: 0.2.2(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1)
@@ -2093,10 +2093,18 @@ packages:
       react:
         optional: true
 
-  '@krizaka/payments@0.1.0':
-    resolution: {integrity: sha512-Np3ZxEqNCr2Hup1GrrTf32ndlE49f+Ea2n4p8FZvgVvTpaY7iS0E2INkw3C4g1+qTMSC/GiZU/OXfG49eiMUig==}
+  '@krizaka/payments@0.4.0':
+    resolution: {integrity: sha512-Rdn3SwCZ7TTPCxc/8XbuRPeC6S3dOUspwXfIQzjlgNZ9+7UnRcGgamp1PnE9akm+QR5S7W+DyMWAGl9zTLATTA==}
     engines: {node: '>=22'}
     hasBin: true
+    peerDependencies:
+      vitest: '>=4'
+      zod: '>=3.23'
+    peerDependenciesMeta:
+      vitest:
+        optional: true
+      zod:
+        optional: true
 
   '@krizaka/privacy@0.1.0':
     resolution: {integrity: sha512-frzqIxx1rrafNeswqrZEg1LCjluEhUmspQAiQ80uEqCc+zPWGeGoZQSr9z6HCcek6lsu9+L8GUW4DOzR+IDVdQ==}
@@ -10217,7 +10225,15 @@ snapshots:
     optionalDependencies:
       react: 19.3.1
 
-  '@krizaka/payments@0.1.0': {}
+  '@krizaka/payments@0.4.0(vitest@4.1.11)(zod@4.6.7)':
+    dependencies:
+      '@krizaka/db': 0.2.0
+      '@krizaka/intl': 0.4.1
+      '@krizaka/settings': 0.5.0(zod@4.6.7)
+      '@krizaka/time': 0.1.0
+    optionalDependencies:
+      vitest: 4.1.11(@types/node@24.19.2)(@vitest/coverage-v8@4.1.11)(jsdom@26.1.0)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      zod: 4.6.7
 
   '@krizaka/privacy@0.1.0(vitest@4.1.11)(zod@4.6.7)':
     dependencies:
