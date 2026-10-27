@@ -10,7 +10,8 @@ tags:
 - extendedWaitUntil:
     visible: ".*(des rendez-vous|has appointments).*"
     timeout: 30000
-- tapOn: "^(?!.*(des rendez-vous|has appointments))\\D+ \\d{1,2} \\D+.*$"
+# A day's label is « October 24, 2026 » (en) or « 24 octobre 2026 » (fr), plus « , has appointments » when marked.
+- tapOn: "^(?!.*(des rendez-vous|has appointments)).*\\d{4}$"
 - extendedWaitUntil:
     visible: "Aucune visite ce jour-là.|No visit that day."
     timeout: 30000

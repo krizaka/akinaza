@@ -11,6 +11,10 @@ tags:
 - assertVisible: "TPS nette|Net GST"
 - takeScreenshot: livres
 - tapOn: "Voir vos chiffres|See your figures"
+- extendedWaitUntil:
+    visible: "Vos chiffres|Your figures"
+    timeout: 30000
+- takeScreenshot: chiffres-opened
 # The figures the dashboard really draws: the cards the API answers with (invoiced, collected, to collect…).
 - extendedWaitUntil:
     visible:

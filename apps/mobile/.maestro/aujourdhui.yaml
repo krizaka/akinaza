@@ -16,13 +16,17 @@ tags:
 - tapOn: ".*Visite chiot.*|.*Puppy visit.*"
 - assertVisible: "Qui|Who"
 - takeScreenshot: aujourdhui-detail
+# The two moves sit under the list of who is booked: scroll to them.
+- scrollUntilVisible:
+    element: "Commencer|Start"
 - tapOn: "Commencer|Start"
-- extendedWaitUntil:
-    visible: "Terminer|Finish"
+- scrollUntilVisible:
+    element: "Terminer|Finish"
     timeout: 30000
 - takeScreenshot: aujourdhui-checked-in
 - tapOn: "Terminer|Finish"
-- extendedWaitUntil:
-    visible: "Terminée|Done"
+- scrollUntilVisible:
+    element: "Terminée|Done"
+    direction: UP
     timeout: 30000
 - takeScreenshot: aujourdhui-checked-out
