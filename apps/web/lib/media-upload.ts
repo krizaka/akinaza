@@ -1,19 +1,14 @@
-import { createHash } from "node:crypto";
+import { sniffType } from "@krizaka/storage";
+
+import { MEDIA_ROOT, type MediaStorage } from "./media-storage";
 
 /**
- * The owner's photos for the storefront (cover, gallery): checked by their bytes, stored content-hashed on the media
- * storage under `user/akinaza/shops/<shop>/`, and answered as a CDN address — the only thing the database keeps. Off
- * (fails closed) until the storage is configured.
+ * The owner's photos for the storefront (cover, gallery) and the files of a client's request: stored by `@krizaka/storage` (the
+ * administrator's provider, the bytes checked by their magic number, content-hashed names) under `user/akinaza/shops/<shop>/…`, and
+ * answered as a CDN address — the only thing the database keeps. Off (fails closed) until the storage is configured.
  */
 // @fixed: the largest upload the server takes (the phone redraws a photo at 1920 px as a JPEG first, ~0.5–1.5 MB) — an abuse limit.
 export const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
-
-export interface MediaSettings {
-  apiKey: string;
-  zone: string;
-  endpoint: string;
-  cdn: string;
-}
 
 export const MEDIA_PURPOSES = ["brand", "wall", "reels", "cards", "announcements", "gallery"] as const;
 export type MediaPurpose = (typeof MEDIA_PURPOSES)[number];
@@ -38,44 +33,28 @@ export function mediaPrefix(shopId: string, purpose: MediaPurpose): string {
   return `user/akinaza/shops/${shopId}/${purposeDirectory[purpose]}/`;
 }
 
-export function mediaSettings(source: Record<string, string | undefined> = process.env): MediaSettings | null {
-  const apiKey = source.MEDIA_STORAGE_API_KEY?.trim();
-  const zone = source.MEDIA_STORAGE_ZONE?.trim();
-  const cdn = source.MEDIA_CDN_HOSTNAME?.trim();
-  if (!apiKey || !zone || !cdn) return null;
-  return { apiKey, zone, endpoint: source.MEDIA_STORAGE_ENDPOINT?.trim() || "storage.bunnycdn.com", cdn };
-}
-
-const starts = (bytes: Uint8Array, magic: number[], at = 0) => magic.every((b, i) => bytes[at + i] === b);
+const IMAGES = ["image/jpeg", "image/png", "image/webp"] as const;
+const VIDEOS = ["video/mp4", "video/webm"] as const;
+const EXTENSION: Record<string, "jpg" | "png" | "webp" | "pdf"> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "application/pdf": "pdf" };
 
 /** The image kind from its first bytes (JPEG, PNG, WebP); an SVG, HTML, a GIF or an empty file is `null`. */
 export function detectImage(bytes: Uint8Array): { ext: "jpg" | "png" | "webp"; mime: string } | null {
-  if (starts(bytes, [0xff, 0xd8, 0xff])) return { ext: "jpg", mime: "image/jpeg" };
-  if (starts(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) return { ext: "png", mime: "image/png" };
-  if (starts(bytes, [0x52, 0x49, 0x46, 0x46]) && starts(bytes, [0x57, 0x45, 0x42, 0x50], 8)) return { ext: "webp", mime: "image/webp" };
-  return null;
+  const mime = sniffType(bytes);
+  return mime && (IMAGES as readonly string[]).includes(mime) ? { ext: EXTENSION[mime] as "jpg" | "png" | "webp", mime } : null;
 }
 
-export function uploadKey(shopId: string, bytes: Uint8Array, ext: string, purpose: MediaPurpose = "gallery"): string {
-  return `${mediaPrefix(shopId, purpose)}${createHash("sha256").update(bytes).digest("hex").slice(0, 16)}.${ext}`;
-}
-
-/** Sends the image to the storage zone and returns its CDN address. The access key never leaves this function. */
-export async function storeImage(settings: MediaSettings, shopId: string, bytes: Uint8Array, fetchImpl: typeof fetch = fetch, purpose: MediaPurpose = "gallery"): Promise<string> {
+/** Sends the image to the storage and returns its CDN address. */
+export async function storeImage(media: MediaStorage, shopId: string, bytes: Uint8Array, purpose: MediaPurpose = "gallery"): Promise<string> {
   const kind = detectImage(bytes);
   if (!kind) throw new Error("not an image");
-  const key = uploadKey(shopId, bytes, kind.ext, purpose);
-  const response = await fetchImpl(`https://${settings.endpoint}/${settings.zone}/${key}`, { method: "PUT", headers: { AccessKey: settings.apiKey, "content-type": kind.mime }, body: bytes as unknown as BodyInit });
-  if (!response.ok) throw new Error(`media storage refused (${response.status})`);
-  return `https://${settings.cdn}/${key}`;
+  const stored = await media.storage.upload({ prefix: MEDIA_ROOT, name: `${shopId}/${purposeDirectory[purpose]}/photo.${kind.ext}`, bytes, allow: IMAGES });
+  return addressOf(media, stored.key);
 }
 
-/** Sends a reel (an MP4 or a WebM already checked by its bytes) to the storage zone, content-hashed under `reels/`, and returns its CDN address. */
-export async function storeVideo(settings: MediaSettings, shopId: string, bytes: Uint8Array, ext: "mp4" | "webm", fetchImpl: typeof fetch = fetch): Promise<string> {
-  const key = uploadKey(shopId, bytes, ext, "reels");
-  const response = await fetchImpl(`https://${settings.endpoint}/${settings.zone}/${key}`, { method: "PUT", headers: { AccessKey: settings.apiKey, "content-type": ext === "mp4" ? "video/mp4" : "video/webm" }, body: bytes as unknown as BodyInit });
-  if (!response.ok) throw new Error(`media storage refused (${response.status})`);
-  return `https://${settings.cdn}/${key}`;
+/** Sends a reel (an MP4 or a WebM already checked by its bytes), content-hashed under `reels/`, and returns its CDN address. */
+export async function storeVideo(media: MediaStorage, shopId: string, bytes: Uint8Array, ext: "mp4" | "webm"): Promise<string> {
+  const stored = await media.storage.upload({ prefix: MEDIA_ROOT, name: `${shopId}/${purposeDirectory.reels}/reel.${ext}`, bytes, allow: VIDEOS });
+  return addressOf(media, stored.key);
 }
 
 // @fixed: the largest file attached to a client's request (a photo redrawn by the phone, or a short PDF) — an abuse limit.
@@ -85,34 +64,27 @@ export const MAX_REQUEST_FILE_BYTES = 5 * 1024 * 1024;
 export function detectRequestFile(bytes: Uint8Array): { ext: "jpg" | "png" | "webp" | "pdf"; mime: string; kind: "image" | "pdf" } | null {
   const image = detectImage(bytes);
   if (image) return { ...image, kind: "image" };
-  if (starts(bytes, [0x25, 0x50, 0x44, 0x46, 0x2d])) return { ext: "pdf", mime: "application/pdf", kind: "pdf" };
-  return null;
+  return sniffType(bytes) === "application/pdf" ? { ext: "pdf", mime: "application/pdf", kind: "pdf" } : null;
 }
 
-export function requestFileKey(shopId: string, requestId: string, bytes: Uint8Array, ext: string): string {
-  return `user/akinaza/shops/${shopId}/requests/${requestId}/${createHash("sha256").update(bytes).digest("hex").slice(0, 16)}.${ext}`;
-}
-
-/** Sends a request's file to the storage zone and returns its CDN address and kind. The access key never leaves this function. */
-export async function storeRequestFile(settings: MediaSettings, shopId: string, requestId: string, bytes: Uint8Array, fetchImpl: typeof fetch = fetch): Promise<{ url: string; kind: "image" | "pdf" }> {
+/** Sends a request's file to the storage and returns its CDN address and kind. */
+export async function storeRequestFile(media: MediaStorage, shopId: string, requestId: string, bytes: Uint8Array): Promise<{ url: string; kind: "image" | "pdf" }> {
   const file = detectRequestFile(bytes);
   if (!file) throw new Error("not an image or a PDF");
-  const key = requestFileKey(shopId, requestId, bytes, file.ext);
-  const response = await fetchImpl(`https://${settings.endpoint}/${settings.zone}/${key}`, { method: "PUT", headers: { AccessKey: settings.apiKey, "content-type": file.mime }, body: bytes as unknown as BodyInit });
-  if (!response.ok) throw new Error(`media storage refused (${response.status})`);
-  return { url: `https://${settings.cdn}/${key}`, kind: file.kind };
+  const stored = await media.storage.upload({ prefix: MEDIA_ROOT, name: `${shopId}/requests/${requestId}/file.${file.ext}`, bytes, allow: [...IMAGES, "application/pdf"] });
+  return { url: addressOf(media, stored.key), kind: file.kind };
 }
 
 /**
- * Removes a stored file by its CDN address (a deleted request, an erased client). Only an address of this zone's CDN under
+ * Removes a stored file by its CDN address (a deleted request, an erased client). Only an address of this storage's CDN under
  * `user/akinaza/` is accepted: nothing else can be deleted through it. Answers whether the storage removed it (a file already
  * gone counts as removed).
  */
-export async function deleteStored(settings: MediaSettings, url: string, fetchImpl: typeof fetch = fetch): Promise<boolean> {
-  const prefix = `https://${settings.cdn}/`;
-  if (!url.startsWith(prefix)) return false;
-  const key = url.slice(prefix.length);
-  if (!key.startsWith("user/akinaza/") || key.includes("..")) return false;
-  const response = await fetchImpl(`https://${settings.endpoint}/${settings.zone}/${key}`, { method: "DELETE", headers: { AccessKey: settings.apiKey } });
-  return response.ok || response.status === 404;
+export async function deleteStored(media: MediaStorage, url: string): Promise<boolean> {
+  const key = media.keyOf(url);
+  if (!key) return false;
+  await media.storage.delete(key);
+  return true;
 }
+
+const addressOf = (media: MediaStorage, key: string) => `https://${media.cdn}/${key}`;
