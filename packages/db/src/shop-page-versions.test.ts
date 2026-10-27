@@ -9,7 +9,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { migrate } from "./migrate";
 import { SHOP_PAGE_DOCUMENT_MIGRATION_SQL } from "./shop-page-document-migration";
-import { draftShopPage, publishedShopPage, publishShopPageDraft, readShopPage, rollbackShopPage, SHOP_PAGE_ARCHIVE_KEEP, saveShopPageDraft, ShopPageInvalidError, shopPageVersionsOf } from "./shop-page-versions";
+import { draftShopPage, publishedShopPage, publishShopPageDraft, readShopPage, rollbackShopPage, SHOP_PAGE_ARCHIVE_KEEP, saveShopPageDraft, setShopAccent, ShopPageInvalidError, shopAccentOf, shopPageVersionsOf } from "./shop-page-versions";
 import { freshDatabase, freshEmptyDatabase } from "./test/db";
 import { walkerShop } from "./test/fixtures";
 
@@ -87,6 +87,21 @@ describe("the shop page document", () => {
     await publishShopPageDraft(t.db, other.shopId, null);
     await expect(rollbackShopPage(t.db, mine.shopId, 1, null)).rejects.toMatchObject({ code: "AK_NOT_FOUND" });
     expect(await shopPageVersionsOf(t.db, mine.shopId)).toEqual([]);
+  });
+});
+
+describe("the accent within the look (akinaza#402)", () => {
+  it("is null until chosen, stored without a page row, and cleared with null", async () => {
+    const shop = await walkerShop(t.db, "doc-accent");
+    expect(await shopAccentOf(t.db, shop.shopId)).toBeNull();
+    await setShopAccent(t.db, shop.shopId, "akinaza:accent-2");
+    expect(await shopAccentOf(t.db, shop.shopId)).toBe("akinaza:accent-2");
+    await setShopAccent(t.db, shop.shopId, null);
+    expect(await shopAccentOf(t.db, shop.shopId)).toBeNull();
+  });
+  it("refuses a value that is not an accent name", async () => {
+    const shop = await walkerShop(t.db, "doc-accent-bad");
+    await expect(setShopAccent(t.db, shop.shopId, "red; drop")).rejects.toThrow();
   });
 });
 

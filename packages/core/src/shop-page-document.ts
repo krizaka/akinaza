@@ -115,3 +115,31 @@ export function starterFor(trade: ShopType): ShopPage {
 }
 export const starterIdFor = (trade: ShopType): ShopStarterId => STARTER_BY_TRADE[trade];
 
+
+/**
+ * The two demo shops are the Krizaka UI showcase (akinaza#404): their public page offers the other compositions of its trade through a « See it another way »
+ * switch (`?look=`), and only theirs. The first look is the page's own (the document the shop publishes); the others are the starters of @krizaka/ui/shop
+ * drawn with the same shop data. A shop that is not a demo has no switch: its owner decides, in the composer.
+ */
+export const DEMO_LOOKS: Readonly<Record<string, readonly { id: string; starter: ShopStarterId }[]>> = {
+  "cedre-ciseaux": [
+    { id: "compact", starter: "salonCompact" },
+    { id: "editorial", starter: "salonEditorial" },
+    { id: "gallery", starter: "salonGallery" },
+  ],
+  "pattes-saint-henri": [
+    { id: "route", starter: "petsRoute" },
+    { id: "journal", starter: "petsJournal" },
+  ],
+};
+
+/** The looks a demo shop offers (empty for any other shop: no switch). */
+export const demoLooksOf = (slug: string): readonly { id: string; starter: ShopStarterId }[] => DEMO_LOOKS[slug] ?? [];
+
+/** The document of a demo shop's look named by `?look=`, or null when the shop is not a demo, the name is unknown, or it is the page's own (the first). */
+export function demoLookDocument(slug: string, look: string | undefined): ShopPage | null {
+  const looks = demoLooksOf(slug);
+  const found = looks.find((l) => l.id === look);
+  if (!found || found === looks[0]) return null;
+  return structuredClone(shopStarters[found.starter]) as ShopPage;
+}

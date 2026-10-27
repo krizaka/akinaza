@@ -246,9 +246,11 @@ export const shopPage = pgTable(
     sectionsCustom: boolean("sections_custom").notNull().default(false),
     /** The owner's text-style overrides per role (title, body, price). */
     style: jsonb("style").$type<Record<string, unknown>>().notNull().default(sql`'{}'::jsonb`),
+    /** The accent the owner chose within the look (one of the preset's tested accents, akinaza#402); null = the look's own. */
+    accent: text("accent"),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
+  (t) => [check("shop_page_accent", sql`${t.accent} IS NULL OR ${t.accent} ~ '^[a-z0-9:-]{1,40}$'`), check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
 );
 
 /** The shop page as a document (akinaza#400): one draft, one published, the rest archived (the last 20 kept). The published one IS the page. */
