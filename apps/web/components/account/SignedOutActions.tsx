@@ -1,3 +1,5 @@
+"use client";
+
 import { ProductBarActions } from "@krizaka/ui/nav-bar";
 import Link from "next/link";
 
