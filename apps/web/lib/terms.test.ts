@@ -51,6 +51,25 @@ describe("the terms of use (akinaza#379)", () => {
     }
   });
 
+  it("reserves Krizaka's rights: IP, licence limited to the subscription, no resale or white label, marks (akinaza#409)", () => {
+    const text = (d: typeof fr) => d.terms.sections.map((s) => `${s.h} ${s.p}`).join("\n");
+    const french = text(fr);
+    for (const needle of ["appartiennent à Technologies Krizaka Inc.", "Pour la durée de votre abonnement seulement", "non cessible et non sous-licenciable", "marque blanche", "service concurrent", "Loi sur le droit d'auteur", "Loi sur les marques de commerce", "TRADEMARKS.md", "sa propre licence"]) {
+      expect(french, needle).toContain(needle);
+    }
+    const english = text(en);
+    for (const needle of ["belong to Technologies Krizaka Inc.", "For the length of your subscription only", "non-transferable, non-sublicensable", "white label", "competing service", "Copyright Act", "Trademarks Act", "TRADEMARKS.md", "its own licence"]) {
+      expect(english, needle).toContain(needle);
+    }
+  });
+
+  it("keeps the shop's content and the code licence out of the reverse-engineering clause", () => {
+    for (const d of [fr, en]) {
+      const clause = d.terms.sections.find((s) => /^14\./.test(s.h))?.p ?? "";
+      expect(clause).toMatch(/publi[ée]|published/);
+    }
+  });
+
   it("keeps to the house rules: no escrow word, no promise of conformity to a law, no AI wording", () => {
     for (const d of [fr, en]) {
       const text = d.terms.sections.map((s) => s.p).join(" ");

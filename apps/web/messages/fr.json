@@ -444,7 +444,19 @@
         "p": "Ces conditions sont régies par les lois du Québec et les lois fédérales du Canada qui s'y appliquent. Les tribunaux du Québec sont compétents. Un consommateur peut toujours poursuivre dans le district où il est domicilié, et ne peut y renoncer d'avance (art. 3149 C.c.Q. ; art. 33 du Code de procédure civile)."
       },
       {
-        "h": "13. Nous joindre",
+        "h": "13. La propriété intellectuelle et votre droit d'utiliser le service",
+        "p": "Akinaza, ses logiciels, ses modèles de documents, la conception des pages de boutique, ses noms, ses oiseaux et ses marques appartiennent à Technologies Krizaka Inc. ou à ses concédants ; ces conditions ne vous cèdent aucun de ces droits (Loi sur le droit d'auteur, L.R.C. (1985), c. C-42). Pour la durée de votre abonnement seulement, vous recevez un droit personnel, non exclusif, non cessible et non sous-licenciable d'utiliser le service hébergé pour les besoins de votre entreprise ; ce droit prend fin avec l'abonnement. Le contenu de votre boutique et les renseignements de vos clients restent les vôtres (section 7) : vous nous autorisez seulement à les héberger et à les traiter pour fournir le service. Le code source d'Akinaza est publié sous sa propre licence, indiquée dans son dépôt : ces conditions régissent le service hébergé, cette licence régit le code, et rien ici ne retire ce que la licence vous permet."
+      },
+      {
+        "h": "14. Les usages interdits",
+        "p": "Sans entente écrite avec Krizaka, vous ne pouvez pas : revendre, louer, sous-licencier ou offrir le service hébergé à des tiers, ni le présenter sous une autre marque (marque blanche) ; l'utiliser pour construire ou améliorer un service concurrent ; en extraire de façon automatisée le contenu ou les données au-delà des exportations que le service offre ; contourner les limites de votre forfait, la facturation ou les mesures de sécurité ; ni décompiler ou désassembler les parties du service hébergé qui ne sont pas publiées, sauf dans la mesure où la loi l'autorise malgré cette clause. Une violation peut entraîner la suspension de l'accès, après un avis écrit lorsque la situation le permet."
+      },
+      {
+        "h": "15. Les noms et les marques",
+        "p": "Les noms et les logos d'Akinaza et de Krizaka, et leurs oiseaux, sont des marques de Technologies Krizaka Inc. (Loi sur les marques de commerce, L.R.C. (1985), c. T-13). Ces conditions, comme la licence du code, n'accordent aucun droit sur ces marques ; leur usage est encadré par la politique publiée à https://github.com/krizaka/.github/blob/main/TRADEMARKS.md."
+      },
+      {
+        "h": "16. Nous joindre",
         "p": "Par le formulaire de contact de Krizaka (sujet Akinaza), ou à contact@krizaka.com pour vos renseignements personnels. Nous répondons dans les 30 jours."
       }
     ]

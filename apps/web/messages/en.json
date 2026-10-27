@@ -444,7 +444,19 @@
         "p": "These terms are governed by the laws of Québec and the federal laws of Canada that apply there. The courts of Québec have jurisdiction. A consumer can always sue in the district where they live, and cannot waive that in advance (art. 3149 C.C.Q.; art. 33 of the Code of Civil Procedure)."
       },
       {
-        "h": "13. Contact",
+        "h": "13. Intellectual property and your right to use the service",
+        "p": "Akinaza, its software, its document templates, the design of the shop pages, its names, its birds and its marks belong to Technologies Krizaka Inc. or its licensors; these terms assign you none of those rights (Copyright Act, R.S.C. 1985, c. C-42). For the length of your subscription only, you receive a personal, non-exclusive, non-transferable, non-sublicensable right to use the hosted service for the needs of your business; that right ends with the subscription. Your shop's content and your clients' information stay yours (section 7): you only authorise us to host and process them to provide the service. Akinaza's source code is published under its own licence, stated in its repository: these terms govern the hosted service, that licence governs the code, and nothing here removes what the licence allows you."
+      },
+      {
+        "h": "14. Prohibited uses",
+        "p": "Without a written agreement with Krizaka, you may not: resell, rent, sublicense or offer the hosted service to third parties, or present it under another brand (white label); use it to build or improve a competing service; extract its content or data by automated means beyond the exports the service offers; circumvent your plan's limits, the billing or the security measures; or decompile or disassemble the parts of the hosted service that are not published, except to the extent the law allows despite this clause. A breach may lead to suspended access, after written notice where the situation allows."
+      },
+      {
+        "h": "15. Names and marks",
+        "p": "The names and logos of Akinaza and Krizaka, and their birds, are marks of Technologies Krizaka Inc. (Trademarks Act, R.S.C. 1985, c. T-13). These terms, like the code licence, grant no right to those marks; their use is governed by the policy published at https://github.com/krizaka/.github/blob/main/TRADEMARKS.md."
+      },
+      {
+        "h": "16. Contact",
         "p": "Through Krizaka's contact form (topic Akinaza), or at contact@krizaka.com for your personal information. We answer within 30 days."
       }
     ]
