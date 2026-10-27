@@ -135,11 +135,17 @@ async function keepTemplate(db: Db, shopId: string, template: string): Promise<v
   if (!config.templateId) await applyTemplate(db, shopId, { templateId: template, keepOrder: false });
 }
 
+async function shopOfSlug(db: Db, slug: string): Promise<{ id: string } | null> {
+  const [found] = await db.select({ id: shops.id }).from(shops).where(eq(shops.slug, slug));
+  return found ?? null;
+}
+
 /** Seeds (or refreshes) one demo shop through the product's operations. Idempotent per owner: a second run changes nothing it already holds. */
 export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string; created: boolean }> {
   const ownerId = await ensureOwner(db, demo.ownerEmail);
   const page = { ...demo.shop, businessType: "professional" as const, taglineFr: demo.taglineFr, taglineEn: demo.taglineEn, ...demo.profile };
-  const existing = await shopOfOwner(db, ownerId);
+  // The shop of this owner, else the one that already holds the address: an older seed (another owner) must be kept, never created again (AK_SLUG_TAKEN).
+  const existing = (await shopOfOwner(db, ownerId)) ?? (await shopOfSlug(db, demo.shop.slug));
   if (existing) {
     await keepType(db, existing.id, demo.shopType);
     await keepTemplate(db, existing.id, demo.template);
