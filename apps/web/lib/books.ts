@@ -68,3 +68,8 @@ export function booksView(prepared: PreparedReturn): BooksView {
     preparedOnly: true,
   };
 }
+
+/** A period with nothing in it: no line carries an amount or a document, so the page says so instead of showing a table of zeros. */
+export function booksIsEmpty(view: { lines: Pick<ReturnLine, "line" | "amountCents" | "sources">[] }): boolean {
+  return view.lines.every((l) => l.amountCents === 0 && l.sources.length === 0);
+}

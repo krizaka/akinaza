@@ -1007,8 +1007,9 @@
       },
       "week": "Week {week} · {date}",
       "calendar": "Calendar",
-      "binder": {
-        "title": "The binder",
+      "glance": {
+        "title": "Your day at a glance",
+        "hint": "Each count opens its list.",
         "appointments": "Appointments {count}",
         "toBill": "To bill {count}",
         "toCollect": "To collect {count}",
@@ -1026,7 +1027,8 @@
         "days": "{days} d",
         "invoiced": "Invoiced",
         "collected": "Collected",
-        "appointments": "Appointments done"
+        "appointments": "Appointments done",
+        "daysLong": "{days} days"
       },
       "balance": {
         "title": "To collect",
@@ -1332,7 +1334,8 @@
         "label": "Your clients at a glance",
         "count": "{count} clients",
         "owedLabel": "To collect",
-        "upToDate": "{count} of {total} up to date"
+        "upToDate": "{count} of {total} up to date",
+        "upToDateHint": "Up to date means nothing owed."
       },
       "search": "Search a client",
       "searchPlaceholder": "Name, e-mail or phone",
@@ -1341,7 +1344,7 @@
       "filter": {
         "all": "All",
         "due": "Still owed",
-        "upcoming": "Coming back"
+        "upcoming": "Next visit booked"
       },
       "selection": {
         "export": "Export the selection (CSV)"
@@ -1417,7 +1420,8 @@
         "businessTypes": {
           "professional": "Professional services (studio, consulting, repairs…)",
           "pets": "Pet care (walks, grooming…)"
-        }
+        },
+        "ownerNameHint": "Your name in the agenda and on your appointments."
       },
       "zones": {
         "title": "Zones you serve",
@@ -1940,7 +1944,14 @@
           "label": "Net QST"
         }
       },
-      "footnote": "Akinaza prepares these figures from your invoices and expenses. You file the return with Revenu Québec yourself, after checking each figure."
+      "footnote": "Akinaza prepares these figures from your invoices and expenses. You file the return with Revenu Québec yourself, after checking each figure.",
+      "remitHint": "Prepared from your invoices and expenses; you file it with Revenu Québec.",
+      "periodHint": "The latest finished quarter is the one to file now; the current quarter is still open.",
+      "empty": {
+        "title": "Nothing to prepare for this period yet",
+        "body": "The figures appear here as soon as you issue invoices or record expenses in this period.",
+        "action": "See the invoices"
+      }
     },
     "invoices": {
       "title": "Invoices",
@@ -2334,7 +2345,7 @@
       "autoMark": "Texts marked « translated automatically » have not been read by you yet: read them and edit them if needed.",
       "runs": "{used} of {limit} translations used today.",
       "nothing": "Nothing to translate yet: fill in your tagline, your story and your services first.",
-      "ownHint": "You wrote this text yourself in this language: change it from the shop page.",
+      "ownHint": "You wrote these texts yourself in this language: change them from the shop page.",
       "staleHint": "Your original text changed since this translation was made.",
       "fields": {
         "tagline": "Tagline",
@@ -2682,7 +2693,11 @@
         "body": "The rest of the page works. Try again in a moment."
       },
       "retry": "Try again",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "page": {
+        "title": "This page could not load.",
+        "body": "Nothing is lost. Try again in a moment."
+      }
     },
     "organize": {
       "close": "Close",

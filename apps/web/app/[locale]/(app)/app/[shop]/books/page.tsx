@@ -1,13 +1,16 @@
 // @template: app-dashboard
 import { prepareShopReturn, shopDay } from "@akinaza/db";
 import { ChipLink } from "@krizaka/ui/chip-link";
+import { EmptyState } from "@krizaka/ui/empty-state";
+import { Mascot } from "@krizaka/ui/mascots";
 import { PageHeader } from "@krizaka/ui/page-header";
 import { Stat, StatGrid } from "@krizaka/ui/stat";
 import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BooksLines } from "@/components/app/BooksLines";
-import { booksView, periodChoices, periodFor } from "@/lib/books";
+import { ButtonLink } from "@/components/ButtonLink";
+import { booksIsEmpty, booksView, periodChoices, periodFor } from "@/lib/books";
 import { db } from "@/lib/db";
 import { formatLongDay, formatMoney } from "@/lib/format";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
@@ -48,12 +51,18 @@ export default async function Books({ params, searchParams }: { params: Promise<
           </ChipLink>
         ))}
       </nav>
+      <p className="text-sm text-fg-secondary">{t.periodHint}</p>
       <StatGrid>
         {nets.map(({ key, net }) => (
           <Stat key={key} label={t.net[key]} value={money(net.netCents)} hint={t.outcome[net.outcome]} />
         ))}
       </StatGrid>
-      <BooksLines lines={view.lines} />
+      <p className="text-sm text-fg-secondary">{t.remitHint}</p>
+      {booksIsEmpty(view) ? (
+        <EmptyState icon={<Mascot bird="beaver" mood="empty" size={120} />} title={t.empty.title} description={t.empty.body} action={<ButtonLink href={shopRoutes(locale, shop.id).invoices} variant="secondary" size="sm">{t.empty.action}</ButtonLink>} />
+      ) : (
+        <BooksLines lines={view.lines} />
+      )}
       <p className="text-sm text-fg-muted">{t.footnote}</p>
     </div>
   );

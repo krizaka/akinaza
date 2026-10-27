@@ -105,7 +105,7 @@ export function TagBinder({ organize, path, own = {} }: { organize: OrganizeData
         <Tabs.NavLink href={listHref(path, only(), null, own)} exact aria-label={say("organize.binder.all")}>
           {say("organize.binder.all")}
         </Tabs.NavLink>
-        {organize.tags.map((tag) => (
+        {organize.tags.filter((tag) => (organize.counts[tag.id] ?? 0) > 0 || organize.filters.tags?.includes(tag.id)).map((tag) => (
           <Tabs.NavLink key={tag.id} href={listHref(path, only(tag.id), null, own)} exact hue={MARKER_HUE[tag.marker]} count={organize.counts[tag.id] ?? 0}>
             {tag.name}
           </Tabs.NavLink>

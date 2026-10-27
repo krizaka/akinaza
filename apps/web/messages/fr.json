@@ -1007,8 +1007,9 @@
       },
       "week": "Semaine {week} · {date}",
       "calendar": "Calendrier",
-      "binder": {
-        "title": "Le classeur",
+      "glance": {
+        "title": "Votre journée en bref",
+        "hint": "Chaque nombre ouvre sa liste.",
         "appointments": "Rendez-vous {count}",
         "toBill": "À facturer {count}",
         "toCollect": "À encaisser {count}",
@@ -1026,7 +1027,8 @@
         "days": "{days} j",
         "invoiced": "Facturé",
         "collected": "Encaissé",
-        "appointments": "Rendez-vous faits"
+        "appointments": "Rendez-vous faits",
+        "daysLong": "{days} jours"
       },
       "balance": {
         "title": "À encaisser",
@@ -1332,7 +1334,8 @@
         "label": "Vos clients en bref",
         "count": "{count} clients",
         "owedLabel": "À encaisser",
-        "upToDate": "{count} sur {total} à jour"
+        "upToDate": "{count} sur {total} à jour",
+        "upToDateHint": "À jour : rien n’est dû."
       },
       "search": "Rechercher un client",
       "searchPlaceholder": "Nom, courriel ou téléphone",
@@ -1341,7 +1344,7 @@
       "filter": {
         "all": "Tous",
         "due": "Reste dû",
-        "upcoming": "À venir"
+        "upcoming": "Prochain rendez-vous pris"
       },
       "selection": {
         "export": "Exporter la sélection (CSV)"
@@ -1417,7 +1420,8 @@
         "businessTypes": {
           "professional": "Services professionnels (studio, conseil, réparation…)",
           "pets": "Soins aux animaux (promenades, toilettage…)"
-        }
+        },
+        "ownerNameHint": "Votre nom dans l’agenda et sur vos rendez-vous."
       },
       "zones": {
         "title": "Zones desservies",
@@ -1940,7 +1944,14 @@
           "label": "TVQ nette"
         }
       },
-      "footnote": "Akinaza prépare ces chiffres à partir de vos factures et de vos dépenses. C'est vous qui produisez la déclaration auprès de Revenu Québec, après avoir vérifié chaque chiffre."
+      "footnote": "Akinaza prépare ces chiffres à partir de vos factures et de vos dépenses. C'est vous qui produisez la déclaration auprès de Revenu Québec, après avoir vérifié chaque chiffre.",
+      "remitHint": "Préparé à partir de vos factures et dépenses ; vous le produisez vous-même auprès de Revenu Québec.",
+      "periodHint": "Le dernier trimestre terminé est celui à produire maintenant ; le trimestre en cours est encore ouvert.",
+      "empty": {
+        "title": "Rien à préparer pour cette période",
+        "body": "Les chiffres apparaissent ici dès que vous émettez des factures ou saisissez des dépenses sur cette période.",
+        "action": "Voir les factures"
+      }
     },
     "invoices": {
       "title": "Factures",
@@ -2334,7 +2345,7 @@
       "autoMark": "Les textes marqués « traduit automatiquement » n'ont pas encore été relus par vous : relisez-les et modifiez-les au besoin.",
       "runs": "{used} traductions sur {limit} utilisées aujourd'hui.",
       "nothing": "Rien à traduire pour l'instant : remplissez d'abord votre accroche, votre histoire et vos services.",
-      "ownHint": "Vous avez écrit ce texte vous-même dans cette langue : modifiez-le depuis la page boutique.",
+      "ownHint": "Vous avez écrit ces textes vous-même dans cette langue : modifiez-les depuis la page de la boutique.",
       "staleHint": "Votre texte d'origine a changé depuis cette traduction.",
       "fields": {
         "tagline": "Accroche",
@@ -2682,7 +2693,11 @@
         "body": "Le reste de la page fonctionne. Réessayez dans un instant."
       },
       "retry": "Réessayer",
-      "loading": "Chargement…"
+      "loading": "Chargement…",
+      "page": {
+        "title": "Cette page n’a pas pu se charger.",
+        "body": "Rien n’est perdu. Réessayez dans un instant."
+      }
     },
     "organize": {
       "close": "Fermer",

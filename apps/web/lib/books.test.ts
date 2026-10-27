@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { booksView, periodChoices, periodFor } from "./books";
+import { booksIsEmpty, booksView, periodChoices, periodFor } from "./books";
 
 const TODAY = "2026-10-21";
 
@@ -57,5 +57,13 @@ describe("the books view", () => {
     expect(v.lines.find((l) => l.line === "103")!.sources).toHaveLength(1);
     expect(v.lines.find((l) => l.line === "109")!.computed).toBe(true);
     expect(v.lines.find((l) => l.line === "103")!.computed).toBe(false);
+  });
+});
+
+describe("an empty period", () => {
+  it("is empty when no line has an amount or a document, and not when one has", () => {
+    expect(booksIsEmpty({ lines: [{ line: "101", amountCents: 0, sources: [] }] })).toBe(true);
+    expect(booksIsEmpty({ lines: [{ line: "101", amountCents: 100, sources: [] }] })).toBe(false);
+    expect(booksIsEmpty({ lines: [{ line: "103", amountCents: 0, sources: [{ kind: "invoice", id: "i", label: "F", amountCents: 0 }] }] })).toBe(false);
   });
 });
