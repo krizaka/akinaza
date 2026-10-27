@@ -34,6 +34,9 @@ know-how it shows: **running a shop, for less** — one tool instead of five, bo
   working papers; **Akinaza
   prepares; the merchant files.** Nothing is transmitted to any government.
 - **Bookings** — services, staff, schedules; the database refuses a double booking (`EXCLUDE` on time ranges).
+- **Explorer** (`/explore`) — the published shops on a map (`@krizaka/ui/map`) and in a list, filtered by kind of service, open now and a free
+  time today, searched by address or postal code or "near me" (asked on a click, never stored) and ranked by distance. The address search is a
+  `GeocodingPort` whose service and attribution are the environment's (`APP_GEOCODER_*`); only what a shop's public page already shows travels.
 - **The shop page in other languages** — the owner writes in French or English and offers the page in the languages they choose, inside the
   administrator's list (`storefront.languages.allowed`; `/fr`, `/en` and `/es` under `/s/<slug>`, a language that is off shows the source language).
   Each text is translated automatically through Orazaka (the `TranslationPort`, the Studio `text-translation`), stored with its status (`auto` or
