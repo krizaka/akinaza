@@ -72,8 +72,8 @@ export function POST(req: Request) {
 /** Disconnects: the connection and the busy times it gave are deleted together; the slots it blocked are free again at once. */
 export function DELETE(req: Request) {
   return handle(async () => {
-    const { id } = await readJson(req, remove);
     const { shop, role, session } = await requireShop(req, "agenda");
+    const { id } = await readJson(req, remove);
     const overview = await calendarOverview(shop.id, agendaScope(role, session.account.id));
     if (!overview.connections.some((c) => c.id === id)) throw refuse(404, "NOT_FOUND", "Not found");
     // The provider is told to forget the grant first (best effort: the owner's choice to leave is never held back by the provider being down).
