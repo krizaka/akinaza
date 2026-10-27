@@ -1665,6 +1665,7 @@
           "once": "Copiez ce lien maintenant : il n’est affiché qu’une fois. Créer un nouveau lien désactive l’ancien aussitôt.",
           "copy": "Copier le lien",
           "copied": "Lien copié",
+          "qrLabel": "Code QR du lien d’agenda privé de {name} : scannez-le avec votre téléphone pour vous abonner",
           "url": "Lien privé de {name}",
           "howTitle": "Comment l’ajouter",
           "how": "Calendrier Apple : Fichier, Nouvel abonnement à un calendrier. Google Agenda : Autres agendas, À partir de l’URL. Outlook : Ajouter un calendrier, S’abonner à partir du Web. Quiconque a le lien peut lire ces heures : ne le partagez avec personne.",
