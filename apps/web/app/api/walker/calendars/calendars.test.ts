@@ -16,6 +16,7 @@ vi.mock("@/lib/rate-limit", () => ({ limit: vi.fn() }));
 vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), addConnection: vi.fn(), connectionSecret: vi.fn(), feedPeople: vi.fn(), listConnections: vi.fn(), recordSyncOk: vi.fn(), removeConnection: vi.fn() }));
 vi.mock("@/lib/calendar/public-url", async (original) => ({ ...(await original<typeof import("@/lib/calendar/public-url")>()), assertPublicHost: vi.fn(async () => undefined) }));
 
+type Fetch = typeof globalThis.fetch;
 const STAFF = "11111111-1111-4111-8111-111111111111";
 const OTHER = "22222222-2222-4222-8222-222222222222";
 const ICS = "BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nUID:a\r\nDTSTART:20991027T140000Z\r\nDTEND:20991027T150000Z\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n";
@@ -93,7 +94,7 @@ describe("connecting a calendar (#282, ADR-004)", () => {
     const id = "44444444-4444-4444-8444-444444444444";
     vi.mocked(listConnections).mockResolvedValue([{ id, staffId: null, kind: "google", label: "G", state: "ok", lastError: null, lastSuccessAt: null, consentedAt: new Date() }]);
     vi.mocked(connectionSecret).mockResolvedValue({ kind: "google", secretEnc: sealField("REFRESH", Buffer.alloc(32, 7), id) });
-    const down = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit): Promise<Response> => Promise.reject(new Error("google is down")));
+    const down = vi.fn<Fetch>(async () => Promise.reject(new Error("google is down")));
     vi.stubGlobal("fetch", down);
     expect((await send(DELETE, "DELETE", { id })).status).toBe(200);
     expect(String(down.mock.calls[0]![0])).toBe("https://oauth2.googleapis.com/revoke");
