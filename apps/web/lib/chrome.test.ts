@@ -3,8 +3,6 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import en from "../messages/en.json";
-import fr from "../messages/fr.json";
 
 const chrome = readFileSync(join(__dirname, "../components/SiteChrome.tsx"), "utf8");
 
