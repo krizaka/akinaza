@@ -1683,7 +1683,18 @@
           "refresh": "Read again",
           "remove": "Disconnect",
           "removeConfirm": "Disconnect this calendar? Its busy times are deleted and those slots open again.",
-          "off": "The administrator has switched calendar connections off."
+          "off": "The administrator has switched calendar connections off.",
+          "providers": {
+            "title": "Connect Google or Outlook",
+            "lead": "You agree at Google's or Microsoft's own page, and Akinaza receives only the times you are busy: never a title, a guest or a note. You can take the permission back there too.",
+            "google": "Connect Google Calendar",
+            "outlook": "Connect Outlook"
+          },
+          "outcome": {
+            "connected": "Calendar connected. Its busy times now keep those slots free.",
+            "denied": "Nothing was connected: you did not give the permission.",
+            "error": "The calendar could not be connected. Try again."
+          }
         }
       }
     },

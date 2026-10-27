@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { configuredKinds } from "@/app/calendar-edge";
 import { BoardEditor } from "@/components/app/BoardEditor";
 import { CalendarSources } from "@/components/app/CalendarSources";
 import { FeedLinks } from "@/components/app/FeedLinks";
@@ -142,7 +143,7 @@ async function AgendaSection({ locale, shopId }: { locale: RouteLocale; shopId: 
   const { shop, role, session } = await memberShop(shopId, "bookings");
   const t = getDictionary(locale).console.boutique.agenda;
   const scope = agendaScope(role, session.account.id);
-  const [overview, calendars] = await Promise.all([feedOverview(shop.id, scope), calendarOverview(shop.id, scope)]);
+  const [overview, calendars] = await Promise.all([feedOverview(shop.id, scope), calendarOverview(shop.id, scope, configuredKinds())]);
   return (
     <div className="flex flex-col gap-5">
       <PageHeader as="h2" title={t.title} description={t.lead} />

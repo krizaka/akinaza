@@ -1683,7 +1683,18 @@
           "refresh": "Relire",
           "remove": "Déconnecter",
           "removeConfirm": "Déconnecter cet agenda ? Ses plages occupées sont supprimées et ces créneaux se rouvrent.",
-          "off": "L'administrateur a désactivé la connexion d'agendas."
+          "off": "L'administrateur a désactivé la connexion d'agendas.",
+          "providers": {
+            "title": "Connecter Google ou Outlook",
+            "lead": "Vous donnez votre accord sur la page de Google ou de Microsoft, et Akinaza ne reçoit que les plages où vous êtes occupé : jamais un titre, un invité ou une note. Vous pouvez aussi y retirer l'autorisation.",
+            "google": "Connecter Google Agenda",
+            "outlook": "Connecter Outlook"
+          },
+          "outcome": {
+            "connected": "Agenda connecté. Ses plages occupées gardent désormais ces créneaux libres.",
+            "denied": "Rien n'a été connecté : vous n'avez pas donné l'autorisation.",
+            "error": "L'agenda n'a pas pu être connecté. Réessayez."
+          }
         }
       }
     },

@@ -52,4 +52,20 @@ describe("the other calendars screen (#282, ADR-004)", () => {
     const keys = (o: unknown, p = ""): string[] => (typeof o === "object" && o ? Object.entries(o).flatMap(([k, v]) => keys(v, `${p}${k}.`)) : [p]);
     expect(keys(fr.console.boutique.agenda.sources)).toEqual(keys(en.console.boutique.agenda.sources));
   });
+
+  it("offers Google and Outlook only when the administrator switched them on, with the consent and what is read", () => {
+    const t = text(renderToStaticMarkup(<CalendarSources overview={overview({ kinds: ["ics", "google", "outlook"] })} />));
+    for (const word of ["Connect Google Calendar", "Connect Outlook", "never a title, a guest or a note"]) expect(t).toContain(word);
+    expect(text(renderToStaticMarkup(<CalendarSources overview={overview({ kinds: ["ics"] })} />))).not.toContain("Connect Google Calendar");
+  });
+
+  it("works with the providers alone, without the ICS address form", () => {
+    const t = text(renderToStaticMarkup(<CalendarSources overview={overview({ kinds: ["google"] })} />));
+    expect(t).toContain("Connect Google Calendar");
+    expect(t).not.toContain("Calendar address (ICS)");
+  });
+
+  it("says the same words in French", () => {
+    for (const loc of [en, fr]) expect(Object.keys(loc.console.boutique.agenda.sources.providers)).toEqual(["title", "lead", "google", "outlook"]);
+  });
 });

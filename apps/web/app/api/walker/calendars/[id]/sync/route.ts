@@ -1,6 +1,7 @@
 import { claimDueConnections } from "@akinaza/db";
 import { z } from "zod";
 
+import { calendarSourceMaker } from "@/app/calendar-edge";
 import { systemClock } from "@/app/system-clock";
 import { agendaScope, requireShop } from "@/lib/access";
 import { calendarOverview } from "@/lib/calendar/overview";
@@ -24,7 +25,7 @@ export function POST(req: Request, { params }: { params: Promise<{ id: string }>
     const now = systemClock.now();
     const [claimed] = await claimDueConnections(db(), now, 1, 5, { shopId: shop.id, id: id.data });
     if (!claimed) throw refuse(404, "NOT_FOUND", "Not found");
-    const outcome = await syncConnection(claimed, now, await syncSettings(), dataKey());
+    const outcome = await syncConnection(claimed, now, await syncSettings(), dataKey(), await calendarSourceMaker());
     return Response.json({ outcome }, { headers: { "Cache-Control": "private, no-store" } });
   });
 }

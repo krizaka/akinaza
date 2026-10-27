@@ -59,8 +59,9 @@ export interface Grant {
 
 /** A source that needs the owner's consent at the provider (OAuth) before it can be read. */
 export interface ConnectableSource extends CalendarSource {
-  authorizeUrl(input: { state: string; redirectUri: string; loginHint?: string }): string;
-  exchange(input: { code: string; redirectUri: string }): Promise<Grant>;
+  /** `codeChallenge` is the S256 challenge of a PKCE verifier kept by the caller (RFC 7636): a stolen code is of no use without it. */
+  authorizeUrl(input: { state: string; redirectUri: string; codeChallenge: string; loginHint?: string }): string;
+  exchange(input: { code: string; redirectUri: string; codeVerifier: string }): Promise<Grant>;
   listCalendars(): Promise<CalendarRef[]>;
   /** Tells the provider to forget the grant; the connection and its busy times are deleted by the caller whatever happens. */
   revoke(): Promise<void>;
