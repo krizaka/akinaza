@@ -14,7 +14,7 @@ const ADMIN = { id: null, label: "admin@example.com" };
 const view = async (prices = priceCatalogue(PRICES, memoryPriceStore()), locale: "en" | "fr" = "en", founderOnSale = false) => pricingPlans(publicCatalogue(await prices.catalogue(NOW)), locale, { founderOnSale });
 
 describe("the public pricing page reads the catalogue (akinaza#380)", () => {
-  it("shows Starter at 45 $ and Scale B2B at 99 $, with the fees of the catalogue: 0 % on cards, the capped debit fee", async () => {
+  it("shows Starter at 45 $ and Pro (the scale entry) at 99 $, with the fees of the catalogue: 0 % on cards, the capped debit fee", async () => {
     const [starter, scale, ...rest] = await view();
     expect(rest).toEqual([]);
     expect([starter!.id, starter!.price, scale!.id, scale!.price]).toEqual(["starter", "$45", "scale", "$99"]);
@@ -52,14 +52,27 @@ describe("the public pricing page reads the catalogue (akinaza#380)", () => {
     expect((await view(prices, "en", true)).map((p) => p.id)).toEqual(["starter", "scale"]);
   });
 
-  it("a feature that is not built says « soon » and carries no figure", async () => {
+  it("a feature that is not built is flagged soon, and carries no figure unless it is a stated rate", async () => {
     const plans = await view();
-    const soon = plans.flatMap((p) => p.features.filter((f) => f.soon));
-    expect(plans[1]!.features.filter((f) => f.soon).map((f) => f.id)).toEqual(["payments", "contract", "transfers"]);
-    for (const f of soon) {
+    expect(plans[0]!.features.filter((f) => f.soon).map((f) => f.id)).toEqual(["payments", "fees"]);
+    expect(plans[1]!.features.filter((f) => f.soon).map((f) => f.id)).toEqual(["payments", "fees", "contract", "transfers"]);
+    for (const f of plans.flatMap((p) => p.features.filter((x) => x.soon && x.id !== "fees"))) {
       expect(f.vars, f.id).toEqual({});
       for (const t of [en, fr]) expect(t.pricing.features[f.id], f.id).not.toMatch(/\d+\s?[%$]|\$\s?\d|\{/);
     }
+  });
+
+  it("lists as running only what runs: client payments, their fees, the contract and the transfers are all planned (akinaza#440)", async () => {
+    for (const plan of await view()) {
+      const running = plan.features.filter((f) => !f.soon).map((f) => f.id);
+      for (const planned of ["payments", "fees", "contract", "transfers"] as const) expect(running, `${plan.id} ${planned}`).not.toContain(planned);
+    }
+  });
+
+  it("the plan above Starter lists only what differs: everything in Starter, then its planned features", async () => {
+    const [starter, scale] = await view();
+    expect(starter!.features.filter((f) => !f.soon).map((f) => f.id)).toEqual(["booking", "invoices", "books"]);
+    expect(scale!.features.filter((f) => !f.soon).map((f) => f.id)).toEqual(["inherits"]);
   });
 });
 
@@ -84,5 +97,14 @@ describe("the page and its messages", () => {
     expect(text).not.toMatch(/escrow|séquestre|\bAI\b|\bIA\b/i);
     expect(en.pricing.faq.map((f) => f.a).join(" ")).toMatch(/Never\./);
     expect(en.pricing.faq.map((f) => f.a).join(" ")).toMatch(/you file them/);
+  });
+});
+
+describe("the plan names are plain words (akinaza#440)", () => {
+  it("has no « Scale B2B » jargon on the public page or the home, in either language", () => {
+    for (const t of [en, fr]) {
+      expect(t.pricing.plans.scale).toBe("Pro");
+      expect(t.landing.founder.plans.scale).toBe("Pro");
+    }
   });
 });

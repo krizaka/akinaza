@@ -1,7 +1,7 @@
 "use client";
 
 import { krizakaFetch, useMutation } from "@krizaka/query";
-import { AccountProfileCard, AvatarPicker } from "@krizaka/ui/account-settings";
+import { AccountProfileCard } from "@krizaka/ui/account-settings";
 import { Alert } from "@krizaka/ui/alert";
 import { Button } from "@krizaka/ui/button";
 import { Field, Input } from "@krizaka/ui/field";
@@ -12,6 +12,7 @@ import { AVATAR_TONES, avatarChoice, avatarOf } from "@/lib/avatar";
 import { errorKey } from "@/lib/client";
 import { useSay } from "@/lib/i18n-client";
 
+import { PictureChoice } from "./PictureChoice";
 import { useSectionDraft } from "./useSectionDraft";
 
 export interface ProfileView {
@@ -23,8 +24,8 @@ export interface ProfileView {
   pendingEmail: string | null;
   /** « Membre depuis octobre 2026 », formatted on the server in the viewer's language; null when the date is unknown. */
   memberSince: string | null;
-  /** « Propriétaire chez Pattes de Saint-Henri », « Employé chez … », « Membre »: what this account is, read only. */
-  role: string;
+  /** « Propriétaire chez Pattes de Saint-Henri », « Employé chez … », « Administrateur »: what this account is, read only; null for a client, who holds no role (the row is not drawn). */
+  role: string | null;
 }
 
 const patchProfile = (body: Record<string, unknown>) => krizakaFetch("/api/me/profile", { method: "PATCH", json: body }).then(() => undefined);
@@ -95,7 +96,7 @@ export function ProfileSettings({ profile }: { profile: ProfileView }) {
   const form = useSectionDraft({ name: profile.name ?? "", avatar: avatarChoice(profile) }, (values) => patchProfile({ name: values.name.trim() || null, avatarSeed: values.avatar || null }));
   const shown = { id: profile.id, avatarSeed: form.draft.avatar };
   return (
-    <SettingsSection variant="flat" title={say("account.profile.sections.profile")} description={say("account.profile.profileDescription")} save={form.save}>
+    <SettingsSection variant="flat" title={say("account.profile.sections.profile")} description={say(profile.role ? "account.profile.profileDescription" : "account.profile.profileDescriptionClient")} save={form.save}>
       <SettingsRow
         label={
           <AccountProfileCard
@@ -110,11 +111,11 @@ export function ProfileSettings({ profile }: { profile: ProfileView }) {
           />
         }
       />
-      <SettingsRow label={say("account.name.label")} description={say("account.name.hint")} htmlFor="account-name">
+      <SettingsRow label={say("account.name.label")} description={say(profile.role ? "account.name.hint" : "account.name.hintClient")} htmlFor="account-name">
         <Input id="account-name" value={form.draft.name} maxLength={80} autoComplete="name" onChange={(event) => form.set({ name: event.target.value })} />
       </SettingsRow>
       <SettingsRow label={say("account.avatar.label")} description={say("account.avatar.hint")}>
-        <AvatarPicker
+        <PictureChoice
           dense
           label={say("account.avatar.label")}
           options={AVATAR_TONES.map((tone) => ({ id: String(tone), label: say("account.avatar.tone", { tone }), defaultAvatar: { brand: "akinaza", tone } }))}
@@ -125,11 +126,13 @@ export function ProfileSettings({ profile }: { profile: ProfileView }) {
       <SettingsRow label={say("account.email.label")} description={say("account.email.hint")}>
         <EmailChange pending={profile.pendingEmail} />
       </SettingsRow>
-      <SettingsRow label={say("account.profile.role")}>
-        <span className="text-sm text-fg-secondary" data-testid="account-role">
-          {profile.role}
-        </span>
-      </SettingsRow>
+      {profile.role ? (
+        <SettingsRow label={say("account.profile.role")}>
+          <span className="text-sm text-fg-secondary" data-testid="account-role">
+            {profile.role}
+          </span>
+        </SettingsRow>
+      ) : null}
     </SettingsSection>
   );
 }

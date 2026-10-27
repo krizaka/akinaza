@@ -46,6 +46,10 @@
     "preferences": "Préférences",
     "version": "v{version}"
   },
+  "stage": {
+    "title": "Version de développement",
+    "message": "Les données peuvent être réinitialisées à tout moment. Ce n’est pas encore une offre commerciale."
+  },
   "landing": {
     "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
     "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",
@@ -84,7 +88,7 @@
       },
       "plans": {
         "starter": "Starter",
-        "scale": "Scale B2B",
+        "scale": "Pro",
         "price": "{price} par mois plus taxes",
         "preparing": "en préparation",
         "scaleSoon": "ses fonctions B2B arrivent bientôt"
@@ -111,7 +115,7 @@
       "line": "Dossiers dans une base de données au Canada · Consentement noté par finalité · Taxes préparées, déclaration produite par vous",
       "scope": "Pour les studios, salons et travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place."
     },
-    "visualLabel": "dev.akinaza.com",
+    "visualLabel": "www.akinaza.com",
     "feed": {
       "title": "Affiché dans votre quartier",
       "lead": "Les affichettes que les commerces épinglent sur leur propre page : une porte ouverte, un nouveau service, une place libérée. Rien ici n’est de la publicité que nous vendons.",
@@ -119,6 +123,7 @@
       "all": "Tous les quartiers",
       "boardLabel": "Affichettes épinglées par les commerces du quartier",
       "visit": "Voir {shop}",
+      "demo": "Voir la boutique de démonstration",
       "empty": "Aucune affichette dans ce quartier pour le moment.",
       "error": "Impossible de charger les affichettes. Réessayez dans un instant."
     }
@@ -351,16 +356,18 @@
     "plansLabel": "Plans",
     "perMonth": "par mois, taxes en sus",
     "preparing": "en préparation",
-    "soon": "bientôt",
+    "soon": "Bientôt",
+    "plannedTitle": "À venir",
     "badgeFounder": "Offre fondatrice",
     "badgeFounderLimit": "Les {limit} premières entreprises",
     "founderNote": "Mise en route incluse : vos services, vos heures, vos premières factures.",
     "plans": {
       "founder": "Fondatrice",
       "starter": "Starter",
-      "scale": "Scale B2B"
+      "scale": "Pro"
     },
     "features": {
+      "inherits": "Tout ce qu’inclut {plan}, plus les fonctions ci-dessous à mesure qu’elles arrivent",
       "booking": "Votre page de boutique et vos réservations, avec les heures que vous avez vraiment",
       "invoices": "Des factures bilingues avec la TPS et la TVQ exactes au sou",
       "books": "Les livres et les chiffres de taxes de chaque période, préparés pour que vous les déclariez",
@@ -1072,12 +1079,12 @@
         "accountTitle": "Mon compte",
         "description": "Votre profil, vos préférences, votre sécurité et vos données.",
         "profileDescription": "Votre nom et votre image, tels que votre équipe les voit.",
+        "profileDescriptionClient": "Votre nom et votre image.",
         "avatar": "Photo de profil",
         "email": "Courriel",
         "language": "Langue",
         "role": "Rôle",
         "roleIn": "{role} chez {shop}",
-        "roleUser": "Membre",
         "roleAdmin": "Administrateur",
         "lastSeen": "Dernière visite",
         "passwordTitle": "Changer votre mot de passe",
@@ -1114,6 +1121,7 @@
       "name": {
         "label": "Nom",
         "hint": "Affiché dans le menu du compte et à votre équipe.",
+        "hintClient": "Affiché dans le menu de votre compte.",
         "missing": "Pas encore de nom"
       },
       "avatar": {

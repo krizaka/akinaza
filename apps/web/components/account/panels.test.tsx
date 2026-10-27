@@ -86,6 +86,15 @@ describe("the profile (docs/ux/2026-10-full-review.md K6): picture, name, e-mail
     expect(text(html)).not.toContain(en.console.account.profile.description);
   });
 
+  it("speaks to a client alone: no team, no role row (akinaza#440)", () => {
+    const html = text(around(<ProfileSettings profile={{ ...base, role: null }} />));
+    expect(html).toContain(en.console.account.profile.profileDescriptionClient);
+    expect(html).toContain(en.console.account.name.hintClient);
+    expect(html).not.toMatch(/your team/i);
+    expect(html).not.toContain(en.console.account.profile.role);
+    expect(around(<ProfileSettings profile={{ ...base, role: null }} />)).not.toContain("account-role");
+  });
+
   it.each([
     ["the owner", "Owner at Pattes de Saint-Henri"],
     ["a staff member", "Staff at Pattes de Saint-Henri"],

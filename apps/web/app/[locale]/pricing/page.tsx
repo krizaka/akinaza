@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 import { systemClock } from "@/app/system-clock";
 import { ButtonLink } from "@/components/ButtonLink";
+import { PlannedFeatures } from "@/components/pricing/PlannedFeatures";
 import { SiteHeader } from "@/components/SiteChrome";
 import { SiteFooter } from "@/components/SiteFooter";
 import { pageSession } from "@/lib/access";
@@ -38,7 +39,8 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
   const founderOnSale = env().APP_FOUNDER_OFFER_ENABLED && onSale(entry) && (await founderSeats(query, founderCap(entry))).open;
   const plans = pricingPlans(await publicPrices(catalogue, now), locale, { founderOnSale });
   const hero = heroActions(locale, Boolean(await pageSession().catch(() => null)));
-  const action = (founder: boolean) =>
+  // One primary action on the page: the featured plan's. The others are secondary.
+  const action = (founder: boolean, featured: boolean) =>
     founder ? (
       <form method="post" action={`/api/billing/checkout?redirect=1&locale=${locale}`}>
         <Button type="submit" variant="primary" size="md" shape="cut" className="w-full">
@@ -46,7 +48,7 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
         </Button>
       </form>
     ) : (
-      <ButtonLink href={hero.primary.href} variant="secondary" size="md" shape="cut" className="w-full">
+      <ButtonLink href={hero.primary.href} variant={featured ? "primary" : "secondary"} size="md" shape="cut" className="w-full">
         {t.landing.actions[hero.primary.message]}
       </ButtonLink>
     );
@@ -54,6 +56,7 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
     if (plan.id !== "founder") return undefined;
     return plan.limit ? format(d.badgeFounderLimit, { limit: plan.limit }) : d.badgeFounder;
   };
+  const wording = (f: (typeof plans)[number]["features"][number]) => format(f.id === "inherits" ? d.features.inherits : d.features[f.id], f.id === "inherits" ? { plan: d.plans.starter } : f.vars);
   const cards: PricingPlan[] = plans.map((plan, i) => ({
     id: plan.id,
     name: d.plans[plan.id],
@@ -61,11 +64,14 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
     unit: plan.price === null ? undefined : d.perMonth,
     featured: i === 0,
     badge: badgeOf(plan),
-    features: [
-      ...(plan.id === "founder" ? [d.founderNote] : []),
-      ...plan.features.map((f) => (f.soon ? `${d.features[f.id]} (${d.soon})` : format(d.features[f.id], f.vars))),
-    ],
-    action: action(plan.id === "founder"),
+    // The tick means « runs today »; what is planned is apart, under « Soon », with no tick.
+    features: [...(plan.id === "founder" ? [d.founderNote] : []), ...plan.features.filter((f) => !f.soon).map(wording)],
+    action: (
+      <>
+        <PlannedFeatures title={d.plannedTitle} soon={d.soon} items={plan.features.filter((f) => f.soon).map(wording)} />
+        {action(plan.id === "founder", i === 0)}
+      </>
+    ),
   }));
   return (
     <>
