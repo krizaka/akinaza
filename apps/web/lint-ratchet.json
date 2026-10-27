@@ -10,7 +10,9 @@
     "src/**/*.{js,jsx,mjs,ts,tsx,mts}",
     "lib/**/*.{js,jsx,mjs,ts,tsx,mts}",
     "hooks/**/*.{js,jsx,mjs,ts,tsx,mts}",
-    "features/**/*.{js,jsx,mjs,ts,tsx,mts}"
+    "features/**/*.{js,jsx,mjs,ts,tsx,mts}",
+    "scripts/**/*.{js,jsx,mjs,ts,tsx,mts}",
+    "proxy.ts"
   ],
   "counters": {
     "palette": 0,
@@ -25,14 +27,15 @@
     "retiredImport": 0,
     "routeStateSelection": 2,
     "pageTemplate": 38,
-    "cognitiveComplexity": 2,
-    "sonar": 55,
-    "sonarjs/no-nested-conditional": 30,
+    "cognitiveComplexity": 3,
+    "sonar": 60,
+    "sonarjs/no-nested-conditional": 32,
     "sonarjs/use-type-alias": 1,
-    "sonarjs/no-nested-template-literals": 18,
+    "sonarjs/no-nested-template-literals": 20,
     "sonarjs/super-linear-regex": 2,
     "sonarjs/no-nested-assignment": 1,
     "sonarjs/todo-tag": 1,
-    "sonarjs/no-redundant-optional": 2
+    "sonarjs/no-redundant-optional": 2,
+    "sonarjs/no-os-command-from-path": 1
   }
 }
