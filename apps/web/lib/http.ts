@@ -1,4 +1,4 @@
-import { OrganizeError, ShopError, TranslationUnavailable } from "@akinaza/db";
+import { OrganizeError, ShopError, ShopPageInvalidError, TranslationUnavailable } from "@akinaza/db";
 import { PriceError, SettingsError } from "@krizaka/settings";
 import { z, ZodError } from "zod";
 
@@ -26,6 +26,7 @@ const SHOP_STATUS: Record<string, number> = {
   AK_REQUEST_UNKNOWN: 404, AK_NOTE_EMPTY: 400, AK_NOTE_TOO_LONG: 400, AK_APPOINTMENT_UNKNOWN: 404, AK_REQUESTS_FULL: 409, AK_REQUEST_FILES_FULL: 409,
   AK_TIME_OFF_DATE: 400, AK_TIME_OFF_ORDER: 400, AK_TIME_OFF_TOO_LONG: 400,
   AK_SHOP_LIMIT: 409, AK_TEMPLATE_UNKNOWN: 404, AK_SECTIONS_CUSTOM: 409, AK_LANGUAGE_NOT_ALLOWED: 400, AK_LANGUAGE_NOT_ENABLED: 409, AK_TRANSLATION_LIMIT: 429, AK_TRANSLATION_UNKNOWN: 404,
+  AK_NOT_FOUND: 404, AK_SHOP_PAGE_NO_DRAFT: 409,
   AK_REEL_LINK: 400, AK_REEL_LIMIT: 409, AK_REEL_UNKNOWN: 404, AK_SOCIAL_LINK: 400, AK_ANNOUNCEMENT_LIMIT: 409, AK_ANNOUNCEMENT_UNKNOWN: 404, AK_REVIEW_REMOVED: 409, AK_REVIEW_UNKNOWN: 404, AK_REEL_TOO_LONG: 413, AK_REEL_NOT_VIDEO: 400,
 };
 
@@ -44,6 +45,10 @@ async function dispatch(run: () => Promise<Response>, requestId: string): Promis
   } catch (error) {
     if (error instanceof HttpError) {
       return Response.json({ error: error.message, ...error.body }, { status: error.status, headers: error.headers });
+    }
+    if (error instanceof ShopPageInvalidError) {
+      // The document is refused whole, each issue with its path (`sections.2.variant`): the composer shows it where it is.
+      return Response.json({ error: "Invalid shop page", code: "SHOP_PAGE_INVALID", issues: error.issues }, { status: 422 });
     }
     if (error instanceof ShopError) {
       return Response.json({ error: error.code, code: error.code.replace(/^AK_/, "") }, { status: SHOP_STATUS[error.code] ?? 400 });
