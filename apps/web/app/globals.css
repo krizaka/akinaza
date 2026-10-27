@@ -87,9 +87,8 @@ html.light [data-hue="ink"]    { --kz-hue: hsl(222 30% 22%); --kz-hue-2: hsl(217
   [data-app-frame-slot] .md\:h-dvh { height: calc(100dvh - var(--kz-top-chrome-h, 0px)); }
 }
 
-/* A shop's first screen: the faces come from next/font (preloaded, display optional, metric-matched fallback), so nothing swaps late. */
+/* The first screen (the dev banner above the page included): the faces come from next/font (preloaded, display optional, metric-matched fallback), so nothing swaps late. */
 .kz-shop-fonts {
-  display: contents;
   --kz-font-sans: var(--kz-shop-font-sans), "Atkinson Hyperlegible Next Fallback", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --kz-font-display: var(--kz-shop-font-display), "Plus Jakarta Sans Fallback", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   font-family: var(--kz-font-sans);

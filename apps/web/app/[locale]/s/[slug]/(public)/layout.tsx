@@ -1,7 +1,5 @@
-import { cn } from "@krizaka/ui/cn";
 import { notFound } from "next/navigation";
 
-import { shopDisplay, shopSans } from "@/lib/shop-fonts";
 import { loadPublicShop, movedShopPath } from "@/lib/shop-page";
 
 /**
@@ -14,5 +12,5 @@ import { loadPublicShop, movedShopPath } from "@/lib/shop-page";
 export default async function ShopLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
   if (!(await loadPublicShop(slug)) && !(await movedShopPath(locale, slug))) notFound();
-  return <div className={cn(shopSans.variable, shopDisplay.variable, "kz-shop-fonts")}>{children}</div>;
+  return children;
 }
