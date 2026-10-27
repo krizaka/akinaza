@@ -46,6 +46,10 @@
     "preferences": "Préférences",
     "version": "v{version}"
   },
+  "stage": {
+    "title": "Version de développement",
+    "message": "Les données peuvent être réinitialisées à tout moment. Ce n’est pas encore une offre commerciale."
+  },
   "landing": {
     "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
     "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",

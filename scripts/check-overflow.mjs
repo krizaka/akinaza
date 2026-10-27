@@ -46,14 +46,19 @@ function measure() {
     .slice(0, 3)
     .map((el) => `${el.tagName.toLowerCase()}.${String(el.className).split(" ").slice(0, 3).join(".")}`);
   const actions = [...document.querySelectorAll("main a[class*='kz-button'], main a[data-slot='button'], main .kz-button")].filter((a) => a.getBoundingClientRect().width > 0).map((a) => Math.round(a.getBoundingClientRect().height));
-  return { scroll: doc.scrollWidth, client: doc.clientWidth, wide, actions };
+  // The development notice stands above the page in the flow; the site bar floats under it, never over it (akinaza#440).
+  const notice = document.querySelector("[data-top-chrome]");
+  const bar = document.querySelector("[data-site-bar] nav, [data-site-bar] [role='navigation']");
+  const chrome = notice && bar && window.scrollY === 0 ? { noticeBottom: Math.round(notice.getBoundingClientRect().bottom), barTop: Math.round(bar.getBoundingClientRect().top) } : null;
+  return { scroll: doc.scrollWidth, client: doc.clientWidth, wide, actions, chrome };
 }
 
 /** The problems one page at one width shows, from what `measure` read. */
-function judge(result, where) {
+export function judge(result, where) {
   const out = [];
   if (result.scroll > result.client) out.push(`${where}: scrollWidth ${result.scroll} > ${result.client} (${result.wide.join(", ")})`);
   else if (result.wide.length) out.push(`${where}: elements past the edge (${result.wide.join(", ")})`);
+  if (result.chrome && result.chrome.barTop < result.chrome.noticeBottom) out.push(`${where}: the bar (top ${result.chrome.barTop} px) overlaps the development notice (bottom ${result.chrome.noticeBottom} px)`);
   if (result.actions.some((h) => h < 36)) out.push(`${where}: an action is ${Math.min(...result.actions)} px tall (< 36)`);
   return out;
 }

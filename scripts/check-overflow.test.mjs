@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { FRAME_LOCALES, FRAME_PAGES, PAGES, THEMES, WIDTHS } from "./check-overflow.mjs";
+import { FRAME_LOCALES, FRAME_PAGES, judge, PAGES, THEMES, WIDTHS } from "./check-overflow.mjs";
 
 describe("the dev-preview crawl (ui.themes-devices)", () => {
   it("covers both languages of the public pages and the sign-in, in both themes, from a phone to a desktop", () => {
@@ -28,5 +28,12 @@ describe("the dev-preview crawl (ui.themes-devices)", () => {
     expect(FRAME_LOCALES).toEqual(["fr", "en"]);
     const source = readFileSync(new URL("./check-overflow.mjs", import.meta.url), "utf8");
     expect(source).toContain("/api/auth/sign-in");
+  });
+
+  it("refuses a site bar that overlaps the development notice (akinaza#440), and accepts one that clears it", () => {
+    const page = { scroll: 390, client: 390, wide: [], actions: [44] };
+    expect(judge({ ...page, chrome: { noticeBottom: 56, barTop: 12 } }, "/en @390 dark")).toEqual([expect.stringContaining("overlaps the development notice")]);
+    expect(judge({ ...page, chrome: { noticeBottom: 56, barTop: 68 } }, "/en @390 dark")).toEqual([]);
+    expect(judge({ ...page, chrome: null }, "/en @390 dark")).toEqual([]);
   });
 });

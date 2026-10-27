@@ -46,6 +46,10 @@
     "preferences": "Preferences",
     "version": "v{version}"
   },
+  "stage": {
+    "title": "Development version",
+    "message": "Data can be reset at any time. This is not a commercial offer yet."
+  },
   "landing": {
     "title": "Your appointments, invoices and taxes, sorted.",
     "lead": "Clients book, you invoice, your tax figures are ready. In French and in English.",
