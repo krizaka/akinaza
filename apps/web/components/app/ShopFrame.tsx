@@ -9,6 +9,7 @@ import { SkipLink } from "@krizaka/ui/skip-link";
 import Link from "next/link";
 import { useState } from "react";
 
+import { FrameSlot } from "@/components/app/FrameSlot";
 import { type ChipShop, ShopChip } from "@/components/app/ShopChip";
 import { ShopSearch } from "@/components/app/ShopSearch";
 import { useFrameAccount } from "@/components/app/use-frame-account";
@@ -70,6 +71,7 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
   return (
     <>
       <SkipLink>{say("shell.skip")}</SkipLink>
+      <FrameSlot>
       <AppFrame
         name="Akinaza"
         mark={<AkinazaLogo size={28} animated={false} />}
@@ -108,6 +110,7 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
           {children}
         </main>
       </AppFrame>
+      </FrameSlot>
       {searchable ? <ShopSearch locale={locale} shopId={shop.current.id} actions={actions} open={searchOpen} onOpenChange={setSearchOpen} /> : null}
     </>
   );

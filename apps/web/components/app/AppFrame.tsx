@@ -6,6 +6,7 @@ import { AppFrame as KrizakaAppFrame, type FrameSection } from "@krizaka/ui/app-
 import { SkipLink } from "@krizaka/ui/skip-link";
 import Link from "next/link";
 
+import { FrameSlot } from "@/components/app/FrameSlot";
 import { useFrameAccount } from "@/components/app/use-frame-account";
 import { useSay } from "@/lib/i18n-client";
 
@@ -26,6 +27,7 @@ export function AppFrame({ locale, email, name, avatarSeed, base, items, childre
   return (
     <>
       <SkipLink>{say("shell.skip")}</SkipLink>
+      <FrameSlot>
       <KrizakaAppFrame
         name="Akinaza"
         label={say("shell.admin")}
@@ -45,6 +47,7 @@ export function AppFrame({ locale, email, name, avatarSeed, base, items, childre
           {children}
         </main>
       </KrizakaAppFrame>
+      </FrameSlot>
     </>
   );
 }

@@ -51,7 +51,14 @@ function measure() {
   // The bar's own box (the offset wrapper just inside the sticky one): the navs inside it are display:none at some widths.
   const bar = document.querySelector("[data-site-bar] > div");
   const chrome = notice && bar && window.scrollY === 0 ? { noticeBottom: Math.round(notice.getBoundingClientRect().bottom), barTop: Math.round(bar.getBoundingClientRect().top) } : null;
-  return { scroll: doc.scrollWidth, client: doc.clientWidth, wide, actions, chrome };
+  // The signed-in frame's own screen (akinaza#444): its shell (`min-height`) and its sticky rail must fit in what is left of the viewport under the
+  // notice, or every page, an empty one included, scrolls by the notice's height. What the frame forces below its top, and the viewport's height.
+  const shell = document.querySelector("[data-app-frame-slot] > *");
+  const rail = shell && [...shell.querySelectorAll("nav")].find((n) => getComputedStyle(n).position === "sticky");
+  const frame = shell
+    ? { top: Math.round(shell.getBoundingClientRect().top + window.scrollY), forced: Math.round(Math.max(parseFloat(getComputedStyle(shell).minHeight) || 0, rail ? rail.getBoundingClientRect().height : 0)), viewport: doc.clientHeight }
+    : null;
+  return { scroll: doc.scrollWidth, client: doc.clientWidth, wide, actions, chrome, frame };
 }
 
 /** The problems one page at one width shows, from what `measure` read. */
@@ -60,6 +67,7 @@ export function judge(result, where) {
   if (result.scroll > result.client) out.push(`${where}: scrollWidth ${result.scroll} > ${result.client} (${result.wide.join(", ")})`);
   else if (result.wide.length) out.push(`${where}: elements past the edge (${result.wide.join(", ")})`);
   if (result.chrome && result.chrome.barTop < result.chrome.noticeBottom) out.push(`${where}: the bar (top ${result.chrome.barTop} px) overlaps the development notice (bottom ${result.chrome.noticeBottom} px)`);
+  if (result.frame && result.frame.top + result.frame.forced > result.frame.viewport + 1) out.push(`${where}: the frame forces a scroll (starts at ${result.frame.top} px and asks ${result.frame.forced} px of a ${result.frame.viewport} px screen)`);
   if (result.actions.some((h) => h < 36)) out.push(`${where}: an action is ${Math.min(...result.actions)} px tall (< 36)`);
   return out;
 }
