@@ -70,6 +70,7 @@ directories); files published before the package keep their key and address. Upl
 
 ```bash
 corepack enable && pnpm install          # Node 22, pnpm 10 — also installs the pre-push hook
+pre-commit install                         # once: the gitleaks and zizmor hooks on each commit
 cp .env.example .env                       # a local PostgreSQL URL (a database of your own)
 pnpm dev                                   # http://localhost:3000
 pnpm run check                             # lint · typecheck · tests (what the hook and CI run)
