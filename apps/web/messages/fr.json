@@ -1078,12 +1078,12 @@
         "accountTitle": "Mon compte",
         "description": "Votre profil, vos préférences, votre sécurité et vos données.",
         "profileDescription": "Votre nom et votre image, tels que votre équipe les voit.",
+        "profileDescriptionClient": "Votre nom et votre image.",
         "avatar": "Photo de profil",
         "email": "Courriel",
         "language": "Langue",
         "role": "Rôle",
         "roleIn": "{role} chez {shop}",
-        "roleUser": "Membre",
         "roleAdmin": "Administrateur",
         "lastSeen": "Dernière visite",
         "passwordTitle": "Changer votre mot de passe",
@@ -1120,6 +1120,7 @@
       "name": {
         "label": "Nom",
         "hint": "Affiché dans le menu du compte et à votre équipe.",
+        "hintClient": "Affiché dans le menu de votre compte.",
         "missing": "Pas encore de nom"
       },
       "avatar": {
