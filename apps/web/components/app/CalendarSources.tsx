@@ -78,7 +78,7 @@ function ProviderConnect({ providers, options }: { providers: Provider[]; option
     onSubmit: async (values) => {
       setNeedConsent(!values.consent);
       if (!values.consent) return;
-      const started = await call.run<{ url: string }>(`/api/calendars/connect/${chosen.current}`, { json: { label: values.label, staffId: values.staffId || null, locale: locale === "fr" ? "fr" : "en", consent: true } }, { refresh: false });
+      const started = await call.run<{ url: string }>(`/api/calendars/connect/${chosen.current}`, { json: { label: values.label, staffId: values.staffId || null, locale, consent: true } }, { refresh: false });
       if (started) window.location.assign(started.url);
     },
   });
