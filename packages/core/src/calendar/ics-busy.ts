@@ -53,6 +53,18 @@ function parseProp(line: string): { name: string; prop: Prop } | null {
   return { name: name!.toUpperCase(), prop: { params: paramsOf(rest), value: line.slice(colon + 1) } };
 }
 
+/** One line inside a VEVENT: nested components (alarms...) are skipped, and the depth is returned. */
+function readInside(current: Props, line: string, upper: string, depth: number): number {
+  if (upper.startsWith("BEGIN:")) return depth + 1;
+  if (upper.startsWith("END:")) return depth - 1;
+  const parsed = depth === 0 ? parseProp(line) : null;
+  if (parsed) {
+    current[parsed.name] ??= [];
+    current[parsed.name]!.push(parsed.prop);
+  }
+  return depth;
+}
+
 function events(text: string): Props[] {
   const out: Props[] = [];
   let current: Props | null = null;
@@ -65,15 +77,7 @@ function events(text: string): Props[] {
     } else if (upper === "END:VEVENT") {
       if (current) out.push(current);
       current = null;
-    } else if (current && upper.startsWith("BEGIN:")) depth++;
-    else if (current && upper.startsWith("END:")) depth--;
-    else if (current && depth === 0) {
-      const parsed = parseProp(line);
-      if (parsed) {
-        current[parsed.name] ??= [];
-        current[parsed.name]!.push(parsed.prop);
-      }
-    }
+    } else if (current) depth = readInside(current, line, upper, depth);
   }
   return out;
 }
@@ -231,27 +235,24 @@ function skippedStarts(e: Props, overridden: Map<string, Set<number>>, timezone:
   return skip;
 }
 
+/** The busy intervals one event gives inside the window (none for a free, cancelled or unreadable event). */
+function eventBusy(e: Props, overridden: Map<string, Set<number>>, timezone: string, from: number, to: number): BusyInterval[] {
+  if (e.TRANSP?.[0]?.value.toUpperCase() === "TRANSPARENT" || e.STATUS?.[0]?.value.toUpperCase() === "CANCELLED") return [];
+  const first = e.DTSTART?.[0] ? parseMoment(e.DTSTART[0], timezone) : null;
+  if (!first) return [];
+  const length = lengthOf(e, first, timezone);
+  if (length <= 0) return [];
+  const skip = skippedStarts(e, overridden, timezone);
+  const rule = e.RRULE?.[0] ? parseRule(e.RRULE[0].value, timezone) : null;
+  const starts = rule && !e["RECURRENCE-ID"] ? occurrenceStarts(first, rule, to) : [first.at];
+  return starts.filter((start) => !skip.has(start) && start + length > from && start < to).map((start) => ({ startsAt: new Date(start), endsAt: new Date(start + length) }));
+}
+
 /** The busy times of an ICS file inside the window, merged. Malformed events are skipped, never fatal. */
 export function parseBusy(text: string, options: IcsBusyOptions): BusyInterval[] {
   const { timezone } = options;
   const [from, to] = [options.from.getTime(), options.to.getTime()];
   const all = events(text);
   const overridden = overriddenStarts(all, timezone);
-  const out: BusyInterval[] = [];
-  for (const e of all) {
-    if (e.TRANSP?.[0]?.value.toUpperCase() === "TRANSPARENT") continue;
-    if (e.STATUS?.[0]?.value.toUpperCase() === "CANCELLED") continue;
-    const first = e.DTSTART?.[0] ? parseMoment(e.DTSTART[0], timezone) : null;
-    if (!first) continue;
-    const length = lengthOf(e, first, timezone);
-    if (length <= 0) continue;
-    const skip = skippedStarts(e, overridden, timezone);
-    const rule = e.RRULE?.[0] ? parseRule(e.RRULE[0].value, timezone) : null;
-    const starts = rule && !e["RECURRENCE-ID"] ? occurrenceStarts(first, rule, to) : [first.at];
-    for (const start of starts) {
-      if (skip.has(start) || start + length <= from || start >= to) continue;
-      out.push({ startsAt: new Date(start), endsAt: new Date(start + length) });
-    }
-  }
-  return mergeBusy(out);
+  return mergeBusy(all.flatMap((e) => eventBusy(e, overridden, timezone, from, to)));
 }
