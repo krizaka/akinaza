@@ -24,7 +24,7 @@ Live mode is a change of keys and of the processor account, not of code.
 
 ## Addendum (2026-10-25, akinaza#363): the grid, the limit, no fee
 - **Prices are data in one module**, `apps/web/lib/pricing.ts`: founder 39 $ a month, plus taxes, setup included; regular 49 $ a month, plus taxes,
-  **not public** (no page shows it while sign-up is closed). `payments/catalogue.json` holds both for the processor; `lib/pricing.test.ts` keeps them equal.
+  **not public** (no page shows it while sign-up is closed). `infra/payments/catalogue.json` holds both for the processor; `lib/pricing.test.ts` keeps them equal.
   Every price shown says « plus taxes », and no amount is typed in a message.
 - **The founder offer's limit is a setting**, `plans.founder.limit` (default 20 businesses, global). A business holds a seat from its first
   subscription (`accounts.payment_subscription_id`). Once the limit is reached the checkout answers 409 `FOUNDER_OFFER_FULL` and the page says the
