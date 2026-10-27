@@ -1,4 +1,4 @@
-import { differenceInCalendarDays, differenceInMilliseconds, hoursToMilliseconds, parseISO } from "date-fns";
+import { addHours, differenceInCalendarDays, differenceInMilliseconds, hoursToMilliseconds, parseISO } from "date-fns";
 
 import { INVOICE_STATE, invoiceState, remainingCents } from "../invoice-state";
 import { balance, expenseEntries, invoiceEntries, type LedgerEntry } from "../ledger";
@@ -118,6 +118,9 @@ export function percent(part: number, whole: number): number | null {
   const abs = n < 0n ? -n : n;
   return Number(sign * ((2n * abs + d) / (2n * d)));
 }
+
+/** The instant after which the figure is called stale (ISO). */
+export const staleAt = (figure: Pick<Figure, "computedAt" | "staleAfterHours">) => addHours(parseISO(figure.computedAt), figure.staleAfterHours).toISOString();
 
 /** Whether a computed figure is still fresh at `now` (ISO). */
 export const isStale = (figure: Pick<Figure, "computedAt" | "staleAfterHours">, now: string) => differenceInMilliseconds(parseISO(now), parseISO(figure.computedAt)) > hoursToMilliseconds(figure.staleAfterHours);

@@ -569,3 +569,13 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - The video player speaks the page's language (its labels come from the catalogues); the shop's own video plays in the television, muted and only while on screen.
 - The booking journey wears a **thin paper head** on steps 1, 2 and 4 (the shop's name in the display face, « Step 2 of 4 · The time », « Edit » on the time step) and the confirmation presses a « booked » stamp once. No wall, tilt, doodle or texture reaches a form; the skeleton carries a box of the head's height.
 
+
+## The owner's figures explain themselves (#260)
+
+- **Decision**: every figure on the Monday brief and on « Vos livres » is a `KpiExplained` (meaning, formula with the numbers read from the ledger, sources linked to their rows, freshness, state); « Que faire maintenant » (`NextActions`) sits on Today and the brief; the lexique (`Glossary`, `GlossaryTerm`) explains the words, the ones needing an accountant marked.
+- **Problem**: a salon owner is not an accountant; a bare « 487,20 $ » raises more questions than it answers.
+- **Principle**: show the work (Nielsen, visibility of system status; progressive disclosure: the meaning first, the formula one row below).
+- **Refused**: a hidden « info » tooltip per figure (unreachable on a phone); a figure with no source.
+- **Cost**: a longer card; the quarter is assumed for the period until the shop's filing frequency is captured.
+- **Wrong if**: owners ignore the formula row (nobody opens the source link) - then fold it.
+- Akinaza prepares; the owner files. Print: « Imprimer ou enregistrer en PDF » on the books page (print styles hide controls).

@@ -1917,7 +1917,8 @@
           "label": "Net QST"
         }
       },
-      "footnote": "Akinaza prepares these figures from your invoices and expenses. You file the return with Revenu Québec yourself, after checking each figure."
+      "footnote": "Akinaza prepares these figures from your invoices and expenses. You file the return with Revenu Québec yourself, after checking each figure.",
+      "figuresTitle": "Your GST and QST figures"
     },
     "invoices": {
       "title": "Invoices",
@@ -2436,7 +2437,30 @@
           "why": "Only {booked} of {offered} of these slots were booked lately.",
           "cta": "Open the hours"
         }
-      }
+      },
+      "title": "Your figures",
+      "lead": "Each figure says what it means, how it is computed from your invoices and where it comes from.",
+      "rateOf": {
+        "collected": "That is {rate} % of what you invoiced with taxes.",
+        "toCollect": "{rate} % of it is overdue.",
+        "margin": "That is {rate} % of your revenue.",
+        "noShows": "That is {rate} % of the appointments that were due."
+      },
+      "source": "Where it comes from",
+      "urgency": {
+        "now": "Now",
+        "soon": "Soon",
+        "week": "This week"
+      },
+      "lexiconLead": "Words that need an accountant are marked.",
+      "print": "Print or save as PDF",
+      "printHint": "A clean copy for your accountant: the figures, their formulas and their sources.",
+      "forPeriod": "For the period {start} to {end}",
+      "computed": "Computed {when}",
+      "lexiconTerms": "Words used here",
+      "never": "Akinaza prepares these figures. You check them and you file your returns yourself.",
+      "formulaHere": "{formula} Here: {terms}.",
+      "updatedLabel": "Updated"
     },
     "lexicon": {
       "title": "Lexique",

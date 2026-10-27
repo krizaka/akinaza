@@ -7,8 +7,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { BooksLines } from "@/components/app/BooksLines";
+import { FiguresPanel } from "@/components/app/FiguresPanel";
+import { LexiconSection } from "@/components/app/LexiconSection";
+import { PrintInvoiceButton } from "@/components/app/PrintInvoiceButton";
 import { booksView, periodChoices, periodFor } from "@/lib/books";
 import { db } from "@/lib/db";
+import { loadFigures } from "@/lib/figures";
 import { formatLongDay, formatMoney } from "@/lib/format";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
@@ -32,6 +36,8 @@ export default async function Books({ params, searchParams }: { params: Promise<
   const today = await shopDay(db(), shop.id, new Date());
   const period = periodFor((await searchParams).period, today);
   const prepared = await prepareShopReturn(db(), shop.id, period.start, period.end);
+  const { figures } = await loadFigures(shop, today, new Date(), { start: period.start, end: period.end });
+  const routes = shopRoutes(locale, shop.id);
   const view = booksView(prepared);
   const money = (cents: number) => formatMoney(cents, locale);
   const nets = [
@@ -41,7 +47,7 @@ export default async function Books({ params, searchParams }: { params: Promise<
   return (
     <div className="flex flex-col gap-5">
       <PageHeader title={t.title} description={format(t.period, { from: formatLongDay(period.start, locale), to: formatLongDay(period.end, locale) })} />
-      <nav aria-label={t.periodNav} className="flex flex-wrap gap-2">
+      <nav aria-label={t.periodNav} data-no-print className="flex flex-wrap gap-2">
         {periodChoices(today).map((p) => (
           <ChipLink key={p.id} asChild selected={p.id === period.id} current={p.id === period.id ? "page" : undefined}>
             <Link href={shopRoutes(locale, shop.id).books(p.id)}>{p.id.replace("-", " ")}</Link>
@@ -53,8 +59,18 @@ export default async function Books({ params, searchParams }: { params: Promise<
           <Stat key={key} label={t.net[key]} value={money(net.netCents)} hint={t.outcome[net.outcome]} />
         ))}
       </StatGrid>
+      <section aria-labelledby="books-figures" className="flex flex-col gap-3">
+        <h2 id="books-figures" className="text-lg font-semibold">{t.figuresTitle}</h2>
+        <p className="text-sm text-fg-muted">{getDictionary(locale).console.figures.never}</p>
+        <FiguresPanel ids={["gstCollected", "qstCollected", "gstToRemit", "qstToRemit"]} figures={figures} locale={locale} routes={routes} timeZone={shop.timezone} now={new Date().toISOString()} />
+      </section>
       <BooksLines lines={view.lines} />
       <p className="text-sm text-fg-muted">{t.footnote}</p>
+      <div data-no-print className="flex flex-col gap-1">
+        <div><PrintInvoiceButton label={getDictionary(locale).console.figures.print} /></div>
+        <p className="text-sm text-fg-muted">{getDictionary(locale).console.figures.printHint}</p>
+      </div>
+      <LexiconSection locale={locale} />
     </div>
   );
 }
