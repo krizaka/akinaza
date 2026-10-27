@@ -57,8 +57,9 @@ describe("the owner's frame (docs/ux/2026-10-full-review.md § 4.1): where you w
       const list = render(OWNER);
       expect(list.match(/data-primary/g)).toHaveLength(1);
       expect(list).toMatch(/data-testid="primary-action"[^>]*>[\s\S]*?shell\.newInvoice/);
-      expect(list.match(/aria-label="shell\.account"/g)).toHaveLength(1);
-      expect(list.indexOf('data-testid="account-menu-header"')).toBeLessThan(list.indexOf('aria-label="shell.account"'));
+      expect(list.match(/aria-label="Compte"/g)).toHaveLength(1);
+      // The menu is in the top bar, not on the rail.
+      expect(list.slice(list.indexOf("<header"), list.indexOf("</header>"))).toContain('aria-label="Compte"');
     } finally {
       where.path = "/fr/app/s-1/aujourdhui";
     }
@@ -107,19 +108,19 @@ describe("the B2 frame (D1b): the search, the language, the rail with its words 
   const html = render(OWNER);
 
   it("opens the search from the header, with its ⌘K hint and the shortcut said to assistive technology", () => {
-    const trigger = html.match(/<button[^>]*data-testid="search-trigger"[^>]*>[\s\S]*?<\/button>/)?.[0] ?? "";
-    expect(trigger).toContain('aria-label="shell.search.open"');
+    const trigger = html.match(/<div data-slot="search"[^>]*>[\s\S]*?<\/button>/)?.[0] ?? "";
     expect(trigger).toContain('aria-keyshortcuts="Meta+K Control+K"');
-    expect(trigger).toContain("<kbd");
-    expect(trigger).toContain("shell.search.placeholder");
+    expect(trigger).toContain('aria-haspopup="dialog"');
+    expect(trigger).toContain("shell.search.open");
   });
 
   it("offers no search to who may open neither clients nor invoices", () => {
-    expect(render({ ...OWNER, search: false })).not.toContain("search-trigger");
+    expect(render({ ...OWNER, search: false })).not.toContain('data-slot="search"');
   });
 
-  it("shows the language in the header from a tablet up (the account menu carries it on a phone)", () => {
-    expect(html).toMatch(/class="hidden sm:block" data-testid="header-language"><div[\s\S]*?shell\.language/);
+  it("keeps the language and the theme in the account menu, the one place of the family: none of its own in the header", () => {
+    expect(html).not.toContain("header-language");
+    expect(html).not.toContain("data-testid=\"account-menu-header\"");
   });
 
   it("shows the rail's words on a desktop and counts on the day and the invoices, said in words", () => {
@@ -150,12 +151,12 @@ describe("the same frame for other roles and for a client", () => {
     expect(html).not.toContain("shop-chip");
     expect(html).not.toContain("primary-action");
     expect(html).not.toContain("app-version");
-    expect(html.match(/aria-label="shell\.account"/g)).toHaveLength(1);
+    expect(html.match(/aria-label="Compte"/g)).toHaveLength(1);
   });
 });
 
 describe("the account under the avatar (docs/ux/2026-10-full-review.md K6)", () => {
-  const trigger = (html: string) => html.match(/<button[^>]*aria-label="shell\.account"[^>]*>[\s\S]*?<\/button>/)?.[0] ?? "";
+  const trigger = (html: string) => html.match(/<button[^>]*aria-label="Compte"[^>]*>[\s\S]*?<\/button>/)?.[0] ?? "";
 
   it("shows the name in the header once the person has set it", () => {
     expect(trigger(render(OWNER))).toContain("Léa");

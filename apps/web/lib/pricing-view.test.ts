@@ -74,7 +74,7 @@ describe("the page and its messages", () => {
     expect(page).toContain("APP_FOUNDER_OFFER_ENABLED");
     expect(page).toContain("heroActions(");
     expect(read("lib/site.ts")).toContain('"pricing"');
-    expect(read("components/SiteChrome.tsx")).toContain('page: "pricing"');
+    expect(read("components/SiteChrome.tsx")).toContain('pricing: pagePath(locale, "pricing")');
     expect(read("components/SiteFooter.tsx")).toContain('pagePath(locale, "pricing")');
     expect(read("lib/seo.ts")).toContain("/en/pricing");
   });
