@@ -1,7 +1,10 @@
 import { krizakaBase } from "@krizaka/config/eslint";
+import { krizakaStack } from "@krizaka/config/eslint/stack";
 
 export default [
   ...krizakaBase,
+  // The stack rules, the React-effects rules and cognitive complexity (15): warnings while krizaka-ratchet freezes the debt.
+  ...krizakaStack({ effects: "warn", complexity: "warn" }),
   { ignores: [".expo/**", "dist/**", "ios/**", "android/**", "expo-env.d.ts"] },
   // Expo config plugins, their tests and Jest's resolver are CommonJS.
   { files: ["plugins/**/*.js", "jest.resolver.js"], rules: { "@typescript-eslint/no-require-imports": "off" } },
