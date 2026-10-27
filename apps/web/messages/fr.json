@@ -126,6 +126,11 @@
       "demo": "Voir la boutique de démonstration",
       "empty": "Aucune affichette dans ce quartier pour le moment.",
       "error": "Impossible de charger les affichettes. Réessayez dans un instant."
+    },
+    "preview": {
+      "demo": "Données de démonstration",
+      "slotsLabel": "Heures libres",
+      "slotsEmpty": "Aucune heure libre cette semaine"
     }
   },
   "docs": {

@@ -126,6 +126,11 @@
       "demo": "See the demo shop",
       "empty": "No flyer up in this neighbourhood yet.",
       "error": "The flyers could not be loaded. Try again in a moment."
+    },
+    "preview": {
+      "demo": "Demo data",
+      "slotsLabel": "Free times",
+      "slotsEmpty": "No free time this week"
     }
   },
   "docs": {
