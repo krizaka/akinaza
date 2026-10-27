@@ -1394,7 +1394,7 @@
         "legalName": "Raison sociale",
         "address": "Adresse",
         "slug": "Adresse de la page",
-        "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. pattes-saint-henri Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
+        "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. pattes-saint-henri. Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
         "ownerName": "Votre prénom",
         "taglineFr": "Une ligne, en français",
         "taglineEn": "Une ligne, en anglais",
@@ -1906,6 +1906,7 @@
         "zero": "Rien à remettre"
       },
       "sources": "{count} documents derrière ce chiffre",
+      "sourcesOne": "1 document derrière ce chiffre",
       "kinds": {
         "invoice": "Facture",
         "expense": "Dépense"
@@ -2140,7 +2141,7 @@
         },
         "shopSetup": {
           "page": {
-            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
+            "slugHint": "Des mots en minuscules reliés par des traits d'union, p. ex. mon-studio. Vous pouvez la changer : l'ancienne adresse mène toujours à votre page.",
             "areaHint": "Montréal — jamais l'adresse civique.",
             "seatUnitHint": "Pour un service de groupe : « Jusqu'à 5 personnes ». Vide : « places »."
           },

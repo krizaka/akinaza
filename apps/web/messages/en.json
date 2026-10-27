@@ -1394,7 +1394,7 @@
         "legalName": "Legal name",
         "address": "Address",
         "slug": "Page address",
-        "slugHint": "Lowercase words joined by hyphens, e.g. pattes-saint-henri You can change it: the old address still leads to your page.",
+        "slugHint": "Lowercase words joined by hyphens, e.g. pattes-saint-henri. You can change it: the old address still leads to your page.",
         "ownerName": "Your first name",
         "taglineFr": "One line, in French",
         "taglineEn": "One line, in English",
@@ -1906,6 +1906,7 @@
         "zero": "Nothing to remit"
       },
       "sources": "{count} documents behind this figure",
+      "sourcesOne": "1 document behind this figure",
       "kinds": {
         "invoice": "Invoice",
         "expense": "Expense"
@@ -2140,7 +2141,7 @@
         },
         "shopSetup": {
           "page": {
-            "slugHint": "Lowercase words joined by hyphens, e.g. my-studio You can change it: the old address still leads to your page.",
+            "slugHint": "Lowercase words joined by hyphens, e.g. my-studio. You can change it: the old address still leads to your page.",
             "areaHint": "Montréal — never the street address.",
             "seatUnitHint": "For a group service: « Up to 5 people ». Empty: « places »."
           },

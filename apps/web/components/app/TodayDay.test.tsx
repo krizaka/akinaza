@@ -91,6 +91,13 @@ describe("Aujourd'hui on the home grammar (D4): the headline, the date on the ri
     expect(html).toContain("today.balance.overdue");
   });
 
+  it("writes the activity charts' text version as money, not as cents (« 10 000 » for 100 $)", () => {
+    const html = render({ board });
+    expect(html).toMatch(/Invoiced|today\.activity\.invoiced/);
+    expect(html).not.toMatch(/10[\s\u202f\u00a0,]?000[^0-9]/);
+    expect(html).toMatch(/100[.,]00/);
+  });
+
   it("keeps the period in the address: 7, 30 or 90 days, the current one marked", () => {
     const html = render({ board, period: 30 });
     for (const p of [30, 90]) expect(html).toContain(`href="/fr/app/s-1/aujourdhui?period=${p}"`);

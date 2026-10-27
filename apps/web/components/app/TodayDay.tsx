@@ -129,6 +129,8 @@ function DayPrimary({ next, nextHref, newInvoiceHref, time }: { next: { id: stri
 /** The activity of the period: one discreet row of three figures, never stacked full width (B2), and the period's chips. */
 function ActivityWidget({ board, totals, period, address }: { board: TodayBoard; totals: { invoiced: number; collected: number; appointments: number }; period: BoardPeriod; address: (next: DayAddressChange) => string }) {
   const { say, locale } = useSay();
+  // The series are cents: the chart reads them as money (its text version said « 25,295 » for $252.95).
+  const moneyFormat = (cents: number) => formatMoney(cents, locale);
   return (
     <Widget
       title={say("today.activity.title")}
@@ -146,15 +148,15 @@ function ActivityWidget({ board, totals, period, address }: { board: TodayBoard;
     >
       <dl className="grid grid-cols-3 gap-3">
         {([
-          ["invoiced", formatMoney(totals.invoiced, locale), board.activity.invoicedCents, "line"],
-          ["collected", formatMoney(totals.collected, locale), board.activity.collectedCents, "line"],
-          ["appointments", String(totals.appointments), board.activity.appointments, "bar"],
-        ] as const).map(([key, value, series, variant]) => (
+          ["invoiced", formatMoney(totals.invoiced, locale), board.activity.invoicedCents, "line", moneyFormat],
+          ["collected", formatMoney(totals.collected, locale), board.activity.collectedCents, "line", moneyFormat],
+          ["appointments", String(totals.appointments), board.activity.appointments, "bar", "integer"],
+        ] as const).map(([key, value, series, variant, format]) => (
           <div key={key} className="flex min-w-0 flex-col gap-1">
-            <dt className="truncate text-xs text-fg-secondary">{say(`today.activity.${key}`)}</dt>
+            <dt className="text-xs leading-tight text-fg-secondary">{say(`today.activity.${key}`)}</dt>
             <dd className="truncate text-sm font-semibold tabular-nums text-fg">{value}</dd>
             <dd>
-              <Sparkline title={say(`today.activity.${key}`)} data={series} categories={board.activity.days} variant={variant} width={72} height={24} />
+              <Sparkline title={say(`today.activity.${key}`)} data={series} categories={board.activity.days} variant={variant} format={format} width={72} height={24} />
             </dd>
           </div>
         ))}
