@@ -93,7 +93,7 @@ describe("connecting a calendar (#282, ADR-004)", () => {
     const id = "44444444-4444-4444-8444-444444444444";
     vi.mocked(listConnections).mockResolvedValue([{ id, staffId: null, kind: "google", label: "G", state: "ok", lastError: null, lastSuccessAt: null, consentedAt: new Date() }]);
     vi.mocked(connectionSecret).mockResolvedValue({ kind: "google", secretEnc: sealField("REFRESH", Buffer.alloc(32, 7), id) });
-    const down = vi.fn(async () => Promise.reject(new Error("google is down")));
+    const down = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit): Promise<Response> => Promise.reject(new Error("google is down")));
     vi.stubGlobal("fetch", down);
     expect((await send(DELETE, "DELETE", { id })).status).toBe(200);
     expect(String(down.mock.calls[0]![0])).toBe("https://oauth2.googleapis.com/revoke");

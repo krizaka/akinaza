@@ -26,7 +26,7 @@ describe("Google (calendar.freebusy only)", () => {
   });
 
   it("exchanges the code with the verifier and keeps the refresh token as the secret", async () => {
-    const fetch = vi.fn(async () => json({ access_token: "a", refresh_token: "r1" }));
+    const fetch = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => json({ access_token: "a", refresh_token: "r1" }));
     const grant = await googleSource({ ...app, fetch }).exchange({ code: "c", redirectUri: "https://x/cb", codeVerifier: "ver" });
     expect(grant.secret).toBe("r1");
     const form = new URLSearchParams(bodyOf(fetch.mock.calls[0] as unknown[]));
@@ -63,7 +63,7 @@ describe("Google (calendar.freebusy only)", () => {
   });
 
   it("revokes the refresh token at Google, and never fails the disconnection", async () => {
-    const fetch = vi.fn(async () => json({}));
+    const fetch = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => json({}));
     await googleSource({ ...app, refreshToken: "r1", fetch }).revoke();
     expect(String(fetch.mock.calls[0]![0])).toBe("https://oauth2.googleapis.com/revoke");
     expect(new URLSearchParams(bodyOf(fetch.mock.calls[0] as unknown[])).get("token")).toBe("r1");
@@ -84,7 +84,7 @@ describe("Outlook (Calendars.ReadBasic + offline_access)", () => {
   });
 
   it("exchanges the code with the verifier", async () => {
-    const fetch = vi.fn(async () => json({ access_token: "a", refresh_token: "r2" }));
+    const fetch = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => json({ access_token: "a", refresh_token: "r2" }));
     expect((await outlookSource({ ...app, fetch }).exchange({ code: "c", redirectUri: "u", codeVerifier: "ver" })).secret).toBe("r2");
     expect(new URLSearchParams(bodyOf(fetch.mock.calls[0] as unknown[])).get("code_verifier")).toBe("ver");
     expect(await code(outlookSource({ ...app, fetch: vi.fn(async () => json({ access_token: "a" })) }).exchange({ code: "c", redirectUri: "u", codeVerifier: "v" }))).toBe("AK_CAL_UNAUTHORIZED");
@@ -96,7 +96,7 @@ describe("Outlook (Calendars.ReadBasic + offline_access)", () => {
       json({ value: [{ start: { dateTime: "2026-10-27T14:00:00.0000000" }, end: { dateTime: "2026-10-27T15:00:00.0000000" }, showAs: "busy" }, { start: { dateTime: "2026-10-27T16:00:00.0000000" }, end: { dateTime: "2026-10-27T17:00:00.0000000" }, showAs: "free" }], "@odata.nextLink": "https://graph.microsoft.com/v1.0/me/calendarView?page=2" }),
       json({ value: [{ start: { dateTime: "2026-10-28T09:00:00.0000000" }, end: { dateTime: "2026-10-28T10:00:00.0000000" }, showAs: "oof" }, { start: { dateTime: "2026-10-28T11:00:00.0000000" }, end: { dateTime: "2026-10-28T12:00:00.0000000" }, isCancelled: true }] }),
     ];
-    const fetch = vi.fn(async () => pages.shift()!);
+    const fetch = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => pages.shift()!);
     const result = await outlookSource({ ...app, refreshToken: "r", fetch }).busy(RANGE, NONE);
     expect(result).toMatchObject({ changed: true, busy: [{ startsAt: new Date("2026-10-27T14:00:00Z") }, { startsAt: new Date("2026-10-28T09:00:00Z") }] });
     expect(String(fetch.mock.calls[1]![0])).toContain("%24select=start%2Cend%2CshowAs%2CisCancelled");
