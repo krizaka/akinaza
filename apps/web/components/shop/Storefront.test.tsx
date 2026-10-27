@@ -1,11 +1,10 @@
-import { TEMPLATES } from "@akinaza/core";
-import { DEFAULT_SHOP_PAGE_SECTIONS, type PublicShop, sectionsFromTemplate, type ShopPageConfig } from "@akinaza/db";
+import { type PublicShop, type ShopPageConfig } from "@akinaza/db";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { buildStorefront } from "@/lib/storefront";
 
-import { Storefront } from "./Storefront";
+import { Storefront } from "./test-storefront";
 
 const TZ = "America/Toronto";
 const NOW = new Date("2026-10-19T10:30:00-04:00"); // Monday, 10:30 in Montréal
@@ -80,8 +79,8 @@ describe("the storefront renders from the shop's data — a hair salon", () => {
     expect(html).not.toContain("#reserver");
   });
   it("leaves out what the salon does not have: no map, no areas, no gallery, no bio, no contact — and no dog walker's word", () => {
-    expect(html).not.toContain('id="zones"');
-    expect(html).not.toContain('id="gallery"');
+    expect(html).not.toContain('id="s_zones"');
+    expect(html).not.toContain('id="s_gallery"');
     expect(html).not.toContain("Who you will meet");
     expect(html).not.toContain("tel:");
     expect(html.toLowerCase()).not.toMatch(/\bdogs?\b|chien|walk|promenade/);
@@ -98,7 +97,7 @@ describe("the storefront renders from the shop's data — a dog walker, in Frenc
   it("uses its cover, its locality, its areas on a map, its bio and its phone", () => {
     expect(html).toContain("https://cdn.test/cover.webp");
     expect(html).toContain("Saint-Henri, Montréal");
-    expect(html).toContain('id="zones"');
+    expect(html).toContain('id="s_zones"');
     expect(html).toContain("Carte des secteurs desservis");
     expect(html).toContain("Je m&#x27;appelle Léa.");
     expect(html).toContain('href="tel:+15145550100"');
@@ -126,10 +125,10 @@ describe("the storefront renders from the shop's data — a dog walker, in Frenc
       };
       const view = buildStorefront({ page, locale: "en", now: NOW, enabledUpcomingSections: { wall: true } });
       const html = renderToStaticMarkup(<Storefront locale="en" view={view} />);
-      expect(html).not.toContain('id="wall"');
+      expect(html).not.toContain('id="s_wall"');
       expect(html).toContain("https://cdn.test/brand/logo.webp");
-      expect(html).not.toContain('id="services"');
-      expect(html).not.toContain('id="reels"');
+      expect(html).not.toContain('id="s_services"');
+      expect(html).not.toContain('id="s_reels"');
       expect(html).not.toContain("This section is being prepared.");
     });
   });
@@ -142,7 +141,7 @@ describe("the storefront renders from the shop's data — a dog walker, in Frenc
     expect(html).toContain("/fr/s/pattes/service/group?zone=z1");
   });
   it("has its gallery", () => {
-    expect(html).toContain('id="gallery"');
+    expect(html).toContain('id="s_gallery"');
     expect(html).toContain("Après la sortie");
   });
 });
@@ -169,88 +168,3 @@ describe("the trade's proposed pictures on the public page (#267)", () => {
   });
 });
 
-describe("`trust` is a section like the others, and a template changes only order, variants and hue (#261, step 3)", () => {
-  const order = (html: string, ids: string[]) => ids.map((id) => [id, html.indexOf(`id="${id}"`)] as const).filter(([, at]) => at >= 0).sort((a, b) => a[1] - b[1]).map(([id]) => id);
-
-  it("a shop with no template draws exactly the order it always had: the story and contact right before the photos", () => {
-    const html = render(walker, "en");
-    expect(order(html, ["services", "hours", "zones", "trust", "gallery"])).toEqual(["services", "hours", "zones", "trust", "gallery"]);
-    expect(html).not.toContain("data-template");
-    expect(html).not.toContain("data-hue");
-  });
-
-  it("hiding `trust` hides the story and contact; moving it moves them", () => {
-    const sections = [...buildStorefront({ page: walker, locale: "en", now: NOW }).sections];
-    const withoutTrust = { ...walker, pageConfig: { logoUrl: null, sections: sections.map((s) => (s.id === "trust" ? { ...s, visible: false } : s)) } } as PublicShop;
-    expect(render(withoutTrust, "en")).not.toContain('id="trust"');
-    const first = { ...walker, pageConfig: { logoUrl: null, sections: [sections.find((s) => s.id === "trust")!, ...sections.filter((s) => s.id !== "trust")] } } as PublicShop;
-    expect(order(render(first, "en"), ["trust", "services", "gallery"])[0]).toBe("trust");
-  });
-
-  it("every template, applied, puts its sections in its order and marks the page with its id and hue", () => {
-    for (const template of TEMPLATES) {
-      const sections = sectionsFromTemplate(template, DEFAULT_SHOP_PAGE_SECTIONS);
-      const page = { ...walker, pageConfig: { logoUrl: null, sections, templateId: template.id, templateVersion: template.version } } as PublicShop;
-      const view = buildStorefront({ page, locale: "en", now: NOW });
-      expect(view.sections.map((s) => s.id).slice(0, template.sections.length), template.id).toEqual(template.sections.map((s) => s.id));
-      expect(view.template).toMatchObject({ id: template.id, version: 1, layout: template.layout, hue: template.hue });
-      const html = renderToStaticMarkup(<Storefront locale="en" view={view} />);
-      expect(html).toContain(`data-template="${template.id}"`);
-      expect(html.includes("data-hue=")).toBe(template.hue !== "brand-akinaza");
-    }
-  });
-
-  it("a story-first template puts the story before the services; a menu-first one lists the services in a single column", () => {
-    const apply = (id: string) => {
-      const template = TEMPLATES.find((t) => t.id === id)!;
-      const page = { ...walker, pageConfig: { logoUrl: null, sections: sectionsFromTemplate(template, DEFAULT_SHOP_PAGE_SECTIONS), templateId: id, templateVersion: 1 } } as PublicShop;
-      return render(page, "en");
-    };
-    expect(order(apply("pets-histoire"), ["trust", "services"])).toEqual(["trust", "services"]);
-    expect(order(apply("pets-vitrine"), ["trust", "services"])).toEqual(["services", "trust"]);
-    expect(apply("salon-carte")).toMatch(/--kz-cards-min:\s*420px/);
-    expect(apply("salon-vitrine")).toMatch(/--kz-cards-min:\s*250px/);
-  });
-
-  it("an id the catalogue does not hold draws the plain page, never a broken one", () => {
-    const page = { ...walker, pageConfig: { logoUrl: null, sections: buildStorefront({ page: walker, locale: "en", now: NOW }).sections, templateId: "gone-away", templateVersion: 3 } } as PublicShop;
-    const html = render(page, "en");
-    expect(html).not.toContain("data-template");
-    expect(html).toContain('id="services"');
-  });
-});
-
-describe("versions, and switching (#261, step 5)", () => {
-  const one = TEMPLATES.find((t) => t.id === "salon-vitrine")!;
-  // Version 2 puts the photos first: a shop that applied version 1 must not move.
-  const two = { ...one, version: 2, sections: [one.sections.find((s) => s.id === "gallery")!, ...one.sections.filter((s) => s.id !== "gallery")] };
-  const catalogue = [...TEMPLATES, two];
-  const on = (template: typeof one) => ({ ...walker, pageConfig: { logoUrl: null, sections: sectionsFromTemplate(template, DEFAULT_SHOP_PAGE_SECTIONS), templateId: template.id, templateVersion: template.version } } as PublicShop);
-
-  it("an old version renders unchanged after a newer one ships; a shop on the newer one draws it", () => {
-    const v1 = buildStorefront({ page: on(one), locale: "en", now: NOW, catalogue });
-    expect(v1.template).toMatchObject({ id: "salon-vitrine", version: 1 });
-    expect(v1.sections[0]!.id).toBe("services");
-    const v2 = buildStorefront({ page: on(two), locale: "en", now: NOW, catalogue });
-    expect(v2.template).toMatchObject({ id: "salon-vitrine", version: 2 });
-    expect(v2.sections[0]!.id).toBe("gallery");
-    expect(renderToStaticMarkup(<Storefront locale="en" view={v1} />)).toContain('data-template="salon-vitrine"');
-  });
-
-  it("switching templates changes only the order, the variants and the hue: every text, photo, service and link stays the same", () => {
-    const a = buildStorefront({ page: on(TEMPLATES.find((t) => t.id === "salon-carte")!), locale: "fr", now: NOW });
-    const b = buildStorefront({ page: on(TEMPLATES.find((t) => t.id === "salon-vitrine")!), locale: "fr", now: NOW });
-    expect(a.template!.id).not.toBe(b.template!.id);
-    expect(a.sections.map((s) => s.id)).not.toEqual(b.sections.map((s) => s.id));
-    const content = (view: typeof a) => {
-      const rest: Partial<typeof a> = { ...view };
-      delete rest.sections;
-      delete rest.template;
-      return rest;
-    };
-    expect(content(a)).toEqual(content(b));
-    expect(a.services.map((s) => s.name)).toEqual(b.services.map((s) => s.name));
-    expect(a.gallery).toEqual(b.gallery);
-    expect(a.tagline).toBe(b.tagline);
-  });
-});

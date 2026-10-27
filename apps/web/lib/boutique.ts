@@ -8,11 +8,11 @@ import type { SettingsNavGroup } from "@krizaka/ui/settings-layout";
  */
 
 /** The sections of « Ma page boutique » (#265, #266) and the shop as a place (B45: the wall, the video and profiles, the board, the reviews), each one save of its own. */
-export const PAGE_TABS = ["identity", "texts", "contact", "offer", "media", "look", "wall", "reels", "board", "reviews", "publish"] as const;
+export const PAGE_TABS = ["identity", "texts", "contact", "offer", "media", "composer", "look", "wall", "reels", "board", "reviews", "publish"] as const;
 export type PageTab = (typeof PAGE_TABS)[number];
 
 /** The permission each tab takes: the shop's identity and publication are the owner's (`settings`); what is pinned on the page is the owner's and the manager's (`catalogue`, #180). */
-export const PAGE_TAB_NEEDS: Record<PageTab, ShopPermission> = { identity: "settings", texts: "settings", contact: "settings", offer: "settings", media: "settings", look: "settings", wall: "catalogue", reels: "catalogue", board: "catalogue", reviews: "catalogue", publish: "settings" };
+export const PAGE_TAB_NEEDS: Record<PageTab, ShopPermission> = { identity: "settings", texts: "settings", contact: "settings", offer: "settings", media: "settings", composer: "catalogue", look: "settings", wall: "catalogue", reels: "catalogue", board: "catalogue", reviews: "catalogue", publish: "settings" };
 
 /** The tabs a role may open, in the hub's order. */
 export const pageTabsAllowed = (allows: (permission: ShopPermission) => boolean): PageTab[] => PAGE_TABS.filter((tab) => allows(PAGE_TAB_NEEDS[tab]));

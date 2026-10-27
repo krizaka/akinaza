@@ -42,8 +42,8 @@ describe("the owner's guide (akinaza#382)", () => {
     expect(pagePath("en", "docs")).toBe("/en/docs");
   });
 
-  it("is in the bar (Product menu) and the footer", () => {
-    expect(read("components/SiteChrome.tsx")).toContain('page: "docs"');
+  it("is in the bar (a flat link) and the footer", () => {
+    expect(read("components/SiteChrome.tsx")).toContain('docs: pagePath(locale, "docs")');
     expect(read("components/SiteFooter.tsx")).toContain('pagePath(locale, "docs")');
   });
 

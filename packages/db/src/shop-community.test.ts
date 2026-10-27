@@ -1,7 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { eq } from "drizzle-orm";
+
 import { eraseClient } from "./shop-ops";
-import { addAnnouncement, addExternalReel, addReview, addUploadedReel, announcementsOf, communityOf, reelsOf, removeAnnouncement, removeReel, replyToReview, reviewsOf, saveSocialLinks, saveWall, setReviewState, socialLinksOf, wallOf } from "./shop-community";
+import { addAnnouncement, feedFlyers, addExternalReel, addReview, addUploadedReel, announcementsOf, communityOf, reelsOf, removeAnnouncement, removeReel, replyToReview, reviewsOf, saveSocialLinks, saveWall, setReviewState, socialLinksOf, wallOf } from "./shop-community";
+import { shops } from "./schema";
 import { freshDatabase, refusal } from "./test/db";
 import { walkerShop } from "./test/fixtures";
 
@@ -211,5 +214,31 @@ describe("the demo shops as places (B45)", () => {
     expect((await urls(b.shopId)).every((u) => u.includes("/demo/pattes-saint-henri/"))).toBe(true);
     const text = JSON.stringify(await wallOf(t.db, a.shopId)).toLowerCase();
     for (const word of ["livre", "book ", "chien", "dog", "laisse"]) expect(text, word).not.toContain(word);
+  });
+});
+
+describe("the neighbourhood feed (#318)", () => {
+  const flyer = (textFr: string, endsOn: string | null = null) => ({ textFr, textEn: "", photoUrl: null, photoAlt: "", endsOn });
+  const setArea = (shopId: string, area: string | null, published = true) => t.db.update(shops).set({ area, published }).where(eq(shops.id, shopId));
+
+  it("lists the flyers of published shops with a locality, with the shop's name and address, never a street", async () => {
+    const s = await walkerShop(t.db, "feed-ok");
+    await setArea(s.shopId, "Saint-Henri, Montréal");
+    const id = await addAnnouncement(t.db, s.shopId, flyer("Portes ouvertes"));
+    const row = (await feedFlyers(t.db)).find((f) => f.id === id);
+    expect(row).toMatchObject({ textFr: "Portes ouvertes", shopName: "Pattes de Saint-Henri", shopSlug: "pattes-feed-ok", area: "Saint-Henri, Montréal" });
+    expect(JSON.stringify(row)).not.toContain("Notre-Dame");
+  });
+
+  it("leaves out an unpublished shop, a shop without locality and a flyer whose last day is past", async () => {
+    const hidden = await walkerShop(t.db, "feed-hidden");
+    await setArea(hidden.shopId, "Villeray", false);
+    const noArea = await walkerShop(t.db, "feed-noarea");
+    await setArea(noArea.shopId, null);
+    const old = await walkerShop(t.db, "feed-old");
+    await setArea(old.shopId, "Villeray");
+    const ids = [await addAnnouncement(t.db, hidden.shopId, flyer("Caché")), await addAnnouncement(t.db, noArea.shopId, flyer("Sans quartier")), await addAnnouncement(t.db, old.shopId, flyer("Passé", "2020-01-01"))];
+    const listed = (await feedFlyers(t.db)).map((f) => f.id);
+    for (const id of ids) expect(listed).not.toContain(id);
   });
 });

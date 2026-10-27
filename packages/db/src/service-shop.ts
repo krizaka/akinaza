@@ -431,7 +431,16 @@ export async function currentSlugOf(db: Db, formerSlug: string): Promise<string 
 
 export async function publicShop(db: Db, slug: string): Promise<PublicShop | null> {
   const [row] = await db.select().from(shops).where(and(eq(shops.slug, slug), eq(shops.published, true)));
-  if (!row) return null;
+  return row ? publicShopOf(db, row) : null;
+}
+
+/** The shop as its page would show it, published or not: the owner's preview of the draft (akinaza#402). The caller checked the member. */
+export async function previewShop(db: Db, shopId: string): Promise<PublicShop | null> {
+  const [row] = await db.select().from(shops).where(eq(shops.id, shopId));
+  return row?.slug ? publicShopOf(db, row) : null;
+}
+
+async function publicShopOf(db: Db, row: typeof shops.$inferSelect): Promise<PublicShop> {
   const full = await loadShop(db, row);
   const team = await activeStaff(db, row.id);
   const everyone = team.length > 1 ? await db.select().from(schedules).where(inArray(schedules.staffId, team.map((m) => m.id))) : full.windows;

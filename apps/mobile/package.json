@@ -40,7 +40,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@krizaka/config": "^0.8.0",
+    "@krizaka/config": "^0.9.1",
     "@testing-library/react-native": "^14.1.0",
     "@types/jest": "^30.0.0",
     "@types/react": "^19.3.0",

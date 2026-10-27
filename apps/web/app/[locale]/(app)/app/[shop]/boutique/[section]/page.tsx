@@ -1,5 +1,6 @@
 import { localDay, OWNER_BOUNDS, OWNER_TUNABLE, type OwnerTunable, reviewScore, shopTypeOf, WALL_LIMITS } from "@akinaza/core";
-import { announcementsOf, invoiceMailSettings, loadShop, reelsOf, reviewsOf, SHOP_ROLES, shopFigureOverrides, shopMediaOf, shopPageConfigOf, shopStaff, socialLinksOf, teamTimeOff, translationRows, translationRunsOn,wallOf } from "@akinaza/db";
+import { announcementsOf, draftShopPage, invoiceMailSettings, loadShop, publishedShopPage, reelsOf, reviewsOf, SHOP_ROLES, shopAccentOf, shopFigureOverrides, shopMediaOf, shopPageConfigOf, shopPageVersionsOf, shopStaff, socialLinksOf, teamTimeOff, translationRows, translationRunsOn,wallOf } from "@akinaza/db";
+import { shopPresets } from "@krizaka/tokens/shop-presets";
 import { Button } from "@krizaka/ui/button";
 import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
@@ -20,6 +21,7 @@ import { TeamPanel } from "@/components/app/TeamPanel";
 import { TimeOffCard } from "@/components/app/TimeOffCard";
 import { WallEditor } from "@/components/app/WallEditor";
 import { BoutiqueHub } from "@/components/boutique/BoutiqueHub";
+import { ShopComposerPanel } from "@/components/boutique/ShopComposerPanel";
 import { agendaScope, pageSession } from "@/lib/access";
 import { BOUTIQUE_NEEDS, type BoutiqueSection, boutiqueSectionsAllowed, isBoutiqueSection, isPageTab, type PageTab, pageTabsAllowed } from "@/lib/boutique";
 import { calendarOverview } from "@/lib/calendar/overview";
@@ -33,6 +35,7 @@ import { adminFigureRules } from "@/lib/figure-rules";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { may, memberShop, shopsOf } from "@/lib/member-shop";
 import { type RouteLocale, shopRoutes } from "@/lib/routes";
+import { accentsByLook } from "@/lib/shop-accents";
 import { appSettings } from "@/lib/settings";
 import { team } from "@/lib/team";
 import { templateChoices } from "@/lib/template-choices";
@@ -70,6 +73,26 @@ async function PageSection({ locale, shopId, tab }: { locale: RouteLocale; shopI
     rules: { cancellationHours: setup.rules.cancellationHours, bookingHorizonDays: setup.rules.bookingHorizonDays, slotStepMinutes: setup.rules.slotStepMinutes, minNoticeMinutes: setup.rules.minNoticeMinutes, reportLinkDays: setup.rules.reportLinkDays, paymentTermsDays: shop.paymentTermsDays },
   };
   return <ShopSetupView data={data} tab={tab} />;
+}
+
+/** Boutique › Page › Layout (akinaza#402): the composer on the shop's draft, with what is live for the diff, the history and the accent. */
+async function ComposerTab({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
+  const { shop } = await memberShop(shopId, "catalogue");
+  const [draft, live, accent, versions, pageConfig] = await Promise.all([draftShopPage(db(), shop.id), publishedShopPage(db(), shop.id), shopAccentOf(db(), shop.id), shopPageVersionsOf(db(), shop.id), shopPageConfigOf(db(), shop.id)]);
+  const trade = shopTypeOf(shop.businessType, pageConfig.shopType);
+  const looks = shopPresets.filter((p) => p.trades.includes(trade));
+  return (
+    <ShopComposerPanel
+      canWrite
+      draft={draft.page}
+      published={live.page}
+      accent={accent}
+      accents={accentsByLook()}
+      presets={looks.map((p) => ({ id: p.id, version: p.version, name: p.name, density: p.density, variants: p.variants }))}
+      previewUrl={`/${locale}/preview/${shop.id}`}
+      versions={versions.map((v) => ({ version: v.version, status: v.status, createdAt: v.createdAt.toISOString() }))}
+    />
+  );
 }
 
 /** The tabs that pin something on the public page: the owner's and the manager's, each with the live preview beside it. */
@@ -195,6 +218,7 @@ async function ShopsSection({ locale, shopId }: { locale: RouteLocale; shopId: s
 
 /** The body of one section of Boutique. */
 function boutiqueBody({ section, tab, community, locale, shopId }: Readonly<{ section: BoutiqueSection; tab: PageTab; community: boolean; locale: RouteLocale; shopId: string }>) {
+  if (section === "page" && tab === "composer") return <ComposerTab locale={locale} shopId={shopId} />;
   if (section === "page") return community ? <CommunityTab shopId={shopId} tab={tab as "wall" | "reels" | "board" | "reviews"} /> : <PageSection locale={locale} shopId={shopId} tab={tab} />;
   if (section === "languages") return <LanguagesSection locale={locale} shopId={shopId} />;
   if (section === "team") return <TeamSection locale={locale} shopId={shopId} />;

@@ -272,14 +272,14 @@
       "idx": 38,
       "version": "7",
       "when": 1795000007000,
-      "tag": "0038_shop_figure_rules",
+      "tag": "0038_shop_page_document",
       "breakpoints": true
     },
     {
       "idx": 39,
       "version": "7",
       "when": 1795000008000,
-      "tag": "0039_feed_tokens",
+      "tag": "0039_shop_page_accent",
       "breakpoints": true
     },
     {
@@ -287,6 +287,20 @@
       "version": "7",
       "when": 1795000009000,
       "tag": "0040_calendar_sources",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1795000010000,
+      "tag": "0041_shop_figure_rules",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1795000011000,
+      "tag": "0042_feed_tokens",
       "breakpoints": true
     }
   ]
