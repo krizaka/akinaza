@@ -4,9 +4,9 @@ import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";
-import { Field, Input } from "@krizaka/ui/field";
 import { useState } from "react";
 
+import { FeedAddress } from "@/components/app/FeedAddress";
 import { useCall } from "@/components/app/useCall";
 import type { FeedOverview, FeedState } from "@/lib/feed-overview";
 import { useSay } from "@/lib/i18n-client";
@@ -16,7 +16,6 @@ function FeedRow({ staffId, name, state }: { staffId: string | null; name: strin
   const { say, locale } = useSay();
   const call = useCall();
   const [url, setUrl] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
   const t = (key: string, vars?: Record<string, string | number>) => say(`boutique.agenda.feed.${key}`, vars);
   const when = state.createdAt ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(state.rotatedAt ?? state.createdAt)) : "";
   const id = `feed-${staffId ?? "shop"}`;
@@ -27,25 +26,7 @@ function FeedRow({ staffId, name, state }: { staffId: string | null; name: strin
         <Badge tone={state.live ? "success" : "neutral"} size="sm">{state.live ? t("live") : t("none")}</Badge>
         {state.live && when ? <span className="text-sm text-fg-muted">{t("since", { when })}</span> : null}
       </div>
-      {url ? (
-        <Field.Root>
-          <Field.Label htmlFor={id}>{t("url", { name })}</Field.Label>
-          <div className="flex flex-wrap gap-2">
-            <Input id={id} readOnly value={url} className="min-w-0 flex-1" onFocus={(e) => e.currentTarget.select()} />
-            <Button
-              type="button"
-              size="md"
-              variant="secondary"
-              onClick={() => {
-                void navigator.clipboard?.writeText(url).then(() => setCopied(true), () => setCopied(false));
-              }}
-            >
-              {copied ? t("copied") : t("copy")}
-            </Button>
-          </div>
-          <Field.Hint>{t("once")}</Field.Hint>
-        </Field.Root>
-      ) : null}
+      {url ? <FeedAddress id={id} name={name} url={url} /> : null}
       {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
       <div className="flex flex-wrap gap-2">
         <Button
@@ -54,7 +35,6 @@ function FeedRow({ staffId, name, state }: { staffId: string | null; name: strin
           variant={state.live ? "secondary" : "primary"}
           disabled={call.pending}
           onClick={async () => {
-            setCopied(false);
             const made = await call.run<{ url: string }>("/api/walker/feeds", { json: { staffId } });
             if (made) setUrl(made.url);
           }}

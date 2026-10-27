@@ -1665,6 +1665,7 @@
           "once": "Copy this link now: it is shown only once. Making a new link turns the old one off at once.",
           "copy": "Copy the link",
           "copied": "Link copied",
+          "qrLabel": "QR code of the private calendar link for {name}: scan it with your phone to subscribe",
           "url": "Private link of {name}",
           "howTitle": "How to add it",
           "how": "Apple Calendar: File, New Calendar Subscription. Google Calendar: Other calendars, From URL. Outlook: Add calendar, Subscribe from web. Anyone who has the link can read these times: share it with nobody.",

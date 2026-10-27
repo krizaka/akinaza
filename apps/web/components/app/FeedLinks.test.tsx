@@ -28,8 +28,8 @@ describe("the calendar links screen (#282)", () => {
     for (const word of ["The whole shop · Salon Laurier", "Link active", "Make a new link", "Turn off", "Julie", "No link yet", "Make the link", "How to add it", "Google Calendar"]) expect(t).toContain(word);
   });
 
-  it("never draws an address: it exists only in the answer that made it", () => {
-    expect(renderToStaticMarkup(<FeedLinks overview={overview()} shopName="S" />)).not.toMatch(/kf1\.|\/api\/feed\/|readOnly/);
+  it("never draws an address or a QR code: they exist only in the answer that made it", () => {
+    expect(renderToStaticMarkup(<FeedLinks overview={overview()} shopName="S" />)).not.toMatch(/kf1\.|\/api\/feed\/|readOnly|<svg[^>]*role="img"/);
   });
 
   it("says so, and offers nothing, when the administrator switched the links off", () => {
