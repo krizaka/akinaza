@@ -1,4 +1,4 @@
-import { booksAnswer, calendarAnswer, clientsAnswer, dayAnswer, invoicesAnswer, issuedInvoice, meAnswer, shopAnswer } from "@akinaza/core";
+import { booksAnswer, calendarAnswer, clientsAnswer, dayAnswer, figuresAnswer, invoicesAnswer, issuedInvoice, meAnswer, shopAnswer } from "@akinaza/core";
 import type { ApiClient, SessionStore } from "@krizaka/app-client";
 import { z } from "zod";
 
@@ -48,6 +48,8 @@ export function createAkinazaApi(api: Pick<ApiClient, "call">, session: Pick<Ses
     shop: (shopId?: string) => get(shopAnswer, inShop("/api/walker/shop", shopId)),
     /** « Livres »: the period's prepared GST/QST (`2026-Q3`, `2026-02`; the latest completed quarter by default). */
     books: (period?: string, shopId?: string) => get(booksAnswer, inShop(`/api/walker/books${period ? `?period=${encodeURIComponent(period)}` : ""}`, shopId)),
+    /** « Vos chiffres » (#260): each figure with its value, formula as data, sources and state, and « que faire maintenant ». */
+    figures: (shopId?: string) => get(figuresAnswer, inShop("/api/walker/figures", shopId)),
     async issueInvoice(request: InvoiceRequest, shopId?: string) {
       return issuedInvoice.parse(await post(inShop("/api/walker/invoices", shopId), request));
     },
