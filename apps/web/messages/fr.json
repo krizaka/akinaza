@@ -319,7 +319,7 @@
             "id": "clients",
             "h": "Les données de vos clients",
             "p": [
-              "Le consentement d'un client est consigné pour chaque finalité et peut être retiré. Effacer un client vide ses champs personnels et garde les factures que la loi oblige à conserver. Les données sont gardées au Canada, chiffrées au repos, et visibles de votre boutique seulement."
+              "Le consentement d'un client est consigné pour chaque finalité et peut être retiré. Effacer un client vide ses champs personnels et garde les factures que la loi oblige à conserver. Les dossiers sont gardés dans une base de données au Canada, chiffrés au repos, et visibles de votre boutique seulement."
             ],
             "items": []
           },
@@ -382,11 +382,50 @@
   "privacy": {
     "title": "Confidentialité",
     "updated": "Mis à jour le {date}",
-    "body": "Akinaza est en développement : seuls les comptes créés par notre équipe peuvent se connecter. Les données d'une boutique — ses clients, rendez-vous, factures et registre des taxes — sont gardées dans la base de données d'Akinaza au Canada, chiffrées au repos, visibles de cette boutique seulement. Le consentement des clients est noté par finalité et peut être retiré ; les renseignements personnels d'un client peuvent être effacés, les factures qu'exige la loi fiscale étant gardées. Quand un commerçant demande de préparer une déclaration, le registre de la période est envoyé à Orazaka, le moteur de Krizaka, par HTTPS ; rien n'est produit ni transmis à un gouvernement. Rien n'est vendu ni partagé. Pour poser une question ou faire supprimer vos données, utilisez le formulaire de contact.",
+    "body": "Akinaza est en développement : seuls les comptes créés par notre équipe peuvent se connecter. Les données d'une boutique — ses clients, rendez-vous, factures et registre des taxes — sont gardées dans la base de données d'Akinaza au Canada, chiffrées au repos, visibles de cette boutique seulement. Le consentement des clients est noté par finalité et peut être retiré ; les renseignements personnels d'un client peuvent être effacés, les factures qu'exige la loi fiscale étant gardées. Les chiffres de taxes préparés par Akinaza sont calculés à partir du registre de la période, dans Akinaza ; rien n'est produit pour un gouvernement, ni déposé auprès de lui, ni transmis. Rien n'est vendu. Pour poser une question ou faire supprimer vos données, utilisez le formulaire de contact.",
     "officer": {
       "title": "Responsable de la protection des renseignements personnels",
       "role": "Responsable de la protection des renseignements personnels",
       "text": "La personne responsable de la protection des renseignements personnels est publiée ici. Titre : {role}, Technologies Krizaka Inc., Montréal (Québec), Canada. Contact : contact@krizaka.com, pour accéder à vos renseignements, les corriger ou les effacer, retirer un consentement ou déposer une plainte ; nous répondons dans un délai de 30 jours."
+    },
+    "processors": {
+      "title": "Qui traite des renseignements pour nous",
+      "lead": "Akinaza fait appel à des fournisseurs de services, par contrat écrit, seulement pour faire fonctionner le service. L'endroit où un fournisseur garde des données n'est indiqué ici qu'une fois confirmé.",
+      "items": [
+        {
+          "h": "Hébergement",
+          "p": "L'application et sa base de données fonctionnent chez un fournisseur d'hébergement infonuagique."
+        },
+        {
+          "h": "Stockage et diffusion des médias",
+          "p": "Les photos et fichiers que vous ajoutez (photos d'une boutique, fichiers d'une demande de client) sont stockés chez un fournisseur de stockage et de diffusion de médias. En développement, ce stockage est à New York, aux États-Unis."
+        },
+        {
+          "h": "Envoi de courriels",
+          "p": "Les courriels comme les rapports de visite et les factures passent par un fournisseur d'envoi de courriels, seulement lorsque l'envoi est activé."
+        },
+        {
+          "h": "Paiements",
+          "p": "Un abonnement se paie sur la page hébergée d'un processeur de paiement ; Akinaza ne voit ni ne garde jamais un numéro de carte."
+        },
+        {
+          "h": "Traduction",
+          "p": "Si la traduction d'une page de boutique est activée, les textes de la page sont envoyés au moteur de Krizaka, Orazaka. Rien sur un client n'est envoyé."
+        }
+      ],
+      "register": "Le registre de ces transferts hors Québec, avec l'évaluation rédigée avant l'ouverture, est public :",
+      "registerLink": "Registre des transferts",
+      "assessmentLink": "Évaluation des facteurs relatifs à la vie privée"
+    },
+    "governance": {
+      "title": "Comment nous traitons les renseignements personnels",
+      "items": [
+        "Pourquoi nous les recueillons : pour faire fonctionner les rendez-vous, les factures et les chiffres de taxes d'une boutique, et le compte de la personne qui se connecte. Rien d'autre.",
+        "Qui peut les voir : la boutique qui les détient, et les rares personnes qui exploitent le service. Une boutique ne voit jamais les données d'une autre.",
+        "Combien de temps nous les gardons : les factures et le registre des taxes six ans, comme l'exige la loi fiscale ; le reste jusqu'à son effacement à votre demande.",
+        "Vos droits : les consulter, les corriger, en obtenir une copie dans un format courant, retirer un consentement ou les faire effacer. Écrivez à la personne responsable ci-dessus ; nous répondons dans un délai de 30 jours.",
+        "En cas de problème : nous suivons une procédure écrite pour les incidents de confidentialité, et nous avisons la Commission d'accès à l'information et les personnes concernées lorsque la loi l'exige."
+      ]
     }
   },
   "terms": {
@@ -421,7 +460,7 @@
       },
       {
         "h": "7. Vos renseignements personnels",
-        "p": "Les renseignements de vos clients que vous saisissez restent les vôtres : vous en êtes responsable et Akinaza les traite pour votre compte, au Canada, chiffrés au repos, visibles de votre boutique seulement. Les consentements sont demandés par finalité, jamais pré-cochés, et peuvent être retirés ; l'effacement vide les champs personnels et garde les factures que la loi fiscale oblige à conserver (six ans). Le tout est encadré par la Loi sur la protection des renseignements personnels dans le secteur privé (RLRQ, c. P-39.1), telle que modifiée par la Loi modernisant des dispositions législatives en matière de protection des renseignements personnels (L.Q. 2021, c. 25). Le détail, le responsable de la protection des renseignements personnels et la façon d'exercer vos droits sont dans l'avis de confidentialité."
+        "p": "Les renseignements de vos clients que vous saisissez restent les vôtres : vous en êtes responsable et Akinaza les traite pour votre compte, dans une base de données au Canada, chiffrés au repos, visibles de votre boutique seulement ; les photos et fichiers que vous ajoutez sont stockés chez un fournisseur de médias, nommé dans l'avis de confidentialité. Les consentements sont demandés par finalité, jamais pré-cochés, et peuvent être retirés ; l'effacement vide les champs personnels et garde les factures que la loi fiscale oblige à conserver (six ans). Le tout est encadré par la Loi sur la protection des renseignements personnels dans le secteur privé (RLRQ, c. P-39.1), telle que modifiée par la Loi modernisant des dispositions législatives en matière de protection des renseignements personnels (L.Q. 2021, c. 25). Le détail, le responsable de la protection des renseignements personnels et la façon d'exercer vos droits sont dans l'avis de confidentialité."
       },
       {
         "h": "8. Notre responsabilité",

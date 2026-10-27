@@ -319,7 +319,7 @@
             "id": "clients",
             "h": "Your clients' data",
             "p": [
-              "A client's consent is recorded for each purpose and can be withdrawn. Erasing a client blanks their personal fields and keeps the invoices that the law requires. Data is kept in Canada, encrypted at rest, and visible to your shop only."
+              "A client's consent is recorded for each purpose and can be withdrawn. Erasing a client blanks their personal fields and keeps the invoices that the law requires. Records are kept in a database in Canada, encrypted at rest, and visible to your shop only."
             ],
             "items": []
           },
@@ -382,11 +382,50 @@
   "privacy": {
     "title": "Privacy",
     "updated": "Updated {date}",
-    "body": "Akinaza is in development: only the accounts our team creates can sign in. A shop's data — its clients, appointments, invoices and tax ledger — is kept in Akinaza's database in Canada, encrypted at rest, visible to that shop only. Client consent is recorded per purpose and can be withdrawn; a client's personal information can be erased, while the invoices tax law requires are kept. When a merchant asks to prepare a tax return, the period's ledger is sent to Orazaka, Krizaka's engine, over HTTPS; nothing is filed or transmitted to any government. Nothing is sold or shared. To ask a question or have your data removed, use the contact form.",
+    "body": "Akinaza is in development: only the accounts our team creates can sign in. A shop's data — its clients, appointments, invoices and tax ledger — is kept in Akinaza's database in Canada, encrypted at rest, visible to that shop only. Client consent is recorded per purpose and can be withdrawn; a client's personal information can be erased, while the invoices tax law requires are kept. The tax figures Akinaza prepares are computed from the period's ledger inside Akinaza; nothing is produced for, filed with or transmitted to any government. Nothing is sold. To ask a question or have your data removed, use the contact form.",
     "officer": {
       "title": "Privacy officer",
       "role": "Privacy Officer (« Responsable de la protection des renseignements personnels »)",
       "text": "The person in charge of the protection of personal information is published here. Role: {role}, Technologies Krizaka Inc., Montréal, Québec, Canada. Contact: contact@krizaka.com, to access, correct or erase your information, withdraw a consent or file a complaint; we answer within 30 days."
+    },
+    "processors": {
+      "title": "Who processes information for us",
+      "lead": "Akinaza uses service providers under written contracts, only to run the service. Where a provider stores data is stated here only once we have confirmed it.",
+      "items": [
+        {
+          "h": "Hosting",
+          "p": "The application and its database run with a cloud hosting provider."
+        },
+        {
+          "h": "Media storage and delivery",
+          "p": "The photos and files you add (a shop's photos, the files of a client's request) are stored with a media storage and delivery provider. In development, that store is in New York, United States."
+        },
+        {
+          "h": "E-mail delivery",
+          "p": "Mails such as walk reports and invoices go through an e-mail delivery provider, only when sending is turned on."
+        },
+        {
+          "h": "Payments",
+          "p": "A subscription is paid on the hosted page of a payment processor; Akinaza never sees or keeps a card number."
+        },
+        {
+          "h": "Translation",
+          "p": "If translating a shop page is turned on, the page's own texts are sent to Krizaka's engine, Orazaka. Nothing about a client is sent."
+        }
+      ],
+      "register": "The register of these transfers outside Québec, with the assessment we wrote before opening, is public:",
+      "registerLink": "Register of transfers",
+      "assessmentLink": "Privacy impact assessment"
+    },
+    "governance": {
+      "title": "How we handle personal information",
+      "items": [
+        "Why we collect it: to run a shop's bookings, invoices and tax figures, and the account of the person who signs in. Nothing else.",
+        "Who can see it: the shop that holds it, and the few people who run the service. A shop never sees another shop's data.",
+        "How long we keep it: invoices and the tax ledger for six years, as tax law requires; the rest until it is erased at your request.",
+        "Your rights: to see it, correct it, take a copy in a common format, withdraw a consent or have it erased. Write to the person in charge above; we answer within 30 days.",
+        "If something goes wrong: we follow a written procedure for confidentiality incidents, and we tell the Commission d'accès à l'information and the persons concerned when the law asks us to."
+      ]
     }
   },
   "terms": {
@@ -421,7 +460,7 @@
       },
       {
         "h": "7. Your personal information",
-        "p": "The information about your clients that you enter stays yours: you are responsible for it and Akinaza processes it on your behalf, in Canada, encrypted at rest, visible to your shop only. Consent is asked per purpose, never pre-ticked, and can be withdrawn; erasure blanks the personal fields and keeps the invoices tax law requires us to keep (six years). All of this falls under the Act respecting the protection of personal information in the private sector (CQLR, c. P-39.1), as amended by the Act to modernize legislative provisions as regards the protection of personal information (S.Q. 2021, c. 25). The details, the person in charge of the protection of personal information and how to exercise your rights are in the privacy notice."
+        "p": "The information about your clients that you enter stays yours: you are responsible for it and Akinaza processes it on your behalf, in a database in Canada, encrypted at rest, visible to your shop only; the photos and files you add are stored with a media provider, named in the privacy notice. Consent is asked per purpose, never pre-ticked, and can be withdrawn; erasure blanks the personal fields and keeps the invoices tax law requires us to keep (six years). All of this falls under the Act respecting the protection of personal information in the private sector (CQLR, c. P-39.1), as amended by the Act to modernize legislative provisions as regards the protection of personal information (S.Q. 2021, c. 25). The details, the person in charge of the protection of personal information and how to exercise your rights are in the privacy notice."
       },
       {
         "h": "8. Our liability",

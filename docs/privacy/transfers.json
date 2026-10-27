@@ -1,0 +1,22 @@
+{
+  "note": "Register of the places that hold or receive personal information, as data (P-39.1 arts. 17 and 18.3). A region is written only where the deployment spec (deploy/digitalocean/app.yaml) proves it; otherwise « to-confirm » (krizaka/.github#285, which waits on the founder). Canadian hosting for production is planned, not claimed. Read by apps/web/lib/transfers.test.ts, which fails when the spec adds a store, a region or a configuration context this file does not list.",
+  "supplierRegister": "https://github.com/krizaka/.github/blob/main/docs/security/isms/supplier-register.json",
+  "contexts": ["APP_", "AUTH_", "ABUSE_", "DATABASE_", "MEDIA_", "REALTIME_"],
+  "contextsNotDeployed": {
+    "MAIL_": "mail delivery is off in the deployment (MAIL_PROVIDER=none keeps every mail pending); when it is turned on, add the provider to `processors` first",
+    "PAYMENTS_": "the subscription processor is configured outside the spec; add it to `processors` before it is set in the spec",
+    "AI_": "no model runs in the deployment; the translation call to Orazaka is off until the Studio is wired"
+  },
+  "stores": [
+    { "id": "app", "what": "the application (sessions, the BFF, the files in transit)", "supplier": "digitalocean", "region": "tor", "country": "CA", "province": "outside Québec (Ontario)", "evidence": "deploy/digitalocean/app.yaml `region:`" },
+    { "id": "database", "what": "accounts, shops, clients, appointments, invoices, the tax ledger, consents, visit reports (including their photos)", "supplier": "digitalocean", "region": "tor1", "country": "CA", "province": "outside Québec (Ontario)", "evidence": "deploy/digitalocean/app.yaml header (`krizaka-dev-pg (tor1…)`, krizaka-infra docs/PLAN.md)" },
+    { "id": "media", "what": "a shop's photos and the files of a client's request", "supplier": "bunny", "region": "ny", "country": "US", "province": "outside Canada", "evidence": "deploy/digitalocean/app.yaml `MEDIA_STORAGE_ENDPOINT`" }
+  ],
+  "processors": [
+    { "id": "digitalocean", "name": "DigitalOcean", "category": "hosting", "receives": "everything the application and the database hold", "deployed": true, "region": "proven for the two stores above only; backups and the managed database's replicas: to-confirm", "agreement": "to-collect", "dpa": "provider's data processing terms, to collect (krizaka/.github#285)" },
+    { "id": "bunny", "name": "Bunny", "category": "media storage and CDN", "receives": "the photos and files an owner or a client adds; the CDN edge serves them worldwide", "deployed": true, "region": "storage zone: New York; CDN edge locations: to-confirm", "agreement": "to-collect", "dpa": "provider's data processing terms, to collect (krizaka/.github#285)" },
+    { "id": "mailgun", "name": "Mailgun", "category": "e-mail delivery", "receives": "the recipient's address and the body of a walk report or an invoice mail", "deployed": false, "region": "to-confirm", "agreement": "to-collect", "dpa": "provider's data processing terms, to collect (krizaka/.github#285)" },
+    { "id": "stripe", "name": "Stripe", "category": "payment processor", "receives": "the subscriber's e-mail and payment details, on the processor's hosted page; never a shop client's data", "deployed": false, "region": "to-confirm", "agreement": "to-collect", "dpa": "provider's data processing terms, to collect (krizaka/.github#285)" },
+    { "id": "orazaka", "name": "Orazaka (Krizaka's engine)", "category": "translation of a shop page", "receives": "the page's own texts and a glossary (shop name, service names, street address); never anything about a client", "deployed": false, "region": "to-confirm (its GPU hosting is RunPod, in the supplier register)", "agreement": "internal, to write", "dpa": "to write with the engine's hosting provider" }
+  ]
+}
