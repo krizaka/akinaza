@@ -3,8 +3,7 @@ appId: com.krizaka.akinaza
 tags:
   - ci
 ---
-- launchApp:
-    clearState: true
+- runFlow: shared/launch.yaml
 # Signed out, the app opens on sign-in (in either language): its e-mail field. After clearState a slow emulator paints a blank
 # screen first, so the field is awaited (as shared/sign-in.yaml awaits its submit), not asserted at once.
 - extendedWaitUntil:

@@ -1,7 +1,8 @@
 import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { handle, refuse } from "@/lib/http";
-import { detectImage, MAX_UPLOAD_BYTES, MEDIA_PURPOSES, type MediaPurpose, mediaSettings, PURPOSE_FEATURE, storeImage } from "@/lib/media-upload";
+import { mediaStorage } from "@/lib/media-storage";
+import { detectImage, MAX_UPLOAD_BYTES, MEDIA_PURPOSES, type MediaPurpose, PURPOSE_FEATURE, storeImage } from "@/lib/media-upload";
 import { appSettings } from "@/lib/settings";
 import { may } from "@/lib/shop-permissions";
 
@@ -14,8 +15,8 @@ export const dynamic = "force-dynamic";
 export function POST(req: Request) {
   return handle(async () => {
     const { session, shop, role } = await requireShop(req, "catalogue");
-    const settings = mediaSettings();
-    if (!settings) throw refuse(503, "UPLOAD_UNAVAILABLE", "media storage is not configured");
+    const media = await mediaStorage({ maxBytes: MAX_UPLOAD_BYTES });
+    if (!media) throw refuse(503, "UPLOAD_UNAVAILABLE", "media storage is not configured");
     if (Number(req.headers.get("content-length") ?? 0) > MAX_UPLOAD_BYTES + 4096) throw refuse(413, "UPLOAD_TOO_LARGE", "file too large");
     const form = await req.formData().catch(() => null);
     const file = form?.get("file");
@@ -29,7 +30,7 @@ export function POST(req: Request) {
     if (file.size > MAX_UPLOAD_BYTES) throw refuse(413, "UPLOAD_TOO_LARGE", "file too large");
     const bytes = new Uint8Array(await file.arrayBuffer());
     if (!detectImage(bytes)) throw refuse(400, "UPLOAD_NOT_IMAGE", "not a JPEG, PNG or WebP image");
-    const url = await storeImage(settings, shop.id, bytes, fetch, purpose as (typeof MEDIA_PURPOSES)[number]);
+    const url = await storeImage(media, shop.id, bytes, purpose as (typeof MEDIA_PURPOSES)[number]);
     await audit({ action: "shop.media_uploaded", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { bytes: bytes.length, purpose }, headers: req.headers });
     return Response.json({ url });
   });

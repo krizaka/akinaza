@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { BOUTIQUE_NEEDS, BOUTIQUE_SECTIONS, boutiqueGroups, type BoutiqueNavWords,boutiqueSectionsAllowed, firstBoutiqueSection, isBoutiqueSection, isPageTab, PAGE_TABS, pageTabsAllowed } from "./boutique";
+import { BOUTIQUE_NEEDS, BOUTIQUE_SECTIONS, boutiqueGroups, type BoutiqueNavWords,boutiqueSectionsAllowed, firstBoutiqueSection, isBoutiqueSection, isPageTab, PAGE_TAB_NEEDS, PAGE_TABS, pageTabsAllowed } from "./boutique";
 import { may } from "./member-shop";
 
 const WORDS: BoutiqueNavWords = {
   groups: { page: "Your page", business: "Your activity" },
-  tabs: { identity: "Identity", texts: "Your page text", contact: "Contact", offer: "Offer", media: "Photos", look: "Look", wall: "Wall", reels: "Video", board: "Board", reviews: "Reviews", publish: "Publish" },
+  tabs: { identity: "Identity", texts: "Your page text", contact: "Contact", offer: "Offer", media: "Photos", composer: "Layout", look: "Look", wall: "Wall", reels: "Video", board: "Board", reviews: "Reviews", publish: "Publish" },
   languages: "Languages",
   team: "Team",
   invoices: "Invoice e-mails",
@@ -17,7 +17,7 @@ const allowedFor = (role: "owner" | "manager" | "staff") => boutiqueSectionsAllo
 
 describe("Boutique, the hub of the shop's configuration (K4)", () => {
   it("holds the sections of the shop page and the shop as a place", () => {
-    expect(PAGE_TABS).toEqual(["identity", "texts", "contact", "offer", "media", "look", "wall", "reels", "board", "reviews", "publish"]);
+    expect(PAGE_TABS).toEqual(["identity", "texts", "contact", "offer", "media", "composer", "look", "wall", "reels", "board", "reviews", "publish"]);
     expect(BOUTIQUE_SECTIONS).toEqual(["page", "languages", "team", "invoices", "shops"]);
   });
 
@@ -25,7 +25,7 @@ describe("Boutique, the hub of the shop's configuration (K4)", () => {
     expect(BOUTIQUE_NEEDS).toEqual({ page: "catalogue", languages: "settings", team: "team", invoices: "settings", shops: "settings" });
     expect(allowedFor("owner")).toEqual(["page", "languages", "team", "invoices", "shops"]);
     expect(allowedFor("manager")).toEqual(["page", "team"]);
-    expect(tabsFor("manager")).toEqual(["wall", "reels", "board", "reviews"]);
+    expect(tabsFor("manager")).toEqual(["composer", "wall", "reels", "board", "reviews"]);
     expect(tabsFor("owner")).toEqual([...PAGE_TABS]);
     expect(tabsFor("staff")).toEqual([]);
     expect(allowedFor("staff")).toEqual([]);
@@ -48,7 +48,7 @@ describe("Boutique, the hub of the shop's configuration (K4)", () => {
   it("groups the owner's navigation: the page and its languages, then the team, the invoice e-mails and the shops", () => {
     const groups = boutiqueGroups({ allowed: allowedFor("owner"), href, current: { section: "page", tab: "contact" }, words: WORDS });
     expect(groups.map((g) => g.id)).toEqual(["page", "business"]);
-    expect(groups[0]!.items.map((i) => i.id)).toEqual(["page-identity", "page-texts", "page-contact", "page-offer", "page-media", "page-look", "page-wall", "page-reels", "page-board", "page-reviews", "page-publish", "languages"]);
+    expect(groups[0]!.items.map((i) => i.id)).toEqual(["page-identity", "page-texts", "page-contact", "page-offer", "page-media", "page-composer", "page-look", "page-wall", "page-reels", "page-board", "page-reviews", "page-publish", "languages"]);
     expect(groups[1]!.items.map((i) => i.id)).toEqual(["team", "invoices", "shops"]);
   });
 
@@ -62,8 +62,16 @@ describe("Boutique, the hub of the shop's configuration (K4)", () => {
 
   it("shows a manager what is pinned on the page and the team, and a staff member no group at all", () => {
     const manager = boutiqueGroups({ allowed: allowedFor("manager"), tabs: tabsFor("manager"), href, current: { section: "team" }, words: WORDS });
-    expect(manager.map((g) => g.items.map((i) => i.id))).toEqual([["page-wall", "page-reels", "page-board", "page-reviews"], ["team"]]);
+    expect(manager.map((g) => g.items.map((i) => i.id))).toEqual([["page-composer", "page-wall", "page-reels", "page-board", "page-reviews"], ["team"]]);
     expect(manager[1]!.items[0]!.current).toBe(true);
     expect(boutiqueGroups({ allowed: allowedFor("staff"), href, current: { section: "team" }, words: WORDS })).toEqual([]);
+  });
+});
+
+describe("the layout tab (akinaza#402)", () => {
+  it("is for the roles that write the page, not for staff", () => {
+    expect(PAGE_TAB_NEEDS.composer).toBe("catalogue");
+    expect(pageTabsAllowed((permission) => permission !== "catalogue" && permission !== "settings")).not.toContain("composer");
+    expect(pageTabsAllowed(() => true)).toContain("composer");
   });
 });

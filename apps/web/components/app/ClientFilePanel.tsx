@@ -53,6 +53,22 @@ export interface ClientFilePanelProps {
  */
 const standing = (i: Bill) => ({ totalCents: i.totalCents, paidCents: i.paidCents, dueOn: i.dueOn, isCredit: i.creditOf !== null, superseded: i.superseded });
 
+/** The count a tab wears on the binder's divider: the lists have one, the summary none. */
+function tabCount(t: ClientFileTab, counts: { invoices: number; visits: number; notes: number }): number | undefined {
+  if (t === "invoices" || t === "visits" || t === "notes") return counts[t];
+  return undefined;
+}
+
+/** A list of the file under its heading: the table, or the sentence saying there is nothing yet. */
+function ListSection({ id, title, empty, children }: { id: string; title: string; empty: string | null; children: React.ReactNode }) {
+  return (
+    <section aria-labelledby={id} className="flex flex-col gap-3">
+      <h2 id={id} className="text-lg font-semibold text-fg">{title}</h2>
+      {empty === null ? children : <p className="text-fg-secondary">{empty}</p>}
+    </section>
+  );
+}
+
 export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, notes, tab, today, organize, tags = [] }: ClientFilePanelProps) {
   const { say, locale } = useSay();
   const routes = useShopRoutes();
@@ -159,7 +175,7 @@ export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, no
       tabs={
         <Tabs.Nav label={say("clients.file.sections")} variant="binder" current={tabHref(tab)}>
           {CLIENT_FILE_TABS.map((t) => (
-            <Tabs.NavLink key={t} href={tabHref(t)} exact hue={t === "summary" ? "accent" : "neutral"} count={t === "invoices" ? file.invoices.length : t === "visits" ? file.visits.length : t === "notes" ? notes.length : undefined}>
+            <Tabs.NavLink key={t} href={tabHref(t)} exact hue={t === "summary" ? "accent" : "neutral"} count={tabCount(t, { invoices: file.invoices.length, visits: file.visits.length, notes: notes.length })}>
               {say(`clients.file.tabs.${t}`)}
             </Tabs.NavLink>
           ))}
@@ -181,24 +197,14 @@ export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, no
         </div>
       ) : null}
       {tab === "invoices" ? (
-        <section aria-labelledby="client-invoices" className="flex flex-col gap-3">
-          <h2 id="client-invoices" className="text-lg font-semibold text-fg">{say("clients.file.invoices")}</h2>
-          {file.invoices.length === 0 ? (
-            <p className="text-fg-secondary">{say("clients.file.noInvoices")}</p>
-          ) : (
-            <DataTable caption={say("clients.file.invoices")} rows={file.invoices} columns={billColumns} labels={labels} getRowId={(i) => i.id} rowLabel={(i) => i.number} />
-          )}
-        </section>
+        <ListSection id="client-invoices" title={say("clients.file.invoices")} empty={file.invoices.length === 0 ? say("clients.file.noInvoices") : null}>
+          <DataTable caption={say("clients.file.invoices")} rows={file.invoices} columns={billColumns} labels={labels} getRowId={(i) => i.id} rowLabel={(i) => i.number} />
+        </ListSection>
       ) : null}
       {tab === "visits" ? (
-        <section aria-labelledby="client-visits" className="flex flex-col gap-3">
-          <h2 id="client-visits" className="text-lg font-semibold text-fg">{say("clients.file.visits")}</h2>
-          {file.visits.length === 0 ? (
-            <p className="text-fg-secondary">{say("clients.file.noVisits")}</p>
-          ) : (
-            <DataTable caption={say("clients.file.visits")} rows={file.visits} columns={visitColumns} labels={labels} getRowId={(v) => v.id} rowLabel={(v) => formatDate(v.startsAt, locale, timeZone)} defaultSort={{ column: "date", direction: "descending" }} />
-          )}
-        </section>
+        <ListSection id="client-visits" title={say("clients.file.visits")} empty={file.visits.length === 0 ? say("clients.file.noVisits") : null}>
+          <DataTable caption={say("clients.file.visits")} rows={file.visits} columns={visitColumns} labels={labels} getRowId={(v) => v.id} rowLabel={(v) => formatDate(v.startsAt, locale, timeZone)} defaultSort={{ column: "date", direction: "descending" }} />
+        </ListSection>
       ) : null}
       {tab === "notes" ? notesColumn : null}
     </DetailLayout>

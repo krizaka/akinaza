@@ -5,8 +5,7 @@ appId: com.krizaka.akinaza
 tags:
   - ci
 ---
-- launchApp:
-    clearState: true
+- runFlow: shared/launch.yaml
 - runFlow: shared/sign-in.yaml
 - assertVisible: "Aujourd'hui|Today"
 - waitForAnimationToEnd

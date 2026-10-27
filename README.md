@@ -61,8 +61,9 @@ know-how it shows: **running a shop, for less** — one tool instead of five, bo
 Owners can reorder and show or hide the page's sections, and upload a logo. The per-shop `shop_page` record stores that
 configuration; shops without a record keep the existing layout. Administrator feature switches always override owner
 choices for upcoming wall, reels, reviews, follow and announcements sections. Photos are checked by their bytes and
-stored under content-hashed Bunny paths (`brand/`, `gallery/`, and future media-purpose directories); uploads stay off
-until media storage is configured.
+stored by `@krizaka/storage` (`lib/media-storage.ts`: the administrator's provider in the `storage.*` settings over the environment's,
+content-hashed names `photo.<sha10>.<ext>`) under `user/akinaza/shops/<shop>/` (`brand/`, `gallery/`, and future media-purpose
+directories); files published before the package keep their key and address. Uploads stay off until media storage is configured.
 
 ## Start
 

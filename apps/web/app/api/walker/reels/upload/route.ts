@@ -6,7 +6,8 @@ import { audit } from "@/lib/audit";
 import { assertShopFeature, communityLimits, megabytesToBytes } from "@/lib/community";
 import { db } from "@/lib/db";
 import { handle, refuse } from "@/lib/http";
-import { detectImage, MAX_UPLOAD_BYTES, mediaSettings, storeImage, storeVideo } from "@/lib/media-upload";
+import { mediaStorage } from "@/lib/media-storage";
+import { detectImage, MAX_UPLOAD_BYTES, storeImage, storeVideo } from "@/lib/media-upload";
 import { announcePage } from "@/lib/realtime";
 
 export const dynamic = "force-dynamic";
@@ -19,10 +20,10 @@ export function POST(req: Request) {
   return handle(async () => {
     const { session, shop } = await requireShop(req, "catalogue");
     await assertShopFeature("features.shopReels");
-    const settings = mediaSettings();
-    if (!settings) throw refuse(503, "UPLOAD_UNAVAILABLE", "media storage is not configured");
     const limits = await communityLimits();
     const maxBytes = megabytesToBytes(limits.reelMegabytes);
+    const media = await mediaStorage({ maxBytes: Math.max(maxBytes, MAX_UPLOAD_BYTES) });
+    if (!media) throw refuse(503, "UPLOAD_UNAVAILABLE", "media storage is not configured");
     if (Number(req.headers.get("content-length") ?? 0) > maxBytes + MAX_UPLOAD_BYTES + 65_536) throw refuse(413, "UPLOAD_TOO_LARGE", "file too large");
     const form = await req.formData().catch(() => null);
     const file = form?.get("video");
@@ -38,9 +39,9 @@ export function POST(req: Request) {
       if (poster.size > MAX_UPLOAD_BYTES) throw refuse(413, "UPLOAD_TOO_LARGE", "poster too large");
       const posterBytes = new Uint8Array(await poster.arrayBuffer());
       if (!detectImage(posterBytes)) throw refuse(400, "UPLOAD_NOT_IMAGE", "not a JPEG, PNG or WebP image");
-      posterUrl = await storeImage(settings, shop.id, posterBytes, fetch, "reels");
+      posterUrl = await storeImage(media, shop.id, posterBytes, "reels");
     }
-    const url = await storeVideo(settings, shop.id, bytes, video.ext);
+    const url = await storeVideo(media, shop.id, bytes, video.ext);
     const text = (name: string) => { const v = form?.get(name); return typeof v === "string" ? v : ""; };
     const id = await addUploadedReel(db(), shop.id, { mp4Url: video.ext === "mp4" ? url : null, webmUrl: video.ext === "webm" ? url : null, posterUrl, seconds: video.seconds, titleFr: text("titleFr"), titleEn: text("titleEn") });
     await audit({ action: "shop.reel_uploaded", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { bytes: bytes.length, seconds: video.seconds }, headers: req.headers });

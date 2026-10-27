@@ -4,8 +4,7 @@ appId: com.krizaka.akinaza
 tags:
   - ci
 ---
-- launchApp:
-    clearState: true
+- runFlow: shared/launch.yaml
 - runFlow: shared/sign-in.yaml
 # The web rail's places, in its order: Aujourd'hui · Clients · Factures · Livres · Boutique.
 - assertVisible: "Aujourd'hui|Today"

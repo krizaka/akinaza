@@ -25,13 +25,14 @@
     "sg:ratchet:update": "node scripts/sg-ratchet.mjs --update",
     "sg:fix": "node scripts/sg-fix.mjs",
     "e2e:walker": "node scripts/e2e-walker.mjs",
+    "e2e:composer": "node scripts/e2e-composer.mjs",
     "shots:storefront": "node scripts/shots-storefront.mjs",
     "shots:docs": "SHOTS_DEVICES=desktop SHOTS_SCENES=docs-shop,docs-bookings,docs-invoices,docs-books,docs-data node scripts/shots-storefront.mjs",
     "payments:setup": "krizaka-payments-setup --catalogue infra/payments/catalogue.json"
   },
   "devDependencies": {
     "@ast-grep/cli": "0.51.0",
-    "@krizaka/config": "^0.8.0",
+    "@krizaka/config": "^0.9.1",
     "@krizaka/i18n": "^0.2.1",
     "@vitest/coverage-v8": "4.1.11",
     "dependency-cruiser": "^18.7.0",

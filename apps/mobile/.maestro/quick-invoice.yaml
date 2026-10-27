@@ -4,8 +4,7 @@ appId: com.krizaka.akinaza
 tags:
   - ci
 ---
-- launchApp:
-    clearState: true
+- runFlow: shared/launch.yaml
 - runFlow: shared/sign-in.yaml
 - tapOn: "Factures|Invoices"
 - tapOn: "Nouvelle facture|New invoice"

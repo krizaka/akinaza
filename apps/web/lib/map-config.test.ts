@@ -18,7 +18,7 @@ describe("the map of a shop page", () => {
 
 describe("the map engine's worker", () => {
   it("is served by this site, not by a third-party CDN: the map points at /maplibre and the route serves the two files", () => {
-    const zone = readFileSync(new URL("../components/shop/ZoneMap.tsx", import.meta.url), "utf8");
+    const zone = readFileSync(new URL("../components/shop/MapSetup.tsx", import.meta.url), "utf8");
     expect(zone).toContain('workerUrl: "/maplibre/maplibre-gl-worker.mjs"');
     const route = readFileSync(new URL("../app/maplibre/[file]/route.ts", import.meta.url), "utf8");
     expect(route).toContain("maplibre-gl-worker.mjs");
