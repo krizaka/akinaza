@@ -74,6 +74,8 @@ export const icsOpen = (name: string): string =>
   ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Akinaza//Export//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", `X-WR-CALNAME:${escape(name)}`].map(fold).join("\r\n") + "\r\n";
 export const icsClose = (): string => "END:VCALENDAR\r\n";
 
+const ICS_STATUS: Record<AppointmentExportRow["status"], "CONFIRMED" | "CANCELLED"> = { booked: "CONFIRMED", done: "CONFIRMED", noShow: "CONFIRMED", cancelled: "CANCELLED" };
+
 /** One event per appointment: « Service · Client », the staff member and the status. Only what the owner's own agenda shows. */
 export function appointmentsIcs(rows: readonly AppointmentExportRow[], w: ExportWords, locale: "fr" | "en", now: Date): string {
   return rows
@@ -87,7 +89,7 @@ export function appointmentsIcs(rows: readonly AppointmentExportRow[], w: Export
         `DTEND:${stamp(r.endsAt)}`,
         `SUMMARY:${escape([service, r.client].filter(Boolean).join(" · "))}`,
         `DESCRIPTION:${escape(`${r.staff} · ${w.status[r.status]}`)}`,
-        `STATUS:${r.status === "cancelled" ? "CANCELLED" : "CONFIRMED"}`,
+        `STATUS:${ICS_STATUS[r.status]}`,
         "END:VEVENT",
       ];
       return `${lines.map(fold).join("\r\n")}\r\n`;
