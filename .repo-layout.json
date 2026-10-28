@@ -15,6 +15,10 @@
     {
       "path": "perf-budgets.json",
       "why": "the page-weight budgets, read by scripts/check-perf-budgets.mjs after the build (scripts/ci-after-build.sh) and by the shop page weight test"
+    },
+    {
+      "path": "osv-scanner.toml",
+      "why": "osv-scanner reads its dated ignore list only from the repository root (the shared osv-scan, krizaka/.github#372)"
     }
   ]
 }
