@@ -117,7 +117,7 @@ export function InvoiceForm({ data, locale: base, start }: InvoiceFormProps) {
   const name = (s: { nameFr: string; nameEn: string }) => ({ fr: s.nameFr, en: s.nameEn })[locale];
   const serviceOptions = [...data.services.map((s) => ({ value: s.id, label: `${name(s)} · ${formatMoney(s.priceCents, locale)}` })), { value: "", label: say("invoices.new.freeLine") }];
   const submit = (
-    <form.Submit size="lg" variant="gradient" className="w-full font-bold" data-primary>
+    <form.Submit size="lg" variant="primary" className="w-full font-bold" data-primary>
       {say("invoices.new.submit")}
     </form.Submit>
   );

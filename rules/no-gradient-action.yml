@@ -1,0 +1,11 @@
+id: no-gradient-action
+language: Tsx
+severity: error
+message: "No `variant=\"gradient\"` on an action: Akinaza's primary action is the solid forest green (`variant=\"primary\"`); copper stays an accent, never a green-to-copper gradient (Oussama, 2026-10-28: « trop IA », akinaza#498)."
+rule:
+  kind: jsx_attribute
+  regex: '^variant="gradient"$'
+ignores:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/dist/**"
