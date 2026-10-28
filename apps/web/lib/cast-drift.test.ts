@@ -8,7 +8,7 @@ import { castOf } from "@krizaka/org";
 import { describe, expect, it } from "vitest";
 
 import { accountsFromEnv, QA_PERSONAS } from "../scripts/qa-accounts.mjs";
-import { ADMIN, castAccounts, ERIC, LOCAL_SECRET, WALKER } from "../scripts/seed-cast.mjs";
+import { ADMIN, castAccounts, ERIC, LOCAL_SECRET } from "../scripts/seed-cast.mjs";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 // Sources only: tests may use a name as a fixture, and the old UX review is prose.
