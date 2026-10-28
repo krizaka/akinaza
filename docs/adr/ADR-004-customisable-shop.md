@@ -148,3 +148,139 @@ Epic #236 is delivered across S2–S5. S1 comes first: nothing else ships to a r
 - Owners will ask for freedom the catalogue does not give. The answer is a new variant in the library, never a free
   column.
 - The composer is ours to maintain. In exchange, no third-party release can break the studio.
+
+## Addendum (2026-10-27, akinaza#478): one direction for the storefront, and six looks
+
+Status: accepted. The founder (2026-10-27): the shop page's sections look dated: the closing call (a flat box with one
+button), the wall (#477), the photo scroller (krizaka-ui#797) and the small TV (#469). He asks for one design pass and
+**at least six looks**. One of them is « Krizaka », with our mascots. The looks are switched through « See it another
+way » and chosen in the editor. This addendum folds in the decisions already taken: the mosaic gallery
+(krizaka-ui#797, `ShopGallery` in krizaka-ui#798), the tidy pinboard wall (#477), the large TV and the hero « photo or TV »
+(#469, `RetroTv` playlist in `@krizaka/ui` 3.68.0) and the compact footer that each app configures (#479).
+
+Captures of today's page, one per existing composition, phone and desktop, both themes (demo shops on dev, 2026-10-27):
+`https://krizaka-assets.b-cdn.net/pr-assets/akinaza/design-478/<look>-<phone|desktop>-<light|dark>.jpg`, where `<look>` is
+`1-cahier` (Pattes, `?look=journal`), `3-editorial` (Cèdre, `?look=editorial`), `4-boutique` (Cèdre, `?look=gallery`),
+`5-affiche` (Cèdre, compact) and `6-nuit-base` (Pattes, route). These are the **starting points**. The « Krizaka » look and
+the « Nuit » surface do not exist yet, so they are described below.
+
+### 1. A look is a preset, and it never touches the content
+
+- ✓ **A look is a trade-agnostic look preset** (`look-cahier`, `look-krizaka`, …) in `@krizaka/tokens`. It names the
+  paper, the surface, the faces, the accents, the density, the photo treatment, the motion, the mascots and **one variant
+  per section type**. A trade starts on one look (`TRADE_PRESETS` becomes a look id). The 12 trade presets stay as
+  published versions (§1: a version that has shipped is never deleted), and new pages use the looks.
+- ✓ **Applying a look rewrites only the variants** of the sections the page already has: `applyLook(doc, preset)` in
+  `@krizaka/ui/shop` keeps the order, the settings, the blocks and the text. It is pure and tested. The section list
+  itself (what the shop shows) stays the owner's, and the starters stay for « Start from a composition ».
+  → « See it another way » on a demo shop shows the **same content in six looks**, which is a real showcase, not six
+  different pages.
+- ✓ **In the editor**, the look is a radio group of six swatches (name, a still thumbnail, the accent chips), then one
+  accent from the look's tested list. It applies to the draft only, and publishing goes through the diff (§3).
+- ✕ **A look as a colour swap** (same variants, another accent) → refused by the founder. Each look sets a variant for
+  every section and its own motion.
+- ✕ **36 presets (6 looks × 6 trades)** → six times the AA matrix for the same result. A trade's difference is its
+  content and its starter, not its look.
+
+### 2. Every section, one direction (all looks)
+
+Mobile first, **one primary action per section**, the page's only primary colour is the booking. The hero is painted
+at once (never revealed, the LCP). Below the fold, every media box has a fixed ratio (CLS 0) and every interactive
+widget is a lazy chunk loaded near the viewport.
+
+| Section | Layout | The action | Motion | Perf · a11y |
+| :-- | :-- | :-- | :-- | :-- |
+| Hero | photo (`poster` / `split` / `banner`) or TV (`tv`), the owner's choice. Name, one line, three facts | « Réserver », chamfer (`shape="cut"`) | none | LCP = the poster image, phone-sized srcset, preloaded; the TV chrome and video after first paint (#469) |
+| Next times | `booking.strip`: 3–6 slots as chips; closed today → the next opening's slots, never an empty bar | a slot | none | text slots, no JS until a tap |
+| Services | `menu` (prices as text, dotted leaders) or `cards` / `index` | « Choisir » per row (secondary) | reveal soft | no images in the menu (ADR §6) |
+| Photos | `gallery.mosaic` = `ShopGallery`: bento 2×2 + 4 on desktop, snap strip with « 1 / 12 » on a phone, lightbox (`Dialog`) | open a photo | none; lightbox swipe | zero JS until the lightbox; fixed ratios (krizaka-ui#797) |
+| Wall | `gallery.wall` = tidy pinboard: 3 / 2 / 1 columns, `grid-auto-flow: dense`, tilt ±1–2° from the id, tape, one owner line (≤ 60 chars, Cahier face) | none | tape settles once (look `paper`) | alt from the line; tab order = visual order (#477) |
+| Short videos | `video.tv` = the large `RetroTv` (full width, controls on hover or focus), playlist in the owner's order, 3 transitions | play | the look's transition; cut under reduced motion | poster first, muted by default, embeds behind a click (#469) |
+| Reviews | `summary-cards` / `quote` / `strip`, the score as text | « Voir les avis » (quiet) | `NumberTicker` on the score (look `soft`/`lively`) | stars have a text equivalent |
+| Bulletin | `board` (flyers, ≤ the settings' limit) or `banner` (one line) | none | none | dates as `<time>` |
+| Visit | `card` / `split` / `map` (`map-gate`: the map loads on a click) | « Itinéraire » | none | no third-party request before a click |
+| **Closing call** | **new `booking.closing`**: full width, the shop's photo or mark, the next free slot live (« Demain 9 h », a read-only `SlotPicker` preview), in the look's surface | **« Réserver »** cut, `lg`; secondary « Appeler » or « Itinéraire » | the slot chip appears once | server-rendered; the preview is text until a tap; legible in both themes |
+| Footer | the shared `SiteFooter` with the app's config (#479): 2–3 short columns, one bottom line that wraps | none | none | no text overflow (the page-audit probe of #479) |
+
+- ✓ **The closing call ships first** (the founder's first example). It replaces `CtaPanel` in a bordered box, which is
+  « Prêt quand vous l'êtes » with one button and empty space in every capture.
+- ✕ **A carousel with arrows and dots, masonry, or parallax** → more JS, a CLS risk, more a11y surface (krizaka-ui#797).
+
+### 3. The six looks
+
+Every value names a token of `@krizaka/tokens` or a variant of `@krizaka/ui/shop`, never a colour. Each look is proven
+AA in both modes for each of its accents, and the visitor's dark / light choice is kept (a look defines both modes).
+
+| | **Cahier** | **Krizaka** | **Éditorial** | **Boutique** | **Affiche** | **Nuit** |
+| :-- | :-- | :-- | :-- | :-- | :-- | :-- |
+| The idea | the artistic notebook (B54's reference) | Krizaka's own page, the flock at work | a magazine page, calm and airy | warm, the shop as a place | bold and modern, big type | calm, low light, the TV glows |
+| Paper · surface | `seyes` (`kraft` for pets) · `paper` | `plain` · `ink` | `plain` · `paper` | `washi` · `warm` | `plain` · `contrast` | `plain` · `deep` (dark) / `dusk` (light) |
+| Faces (title · note) | `display` · `cahier` | `product-display` · `mono` | `display` · `mono` | `display` · `cahier` | `poster` · `mono` | `product-display` · `mono` |
+| Accents | akinaza, akinaza:accent-2 | krizaka, akinaza | akinaza:accent-2, akinaza | akinaza:accent-2, akinaza | akinaza, yomizaka | krizaka, akinaza |
+| Density · photo | airy · warm, grain 1, radius none, `polaroid` frame | compact · none, radius xs | airy · none, radius none | airy · warm, radius xs | compact · none, radius none | compact · cool, radius xs |
+| Hero | `split` | `poster` | `banner` | `poster` | `banner` | `tv` (poster LCP) |
+| Services | `index` | `menu` | `menu` (2 columns) | `cards` | `menu` | `menu` |
+| Booking strip | `strip` | `strip` | `strip` | `strip` | `strip` | `strip` |
+| Gallery | `wall` | `mosaic` | `mosaic` | `mosaic` | `filmstrip` | `mosaic` |
+| Video | `tv` | `tv` | `shorts` | `tv` | `shorts` | `tv` |
+| Reviews | `quote` | `summary-cards` | `quote` | `summary-cards` | `strip` | `summary-cards` |
+| Bulletin · visit | `board` · `split` | `banner` · `card` | `banner` · `split` | `board` · `split` | `banner` · `card` | `banner` · `map` |
+| Closing | `closing` on paper, the « réservé » stamp | `closing`, the pigeon | `closing`, the photo | `closing`, the photo | `closing`, the mark, big type | `closing`, the photo |
+| Motion | `paper`: tape settles, the stamp presses, TV `channel` | `soft`: `reveal(i)`, `NumberTicker`, the birds blink on screen only | `still`: fades, TV `crossfade` | `soft`: TV `slide` | `lively`: reveals staggered 70 ms, TV `slide` | `soft`: TV `crossfade` |
+| Mascots | off | **on** (below) | off | off | off | off |
+| Today | ≈ `pets-carnet` (capture 1) | — (described) | ≈ `salon-atelier` airy (capture 3) | ≈ `salon-atelier` compact (capture 4) | ≈ `salon-vitrine` (capture 5) | — (`6-nuit-base` is its starting composition) |
+
+**The « Krizaka » look's birds** (`@krizaka/ui/mascots`, `tone="brand"`): at most one per section, each a different bird,
+each one doing its job and never decoration (the mascots' rule). There is none on the first screen (LCP) and none on the
+photos, wall or TV (the pictures are the subject). The words stay beside the bird, from the messages (EN/FR).
+
+| Section | Bird | Why |
+| :-- | :-- | :-- |
+| Next times | the beaver | it builds the shop: bookings at work |
+| Reviews | the owl | it reads: every review is read and verified |
+| Policies | the falcon | it watches: the cancellation and payment rules |
+| Story | the crane | it listens: the owner takes their time |
+| FAQ | the flamingo | it answers |
+| Closing call | the pigeon | it delivers the confirmation |
+
+- ✓ The birds are server-rendered SVG. Their life loop runs only on screen and stops under reduced motion. They add no
+  client JS to the public page (the ratchet).
+
+### 4. Budgets, for every look
+
+- ✓ Each look passes the §4 budgets on **both demo shops**: LCP ≤ 2.5 s, CLS 0 (≤ 0.02 hard), the JS ratchet, five
+  phone screens for the compact salon, the page audit with axe in both themes. The perf gate in CI measures the six
+  looks (`?look=`) and the TV hero. A look that fails is not offered.
+- ✓ Motion: CSS only on the public page. There is no permanent `requestAnimationFrame` and no animation library. The
+  TV and the lightbox are the only lazy chunks. Everything is still under `prefers-reduced-motion` and Save-Data.
+
+### 5. Missing in krizaka-ui (libs first)
+
+| Missing | Where |
+| :-- | :-- |
+| `booking.closing` (the closing call: photo or mark, a read-only next-slot preview, the primary and a secondary action) | `@krizaka/ui/shop/booking` |
+| Look presets: trade-agnostic `look-*` ids; new keys `surface` (`paper` · `ink` · `warm` · `contrast` · `deep`/`dusk`), `motion` (`still` · `soft` · `paper` · `lively`), `mascots` (`off` · `on`), `photo.frame` (`none` · `polaroid`), the `poster` title face (from `@krizaka/fonts`); the six looks and their AA matrix | `@krizaka/tokens/shop-presets` |
+| `applyLook(doc, preset)`, the look catalogue, the composer's look picker (radio group, swatches), a mascot slot per section driven by `mascots` | `@krizaka/ui/shop`, `@krizaka/ui/shop-composer` |
+| `gallery.mosaic` rendered by `ShopGallery` | krizaka-ui#797 / #798 |
+| `Wall` as the tidy pinboard (dense grid, deterministic tilt, one owner line) | `@krizaka/ui/wall` (the library half of #477) |
+| `SiteFooter` taking a typed config (columns, bottom items, socials, legal line) | `@krizaka/ui/site-footer` (the library half of #479) |
+| `RetroTv` wide in `hero.tv` and `video.tv` | shipped in 3.68.0 (krizaka-ui#796); adoption only |
+
+### 6. Slices
+
+The library first, then the Akinaza adoption, **the closing call first**. Each slice keeps §4 and §5 and carries its own
+perf and a11y acceptance.
+
+| # | Slice | Issue |
+| :-- | :-- | :-- |
+| L1 | `booking.closing`, the closing call | krizaka/krizaka-ui#802 |
+| L2 | the six look presets, the new keys, the AA matrix | krizaka/krizaka-ui#803 |
+| L3 | `applyLook`, the look picker, the mascot slots, the motion modes | krizaka/krizaka-ui#804 |
+| L4 | `Wall` as the tidy pinboard | krizaka/krizaka-ui#805 |
+| L5 | `SiteFooter` config | krizaka/krizaka-ui#806 |
+| A1 | adopt the closing call | #480 |
+| A2 | the hero « photo or TV » and the large TV | #469 |
+| A3 | adopt `ShopGallery` | #481 (krizaka-ui#797) |
+| A4 | the tidy wall and its editor | #477 |
+| A5 | the compact, configured footer | #479 |
+| A6 | the six looks in « See it another way » and the composer, the perf gate per look | #482 |
