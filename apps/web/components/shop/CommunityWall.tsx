@@ -32,9 +32,6 @@ export interface PlayerWords {
 /** The television's own words (@krizaka/ui 3.70: `RetroTv.labels` are the cabinet's, no longer the player's). */
 const tvLabels = (w: PlayerWords): Partial<RetroTvLabels> => ({ play: w.play, pause: w.pause, seek: w.seek, soundOff: w.unmute, soundOn: w.mute });
 
-/** The television's own controls (3.69: its labels are its own, not the video player's): the words the catalogue has; the playlist's (next, previous) are not drawn for one video. */
-const tvLabels = (w: PlayerWords): Partial<RetroTvLabels> => ({ play: w.play, pause: w.pause, seek: w.seek, soundOff: w.mute, soundOn: w.unmute });
-
 export interface FacadeWords {
   /** « Load {platform} and play » and the line under it, with the platform already named. */
   play: Record<string, string>;
