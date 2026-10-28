@@ -22,10 +22,10 @@ export function bulletinLayout(count: number): {
  * ) the note is drawn here; then this file adopts it.
  */
 const PAPERS = [
-  "bg-[var(--kz-warning-soft)]",
-  "bg-[var(--kz-danger-soft)]",
-  "bg-[var(--kz-success-soft)]",
-  "bg-[var(--kz-accent-soft)]",
+  "bg-warning-soft",
+  "bg-danger-soft",
+  "bg-success-soft",
+  "bg-accent-soft",
 ] as const;
 
 /** A flyer's look is read from its id, never from chance: the same flyer is the same paper, hold and lean on every render and every device. */
@@ -76,7 +76,7 @@ export function Bulletin({
               tilt={look.tilt}
               className="block"
             >
-              <div className="[filter:drop-shadow(2px_3px_0_var(--kz-border-default))]">
+              <div className="text-border-default drop-shadow-[2px_3px_0_currentColor]">
                 <div
                   data-postit=""
                   className={cn(
