@@ -29,11 +29,8 @@ export interface PlayerWords {
   time: string;
 }
 
-/**
- * The television's own words (`@krizaka/ui` 3.68 gave `RetroTv` its own label set): the ones the catalogue has. `next`, `previous`,
- * `nowPlaying` and `captions` stay the library's until the catalogue carries them (akinaza#469, the television's playlist).
- */
-export const tvLabels = (w: PlayerWords): Partial<RetroTvLabels> => ({ play: w.play, pause: w.pause, seek: w.seek, soundOn: w.unmute, soundOff: w.mute });
+/** The television's own words (@krizaka/ui 3.70: `RetroTv.labels` are the cabinet's, no longer the player's). */
+const tvLabels = (w: PlayerWords): Partial<RetroTvLabels> => ({ play: w.play, pause: w.pause, seek: w.seek, soundOff: w.unmute, soundOn: w.mute });
 
 export interface FacadeWords {
   /** « Load {platform} and play » and the line under it, with the platform already named. */
