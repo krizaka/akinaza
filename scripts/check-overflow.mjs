@@ -21,7 +21,7 @@ export const SHOP_PAGES = ["/en/s/cedre-ciseaux", "/fr/s/cedre-ciseaux?look=edit
 /** The signed-in frame (akinaza#396, the « never overflows » containment of the shared `AppFrame`), relative to `/<locale>/app/<shop>`: the owner's rail, header and account menu at every width. */
 export const FRAME_PAGES = ["/aujourdhui", "/clients", "/invoices", "/books", "/shop"];
 export const FRAME_LOCALES = ["fr", "en"];
-export const PAGES = ["/en", "/fr", "/en/privacy", "/fr/privacy", "/en/changelog", "/fr/changelog", "/en/sign-in", "/fr/sign-in", ...SHOP_PAGES];
+export const PAGES = ["/en", "/fr", "/en/explore", "/fr/explore", "/en/privacy", "/fr/privacy", "/en/changelog", "/fr/changelog", "/en/sign-in", "/fr/sign-in", ...SHOP_PAGES];
 
 const arg = (name, fallback) => {
   const i = process.argv.indexOf(`--${name}`);
