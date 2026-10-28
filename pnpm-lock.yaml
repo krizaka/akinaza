@@ -23,6 +23,9 @@ importers:
       '@krizaka/i18n':
         specifier: ^0.2.1
         version: 0.2.1(react@19.3.1)(typescript@6.0.3)
+      '@krizaka/page-audit':
+        specifier: 0.3.1
+        version: 0.3.1(@krizaka/a11y-audit@0.2.0)(playwright-core@1.64.0)
       '@vitest/coverage-v8':
         specifier: 4.1.11
         version: 4.1.11(vitest@4.1.11)
@@ -2116,6 +2119,17 @@ packages:
       react: '>=18'
     peerDependenciesMeta:
       react:
+        optional: true
+
+  '@krizaka/page-audit@0.3.1':
+    resolution: {integrity: sha512-d1+VBjoKFMk1NnWFLsCKd9bMghp9v9b0+KnZo5YzDJDcM20/VthLYh4mF8eEV2oq+6ROG6T607u3DhlJDRgvnQ==}
+    engines: {node: '>=22'}
+    hasBin: true
+    peerDependencies:
+      '@krizaka/a11y-audit': '>=0.2.0'
+      playwright-core: '>=1.40'
+    peerDependenciesMeta:
+      '@krizaka/a11y-audit':
         optional: true
 
   '@krizaka/payments@0.4.0':
@@ -10332,6 +10346,12 @@ snapshots:
       '@tanstack/pacer': 0.23.1
     optionalDependencies:
       react: 19.3.1
+
+  '@krizaka/page-audit@0.3.1(@krizaka/a11y-audit@0.2.0)(playwright-core@1.64.0)':
+    dependencies:
+      playwright-core: 1.64.0
+    optionalDependencies:
+      '@krizaka/a11y-audit': 0.2.0
 
   '@krizaka/payments@0.4.0(vitest@4.1.11)(zod@4.6.7)':
     dependencies:
