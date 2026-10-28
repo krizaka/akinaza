@@ -168,10 +168,10 @@ describe("the account under the avatar (docs/ux/2026-10-full-review.md K6)", () 
     expect(html).not.toContain("lea@example.test");
   });
 
-  it("draws the same default picture as the profile: the chosen tone, else the account's own", async () => {
+  it("draws the same default picture as the profile: the chosen one, else the one the account's id assigns", async () => {
     const { avatarOf } = await import("@/lib/avatar");
-    expect(avatarOf({ id: "a-1", avatarSeed: "4" })).toEqual({ brand: "akinaza", tone: 4 });
-    expect(avatarOf({ id: "a-1", avatarSeed: null })).toEqual({ brand: "akinaza", seed: "a-1" });
+    expect(avatarOf({ id: "a-1", avatarSeed: "4" }).fallbackSrc).toMatch(/\/person\/silhouette-4-256\.webp$/);
+    expect(avatarOf({ id: "a-1", avatarSeed: null })).toEqual(avatarOf({ id: "a-1", avatarSeed: "gone" }));
   });
 
   it("reaches the account through the menu only: « Mon compte » leads to the profile, the rail does not", () => {

@@ -25,7 +25,7 @@ import { ShopReviews } from "@/components/shop/ShopReviews";
 import { ShopVideoLazy } from "@/components/shop/ShopVideoLazy";
 import { coverPhoneSet, coverSizes, coverSrcSet, PHONE_MEDIA } from "@/lib/cover-renditions";
 import { type Locale, translator } from "@/lib/i18n";
-import { defaultPicture } from "@/lib/org-defaults";
+import { defaultBanner, defaultPicture } from "@/lib/org-defaults";
 import { photoLedger, type PhotoPool, planPhotos } from "@/lib/shop-page-media";
 import type { StorefrontView } from "@/lib/storefront";
 
@@ -74,6 +74,12 @@ function heroFact(b: NonNullable<Args<"hero">["section"]["blocks"]>[number], { v
   return null;
 }
 
+/** A shop with no photo for its hero wears the org JSON's default banner for its name, like its logo (a decorative picture: no alt). */
+function bannerOf(id: string) {
+  const banner = defaultBanner(id);
+  return banner ? { src: banner.src, alt: "", srcSet: banner.srcSet } : undefined;
+}
+
 function heroSection({ section, c }: Args<"hero">): ReactNode {
   const { view, text, plan, book } = c;
   const common = commonOf(section);
@@ -82,7 +88,7 @@ function heroSection({ section, c }: Args<"hero">): ReactNode {
     logo ? <Image key="logo" src={logo} alt={view.name} width={64} height={64} unoptimized className="rounded-lg object-cover" /> : null,
     ...(section.blocks ?? []).map((b) => heroFact(b, c)),
   ];
-  return <HeroSection {...common} variant={section.variant === "tv" ? "poster" : section.variant} focus={section.settings.focus} title={view.name} lead={text(section.text?.lead) ?? view.tagline ?? undefined} facts={facts} actions={book()} cover={plan.cover ? { src: plan.cover.src, alt: plan.cover.alt, video: plan.cover.video, srcSet: coverSrcSet(plan.cover.src), phone: coverPhoneSet(plan.cover.src) } : undefined} />;
+  return <HeroSection {...common} variant={section.variant === "tv" ? "poster" : section.variant} focus={section.settings.focus} title={view.name} lead={text(section.text?.lead) ?? view.tagline ?? undefined} facts={facts} actions={book()} cover={plan.cover ? { src: plan.cover.src, alt: plan.cover.alt, video: plan.cover.video, srcSet: coverSrcSet(plan.cover.src), phone: coverPhoneSet(plan.cover.src) } : bannerOf(view.name)} />;
 }
 
 function servicesSection({ section, c }: Args<"services">): ReactNode {

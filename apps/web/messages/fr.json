@@ -1251,8 +1251,7 @@
       },
       "avatar": {
         "label": "Image",
-        "hint": "Une des images d'Akinaza.",
-        "tone": "Image {tone}"
+        "hint": "Une des images d'Akinaza."
       },
       "email": {
         "label": "Courriel",
