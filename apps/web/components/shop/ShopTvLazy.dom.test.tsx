@@ -23,7 +23,7 @@ afterEach(() => {
   disconnect.mockClear();
 });
 
-const props = { video: { poster: "https://cdn.example/p.jpg" } } as never;
+const props = { video: { poster: "https://cdn.example/p.jpg" } } as unknown as Parameters<typeof ShopTvLazy>[0];
 
 describe("ShopTvLazy: the television is downloaded when it nears the screen, not at hydration (client JS budget)", () => {
   it("holds the poster frame until the frame is near, then mounts the player once", async () => {
