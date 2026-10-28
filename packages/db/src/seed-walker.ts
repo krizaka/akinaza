@@ -67,9 +67,9 @@ export const SAINT_HENRI = {
       includedEn: ["A meet-and-greet before the first walk", "Pick-up at your door", "A photo and a note after"],
     },
   } as Record<string, { descriptionFr: string; descriptionEn: string; includedFr: string[]; includedEn: string[] }>,
-  /** The shop's photos: the cover (an autumn view from Mont-Royal, the neighbourhood's mood) and the gallery (the real recordings of the walker's journey on dev). */
+  /** The shop's photos: the cover (the Lachine canal at dawn, Akinaza's own demo image) and the gallery (the real recordings of the walker's journey on dev). */
   media: {
-    cover: { url: "https://krizaka-assets.b-cdn.net/site/products/orazaka/gallery/mtl-mont-royal.4f8387c925.webp", altFr: "Montréal en automne, vue depuis le mont Royal.", altEn: "Montréal in autumn, seen from Mont Royal." },
+    cover: { url: "https://krizaka-assets.b-cdn.net/site/products/akinaza/demo/pets-cover.18173bdfbf.webp", altFr: "Le canal Lachine au petit matin, le chemin de la promenade.", altEn: "The Lachine canal at dawn, the walk's path." },
     gallery: [
       { url: "https://krizaka-assets.b-cdn.net/site/products/orazaka/gallery/mtl-ruelle.021f8cb018.webp", altFr: "Une ruelle de quartier sous la pluie.", altEn: "A neighbourhood alley in the rain.", captionFr: "Le quartier", captionEn: "The neighbourhood", wide: true },
       {
