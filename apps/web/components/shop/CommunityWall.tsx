@@ -3,7 +3,7 @@
 
 import { WALL_KIND, type WallTexture } from "@akinaza/core";
 import { EmbedFacade } from "@krizaka/ui/embed-facade";
-import { RetroTv } from "@krizaka/ui/retro-tv";
+import { RetroTv, type RetroTvLabels } from "@krizaka/ui/retro-tv";
 import type { VideoPlayerLabels } from "@krizaka/ui/video-player";
 import { Wall, type WallItem } from "@krizaka/ui/wall";
 import Image from "next/image";
@@ -48,6 +48,9 @@ export const playerLabels = (w: PlayerWords): VideoPlayerLabels => ({
   time: (time, duration) => w.time.replace("{time}", time).replace("{duration}", duration),
 });
 
+/** The television's own controls (3.69: its labels are its own, not the video player's): the words the catalogue has; the playlist's (next, previous) are not drawn for one video. */
+const tvLabels = (w: PlayerWords): Partial<RetroTvLabels> => ({ play: w.play, pause: w.pause, seek: w.seek, soundOff: w.mute, soundOn: w.unmute });
+
 export interface FacadeWords {
   /** « Load {platform} and play » and the line under it, with the platform already named. */
   play: Record<string, string>;
@@ -75,12 +78,12 @@ export function ShopTv({ video, channel, title, player, facade, platformNames }:
   const src = video.mp4 ?? video.webm;
   if (video.platform && video.externalUrl) {
     return (
-      <RetroTv title={title} channel={channel} labels={playerLabels(player)}>
+      <RetroTv title={title} channel={channel} labels={tvLabels(player)}>
         <EmbedFacade platform={video.platform} url={video.externalUrl} title={title} playLabel={facade.play[video.platform] ?? platformNames[video.platform] ?? ""} poster={video.poster ?? undefined} notice={facade.notice[video.platform]} />
       </RetroTv>
     );
   }
-  return <RetroTv title={title} channel={channel} src={src ?? ""} type="file" poster={video.poster ?? undefined} labels={playerLabels(player)} />;
+  return <RetroTv title={title} channel={channel} src={src ?? ""} type="file" poster={video.poster ?? undefined} labels={tvLabels(player)} />;
 }
 
 /** The wall: the owner's photos, words and sign over a real list, with the latest video in its television beside it. */

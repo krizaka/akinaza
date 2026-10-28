@@ -40,6 +40,20 @@ describe("no duplicate photo on a page (akinaza#401)", () => {
   });
 });
 
+describe("the closing call's photo (akinaza#480)", () => {
+  const closing = { schema: 1, preset: { id: "salon-vitrine", version: 1 }, sections: [{ key: "s_hero", type: "hero", variant: "poster", settings: { focus: "center" } }, { key: "s_gallery", type: "gallery", variant: "grid", settings: { source: "all" } }, { key: "s_booking_closing", type: "booking", variant: "closing", settings: { count: 4 } }] };
+  it("is a photo no earlier section drew, the cover and the gallery included", () => {
+    const plan = planPhotos(closing as never, { cover: photo(0), gallery: Array.from({ length: 14 }, (_, i) => photo(i)), wall: [] });
+    expect(plan.sections.s_booking_closing!.map((p) => p.id)).toEqual(["p13"]);
+    const addresses = placedAddresses(plan);
+    expect(new Set(addresses).size).toBe(addresses.length);
+  });
+  it("is absent when the page already shows every photo: the shop's mark stands in", () => {
+    const plan = planPhotos(closing as never, { cover: photo(0), gallery: [photo(0), photo(1)], wall: [] });
+    expect(plan.sections.s_booking_closing).toBeUndefined();
+  });
+});
+
 describe("a video's poster", () => {
   it("is left out when the page already draws that picture, and claimed once otherwise", async () => {
     const { photoLedger } = await import("./shop-page-media");

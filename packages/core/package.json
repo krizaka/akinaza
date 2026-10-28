@@ -17,7 +17,7 @@
     "@krizaka/brief": "0.1.0",
     "@krizaka/intl": "0.3.0",
     "@krizaka/tokens": "^3.65.0",
-    "@krizaka/ui": "^3.66.0",
+    "@krizaka/ui": "^3.69.0",
     "date-fns": "^4.4.0",
     "zod": "^4.6.5"
   },

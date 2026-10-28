@@ -43,7 +43,7 @@ export const LEGACY_SECTION_DOCS: Readonly<Record<LegacySectionId, readonly DocS
   follow: [],
 };
 
-/** The hero opens every page; the booking panel and the sticky bar close it. */
+/** The hero opens every page; the closing call and the sticky bar close it. */
 export const HERO_SECTION: DocSection = {
   type: "hero",
   variant: "poster",
@@ -54,7 +54,7 @@ export const HERO_SECTION: DocSection = {
   ],
 };
 export const BOOKING_SECTIONS: readonly DocSection[] = [
-  { type: "booking", variant: "panel", settings: { count: 4 } },
+  { type: "booking", variant: "closing", settings: { count: 4 } },
   { type: "booking", variant: "sticky", settings: { count: 4 } },
 ];
 
