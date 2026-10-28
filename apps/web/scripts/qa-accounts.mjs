@@ -8,7 +8,7 @@
 import crypto from "node:crypto";
 import { promisify } from "node:util";
 
-import { personaByRole } from "@krizaka/org";
+import { persona } from "@krizaka/org";
 
 const scrypt = promisify(crypto.scrypt);
 
@@ -20,7 +20,7 @@ export async function hashPassword(password) {
 }
 
 // The visible name of each account is its persona's, from the cast (`@krizaka/org`): demos and recordings never show « qa » or « admin ».
-export const QA_PERSONAS = { USER: personaByRole("akinaza", "owner"), ADMIN: personaByRole("akinaza", "admin") };
+export const QA_PERSONAS = { USER: persona("akinaza", "eric"), ADMIN: persona("akinaza", "mira") };
 
 export function accountsFromEnv(env) {
   const accounts = [

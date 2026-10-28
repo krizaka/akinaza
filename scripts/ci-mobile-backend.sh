@@ -30,7 +30,7 @@ curl -sf http://localhost:3000/api/healthz >/dev/null
 
 # The migrations ran at the server's start; now the demo shops and the walker persona, whose owner signs in on the phone.
 pnpm --filter @akinaza/db seed:demos
-QA_WALKER_PASSWORD="$DEMO_ACCOUNT_PASSWORD" QA_CLIENTS_PASSWORD="$(openssl rand -hex 16)" QA_ADMIN_PASSWORD="$(openssl rand -hex 16)" pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs --check
+QA_WALKER_PASSWORD="$DEMO_ACCOUNT_PASSWORD" QA_CLIENTS_PASSWORD="$(openssl rand -hex 16)" QA_USER_PASSWORD="$(openssl rand -hex 16)" QA_ADMIN_PASSWORD="$(openssl rand -hex 16)" pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs --check
 # A visit today at "now + 1 h" (the injected clock, never a typed date), so the phone's Aujourd'hui flow always goes list, detail, start, finish (#433).
 pnpm --filter @akinaza/web exec tsx scripts/seed-today-visit.mjs
 echo "backend ready: http://localhost:3000 (dev, the Saint-Henri walker)"

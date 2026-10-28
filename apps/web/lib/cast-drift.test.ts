@@ -8,7 +8,7 @@ import { castOf } from "@krizaka/org";
 import { describe, expect, it } from "vitest";
 
 import { accountsFromEnv, QA_PERSONAS } from "../scripts/qa-accounts.mjs";
-import { ADMIN, castAccounts, LOCAL_SECRET, WALKER } from "../scripts/seed-cast.mjs";
+import { ADMIN, castAccounts, ERIC, LOCAL_SECRET, WALKER } from "../scripts/seed-cast.mjs";
 
 const root = fileURLToPath(new URL("../../..", import.meta.url));
 // Sources only: tests may use a name as a fixture, and the old UX review is prose.
@@ -28,18 +28,18 @@ describe("the cast is the only source of the personas", () => {
   });
 
   it("names the QA accounts and the seeded accounts after their personas", () => {
-    expect(QA_PERSONAS.USER).toEqual(WALKER);
+    expect(QA_PERSONAS.USER).toEqual(ERIC);
     expect(QA_PERSONAS.ADMIN).toEqual(ADMIN);
     const env = { QA_USER_EMAIL: "a@x.test", QA_USER_PASSWORD: "x".repeat(14), QA_ADMIN_EMAIL: "b@x.test", QA_ADMIN_PASSWORD: "y".repeat(14) };
-    expect(accountsFromEnv(env).map((a: { name: string }) => a.name)).toEqual([WALKER.displayName, ADMIN.displayName]);
+    expect(accountsFromEnv(env).map((a: { name: string }) => a.name)).toEqual([ERIC.displayName, ADMIN.displayName]);
   });
 
-  it("gives the cast accounts: the walker, five clients, the administrator; a default secret only on this machine", () => {
+  it("gives the cast accounts: the walker, five clients, Éric, the administrator; a default secret only on this machine", () => {
     const local = castAccounts({ DATABASE_URL: "postgres://u@localhost:5432/x" });
-    expect(local.map((a: { persona: { id: string } }) => a.persona.id)).toEqual(["lea", "camille", "jordan", "nadia", "etienne", "sofia", "simon"]);
+    expect(local.map((a: { persona: { id: string } }) => a.persona.id)).toEqual(["lea", "camille", "jordan", "nadia", "etienne", "sofia", "eric", "mira"]);
     expect(local.every((a: { secret: string }) => a.secret === LOCAL_SECRET)).toBe(true);
     expect(() => castAccounts({ DATABASE_URL: "postgres://u@db.example.com/x" })).toThrow(/QA_WALKER_PASSWORD/);
-    const remote = castAccounts({ DATABASE_URL: "postgres://u@db.example.com/x", QA_WALKER_PASSWORD: "w".repeat(14), QA_CLIENTS_PASSWORD: "c".repeat(14), QA_ADMIN_PASSWORD: "a".repeat(14), QA_ADMIN_EMAIL: "Boss@x.test" });
+    const remote = castAccounts({ DATABASE_URL: "postgres://u@db.example.com/x", QA_WALKER_PASSWORD: "w".repeat(14), QA_CLIENTS_PASSWORD: "c".repeat(14), QA_ADMIN_PASSWORD: "a".repeat(14), QA_USER_PASSWORD: "u".repeat(14), QA_ADMIN_EMAIL: "Boss@x.test" });
     expect(remote.at(-1)).toMatchObject({ email: "boss@x.test", role: "ADMIN" });
   });
 });

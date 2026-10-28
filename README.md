@@ -99,7 +99,7 @@ The Krizaka names and birds are not licensed: [trademark policy](https://github.
 
 ## Demo cast and hot-fix reproduction
 
-One cast (`@krizaka/org`) and one idempotent seed serve local, CI, Maestro, the recorders and the dev deployment (krizaka/.github#356): the Saint-Henri walker Léa Beaulieu with her shop, her five clients and their dogs, and Simon Roy, the administrator. `apps/web/scripts/qa-accounts.mjs` gives the QA accounts the same persona names; `apps/web/lib/cast-drift.test.ts` fails if a persona's name is spelled anywhere else.
+One cast (`@krizaka/org`) and one idempotent seed serve local, CI, Maestro, the recorders and the dev deployment (krizaka/.github#356): the Saint-Henri walker Léa Beaulieu with her shop, her five clients and their dogs, Éric Tremblay (the Krizaka studio's owner) and Mira Haddad, the administrator — the same names as the deployed QA accounts. `apps/web/scripts/qa-accounts.mjs` gives the QA accounts the same persona names; `apps/web/lib/cast-drift.test.ts` fails if a persona's name is spelled anywhere else.
 
 **Reproduce a hot fix locally**: start a Postgres (`docker run -d -p 5432:5432 -e POSTGRES_USER=akinaza -e POSTGRES_PASSWORD=akinaza -e POSTGRES_DB=akinaza postgres:17-alpine`), `export DATABASE_URL=postgres://akinaza:akinaza@localhost:5432/akinaza`, `pnpm run dev:seed`, `pnpm dev`, and sign in as `lea.beaulieu@akinaza.test` (local password `local-cast-password-0123`). `dev:seed --check` compares the counts per table with `apps/web/scripts/cast-fingerprint.json`; the **Dev seed** workflow runs the same check on the dev database from the `dev` GitHub environment and fails closed when one of its secrets is missing.
 

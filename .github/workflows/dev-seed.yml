@@ -21,6 +21,8 @@ jobs:
       DATABASE_CA_CERT: ${{ secrets.DATABASE_CA_CERT }}
       APP_DATA_ENCRYPTION_KEY: ${{ secrets.APP_DATA_ENCRYPTION_KEY }}
       QA_WALKER_PASSWORD: ${{ secrets.QA_WALKER_PASSWORD }}
+      QA_USER_EMAIL: ${{ secrets.QA_USER_EMAIL }}
+      QA_USER_PASSWORD: ${{ secrets.QA_USER_PASSWORD }}
       QA_CLIENTS_PASSWORD: ${{ secrets.QA_CLIENTS_PASSWORD }}
       QA_ADMIN_EMAIL: ${{ secrets.QA_ADMIN_EMAIL }}
       QA_ADMIN_PASSWORD: ${{ secrets.QA_ADMIN_PASSWORD }}
@@ -28,7 +30,7 @@ jobs:
       - name: Check the environment secrets (fail closed)
         run: |
           missing=""
-          for name in DATABASE_URL DATABASE_CA_CERT APP_DATA_ENCRYPTION_KEY QA_WALKER_PASSWORD QA_CLIENTS_PASSWORD QA_ADMIN_EMAIL QA_ADMIN_PASSWORD; do
+          for name in DATABASE_URL DATABASE_CA_CERT APP_DATA_ENCRYPTION_KEY QA_WALKER_PASSWORD QA_CLIENTS_PASSWORD QA_USER_EMAIL QA_USER_PASSWORD QA_ADMIN_EMAIL QA_ADMIN_PASSWORD; do
             [ -n "$(printenv "$name")" ] || missing="$missing $name"
           done
           if [ -n "$missing" ]; then

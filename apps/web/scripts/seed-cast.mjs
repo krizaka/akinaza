@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // The whole Akinaza cast on a database, the same everywhere (krizaka/.github#356): local (`pnpm run dev:seed`), CI, Maestro, the
-// recorders and the dev deployment. Léa Beaulieu (the Saint-Henri walker) with her shop, five clients with their dogs, and
-// Simon Roy, the administrator — names, languages and roles come from `@krizaka/org`'s cast. Idempotent; refused outside dev.
+// recorders and the dev deployment. The Saint-Henri walker (Léa) with her shop, five clients with their dogs, and
+// Éric (the Krizaka studio's owner), Mira (the administrator) — names, languages and roles come from `@krizaka/org`'s cast. Idempotent; refused outside dev.
 // Addresses of the walker and the clients are the seed's own fictional `.test` ones; secrets come from the environment and are
 // never printed (a database on this machine gets local defaults).
 //
@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 
 import { createDb, migrate, pg, poolConfig } from "@akinaza/db";
 import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri } from "@akinaza/db/seed-walker";
-import { castOf, personaByRole, seedFingerprint } from "@krizaka/org";
+import { castOf, persona, seedFingerprint } from "@krizaka/org";
 
 import { hashPassword } from "./qa-accounts.mjs";
 
@@ -28,8 +28,9 @@ const isLocalHost = (databaseUrl) => {
   }
 };
 
-export const WALKER = personaByRole("akinaza", "owner");
-export const ADMIN = personaByRole("akinaza", "admin");
+export const WALKER = persona("akinaza", "lea");
+export const ERIC = persona("akinaza", "eric");
+export const ADMIN = persona("akinaza", "mira");
 
 /** The accounts of the cast: the walker, the five clients (same order as the seed) and the administrator. */
 export function castAccounts(env) {
@@ -41,13 +42,17 @@ export function castAccounts(env) {
   };
   const walkerSecret = need("QA_WALKER_PASSWORD", LOCAL_SECRET);
   const clientsSecret = need("QA_CLIENTS_PASSWORD", LOCAL_SECRET);
-  const adminEmail = (env.QA_ADMIN_EMAIL ?? `${ADMIN.id}@demo.akinaza.test`).trim().toLowerCase();
-  if (!/^[^@\s]+@[^@\s]+$/.test(adminEmail)) throw new Error("QA_ADMIN_EMAIL is invalid");
+  const addressOf = (name, p) => {
+    const email = (env[name] ?? `${p.id}@demo.akinaza.test`).trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+$/.test(email)) throw new Error(`${name} is invalid`);
+    return email;
+  };
   const clientPersonas = castOf("akinaza").filter((p) => p.role === "client");
   return [
     { persona: WALKER, email: SAINT_HENRI_EMAILS[0], role: "USER", secret: walkerSecret },
     ...clientPersonas.map((persona, i) => ({ persona, email: SAINT_HENRI_EMAILS[i + 1], role: "USER", secret: clientsSecret })),
-    { persona: ADMIN, email: adminEmail, role: "ADMIN", secret: need("QA_ADMIN_PASSWORD", LOCAL_SECRET) },
+    { persona: ERIC, email: addressOf("QA_USER_EMAIL", ERIC), role: "USER", secret: need("QA_USER_PASSWORD", LOCAL_SECRET) },
+    { persona: ADMIN, email: addressOf("QA_ADMIN_EMAIL", ADMIN), role: "ADMIN", secret: need("QA_ADMIN_PASSWORD", LOCAL_SECRET) },
   ];
 }
 
@@ -98,7 +103,7 @@ async function main() {
       ids.push(row.id);
     }
     const result = await seedSaintHenri(createDb(pool), key, new Date());
-    console.log(`seed-cast: ${WALKER.displayName} (${SAINT_HENRI.shop.name}), ${accounts.length - 2} clients, ${ADMIN.displayName} (administrator); shop ${result.created ? "created" : "already there"}`);
+    console.log(`seed-cast: ${WALKER.displayName} (${SAINT_HENRI.shop.name}), ${accounts.length - 3} clients, ${ERIC.displayName}, ${ADMIN.displayName} (administrator); shop ${result.created ? "created" : "already there"}`);
     const { fingerprint } = await fingerprintOf((sql, values) => pool.query(sql, values), ids);
     console.log(`fingerprint: ${fingerprint}`);
     if (process.argv.includes("--check")) {
