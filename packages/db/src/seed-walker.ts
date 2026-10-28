@@ -73,19 +73,19 @@ export const SAINT_HENRI = {
   } as Record<string, { descriptionFr: string; descriptionEn: string; includedFr: string[]; includedEn: string[] }>,
   /** The shop's photos: the cover (the Lachine canal at dawn, Akinaza's own demo image) and the gallery (the real recordings of the walker's journey on dev). */
   media: {
-    cover: { url: "https://krizaka-assets.b-cdn.net/site/products/akinaza/demo/pets-cover.18173bdfbf.webp", altFr: "Le canal Lachine au petit matin, le chemin de la promenade.", altEn: "The Lachine canal at dawn, the walk's path." },
+    cover: { url: "https://krizaka-assets.b-cdn.net/sites/akinaza/demo/pets-cover.18173bdfbf.webp", altFr: "Le canal Lachine au petit matin, le chemin de la promenade.", altEn: "The Lachine canal at dawn, the walk's path." },
     gallery: [
-      { url: "https://krizaka-assets.b-cdn.net/site/products/orazaka/gallery/mtl-ruelle.021f8cb018.webp", altFr: "Une ruelle de quartier sous la pluie.", altEn: "A neighbourhood alley in the rain.", captionFr: "Le quartier", captionEn: "The neighbourhood", wide: true },
+      { url: "https://krizaka-assets.b-cdn.net/sites/orazaka/gallery/mtl-ruelle.021f8cb018.webp", altFr: "Une ruelle de quartier sous la pluie.", altEn: "A neighbourhood alley in the rain.", captionFr: "Le quartier", captionEn: "The neighbourhood", wide: true },
       {
-        url: "https://krizaka-assets.b-cdn.net/site/products/akinaza/tour/phone-report.af3aa7b92b.jpg",
-        webmUrl: "https://krizaka-assets.b-cdn.net/site/products/akinaza/tour/report.47b4fef558.webm",
-        mp4Url: "https://krizaka-assets.b-cdn.net/site/products/akinaza/tour/report.b1f25d285f.mp4",
+        url: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/phone-report.af3aa7b92b.jpg",
+        webmUrl: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/report.47b4fef558.webm",
+        mp4Url: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/report.b1f25d285f.mp4",
         altFr: "Léa écrit le rapport d'une promenade : une photo et un mot.",
         altEn: "Léa writes the report of a walk: a photo and a note.",
         captionFr: "Le rapport après la sortie",
         captionEn: "The report after the walk",
       },
-      { url: "https://krizaka-assets.b-cdn.net/site/products/akinaza/tour/phone-client.c5b88410f9.jpg", altFr: "Le rapport reçu par la cliente, avec la photo de son chien.", altEn: "The report as the client receives it, with her dog's photo.", captionFr: "Ce que vous recevez", captionEn: "What you receive" },
+      { url: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/phone-client.c5b88410f9.jpg", altFr: "Le rapport reçu par la cliente, avec la photo de son chien.", altEn: "The report as the client receives it, with her dog's photo.", captionFr: "Ce que vous recevez", captionEn: "What you receive" },
     ],
   },
   hours: [

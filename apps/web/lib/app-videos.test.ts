@@ -8,7 +8,7 @@ import { downloadPageOpen } from "./downloads";
 import { getDictionary, LOCALES } from "./i18n";
 
 const ROOT = join(__dirname, "..");
-const PATH = /^products\/akinaza\/download\/(web|android|ios|mac)-[a-z0-9-]+\.[0-9a-f]{10}\.(webm|mp4|jpg)$/;
+const PATH = /^sites\/akinaza\/download\/(web|android|ios|mac)-[a-z0-9-]+\.[0-9a-f]{10}\.(webm|mp4|jpg)$/;
 
 describe("the download page's videos (krizaka/.github#315)", () => {
   it("are known to the manifest with a file of each kind, hashed, under the product's download folder", () => {
