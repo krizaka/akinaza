@@ -41,6 +41,7 @@ export const PUBLIC_PAGES = [
   "/fr/s/cedre-ciseaux?look=gallery",
   "/en/s/pattes-saint-henri?look=journal",
   "/fr/s/nope",
+  "/fr/s/cedre-ciseaux/service/nope",
   "/fr/nope",
 ];
 
