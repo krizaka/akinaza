@@ -32,7 +32,7 @@ export function AkinazaAccountMenu({ locale, accountId, name, email, avatarSeed,
       label={words.account}
       name={name ?? undefined}
       email={email}
-      avatar={{ defaultAvatar: avatarOf({ id: accountId ?? email ?? name ?? "akinaza", avatarSeed }), alt: "", fallback: (name ?? email ?? "A").slice(0, 1).toUpperCase() }}
+      avatar={{ ...avatarOf({ id: accountId ?? email ?? name ?? "akinaza", avatarSeed }), alt: "", fallback: (name ?? email ?? "A").slice(0, 1).toUpperCase() }}
       showName={showName}
       linkAs={Link}
       links={[{ id: "settings", label: words.settings, href: settingsHref, icon: <UserIcon size={16} /> }]}
