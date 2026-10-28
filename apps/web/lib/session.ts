@@ -2,13 +2,14 @@ import crypto from "node:crypto";
 
 import { query } from "./db";
 import { sessionSecret } from "./env";
+import { SESSION_COOKIE } from "./session-cookie";
 
 /**
  * Web sessions. The cookie holds a random token (`as1.` + 32 bytes); the table keeps only its keyed hash, so a leaked
  * table opens nothing. The account is re-read on every request (a suspension applies at once). 14 days, HttpOnly,
  * Secure in production, SameSite=Lax.
  */
-export const SESSION_COOKIE = "akinaza_session";
+export { SESSION_COOKIE };
 export const SESSION_TTL_DAYS = 14;
 const TOKEN = /^as1\.[A-Za-z0-9_-]{43}$/;
 

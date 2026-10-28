@@ -1,9 +1,14 @@
+import { landingRedirect, sessionHint } from "@krizaka/auth";
 import { type NextRequest, NextResponse } from "next/server";
 
 import { isAdminHost, routeFor, shopOfHost } from "./lib/host";
 import { CLOSED_ROBOTS, closedRobots, devRedirect, indexableOn, isDevHost, NOINDEX } from "./lib/indexing";
 import { LOCALE_HEADER, negotiateLocale, pageLocaleOf,PATH_HEADER } from "./lib/locale-negotiation";
+import { SESSION_COOKIE } from "./lib/session-cookie";
 import { SITE_URL } from "./lib/site";
+
+/** krizaka-ui#827: a signed-in person never sees the public landing page; the cookie is a hint, the app and the API still resolve the session. */
+const LANDING = ["/", "/fr", "/en"] as const;
 
 /**
  * Every page exists in English and French (`/en/…`, `/fr/…`); an address without a language goes to the visitor's choice
@@ -35,6 +40,8 @@ export function proxy(request: NextRequest) {
   const site = process.env.APP_PUBLIC_URL ?? SITE_URL;
   const route = routeFor(host, request.nextUrl.pathname, chosen, site);
   const admin = isAdminHost(host);
+  const home = admin ? null : landingRedirect(request, { cookie: SESSION_COOKIE, landing: LANDING, home: () => `/${pageLocaleOf(pathname, chosen)}/app` });
+  if (home) return home;
   // <slug>.akinaza.com shows a shop page that www also serves: never indexed twice.
   const shopHost = shopOfHost(host, new URL(site).hostname.replace(/^www\./, "")) !== null;
   // A deployment closed to search engines (APP_SEARCH_INDEXING=off): robots.txt disallows everything (the sitemap is still served, noindexed).
@@ -65,7 +72,7 @@ export function proxy(request: NextRequest) {
     response.cookies.set("NEXT_LOCALE", segment, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
   }
   if (admin || closed || shopHost) response.headers.set("x-robots-tag", NOINDEX);
-  return response;
+  return sessionHint(response, request, { cookie: SESSION_COOKIE, secure: process.env.NODE_ENV === "production" });
 }
 
 export const config = {

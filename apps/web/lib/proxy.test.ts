@@ -121,3 +121,37 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
     expect(pageMatcher.test("/maps/v1/tiles/quebec-20261012.pmtiles")).toBe(false);
   });
 });
+
+// krizaka-ui#827: a signed-in visitor never sees the public landing page; the bar's hint flag follows the session cookie.
+describe("a signed-in visitor lands on their home, never on the landing page (krizaka-ui#827)", () => {
+  const ask = (path: string, cookie?: string, host = "www.akinaza.com") => proxy(new NextRequest(`https://${host}${path}`, { headers: { host, ...(cookie ? { cookie } : {}) } }));
+  const goes = (res: Response) => (res.headers.get("location") ? new URL(res.headers.get("location")!).pathname : null);
+
+  it("/ , /fr and /en with the session cookie answer 307 to the home in the language, private and varying with the cookie", () => {
+    for (const [path, home, cookie] of [
+      ["/", "/fr/app", "akinaza_session=as1.x"],
+      ["/", "/en/app", "akinaza_session=as1.x; NEXT_LOCALE=en"],
+      ["/fr", "/fr/app", "akinaza_session=as1.x"],
+      ["/en", "/en/app", "akinaza_session=as1.x"],
+    ] as const) {
+      const res = ask(path, cookie);
+      expect(res.status).toBe(307);
+      expect(goes(res)).toBe(home);
+      expect(res.headers.get("cache-control")).toBe("private, no-store");
+      expect(res.headers.get("vary")).toBe("Cookie");
+    }
+  });
+  it("a signed-out visitor still gets the landing page, and a public page stays reachable signed in", () => {
+    expect(goes(ask("/fr"))).toBeNull();
+    expect(goes(ask("/fr/pricing", "akinaza_session=as1.x"))).toBeNull();
+  });
+  it("keeps the readable hint flag in step with the cookie on a public page, never carrying the token", () => {
+    const set = ask("/fr/pricing", "akinaza_session=as1.tok").headers.get("set-cookie") ?? "";
+    expect(set).toContain("kz-session=1");
+    expect(set).not.toContain("as1.tok");
+    expect(ask("/fr/pricing", "kz-session=1").headers.get("set-cookie") ?? "").toContain("Max-Age=0");
+  });
+  it("the administration console is not a landing page", () => {
+    expect(goes(ask("/fr", "akinaza_session=as1.x", "admin.akinaza.com"))).not.toBe("/fr/app");
+  });
+});
