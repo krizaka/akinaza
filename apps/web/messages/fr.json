@@ -23,6 +23,7 @@
     "contact": "Contact",
     "legal": "Confidentialité",
     "terms": "Conditions d'utilisation",
+    "footerColumns": { "product": "Produit", "legal": "Légal" },
     "menu": {
       "label": "Menu",
       "home": {

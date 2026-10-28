@@ -8,7 +8,7 @@ export function GET() {
     (
       <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "center", padding: 80, background: "linear-gradient(135deg, #0f1a13 0%, #0f1018 55%, #0c0c0e 100%)", color: "#f4f4f5", fontFamily: "sans-serif" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-          <div style={{ width: 72, height: 72, background: "linear-gradient(45deg, #2d8049, #bc632f)", borderRadius: 12 }} />
+          <div style={{ width: 72, height: 72, background: "#2d8049", borderRadius: 12 }} />
           <div style={{ fontSize: 64, fontWeight: 800 }}>Akinaza</div>
         </div>
         <div style={{ fontSize: 48, fontWeight: 700, marginTop: 40 }}>Run your shop, for less.</div>

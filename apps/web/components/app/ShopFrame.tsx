@@ -97,7 +97,7 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
         search={searchable ? { label: say("shell.search.open"), onOpen: () => setSearchOpen(true) } : undefined}
         primary={
           newInvoiceHref && screenPrimary(path) === "header" ? (
-            <Button asChild variant="gradient" size="sm" className="font-bold">
+            <Button asChild variant="primary" size="sm" className="font-bold">
               <Link href={newInvoiceHref} aria-label={say("shell.newInvoice")} data-testid="primary-action" data-primary>
                 <PlusIcon size={16} strokeWidth={2.5} aria-hidden />
                 <span className="hidden sm:inline">{say("shell.newInvoice")}</span>

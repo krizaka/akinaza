@@ -34,7 +34,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         </>
       }
     >
-      <SiteFooterColumn title="Akinaza">
+      <SiteFooterColumn title={t("chrome.footerColumns.product")}>
         <SiteFooterLink asChild>
           <Link href={`/${locale}/s/${DEMO_SHOP}`}>{t("chrome.menu.shop.title")}</Link>
         </SiteFooterLink>
@@ -49,12 +49,16 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         <SiteFooterLink asChild>
           <Link href={pagePath(locale, "docs")}>{t("chrome.menu.docs.title")}</Link>
         </SiteFooterLink>
+      </SiteFooterColumn>
+      <SiteFooterColumn title={t("chrome.footerColumns.legal")}>
         <SiteFooterLink asChild>
           <Link href={pagePath(locale, "privacy")}>{t("chrome.legal")}</Link>
         </SiteFooterLink>
         <SiteFooterLink asChild>
           <Link href={pagePath(locale, "terms")}>{t("chrome.terms")}</Link>
         </SiteFooterLink>
+      </SiteFooterColumn>
+      <SiteFooterColumn title="Krizaka">
         <SiteFooterLink href={REPO_URL}>{t("chrome.sourceCode")}</SiteFooterLink>
         <SiteFooterLink href={contactHref("dev-akinaza-footer")}>{t("chrome.contact")}</SiteFooterLink>
       </SiteFooterColumn>
