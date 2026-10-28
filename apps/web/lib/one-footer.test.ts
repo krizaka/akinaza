@@ -24,6 +24,15 @@ describe("the pages render exactly one footer", () => {
     expect(footer).toContain('t("chrome.devNotice")');
   });
 
+  it("the links sit in three short columns (Product, Legal, Krizaka), not one tall column (akinaza#479)", () => {
+    expect(read("components/SiteFooter.tsx").match(/<SiteFooterColumn\b/g)).toHaveLength(3);
+    for (const locale of ["en", "fr"]) {
+      const chrome = JSON.parse(read(`messages/${locale}.json`)).chrome;
+      expect(chrome.footerColumns.product).toBeTruthy();
+      expect(chrome.footerColumns.legal).toBeTruthy();
+    }
+  });
+
   it("a page that renders <SiteFooter/> renders it once, after its main; the signed-in spaces render none", () => {
     const all = files("app").filter((f) => /\.tsx$/.test(f));
     const withFooter = all.filter((f) => /<SiteFooter\b/.test(read(f)));
