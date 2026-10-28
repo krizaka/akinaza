@@ -171,7 +171,7 @@ export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, no
     <DetailLayout
       cover
       eyebrow={say("clients.file.eyebrow")}
-      media={<ClientAvatar name={client.fullName} size="lg" />}
+      media={<ClientAvatar id={client.id} name={client.fullName} size="lg" />}
       title={client.fullName}
       status={owed > 0 ? <Badge tone="warning">{say("clients.state.owes", { amount: formatMoney(owed, locale) })}</Badge> : <Badge tone="success">{say("clients.state.upToDate")}</Badge>}
       meta={<ClientMeta client={client} timeZone={timeZone} tags={tags} organize={organize} />}
