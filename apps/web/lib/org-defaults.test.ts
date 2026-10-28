@@ -27,3 +27,13 @@ describe("default pictures come from the org JSON (akinaza#411)", () => {
     expect(pickerChoices("shop").length).toBeGreaterThan(0);
   });
 });
+
+describe("a shop without a photo wears a default banner (akinaza#499)", () => {
+  it("is the org's banner for the shop's id, in two widths, the same every time", async () => {
+    const { defaultBanner } = await import("./org-defaults");
+    const b = defaultBanner("shop-1");
+    expect(b?.src).toMatch(/\/defaults\/v\d+\/banner\/.+-1920\.webp$/);
+    expect(b?.srcSet).toMatch(/-960\.webp 960w, .+-1920\.webp 1920w$/);
+    expect(defaultBanner("shop-1")).toEqual(b);
+  });
+});

@@ -107,7 +107,7 @@ export function TeamPanel({ members, invitations, assignable, timeZone }: TeamPa
         subtitle: (m) => (m.name ? m.email : ""),
         cell: (m) => (
           <span className="flex items-center gap-3 font-semibold text-fg">
-            <ClientAvatar name={m.name ?? m.email} />
+            <ClientAvatar id={m.accountId} name={m.name ?? m.email} />
             {m.name ?? m.email}
             {m.isYou ? <Badge tone="neutral">{say("team.you")}</Badge> : null}
           </span>

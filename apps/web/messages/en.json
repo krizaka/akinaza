@@ -1252,8 +1252,7 @@
       },
       "avatar": {
         "label": "Picture",
-        "hint": "One of Akinaza's pictures.",
-        "tone": "Picture {tone}"
+        "hint": "One of Akinaza's pictures."
       },
       "email": {
         "label": "E-mail",
