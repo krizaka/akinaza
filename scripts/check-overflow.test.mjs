@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { FRAME_LOCALES, FRAME_PAGES, judge, PAGES, THEMES, WIDTHS } from "./check-overflow.mjs";
+import { A11Y, A11Y_WIDTHS, CHECKS, FRAME_LOCALES, FRAME_PAGES, OPTIONS, PAGES, SETTLE_MS, THEMES, WIDTHS } from "./check-overflow.mjs";
 
 describe("the dev-preview crawl (ui.themes-devices)", () => {
   it("covers both languages of the public pages and the sign-in, in both themes, from a phone to a desktop", () => {
@@ -12,15 +12,17 @@ describe("the dev-preview crawl (ui.themes-devices)", () => {
     expect(Math.max(...WIDTHS)).toBeGreaterThanOrEqual(1440);
   });
 
-  it("refuses a console error, an uncaught exception, an HTTP error and an empty page", () => {
-    const source = readFileSync(new URL("./check-overflow.mjs", import.meta.url), "utf8");
-    for (const needle of ['page.on("console"', 'page.on("pageerror"', "response.status() >= 400", "empty <main>"]) expect(source).toContain(needle);
+  it("refuses a console error, an uncaught exception, an HTTP error and an empty page: the shared audit, every console error counted", () => {
+    expect(CHECKS).toMatchObject({ status: true, emptyMain: true });
+    // `ignoreConsole: []`: a failed first-party request is a console error too, as before the shared audit.
+    expect(OPTIONS.ignoreConsole).toEqual([]);
   });
 
   it("waits for the page to load, never for the network to go quiet: the home's looping video never does (akinaza#341)", () => {
     const source = readFileSync(new URL("./check-overflow.mjs", import.meta.url), "utf8");
     expect(source).not.toContain('"networkidle"');
     expect(source).toContain('waitUntil: "load"');
+    expect(OPTIONS.settleMs).toBe(SETTLE_MS);
   });
 
   it("also holds the signed-in frame to it (akinaza#396): the owner's rail, header and account menu on the pages of the day, in both languages and themes", () => {
@@ -30,19 +32,15 @@ describe("the dev-preview crawl (ui.themes-devices)", () => {
     expect(source).toContain("/api/auth/sign-in");
   });
 
-  it("refuses a site bar that overlaps the development notice (akinaza#440), and accepts one that clears it", () => {
-    const page = { scroll: 390, client: 390, wide: [], actions: [44] };
-    expect(judge({ ...page, chrome: { noticeBottom: 56, barTop: 12 } }, "/en @390 dark")).toEqual([expect.stringContaining("overlaps the development notice")]);
-    expect(judge({ ...page, chrome: { noticeBottom: 56, barTop: 68 } }, "/en @390 dark")).toEqual([]);
-    expect(judge({ ...page, chrome: null }, "/en @390 dark")).toEqual([]);
+  it("holds the signed-in frame to a screen that fits under the notice (akinaza#444), and an action to 36 px; the bar over the notice (akinaza#440) is the audit's top-chrome check", () => {
+    expect(CHECKS).toMatchObject({ frame: true, minAction: 36 });
+    expect(OPTIONS.height).toBe(900);
   });
 
-  it("refuses a frame that asks more than the screen under the notice: the slight scroll of every app page (akinaza#444)", () => {
-    const base = { scroll: 390, client: 390, wide: [], actions: [], chrome: null };
-    expect(judge({ ...base, frame: { top: 36, forced: 900, viewport: 900 } }, "p")).toEqual([expect.stringContaining("the frame forces a scroll")]);
-    expect(judge({ ...base, frame: { top: 36, forced: 864, viewport: 900 } }, "p")).toEqual([]);
-    expect(judge({ ...base, frame: { top: 0, forced: 900, viewport: 900 } }, "p")).toEqual([]);
-    expect(judge({ ...base, frame: null }, "p")).toEqual([]);
+  it("keeps the axe ratchet per repo: a11y-baseline.json, at the phone and the desktop width", () => {
+    expect(A11Y).toMatchObject({ app: "akinaza", widths: A11Y_WIDTHS });
+    expect(A11Y.baseline).toMatch(/a11y-baseline\.json$/);
+    expect(A11Y_WIDTHS).toEqual([390, 1440]);
   });
 
   it("takes the notice off the frame's screen in CSS, from the height FrameSlot measures", () => {
