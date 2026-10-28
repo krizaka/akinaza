@@ -4,7 +4,6 @@
 import { WALL_KIND, type WallTexture } from "@akinaza/core";
 import { EmbedFacade } from "@krizaka/ui/embed-facade";
 import { RetroTv, type RetroTvLabels } from "@krizaka/ui/retro-tv";
-import type { VideoPlayerLabels } from "@krizaka/ui/video-player";
 import { Wall, type WallItem } from "@krizaka/ui/wall";
 import Image from "next/image";
 
@@ -30,23 +29,8 @@ export interface PlayerWords {
   time: string;
 }
 
-export const playerLabels = (w: PlayerWords): VideoPlayerLabels => ({
-  play: w.play,
-  pause: w.pause,
-  mute: w.mute,
-  unmute: w.unmute,
-  volume: w.volume,
-  seek: w.seek,
-  speed: (rate) => w.speed.replace("{rate}", String(rate)),
-  captions: (track) => (track === null ? w.captionsOff : w.captionsOn.replace("{track}", track)),
-  fullscreen: w.fullscreen,
-  exitFullscreen: w.exitFullscreen,
-  pictureInPicture: w.pictureInPicture,
-  loading: w.loading,
-  error: w.error,
-  retry: w.retry,
-  time: (time, duration) => w.time.replace("{time}", time).replace("{duration}", duration),
-});
+/** The television's own words (@krizaka/ui 3.70: `RetroTv.labels` are the cabinet's, no longer the player's). */
+const tvLabels = (w: PlayerWords): Partial<RetroTvLabels> => ({ play: w.play, pause: w.pause, seek: w.seek, soundOff: w.unmute, soundOn: w.mute });
 
 /** The television's own controls (3.69: its labels are its own, not the video player's): the words the catalogue has; the playlist's (next, previous) are not drawn for one video. */
 const tvLabels = (w: PlayerWords): Partial<RetroTvLabels> => ({ play: w.play, pause: w.pause, seek: w.seek, soundOff: w.mute, soundOn: w.unmute });
