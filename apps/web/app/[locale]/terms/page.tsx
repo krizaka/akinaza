@@ -7,6 +7,7 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
+import { publisherVars } from "@/lib/publisher";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { pagePath, TERMS_VERSION } from "@/lib/site";
 
@@ -33,7 +34,7 @@ export default async function Terms({ params }: Readonly<{ params: Promise<{ loc
           {t.terms.sections.map((s) => (
             <section key={s.h} className="mt-8 max-w-3xl">
               <h2 className="m-0 text-xl font-semibold text-fg">{s.h}</h2>
-              <p className="mt-2 text-base leading-relaxed text-fg-secondary">{s.p}</p>
+              <p className="mt-2 text-base leading-relaxed text-fg-secondary">{format(s.p, publisherVars())}</p>
             </section>
           ))}
           <p className="mt-8 max-w-3xl">

@@ -6,6 +6,8 @@ import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
+import { format } from "./i18n";
+import { publisherVars } from "./publisher";
 import { llmsText } from "./seo";
 import { pagePath, PAGES, TERMS_VERSION } from "./site";
 
@@ -40,7 +42,7 @@ describe("the terms of use (akinaza#379)", () => {
   });
 
   it("covers what the issue requires, with the law cited", () => {
-    const text = (d: typeof fr) => d.terms.sections.map((s) => `${s.h} ${s.p}`).join("\n");
+    const text = (d: typeof fr) => d.terms.sections.map((s) => `${s.h} ${format(s.p, publisherVars())}`).join("\n");
     const french = text(fr);
     for (const needle of ["Loi sur la protection du consommateur", "Code civil du Québec", "L.Q. 2021, c. 25", "renouvelle", "résilier", "ne détient jamais de fonds", "ne produit, ne signe et ne transmet aucune déclaration", "Québec", "tribunaux", "3149", "2125", "1474", "Charte de la langue française"]) {
       expect(french, needle).toContain(needle);
@@ -52,7 +54,7 @@ describe("the terms of use (akinaza#379)", () => {
   });
 
   it("reserves Krizaka's rights: IP, licence limited to the subscription, no resale or white label, marks (akinaza#409)", () => {
-    const text = (d: typeof fr) => d.terms.sections.map((s) => `${s.h} ${s.p}`).join("\n");
+    const text = (d: typeof fr) => d.terms.sections.map((s) => `${s.h} ${format(s.p, publisherVars())}`).join("\n");
     const french = text(fr);
     for (const needle of ["appartiennent à Technologies Krizaka Inc.", "Pour la durée de votre abonnement seulement", "non cessible et non sous-licenciable", "marque blanche", "service concurrent", "Loi sur le droit d'auteur", "Loi sur les marques de commerce", "TRADEMARKS.md", "sa propre licence"]) {
       expect(french, needle).toContain(needle);

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
+import { publisherVars } from "@/lib/publisher";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { EFVP_URL, pagePath, PRIVACY_UPDATED, TRANSFERS_URL } from "@/lib/site";
 
@@ -52,7 +53,7 @@ export default async function Privacy({ params }: { params: Promise<{ locale: st
           </section>
           <section id="officer" className="mt-8 max-w-3xl">
             <h2 className="m-0 text-xl font-semibold text-fg">{t.privacy.officer.title}</h2>
-            <p className="mt-2 text-base leading-relaxed text-fg-secondary">{format(t.privacy.officer.text, { role: t.privacy.officer.role })}</p>
+            <p className="mt-2 text-base leading-relaxed text-fg-secondary">{format(t.privacy.officer.text, { role: t.privacy.officer.role, ...publisherVars() })}</p>
           </section>
         </Page>
       </main>
