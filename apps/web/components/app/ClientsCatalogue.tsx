@@ -53,7 +53,7 @@ export function ClientsCatalogue({ clients, query, timeZone, organize, tagsByCli
         value: (c) => c.fullName,
         cell: (c) => (
           <Link href={routes.client(c.id)} className="flex items-center gap-3 font-semibold text-fg hover:underline">
-            <ClientAvatar name={c.fullName} />
+            <ClientAvatar id={c.id} name={c.fullName} />
             {c.fullName}
           </Link>
         ),

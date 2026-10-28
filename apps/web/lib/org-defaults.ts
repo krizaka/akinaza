@@ -19,3 +19,11 @@ export const PICKER_KINDS = { person: ["person"], shop: ["shop"], banner: ["bann
 export function pickerChoices(subject: keyof typeof PICKER_KINDS): { id: string; kind: OrgDefaultKind }[] {
   return PICKER_KINDS[subject].flatMap((kind) => listDefaults(kind).map((item) => ({ id: item.id, kind })));
 }
+
+/** The default banner of a shop or a profile without one, as the hero's cover (960 and 1920 px renditions): the same banner for the same seed. */
+export function defaultBanner(seed: string): { src: string; srcSet: string } | null {
+  const item = defaultFor("banner", seed);
+  if (!item) return null;
+  const [small, large] = [960, 1920].map((w) => defaultUrl(item, w));
+  return { src: large!, srcSet: `${small} 960w, ${large} 1920w` };
+}

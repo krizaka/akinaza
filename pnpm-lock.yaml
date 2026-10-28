@@ -329,6 +329,9 @@ importers:
       '@krizaka/intl':
         specifier: 0.3.0
         version: 0.3.0
+      '@krizaka/org':
+        specifier: ^0.3.1
+        version: 0.3.1
       '@krizaka/tokens':
         specifier: ^3.70.0
         version: 3.70.0

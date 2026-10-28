@@ -4,6 +4,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
+import { avatarOptions } from "@/lib/avatar";
 import { I18nProvider } from "@/lib/i18n-client";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
@@ -62,12 +63,12 @@ describe("the profile's controls all have an accessible name (akinaza#440)", () 
     expect(unnamed).toEqual([]);
   });
 
-  it("names each of the six pictures once, in the group the picture row is named after", async () => {
+  it("names each of the org's person pictures once, in the group the picture row is named after", async () => {
     const page = await mount("en");
     const group = page.querySelector('[role="radiogroup"]')!;
     expect(group.getAttribute("aria-label")).toBe(en.console.account.avatar.label);
     const tiles = [...group.querySelectorAll('button[role="radio"]')];
-    expect(tiles.map((t) => t.getAttribute("aria-label"))).toEqual([1, 2, 3, 4, 5, 6].map((tone) => en.console.account.avatar.tone.replace("{tone}", String(tone))));
+    expect(tiles.map((t) => t.getAttribute("aria-label"))).toEqual(avatarOptions("en").map((o) => o.label));
     const mirrors = [...page.querySelectorAll('input[type="radio"]')];
     expect(mirrors.map((m) => m.getAttribute("aria-label"))).toEqual(tiles.map((t) => t.getAttribute("aria-label")));
   });

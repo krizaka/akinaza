@@ -2,6 +2,8 @@
 
 import { Avatar } from "@krizaka/ui/avatar";
 
+import { avatarOf } from "@/lib/avatar";
+
 export interface ClientRowView {
   id: string;
   fullName: string;
@@ -15,7 +17,7 @@ export interface ClientRowView {
   owedCents: number;
 }
 
-/** The avatar every list of clients draws: the person's initials on the brand's gradient, the same one wherever they appear. */
-export function ClientAvatar({ name, size = "sm" }: { name: string; size?: "sm" | "md" | "lg" }) {
-  return <Avatar alt="" size={size} defaultAvatar={{ brand: "akinaza", seed: name }} fallback={name.charAt(0)} />;
+/** The avatar every list of clients draws: the org JSON's default picture assigned to the person's id (their name when they have no id), the same one wherever they appear. */
+export function ClientAvatar({ id, name, avatarSeed, size = "sm" }: { id?: string; name: string; avatarSeed?: string | null; size?: "sm" | "md" | "lg" }) {
+  return <Avatar alt="" size={size} {...avatarOf({ id: id ?? name, avatarSeed }, size === "sm" ? 256 : 512)} fallback={name.charAt(0)} />;
 }

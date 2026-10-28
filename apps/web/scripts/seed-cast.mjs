@@ -110,10 +110,10 @@ async function main() {
     for (const a of accounts) {
       const [row] = (
         await pool.query(
-          `INSERT INTO accounts (email, role, locale, name, email_verified_at, password_hash) VALUES ($1, $2, $3, $4, now(), $5)
-           ON CONFLICT (email) DO UPDATE SET role = EXCLUDED.role, status = 'ACTIVE', password_hash = EXCLUDED.password_hash, name = coalesce(accounts.name, EXCLUDED.name)
+          `INSERT INTO accounts (email, role, locale, name, avatar_seed, email_verified_at, password_hash) VALUES ($1, $2, $3, $4, $6, now(), $5)
+           ON CONFLICT (email) DO UPDATE SET role = EXCLUDED.role, status = 'ACTIVE', password_hash = EXCLUDED.password_hash, name = coalesce(accounts.name, EXCLUDED.name), avatar_seed = EXCLUDED.avatar_seed
            RETURNING id`,
-          [a.email, a.role, a.persona.locale, a.persona.displayName, await hashPassword(a.secret)],
+          [a.email, a.role, a.persona.locale, a.persona.displayName, await hashPassword(a.secret), a.persona.avatar],
         )
       ).rows;
       ids.push(row.id);
