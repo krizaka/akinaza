@@ -17,6 +17,7 @@ describe("the QA accounts script", () => {
       ["qa+user@akinaza.com", "USER"],
       ["qa+admin@akinaza.com", "ADMIN"],
     ]);
+    expect(accountsFromEnv(env).map((a: { name: string }) => a.name)).toEqual(["Léa Beaulieu", "Simon Roy"]);
     expect(() => accountsFromEnv({ ...env, QA_ADMIN_PASSWORD: "short" })).toThrow(/ADMIN password/);
     expect(() => accountsFromEnv({ ...env, QA_USER_EMAIL: undefined })).toThrow(/USER/);
   });

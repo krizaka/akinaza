@@ -8,6 +8,8 @@
 import crypto from "node:crypto";
 import { promisify } from "node:util";
 
+import { personaByRole } from "@krizaka/org";
+
 const scrypt = promisify(crypto.scrypt);
 
 /** The same scheme as lib/password.ts: scrypt N=2^15 r=8 p=1, 16-byte salt, `scrypt$N$r$p$salt$hash`. */
@@ -16,6 +18,9 @@ export async function hashPassword(password) {
   const hash = await scrypt(password, salt, 32, { N: 32768, r: 8, p: 1, maxmem: 64 * 1024 * 1024 });
   return `scrypt$32768$8$1$${salt.toString("base64url")}$${hash.toString("base64url")}`;
 }
+
+// The visible name of each account is its persona's, from the cast (`@krizaka/org`): demos and recordings never show « qa » or « admin ».
+export const QA_PERSONAS = { USER: personaByRole("akinaza", "owner"), ADMIN: personaByRole("akinaza", "admin") };
 
 export function accountsFromEnv(env) {
   const accounts = [
@@ -26,7 +31,7 @@ export function accountsFromEnv(env) {
     if (!a.email || !/^[^@\s]+@[^@\s]+$/.test(a.email)) throw new Error(`a QA e-mail is missing or invalid (${a.role})`);
     if (!a.password || a.password.length < 12) throw new Error(`the ${a.role} password is missing or shorter than 12 characters`);
   }
-  return accounts.map((a) => ({ ...a, email: a.email.trim().toLowerCase() }));
+  return accounts.map((a) => ({ ...a, email: a.email.trim().toLowerCase(), name: QA_PERSONAS[a.role].displayName }));
 }
 
 async function main() {
@@ -39,11 +44,11 @@ async function main() {
   try {
     for (const a of accountsFromEnv(process.env)) {
       await client.query(
-        `INSERT INTO accounts (email, role, password_hash) VALUES ($1, $2, $3)
-         ON CONFLICT (email) DO UPDATE SET role = EXCLUDED.role, password_hash = EXCLUDED.password_hash, status = 'ACTIVE'`,
-        [a.email, a.role, await hashPassword(a.password)],
+        `INSERT INTO accounts (email, role, password_hash, name) VALUES ($1, $2, $3, $4)
+         ON CONFLICT (email) DO UPDATE SET role = EXCLUDED.role, password_hash = EXCLUDED.password_hash, status = 'ACTIVE', name = EXCLUDED.name`,
+        [a.email, a.role, await hashPassword(a.password), a.name],
       );
-      console.log(`qa-accounts: ${a.role} ${a.email} ready (password from the environment, not printed)`);
+      console.log(`qa-accounts: ${a.role} ${a.email} as ${a.name} ready (password from the environment, not printed)`);
     }
   } finally {
     await client.end();
