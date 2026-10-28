@@ -1,12 +1,18 @@
 import type { PublicShop } from "@akinaza/db";
 import type { CommunityView } from "@akinaza/db";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { buildCommunity } from "@/lib/community-view";
 import { buildStorefront } from "@/lib/storefront";
 
 import { Storefront } from "./test-storefront";
+
+// `next/dynamic` renders nothing to a string: the shorts variant keeps its server render in the browser's Next, here it is the section itself.
+vi.mock("@/components/shop/ShopVideoLazy", async () => {
+  const { VideoSection } = await import("@krizaka/ui/shop/video");
+  return { ShopReelsSection: VideoSection, ShopVideoLazy: VideoSection };
+});
 
 const NOW = new Date("2026-10-19T10:30:00-04:00");
 const TODAY = "2026-10-19";
