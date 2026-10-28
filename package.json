@@ -38,11 +38,11 @@
     "@krizaka/config": "^0.13.0",
     "@krizaka/i18n": "^0.2.1",
     "@krizaka/page-audit": "0.3.1",
-    "@vitest/coverage-v8": "4.1.11",
+    "@vitest/coverage-v8": "4.1.12",
     "dependency-cruiser": "^18.7.0",
     "playwright-core": "1.64.0",
     "turbo": "^2.11.7",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.12"
   },
   "engines": {
     "node": ">=22"
