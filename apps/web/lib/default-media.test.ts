@@ -17,10 +17,10 @@ describe("the default media are on the CDN and described (#267)", () => {
     for (const hash of Object.values(files)) expect(hash).toMatch(/^[0-9a-f]{10}$/);
   });
 
-  it("an address is the hashed object on the media zone: name.hash.ext under site/, never a guess", () => {
+  it("an address is the hashed object on the media zone: name.hash.ext under apps/akinaza/, never a guess", () => {
     const [path] = defaultMediaPaths();
-    expect(defaultFileUrl(path!)).toMatch(/^https:\/\/krizaka-assets\.b-cdn\.net\/site\/products\/akinaza\/defaults\/.+\.[0-9a-f]{10}\.(avif|webp|webm|mp4)$/);
-    expect(defaultFileUrl("products/akinaza/defaults/nope/cover/x.webp")).toBeNull();
+    expect(defaultFileUrl(path!)).toMatch(/^https:\/\/krizaka-assets\.b-cdn\.net\/apps\/akinaza\/defaults\/.+\.[0-9a-f]{10}\.(avif|webp|webm|mp4)$/);
+    expect(defaultFileUrl("defaults/nope/cover/x.webp")).toBeNull();
   });
 
   it("every default has its description in French and in English", () => {

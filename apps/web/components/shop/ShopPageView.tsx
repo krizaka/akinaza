@@ -2,7 +2,7 @@ import { Badge } from "@krizaka/ui/badge";
 import { OpeningHours } from "@krizaka/ui/opening-hours";
 import type { ShopPage } from "@krizaka/ui/shop";
 import { ShopFrame } from "@krizaka/ui/shop";
-import { BookingSection } from "@krizaka/ui/shop/booking";
+import { BookingSection, type BookingTime } from "@krizaka/ui/shop/booking";
 import { BulletinSection } from "@krizaka/ui/shop/bulletin";
 import { FaqSection } from "@krizaka/ui/shop/faq";
 import { GallerySection } from "@krizaka/ui/shop/gallery";
@@ -42,6 +42,8 @@ export interface ShopPageViewProps {
   accent?: string;
   /** The shop's day (`2026-10-27`) for the bulletin board. */
   today: string;
+  /** The closing call's next free time (`nextFreeTime`), when the page has one and a time is free. */
+  nextTime?: BookingTime;
 }
 
 type Section = ShopPage["sections"][number];
@@ -57,6 +59,7 @@ type Ctx = {
   contact: StorefrontView["contact"];
   community: StorefrontView["community"];
   today: string;
+  nextTime: BookingTime | undefined;
   playLabels: Record<Platform, string>;
   notice: string;
   platformName: (p: Platform) => string;
@@ -80,7 +83,7 @@ function bannerOf(id: string) {
 function heroSection({ section, c }: Args<"hero">): ReactNode {
   const { view, text, plan, book } = c;
   const common = commonOf(section);
-  const logo = view.logoUrl ?? defaultPicture("shop", view.name, 256)?.src ?? null;
+  const logo = c.claim(view.logoUrl ?? defaultPicture("shop", view.name, 256)?.src ?? null) ?? null;
   const facts = [
     logo ? <Image key="logo" src={logo} alt={view.name} width={64} height={64} unoptimized className="rounded-lg object-cover" /> : null,
     ...(section.blocks ?? []).map((b) => heroFact(b, c)),
@@ -101,9 +104,23 @@ function servicesSection({ section, c }: Args<"services">): ReactNode {
 }
 
 function bookingSection({ section, c }: Args<"booking">): ReactNode {
-  const { view, t } = c;
+  const { view, t, plan, contact } = c;
   const common = commonOf(section);
-  return <BookingSection {...common} variant={section.variant} label={t("console.shopPage.book")} href={view.bookHref} actionLabel={t("console.shopPage.book")} title={t("console.shopPage.closingTitle")} body={t("console.shopPage.closingBody")} linkAs={Link} />;
+  const base = { ...common, variant: section.variant, label: t("console.shopPage.book"), href: view.bookHref, actionLabel: t("console.shopPage.book"), title: t("console.shopPage.closingTitle"), body: t("console.shopPage.closingBody"), linkAs: Link };
+  if (section.variant !== "closing") return <BookingSection {...base} />;
+  const photo = plan.sections[section.key]?.[0];
+  // The mark stands in for a photo, once: the logo the hero already shows is not drawn again.
+  const logo = c.claim(view.logoUrl ?? defaultPicture("shop", view.name, 256)?.src ?? null);
+  return (
+    <BookingSection
+      {...base}
+      photo={photo ? { src: photo.src, alt: photo.alt, srcSet: coverSrcSet(photo.src) } : undefined}
+      mark={logo ? <Image src={logo} alt="" width={64} height={64} unoptimized className="rounded-lg object-cover" /> : undefined}
+      nextTime={c.nextTime}
+      nextTimeLabel={t("console.shopPage.nextFreeTime")}
+      secondary={contact?.phoneHref ? { label: t("console.shopPage.call"), href: contact.phoneHref } : undefined}
+    />
+  );
 }
 
 function teamSection({ section, c }: Args<"team">): ReactNode {
@@ -231,7 +248,7 @@ const renderSection = (section: Section, c: Ctx): ReactNode => SECTIONS[section.
  * team, hours, reviews) is the page's view, resolved by `buildStorefront`; the document says which sections, which variants and which settings. A section with nothing
  * to show is not drawn. The cover is the LCP (preloaded, a fixed ratio in the hero); every photo appears once (`planPhotos`); embeds stay behind their facade.
  */
-export function ShopPageView({ page, view, locale, accent, today }: ShopPageViewProps) {
+export function ShopPageView({ page, view, locale, accent, today, nextTime }: ShopPageViewProps) {
   const t = translator(locale);
   const community = view.community;
   const pool: PhotoPool = {
@@ -270,6 +287,7 @@ export function ShopPageView({ page, view, locale, accent, today }: ShopPageView
     contact: view.contact,
     community,
     today,
+    nextTime,
     playLabels: Object.fromEntries(PLATFORMS.map((p) => [p, t("console.shopPage.facadePlay", { platform: platformName(p) })])) as Record<Platform, string>,
     notice: t("console.shopPage.facadeNotice", { platform: PLATFORMS.map(platformName).join(" · ") }),
     platformName,

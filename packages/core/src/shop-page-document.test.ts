@@ -18,7 +18,7 @@ describe("the shop page document", () => {
     const keys = doc.sections.map((s) => s.key);
     expect(keys[0]).toBe("s_hero");
     expect(keys.slice(1, 5)).toEqual(["s_reviews", "s_services", "s_trust_1", "s_trust_2"]);
-    expect(keys.slice(-2)).toEqual(["s_booking_panel", "s_booking_sticky"]);
+    expect(keys.slice(-2)).toEqual(["s_booking_closing", "s_booking_sticky"]);
     expect(doc.sections.filter((s) => s.disabled).map((s) => s.key)).toEqual(["s_wall"]);
     expect(parseShopPage(doc).ok).toBe(true);
   });

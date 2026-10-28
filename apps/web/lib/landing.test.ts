@@ -37,7 +37,7 @@ describe("the home is short and concrete", () => {
   it("each screen is a real capture with its text and alt in both languages, on the CDN", () => {
     for (const locale of ["en", "fr"] as const) {
       for (const { id } of SCREENS) {
-        const base = `${MEDIA_CDN}/site/products/akinaza/tour/phone-${id}-${locale}.`;
+        const base = `${MEDIA_CDN}/sites/akinaza/tour/phone-${id}-${locale}.`;
         expect(screenStill(id, locale).startsWith(base)).toBe(true);
         expect(screenStill(id, locale).slice(base.length)).toMatch(/^[0-9a-f]{10}\.jpg$/);
         for (const m of [en, fr]) expect(m.landing.screens[id].title && m.landing.screens[id].text && m.landing.screens[id].alt, id).toBeTruthy();

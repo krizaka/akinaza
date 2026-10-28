@@ -10,6 +10,7 @@ import { ShopPageView } from "@/components/shop/ShopPageView";
 import { StorefrontLive } from "@/components/shop/StorefrontLive";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { nextFreeTimeOf } from "@/lib/closing-call-read";
 import { reviewRules } from "@/lib/community";
 import { buildCommunity } from "@/lib/community-view";
 import { db } from "@/lib/db";
@@ -56,12 +57,14 @@ export default async function ShopPage({ params, searchParams }: { params: Promi
   const other = demoLookDocument(slug, look);
   const looks = demoLooksOf(slug);
   const shown = other ? looks.find((l) => l.id === look)!.id : looks[0]?.id ?? "";
+  const shownPage = other ?? document.page;
+  const nextTime = shownPage.sections.some((s) => s.type === "booking" && s.variant === "closing" && !s.disabled) ? await nextFreeTimeOf({ page, locale, now }) : undefined;
   return (
     <>
       <SiteHeader locale={locale} current="home" path={`/${content}/s/${slug}`} languages={page.languages.enabled} contentLocale={content} anonymous={anonymous} />
       {live ? <StorefrontLive slug={slug} enabled /> : null}
       <DemoLookSwitch slug={slug} current={shown} path={`/${content}/s/${slug}`} locale={locale} />
-      <main id="content" data-shop-look={shown || undefined}><ShopPageView page={other ?? document.page} view={view} locale={locale} accent={other ? undefined : accent} today={localDay(now, page.shop.timezone)} /></main>
+      <main id="content" data-shop-look={shown || undefined}><ShopPageView page={shownPage} view={view} locale={locale} nextTime={nextTime} accent={other ? undefined : accent} today={localDay(now, page.shop.timezone)} /></main>
       <SiteFooter locale={locale} />
     </>
   );

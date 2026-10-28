@@ -84,7 +84,7 @@ const nextConfig = {
   serverExternalPackages: ["pg"],
   // The basemap of the shop pages: Protomaps tiles on the media CDN, read through this origin (the CDN sends no CORS headers).
   async rewrites() {
-    return [{ source: "/maps/v1/:path*", destination: "https://krizaka-assets.b-cdn.net/maps/v1/:path*" }];
+    return [{ source: "/maps/v1/:path*", destination: "https://krizaka-assets.b-cdn.net/org/v1/maps/:path*" }];
   },
   // The retired pages answer 308 to what replaced them.
   async redirects() {

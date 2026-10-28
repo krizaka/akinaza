@@ -43,7 +43,7 @@ export const LEGACY_SECTION_DOCS: Readonly<Record<LegacySectionId, readonly DocS
   follow: [],
 };
 
-/** The hero opens every page; the booking panel and the sticky bar close it. */
+/** The hero opens every page; the closing call and the sticky bar close it. */
 export const HERO_SECTION: DocSection = {
   type: "hero",
   variant: "poster",
@@ -54,6 +54,12 @@ export const HERO_SECTION: DocSection = {
   ],
 };
 export const BOOKING_SECTIONS: readonly DocSection[] = [
+  { type: "booking", variant: "closing", settings: { count: 4 } },
+  { type: "booking", variant: "sticky", settings: { count: 4 } },
+];
+
+/** What migration 0038 wrote at the end of every existing page (the panel, then the bar). Frozen: a stored page keeps drawing it; a new one closes with `BOOKING_SECTIONS`. */
+export const MIGRATION_0038_BOOKING_SECTIONS: readonly DocSection[] = [
   { type: "booking", variant: "panel", settings: { count: 4 } },
   { type: "booking", variant: "sticky", settings: { count: 4 } },
 ];
@@ -87,7 +93,7 @@ export function withTrustLegacy<T extends { id: string; visible: boolean }>(sect
 }
 
 /** Today's page as a document: same sections, same order, a hidden one `disabled`; the hero first and the booking bar last. Pure. */
-export function documentFromLegacy(input: { sections: readonly { id: string; visible: boolean }[]; trade: ShopType }): ShopPage {
+export function documentFromLegacy(input: { sections: readonly { id: string; visible: boolean }[]; trade: ShopType; booking?: readonly DocSection[] }): ShopPage {
   const sections: Record<string, unknown>[] = [];
   const push = (key: string, doc: DocSection, disabled = false) => sections.push({ key, ...doc, ...(disabled ? { disabled: true } : {}) });
   push("s_hero", HERO_SECTION);
@@ -96,7 +102,7 @@ export function documentFromLegacy(input: { sections: readonly { id: string; vis
     if (!docs) continue;
     docs.forEach((doc, rank) => push(sectionKey(legacy.id, rank, docs.length), doc, !legacy.visible));
   }
-  BOOKING_SECTIONS.forEach((doc) => push(`s_booking_${doc.variant}`, doc));
+  (input.booking ?? BOOKING_SECTIONS).forEach((doc) => push(`s_booking_${doc.variant}`, doc));
   return { schema: 1, preset: presetOf(input.trade), sections } as unknown as ShopPage;
 }
 
