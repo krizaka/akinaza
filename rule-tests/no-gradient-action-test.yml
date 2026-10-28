@@ -1,0 +1,11 @@
+id: no-gradient-action
+valid:
+  - |
+    const a = <Button variant="primary" size="lg">New invoice</Button>;
+  - |
+    const b = <Button asChild variant="secondary"><a href="/x">x</a></Button>;
+invalid:
+  - |
+    const a = <Button variant="gradient" size="lg">New invoice</Button>;
+  - |
+    const b = <form.Submit size="md" variant="gradient" data-primary>Save</form.Submit>;

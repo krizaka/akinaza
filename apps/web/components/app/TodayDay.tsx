@@ -108,7 +108,7 @@ function DayPrimary({ next, nextHref, newInvoiceHref, time }: { next: { id: stri
   if (next && nextHref) {
     return (
       <div>
-        <Button asChild variant="gradient" size="md" className="font-bold">
+        <Button asChild variant="primary" size="md" className="font-bold">
           <Link href={nextHref} data-primary scroll={false}>
             {say("today.nextPrimary", { client: next.client ?? say("today.walkIn"), time: time(next.startsAt) })}
           </Link>
@@ -119,7 +119,7 @@ function DayPrimary({ next, nextHref, newInvoiceHref, time }: { next: { id: stri
   if (!newInvoiceHref) return null;
   return (
     <div>
-      <Button asChild variant="gradient" size="md" className="font-bold">
+      <Button asChild variant="primary" size="md" className="font-bold">
         <Link href={newInvoiceHref} data-primary>
           {say("shell.newInvoice")}
         </Link>
