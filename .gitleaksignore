@@ -2,3 +2,5 @@
 c3b6685f08ab4eebe6963577b52fc003b6f14e97:.github/workflows/ci.yml:generic-api-key:56
 # CI-only dummy, removed in #464, CTO-verified 2026-10-27
 aa479b56202b898ad4247b6da129e12a191445e3:scripts/ci-after-build.sh:generic-api-key:9
+# CI-only dummy key of the visual-regression script (open PR #520), flagged in its commit; the script reads it from a CI-only value. Added 2026-10-28, CTO to verify
+ff9d6624080ff388b6feb139fa4894e947e38f4c:scripts/ci-visual-start.sh:generic-api-key:11
