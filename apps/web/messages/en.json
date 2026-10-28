@@ -23,6 +23,7 @@
     "contact": "Contact",
     "legal": "Privacy",
     "terms": "Terms of use",
+    "footerColumns": { "product": "Product", "legal": "Legal" },
     "menu": {
       "label": "Menu",
       "home": {
