@@ -35,7 +35,8 @@ describe("bookings (real PostgreSQL 16)", () => {
     const s = await salon(t.db);
     const first = await book(t.db, { shopId: s.shop.id, staffId: s.staff.marc.id, serviceId: s.services.cut.id, startsAt: at("2026-10-16T13:00:00Z") });
     await t.db.update(appointments).set({ status: "cancelled" }).where(eq(appointments.id, first.id));
-    await book(t.db, { shopId: s.shop.id, staffId: s.staff.marc.id, serviceId: s.services.cut.id, startsAt: at("2026-10-16T13:15:00Z") });
+    const second = await book(t.db, { shopId: s.shop.id, staffId: s.staff.marc.id, serviceId: s.services.cut.id, startsAt: at("2026-10-16T13:15:00Z") });
+    expect(second.id).not.toBe(first.id);
   });
 });
 
