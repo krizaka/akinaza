@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { exploreShops } from "./explore";
-import { shopZones, shops } from "./schema";
+import { shopRules, shopZones, shops } from "./schema";
 import { freshDatabase } from "./test/db";
 import { NOW, walkerShop } from "./test/fixtures";
 
@@ -40,5 +40,11 @@ describe("Explorer's shops (real PostgreSQL 16)", () => {
     await t.db.update(shops).set({ published: true }).where(eq(shops.id, w.shopId));
     const json = JSON.stringify(await exploreShops(t.db, NOW));
     expect(json).not.toMatch(/Notre-Dame|legalName|ownerId|gstNumber|qstNumber|address/);
+  });
+
+  it("leaves out a published shop whose page cannot be read yet (no booking rules): one shop never fails the whole list (a 400 on /api/explore/shops)", async () => {
+    await t.db.delete(shopRules).where(eq(shopRules.shopId, w.shopId));
+    const shop = (await exploreShops(t.db, new Date("2026-10-19T14:00:00Z"))).find((s) => s.slug === "pattes-x");
+    expect(shop).toBeUndefined();
   });
 });

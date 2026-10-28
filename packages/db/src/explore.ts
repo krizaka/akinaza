@@ -2,6 +2,7 @@ import { type ExploreShop, isOpenNow, localDay } from "@akinaza/core";
 import { and, asc, eq, isNotNull } from "drizzle-orm";
 
 import type { Db } from "./client";
+import { ShopError } from "./errors";
 import { shops } from "./schema";
 import { listSlots, publicShop } from "./service-shop";
 
@@ -19,12 +20,13 @@ export async function exploreShops(db: Db, now: Date): Promise<ExploreShop[]> {
   const rows = await db.select({ slug: shops.slug, kind: shops.kind }).from(shops).where(and(eq(shops.published, true), isNotNull(shops.slug))).orderBy(asc(shops.name)).limit(MAX_SHOPS);
   const built = await Promise.all(
     rows.map(async (row): Promise<ExploreShop | null> => {
-      const page = await publicShop(db, row.slug!);
+      // A published shop whose page cannot be read yet (no rules or staff) is left out: one shop never fails the whole list.
+      const page = await publicShop(db, row.slug!).catch((e: unknown) => { if (e instanceof ShopError) return null; throw e; });
       if (!page) return null;
       const located = page.zones.find((z) => z.lat !== null && z.lng !== null);
       const today = localDay(now, page.shop.timezone);
       const free = await Promise.all(
-        page.services.slice(0, SERVICES_CHECKED).map((s) => listSlots(db, { shopId: page.shop.id, serviceId: s.id, zoneId: null, now, days: 1, fromDay: today }).then((slots) => slots.length > 0)),
+        page.services.slice(0, SERVICES_CHECKED).map((s) => listSlots(db, { shopId: page.shop.id, serviceId: s.id, zoneId: null, now, days: 1, fromDay: today }).then((slots) => slots.length > 0, () => false)),
       );
       return {
         slug: page.shop.slug!,
