@@ -170,34 +170,37 @@ export function InvoicesTable({ invoices, today, defaultMessage = "", organize, 
           <ViewsBar organize={organize} path={pathname} />
         </>
       ) : null}
-      <DataTable
-        {...(organize
-          ? {
-              selectable: true,
-              selected,
-              onSelectedChange: setSelected,
-              bulkMax: 200,
-              bulkActions: ({ clear }: { clear: () => void }) => <SelectionTags organize={organize} selected={selected} onDone={clear} />,
-            }
-          : {})}
-        caption={say("invoices.list.title")}
-        rows={ordered}
-        columns={columns}
-        labels={labels}
-        density="compact"
-        getRowId={(i) => i.id}
-        rowLabel={(i) => i.number}
-        renderDetail={detail}
-        toolbar={
-          <div className="flex flex-col gap-3">
-            <DataTableFilters />
-            <div className="flex justify-end gap-2">
-              <DataTableColumnsMenu />
-              <DataTableExport filename={say("invoices.list.exportFile", { day: today })} />
+      {/* At 1024 px the table is wider than its section (found by @krizaka/page-audit's « overflows its panel »): it scrolls in its own box instead of being cut by the frame. */}
+      <div className="overflow-x-auto">
+        <DataTable
+          {...(organize
+            ? {
+                selectable: true,
+                selected,
+                onSelectedChange: setSelected,
+                bulkMax: 200,
+                bulkActions: ({ clear }: { clear: () => void }) => <SelectionTags organize={organize} selected={selected} onDone={clear} />,
+              }
+            : {})}
+          caption={say("invoices.list.title")}
+          rows={ordered}
+          columns={columns}
+          labels={labels}
+          density="compact"
+          getRowId={(i) => i.id}
+          rowLabel={(i) => i.number}
+          renderDetail={detail}
+          toolbar={
+            <div className="flex flex-col gap-3">
+              <DataTableFilters />
+              <div className="flex justify-end gap-2">
+                <DataTableColumnsMenu />
+                <DataTableExport filename={say("invoices.list.exportFile", { day: today })} />
+              </div>
             </div>
-          </div>
-        }
-      />
+          }
+        />
+      </div>
     </div>
   );
 }
