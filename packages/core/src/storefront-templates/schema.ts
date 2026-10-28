@@ -53,6 +53,7 @@ export type TemplateTextStyle = z.infer<typeof textStyleSchema>;
 export const TEXT_ROLES = ["title", "body", "price"] as const;
 
 /** The version of the notebook (`cahier`) storefront: a template at this version or later carries the `cahier` block and full `TextStyle`s (docs/design/cahier-storefront.md § 8.2). */
+// @fixed: the schema version at which the notebook block appears is a fact of the data format, not a business parameter
 export const CAHIER_VERSION = 2;
 
 /** The `cahier` block of a v2 template: the notebook's hand-made parts, as data. Absent = a v1 template, drawn as today. */
