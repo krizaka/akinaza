@@ -29,7 +29,7 @@ export function useFrameAccount({ locale, id, email, name, avatarSeed, profileHr
       // With no name the menu says « Your account » and shows the address as its identity line (CTO, #431 follow-up); the header never prints the address (docs/ux K6).
       name: name || say("shell.yourAccount"),
       email,
-      avatar: { defaultAvatar: avatarOf({ id: id ?? email, avatarSeed }), alt: "", fallback: (name ?? email).slice(0, 1).toUpperCase() },
+      avatar: { ...avatarOf({ id: id ?? email, avatarSeed }), alt: "", fallback: (name ?? email).slice(0, 1).toUpperCase() },
       links: { profile: { href: profileHref } },
       onSignOut: () => signOut.mutate(),
     },

@@ -24,6 +24,7 @@ import { useShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
 import { type DayVisitView, VisitBookings, VisitProgress } from "@/components/app/VisitDetail";
 import { ButtonLink } from "@/components/ButtonLink";
+import { avatarOf } from "@/lib/avatar";
 import { AppointmentStatus, dayHeadline, daySummary, headlineMessage, shiftDay, STATUS_TONE, statusWord } from "@/lib/day";
 import { formatLongDay, formatMoney, formatTime, INTL_LOCALE } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
@@ -202,7 +203,7 @@ function appointmentRow(a: TodayAppointment, visit: DayVisitView | null, ctx: { 
     title: visit ? a.service[locale] : (a.client ?? say("today.walkIn")),
     description: visit ? `${dogs(visit.bookings.length)} · ${a.staff}` : `${a.service[locale]} · ${a.staff}`,
     tone: STATUS_TONE[statusWord(a)],
-    leading: <Avatar alt="" size="sm" defaultAvatar={{ brand: "akinaza", seed: a.staff }} fallback={a.staff.charAt(0)} />,
+    leading: <Avatar alt="" size="sm" {...avatarOf({ id: a.staff })} fallback={a.staff.charAt(0)} />,
     status: (
       <span className="flex flex-wrap items-center justify-end gap-1">
         {a.agendaConflict ? <Badge tone="warning">{say("today.conflict", { calendar: a.agendaConflict })}</Badge> : null}

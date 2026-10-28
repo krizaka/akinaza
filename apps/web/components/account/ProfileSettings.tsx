@@ -8,7 +8,7 @@ import { Field, Input } from "@krizaka/ui/field";
 import { SettingsRow, SettingsSection } from "@krizaka/ui/settings-layout";
 import { useState } from "react";
 
-import { AVATAR_TONES, avatarChoice, avatarOf } from "@/lib/avatar";
+import { avatarChoice, avatarOptions, avatarSrc } from "@/lib/avatar";
 import { errorKey } from "@/lib/client";
 import { useSay } from "@/lib/i18n-client";
 
@@ -92,7 +92,7 @@ function EmailChange({ pending }: { pending: string | null }) {
  * The identity card's heading is the name — « Pas encore de nom » until there is one, never the address, which has its own line.
  */
 export function ProfileSettings({ profile }: { profile: ProfileView }) {
-  const { say } = useSay();
+  const { say, locale } = useSay();
   const form = useSectionDraft({ name: profile.name ?? "", avatar: avatarChoice(profile) }, (values) => patchProfile({ name: values.name.trim() || null, avatarSeed: values.avatar || null }));
   const shown = { id: profile.id, avatarSeed: form.draft.avatar };
   return (
@@ -107,7 +107,7 @@ export function ProfileSettings({ profile }: { profile: ProfileView }) {
             verifiedLabel={say("account.email.verified")}
             unverifiedLabel={say("account.email.unverified")}
             memberSince={profile.memberSince ?? undefined}
-            avatar={{ defaultAvatar: avatarOf(shown) }}
+            avatar={{ src: avatarSrc(shown, 512) }}
           />
         }
       />
@@ -118,7 +118,7 @@ export function ProfileSettings({ profile }: { profile: ProfileView }) {
         <PictureChoice
           dense
           label={say("account.avatar.label")}
-          options={AVATAR_TONES.map((tone) => ({ id: String(tone), label: say("account.avatar.tone", { tone }), defaultAvatar: { brand: "akinaza", tone } }))}
+          options={avatarOptions(locale)}
           value={form.draft.avatar}
           onValueChange={(avatar) => form.set({ avatar })}
         />
