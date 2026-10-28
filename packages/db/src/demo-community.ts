@@ -7,7 +7,7 @@ import { shops } from "./schema";
 
 /**
  * The demo shops as places (B45): a wall of photos, cards and the sign, the latest reel, a public Short behind its facade, the profile links, the bulletin
- * board and eight verified reviews. Media are on the CDN (`site/products/akinaza/demo/<slug>/`, uploaded with krizaka-com's `cdn-assets`, never committed);
+ * board and eight verified reviews. Media are on the CDN (`sites/akinaza/demo/<slug>/`, uploaded with krizaka-com's `cdn-assets`, never committed);
  * the people in the words are invented, like the shops. Through the product's own operations; idempotent: whatever the owner already pinned is left alone.
  */
 type Demo = typeof media;

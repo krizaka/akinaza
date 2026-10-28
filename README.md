@@ -40,7 +40,7 @@ know-how it shows: **running a shop, for less** — one tool instead of five, bo
   `edited`), its run and the version of its source, and edited by the owner on « Langues de votre page »; an edited text is never overwritten, a changed
   source flags the translation « à revoir ». Admin: `features.storefrontTranslation` (off until the Studio is wired) and `limits.translationsPerShopPerDay`.
 - **Proposed images** — no section of a shop page is ever empty: each trade (salon, coaching, workshop, cleaning, pets, consulting) has neutral default
-  photos, a cover with its silent loop and service images on the media CDN (`site/products/akinaza/defaults/`, named by `apps/web/lib/default-media.manifest.json`).
+  photos, a cover with its silent loop and service images on the media CDN (`apps/akinaza/defaults/`, named by `apps/web/lib/default-media.manifest.json`).
   The owner picks them in « Images proposées » or turns them off; a slot they filled is never replaced; the administrator chooses which trades are offered.
 - **Page templates** — two per trade, versioned data (order, variants, hue, paper, text styles), never a text or a photo: the owner picks one in « Apparence » with a
   preview, or at shop creation (the trade's default preselected); a page the owner reordered is asked « keep my order » before anything moves; a template that
