@@ -5,31 +5,20 @@ import { CAHIER_VERSION, templateSchema } from "./schema";
 
 const style = (font: TemplateTextStyle["font"], size: TemplateTextStyle["size"], weight: TemplateTextStyle["weight"], italic = false): TemplateTextStyle => ({ font, size, weight, italic });
 
+type Section = { id: Template["sections"][number]["id"]; variant: string };
+
+/** « id:variant id … » (variant « default » when omitted) as the sections of a layout. */
+const sections = (spec: string): Section[] =>
+  spec.split(" ").map((token) => {
+    const [id, variant = "default"] = token.split(":");
+    return { id: id as Section["id"], variant };
+  });
+
 /** The section order of each layout, after the hero (docs/design/storefront-templates.md, section 5). */
-const LAYOUT_SECTIONS: Record<Layout, { id: Template["sections"][number]["id"]; variant: string }[]> = {
-  vitrine: [
-    { id: "services", variant: "grid" },
-    { id: "gallery", variant: "grid" },
-    { id: "team", variant: "default" },
-    { id: "hours", variant: "default" },
-    { id: "zones", variant: "default" },
-    { id: "trust", variant: "default" },
-  ],
-  carte: [
-    { id: "services", variant: "list" },
-    { id: "hours", variant: "default" },
-    { id: "team", variant: "default" },
-    { id: "trust", variant: "default" },
-    { id: "gallery", variant: "grid" },
-  ],
-  histoire: [
-    { id: "trust", variant: "story" },
-    { id: "gallery", variant: "taped" },
-    { id: "services", variant: "grid" },
-    { id: "hours", variant: "default" },
-    { id: "team", variant: "default" },
-    { id: "zones", variant: "default" },
-  ],
+const LAYOUT_SECTIONS: Record<Layout, Section[]> = {
+  vitrine: sections("services:grid gallery:grid team hours zones trust"),
+  carte: sections("services:list hours team trust gallery:grid"),
+  histoire: sections("trust:story gallery:taped services:grid hours team zones"),
 };
 
 type Row = { id: string; shopType: Template["shopTypes"][number]; layout: Layout; hue: Template["hue"]; paper: Template["paper"]; title: TemplateTextStyle; body: TemplateTextStyle; price: TemplateTextStyle; slots: Template["slots"] };
@@ -81,42 +70,10 @@ const full = (font: TextStyle["font"], size: TextStyle["size"], weight: TextStyl
 });
 
 /** The body order of each layout at version 2, after the fixed head (the owner's own order still wins). `reels` is not placed: the latest reel is a wall item. */
-const LAYOUT_SECTIONS_V2: Record<Layout, { id: Template["sections"][number]["id"]; variant: string }[]> = {
-  vitrine: [
-    { id: "services", variant: "index" },
-    { id: "wall", variant: "default" },
-    { id: "announcements", variant: "default" },
-    { id: "team", variant: "polaroid" },
-    { id: "hours", variant: "card" },
-    { id: "zones", variant: "default" },
-    { id: "reviews", variant: "stamp" },
-    { id: "trust", variant: "default" },
-    { id: "gallery", variant: "grid" },
-    { id: "follow", variant: "default" },
-  ],
-  carte: [
-    { id: "services", variant: "list" },
-    { id: "hours", variant: "card" },
-    { id: "team", variant: "polaroid" },
-    { id: "trust", variant: "default" },
-    { id: "reviews", variant: "stamp" },
-    { id: "wall", variant: "default" },
-    { id: "gallery", variant: "grid" },
-    { id: "announcements", variant: "default" },
-    { id: "follow", variant: "default" },
-  ],
-  histoire: [
-    { id: "trust", variant: "story" },
-    { id: "gallery", variant: "taped" },
-    { id: "services", variant: "index" },
-    { id: "hours", variant: "card" },
-    { id: "zones", variant: "default" },
-    { id: "wall", variant: "default" },
-    { id: "announcements", variant: "default" },
-    { id: "team", variant: "polaroid" },
-    { id: "reviews", variant: "stamp" },
-    { id: "follow", variant: "default" },
-  ],
+const LAYOUT_SECTIONS_V2: Record<Layout, Section[]> = {
+  vitrine: sections("services:index wall announcements team:polaroid hours:card zones reviews:stamp trust gallery:grid follow"),
+  carte: sections("services:list hours:card team:polaroid trust reviews:stamp wall gallery:grid announcements follow"),
+  histoire: sections("trust:story gallery:taped services:index hours:card zones wall announcements team:polaroid reviews:stamp follow"),
 };
 
 type RowV2 = {
