@@ -31,8 +31,8 @@ export const DEFAULT_SLOT_IDS = Object.keys(DEFAULT_SLOTS) as DefaultSlot[];
 
 export const RENDITION_FORMATS = ["avif", "webp"] as const;
 
-/** Where the defaults live, as logical paths under the media zone's `site/` root. */
-export const DEFAULTS_ROOT = "products/akinaza/defaults";
+/** Where the defaults live, as logical paths under `apps/akinaza/` on the media zone (ADR-014 layout v2). */
+export const DEFAULTS_ROOT = "defaults";
 
 export interface DefaultMedia {
   /** `salon-cover-1`: unique, stable (a stored choice names it). */

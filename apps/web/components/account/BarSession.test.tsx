@@ -1,10 +1,11 @@
+import { QueryClient, QueryClientProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
-import { BarActionsView, type BarWords, settleSignOut } from "./BarSession";
+import { BarActionsView, type BarWords, Island, ME_KEY, settleSignOut } from "./BarSession";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => "/en" }));
 
@@ -68,8 +69,39 @@ describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
     const queryClient = { setQueryData: vi.fn((_key: unknown, value: unknown): void => void calls.push(`data:${JSON.stringify(value)}`)) };
     const router = { refresh: vi.fn(() => calls.push("refresh")) };
     settleSignOut(queryClient as unknown as Parameters<typeof settleSignOut>[0], router, true);
-    expect(queryClient.setQueryData).toHaveBeenCalledWith(["me"], { signedIn: false, signupOpen: true });
+    expect(queryClient.setQueryData).toHaveBeenCalledWith(ME_KEY, { signedIn: false, signupOpen: true });
     expect(router.refresh).toHaveBeenCalledTimes(1);
     expect(calls).toEqual(['data:{"signedIn":false,"signupOpen":true}', "refresh"]);
+  });
+});
+
+describe("the bar's first render matches the session (krizaka-ui#800)", () => {
+  const island = (prime?: (client: QueryClient) => void) => {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    prime?.(client);
+    return renderToStaticMarkup(
+      <QueryClientProvider client={client}>
+        <Island locale="en" words={wordsOf(en)} placement="bar" />
+      </QueryClientProvider>,
+    );
+  };
+
+  it("the session is not known yet: neither « Sign in » nor the avatar (a signed-in person never sees « Sign in » flash)", () => {
+    const html = island();
+    expect(html).toContain('data-session="pending"');
+    expect(text(html)).not.toContain("Sign in");
+    expect(html).not.toContain('aria-label="Account"');
+  });
+
+  it("the session is known and signed in: the very first render is the avatar menu", () => {
+    const html = island((c) => c.setQueryData(ME_KEY, { signedIn: true, signupOpen: false, account: { name: "Camille", email: "camille@example.com", avatarSeed: null } }));
+    expect(html).toContain('aria-label="Account"');
+    expect(text(html)).not.toContain("Sign in");
+  });
+
+  it("the session is known and signed out: the very first render is « Sign in »", () => {
+    const html = island((c) => c.setQueryData(ME_KEY, { signedIn: false, signupOpen: false }));
+    expect(text(html)).toContain("Sign in");
+    expect(html).not.toContain('aria-label="Account"');
   });
 });

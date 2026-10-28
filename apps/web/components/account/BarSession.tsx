@@ -1,15 +1,18 @@
 "use client";
 
-import { krizakaFetch, QueryClient, QueryClientProvider, useMutation, useQuery, useQueryClient } from "@krizaka/query";
+import { krizakaFetch, QueryClient, QueryClientProvider, useMutation, useQueryClient } from "@krizaka/query";
 import { Button } from "@krizaka/ui/button";
+import { sessionKey, useNavSession } from "@krizaka/ui/nav-bar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { type AccountMenuWords,AkinazaAccountMenu } from "@/components/account/AkinazaAccountMenu";
 import { SignedOutActions } from "@/components/account/SignedOutActions";
-import { type Me, meSchema } from "@/lib/me";
+import type { Me } from "@/lib/me";
 
-export const ME_KEY = ["me"] as const;
+export const ME_ENDPOINT = "/api/me";
+/** The bar reads the family's one session query (`@krizaka/ui/nav-bar`), so a hero or a closing call that reads it never disagrees (krizaka-ui#800). */
+export const ME_KEY = sessionKey(ME_ENDPOINT);
 const SIGNED_OUT: Me = { signedIn: false, signupOpen: false };
 
 /**
@@ -57,16 +60,20 @@ export function BarActionsView({ me, locale, words, placement, onSignOut }: { me
   return <SignedOutActions locale={locale} placement={placement} signupOpen={me.signupOpen} signIn={words.signIn} tryIt={words.tryIt} />;
 }
 
-function Island({ locale, words, placement }: { locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel" }) {
+export function Island({ locale, words, placement }: { locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel" }) {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { data } = useQuery({ queryKey: ME_KEY, queryFn: () => krizakaFetch("/api/me", { schema: meSchema }) });
+  const session = useNavSession<NonNullable<Me["account"]>>(ME_ENDPOINT);
+  const signupOpen = session.status === "pending" ? false : session.signupOpen;
   const signOut = useMutation({
     mutationFn: () => krizakaFetch("/api/auth/sign-out", { method: "POST" }),
-    onSettled: () => settleSignOut(queryClient, router, data?.signupOpen ?? false),
+    onSettled: () => settleSignOut(queryClient, router, signupOpen),
   });
-  // Until the answer comes the bar is the signed-out one: the public page stays static and never waits for the session.
-  return <BarActionsView me={data ?? SIGNED_OUT} locale={locale} words={words} placement={placement} onSignOut={() => signOut.mutate()} />;
+  // The public page stays static and never waits for the session; until the answer comes the bar reserves its place and draws NEITHER
+  // state (a signed-in person never sees « Sign in » flash), and a failed refetch keeps the last known state (krizaka-ui#800).
+  if (session.status === "pending") return <span data-testid="bar-session" data-session="pending" aria-hidden="true" className="inline-block h-9 min-w-24" />;
+  const me: Me = session.status === "in" ? { signedIn: true, signupOpen, account: session.account } : { signedIn: false, signupOpen };
+  return <BarActionsView me={me} locale={locale} words={words} placement={placement} onSignOut={() => signOut.mutate()} />;
 }
 
 /** The public bar's account state: « Sign in » / « Try Akinaza », or « Open the app » and the avatar when a session is open. */

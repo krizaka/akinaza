@@ -8,10 +8,10 @@ import { publishedShopPage, publishShopPageDraft, saveShopPageDraft } from "./sh
 
 /**
  * The two demo shops' page (akinaza#403, #404): the photos of the shop-page ADR (generated, in the Krizaka banner style, no faces, on the media CDN under
- * `site/products/akinaza/demo/`) and the document each publishes. The other compositions of the trade are offered by the public switch
+ * `sites/akinaza/demo/`) and the document each publishes. The other compositions of the trade are offered by the public switch
  * (`demoLooksOf`), not stored. Seeded through the product's own operations; a second run changes nothing it already holds.
  */
-const CDN = "https://krizaka-assets.b-cdn.net/site/products/akinaza/demo";
+const CDN = "https://krizaka-assets.b-cdn.net/sites/akinaza/demo";
 
 /** The CDN address of a demo photo: `<name>.<10 hex of its SHA-256>.webp`, a URL that never changes content. */
 const photo = (name: string, hash: string) => `${CDN}/${name}.${hash}.webp`;

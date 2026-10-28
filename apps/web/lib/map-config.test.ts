@@ -7,7 +7,7 @@ const config = readFileSync(new URL("../next.config.mjs", import.meta.url), "utf
 describe("the map of a shop page", () => {
   it("reads its tiles and glyphs through this origin: the media CDN sends no CORS headers", () => {
     expect(config).toContain('source: "/maps/v1/:path*"');
-    expect(config).toContain("https://krizaka-assets.b-cdn.net/maps/v1/:path*");
+    expect(config).toContain("https://krizaka-assets.b-cdn.net/org/v1/maps/:path*");
   });
   it("lets its engine run its worker from a blob, and nothing else", () => {
     expect(config).toContain("worker-src 'self' blob:");

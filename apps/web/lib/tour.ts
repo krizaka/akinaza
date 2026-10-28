@@ -2,7 +2,7 @@
  * The landing's living proof, captured on the demo shop (Pattes de Saint-Henri: fictional, seeded, QA personas, no real
  * person). The hero's phone plays the walker's journey recorded on dev.akinaza.com as one take (2026-10-19, scripts/record-journey.mjs);
  * the three screens under it are stills of the booking, an invoice and the quarter's books. All on the Krizaka media CDN under
- * hashed, immutable names (`site/products/akinaza/tour/`, a prefix owned by this site: FOREIGN_WRITERS in krizaka-com);
+ * hashed, immutable names (`sites/akinaza/tour/`, a prefix owned by this site: FOREIGN_WRITERS in krizaka-com);
  * a new capture is a new hash here.
  */
 /** The Krizaka media CDN: the one host the page's CSP lets serve images (next.config.mjs). */
@@ -24,7 +24,7 @@ const HERO: Record<TourLocale, { mp4: string; webm: string; poster: string }> = 
   en: { mp4: "879d9c259f", webm: "9b62beffcb", poster: "da40382afd" },
 };
 
-const TOUR_DIR = `${MEDIA_CDN}/site/products/akinaza/tour`;
+const TOUR_DIR = `${MEDIA_CDN}/sites/akinaza/tour`;
 
 export const screenStill = (id: ScreenId, locale: TourLocale) => `${TOUR_DIR}/phone-${id}-${locale}.${SCREEN_STILLS[id][locale]}.jpg`;
 
