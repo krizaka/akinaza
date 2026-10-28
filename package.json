@@ -15,6 +15,7 @@
     "test:coverage": "turbo run test --filter='!./apps/mobile' -- --coverage.enabled --coverage.provider=v8 --coverage.reporter=lcov && turbo run test --filter='./apps/mobile' && vitest run --coverage.enabled --coverage.provider=v8 --coverage.reporter=lcov",
     "check": "pnpm run lint && pnpm run typecheck && pnpm run test",
     "dev:check": "turbo run lint typecheck test --filter='...[origin/main]' && vitest run",
+    "dev:seed": "pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "check:perf": "node scripts/check-perf-budgets.mjs",
     "check:overflow": "node scripts/check-overflow.mjs",
