@@ -3,8 +3,7 @@
 
 import { WALL_KIND, type WallTexture } from "@akinaza/core";
 import { EmbedFacade } from "@krizaka/ui/embed-facade";
-import { RetroTv } from "@krizaka/ui/retro-tv";
-import type { VideoPlayerLabels } from "@krizaka/ui/video-player";
+import { RetroTv, type RetroTvLabels } from "@krizaka/ui/retro-tv";
 import { Wall, type WallItem } from "@krizaka/ui/wall";
 import Image from "next/image";
 
@@ -30,23 +29,11 @@ export interface PlayerWords {
   time: string;
 }
 
-export const playerLabels = (w: PlayerWords): VideoPlayerLabels => ({
-  play: w.play,
-  pause: w.pause,
-  mute: w.mute,
-  unmute: w.unmute,
-  volume: w.volume,
-  seek: w.seek,
-  speed: (rate) => w.speed.replace("{rate}", String(rate)),
-  captions: (track) => (track === null ? w.captionsOff : w.captionsOn.replace("{track}", track)),
-  fullscreen: w.fullscreen,
-  exitFullscreen: w.exitFullscreen,
-  pictureInPicture: w.pictureInPicture,
-  loading: w.loading,
-  error: w.error,
-  retry: w.retry,
-  time: (time, duration) => w.time.replace("{time}", time).replace("{duration}", duration),
-});
+/**
+ * The television's own words (`@krizaka/ui` 3.68 gave `RetroTv` its own label set): the ones the catalogue has. `next`, `previous`,
+ * `nowPlaying` and `captions` stay the library's until the catalogue carries them (akinaza#469, the television's playlist).
+ */
+export const tvLabels = (w: PlayerWords): Partial<RetroTvLabels> => ({ play: w.play, pause: w.pause, seek: w.seek, soundOn: w.unmute, soundOff: w.mute });
 
 export interface FacadeWords {
   /** « Load {platform} and play » and the line under it, with the platform already named. */
@@ -75,12 +62,12 @@ export function ShopTv({ video, channel, title, player, facade, platformNames }:
   const src = video.mp4 ?? video.webm;
   if (video.platform && video.externalUrl) {
     return (
-      <RetroTv title={title} channel={channel} labels={playerLabels(player)}>
+      <RetroTv title={title} channel={channel} labels={tvLabels(player)}>
         <EmbedFacade platform={video.platform} url={video.externalUrl} title={title} playLabel={facade.play[video.platform] ?? platformNames[video.platform] ?? ""} poster={video.poster ?? undefined} notice={facade.notice[video.platform]} />
       </RetroTv>
     );
   }
-  return <RetroTv title={title} channel={channel} src={src ?? ""} type="file" poster={video.poster ?? undefined} labels={playerLabels(player)} />;
+  return <RetroTv title={title} channel={channel} src={src ?? ""} type="file" poster={video.poster ?? undefined} labels={tvLabels(player)} />;
 }
 
 /** The wall: the owner's photos, words and sign over a real list, with the latest video in its television beside it. */
