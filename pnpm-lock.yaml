@@ -164,8 +164,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(vitest@4.1.12)
       '@krizaka/auth':
-        specifier: ^0.10.0
-        version: 0.10.0(vitest@4.1.12)(zod@4.6.7)
+        specifier: ^0.11.0
+        version: 0.11.0(vitest@4.1.12)(zod@4.6.7)
       '@krizaka/brief':
         specifier: 0.1.0
         version: 0.1.0
@@ -371,8 +371,8 @@ importers:
         specifier: 0.1.0
         version: 0.1.0(vitest@4.1.12)
       '@krizaka/auth':
-        specifier: ^0.10.0
-        version: 0.10.0(vitest@4.1.12)(zod@4.6.7)
+        specifier: ^0.11.0
+        version: 0.11.0(vitest@4.1.12)(zod@4.6.7)
       '@krizaka/db':
         specifier: 0.2.0
         version: 0.2.0
@@ -2024,8 +2024,8 @@ packages:
       react:
         optional: true
 
-  '@krizaka/auth@0.10.0':
-    resolution: {integrity: sha512-swQ9EkF1T8tweabekLfHjkACJZX9LJZslzAcQXezdIkOslvI5BHWUXbeP38cO2NPkDAXehn1UYHJ4QsgocCMvA==}
+  '@krizaka/auth@0.11.0':
+    resolution: {integrity: sha512-rUozUchat4ohkG5Qud4WaiimI8FwSXcDz1L6L3EZkOJw4PHgP73V/OTK1HQdvFeSG7wvrEgNMXZEEtbtBmg7AQ==}
     engines: {node: '>=22'}
     peerDependencies:
       vitest: '>=4'
@@ -10396,7 +10396,7 @@ snapshots:
     optionalDependencies:
       react: 19.3.1
 
-  '@krizaka/auth@0.10.0(vitest@4.1.12)(zod@4.6.7)':
+  '@krizaka/auth@0.11.0(vitest@4.1.12)(zod@4.6.7)':
     dependencies:
       '@krizaka/db': 0.2.0
       '@krizaka/settings': 0.5.0(zod@4.6.7)
