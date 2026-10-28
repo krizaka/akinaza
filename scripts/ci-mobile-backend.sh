@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # The backend of the phone's Maestro flows (krizaka/.github#241, mobile-e2e.yml's `setup-command`): a throwaway PostgreSQL and
-# the built web app on localhost:3000, with the fictional Saint-Henri dog walker (Léa Beaulieu, the shop's owner) seeded for
+# the built web app on localhost:3000, with the Akinaza cast (@krizaka/org: the Saint-Henri walker who owns the shop, her clients, the administrator) seeded for
 # DEMO_ACCOUNT_EMAIL / DEMO_ACCOUNT_PASSWORD (made by the workflow, masked, for this run only). A fresh database every run,
 # so the demo data is reset each time. The emulator reaches it through `adb reverse`. Dev only, nothing here is a real
 # secret or a real account.
@@ -30,7 +30,7 @@ curl -sf http://localhost:3000/api/healthz >/dev/null
 
 # The migrations ran at the server's start; now the demo shops and the walker persona, whose owner signs in on the phone.
 pnpm --filter @akinaza/db seed:demos
-QA_WALKER_PASSWORD="$DEMO_ACCOUNT_PASSWORD" QA_CLIENTS_PASSWORD="$(openssl rand -hex 16)" pnpm --filter @akinaza/web exec tsx scripts/seed-saint-henri.mjs
+QA_WALKER_PASSWORD="$DEMO_ACCOUNT_PASSWORD" QA_CLIENTS_PASSWORD="$(openssl rand -hex 16)" QA_USER_PASSWORD="$(openssl rand -hex 16)" QA_ADMIN_PASSWORD="$(openssl rand -hex 16)" pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs --check
 # A visit today at "now + 1 h" (the injected clock, never a typed date), so the phone's Aujourd'hui flow always goes list, detail, start, finish (#433).
 pnpm --filter @akinaza/web exec tsx scripts/seed-today-visit.mjs
 echo "backend ready: http://localhost:3000 (dev, the Saint-Henri walker)"

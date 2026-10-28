@@ -1,4 +1,5 @@
 import { localDay } from "@krizaka/intl";
+import { persona } from "@krizaka/org";
 import { eq } from "drizzle-orm";
 
 import type { Db } from "./client";
@@ -33,9 +34,9 @@ export async function seedDemoShop(db: Db, ownerEmail: string, now = new Date())
   const people = await db
     .insert(clients)
     .values([
-      { shopId: shop!.id, fullName: "Camille Tremblay", email: "camille@example.test", language: "fr" },
-      { shopId: shop!.id, fullName: "Jordan Lee", email: "jordan@example.test", language: "en" },
-      { shopId: shop!.id, fullName: "Nadia Benali", phone: "514-555-0142", language: "fr" },
+      { shopId: shop!.id, fullName: persona("akinaza", "camille").displayName, email: "camille@example.test", language: persona("akinaza", "camille").locale },
+      { shopId: shop!.id, fullName: persona("akinaza", "jordan").displayName, email: "jordan@example.test", language: persona("akinaza", "jordan").locale },
+      { shopId: shop!.id, fullName: persona("akinaza", "nadia").displayName, phone: "514-555-0142", language: persona("akinaza", "nadia").locale },
     ])
     .returning();
   for (const c of people) {
