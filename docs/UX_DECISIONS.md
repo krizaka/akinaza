@@ -606,3 +606,12 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Refused**: deciding for the owner when two things overlap (a rule that moves or cancels one would be wrong half the time); showing event titles (more data than blocking a time needs, and Loi 25); writing bookings into their calendar (the private link already does it).
 - **Cost**: a calendar is read every 30 minutes by default (set by the administrator), so a meeting added a minute ago may not block yet - « Read again » reads it now. The address is a secret: kept sealed, shown to nobody.
 - **Wrong if**: owners connect a calendar full of personal events and are surprised that those times are closed - then show the count of blocked times next to each calendar.
+
+## Explorer: shops on a map and in a list, by address or "near me" (#235)
+
+- « Explorer » is the first link of the public bar and the phone panel (the same `NavBar` items). The page is a list and a map: on a phone the list comes first with a List / Map toggle (the map is its own chunk, loaded only when shown); from 1024 px they sit side by side.
+- Filters: kind of service, open now, a free time today. Ranking is by distance after a search or "near me"; with no origin the order is by name (no ranking is invented).
+- Address or postal code goes through a `GeocodingPort` (the service and its attribution are the environment's, answers cached, 30 searches a minute per address); the attribution is shown with the results. A shared package is asked for in krizaka-ts#180.
+- "Near me" asks the browser for the position on the click only, keeps it in the page's state and never sends or stores it.
+- A shop's position is the centre of the first area it serves that has one (what its public page already shows), never its street address. A shop with no position is listed and says so.
+
