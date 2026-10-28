@@ -12,11 +12,11 @@ const Video = dynamic(loadVideoSection, { ssr: false });
 /** The shorts variant keeps its server render (links to the platforms); its code is still a chunk of its own, never part of the page's. */
 export const ShopReelsSection = dynamic(loadVideoSection);
 
-/** The television starts loading when its frame enters the screen: the poster holds the same frame meanwhile, and nothing is fetched for a visitor who never scrolls there. */
-const NEAR = "0px";
+/** How far below the screen the television starts loading, so it is there before it is scrolled to. */
+const NEAR = "600px 0px";
 
 /**
- * The shop page's television (`@krizaka/ui` `RetroTv`), downloaded when its frame enters the screen (akinaza#404, #483). Its player and cabinet are the heaviest part of
+ * The shop page's television (`@krizaka/ui` `RetroTv`), downloaded when its frame nears the screen (akinaza#404, #483). Its player and cabinet are the heaviest part of
  * the shop page and sit far below the first screen: nothing of them is fetched until the visitor scrolls close (the client JS budget of the page counts what it loads),
  * and a server render of the player differs from its first client render (React #418, caught by `check:hydration`). Until then the section keeps its own anchor and
  * key, with the poster's frame, so the outline of the composer and the page do not move.
