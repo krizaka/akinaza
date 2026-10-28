@@ -1,5 +1,6 @@
 import { localDay, localInstant } from "@akinaza/core";
 import { addDays, addHours, addMinutes, addMonths } from "date-fns";
+import { persona } from "@krizaka/org";
 import { and, eq, sql } from "drizzle-orm";
 
 import type { Db } from "./client";
@@ -10,13 +11,16 @@ import { seedDemoCommunity } from "./demo-community";
 import { applyTemplate, shopPageConfigOf } from "./shop-page";
 import { checkIn, checkOut, saveReport } from "./visits";
 
+/** A person of the Akinaza cast (`@krizaka/org`): the names and languages of the demo come from there, never from this file. */
+const cast = (id: string) => persona("akinaza", id);
+
 /**
  * The fictional Saint-Henri dog walker of the demos (Akinaza#52): an adult who is clearly not a real person, five
  * clients with their dogs, a published shop page, and a few walks around today. Everything goes through the same
  * operations the product uses — no row is written around the rules. Idempotent per walker account.
  */
 export const SAINT_HENRI = {
-  shop: { name: "Pattes de Saint-Henri", legalName: "Pattes de Saint-Henri (démo)", address: "2000 rue Notre-Dame O., Montréal QC H3J 1N4", slug: "pattes-saint-henri", ownerName: "Léa", businessType: "pets" as const },
+  shop: { name: "Pattes de Saint-Henri", legalName: "Pattes de Saint-Henri (démo)", address: "2000 rue Notre-Dame O., Montréal QC H3J 1N4", slug: "pattes-saint-henri", ownerName: cast("lea").firstName, businessType: "pets" as const },
   /** The template of her trade the page wears (#261, step 6), applied once. */
   template: "pets-histoire",
   taglineFr: "Des promenades de quartier, avec une photo et un mot après chaque sortie.",
@@ -92,11 +96,11 @@ export const SAINT_HENRI = {
     { weekday: 6, startsAt: "09:00", endsAt: "12:00" },
   ],
   clients: [
-    { email: "camille.tremblay@akinaza.test", name: "Camille Tremblay", phone: "514-555-0101", language: "fr" as const, notes: "Code de la porte 4821, clé de secours sous le pot de lavande.", dogs: [{ name: "Rex", breed: "Labrador", size: "large" as const, temperament: "Joueur, tire un peu en laisse" }] },
-    { email: "jordan.lee@akinaza.test", name: "Jordan Lee", phone: "514-555-0102", language: "en" as const, notes: "Buzzer 12, leash on the hook by the door.", dogs: [{ name: "Luna", breed: "Border collie", size: "medium" as const, temperament: "Shy with other dogs at first" }] },
-    { email: "nadia.benali@akinaza.test", name: "Nadia Benali", phone: "514-555-0103", language: "fr" as const, notes: null, dogs: [{ name: "Biscuit", breed: "Cavapoo", size: "small" as const, temperament: "Doux" }, { name: "Pixel", breed: "Chihuahua", size: "small" as const, temperament: "Craintif des vélos" }] },
-    { email: "etienne.gagnon@akinaza.test", name: "Étienne Gagnon", phone: "514-555-0104", language: "fr" as const, notes: "Cadenas du portail : 0719.", dogs: [{ name: "Érable", breed: "Golden retriever", size: "large" as const, temperament: "Adore l'eau" }] },
-    { email: "sofia.rossi@akinaza.test", name: "Sofia Rossi", phone: "514-555-0105", language: "en" as const, notes: null, dogs: [{ name: "Tofu", breed: "Shiba inu", size: "medium" as const, temperament: "Independent, never off leash" }] },
+    { email: "camille.tremblay@akinaza.test", name: cast("camille").displayName, phone: "514-555-0101", language: cast("camille").locale, notes: "Code de la porte 4821, clé de secours sous le pot de lavande.", dogs: [{ name: "Rex", breed: "Labrador", size: "large" as const, temperament: "Joueur, tire un peu en laisse" }] },
+    { email: "jordan.lee@akinaza.test", name: cast("jordan").displayName, phone: "514-555-0102", language: cast("jordan").locale, notes: "Buzzer 12, leash on the hook by the door.", dogs: [{ name: "Luna", breed: "Border collie", size: "medium" as const, temperament: "Shy with other dogs at first" }] },
+    { email: "nadia.benali@akinaza.test", name: cast("nadia").displayName, phone: "514-555-0103", language: cast("nadia").locale, notes: null, dogs: [{ name: "Biscuit", breed: "Cavapoo", size: "small" as const, temperament: "Doux" }, { name: "Pixel", breed: "Chihuahua", size: "small" as const, temperament: "Craintif des vélos" }] },
+    { email: "etienne.gagnon@akinaza.test", name: cast("etienne").displayName, phone: "514-555-0104", language: cast("etienne").locale, notes: "Cadenas du portail : 0719.", dogs: [{ name: "Érable", breed: "Golden retriever", size: "large" as const, temperament: "Adore l'eau" }] },
+    { email: "sofia.rossi@akinaza.test", name: cast("sofia").displayName, phone: "514-555-0105", language: cast("sofia").locale, notes: null, dogs: [{ name: "Tofu", breed: "Shiba inu", size: "medium" as const, temperament: "Independent, never off leash" }] },
   ],
 };
 

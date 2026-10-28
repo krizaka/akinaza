@@ -49,7 +49,7 @@ export function InvoiceSendAction({ invoiceId, email, defaultMessage = "", prima
       >
         <Dialog.Trigger asChild>
           {primary ? (
-            <Button size="md" variant="gradient" className="font-bold" data-primary data-kz-status={sent ? "success" : undefined}>
+            <Button size="md" variant="primary" className="font-bold" data-primary data-kz-status={sent ? "success" : undefined}>
               {say("invoices.send.open")}
             </Button>
           ) : (
