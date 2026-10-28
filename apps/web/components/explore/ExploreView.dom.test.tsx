@@ -2,6 +2,7 @@
 import type { ExploreShop } from "@akinaza/core";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import en from "@/messages/en.json";
@@ -76,5 +77,12 @@ describe("Explorer (the list on a phone, jsdom)", () => {
     await mount({}, false);
     expect(host!.textContent).toContain("The shops could not be loaded.");
     expect(button("Try again")).toBeTruthy();
+  });
+
+  it("renders the same first markup on the server and in the browser: « Near me » appears only after hydration (React #418)", async () => {
+    // The server has no navigator.geolocation; the browser has. A markup that reads it while rendering differs, and React reports #418.
+    expect(renderToString(<ExploreView locale="en" words={words} />)).not.toContain("Near me");
+    await mount({ shops: SHOPS });
+    expect(button("Near me")).toBeTruthy();
   });
 });

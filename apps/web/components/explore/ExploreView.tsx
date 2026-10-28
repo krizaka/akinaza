@@ -34,6 +34,10 @@ const subscribeWide = (cb: () => void) => {
   return () => m.removeEventListener("change", cb);
 };
 
+const subscribeNever = () => () => undefined;
+/** Whether the browser can give a position: false on the server and in the first client render (same markup), then the answer. */
+const useCanLocate = () => useSyncExternalStore(subscribeNever, canLocate, () => false);
+
 interface GeocodeAnswer {
   places: GeoPlace[];
   attribution: GeoAttribution;
@@ -84,6 +88,7 @@ function ShopCard({ shop, locale, words, selected, onShowOnMap }: { shop: Ranked
 }
 
 function SearchBar({ words, typed, onType, onSubmit, locating, onLocate, notice, denied }: { words: ExploreWords; typed: string; onType: (v: string) => void; onSubmit: () => void; locating: Locating; onLocate: () => void; notice: ReturnType<typeof geoNotice>; denied: boolean }) {
+  const locatable = useCanLocate();
   return (
     <>
       <form role="search" aria-label={words.search.label} className="flex flex-col gap-2 sm:flex-row sm:items-end" onSubmit={(e) => { e.preventDefault(); onSubmit(); }}>
@@ -92,7 +97,7 @@ function SearchBar({ words, typed, onType, onSubmit, locating, onLocate, notice,
           <Input type="search" name="q" value={typed} placeholder={words.search.placeholder} autoComplete="street-address" maxLength={120} onChange={(e) => onType(e.target.value)} />
         </label>
         <Button type="submit" variant="primary" size="md" shape="cut" disabled={typed.trim().length < 3}>{words.search.submit}</Button>
-        {canLocate() ? <Button type="button" variant="secondary" size="md" shape="cut" onClick={onLocate} disabled={locating === "busy"}>{locating === "busy" ? words.search.nearMeBusy : words.search.nearMe}</Button> : null}
+        {locatable ? <Button type="button" variant="secondary" size="md" shape="cut" onClick={onLocate} disabled={locating === "busy"}>{locating === "busy" ? words.search.nearMeBusy : words.search.nearMe}</Button> : null}
       </form>
       <p className="m-0 text-xs text-fg-secondary">{words.search.nearMeNote}</p>
       {denied ? <Alert tone="warning">{words.search.denied}</Alert> : null}
