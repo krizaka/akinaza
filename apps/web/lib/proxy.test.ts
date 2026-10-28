@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { config, proxy } from "../proxy";
-import { LOCALE_HEADER } from "./locale-negotiation";
+import { LOCALE_HEADER, PATH_HEADER } from "./locale-negotiation";
 
 const get = (path: string) => proxy(new NextRequest(`https://dev.akinaza.com${path}`, { headers: { host: "dev.akinaza.com" } }));
 
@@ -84,6 +84,13 @@ describe("the language of the address reaches the pages (the 404 has no params)"
     expect(fr.headers.get(`x-middleware-request-${LOCALE_HEADER}`)).toBe("fr");
     const en = proxy(new NextRequest("https://www.akinaza.com/en/nope", { headers: { host: "www.akinaza.com" } }));
     expect(en.headers.get(`x-middleware-request-${LOCALE_HEADER}`)).toBe("en");
+  });
+});
+
+describe("the proxy hands the requested address to the pages (#287)", () => {
+  it("carries the path and the query, so the signed-in guard can send the visitor back after sign-in", () => {
+    const r = proxy(new NextRequest("https://www.akinaza.com/fr/app/invoices?status=open", { headers: { host: "www.akinaza.com" } }));
+    expect(r.headers.get(`x-middleware-request-${PATH_HEADER}`)).toBe("/fr/app/invoices?status=open");
   });
 });
 

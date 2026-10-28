@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { isAdminHost, routeFor, shopOfHost } from "./lib/host";
 import { CLOSED_ROBOTS, closedRobots, devRedirect, indexableOn, isDevHost, NOINDEX } from "./lib/indexing";
-import { LOCALE_HEADER, negotiateLocale, pageLocaleOf } from "./lib/locale-negotiation";
+import { LOCALE_HEADER, negotiateLocale, pageLocaleOf,PATH_HEADER } from "./lib/locale-negotiation";
 import { SITE_URL } from "./lib/site";
 
 /**
@@ -42,6 +42,7 @@ export function proxy(request: NextRequest) {
   // The language of the address, handed to the pages (the 404 has no params): set on the request, never trusted from the client.
   const forwarded = new Headers(request.headers);
   forwarded.set(LOCALE_HEADER, pageLocaleOf(pathname, chosen));
+  forwarded.set(PATH_HEADER, pathname + request.nextUrl.search);
   let response: NextResponse;
   switch (route.kind) {
     case "robotsClosed":
