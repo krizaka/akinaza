@@ -7,10 +7,10 @@ import { describe, expect, it } from "vitest";
 const read = (name) => readFileSync(new URL(`../${name}`, import.meta.url), "utf8");
 
 describe("the a11y guard", () => {
-  it("the crawl runs axe through @krizaka/a11y-audit (never axe-core itself) and ratchets against a11y-baseline.json", () => {
+  it("the crawl runs axe through @krizaka/page-audit's a11y step (itself on @krizaka/a11y-audit, never axe-core) and ratchets against a11y-baseline.json", () => {
     const source = read("scripts/check-overflow.mjs");
-    expect(source).toContain('from "@krizaka/a11y-audit"');
-    expect(source).toContain("auditA11y(page)");
+    expect(source).toContain('from "@krizaka/page-audit"');
+    expect(source).toContain("a11y: A11Y");
     expect(source).toContain("a11y-baseline.json");
     expect(source).not.toContain('from "axe-core"');
   });
