@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import { DEFAULT_SLOT_IDS, SHOP_TYPES } from "../shop-media";
-import { TEMPLATES } from "./catalogue";
+import { TEMPLATES, TEMPLATES_V2 } from "./catalogue";
 import { latestTemplate, preselectedTemplate, resolveTemplate, templatesFor } from "./resolve";
 import { LAYOUTS, SECTION_VARIANTS, TEMPLATE_SECTIONS, TEMPLATE_SLOTS, templateSchema } from "./schema";
+import { fontWeights, parseTextStyle } from "@krizaka/ui/text-style/server";
 
 describe("the storefront template catalogue (#261, step 1)", () => {
   it("every template parses against the schema, again from its own value", () => {
@@ -103,5 +104,66 @@ describe("which template a shop renders with", () => {
     expect(preselectedTemplate("salon", "salon-carte", [])).toBeNull();
     // preselecting never makes a shop render with it
     expect(resolveTemplate({})).toBeNull();
+  });
+});
+
+describe("the notebook storefront, version 2 of each template (#304, docs/design/cahier-storefront.md 8.2)", () => {
+  it("version 1 and version 2 coexist: twelve of each, the same ids, the same trade and layout", () => {
+    expect(TEMPLATES_V2).toHaveLength(12);
+    expect(TEMPLATES_V2.map((t) => t.id).sort()).toEqual(TEMPLATES.map((t) => t.id).sort());
+    for (const t of TEMPLATES_V2) {
+      const v1 = TEMPLATES.find((x) => x.id === t.id)!;
+      expect(t.version).toBe(2);
+      expect(t.layout).toBe(v1.layout);
+      expect(t.shopTypes).toEqual(v1.shopTypes);
+      expect(templateSchema.safeParse(t).success, t.id).toBe(true);
+    }
+    expect(resolveTemplate({ templateId: "salon-vitrine", templateVersion: 1 })?.cahier).toBeUndefined();
+    expect(resolveTemplate({ templateId: "salon-vitrine", templateVersion: 2 })?.cahier?.sign).toBe("painted");
+  });
+
+  it("a shop on version 1, or with no template, resolves exactly as before; the picker still offers version 1 only", () => {
+    expect(resolveTemplate({})).toBeNull();
+    expect(resolveTemplate({ templateId: "salon-vitrine", templateVersion: 1 })).toBe(TEMPLATES.find((t) => t.id === "salon-vitrine"));
+    expect(templatesFor("salon").map((t) => t.version)).toEqual([1, 1]);
+  });
+
+  it("every title, body and price is a complete TextStyle that parseTextStyle leaves unchanged, in a weight its face is cut in", () => {
+    for (const t of TEMPLATES_V2) {
+      for (const role of ["title", "body", "price"] as const) {
+        const style = t.textStyles[role] as ReturnType<typeof parseTextStyle>;
+        expect(parseTextStyle(style), `${t.id}.${role}`).toEqual(style);
+        expect(fontWeights[style.font], `${t.id}.${role}`).toContain(style.weight);
+      }
+    }
+  });
+
+  it("the pen is never a title, a body or a price font (schema test)", () => {
+    const base = TEMPLATES_V2[0]!;
+    for (const role of ["title", "body", "price"] as const) {
+      const pen = { ...base, textStyles: { ...base.textStyles, [role]: { ...(base.textStyles[role] as object), font: "cahier", weight: 500 } } };
+      expect(templateSchema.safeParse(pen).success, role).toBe(false);
+    }
+  });
+
+  it("a v2 template carries the cahier block and complete styles; a v1 template neither", () => {
+    const v2 = TEMPLATES_V2[0]!;
+    const v1 = TEMPLATES[0]!;
+    expect(templateSchema.safeParse({ ...v2, cahier: undefined }).success).toBe(false);
+    expect(templateSchema.safeParse({ ...v2, textStyles: v1.textStyles }).success).toBe(false);
+    expect(templateSchema.safeParse({ ...v1, cahier: v2.cahier }).success).toBe(false);
+    expect(templateSchema.safeParse({ ...v2, cahier: { ...v2.cahier!, heroTilt: 5 } }).success).toBe(false);
+    expect(templateSchema.safeParse({ ...v2, cahier: { ...v2.cahier!, doodles: [1, 2, 3].map(() => ({ kind: "star", near: "wall" })) } }).success).toBe(false);
+  });
+
+  it("the compact carte head is not tilted; reels are not placed; the index cards, polaroids, hour cards and stamps are the v2 variants", () => {
+    for (const t of TEMPLATES_V2) {
+      if (t.layout === "carte") expect(t.cahier!.heroTilt, t.id).toBe(0);
+      expect(t.sections.map((s) => s.id), t.id).not.toContain("reels");
+      expect(t.sections.find((s) => s.id === "services")!.variant).toBe(t.layout === "carte" ? "list" : "index");
+      expect(t.sections.find((s) => s.id === "team")!.variant).toBe("polaroid");
+      expect(t.sections.find((s) => s.id === "hours")!.variant).toBe("card");
+      expect(t.sections.find((s) => s.id === "reviews")!.variant).toBe("stamp");
+    }
   });
 });
