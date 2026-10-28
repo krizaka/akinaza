@@ -56,20 +56,36 @@ export function castAccounts(env) {
   ];
 }
 
-/** The tables the fingerprint counts, for the cast's accounts and their shop only (a dev database may hold other rows too). */
+/**
+ * The tables the fingerprint counts: the cast's accounts (a list), and the walker's shop with what hangs on it (her id). Éric and Mira may own
+ * other rows on a dev database (a studio's shop, older demo data): they are not the seed's, so they never enter the count.
+ */
 export const FINGERPRINT_QUERIES = {
   accounts: "SELECT count(*)::int AS n FROM accounts WHERE id = ANY($1)",
-  shops: "SELECT count(*)::int AS n FROM shops WHERE owner_id = ANY($1)",
-  clients: "SELECT count(*)::int AS n FROM clients WHERE shop_id IN (SELECT id FROM shops WHERE owner_id = ANY($1))",
-  services: "SELECT count(*)::int AS n FROM services WHERE shop_id IN (SELECT id FROM shops WHERE owner_id = ANY($1))",
-  appointments: "SELECT count(*)::int AS n FROM appointments WHERE shop_id IN (SELECT id FROM shops WHERE owner_id = ANY($1))",
-  invoices: "SELECT count(*)::int AS n FROM invoices WHERE shop_id IN (SELECT id FROM shops WHERE owner_id = ANY($1))",
+  shops: "SELECT count(*)::int AS n FROM shops WHERE owner_id = $1",
+  clients: "SELECT count(*)::int AS n FROM clients WHERE shop_id IN (SELECT id FROM shops WHERE owner_id = $1)",
+  services: "SELECT count(*)::int AS n FROM services WHERE shop_id IN (SELECT id FROM shops WHERE owner_id = $1)",
+  appointments: "SELECT count(*)::int AS n FROM appointments WHERE shop_id IN (SELECT id FROM shops WHERE owner_id = $1)",
+  invoices: "SELECT count(*)::int AS n FROM invoices WHERE shop_id IN (SELECT id FROM shops WHERE owner_id = $1)",
 };
 
-export async function fingerprintOf(query, ownerIds) {
+export async function fingerprintOf(query, accountIds, walkerId) {
   const counts = {};
-  for (const [table, sql] of Object.entries(FINGERPRINT_QUERIES)) counts[table] = (await query(sql, [ownerIds])).rows[0].n;
+  for (const [table, sql] of Object.entries(FINGERPRINT_QUERIES)) {
+    const values = sql.includes("ANY($1)") ? [accountIds] : [walkerId];
+    counts[table] = (await query(sql, values)).rows[0].n;
+  }
   return { counts, fingerprint: seedFingerprint(counts) };
+}
+
+/**
+ * Whether a database holds the recorded cast. A local or CI database is the seed's alone: the fingerprint is exact. The shared dev
+ * database is lived in (bookings made in the app, other tests add clients and appointments), and the seed leaves a shop that already
+ * has its invoices alone, so there the check is « everything recorded is there »: the accounts exactly, every other count at least.
+ */
+export function matchesRecorded(counts, expected, exact) {
+  const recorded = Object.fromEntries(expected.split(";").map((pair) => pair.split("=")).map(([k, v]) => [k, Number(v)]));
+  return Object.entries(recorded).every(([table, n]) => (exact || table === "accounts" ? counts[table] === n : counts[table] >= n));
 }
 
 /** The seed works on dev and local only. */
@@ -104,12 +120,13 @@ async function main() {
     }
     const result = await seedSaintHenri(createDb(pool), key, new Date());
     console.log(`seed-cast: ${WALKER.displayName} (${SAINT_HENRI.shop.name}), ${accounts.length - 3} clients, ${ERIC.displayName}, ${ADMIN.displayName} (administrator); shop ${result.created ? "created" : "already there"}`);
-    const { fingerprint } = await fingerprintOf((sql, values) => pool.query(sql, values), ids);
+    const { fingerprint, counts } = await fingerprintOf((sql, values) => pool.query(sql, values), ids, ids[0]);
     console.log(`fingerprint: ${fingerprint}`);
     if (process.argv.includes("--check")) {
       const expected = JSON.parse(readFileSync(new URL("./cast-fingerprint.json", import.meta.url), "utf8")).fingerprint;
-      if (fingerprint !== expected) throw new Error(`the seeded data differs from the recorded fingerprint\n  expected ${expected}\n  got      ${fingerprint}`);
-      console.log("fingerprint: matches the recorded one");
+      const exact = isLocalHost(url);
+      if (!matchesRecorded(counts, expected, exact)) throw new Error(`the seeded data differs from the recorded fingerprint\n  expected ${expected}\n  got      ${fingerprint}`);
+      console.log(exact ? "fingerprint: matches the recorded one" : "fingerprint: everything recorded is there (this database is lived in: counts may exceed it)");
     }
   } finally {
     await pool.end();
