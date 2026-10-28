@@ -47,7 +47,7 @@ describe("the hydration crawl (one rendering for the server and the browser, K0)
   it("lets another visitor be tried (--locale, --timezone) and expects the two 404 checks to answer 404", () => {
     const source = readFileSync(new URL("./check-hydration.mjs", import.meta.url), "utf8");
     for (const needle of ['arg("timezone", BROWSER.timezoneId)', 'arg("locale", BROWSER.locale)', "expected404 ? status !== 404 : status >= 400"]) expect(source).toContain(needle);
-    expect(PUBLIC_PAGES.filter((p) => p.endsWith("/nope"))).toEqual(["/fr/s/nope", "/fr/nope"]);
+    expect(PUBLIC_PAGES.filter((p) => p.endsWith("/nope"))).toEqual(["/fr/s/nope", "/fr/s/cedre-ciseaux/service/nope", "/fr/nope"]);
   });
 
   it("crawls the correction screen of the first invoice too, and the page of a client's file as it is", () => {
