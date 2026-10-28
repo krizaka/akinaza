@@ -23,6 +23,7 @@ import { ButtonLink } from "@/components/ButtonLink";
 import { MapSetup } from "@/components/shop/MapSetup";
 import { ShopReviews } from "@/components/shop/ShopReviews";
 import { ShopVideoLazy } from "@/components/shop/ShopVideoLazy";
+import { coverPhoneSet, coverSizes, coverSrcSet, PHONE_MEDIA } from "@/lib/cover-renditions";
 import { type Locale, translator } from "@/lib/i18n";
 import { defaultPicture } from "@/lib/org-defaults";
 import { photoLedger, type PhotoPool, planPhotos } from "@/lib/shop-page-media";
@@ -78,7 +79,7 @@ function heroSection({ section, c }: Args<"hero">): ReactNode {
     logo ? <Image key="logo" src={logo} alt={view.name} width={64} height={64} unoptimized className="rounded-lg object-cover" /> : null,
     ...(section.blocks ?? []).map((b) => heroFact(b, c)),
   ];
-  return <HeroSection {...common} variant={section.variant === "tv" ? "poster" : section.variant} focus={section.settings.focus} title={view.name} lead={text(section.text?.lead) ?? view.tagline ?? undefined} facts={facts} actions={book()} cover={plan.cover ? { src: plan.cover.src, alt: plan.cover.alt, video: plan.cover.video } : undefined} />;
+  return <HeroSection {...common} variant={section.variant === "tv" ? "poster" : section.variant} focus={section.settings.focus} title={view.name} lead={text(section.text?.lead) ?? view.tagline ?? undefined} facts={facts} actions={book()} cover={plan.cover ? { src: plan.cover.src, alt: plan.cover.alt, video: plan.cover.video, srcSet: coverSrcSet(plan.cover.src), phone: coverPhoneSet(plan.cover.src) } : undefined} />;
 }
 
 function servicesSection({ section, c }: Args<"services">): ReactNode {
@@ -235,7 +236,20 @@ export function ShopPageView({ page, view, locale, accent, today }: ShopPageView
   const plan = planPhotos(page, pool);
   const claim = photoLedger(plan);
   // The LCP: the hero's cover is asked for first, with a high priority.
-  if (plan.cover) preload(plan.cover.src, { as: "image", fetchPriority: "high" });
+  // The exact `srcset` candidate the hero's <img> will pick: same set, same sizes (a mismatch would download the cover twice).
+  if (plan.cover) {
+    const srcSet = coverSrcSet(plan.cover.src);
+    const phone = coverPhoneSet(plan.cover.src);
+    const heroVariant = page.sections.find((s) => s.type === "hero" && !s.disabled)?.variant;
+    const poster = heroVariant === "poster" || heroVariant === "tv" || heroVariant === undefined;
+    if (poster && phone) {
+      // The poster hero swaps its source on a phone: ask for that candidate there, the full file elsewhere.
+      preload(plan.cover.src, { as: "image", fetchPriority: "high", imageSrcSet: phone, imageSizes: "100vw", media: PHONE_MEDIA });
+      preload(plan.cover.src, { as: "image", fetchPriority: "high", media: `not ${PHONE_MEDIA}` });
+    } else {
+      preload(plan.cover.src, { as: "image", fetchPriority: "high", ...(srcSet ? { imageSrcSet: srcSet, imageSizes: coverSizes(heroVariant) } : {}) });
+    }
+  }
 
   const text: Ctx["text"] = (value) => (value ? value[locale] || value.fr || value.en || undefined : undefined);
   const platformName = (p: Platform) => t(`console.shopPage.platform.${p}`);
