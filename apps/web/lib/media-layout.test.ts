@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 const REPO = join(__dirname, "../../..");
 const ROOTS = ["apps/web", "packages", "deploy"];
 const SKIP = new Set(["node_modules", ".next", ".turbo", "coverage", "dist"]);
-const LEGACY = /b-cdn\.net\/site\/|b-cdn\.net\/maps\/v1|site\/products\/|"root":\s*"site"/;
+const LEGACY = /site\\?\/products|b-cdn\.net\/site\/|b-cdn\.net\/maps\/v1|site\/products\/|"root":\s*"site"/;
 
 function* files(dir: string): Generator<string> {
   for (const name of readdirSync(dir)) {

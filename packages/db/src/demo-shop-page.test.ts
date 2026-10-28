@@ -19,7 +19,7 @@ describe("the demo shops' page (akinaza#403, #404)", () => {
     expect(all).toHaveLength(18);
     expect(new Set(all.map((s) => s.url)).size).toBe(all.length);
     for (const s of all) {
-      expect(s.url).toMatch(/^https:\/\/krizaka-assets\.b-cdn\.net\/site\/products\/akinaza\/demo\/[a-z-]+\.[0-9a-f]{10}\.webp$/);
+      expect(s.url).toMatch(/^https:\/\/krizaka-assets\.b-cdn\.net\/sites\/akinaza\/demo\/[a-z-]+\.[0-9a-f]{10}\.webp$/);
       expect(s.altFr?.length).toBeGreaterThan(5);
       expect(s.altEn?.length).toBeGreaterThan(5);
     }
