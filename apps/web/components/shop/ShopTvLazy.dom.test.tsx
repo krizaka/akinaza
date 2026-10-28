@@ -3,9 +3,10 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { ShopVideoLazy } from "./ShopVideoLazy";
+import { ShopTvLazy } from "./ShopTvLazy";
 
 vi.mock("next/dynamic", () => ({ default: () => () => <div data-testid="tv" /> }));
+vi.mock("next/image", () => ({ default: () => <span data-testid="poster" /> }));
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 let callback: ((e: { isIntersecting: boolean }[]) => void) | null = null;
@@ -22,15 +23,15 @@ afterEach(() => {
   disconnect.mockClear();
 });
 
-const props = { id: "tv", clip: { poster: "https://cdn.example/p.jpg" } } as unknown as Parameters<typeof ShopVideoLazy>[0];
+const props = { video: { poster: "https://cdn.example/p.jpg" } } as unknown as Parameters<typeof ShopTvLazy>[0];
 
-describe("ShopVideoLazy: the television is downloaded when it nears the screen, not at hydration (client JS budget)", () => {
+describe("ShopTvLazy: the television is downloaded when it nears the screen, not at hydration (client JS budget)", () => {
   it("holds the poster frame until the frame is near, then mounts the player once", async () => {
     globalThis.IntersectionObserver = FakeObserver as never;
     const host = document.createElement("div");
     document.body.append(host);
     const root = createRoot(host);
-    await act(async () => root.render(<ShopVideoLazy {...props} />));
+    await act(async () => root.render(<ShopTvLazy {...props} />));
     expect(host.querySelector("[data-tv-frame]")).not.toBeNull();
     expect(host.querySelector("[data-testid=tv]")).toBeNull();
     await act(async () => callback?.([{ isIntersecting: false }]));

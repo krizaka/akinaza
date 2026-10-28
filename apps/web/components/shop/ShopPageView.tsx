@@ -12,6 +12,7 @@ import { ServicesSection } from "@krizaka/ui/shop/services";
 import { SocialSection } from "@krizaka/ui/shop/social";
 import { StorySection } from "@krizaka/ui/shop/story";
 import { TeamSection } from "@krizaka/ui/shop/team";
+import { VideoSection } from "@krizaka/ui/shop/video";
 import { VisitSection } from "@krizaka/ui/shop/visit";
 import Image from "next/image";
 import Link from "next/link";
@@ -21,7 +22,7 @@ import { preload } from "react-dom";
 import { ButtonLink } from "@/components/ButtonLink";
 import { MapSetup } from "@/components/shop/MapSetup";
 import { ShopReviews } from "@/components/shop/ShopReviews";
-import { ShopReelsSection, ShopVideoLazy } from "@/components/shop/ShopVideoLazy";
+import { ShopVideoLazy } from "@/components/shop/ShopVideoLazy";
 import { coverPhoneSet, coverSizes, coverSrcSet, PHONE_MEDIA } from "@/lib/cover-renditions";
 import { type Locale, translator } from "@/lib/i18n";
 import { defaultBanner, defaultPicture } from "@/lib/org-defaults";
@@ -173,7 +174,7 @@ function videoSection({ section, c }: Args<"video">): ReactNode {
   const tv = section.variant === "tv" ? community?.tv : null;
   const reels = section.variant === "shorts" ? shortsOf(community, claim) : [];
   if (!tv && !reels.length) return null;
-  const Video = section.variant === "tv" ? ShopVideoLazy : ShopReelsSection;
+  const Video = section.variant === "tv" ? ShopVideoLazy : VideoSection;
   return <Video {...common} variant={section.variant} title={title(t("console.shopPage.reelsTitle"))} lead={lead} reels={reels} clip={tv ? { src: tv.mp4 ?? tv.webm ?? undefined, poster: claim(tv.poster), title: t("console.shopPage.tvTitle", { shop: view.name }) } : undefined} playLabels={playLabels} notice={notice} cabinet={section.settings.cabinet} channel={t("console.shopPage.tvChannel")} />;
 }
 
