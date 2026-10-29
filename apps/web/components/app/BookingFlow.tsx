@@ -289,6 +289,8 @@ function BookingSlots({ slug, staffId, serviceId, zoneId, timeZone, value, onPic
     }));
   }, [offered, week, timeZone, lang, say]);
   const part = new Intl.DateTimeFormat(lang, { timeZone: "UTC", day: "numeric", month: "short" });
+  const dayWords = (day: string) => part.format(new Date(`${day}T12:00:00Z`));
+  const weekLabel = `${dayWords(week)} – ${dayWords(shiftDay(week, 6))}`;
   return (
     <div className="flex flex-col gap-2">
       {slots.isPending ? <p className="text-fg-secondary">{say("book.slotsLoading")}</p> : null}
@@ -303,7 +305,7 @@ function BookingSlots({ slug, staffId, serviceId, zoneId, timeZone, value, onPic
         minWeek={todayWeek}
         maxWeek={shiftDay(todayWeek, 7 * WEEKS_AHEAD)}
         todayWeek={todayWeek}
-        weekLabel={`${part.format(new Date(`${week}T12:00:00Z`))} – ${part.format(new Date(`${shiftDay(week, 6)}T12:00:00Z`))}`}
+        weekLabel={weekLabel}
         weekButtons={{ previous: say("journey.weekPrevious"), today: say("journey.weekToday"), next: say("journey.weekNext") }}
         footer={say("book.footer", { zone: timeZone })}
       />

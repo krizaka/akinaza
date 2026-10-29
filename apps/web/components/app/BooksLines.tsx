@@ -53,5 +53,5 @@ export function BooksLines({ lines }: Readonly<{ lines: BooksLineView[] }>) {
     ],
     [say, locale],
   );
-  return <DataTable caption={say("books.table.caption")} showCaption rows={lines} columns={columns} getRowId={(r) => r.line} rowLabel={(r) => `${r.line} ${say(`books.lines.${r.line}.label`)}`} />;
+  return <DataTable caption={say("books.table.caption")} showCaption rows={lines} columns={columns} getRowId={(r) => r.line} rowLabel={(r) => [r.line, say(`books.lines.${r.line}.label`)].join(" ")} />;
 }

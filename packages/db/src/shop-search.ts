@@ -9,7 +9,10 @@ import { listInvoices } from "./shop-ops";
 const PER_KIND = 5;
 
 /** `%` and `_` typed by the person are themselves, never a pattern. */
-const contains = (q: string) => `%${q.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+const contains = (q: string) => {
+  const escaped = q.replace(/[\\%_]/g, (c) => `\\${c}`);
+  return `%${escaped}%`;
+};
 
 export interface ShopSearchResult {
   clients: { id: string; fullName: string }[];
