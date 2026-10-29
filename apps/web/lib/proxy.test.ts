@@ -271,7 +271,7 @@ describe("the proxy on the shops' own domain", () => {
     const robots = await on("salon.akinaza.shop", "/robots.txt");
     expect(await robots.text()).toBe("User-agent: *\nDisallow: /\nSitemap: https://salon.akinaza.shop/sitemap.xml\n");
     const sitemap = await on("salon.akinaza.shop", "/sitemap.xml");
-    expect(sitemap.headers.get("x-middleware-rewrite")).toBe("https://salon.akinaza.shop/api/internal/shop-sitemap?slug=salon");
+    expect(sitemap.headers.get("x-middleware-rewrite")).toBe("https://salon.akinaza.shop/api/internal/shop-sitemap");
     expect(sitemap.headers.get("x-robots-tag")).toBe("noindex, nofollow");
   });
 
