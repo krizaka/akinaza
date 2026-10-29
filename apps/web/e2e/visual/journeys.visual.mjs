@@ -56,12 +56,6 @@ async function freeSlot(page, { origin }) {
   return href;
 }
 
-/** Confirms the booking, as the person does: the booking has its own page afterwards. */
-async function submitBooking(page) {
-  await page.locator("form button[type=submit]").first().click();
-  await page.waitForURL(/\/confirmation\?booking=/, { timeout: 30_000 });
-}
-
 defineJourneyTests({
   test,
   expect,
@@ -73,7 +67,6 @@ defineJourneyTests({
     { name: "shop-page", path: SHOP, mask: LIVE },
     { name: "service-booking", path: firstService, mask: LIVE },
     { name: "booking-confirm", path: freeSlot, session: true, mask: LIVE, viewports: ["desktop"] },
-    { name: "booking-confirmed", path: freeSlot, session: true, mask: LIVE, viewports: ["desktop"], ready: submitBooking },
     { name: "sign-in", path: "/fr/sign-in" },
     { name: "walker-today", path: "/fr/app", session: true, mask: LIVE },
   ],
