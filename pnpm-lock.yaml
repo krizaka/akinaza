@@ -377,8 +377,8 @@ importers:
         specifier: 0.5.0
         version: 0.5.0
       '@krizaka/db':
-        specifier: 0.2.0
-        version: 0.2.0
+        specifier: 0.3.0
+        version: 0.3.0
       '@krizaka/intl':
         specifier: 0.3.0
         version: 0.3.0
@@ -2084,6 +2084,10 @@ packages:
 
   '@krizaka/db@0.2.0':
     resolution: {integrity: sha512-m4gFEqeKd1B//UDjGaj/6YN0pXPWjKi2vH391Hl86K0pCemuVg57+AKx9b1pHzpLXm1SyBK4p/svmoi9o1gOgA==}
+    engines: {node: '>=22'}
+
+  '@krizaka/db@0.3.0':
+    resolution: {integrity: sha512-fUghxlF2A8unhrUyosLdUkPInzJ1MQi2WAG4rQe+XWvikvAa3Qyc9OMePXaTbrMe9+khqGsb0f0kDimFDMIcqQ==}
     engines: {node: '>=22'}
 
   '@krizaka/discovery@0.1.0':
@@ -10474,6 +10478,8 @@ snapshots:
       - supports-color
 
   '@krizaka/db@0.2.0': {}
+
+  '@krizaka/db@0.3.0': {}
 
   '@krizaka/discovery@0.1.0(react@19.3.1)':
     dependencies:

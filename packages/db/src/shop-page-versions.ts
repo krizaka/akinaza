@@ -1,4 +1,4 @@
-import { shopTypeOf, starterFor } from "@akinaza/core";
+import { type FramePaper, shopTypeOf, starterFor } from "@akinaza/core";
 import { migrateShopPage, parseShopPage, type ShopPage, type ShopPageIssue } from "@krizaka/ui/shop";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 
@@ -135,6 +135,12 @@ async function pruneArchive(db: Db, shopId: string): Promise<void> {
 /** The shop's versions, newest first (the history the composer lists). */
 export async function shopPageVersionsOf(db: Db, shopId: string): Promise<ShopPageVersionRow[]> {
   return db.select(listColumns).from(shopPageVersions).where(eq(shopPageVersions.shopId, shopId)).orderBy(desc(shopPageVersions.version));
+}
+
+/** The paper under the page, set by the template the owner applied (akinaza#305), or null (the look's own). */
+export async function shopPaperOf(db: Db, shopId: string): Promise<FramePaper | null> {
+  const [row] = await db.select({ paper: shopPage.paper }).from(shopPage).where(eq(shopPage.shopId, shopId));
+  return row?.paper ?? null;
 }
 
 /** The accent the owner chose within the look, or null (the look's own). */
