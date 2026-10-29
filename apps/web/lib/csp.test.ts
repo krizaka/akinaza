@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import { describe, expect, it, vi } from "vitest";
 
 import nextConfig from "../next.config.mjs";
@@ -41,5 +43,13 @@ describe("the content security policy", async () => {
     expect(await cspWith({ NODE_ENV: "production", APP_PUBLIC_URL: "https://www.akinaza.com" })).toContain("upgrade-insecure-requests");
     expect(await cspWith({ NODE_ENV: "production", APP_PUBLIC_URL: undefined })).toContain("upgrade-insecure-requests");
     expect(await cspWith({ NODE_ENV: "production", APP_PUBLIC_URL: "http://localhost:3000" })).not.toContain("upgrade-insecure-requests");
+  });
+});
+
+/** The CSP is baked at build: turbo hands the build task only the variables it declares, so the one the policy reads must be declared (#515: the CI build never saw it). */
+describe("the build reads what the policy depends on", () => {
+  it("turbo declares APP_PUBLIC_URL for the build task", () => {
+    const turbo = JSON.parse(readFileSync(new URL("../../../turbo.json", import.meta.url), "utf8")) as { tasks: { build: { env: string[] } } };
+    expect(turbo.tasks.build.env).toContain("APP_PUBLIC_URL");
   });
 });
