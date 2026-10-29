@@ -1,3 +1,4 @@
+import type { FramePaper } from "@akinaza/core";
 import { Badge } from "@krizaka/ui/badge";
 import { OpeningHours } from "@krizaka/ui/opening-hours";
 import { PaperGrain } from "@krizaka/ui/page";
@@ -42,7 +43,7 @@ export interface ShopPageViewProps {
   /** The preset's paper and its tested accents are the frame's own: the page only names the preset and the density. */
   accent?: string;
   /** The paper under the page (the applied template's, when the notebook storefront is on); none = the look's own. */
-  paper?: "plain" | "seyes" | "kraft" | "washi" | undefined;
+  paper?: FramePaper;
   /** The shop's day (`2026-10-27`) for the bulletin board. */
   today: string;
   /** The closing call's next free time (`nextFreeTime`), when the page has one and a time is free. */
