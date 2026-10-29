@@ -31,6 +31,11 @@ describe("the visual regression", () => {
     expect(journeys).toContain("mask: LIVE");
   });
 
+  it("takes the server-clocked « open now » chip out of the shop page capture (its words and width follow the hour of the run)", () => {
+    expect(read("apps/web/e2e/visual/journeys.visual.mjs")).toMatch(/name: "shop-page"[^}]*ready: withoutLive/);
+    expect(read("apps/web/components/shop/ShopPageView.tsx")).toMatch(/<Badge key=\{b\.key\} data-live[^>]*>\{view\.status\.label\}/);
+  });
+
   it("starts the app on the cast, dev only, and records the moment of the seed", () => {
     const start = read("scripts/ci-visual-start.sh");
     expect(start).toContain("APP_ENVIRONMENT=dev");
