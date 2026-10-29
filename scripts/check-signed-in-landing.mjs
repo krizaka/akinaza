@@ -25,7 +25,7 @@ const arg = (name, fallback) => {
 export const watchSignInLink = () => {
   window.__sawSignIn = false;
   const look = () => {
-    if (document.querySelector('header a[href$="/sign-in"], nav a[href$="/sign-in"]')) window.__sawSignIn = true;
+    if (document.querySelector('[data-site-bar] a[href$="/sign-in"]')) window.__sawSignIn = true;
   };
   new MutationObserver(look).observe(document, { childList: true, subtree: true });
   document.addEventListener("DOMContentLoaded", look);
@@ -33,6 +33,9 @@ export const watchSignInLink = () => {
 
 /** The path of a URL, for a message. Pure, tested. */
 export const pathOf = (url) => new URL(url).pathname;
+
+/** The home of the app is `/<locale>/app`, which a person with a single shop is sent on from, to that shop's Today (`/<locale>/app/<shop>/…`): both are inside the app. */
+export const inApp = (path, locale) => path === `/${locale}/app` || path.startsWith(`/${locale}/app/`);
 
 export async function check({ base, locale = "fr", email, password }) {
   if (!email || !password) throw new Error("E2E_EMAIL and E2E_PASSWORD are required (the seeded owner)");
@@ -44,13 +47,13 @@ export async function check({ base, locale = "fr", email, password }) {
     const page = await context.newPage();
     // Signed out first: the public page does offer « Sign in » (so the next checks mean something).
     await loadSettled(page, `${base}/${locale}/pricing`);
-    await page.waitForFunction(() => document.querySelector('header a[href$="/sign-in"], nav a[href$="/sign-in"]') !== null, null, { timeout: 15_000 }).catch(() => {
+    await page.waitForFunction(() => document.querySelector('[data-site-bar] a[href$="/sign-in"]') !== null, null, { timeout: 15_000 }).catch(() => {
       problems.push(`/${locale}/pricing signed out: no « Sign in » link in the bar (the guard would pass for nothing)`);
     });
     await signIn(page, base, locale, email, password);
     for (const from of ["/", `/${locale}`]) {
       await loadSettled(page, `${base}${from}`);
-      if (pathOf(page.url()) !== `/${locale}/app`) problems.push(`${from} signed in: landed on ${pathOf(page.url())}, expected /${locale}/app`);
+      if (!inApp(pathOf(page.url()), locale)) problems.push(`${from} signed in: landed on ${pathOf(page.url())}, expected the app (/${locale}/app…)`);
     }
     // The server answers the redirect itself: 307, private, varying with the cookie (no HTML of the landing page at all).
     const raw = await page.request.get(`${base}/${locale}`, { maxRedirects: 0 });
@@ -58,7 +61,7 @@ export async function check({ base, locale = "fr", email, password }) {
     if (raw.headers()["cache-control"] !== "private, no-store") problems.push(`/${locale} signed in: Cache-Control must be « private, no-store », got ${raw.headers()["cache-control"]}`);
     if (!/cookie/i.test(raw.headers().vary ?? "")) problems.push(`/${locale} signed in: Vary must name Cookie, got ${raw.headers().vary}`);
     await loadSettled(page, `${base}/${locale}/pricing`);
-    await page.waitForFunction(() => document.querySelector('header button, nav button, header [data-state]') !== null, null, { timeout: 15_000 }).catch(() => {});
+    await page.waitForFunction(() => document.querySelector('[data-site-bar] button, [data-site-bar] [data-state]') !== null, null, { timeout: 15_000 }).catch(() => {});
     if (await page.evaluate(() => window.__sawSignIn)) problems.push(`/${locale}/pricing signed in: the bar drew « Sign in » for an instant`);
     await context.close();
   } finally {
