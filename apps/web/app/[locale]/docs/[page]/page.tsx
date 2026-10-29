@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { DocsSidebar } from "@/components/docs/DocsSidebar";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { jsonLdHtml } from "@/lib/csp";
 import { docHref, isDocId, neighbours } from "@/lib/docs";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
@@ -33,7 +34,7 @@ export default async function DocsPage({ params }: Readonly<{ params: Promise<{ 
   const link = (id: typeof previous) => (id ? { href: docHref(locale, id), title: d.pages[id].nav } : undefined);
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current={`docs/${page}`} />
       <main id="content" className="pt-20">
         <DocsArticlePage
