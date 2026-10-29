@@ -18,6 +18,7 @@ import { proposedDefaults } from "@/lib/default-media-settings";
 import { asLocale, asPageLocale, getDictionary, uiLocaleOf } from "@/lib/i18n";
 import { SESSION_COOKIE } from "@/lib/session";
 import { appSettings, shopPaperShown, shopSectionFeatures } from "@/lib/settings";
+import { shopPageUrl } from "@/lib/shop-domain";
 import { loadPublicShop, loadPublicShopOrMove } from "@/lib/shop-page";
 import { buildStorefront } from "@/lib/storefront";
 
@@ -30,8 +31,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const content = asPageLocale(locale);
   const tagline = page ? buildStorefront({ page, locale: uiLocaleOf(content), contentLocale: content, now: new Date() }).tagline : null;
   // Each language the owner offers is an alternate of the others (the page itself stays out of search engines for now).
-  const languages = page ? Object.fromEntries(page.languages.enabled.map((x) => [x, `/${x}/s/${slug}`])) : undefined;
-  return { title: page?.shop.name ?? getDictionary(l).console.shopPage.notFound, description: tagline ?? undefined, alternates: languages ? { canonical: `/${content}/s/${slug}`, languages } : undefined, robots: { index: false, follow: false } };
+  const languages = page ? Object.fromEntries(page.languages.enabled.map((x) => [x, shopPageUrl(slug, x, process.env)])) : undefined;
+  return { title: page?.shop.name ?? getDictionary(l).console.shopPage.notFound, description: tagline ?? undefined, alternates: languages ? { canonical: shopPageUrl(slug, content, process.env), languages } : undefined, robots: { index: false, follow: false } };
 }
 
 /** A shop's public page: the cover, the services as cards, the next free times (the real availability), the hours, the areas on a map, who you will meet, the way in. */
