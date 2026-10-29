@@ -20,10 +20,6 @@ const NOW = (() => {
 })();
 // Times and free slots follow the day; the map's tiles come from the network, so the map itself is masked.
 const LIVE = ["time", "[data-live]", ".maplibregl-map"];
-// « Open now · closes at 5 pm » is drawn by the server from the real clock (the browser's is frozen), so its words, its width and the
-// wrapping of the chips beside it change with the hour of the run: a mask is not enough, the chip is taken out of the flow. A style, not a removed node:
-// React puts a node it owns back when the page hydrates after the removal.
-const withoutLive = (page) => page.addStyleTag({ content: "[data-live]{display:none!important}" });
 
 /** Signs in through the form, as a person would; the session cookie is kept for the signed-in captures. */
 async function signIn(page) {
@@ -68,7 +64,7 @@ defineJourneyTests({
   ...(NOW ? { now: NOW } : {}),
   journeys: [
     { name: "landing", path: "/fr", mask: LIVE },
-    { name: "shop-page", path: SHOP, mask: LIVE, ready: withoutLive },
+    { name: "shop-page", path: SHOP, mask: LIVE },
     { name: "service-booking", path: firstService, mask: LIVE },
     { name: "booking-confirm", path: freeSlot, session: true, mask: LIVE, viewports: ["desktop"] },
     { name: "sign-in", path: "/fr/sign-in" },
