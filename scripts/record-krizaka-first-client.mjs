@@ -169,7 +169,7 @@ await clip("onboarding", async ({ take, page, go, glide }) => {
   await go("app");
   await page.waitForTimeout(1200);
   await glide(220, 1400);
-  await go("app/boutique");
+  await go("app/settings");
   await page.waitForTimeout(800);
   await glide(520, 2200);
   await take.speak("today");

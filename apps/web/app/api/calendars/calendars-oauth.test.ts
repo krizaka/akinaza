@@ -99,7 +99,7 @@ describe("the callback", () => {
     const { state, nonce } = stateOf();
     const res = await hit("google", state, nonce);
     expect(res.status).toBe(303);
-    expect(res.headers.get("location")).toBe("/fr/app/s1/boutique/agenda?calendar=connected");
+    expect(res.headers.get("location")).toBe("/fr/app/s1/settings/agenda?calendar=connected");
     const exchange = vi.mocked(fetch).mock.calls.find(([u]) => String(u).includes("token"))!;
     expect(new URLSearchParams(String((exchange[1] as RequestInit).body)).get("code_verifier")).toBe(verifier);
     const added = vi.mocked(addConnection).mock.calls[0]![1];
@@ -141,7 +141,7 @@ describe("the callback", () => {
     const { state, nonce } = stateOf();
     vi.stubGlobal("fetch", vi.fn(async () => Response.json({ error: "invalid_grant" }, { status: 400 })));
     const res = await hit("google", state, nonce);
-    expect(res.headers.get("location")).toBe("/fr/app/s1/boutique/agenda?calendar=error");
+    expect(res.headers.get("location")).toBe("/fr/app/s1/settings/agenda?calendar=error");
     expect(addConnection).not.toHaveBeenCalled();
   });
 });

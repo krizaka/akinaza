@@ -26,7 +26,7 @@ describe("the dev-preview crawl (ui.themes-devices)", () => {
   });
 
   it("also holds the signed-in frame to it (akinaza#396): the owner's rail, header and account menu on the pages of the day, in both languages and themes", () => {
-    for (const page of ["/aujourdhui", "/clients", "/invoices", "/books", "/shop"]) expect(FRAME_PAGES).toContain(page);
+    for (const page of ["/today", "/clients", "/invoices", "/books", "/shop"]) expect(FRAME_PAGES).toContain(page);
     expect(FRAME_LOCALES).toEqual(["fr", "en"]);
     const source = readFileSync(new URL("./check-overflow.mjs", import.meta.url), "utf8");
     expect(source).toContain("/api/auth/sign-in");

@@ -69,7 +69,7 @@ const invoiceColumns = ({ say, locale, routes, today, wash, organize, tagsByInvo
     {
       id: "number",
       header: say("invoices.table.number"),
-      type: "title",
+      type: "link",
       card: "title",
       width: 132,
       sortable: true,
@@ -82,7 +82,7 @@ const invoiceColumns = ({ say, locale, routes, today, wash, organize, tagsByInvo
       ),
       subtitle: (i) => (i.creditOf ? say("invoices.list.credit") : i.language.toUpperCase()),
     },
-    { id: "client", header: say("invoices.table.client"), sortable: true, filter: "text", minWidth: 240, value: (i) => i.client ?? "", cell: (i) => i.client ?? say("invoices.list.noClient") },
+    { id: "client", header: say("invoices.table.client"), type: "title", card: "label", sortable: true, filter: "text", minWidth: 240, value: (i) => i.client ?? "", cell: (i) => i.client ?? say("invoices.list.noClient") },
     {
       id: "state",
       header: say("invoices.table.state"),
