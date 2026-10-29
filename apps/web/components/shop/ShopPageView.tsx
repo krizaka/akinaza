@@ -36,6 +36,17 @@ type Platform = (typeof PLATFORMS)[number];
 const isPlatform = (value: string): value is Platform => (PLATFORMS as readonly string[]).includes(value);
 
 /** The accent the owner chose within the look, else the look's own. */
+/** The « Book » button of every section that offers it, made outside the page component (a render function, not a component defined in its render). */
+function bookButton(href: string, label: string) {
+  return function renderBook(size: "md" | "lg" = "lg") {
+    return (
+      <ButtonLink href={href} size={size} variant="primary">
+        {label}
+      </ButtonLink>
+    );
+  };
+}
+
 export interface ShopPageViewProps {
   page: ShopPage;
   view: StorefrontView;
@@ -287,7 +298,7 @@ export function ShopPageView({ page, view, locale, accent, paper, today, nextTim
     titleOf: (section, fallback) => text(section.text?.title) ?? fallback,
     plan,
     claim,
-    book: (size = "lg") => <ButtonLink href={view.bookHref} size={size} variant="primary">{t("console.shopPage.book")}</ButtonLink>,
+    book: bookButton(view.bookHref, t("console.shopPage.book")),
     contact: view.contact,
     community,
     today,
