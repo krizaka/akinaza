@@ -53,11 +53,11 @@ const line = (m: { url: string; altFr: string; altEn: string; captionFr: string 
 
 /** Boutique › Page: the shop as the walker builds its public page (identity, texts, zones, services, hours, rules, media, look, publish). */
 async function PageSection({ locale, shopId, tab }: Readonly<{ locale: RouteLocale; shopId: string; tab: PageTab }>) {
-  const { shop } = await memberShop(shopId, "settings");
+  const { shop, session } = await memberShop(shopId, "settings");
   const base = readEnv().APP_PUBLIC_URL;
   const setup = await loadShop(db(), shop);
   const [media, pageConfig] = await Promise.all([shopMediaOf(db(), shop.id), shopPageConfigOf(db(), shop.id)]);
-  const [rules, templates, catalogue] = await Promise.all([defaultMediaSettings(), templateRules(), templateCatalogue()]);
+  const [rules, templates, catalogue] = await Promise.all([defaultMediaSettings(), templateRules(), templateCatalogue(session.account.id)]);
   const proposed = rules.enabled ? { config: pageConfig, shopType: shopTypeOf(shop.businessType, pageConfig.shopType), proposals: proposalsFor(rules.types), media: { cover: media.cover ? line(media.cover) : null, gallery: media.gallery.map(line) } } : null;
   const data: SetupData = {
     proposed,

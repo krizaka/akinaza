@@ -47,6 +47,9 @@ export const DEVICES = { desktop: { width: 1440, height: 900 }, phone: { width: 
 /** The extra features switched on for the run only (`SHOTS_FLAGS=features.cahierStorefront,…`): the throw-away database, never a shared one. */
 export const flagsOf = (value) => (value ?? "").split(",").map((s) => s.trim()).filter((s) => /^features\.[A-Za-z]+$/.test(s));
 
+/** The slugs of the demo shops (packages/db/src/demo-shops.ts): the owners a person's flag is set for (`SHOTS_DEMO_FLAGS`), never anyone else. */
+export const DEMO_SLUGS = ["cedre-ciseaux", "encre-vive", "ferland-conseil"];
+
 /** `look-phone-dark.png`: one file per scene, device and theme. */
 export const shotName = (scene, device, theme) => `${scene}-${device}-${theme}.png`;
 
@@ -203,6 +206,9 @@ async function main() {
     run(["--filter", "@akinaza/db", "seed:demos"]);
     run(["--filter", "@akinaza/web", "exec", "tsx", "scripts/set-setting.mjs", "features.storefrontTemplates", "true", "--actor", "shots-storefront"]);
     for (const flag of flagsOf(process.env.SHOTS_FLAGS)) run(["--filter", "@akinaza/web", "exec", "tsx", "scripts/set-setting.mjs", flag, "true", "--actor", "shots-storefront"]);
+    // The demo shops' owners only (a person's value of the administration, as in production): `SHOTS_DEMO_FLAGS=features.cahierStorefront`.
+    const demoOwners = (await db.query("SELECT a.email FROM shops s JOIN accounts a ON a.id = s.owner_id WHERE s.slug = ANY($1)", [DEMO_SLUGS])).rows;
+    for (const flag of flagsOf(process.env.SHOTS_DEMO_FLAGS)) for (const { email } of demoOwners) run(["--filter", "@akinaza/web", "exec", "tsx", "scripts/set-setting.mjs", flag, "true", "--user", email, "--actor", "shots-storefront"]);
     const { rows } = await db.query("SELECT s.id, s.slug, a.email FROM shops s JOIN accounts a ON a.id = s.owner_id WHERE s.slug = 'pattes-saint-henri'");
     if (!rows[0]) throw new Error("the Saint-Henri shop was not seeded");
     const shop = { id: rows[0].id, slug: rows[0].slug };

@@ -1,6 +1,6 @@
 
 import { demoLookDocument, demoLooksOf, localDay } from "@akinaza/core";
-import { communityOf, publishedShopPage, shopAccentOf, shopPaperOf, teamDay } from "@akinaza/db";
+import { communityOf, ownerOfShop, publishedShopPage, shopAccentOf, shopPaperOf, teamDay } from "@akinaza/db";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
@@ -51,7 +51,7 @@ export default async function ShopPage({ params, searchParams }: { params: Promi
   // Who is here today, computed on the server from bare time ranges: the page receives a state per first name, nothing else.
   const [team, enabledUpcomingSections, community, rules, document] = await Promise.all([teamDay(db(), page.shop.id, now), shopSectionFeatures(), communityOf(db(), page.shop.id), reviewRules(), publishedShopPage(db(), page.shop.id)]);
   const accent = (await shopAccentOf(db(), page.shop.id)) ?? undefined;
-  const paper = await shopPaperShown(await shopPaperOf(db(), page.shop.id));
+  const paper = await shopPaperShown(await shopPaperOf(db(), page.shop.id), await ownerOfShop(db(), page.shop.id));
   const placed = buildCommunity({ community, locale, today: localDay(now, page.shop.timezone), rules, enabled: enabledUpcomingSections });
   const view = buildStorefront({ page, locale, contentLocale: content, now, teamDay: team, enabledUpcomingSections, community: placed, defaults: await proposedDefaults(page) });
   // The demo shops offer the other compositions of Krizaka UI (`?look=`); any other shop ignores the parameter.

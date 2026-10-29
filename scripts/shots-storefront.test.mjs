@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { DEVICES, flagsOf, plan, SCENES, shotName, THEMES } from "./shots-storefront.mjs";
+import { DEMO_SLUGS, DEVICES, flagsOf, plan, SCENES, shotName, THEMES } from "./shots-storefront.mjs";
 
 const source = readFileSync(new URL("./shots-storefront.mjs", import.meta.url), "utf8");
 
@@ -64,5 +64,11 @@ describe("flagsOf: features switched on for a capture run only", () => {
   it("reads a comma list and keeps only feature keys", () => {
     expect(flagsOf("features.cahierStorefront, features.x ,plans.free.apiKeys,;rm")).toEqual(["features.cahierStorefront", "features.x"]);
     expect(flagsOf(undefined)).toEqual([]);
+  });
+});
+
+describe("the demo shops' own flag (akinaza#261)", () => {
+  it("names the three demo shops and nothing else", () => {
+    expect(DEMO_SLUGS).toEqual(["cedre-ciseaux", "encre-vive", "ferland-conseil"]);
   });
 });
