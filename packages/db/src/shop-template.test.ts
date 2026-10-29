@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { framePaperOf, TEMPLATES } from "@akinaza/core";
+import { framePaperOf, TEMPLATES, TEMPLATES_V2 } from "@akinaza/core";
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -192,6 +192,18 @@ describe("`trust` is an orderable section (#261, step 3)", () => {
   });
 });
 
+
+describe("the update to the notebook's version (akinaza#316)", () => {
+  it("moves a shop from @1 to @2 and keeps its content: its trade, logo and image defaults", async () => {
+    const shop = await walkerShop(t.db, "to-v2");
+    await saveShopPageConfig(t.db, shop.shopId, { shopType: "salon", logoUrl: "https://example.test/logo.png", useDefaults: false });
+    await applyTemplate(t.db, shop.shopId, { templateId: "salon-vitrine" });
+    expect(await shopPageConfigOf(t.db, shop.shopId)).toMatchObject({ templateId: "salon-vitrine", templateVersion: 1 });
+    const catalogue = [...TEMPLATES, ...TEMPLATES_V2];
+    await applyTemplate(t.db, shop.shopId, { templateId: "salon-vitrine", keepOrder: false }, catalogue);
+    expect(await shopPageConfigOf(t.db, shop.shopId)).toMatchObject({ templateId: "salon-vitrine", templateVersion: 2, shopType: "salon", logoUrl: "https://example.test/logo.png", useDefaults: false });
+  });
+});
 
 describe("the paper of the applied template (akinaza#305)", () => {
   it("is null until a template is applied, then the template's paper in the frame's words, per shop", async () => {

@@ -7,7 +7,7 @@ import { workspace } from "@/lib/workspace";
 export const dynamic = "force-dynamic";
 
 /** The administrator's defaults of « the workspace, organised » (akinaza#337): tag sets by trade, who writes them, the invoice's states. */
-export default async function AdminOrganize({ params }: { params: Promise<{ locale: string }> }) {
+export default async function AdminOrganize({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const t = translator(asLocale((await params).locale));
   const stored: StoredKind[] = [];
   for (const kind of WORKSPACE_KINDS) {

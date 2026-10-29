@@ -1,0 +1,50 @@
+id: no-cookie-domain
+snapshots:
+  "(await cookies()).set({ name: \"a\", value: \"b\", domain: \"akinaza.com\" });\n":
+    labels:
+    - source: "domain: \"akinaza.com\""
+      style: primary
+      start: 47
+      end: 68
+    - source: (await cookies()).set
+      style: secondary
+      start: 0
+      end: 21
+    - source: "(await cookies()).set({ name: \"a\", value: \"b\", domain: \"akinaza.com\" })"
+      style: secondary
+      start: 0
+      end: 71
+    - source: domain
+      style: secondary
+      start: 47
+      end: 53
+  "const header = \"a=b; Domain=akinaza.com\";\n":
+    labels:
+    - source: "\"a=b; Domain=akinaza.com\""
+      style: primary
+      start: 15
+      end: 40
+  "const header = `a=b; Path=/; Domain=akinaza.com`;\n":
+    labels:
+    - source: "`a=b; Path=/; Domain=akinaza.com`"
+      style: primary
+      start: 15
+      end: 48
+  "response.cookies.set(\"a\", \"b\", { domain: \".akinaza.com\" });\n":
+    labels:
+    - source: "domain: \".akinaza.com\""
+      style: primary
+      start: 33
+      end: 55
+    - source: response.cookies.set
+      style: secondary
+      start: 0
+      end: 20
+    - source: "response.cookies.set(\"a\", \"b\", { domain: \".akinaza.com\" })"
+      style: secondary
+      start: 0
+      end: 58
+    - source: domain
+      style: secondary
+      start: 33
+      end: 39

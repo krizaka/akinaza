@@ -21,7 +21,7 @@ export interface ChipShop {
  * choose; a menu when the account works in other shops or may add one: the other shops open the same page there (the address
  * says which shop is open, the cookie only remembers it), « Ajouter une boutique » at the end.
  */
-export function ShopChip({ locale, current, others, addHref }: { locale: RouteLocale; current: ChipShop; others: ChipShop[]; /** Where a new shop is created; null for who may not. */ addHref: string | null }) {
+export function ShopChip({ locale, current, others, addHref }: Readonly<{ locale: RouteLocale; current: ChipShop; others: ChipShop[]; /** Where a new shop is created; null for who may not. */ addHref: string | null }>) {
   const { say } = useSay();
   const router = useRouter();
   const pathname = usePathname() ?? "";

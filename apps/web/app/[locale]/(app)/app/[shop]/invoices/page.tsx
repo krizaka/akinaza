@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 export const generateMetadata = titleOf("invoices");
 
 /** The issued invoices (each opens as a document), and the one primary action: a new invoice, on its own address. */
-export default async function Invoices({ params, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+export default async function Invoices({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }>) {
   const { locale: rawLocale, shop: shopId } = await params;
   const locale = asLocale(rawLocale);
   const { shop, session, role } = await memberShop(shopId, "invoices");

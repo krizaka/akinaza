@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
+import { contentSecurityPolicy } from "./csp";
 import { SCREENS } from "./landing";
 import { MEDIA_CDN, screenStill } from "./tour";
 
@@ -17,8 +18,9 @@ describe("the home's screens", () => {
   });
 
   it("are allowed by the page's CSP: the media host, for images", () => {
-    const config = readFileSync(new URL("../next.config.mjs", import.meta.url), "utf8");
-    expect(config).toContain(`"img-src 'self' data: blob: ${MEDIA_CDN}"`);
+    for (const nonce of [undefined, "abc"]) {
+      expect(contentSecurityPolicy({ nonce, production: true, upgradeInsecure: true })).toContain(`img-src 'self' data: blob: ${MEDIA_CDN}`);
+    }
   });
 });
 

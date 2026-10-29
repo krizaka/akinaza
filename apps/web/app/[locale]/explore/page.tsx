@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { ExploreView, type ExploreWords } from "@/components/explore/ExploreView";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { jsonLdHtml } from "@/lib/csp";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 
@@ -30,7 +31,7 @@ export default async function Explore({ params }: Readonly<{ params: Promise<{ l
   };
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="explore" />
       <main id="content" className="mx-auto flex w-full max-w-(--kz-page-max,72rem) flex-col gap-6 px-4 pb-16 pt-24 sm:px-8">
         <header className="flex flex-col gap-2">

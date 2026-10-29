@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * « Ouvrir une boutique » (K7): a client's first shop, from their bookings. Someone who already works in a shop adds one from
  * the shop's own space (Boutique › Boutiques), so this address takes them there.
  */
-export default async function OpenShopPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function OpenShopPage({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const { account } = (await pageSession())!;
   const member = await lastMember(account.id);

@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /** « Le point du lundi » in full, on its own address: Today only announces it (docs/ux/2026-10-full-review.md B2). */
-export default async function BriefPage({ params }: { params: Promise<{ locale: string; shop: string }> }) {
+export default async function BriefPage({ params }: Readonly<{ params: Promise<{ locale: string; shop: string }> }>) {
   const { locale: raw, shop: shopId } = await params;
   const locale = asLocale(raw);
   const { shop } = await memberShop(shopId, "reports");

@@ -207,7 +207,12 @@ export async function saveReport(db: Db, input: ReportInput): Promise<{ reportId
     const minutes = visitMinutes(new Date(visit.checked_in_at), new Date(visit.checked_out_at));
     const [existing] = await tx.select({ id: visitReports.id }).from(visitReports).where(eq(visitReports.bookingId, input.bookingId));
     if (existing) {
-      await tx.update(visitReports).set({ note, durationMinutes: minutes, ...(photo === undefined ? {} : photo === null ? { photo: null, photoType: null } : { photo: photo.bytes, photoType: photo.type }) }).where(eq(visitReports.id, existing.id));
+      const photoColumns: Partial<typeof visitReports.$inferInsert> = {};
+      if (photo !== undefined) {
+        photoColumns.photo = photo?.bytes ?? null;
+        photoColumns.photoType = photo?.type ?? null;
+      }
+      await tx.update(visitReports).set({ note, durationMinutes: minutes, ...photoColumns }).where(eq(visitReports.id, existing.id));
       return { reportId: existing.id, created: false };
     }
     // The link is born unusable (a random hash nobody holds); `issueReportLink` makes the real one when the report is sent.
@@ -314,13 +319,12 @@ export async function reportByToken(db: Db, token: string, now: Date): Promise<R
 
 /** The photo of a report: by the private link (while it lives) — or for the client who owns the booking. */
 export async function reportPhoto(db: Db, by: { token: string; now: Date } | { clientId: string; reportId: string }): Promise<{ bytes: Buffer; type: "jpeg" | "png" | "webp" } | null> {
+  if ("token" in by && !isReportToken(by.token)) return null;
   const found =
     "token" in by
-      ? isReportToken(by.token)
-        ? await db.execute(sql`SELECT photo, photo_type FROM visit_reports WHERE view_token_hash = ${reportTokenHash(by.token)} AND token_expires_at > ${by.now.toISOString()}::timestamptz AND photo IS NOT NULL`)
-        : null
+      ? await db.execute(sql`SELECT photo, photo_type FROM visit_reports WHERE view_token_hash = ${reportTokenHash(by.token)} AND token_expires_at > ${by.now.toISOString()}::timestamptz AND photo IS NOT NULL`)
       : await db.execute(sql`SELECT r.photo, r.photo_type FROM visit_reports r JOIN bookings b ON b.id = r.booking_id WHERE r.id = ${by.reportId} AND b.client_id = ${by.clientId} AND r.photo IS NOT NULL`);
-  const row = found?.rows[0] as { photo: Buffer; photo_type: "jpeg" | "png" | "webp" } | undefined;
+  const row = found.rows[0] as { photo: Buffer; photo_type: "jpeg" | "png" | "webp" } | undefined;
   return row ? { bytes: row.photo, type: row.photo_type } : null;
 }
 

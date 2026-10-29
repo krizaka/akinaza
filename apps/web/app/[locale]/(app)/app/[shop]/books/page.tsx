@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * « Vos livres »: the GST/QST return of a period, prepared from the shop's invoices and expenses, every figure with its
  * sources. It prepares; the merchant reviews and files it themselves with Revenu Québec — nothing is sent from here.
  */
-export default async function Books({ params, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ period?: string }> }) {
+export default async function Books({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ period?: string }> }>) {
   const { locale: rawLocale, shop: shopId } = await params;
   const locale = asLocale(rawLocale);
   const { shop } = await memberShop(shopId, "reports");
