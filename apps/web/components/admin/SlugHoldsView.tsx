@@ -12,7 +12,7 @@ import { z } from "zod";
 
 import { errorKey } from "@/lib/client";
 import { useSay } from "@/lib/i18n-client";
-import { addTerm, lineIssue, removeTerm, replaceTerm, termRows } from "@/lib/protected-terms-edit";
+import { addTerm, lineIssue, removeTerm, replaceTerm, storedTerms, termRows } from "@/lib/protected-terms-edit";
 
 import { formatDate } from "./format";
 
@@ -187,7 +187,7 @@ function ProtectedTerms() {
     onSuccess: () => client.invalidateQueries({ queryKey: TERMS }),
     onError: (error) => setProblem(say(`errors.${errorKey(error)}`)),
   });
-  const stored = data.data ? String(data.data.values[TERMS_KEY] ?? "") : null;
+  const stored = data.data ? storedTerms(data.data.values[TERMS_KEY]) : null;
   if (stored === null) return null;
   const change = (next: string) => {
     setProblem(null);

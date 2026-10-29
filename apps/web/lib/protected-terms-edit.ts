@@ -21,6 +21,12 @@ function kindOf(line: string): TermKind {
   return line.length > 2 && line.startsWith("/") && line.endsWith("/") ? "pattern" : "word";
 }
 
+/** The text of the setting out of `GET /api/admin/settings`, where each value is `{ value, source }` (a plain string is read too). */
+export function storedTerms(entry: unknown): string {
+  const value = typeof entry === "object" && entry !== null && "value" in entry ? entry.value : entry;
+  return typeof value === "string" ? value : "";
+}
+
 /** The lines worth listing: blank lines are skipped, comments are listed (and can be removed). */
 export function termRows(stored: string): TermRow[] {
   const issues = new Map(protectedTermsIssues(stored).map((i) => [i.line - 1, i.reason]));

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { addTerm, lineIssue, removeTerm, replaceTerm, termRows } from "./protected-terms-edit";
+import { addTerm, lineIssue, removeTerm, replaceTerm, storedTerms, termRows } from "./protected-terms-edit";
 
 const STORED = "# brands\nlogin\n\n/^pay.?pal$/\n/(a+)+$/";
 
@@ -31,5 +31,17 @@ describe("the protected terms the console edits", () => {
     expect(addTerm("", "login")).toBe("login");
     expect(replaceTerm(STORED, 1, "signin ").split("\n")[1]).toBe("signin");
     expect(removeTerm(STORED, 4)).toBe("# brands\nlogin\n\n/^pay.?pal$/");
+  });
+});
+
+describe("storedTerms reads the setting the way the settings API answers (#537)", () => {
+  it("takes the text out of { value, source }, never « [object Object] »", () => {
+    expect(storedTerms({ value: "paypal\nlogin", source: "default" })).toBe("paypal\nlogin");
+    expect(termRows(storedTerms({ value: "paypal", source: "default" }))[0]).toMatchObject({ text: "paypal", kind: "word" });
+  });
+  it("accepts a bare string and falls back to empty", () => {
+    expect(storedTerms("a")).toBe("a");
+    expect(storedTerms(undefined)).toBe("");
+    expect(storedTerms({ value: 3 })).toBe("");
   });
 });
