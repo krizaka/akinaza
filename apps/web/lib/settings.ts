@@ -46,6 +46,9 @@ export const SETTINGS = {
   "limits.webhookEndpoints": integer("limits", 5, { min: 0, max: 50, unit: "endpoints" }, WORKSPACE_SCOPES),
   // Several shops under one account (#265): the most an owner may run.
   "limits.shopsPerOwner": integer("limits", 5, { min: 1, max: 50, unit: "shops" }, GLOBAL_ONLY),
+  // The pace of address changes (ADR-005 slice 4, #537): the most one shop changes its address per window (days); the first address does not count.
+  "limits.slugChanges": integer("limits", 3, { min: 1, max: 50, unit: "changes" }, GLOBAL_ONLY),
+  "limits.slugChangeWindowDays": integer("limits", 30, { min: 1, max: 365, unit: "days" }, GLOBAL_ONLY),
   "limits.wallItems": integer("limits", 24, { min: 1, max: 500, unit: "items" }),
   "limits.reelSeconds": integer("limits", 60, { min: 1, max: 300, unit: "seconds" }),
   "limits.reelMegabytes": integer("limits", 40, { min: 1, max: 500, unit: "megabytes" }),

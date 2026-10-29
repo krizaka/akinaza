@@ -10,7 +10,7 @@ import { ShopError } from "./errors";
 import { type CommunityView, communityOf } from "./shop-community";
 import { shopPageConfigOf, type ShopPageConfig } from "./shop-page";
 import { type ShopLanguages, shopLanguagesOf, type StoredTranslation, translationsOf } from "./shop-translations";
-import { appointments, bookings, isPublicShop, memberships, clients, dependants, daysOff, MediaRole, schedules, services, shopFormerSlugs, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
+import { appointments, bookings, isPublicShop, memberships, clients, dependants, daysOff, MediaRole, schedules, services, shopFormerSlugs, shopMedia, shopSlugChanges, shopRules, shops, shopZones, staff } from "./schema";
 import { recordConsent } from "./shop-ops";
 
 /**
@@ -142,6 +142,8 @@ export async function setDefaultShop(db: Db, ownerId: string, shopId: string): P
 /** What a save knows about addresses: the protected terms (the setting, parsed). Without any, nothing is held (seeds, tests of other features). */
 export interface SlugPolicy {
   terms?: readonly ProtectedTerm[];
+  /** At most `max` address changes per shop in the last `days` days (the administrator's setting): a phisher cannot walk through addresses. */
+  slugChanges?: { max: number; days: number };
 }
 
 /** Saves the shop's page. A slug that wears a protected term is HELD (the shop is saved, not public until the administrator clears it); the verdict is taken when the slug changes, so a cleared shop is not held again by saving its other fields. */
@@ -164,6 +166,12 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, 
         if (count === 0) refuse("AK_NOT_PUBLISHABLE");
       }
       const slugChanged = !existing || existing.slug !== input.slug;
+      const renames = existing?.slug != null && existing.slug !== input.slug ? policy.slugChanges : undefined;
+      if (existing && renames) {
+        // The shop row is locked (FOR UPDATE above): the count and the new row are one decision.
+        const [recent] = await tx.select({ n: sql<number>`count(*)::int` }).from(shopSlugChanges).where(and(eq(shopSlugChanges.shopId, existing.id), sql`${shopSlugChanges.at} > now() - make_interval(days => ${renames.days})`));
+        if (recent!.n >= renames.max) refuse("AK_SLUG_RATE_LIMIT");
+      }
       const verdict = slugChanged && policy.terms ? holdSlug(input.slug, policy.terms) : undefined;
       const hold = verdict
         ? verdict.held
@@ -191,6 +199,7 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, 
       };
       if (existing) {
         await tx.update(shops).set(values).where(eq(shops.id, existing.id));
+        if (renames) await tx.insert(shopSlugChanges).values({ shopId: existing.id });
         const owner = await ownStaff(tx, existing.id);
         await tx.update(staff).set({ name: input.ownerName }).where(eq(staff.id, owner.id));
         return { shopId: existing.id, created: false, held: verdict ? verdict.held : existing.slugHeld };

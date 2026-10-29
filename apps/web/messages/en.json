@@ -983,6 +983,7 @@
       "CONFIRM_MISMATCH": "The e-mail typed does not match the account.",
       "RETENTION_REQUIRED": "This account owns a shop whose invoices are kept for six years.",
       "SLUG_TAKEN": "This address is already taken, or it was another page's address.",
+      "SLUG_RATE_LIMIT": "You changed this address too often. Try again in a few days.",
       "NOT_PUBLISHABLE": "Add at least one service before publishing the page.",
       "ZONE_EXISTS": "This zone is already in the list.",
       "WINDOW_OVERLAP": "This window overlaps another one that day.",
