@@ -42,9 +42,15 @@ async function firstService(page, { origin }) {
 let slotTurn = 0;
 async function freeSlot(page, { origin }) {
   const service = await firstService(page, { origin });
-  await page.goto(new URL(`${service}/slots`, origin).toString());
+  // The service page's own link to the times carries the area and the person the shop travels with: follow it.
+  await page.goto(new URL(service, origin).toString());
+  const times = await page.locator('a[href*="/slots"]').first().getAttribute("href");
+  await page.goto(new URL(times ?? `${service}/slots`, origin).toString());
   const slots = page.locator('a[href*="/confirm"]');
-  await slots.first().waitFor({ timeout: 30_000 });
+  await slots.first().waitFor({ timeout: 30_000 }).catch(async () => {
+    const seen = ((await page.locator("main").first().innerText().catch(() => "")) || "").replace(/\s+/g, " ").slice(0, 300);
+    throw new Error(`no free slot at ${page.url()}: ${seen}`);
+  });
   const href = await slots.nth(slotTurn++ % (await slots.count())).getAttribute("href");
   if (!href) throw new Error("no free slot on the seeded service: is the cast seeded?");
   return href;
