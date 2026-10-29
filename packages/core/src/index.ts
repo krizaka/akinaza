@@ -21,3 +21,4 @@ export * from "./calendar";
 export * from "./shop-page-document";
 export * from "./explore";
 export * from "./avatar";
+export * from "./slug-guard";
