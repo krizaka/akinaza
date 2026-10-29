@@ -7,6 +7,13 @@ import fr from "@/messages/fr.json";
 
 import { BarActionsView, type BarWords, Island, ME_KEY, settleSignOut } from "./BarSession";
 
+vi.mock("next/link", () => ({
+  default: ({ href, prefetch, children }: { href: string; prefetch?: boolean; children: React.ReactNode }) => (
+    <a href={href} data-prefetch={String(prefetch)}>
+      {children}
+    </a>
+  ),
+}));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => "/en" }));
 
 const wordsOf = (c: typeof en): BarWords => ({ signIn: c.chrome.signIn, tryIt: c.chrome.tryIt, openApp: c.chrome.openApp, account: c.chrome.account, settings: c.chrome.settings, language: c.chrome.languageLabel, theme: c.chrome.themeToggle, signOut: c.chrome.signOut });
@@ -50,6 +57,8 @@ describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
     const panel = render(me, "en", "panel");
     expect(panel).not.toContain('aria-label="Account"');
     expect(text(panel)).toContain("Open the app");
+    // The production CSP upgrades insecure requests: a prefetch of /app would go to https on a plain-http server and fail (check:hydration).
+    expect(panel).toContain('data-prefetch="false"');
   });
 
   it("speaks French from the catalogue, in the phone's panel too", () => {

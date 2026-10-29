@@ -49,7 +49,7 @@ export function BarActionsView({ me, locale, words, placement, onSignOut }: { me
         {/* The bar has the account menu only (one entry, no second « Open the app »); the phone's panel has no menu, so it keeps the action. */}
         {placement === "panel" ? (
           <Button asChild variant="primary" size="md" className="mt-2 font-bold">
-            <Link href={`/${locale}/app`}>{words.openApp}</Link>
+            <Link href={`/${locale}/app`} prefetch={false}>{words.openApp}</Link>
           </Button>
         ) : (
           <AkinazaAccountMenu locale={locale} accountId={me.account.id} name={me.account.name} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} words={words} onSignOut={onSignOut} />
