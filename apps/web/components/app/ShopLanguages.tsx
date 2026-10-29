@@ -29,14 +29,15 @@ export interface LanguagesData {
 const TONE: Record<TranslationState, "neutral" | "success" | "warning" | "accent"> = { own: "neutral", missing: "neutral", auto: "accent", edited: "success", stale: "warning" };
 
 /** One text in one language: what the page will say, its state, the owner's own wording, and « refaire la traduction ». */
-function TextRow({ field, locale, translationOn }: { field: FieldView; locale: PageLocale; translationOn: boolean }) {
+function TextRow({ field, locale, translationOn }: Readonly<{ field: FieldView; locale: PageLocale; translationOn: boolean }>) {
   const { say } = useSay();
   const call = useCall();
   const current = field.languages[locale] ?? { state: "missing" as const, text: "" };
   const [text, setText] = useState(current.text);
   const t = (key: string) => say(`shopLanguages.${key}`);
   const writable = current.state !== "own";
-  const label = `${t(`fields.${field.field}`)}${field.owner ? ` · ${field.owner}` : ""}`;
+  const fieldName = t(`fields.${field.field}`);
+  const label = field.owner ? `${fieldName} · ${field.owner}` : fieldName;
   return (
     <li className="flex flex-col gap-2 border-t border-border-subtle pt-4 first:border-t-0 first:pt-0">
       <div className="flex flex-wrap items-center gap-2">
@@ -67,7 +68,7 @@ function TextRow({ field, locale, translationOn }: { field: FieldView; locale: P
 }
 
 /** The shop page in other languages: which ones are on, and each text in each of them, editable (#258). Plain words: « traduction automatique », never more. */
-export function ShopLanguages({ data }: { data: LanguagesData }) {
+export function ShopLanguages({ data }: Readonly<{ data: LanguagesData }>) {
   const { say, locale: uiLocale } = useSay();
   const call = useCall();
   const t = (key: string, vars?: Record<string, string | number>) => say(`shopLanguages.${key}`, vars);
@@ -131,7 +132,7 @@ export function ShopLanguages({ data }: { data: LanguagesData }) {
   );
 }
 
-function TranslateButton({ locale, label }: { locale: PageLocale; label: string }) {
+function TranslateButton({ locale, label }: Readonly<{ locale: PageLocale; label: string }>) {
   const call = useCall();
   return (
     <div className="flex flex-col items-end gap-1">

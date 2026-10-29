@@ -11,7 +11,7 @@ import { useLocale } from "@/use-locale";
 import { STATUS_TONE } from "./VisitRow";
 
 /** One appointment opened: when, where, who (each with a call), its state and the two moves of the owner (start, finish). */
-export function VisitDetail({ visit, timeZone, busy, onCheckIn, onCheckOut }: { visit: DayVisit; timeZone: string; busy: boolean; onCheckIn: () => void; onCheckOut: () => void }) {
+export function VisitDetail({ visit, timeZone, busy, onCheckIn, onCheckOut }: Readonly<{ visit: DayVisit; timeZone: string; busy: boolean; onCheckIn: () => void; onCheckOut: () => void }>) {
   const { t } = useI18n();
   const { locale } = useLocale();
   const clock = (instant: string) => timeOf(instant, timeZone, locale);

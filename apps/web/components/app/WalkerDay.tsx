@@ -12,7 +12,7 @@ import { useSay, useVocabulary } from "@/lib/i18n-client";
 export type { DayVisitView } from "@/components/app/VisitDetail";
 
 /** The walker's day, built for a phone in the street: big buttons, one thing at a time, the report right under the walk. Staff see it; the owner reads the agenda. */
-export function WalkerDay({ visits, timeZone, nav }: { visits: DayVisitView[]; timeZone: string; nav: { prev: string; next: string; today: string; isToday: boolean } }) {
+export function WalkerDay({ visits, timeZone, nav }: Readonly<{ visits: DayVisitView[]; timeZone: string; nav: { prev: string; next: string; today: string; isToday: boolean } }>) {
   const { say } = useSay();
   return (
     <div className="flex flex-col gap-4">
@@ -37,7 +37,7 @@ export function WalkerDay({ visits, timeZone, nav }: { visits: DayVisitView[]; t
   );
 }
 
-function VisitCard({ visit, timeZone }: { visit: DayVisitView; timeZone: string }) {
+function VisitCard({ visit, timeZone }: Readonly<{ visit: DayVisitView; timeZone: string }>) {
   const { say, locale } = useSay();
   const { dependants } = useVocabulary();
   const live = visit.checkedInAt && !visit.checkedOutAt;

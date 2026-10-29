@@ -74,7 +74,7 @@ async function maxVersion(db: Db, shopId: string): Promise<number> {
 export async function saveShopPageDraft(db: Db, shopId: string, input: unknown, authorId: string | null): Promise<{ version: number }> {
   const page = readShopPage(input);
   return db.transaction(async (tx) => {
-    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`shop_page:${shopId}`}, 0))`);
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${pageLockKey(shopId)}, 0))`);
     const existing = await documentOf(tx as unknown as Db, shopId, "draft");
     if (existing) {
       await tx.update(shopPageVersions).set({ doc: page, schema: page.schema, authorId, createdAt: sql`now()` }).where(eq(shopPageVersions.id, existing.id));
@@ -89,7 +89,7 @@ export async function saveShopPageDraft(db: Db, shopId: string, input: unknown, 
 /** Makes the draft the page: the published one is archived, the draft becomes the published one (a fresh number), the archive is bounded. 409 without a draft. */
 export async function publishShopPageDraft(db: Db, shopId: string, authorId: string | null): Promise<{ version: number }> {
   return db.transaction(async (tx) => {
-    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`shop_page:${shopId}`}, 0))`);
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${pageLockKey(shopId)}, 0))`);
     const draft = await documentOf(tx as unknown as Db, shopId, "draft");
     if (!draft) throw new ShopError("AK_SHOP_PAGE_NO_DRAFT");
     readShopPage(draft.doc);
@@ -104,7 +104,7 @@ export async function publishShopPageDraft(db: Db, shopId: string, authorId: str
 /** Puts an archived version back as a NEW published version (history is never rewritten). 404 for a version that is not this shop's archive. */
 export async function rollbackShopPage(db: Db, shopId: string, version: number, authorId: string | null, options: { keepDraft?: boolean } = {}): Promise<{ version: number; draftReset: boolean }> {
   return db.transaction(async (tx) => {
-    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`shop_page:${shopId}`}, 0))`);
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${pageLockKey(shopId)}, 0))`);
     const [target] = await tx.select().from(shopPageVersions).where(and(eq(shopPageVersions.shopId, shopId), eq(shopPageVersions.version, version), eq(shopPageVersions.status, "archived")));
     if (!target) throw new ShopError("AK_NOT_FOUND");
     const page = readShopPage(target.doc);
@@ -121,7 +121,7 @@ export async function rollbackShopPage(db: Db, shopId: string, version: number, 
 /** Throws the draft away: the composer then shows the published page again. Nothing to discard is not an error (`discarded: false`). */
 export async function discardShopPageDraft(db: Db, shopId: string): Promise<{ discarded: boolean }> {
   return db.transaction(async (tx) => {
-    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${`shop_page:${shopId}`}, 0))`);
+    await tx.execute(sql`SELECT pg_advisory_xact_lock(hashtextextended(${pageLockKey(shopId)}, 0))`);
     const gone = await tx.delete(shopPageVersions).where(and(eq(shopPageVersions.shopId, shopId), eq(shopPageVersions.status, "draft"))).returning({ id: shopPageVersions.id });
     return { discarded: gone.length > 0 };
   });
@@ -152,4 +152,9 @@ export async function shopAccentOf(db: Db, shopId: string): Promise<string | nul
 /** Stores the accent (the caller checked it against the look's tested accents); creates the shop's page row when it has none. */
 export async function setShopAccent(db: Db, shopId: string, accent: string | null): Promise<void> {
   await db.insert(shopPage).values({ shopId, accent }).onConflictDoUpdate({ target: shopPage.shopId, set: { accent, updatedAt: sql`now()` } });
+}
+
+/** The advisory lock key of a shop's page: its versions are written one at a time. */
+function pageLockKey(shopId: string): string {
+  return `shop_page:${shopId}`;
 }

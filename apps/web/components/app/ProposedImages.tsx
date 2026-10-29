@@ -24,7 +24,7 @@ export interface ProposedImagesData {
 }
 
 /** « Images proposées »: the owner picks the trade, chooses a proposed cover or photos in one click, or turns the proposals off. They are neutral pictures, never presented as the shop. */
-export function ProposedImages({ data }: { data: ProposedImagesData }) {
+export function ProposedImages({ data }: Readonly<{ data: ProposedImagesData }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [type, setType] = useState<ShopType>(data.shopType);

@@ -17,7 +17,7 @@ export const { I18nProvider, useI18n } = createI18nReact<ConsoleMessages, Locale
 const VocabularyContext = createContext<BusinessType>("pets");
 
 /** The words of a shop's business type for everything below. The default, outside a shop, is the base (pet-care) wording of the first business Akinaza served. */
-export function VocabularyProvider({ type, children }: { type: BusinessType; children: React.ReactNode }) {
+export function VocabularyProvider({ type, children }: Readonly<{ type: BusinessType; children: React.ReactNode }>) {
   return <VocabularyContext.Provider value={type}>{children}</VocabularyContext.Provider>;
 }
 

@@ -38,7 +38,7 @@ function useSectionSave(page: Page | null) {
 const EMPTY: Page = { name: "", legalName: "", address: "", slug: "", ownerName: "", taglineFr: "", taglineEn: "", published: false, area: "", bioFr: "", bioEn: "", publicPhone: "", publicEmail: "", seatUnitFr: "", seatUnitEn: "", businessType: "professional" };
 
 /** The frame of a section: title, one line of what it is for, then its form. */
-function SectionCard({ title, lead, badge, quiet = false, children }: { title: string; lead: string; badge?: React.ReactNode; /** The page's heading above already says the title (« Identity »): the card does not say it again. */ quiet?: boolean; children: React.ReactNode }) {
+function SectionCard({ title, lead, badge, quiet = false, children }: Readonly<{ title: string; lead: string; badge?: React.ReactNode; /** The page's heading above already says the title (« Identity »): the card does not say it again. */ quiet?: boolean; children: React.ReactNode }>) {
   return (
     <Card.Root className="p-4">
       {quiet ? null : (
@@ -54,7 +54,7 @@ function SectionCard({ title, lead, badge, quiet = false, children }: { title: s
 }
 
 /** The foot of a section's form: what the save answered, then its one button. */
-function SectionFooter({ s, Submit }: { s: ReturnType<typeof useSectionSave>; Submit: React.ComponentType<{ size?: "md"; className?: string; "data-primary"?: boolean; children: React.ReactNode }> }) {
+function SectionFooter({ s, Submit }: Readonly<{ s: ReturnType<typeof useSectionSave>; Submit: React.ComponentType<{ size?: "md"; className?: string; "data-primary"?: boolean; children: React.ReactNode }> }>) {
   return (
     <div className="flex flex-col gap-3 sm:col-span-2">
       <SectionStatus s={s} />
@@ -64,7 +64,7 @@ function SectionFooter({ s, Submit }: { s: ReturnType<typeof useSectionSave>; Su
 }
 
 /** What a save answered: the refusal in words, or « Saved ». */
-function SectionStatus({ s }: { s: ReturnType<typeof useSectionSave> }) {
+function SectionStatus({ s }: Readonly<{ s: ReturnType<typeof useSectionSave> }>) {
   return (
     <>
       {s.call.problem ? <Alert tone="danger">{s.call.problem}</Alert> : null}
@@ -80,7 +80,7 @@ export const identityForm = createKrizakaForm({
 
 /** The fields that say who a shop is: shared by the identity section and « Add a shop ». */
 /** `withBusinessType` false: the trade asked beside the form stands for it (« Add a shop » with templates, #261). */
-export function IdentityFields({ form, say, withAddress = false, withBusinessType = true }: { form: ReturnType<typeof identityForm.useForm>; say: ReturnType<typeof useSay>["say"]; withAddress?: boolean; withBusinessType?: boolean }) {
+export function IdentityFields({ form, say, withAddress = false, withBusinessType = true }: Readonly<{ form: ReturnType<typeof identityForm.useForm>; say: ReturnType<typeof useSay>["say"]; withAddress?: boolean; withBusinessType?: boolean }>) {
   return (
     <>
       <form.TextField name="name" label={say("shopSetup.page.name")} autoComplete="organization" />
@@ -100,7 +100,7 @@ export function IdentityFields({ form, say, withAddress = false, withBusinessTyp
 }
 
 /** Identity: who the shop is. */
-export function IdentitySection({ page }: { page: Page | null }) {
+export function IdentitySection({ page }: Readonly<{ page: Page | null }>) {
   const s = useSectionSave(page);
   const form = identityForm.useForm({ i18n: s.i18n, defaultValues: { name: page?.name ?? "", businessType: page?.businessType ?? "professional", legalName: page?.legalName ?? "", ownerName: page?.ownerName ?? "", slug: page?.slug ?? "", address: page?.address ?? "" }, onSubmit: (v) => s.save(v) });
   return (
@@ -119,7 +119,7 @@ const textsForm = createKrizakaForm({
 });
 
 /** Your page: the texts, French and English side by side. */
-export function TextsSection({ page, shopId }: { page: Page | null; shopId: string }) {
+export function TextsSection({ page, shopId }: Readonly<{ page: Page | null; shopId: string }>) {
   const s = useSectionSave(page);
   const form = textsForm.useForm({ i18n: s.i18n, defaultValues: { taglineFr: page?.taglineFr ?? "", taglineEn: page?.taglineEn ?? "", bioFr: page?.bioFr ?? "", bioEn: page?.bioEn ?? "", seatUnitFr: page?.seatUnitFr ?? "", seatUnitEn: page?.seatUnitEn ?? "" }, onSubmit: (v) => s.save(v) });
   const say = s.say;
@@ -148,7 +148,7 @@ const contactForm = createKrizakaForm({
 });
 
 /** Contact and place: the street address stays private; what visitors see is the locality, a phone and an e-mail. */
-export function ContactSection({ page }: { page: Page | null }) {
+export function ContactSection({ page }: Readonly<{ page: Page | null }>) {
   const s = useSectionSave(page);
   const form = contactForm.useForm({ i18n: s.i18n, defaultValues: { address: page?.address ?? "", area: page?.area ?? "", publicPhone: page?.publicPhone ?? "", publicEmail: page?.publicEmail ?? "" }, onSubmit: (v) => s.save(v) });
   const say = s.say;
@@ -172,7 +172,7 @@ export function ContactSection({ page }: { page: Page | null }) {
 const publishForm = createKrizakaForm({ schema: z.object({ published: z.boolean() }), defaultValues: { published: false } });
 
 /** Publish: the switch and the public link, nothing else. */
-export function PublishSection({ page, publicUrl }: { page: Page | null; publicUrl: string | null }) {
+export function PublishSection({ page, publicUrl }: Readonly<{ page: Page | null; publicUrl: string | null }>) {
   const s = useSectionSave(page);
   const form = publishForm.useForm({ i18n: s.i18n, defaultValues: { published: page?.published ?? false }, onSubmit: (v) => s.save(v) });
   const say = s.say;

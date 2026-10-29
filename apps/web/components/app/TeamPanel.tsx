@@ -61,7 +61,7 @@ function useTeamCall() {
 
 const invite = createKrizakaForm({ schema: z.object({ email: z.string().trim().min(1).email().max(320), role: z.string().min(1) }), defaultValues: { email: "", role: "staff" } });
 
-function InviteForm({ assignable }: { assignable: ShopRole[] }) {
+function InviteForm({ assignable }: Readonly<{ assignable: ShopRole[] }>) {
   const { say, locale } = useSay();
   const call = useTeamCall();
   const [link, setLink] = useState<string | null>(null);
@@ -92,7 +92,7 @@ function InviteForm({ assignable }: { assignable: ShopRole[] }) {
 }
 
 /** The team of a shop: who works in it with which role, who is invited, and the form to invite. Owner and manager; the roles one may hand out come from the role table. */
-export function TeamPanel({ members, invitations, assignable, timeZone }: TeamPanelProps) {
+export function TeamPanel({ members, invitations, assignable, timeZone }: Readonly<TeamPanelProps>) {
   const { say, locale } = useSay();
   const call = useTeamCall();
   const columns = useMemo<DataTableColumn<TeamMemberView>[]>(

@@ -40,7 +40,7 @@ function TermsNote() {
 }
 
 /** The subscription: its state, the founder offer when it is on sale, and the hosted page where it is managed, its invoices read and it is cancelled. */
-export function SubscriptionPanel({ subscription }: { subscription: SubscriptionView }) {
+export function SubscriptionPanel({ subscription }: Readonly<{ subscription: SubscriptionView }>) {
   const { say, locale } = useSay();
   const [problem, setProblem] = useState<string | null>(null);
   const open = useMutation({
@@ -72,7 +72,7 @@ export function SubscriptionPanel({ subscription }: { subscription: Subscription
 }
 
 /** What an account without a subscription is offered: the founder offer while it is on sale (choosing it accepts the terms), or why there is none. */
-function NotSubscribed({ subscription, pending, onChoose }: { subscription: SubscriptionView; pending: boolean; onChoose: () => void }) {
+function NotSubscribed({ subscription, pending, onChoose }: Readonly<{ subscription: SubscriptionView; pending: boolean; onChoose: () => void }>) {
   const { say } = useSay();
   return (
     <>

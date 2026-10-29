@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+import { HOST_FREE_PATHS, isAllowedHost } from "./lib/allowed-hosts";
 import { cookieName, ownCookie } from "./lib/cookie";
 import { refusesCrossSiteWrite } from "./lib/csrf";
 import { isAdminHost, routeFor, shopOfHost } from "./lib/host";
@@ -26,6 +27,8 @@ export function proxy(request: NextRequest) {
   const host = request.headers.get("host");
   const closed = !indexableOn(host);
   const pathname = request.nextUrl.pathname;
+  // ADR-005 slice 4 (#536): a host this deployment does not serve is answered 421 before anything is routed or built from it (the platform's health check names its own).
+  if (!HOST_FREE_PATHS.includes(pathname) && !isAllowedHost(host, process.env)) return new NextResponse("Misdirected Request", { status: 421, headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });
   // The dev host serves the API too: the check comes first.
   const refused = crossSiteWrite(request);
   if (refused) return refused;
