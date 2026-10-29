@@ -29,7 +29,7 @@ const correctionForm = createKrizakaForm({ schema: z.object({ lines: z.array(lin
  * line. Confirming issues the credit note of the original and the replacement together (the server's one transaction), then
  * opens the replacement. The client, the language and the terms stay the original's.
  */
-export function InvoiceCorrection({ original, lines, today }: { original: { id: string; number: string; clientId: string | null; language: "fr" | "en"; termsDays: number | null }; lines: CorrectionLine[]; today: string }) {
+export function InvoiceCorrection({ original, lines, today }: Readonly<{ original: { id: string; number: string; clientId: string | null; language: "fr" | "en"; termsDays: number | null }; lines: CorrectionLine[]; today: string }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const router = useRouter();

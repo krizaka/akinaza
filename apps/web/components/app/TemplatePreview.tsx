@@ -4,7 +4,7 @@ import type { Template } from "@akinaza/core";
 export const PLAIN_PAGE_SECTIONS: readonly { id: string; variant: string; visible: boolean }[] = ["services", "team", "hours", "zones", "trust", "gallery"].map((id) => ({ id, variant: "default", visible: true }));
 
 /** The small shapes that stand for a section's variant: a grid of cards, a list, photos (straight or taped), a story, a plain band. */
-function Glyph({ id, variant }: { id: string; variant: string }) {
+function Glyph({ id, variant }: Readonly<{ id: string; variant: string }>) {
   if (id === "services" && variant === "list") {
     return (
       <span className="flex flex-col gap-[2px]">
@@ -57,7 +57,7 @@ function Glyph({ id, variant }: { id: string; variant: string }) {
  * A template at a glance (#261, step 4): a tiny page in the template's hue and paper — the hero band, then its sections in its order, each with the shape of its
  * variant and its name. Decorative (the tile's name carries the meaning); `template` null draws today's plain page.
  */
-export function TemplatePreview({ template, labels }: { template: Template | null; /** The sections' names, by id (`shopSetup.layout.sections.*`). */ labels: Record<string, string> }) {
+export function TemplatePreview({ template, labels }: Readonly<{ template: Template | null; /** The sections' names, by id (`shopSetup.layout.sections.*`). */ labels: Record<string, string> }>) {
   const sections = (template ? template.sections : PLAIN_PAGE_SECTIONS).filter((s) => s.visible);
   const hue = template && template.hue !== "brand-akinaza" ? template.hue : undefined;
   return (

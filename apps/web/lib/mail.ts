@@ -30,9 +30,10 @@ export async function deliver(db: Db, mail: Pending, now: Date, settings: MailSe
   const form = new URLSearchParams({ from, to: mail.toEmail, subject: mail.subject, text: mail.bodyText, html: mail.html });
   if (mail.ccEmail) form.set("cc", mail.ccEmail);
   try {
+    const credentials = Buffer.from(`api:${settings.apiKey}`).toString("base64");
     const response = await send(`${settings.apiUrl.replace(/\/+$/, "")}/v3/${encodeURIComponent(settings.domain!)}/messages`, {
       method: "POST",
-      headers: { Authorization: `Basic ${Buffer.from(`api:${settings.apiKey}`).toString("base64")}`, "Content-Type": "application/x-www-form-urlencoded" },
+      headers: { Authorization: `Basic ${credentials}`, "Content-Type": "application/x-www-form-urlencoded" },
       body: form,
     });
     if (response.ok) {

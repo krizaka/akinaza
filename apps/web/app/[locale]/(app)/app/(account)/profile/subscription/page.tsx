@@ -22,7 +22,7 @@ export const generateMetadata = titleOf("profile");
  * The subscription: its state, the price it was sold at (the catalogue's version kept with it, akinaza#371), the founder offer
  * while it is on sale (the catalogue's entry in force), and the hosted page where it is managed.
  */
-export default async function Subscription({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Subscription({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const { session, profile, sections } = await accountPage();
   // A manager or a staff member works in someone else's shop: no subscription of theirs to show (`accountSectionsFor`).

@@ -20,7 +20,7 @@ const ZONE = "America/Toronto";
  * scheduled, a change from a date (now or later), and the history. Composed from `SettingsSection` / `SettingsRow` until the
  * price-list block of Krizaka UI exists (krizaka/krizaka-ui#713). A subscription already sold keeps its version.
  */
-export function PriceEntryAdmin({ entry, history, availabilities }: { entry: Entry; history: PriceHistoryLine[]; availabilities: Availability[] }) {
+export function PriceEntryAdmin({ entry, history, availabilities }: Readonly<{ entry: Entry; history: PriceHistoryLine[]; availabilities: Availability[] }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [amount, setAmount] = useState(entry.amountCents === null ? "" : String(entry.amountCents / 100));

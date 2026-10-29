@@ -30,7 +30,7 @@ const requestForm = createKrizakaForm({
  * « Mes demandes » (akinaza#210): requests kept at the shop, renewed in one tap, with a photo or a document attached. The form
  * is folded behind « Garder une demande » and opens in place (D7); renewing is a secondary — the screen keeps one primary.
  */
-export function RequestsCard({ data }: { data: RequestsData }) {
+export function RequestsCard({ data }: Readonly<{ data: RequestsData }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [adding, setAdding] = useState(false);
@@ -103,7 +103,7 @@ export function RequestsCard({ data }: { data: RequestsData }) {
   );
 }
 
-function RequestFiles({ request, clientId, call }: { request: RequestsData["requests"][number]; clientId: string; call: ReturnType<typeof useCall> }) {
+function RequestFiles({ request, clientId, call }: Readonly<{ request: RequestsData["requests"][number]; clientId: string; call: ReturnType<typeof useCall> }>) {
   const { say } = useSay();
   const input = useRef<HTMLInputElement>(null);
   const send = async (file: File) => {

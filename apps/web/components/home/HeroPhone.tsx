@@ -9,7 +9,7 @@ import { HERO_TAKE, heroTake } from "@/lib/tour";
  * one continuous take recorded on dev.akinaza.com (lib/tour.ts), a muted loop over its poster. The poster is painted at once
  * (the page's LCP, preloaded by the page), never revealed; under reduced motion it stays a still.
  */
-export function HeroPhone({ locale }: { locale: Locale }) {
+export function HeroPhone({ locale }: Readonly<{ locale: Locale }>) {
   const t = getDictionary(locale).landing.hero;
   const take = heroTake(locale);
   return (

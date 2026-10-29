@@ -11,7 +11,8 @@ export const asLocale = (value: string | null | undefined): Locale => LOCALES.fi
 const app = (locale: Locale, ...parts: string[]) => ["", locale, "app", ...parts].join("/");
 const query = (params: Record<string, string | undefined>) => {
   const pairs = Object.entries(params).filter((e): e is [string, string] => !!e[1]);
-  return pairs.length ? `?${pairs.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join("&")}` : "";
+  const joined = pairs.map(([k, v]) => `${k}=${encodeURIComponent(v)}`).join("&");
+  return pairs.length ? `?${joined}` : "";
 };
 
 /**

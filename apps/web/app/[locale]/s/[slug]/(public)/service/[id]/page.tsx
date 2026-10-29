@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 /** Step 2 — a service: duration, price to the cent, what is included, the cancellation rule, who takes it. The address keeps the choices. */
-export default async function ServicePage({ params, searchParams }: { params: Promise<{ locale: string; slug: string; id: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+export default async function ServicePage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; slug: string; id: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }>) {
   const { locale: raw, slug, id } = await params;
   const query = await searchParams;
   const locale = asLocale(raw);

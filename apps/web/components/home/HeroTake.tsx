@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
  * the video plays only while it is on screen and never under reduced motion or Save-Data — then the poster stays. No sound,
  * no controls, nothing to read in it that the page does not also say (the figcaption and the steps below).
  */
-export function HeroTake({ poster, webm, mp4, alt, width, height }: { poster: string; webm: string; mp4: string; alt: string; width: number; height: number }) {
+export function HeroTake({ poster, webm, mp4, alt, width, height }: Readonly<{ poster: string; webm: string; mp4: string; alt: string; width: number; height: number }>) {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const video = ref.current;

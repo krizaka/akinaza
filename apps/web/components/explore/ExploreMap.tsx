@@ -11,7 +11,7 @@ import { MapSetup } from "../shop/MapSetup";
  * The map of Explorer: a marker per shop that has a position, the visitor's origin when there is one. It is its own chunk (loaded
  * on demand by `ExploreView`), so the page's first paint carries no map engine. Tiles come through this origin (`MapSetup`).
  */
-export default function ExploreMap({ shops, selected, onSelect, origin, center, locale, label, youLabel }: { shops: readonly RankedShop[]; selected: string | null; onSelect: (slug: string) => void; origin: Origin | null; center: readonly [number, number]; locale: string; label: string; youLabel: string }) {
+export default function ExploreMap({ shops, selected, onSelect, origin, center, locale, label, youLabel }: Readonly<{ shops: readonly RankedShop[]; selected: string | null; onSelect: (slug: string) => void; origin: Origin | null; center: readonly [number, number]; locale: string; label: string; youLabel: string }>) {
   const on = shops.find((s) => s.slug === selected);
   return (
     <>

@@ -18,11 +18,12 @@ export interface FeedWords {
   error: string;
 }
 
-function Feed({ initial, locale, words }: { initial: FeedView; locale: string; words: FeedWords }) {
+function Feed({ initial, locale, words }: Readonly<{ initial: FeedView; locale: string; words: FeedWords }>) {
   const [quartier, setQuartier] = useState<string | null>(null);
+  const quartierQuery = quartier ? `&quartier=${encodeURIComponent(quartier)}` : "";
   const feed = useQuery({
     queryKey: ["neighbourhood-feed", locale, quartier],
-    queryFn: ({ signal }) => krizakaFetch(`/api/feed?locale=${locale}${quartier ? `&quartier=${encodeURIComponent(quartier)}` : ""}`, { signal }) as Promise<FeedView>,
+    queryFn: ({ signal }) => krizakaFetch(`/api/feed?locale=${locale}${quartierQuery}`, { signal }) as Promise<FeedView>,
     // The server drew the unfiltered board: it is the first answer, a neighbourhood asks the API.
     ...(quartier === null ? { initialData: initial } : {}),
     staleTime: 60_000,
@@ -44,7 +45,7 @@ function Feed({ initial, locale, words }: { initial: FeedView; locale: string; w
 }
 
 /** The home's neighbourhood feed: flyers on the Cahier's board, a neighbourhood at a time (@krizaka/query, never an effect). */
-export function NeighbourhoodFeed(props: { initial: FeedView; locale: string; words: FeedWords }) {
+export function NeighbourhoodFeed(props: Readonly<{ initial: FeedView; locale: string; words: FeedWords }>) {
   return (
     <KrizakaQueryProvider>
       <Feed {...props} />

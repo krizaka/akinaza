@@ -24,7 +24,7 @@ export const metadata: Metadata = { robots: { index: false, follow: false } };
  * The owner's preview of the DRAFT page (akinaza#402), the page of the composer's iframe. The public route reads the published document only; this
  * one reads the draft, for a member who may edit the page (no session or another shop's: a 404). Same view as the public page, same sections.
  */
-export default async function ShopPreview({ params }: { params: Promise<{ locale: string; shop: string }> }) {
+export default async function ShopPreview({ params }: Readonly<{ params: Promise<{ locale: string; shop: string }> }>) {
   const { locale: raw, shop: shopId } = await params;
   const session = await pageSession();
   const member = session ? await memberOf(session.account.id, shopId) : null;
