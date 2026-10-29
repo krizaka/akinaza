@@ -92,8 +92,8 @@ export const WORDS = {
 };
 
 const T = {
-  en: { period: "2026-Q3", client: "Client", service: "Service", quantity: "Quantity", other: "Other line (description)", price: "Unit price", submit: "Issue the invoice", open: /^Open /, dev: /Software development/, consulting: /Consulting and architecture/, support: /Support and maintenance/, workshop: /Scoping workshop/, nord: /Nord Studio/, lumen: /Studio Lumen/, books: /^Your books$/ },
-  fr: { period: "2026-Q3", client: "Client", service: "Service", quantity: "Quantité", other: "Autre ligne (description)", price: "Prix unitaire", submit: "Émettre la facture", open: /^Ouvrir /, dev: /Développement logiciel/, consulting: /Conseil et architecture/, support: /Soutien et maintenance/, workshop: /Atelier de cadrage/, nord: /Nord Studio/, lumen: /Studio Lumen/, books: /^Vos livres$/ },
+  en: { period: "2026-Q3", client: "Client", service: "Service", quantity: "Quantity", addLine: "Add a line", other: "Other line (description)", price: "Unit price", submit: "Issue the invoice", dev: /Software development/, consulting: /Consulting and architecture/, support: /Support and maintenance/, workshop: /Scoping workshop/, nord: /Nord Studio/, lumen: /Studio Lumen/, books: /^Your books$/ },
+  fr: { period: "2026-Q3", client: "Client", service: "Service", quantity: "Quantité", addLine: "Ajouter une ligne", other: "Autre ligne (description)", price: "Prix unitaire", submit: "Émettre la facture", dev: /Développement logiciel/, consulting: /Conseil et architecture/, support: /Soutien et maintenance/, workshop: /Atelier de cadrage/, nord: /Nord Studio/, lumen: /Studio Lumen/, books: /^Vos livres$/ },
 }[locale];
 
 /** Chooses the option of a native select whose text matches. */
@@ -138,7 +138,18 @@ async function clip(id, run) {
         }),
       [dy, ms],
     );
-  const go = (p) => page.goto(`${BASE}/${locale}/${p}`, { waitUntil: "networkidle" });
+  // The console lives under the shop's id (/app/<shop>/…): only the entrance /app, the invoices and the other lists redirect there, so the
+  // id is read once from where /app lands, as a person's browser would carry it.
+  let shopBase;
+  const go = async (p) => {
+    if (p.startsWith("app") && p !== "app" && !shopBase) {
+      await page.goto(`${BASE}/${locale}/app`, { waitUntil: "networkidle" });
+      shopBase = new URL(page.url()).pathname.match(/\/app\/[0-9a-f-]{36}/)?.[0];
+      if (!shopBase) throw new Error(`/app did not land on a shop: ${new URL(page.url()).pathname}`);
+    }
+    const target = p.startsWith("app/") ? `${shopBase}/${p.slice(4)}` : p === "app" ? "app" : p;
+    return page.goto(`${BASE}/${locale}/${target.replace(/^\//, "")}`, { waitUntil: "networkidle" });
+  };
   await run({ take, page, go, glide });
   const meta = await take.finish({ voice });
   process.stdout.write(`${device}/${locale}/${id}: ${meta.seconds} s, ${meta.activeCaptureFps} fps while moving, ${meta.calls.filter((c) => c.status >= 500).length} server errors\n`);
@@ -158,7 +169,7 @@ await clip("onboarding", async ({ take, page, go, glide }) => {
   await go("app");
   await page.waitForTimeout(1200);
   await glide(220, 1400);
-  await go("app/shop");
+  await go("app/boutique");
   await page.waitForTimeout(800);
   await glide(520, 2200);
   await take.speak("today");
@@ -171,32 +182,29 @@ await clip("onboarding", async ({ take, page, go, glide }) => {
 
 await clip("invoice", async ({ take, page, go, glide }) => {
   const english = locale === "en";
-  await go("app/invoices");
+  await go("app/invoices/new");
   await take.start();
   take.beat("form");
   await page.waitForTimeout(900);
   // English: the English-speaking client, 7.5 h of consulting and a workshop; French: the French-speaking client, 7,5 h of development and the support plan.
   await choose(page.getByLabel(T.client, { exact: true }), english ? T.nord : T.lumen);
   await page.waitForTimeout(500);
-  await choose(page.getByLabel(new RegExp(`^${T.service} 1`)), english ? T.consulting : T.dev);
+  await choose(page.getByLabel(T.service, { exact: true }).nth(0), english ? T.consulting : T.dev);
   await page.getByLabel(T.quantity).nth(0).fill(english ? "7.5" : "7,5");
   await page.waitForTimeout(500);
-  await choose(page.getByLabel(new RegExp(`^${T.service} 2`)), english ? T.workshop : T.support);
+  await page.getByRole("button", { name: T.addLine }).click();
+  await choose(page.getByLabel(T.service, { exact: true }).nth(1), english ? T.workshop : T.support);
   await page.getByLabel(T.quantity).nth(1).fill("1");
   await page.waitForTimeout(500);
-  const language = page.getByLabel(/^(Language of the invoice|Langue de la facture)/);
-  await language.selectOption(english ? "en" : "fr");
   await take.speak("form");
   const submit = page.getByRole("button", { name: T.submit });
   await submit.scrollIntoViewIfNeeded();
   await submit.click();
   take.beat("issued");
-  const issued = page.getByRole("link", { name: T.open }).first();
-  await issued.waitFor({ timeout: 30_000 });
-  await issued.scrollIntoViewIfNeeded();
+  // Issuing opens the invoice itself (?issued=1): no list to click through any more.
+  await page.waitForURL(/\/invoices\/[0-9a-f-]{36}/, { timeout: 30_000 });
+  await page.waitForLoadState("networkidle");
   await take.speak("issued");
-  await issued.click();
-  await page.waitForURL(/\/app\/invoices\//);
   take.beat("document");
   // The taxes to the cent, on screen: 7.5 × 180 + 600 = 1 950.00 → GST 97.50, QST 194.51 (194.5125); 7,5 × 150 + 500 = 1 625,00 → GST 81,25, QST 162,09 (162.09375).
   const totals = english ? ["1,950.00", "97.50", "194.51", "2,242.01"] : ["1 625,00", "81,25", "162,09", "1 868,34"];
@@ -211,7 +219,7 @@ await clip("books", async ({ take, page, go, glide }) => {
   await take.start();
   take.beat("list");
   await page.waitForTimeout(900);
-  await page.getByRole("heading", { level: 2 }).last().scrollIntoViewIfNeeded();
+  await page.getByRole("table").first().scrollIntoViewIfNeeded(); // the list is a table; it has no level-2 heading
   await glide(380, 2000);
   await take.speak("list");
   take.beat("sources");
