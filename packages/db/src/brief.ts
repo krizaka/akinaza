@@ -61,7 +61,7 @@ export async function briefSnapshot(db: Db, shopId: string, at: { week: string; 
         db,
         sql`SELECT c.id, (c.email IS NOT NULL) AS contactable, (c.erased_at IS NOT NULL) AS erased,
                    COALESCE((SELECT k.granted FROM privacy.consent k WHERE k.subject_kind = 'client' AND k.subject_id = c.id::text AND k.purpose = 'marketing' ORDER BY k.seq DESC LIMIT 1), false) AS marketing
-              FROM clients c WHERE c.shop_id = ${shopId} AND c.id IN (${sql.join(clientIds.map((id) => sql`${id}::uuid`), sql`, `)}) ORDER BY c.id`,
+              FROM clients c WHERE c.shop_id = ${shopId} AND c.id IN (${uuidList(clientIds)}) ORDER BY c.id`,
       )
     : [];
 
@@ -95,9 +95,10 @@ export async function recordBriefResult(db: Db, shopId: string, recommendationId
 
 /** The actions taken on one week's brief, by recommendation id. */
 export async function briefActionsOf(db: Db, shopId: string, week: string): Promise<Record<string, Record<string, number>>> {
+  const weekPrefix = `${week}:%`;
   const done = await rows<{ recommendation_id: string; result: Record<string, number> }>(
     db,
-    sql`SELECT recommendation_id, result FROM brief_actions WHERE shop_id = ${shopId} AND recommendation_id LIKE ${`${week}:%`}`,
+    sql`SELECT recommendation_id, result FROM brief_actions WHERE shop_id = ${shopId} AND recommendation_id LIKE ${weekPrefix}`,
   );
   return Object.fromEntries(done.map((d) => [d.recommendation_id, d.result]));
 }
@@ -112,7 +113,7 @@ export async function reachableClients(db: Db, shopId: string, clientIds: readon
     db,
     sql`SELECT c.id, c.full_name AS "fullName", c.email, c.language FROM clients c
          WHERE c.shop_id = ${shopId} AND c.erased_at IS NULL AND c.email IS NOT NULL
-           AND c.id IN (${sql.join(clientIds.map((id) => sql`${id}::uuid`), sql`, `)})
+           AND c.id IN (${uuidList(clientIds)})
            AND COALESCE((SELECT k.granted FROM privacy.consent k WHERE k.subject_kind = 'client' AND k.subject_id = c.id::text AND k.purpose = 'marketing' ORDER BY k.seq DESC LIMIT 1), false)
          ORDER BY c.id`,
   );
@@ -159,3 +160,8 @@ export async function unsubscribeBrief(db: Db, token: string): Promise<boolean> 
 }
 
 const sha256 = (value: string) => createHash("sha256").update(value).digest("hex");
+
+/** `a::uuid, b::uuid, …` for an IN list. */
+function uuidList(ids: readonly string[]) {
+  return sql.join(ids.map((id) => sql`${id}::uuid`), sql`, `);
+}

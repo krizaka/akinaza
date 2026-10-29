@@ -24,7 +24,8 @@ export const webhooks = (sealer?: { seal: (plain: string) => string; open: (seal
 export const sendWebhook: Send = async ({ url, body, headers }) => {
   const host = new URL(url).hostname.replace(/^\[|\]$/g, "");
   for (const { address } of await lookup(host, { all: true })) {
-    if (endpointUrlProblem(`https://${address.includes(":") ? `[${address}]` : address}/`)) throw new Error("the address resolves to a private network");
+    const authority = address.includes(":") ? `[${address}]` : address;
+    if (endpointUrlProblem(`https://${authority}/`)) throw new Error("the address resolves to a private network");
   }
   const res = await fetch(url, { method: "POST", body, headers, redirect: "manual", signal: AbortSignal.timeout(SEND_TIMEOUT_MS) });
   return { status: res.status };

@@ -33,7 +33,9 @@ const RATE_KEYS = ["collected", "toCollect", "margin", "noShows"];
 /** The meaning, then the second reading of the figure (its rate) when it has one. */
 export function meaningText(figure: FigureAnswer, say: Say): string {
   const base = say(`figures.${figure.id}.meaning`);
-  return figure.rate !== null && RATE_KEYS.includes(figure.id) ? `${base} ${say(`figures.rateOf.${figure.id}`, { rate: figure.rate })}` : base;
+  if (figure.rate === null || !RATE_KEYS.includes(figure.id)) return base;
+  const rateText = say(`figures.rateOf.${figure.id}`, { rate: figure.rate });
+  return `${base} ${rateText}`;
 }
 
 /** « 12 invoices · 3 expenses » (a source with no row is left out). */

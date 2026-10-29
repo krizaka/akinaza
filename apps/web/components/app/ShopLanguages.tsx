@@ -36,7 +36,8 @@ function TextRow({ field, locale, translationOn }: Readonly<{ field: FieldView; 
   const [text, setText] = useState(current.text);
   const t = (key: string) => say(`shopLanguages.${key}`);
   const writable = current.state !== "own";
-  const label = `${t(`fields.${field.field}`)}${field.owner ? ` · ${field.owner}` : ""}`;
+  const fieldName = t(`fields.${field.field}`);
+  const label = field.owner ? `${fieldName} · ${field.owner}` : fieldName;
   return (
     <li className="flex flex-col gap-2 border-t border-border-subtle pt-4 first:border-t-0 first:pt-0">
       <div className="flex flex-wrap items-center gap-2">
