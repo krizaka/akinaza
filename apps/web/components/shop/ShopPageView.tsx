@@ -16,7 +16,6 @@ import { StorySection } from "@krizaka/ui/shop/story";
 import { TeamSection } from "@krizaka/ui/shop/team";
 import { VideoSection } from "@krizaka/ui/shop/video";
 import { VisitSection } from "@krizaka/ui/shop/visit";
-import { ShopGallery, shopGalleryLabels, shopGalleryLabelsFr } from "@krizaka/ui/shop-gallery";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
@@ -24,6 +23,7 @@ import { preload } from "react-dom";
 
 import { ButtonLink } from "@/components/ButtonLink";
 import { MapSetup } from "@/components/shop/MapSetup";
+import { ShopMosaic } from "@/components/shop/ShopMosaic";
 import { ShopReviews } from "@/components/shop/ShopReviews";
 import { ShopVideoLazy } from "@/components/shop/ShopVideoLazy";
 import { coverPhoneSet, coverSizes, coverSrcSet, PHONE_MEDIA } from "@/lib/cover-renditions";
@@ -78,8 +78,7 @@ type Ctx = {
   nextTime: BookingTime | undefined;
   playLabels: Record<Platform, string>;
   notice: string;
-  /** The mosaic's lightbox words, in the page's language (the package holds English and French). */
-  galleryLabels: typeof shopGalleryLabels;
+  locale: Locale;
   platformName: (p: Platform) => string;
 };
 const commonOf = (section: Section) => ({ id: section.key, "data-shop-key": section.key }) as const;
@@ -199,7 +198,7 @@ function mosaicSection({ section, c, common, label, lead }: Args<"gallery"> & { 
   const photos = (c.plan.sections[section.key] ?? []).map((p) => ({ id: p.id, src: p.src, alt: p.alt, srcSet: coverSrcSet(p.src) }));
   return (
     <ShopSection {...common} title={c.titleOf(section, label)} lead={lead} data-variant="mosaic">
-      <ShopGallery photos={photos} label={label} labels={c.galleryLabels} />
+      <ShopMosaic photos={photos} label={label} locale={c.locale} />
     </ShopSection>
   );
 }
@@ -328,7 +327,7 @@ export function ShopPageView({ page, view, locale, accent, paper, today, nextTim
     playLabels: Object.fromEntries(PLATFORMS.map((p) => [p, t("console.shopPage.facadePlay", { platform: platformName(p) })])) as Record<Platform, string>,
     notice: t("console.shopPage.facadeNotice", { platform: PLATFORMS.map(platformName).join(" · ") }),
     platformName,
-    galleryLabels: locale === "fr" ? shopGalleryLabelsFr : shopGalleryLabels,
+    locale,
   };
 
   const accentOf = { ...(accent ? { accent } : {}), ...(paper ? { paper } : {}) };
