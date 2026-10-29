@@ -104,11 +104,12 @@ function serve(request: NextRequest, closed: boolean, ownShopHost: boolean): Nex
   const site = process.env.APP_PUBLIC_URL ?? SITE_URL;
   const route = routeFor(host, request.nextUrl.pathname, chosen, site, hostingOf());
   const admin = isAdminHost(host);
-  const home = admin ? null : landingRedirect(request, { cookie: SESSION_COOKIE, landing: LANDING, home: () => `/${pageLocaleOf(pathname, chosen)}/app`, origin: site });
-  if (home) return home;
   // A shop's address shows a page that www may also serve: never indexed twice.
   const shop = shopHostOf(host, process.env);
   const shopHost = shop !== null;
+  // A shop's own page is nobody's landing: the app's session never goes there (ADR-005), so no hint can send a visitor away from it.
+  const home = admin || shop ? null : landingRedirect(request, { cookie: SESSION_COOKIE, landing: LANDING, home: () => `/${pageLocaleOf(pathname, chosen)}/app`, origin: site });
+  if (home) return home;
   // A deployment closed to search engines (APP_SEARCH_INDEXING=off): robots.txt disallows everything (the sitemap is still served, noindexed).
   if (closed && request.nextUrl.pathname === "/robots.txt") return new NextResponse(CLOSED_ROBOTS, { headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });
   // The language of the address, handed to the pages (the 404 has no params): set on the request, never trusted from the client.
@@ -137,7 +138,7 @@ function serve(request: NextRequest, closed: boolean, ownShopHost: boolean): Nex
     default:
       response = NextResponse.next({ request: { headers: forwarded } });
   }
-  return dressed(response, request, { csp, noindex: admin || closed || shopHost, noStore: ownShopHost });
+  return dressed(response, request, { csp, noindex: admin || closed || shopHost, noStore: ownShopHost, hint: !shopHost });
 }
 
 /** A redirect on the public host, not the platform's internal one: admin.akinaza.com stays admin.akinaza.com. */
@@ -150,7 +151,7 @@ function redirectOf(request: NextRequest, route: Extract<HostRoute, { kind: "red
 }
 
 /** What every served response wears: the language of its address in a cookie, no index where the page is not for search, no shared cache on a shop's host, the policy. */
-function dressed(response: NextResponse, request: NextRequest, { csp, noindex, noStore }: { csp: string; noindex: boolean; noStore: boolean }): NextResponse {
+function dressed(response: NextResponse, request: NextRequest, { csp, noindex, noStore, hint }: { csp: string; noindex: boolean; noStore: boolean; hint: boolean }): NextResponse {
   const segment = request.nextUrl.pathname.split("/")[1];
   if ((segment === "en" || segment === "fr") && request.cookies.get(LOCALE_COOKIE)?.value !== segment) {
     response.cookies.set(ownCookie(LOCALE_COOKIE, segment, { httpOnly: false, maxAge: 60 * 60 * 24 * 365 }));
@@ -159,6 +160,8 @@ function dressed(response: NextResponse, request: NextRequest, { csp, noindex, n
   // The page of a shop is for one request: never shared from a cache whose key could lose the host (ADR-005 §3).
   if (noStore) response.headers.set("cache-control", "private, no-store");
   response.headers.set("Content-Security-Policy", csp);
+  // The readable hint is the app's own: a shop's host never carries it (no session reaches a shop page).
+  if (!hint) return response;
   return sessionHint(response, request, { cookie: SESSION_COOKIE, secure: process.env.NODE_ENV === "production" });
 }
 

@@ -8,8 +8,8 @@ import fr from "@/messages/fr.json";
 import { BarActionsView, type BarWords, Island, ME_KEY, settleSignOut } from "./BarSession";
 
 vi.mock("next/link", () => ({
-  default: ({ href, prefetch, children }: { href: string; prefetch?: boolean; children: React.ReactNode }) => (
-    <a href={href} data-prefetch={String(prefetch)}>
+  default: ({ href, prefetch, children, ...rest }: { href: string; prefetch?: boolean; children: React.ReactNode }) => (
+    <a href={href} data-prefetch={String(prefetch)} {...rest}>
       {children}
     </a>
   ),
@@ -22,6 +22,12 @@ const render = (me: Parameters<typeof BarActionsView>[0]["me"], locale: "en" | "
 const text = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
 
 describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
+  it("the signed-out actions carry data-signed-out-only, so html[data-session] hides them from the first paint (krizaka-ui#827)", () => {
+    for (const placement of ["bar", "panel"] as const) {
+      const html = render({ signedIn: false, signupOpen: true }, "en", placement);
+      expect(html).toMatch(/<a[^>]*data-signed-out-only[^>]*href="\/en\/sign-in"|<a[^>]*href="\/en\/sign-in"[^>]*data-signed-out-only/);
+    }
+  });
   it("signed out, sign-up closed: « Sign in » is the action, no sales call", () => {
     const html = render({ signedIn: false, signupOpen: false });
     expect(text(html)).toContain("Sign in");
