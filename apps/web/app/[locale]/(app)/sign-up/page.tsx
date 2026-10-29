@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * Registration, built and disabled by configuration: while AUTH_SIGNUP_ENABLED is not `true` the page says the sign-up is
  * closed and offers no form. The server refuses it the same way (POST /api/auth/sign-up).
  */
-export default async function SignUpPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function SignUpPage({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale).console;
   const open = signupEnabled();

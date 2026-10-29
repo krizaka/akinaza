@@ -58,7 +58,7 @@ const QUICK_METHODS = ["cash", "card", "transfer"] as const;
  * filtered by state, exported as CSV, each unfolding its amounts and its quick actions — open, edit (#207), cash the balance.
  * A card per invoice on a phone.
  */
-export function InvoicesTable({ invoices, today, defaultMessage = "", organize, tagsByInvoice = {} }: { invoices: InvoiceRowView[]; today: string; defaultMessage?: string; organize?: OrganizeData; tagsByInvoice?: Record<string, TagLite[]> }) {
+export function InvoicesTable({ invoices, today, defaultMessage = "", organize, tagsByInvoice = {} }: Readonly<{ invoices: InvoiceRowView[]; today: string; defaultMessage?: string; organize?: OrganizeData; tagsByInvoice?: Record<string, TagLite[]> }>) {
   const pathname = usePathname() ?? "";
   const [selected, setSelected] = useState<string[]>([]);
   const { say, locale } = useSay();

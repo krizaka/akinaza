@@ -38,7 +38,7 @@ const i18nOf = (say: Say, locale: string) => ({ t: (key: string, vars?: Readonly
 const money = (cents: number, locale: string) => new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" }).format(cents / 100);
 
 /** Join the shop (a file, with consents) → add a dog → pick a walk → book. Each step shows once the one before is done. */
-export function BookingFlow({ data }: { data: BookingData }) {
+export function BookingFlow({ data }: Readonly<{ data: BookingData }>) {
   const { dependants } = useVocabulary();
   return (
     <div className="flex flex-col gap-4">
@@ -62,7 +62,7 @@ const joinForm = createKrizakaForm({
   defaultValues: { fullName: "", phone: "", consentService: false, consentReminders: false },
 });
 
-function JoinCard({ data }: { data: BookingData }) {
+function JoinCard({ data }: Readonly<{ data: BookingData }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [needConsent, setNeedConsent] = useState(false);
@@ -107,7 +107,7 @@ const dogForm = createKrizakaForm({
   defaultValues: { name: "", breed: "", size: "", temperament: "", vetName: "", vetPhone: "", emergencyName: "", emergencyPhone: "" },
 });
 
-function DogCard({ clientId, onDone }: { clientId: string; onDone?: () => void }) {
+function DogCard({ clientId, onDone }: Readonly<{ clientId: string; onDone?: () => void }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const form = dogForm.useForm({
@@ -147,7 +147,7 @@ function DogCard({ clientId, onDone }: { clientId: string; onDone?: () => void }
 }
 
 /** A second dog on the file, without leaving the page: the button opens the same form as the first. */
-function AnotherDog({ clientId }: { clientId: string }) {
+function AnotherDog({ clientId }: Readonly<{ clientId: string }>) {
   const { say } = useSay();
   const [open, setOpen] = useState(false);
   return (
@@ -174,7 +174,7 @@ interface SlotView {
   joins: boolean;
 }
 
-function BookCard({ data, clientId }: { data: BookingData; clientId: string }) {
+function BookCard({ data, clientId }: Readonly<{ data: BookingData; clientId: string }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [booked, setBooked] = useState(false);
@@ -252,7 +252,7 @@ const WEEKS_AHEAD = 8; // @fixed: the booking page's horizon of browsing; the en
  * The times of a service, by week and by part of the day: the package's `SlotPicker` (krizaka-ui#672) over the engine's slots of that
  * week (`from`). The chosen time is the form's value; a time carried from the shop page that is no longer free is dropped.
  */
-function BookingSlots({ slug, staffId, serviceId, zoneId, timeZone, value, onPick, error }: { slug: string; staffId: string | null; serviceId: string; zoneId: string | null; timeZone: string; value: string; onPick: (v: string) => void; error: string | undefined }) {
+function BookingSlots({ slug, staffId, serviceId, zoneId, timeZone, value, onPick, error }: Readonly<{ slug: string; staffId: string | null; serviceId: string; zoneId: string | null; timeZone: string; value: string; onPick: (v: string) => void; error: string | undefined }>) {
   const { say, locale } = useSay();
   const lang = locale === "fr" ? "fr-CA" : "en-CA";
   const todayWeek = useMemo(() => mondayOf(new Intl.DateTimeFormat("en-CA", { timeZone }).format(new Date())), [timeZone]);
@@ -314,7 +314,7 @@ function BookingSlots({ slug, staffId, serviceId, zoneId, timeZone, value, onPic
 
 const accessForm = createKrizakaForm({ schema: z.object({ notes: z.string().trim().max(500) }), defaultValues: { notes: "" } });
 
-function AccessCard({ clientId }: { clientId: string }) {
+function AccessCard({ clientId }: Readonly<{ clientId: string }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [saved, setSaved] = useState(false);

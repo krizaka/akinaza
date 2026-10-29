@@ -18,7 +18,7 @@ type Membership = { shop: { id: string; name: string; businessType: Parameters<t
  * account menu; the rail counts the day's appointments and the invoices to collect.
  * A client (no shop) gets the same frame around their bookings.
  */
-export async function SpaceChrome({ locale, account, member, children }: { locale: RouteLocale; account: { id: string; email: string }; member: Membership; children: React.ReactNode }) {
+export async function SpaceChrome({ locale, account, member, children }: Readonly<{ locale: RouteLocale; account: { id: string; email: string }; member: Membership; children: React.ReactNode }>) {
   const profile = await accounts().profile(account.id);
   const routes = accountRoutes(locale);
   const common = { locale, account: { id: account.id, email: account.email, name: profile.name, avatarSeed: profile.avatarSeed }, dev: !indexable(), home: routes.home, profileHref: routes.profile };

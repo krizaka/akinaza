@@ -8,7 +8,7 @@ import { useState } from "react";
 import { useCall } from "@/components/app/useCall";
 
 /** Cancels the booking in two taps (ask, then confirm), with the answer on the spot; the page refreshes to the cancelled state. */
-export function CancelBooking({ bookingId, clientId, words }: { bookingId: string; clientId: string; words: { cancel: string; confirm: string; cancelling: string } }) {
+export function CancelBooking({ bookingId, clientId, words }: Readonly<{ bookingId: string; clientId: string; words: { cancel: string; confirm: string; cancelling: string } }>) {
   const call = useCall();
   const router = useRouter();
   const [asked, setAsked] = useState(false);

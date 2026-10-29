@@ -12,7 +12,7 @@ import { asLocale } from "@/lib/i18n";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false }, referrer: "no-referrer" };
 
-export default async function PublicInvoicePage({ params, searchParams }: { params: Promise<{ locale: string; token: string }>; searchParams: Promise<{ replacement?: string }> }) {
+export default async function PublicInvoicePage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; token: string }>; searchParams: Promise<{ replacement?: string }> }>) {
   const { locale: raw, token } = await params;
   const locale = asLocale(raw);
   const { replacement } = await searchParams;

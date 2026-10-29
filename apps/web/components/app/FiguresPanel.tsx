@@ -13,7 +13,7 @@ import type { ShopRoutes } from "@/lib/routes";
  * (a link to the rows), when it was computed and its state against the thresholds the administrator set. The lexique's words used by a figure
  * follow it as glossary terms, the ones that need an accountant marked. Server-rendered: nothing here fetches.
  */
-export function FiguresPanel({ ids, figures, locale, routes, timeZone, now }: { ids: readonly FigureId[]; figures: Record<FigureId, Figure>; locale: Locale; routes: ShopRoutes; timeZone: string; now: string }) {
+export function FiguresPanel({ ids, figures, locale, routes, timeZone, now }: Readonly<{ ids: readonly FigureId[]; figures: Record<FigureId, Figure>; locale: Locale; routes: ShopRoutes; timeZone: string; now: string }>) {
   const t = getDictionary(locale).console;
   return (
     <div className="grid gap-4 md:grid-cols-2" data-testid="figures">

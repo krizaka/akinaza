@@ -34,7 +34,7 @@ export interface InvoiceDetailViewProps {
  * the ledger received) as a chip, « Envoyer la facture » the one primary with « Modifier » and « Imprimer » beside it; the aside
  * holds the deliveries and the chain (what it replaces, what replaced or cancelled it). The document keeps its own language.
  */
-export function InvoiceDetailView({ invoice, deliveries, locale, routes, today, defaultMessage, issued = false }: InvoiceDetailViewProps) {
+export function InvoiceDetailView({ invoice, deliveries, locale, routes, today, defaultMessage, issued = false }: Readonly<InvoiceDetailViewProps>) {
   const t = getDictionary(locale).console;
   const state = invoiceState({ totalCents: invoice.totalCents, paidCents: invoice.paidCents, dueOn: invoice.dueOn, isCredit: invoice.creditOf !== null, superseded: Boolean(invoice.replacedBy ?? invoice.creditedBy) }, today);
   // An invoice that still stands can be corrected (#207); a credit note or an already credited invoice cannot.

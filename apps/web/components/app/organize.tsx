@@ -31,7 +31,7 @@ import { listHref, MARKER_HUE, type OrganizeData, type TagLite } from "@/lib/org
 const base = (organize: OrganizeData) => `/api/walker/${organize.kind === "client" ? "clients" : "invoices"}`;
 
 /** The tags a row wears, wrapped on one line: read-only (a tag is changed from the file, the binder or the selection). */
-export function TagChips({ tags }: { tags: readonly TagLite[] | undefined }) {
+export function TagChips({ tags }: Readonly<{ tags: readonly TagLite[] | undefined }>) {
   if (!tags?.length) return null;
   return (
     <ul className="flex flex-wrap gap-1">
@@ -54,7 +54,7 @@ function useMarkerNames(): Record<Marker, string> {
   return useMemo(() => Object.fromEntries(MARKERS.map((m) => [m, say(`organize.markers.${m}`)])) as Record<Marker, string>, [say]);
 }
 
-function NewTagDialog({ kind, open, onOpenChange }: { kind: "client" | "invoice"; open: boolean; onOpenChange: (open: boolean) => void }) {
+function NewTagDialog({ kind, open, onOpenChange }: Readonly<{ kind: "client" | "invoice"; open: boolean; onOpenChange: (open: boolean) => void }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const names = useMarkerNames();
@@ -92,7 +92,7 @@ function NewTagDialog({ kind, open, onOpenChange }: { kind: "client" | "invoice"
  * The binder's dividers per tag (`Tabs.Nav variant="binder"`, krizaka-ui#648): « All » and one divider per tag with its count; the
  * address is the state (`?tags=<id>`), so a divider is a link and a shared link opens the same one. « + New tag » for those who write tags.
  */
-export function TagBinder({ organize, path, own = {} }: { organize: OrganizeData; path: string; own?: Record<string, string | undefined> }) {
+export function TagBinder({ organize, path, own = {} }: Readonly<{ organize: OrganizeData; path: string; own?: Record<string, string | undefined> }>) {
   const { say } = useSay();
   const search = useSearchParams();
   const [adding, setAdding] = useState(false);
@@ -142,7 +142,7 @@ function useSavedViewsLabels(): Partial<SavedViewsLabels> {
  * The views of a list (`SavedViews`): the administrator's, the shop's shared ones and mine, each a link to the filters it holds (the
  * address is the state); « Save view » when the filters in force are not one of them; rename and delete for mine.
  */
-export function ViewsBar({ organize, path, own = {} }: { organize: OrganizeData; path: string; own?: Record<string, string | undefined> }) {
+export function ViewsBar({ organize, path, own = {} }: Readonly<{ organize: OrganizeData; path: string; own?: Record<string, string | undefined> }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const labels = useSavedViewsLabels();
@@ -183,7 +183,7 @@ export function ViewsBar({ organize, path, own = {} }: { organize: OrganizeData;
  * The selection bar's bulk tag and untag (given to `DataTable bulkActions`, which draws the bar). At most 200 at a time, one call, one
  * audit line per row; there is no « mark as paid »: an invoice's state follows the ledger.
  */
-export function SelectionTags({ organize, selected, onDone }: { organize: OrganizeData; selected: string[]; onDone: () => void }) {
+export function SelectionTags({ organize, selected, onDone }: Readonly<{ organize: OrganizeData; selected: string[]; onDone: () => void }>) {
   const { say } = useSay();
   const call = useCall();
   const apply = async (change: { add?: string[]; remove?: string[] }) => {
@@ -216,7 +216,7 @@ export function SelectionTags({ organize, selected, onDone }: { organize: Organi
 }
 
 /** One client's tags, from its file: the package's `TagSelector creatable` in a popover — one call per change (the bulk call, for one id). */
-export function TagsEditor({ organize, entityId, worn }: { organize: OrganizeData; entityId: string; worn: TagLite[] }) {
+export function TagsEditor({ organize, entityId, worn }: Readonly<{ organize: OrganizeData; entityId: string; worn: TagLite[] }>) {
   const { say } = useSay();
   const call = useCall();
   const names = useMarkerNames();

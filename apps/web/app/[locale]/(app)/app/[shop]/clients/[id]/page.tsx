@@ -23,7 +23,7 @@ export const dynamic = "force-dynamic";
 export const generateMetadata = titleOf("clients");
 
 /** One client's file, with the clients beside it on a computer (one at a time on a phone, the way back above). The address names the client. */
-export default async function ClientPage({ params, searchParams }: { params: Promise<{ locale: string; shop: string; id: string }>; searchParams: Promise<{ tab?: string }> }) {
+export default async function ClientPage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string; id: string }>; searchParams: Promise<{ tab?: string }> }>) {
   const { locale: rawLocale, shop: shopId, id } = await params;
   const locale = asLocale(rawLocale);
   const t = getDictionary(locale).console.clients;

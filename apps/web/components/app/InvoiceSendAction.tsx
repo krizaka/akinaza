@@ -20,7 +20,7 @@ const sendInvoiceForm = createKrizakaForm({
  * page it is the screen's one primary (`primary`, the hero primary); in a list's row it is a quiet secondary. Once sent, the
  * button rings once (`data-kz-status="success"`, motion.css, D11).
  */
-export function InvoiceSendAction({ invoiceId, email, defaultMessage = "", primary = false }: { invoiceId: string; email: string | null; defaultMessage?: string; primary?: boolean }) {
+export function InvoiceSendAction({ invoiceId, email, defaultMessage = "", primary = false }: Readonly<{ invoiceId: string; email: string | null; defaultMessage?: string; primary?: boolean }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [open, setOpen] = useState(false);

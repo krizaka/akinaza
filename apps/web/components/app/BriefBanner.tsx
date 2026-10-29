@@ -12,7 +12,7 @@ import { useSay } from "@/lib/i18n-client";
  * « Le point du lundi » on Today, only when it has something to say (docs/ux/2026-10-full-review.md B2): one line, the way
  * to the full point (`/brief`), and a way to put it aside for this visit. An empty brief shows nothing — the day comes first.
  */
-export function BriefBanner({ count, href }: { /** How many facts the brief holds this week; nothing shows for none. */ count: number; href: string }) {
+export function BriefBanner({ count, href }: Readonly<{ /** How many facts the brief holds this week; nothing shows for none. */ count: number; href: string }>) {
   const { say } = useSay();
   const [hidden, setHidden] = useState(false);
   if (count === 0 || hidden) return null;

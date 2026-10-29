@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 export const generateMetadata = titleOf("profile");
 
 /** The password (saving it ends the other sign-ins) and the live sign-ins of the account. */
-export default async function Security({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Security({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale).console.account.profile;
   const { session, profile, sections } = await accountPage();

@@ -11,7 +11,7 @@ import { useSay } from "@/lib/i18n-client";
  * The walker opens a client's access notes (keys, door codes) on demand: the list never carries them, each opening is
  * one request and one line of the audit log, and the text is forgotten again when hidden.
  */
-export function AccessNotes({ clientId, clientName }: { clientId: string; clientName: string }) {
+export function AccessNotes({ clientId, clientName }: Readonly<{ clientId: string; clientName: string }>) {
   const { say } = useSay();
   const call = useCall();
   const [notes, setNotes] = useState<string | null | undefined>(undefined);
