@@ -172,6 +172,19 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
   return { shopId, created: true };
 }
 
+/**
+ * The per-person switches the demo shops' owners wear on a seeded deployment (local = deployed): set by `seed-demo-flags.mjs`
+ * through the documented setting command (`set-setting.mjs --user`), never by hand in the database.
+ */
+export const DEMO_OWNER_FLAGS: Readonly<Record<string, boolean>> = { "features.cahierStorefront": true };
+
+/** One `set-setting.mjs` argument list per owner and flag: the demo owners are the seed's own `.test` addresses. */
+export function demoOwnerFlagArgs(shops: readonly DemoShop[] = DEMO_SHOPS): string[][] {
+  return [...new Set(shops.map((d) => d.ownerEmail))].flatMap((email) =>
+    Object.entries(DEMO_OWNER_FLAGS).map(([key, value]) => [key, JSON.stringify(value), "--user", email, "--actor", "seed-demo-flags"]),
+  );
+}
+
 export async function seedDemoShops(db: Db): Promise<{ slug: string; shopId: string; created: boolean }[]> {
   const out = [];
   for (const demo of DEMO_SHOPS) out.push({ slug: demo.shop.slug, ...(await seedDemo(db, demo)) });
