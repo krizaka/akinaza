@@ -17,6 +17,7 @@ import { organizeData, tagsOfRows } from "@/lib/organize-data";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
 import { isUuid } from "@/lib/shop-id";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +30,7 @@ export default async function ClientPage({ params, searchParams }: Readonly<{ pa
   const t = getDictionary(locale).console.clients;
   const { shop, role, session } = await memberShop(shopId, "clients");
   if (!isUuid(id)) notFound();
-  const now = new Date();
+  const now = requestNow();
   const [file, overview] = await Promise.all([clientFile(db(), shop.id, id), clientOverview(db(), shop.id, now)]);
   if (!file) notFound();
   // The client is this shop's (clientFile above): what they keep here, for the visit (akinaza#210).

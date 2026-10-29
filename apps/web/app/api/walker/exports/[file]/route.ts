@@ -8,6 +8,7 @@ import { handle, refuse } from "@/lib/http";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { limit } from "@/lib/rate-limit";
 import { appSettings } from "@/lib/settings";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -49,7 +50,7 @@ export function GET(req: Request, ctx: { params: Promise<{ file: string }> }) {
     const locale = asLocale(new URL(req.url).searchParams.get("locale") ?? "fr");
     await audit({ action: "shop.data_exported", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { kind: kindOf(file), format: formatOf(file) }, headers: req.headers });
     const encoder = new TextEncoder();
-    const source = chunks(file, shop, locale, new Date());
+    const source = chunks(file, shop, locale, requestNow());
     const body = new ReadableStream<Uint8Array>({
       async pull(controller) {
         const next = await source.next();

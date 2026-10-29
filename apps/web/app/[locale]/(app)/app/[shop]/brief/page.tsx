@@ -13,6 +13,7 @@ import { loadFigures } from "@/lib/figures";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { shopRoutes } from "@/lib/routes";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -25,9 +26,9 @@ export default async function BriefPage({ params }: Readonly<{ params: Promise<{
   const { locale: raw, shop: shopId } = await params;
   const locale = asLocale(raw);
   const { shop } = await memberShop(shopId, "reports");
-  const brief = await loadShopBrief(shop, new Date());
+  const brief = await loadShopBrief(shop, requestNow());
   const t = getDictionary(locale).console.brief;
-  const now = new Date();
+  const now = requestNow();
   const { figures, actions } = await loadFigures(shop, await shopDay(db(), shop.id, now), now);
   const routes = shopRoutes(locale, shop.id);
   const f = getDictionary(locale).console.figures;
