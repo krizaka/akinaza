@@ -106,3 +106,7 @@ One cast (`@krizaka/org`) and one idempotent seed serve local, CI, Maestro, the 
 
 **Reproduce a hot fix locally**: start a Postgres (`docker run -d -p 5432:5432 -e POSTGRES_USER=akinaza -e POSTGRES_PASSWORD=akinaza -e POSTGRES_DB=akinaza postgres:17-alpine`), `export DATABASE_URL=postgres://akinaza:akinaza@localhost:5432/akinaza`, `pnpm run dev:seed`, `pnpm dev`, and sign in as `lea.beaulieu@akinaza.test` (local password `local-cast-password-0123`). `dev:seed --check` compares the counts per table with `apps/web/scripts/cast-fingerprint.json`; the dev database refuses GitHub's runners (and is not opened to their ranges), so the dev seed runs **from a trusted machine** with the same `--check` (exact on a local database; on the lived-in dev one, « everything recorded is there »): the maintainers' `seed-dev.sh akinaza` reads the credentials at run time and prints none.
 
+
+## Tests
+
+Unit tests (`pnpm test`), the page audit and the **page journeys** (`apps/web/e2e/visual/journeys.visual.mjs`: the landing, a shop page, a service, sign-in and the walker's day, as the seeded cast; pixels of whole pages taken in CI only). To update a baseline run Actions > *Update visual baselines* on your branch; how the layers work and how to read a diff: [krizaka/.github docs/standards/ui-testing.md](https://github.com/krizaka/.github/blob/main/docs/standards/ui-testing.md).
