@@ -1,5 +1,6 @@
 import { clientIp } from "./client-ip";
 import { HttpError } from "./http";
+import { systemClock } from "@/app/system-clock";
 
 /**
  * Fixed-window limits kept in this process (one instance in dev: enough; a second instance needs a shared store
@@ -15,7 +16,7 @@ function prune(now: number) {
   for (const [k, w] of windows) if (w.resetAt <= now) windows.delete(k);
 }
 
-export function hit(key: string, limit: number, windowSeconds: number, now = Date.now()): { allowed: boolean; retryAfter: number } {
+export function hit(key: string, limit: number, windowSeconds: number, now = systemClock.now().getTime()): { allowed: boolean; retryAfter: number } {
   let entry = windows.get(key);
   if (!entry || entry.resetAt <= now) {
     if (windows.size >= MAX_KEYS) prune(now);

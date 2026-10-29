@@ -56,6 +56,8 @@ export const envSchema = z.object({
   ABUSE_TRUSTED_PROXY_HOPS: z.coerce.number().int().min(1).max(10).default(1),
   /** The stage of the deployment: `dev` shows the « Development version » notice on every page (`StageNotice`); `prod` hides it. Read at build too: the pages are static. */
   APP_ENVIRONMENT: z.enum(["dev", "prod"]).default("dev"),
+  /** A fixed instant (ISO 8601) for the pages' clock, honoured only when `APP_ENVIRONMENT` is `dev` (visual and e2e runs: `app/request-now.ts`). Ignored in `prod`. */
+  APP_FIXED_NOW: z.string().datetime().optional(),
   /** `off` on every dev / preview deployment: noindex everywhere, robots.txt closed, the development notice in the footer. */
   APP_SEARCH_INDEXING: z.enum(["on", "off"]).default("on"),
   /** Connections this process's pool may hold (the cluster's budget is shared: dev uses 2 behind a PgBouncer pool). */

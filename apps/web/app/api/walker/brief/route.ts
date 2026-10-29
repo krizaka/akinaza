@@ -1,6 +1,7 @@
 import { requireShop } from "@/lib/access";
 import { loadShopBrief } from "@/lib/brief";
 import { handle } from "@/lib/http";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +9,6 @@ export const dynamic = "force-dynamic";
 export function GET(req: Request) {
   return handle(async () => {
     const { shop } = await requireShop(req, "reports");
-    return Response.json(await loadShopBrief(shop, new Date()));
+    return Response.json(await loadShopBrief(shop, requestNow()));
   });
 }

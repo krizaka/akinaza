@@ -4,6 +4,7 @@ import { ownCookie } from "./cookie";
 import { query } from "./db";
 import { sessionSecret } from "./env";
 import { SESSION_COOKIE } from "./session-cookie";
+import { systemClock } from "@/app/system-clock";
 
 /**
  * Web sessions. The cookie holds a random token (`as1.` + 32 bytes); the table keeps only its keyed hash, so a leaked
@@ -32,7 +33,8 @@ export interface Session {
 
 export async function createSession(accountId: string, meta: { ip: string | null; userAgent: string | null }): Promise<{ token: string; expires: Date }> {
   const token = newToken();
-  const expires = new Date(Date.now() + SESSION_TTL_DAYS * 86_400_000);
+  const expires = systemClock.now();
+  expires.setUTCDate(expires.getUTCDate() + SESSION_TTL_DAYS);
   await query("INSERT INTO sessions (account_id, token_hash, expires_at, ip, user_agent) VALUES ($1, $2, $3, $4, $5)", [accountId, tokenHash(token), expires, meta.ip, meta.userAgent?.slice(0, 300) ?? null]);
   return { token, expires };
 }

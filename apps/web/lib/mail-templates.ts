@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { systemClock } from "@/app/system-clock";
 
 /**
  * E-mail templates are data, not code (the krizaka-notifications convention, shared with Orochia and Yasakia). A template is a folder `apps/web/mail-templates/<id>/`
@@ -129,7 +130,7 @@ export function renderMailTemplate<Id extends MailTemplateId>(id: Id, vars: Mail
     const name = `${id}/${locale}`;
     const subject = fill(f.subject, values, { html: false, allowed, name: `${name}/subject.txt` }).replace(/\s+/g, " ").trim();
     if (!subject) throw new MailTemplateError(`${name}/subject.txt: empty subject`);
-    const layout: Values = { subject, lang: locale, appUrl: options.appUrl, year: (options.now ?? new Date()).getUTCFullYear() };
+    const layout: Values = { subject, lang: locale, appUrl: options.appUrl, year: (options.now ?? systemClock.now()).getUTCFullYear() };
     const footer = fill(f.footer, layout, { html: false, allowed: ["appUrl", "year"], name: `_layout/${locale}/footer.txt` }).trim();
     const htmlBody = fill(f.html, values, { html: true, allowed, name: `${name}/body.html` });
     const textBody = fill(f.text, values, { html: false, allowed, name: `${name}/body.txt` }).trim();

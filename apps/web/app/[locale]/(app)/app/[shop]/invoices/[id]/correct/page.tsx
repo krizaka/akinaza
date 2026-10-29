@@ -10,6 +10,7 @@ import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export default async function CorrectInvoicePage({ params }: Readonly<{ params: 
   if (!z.string().uuid().safeParse(id).success) notFound();
   const { shop } = await memberShop(shopId, "invoices");
   const routes = shopRoutes(locale, shop.id);
-  const [invoice, today] = await Promise.all([invoiceDetail(db(), shop.id, id), shopDay(db(), shop.id, new Date())]);
+  const [invoice, today] = await Promise.all([invoiceDetail(db(), shop.id, id), shopDay(db(), shop.id, requestNow())]);
   if (!invoice) notFound();
   // Nothing to correct on a credit note, nor on an invoice already credited: back to what it is now.
   if (invoice.creditOf || invoice.creditedBy) redirect(routes.invoice(invoice.replacedBy?.id ?? invoice.id));
