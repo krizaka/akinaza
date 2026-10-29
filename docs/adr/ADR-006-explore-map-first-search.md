@@ -75,9 +75,9 @@ Order of the index work, each checked with `EXPLAIN (ANALYZE, BUFFERS)` on the s
 | --- | --- | --- |
 | Text (name, tagline, area, service names) | **FTS**: a generated `search` `tsvector` (`french`/`english` config by locale, `unaccent`) on a small read model `shop_search(shop_id, search, name, kind, point, price_band, …)` | GIN on `search` |
 | Typos and partial names (« coif ») | **`pg_trgm`** `similarity` / `ILIKE` on `name` and service names, as the fallback when FTS returns nothing and for prefix matches | GIN `gin_trgm_ops` on `name` |
-| Distance and viewport | **`cube` + `earthdistance`**: `ll_to_earth(lat, lng)`, `earth_box` for the bounding filter, `earth_distance` for the order | GiST on `ll_to_earth(lat, lng)` of the zone centres |
+| Distance and viewport | **a core `point` + haversine** (amended by slice 2, deviation 1: `earthdistance` is not a trusted extension): a box prefilters, the haversine decides and orders | GiST on the generated `point` of the first zone centre |
 | Service type, kind, price band | plain `btree` / `inArray` on the read model | btree on `(kind)`, `(price_band)`; GIN on the `services text[]` |
-| Open now / this week / free today | computed **with the injected clock** (`requestNow()`), never `now()` in SQL: `open_windows` of the shop joined on `weekday` in the shop's own timezone (`AT TIME ZONE shops.timezone`), minus `days_off`; « this week » = at least one window in the next 7 local days; « free today » = the existing slot engine, only for the page's candidates (see below) | btree `(shop_id, weekday)` already exists |
+| Open now / this week / free today | open now computed live, the other two **stored by a sweep** (amended: « Free time today » below), all with the **injected clock** (`requestNow()`), never `now()` in SQL: `open_windows` of the shop joined on `weekday` in the shop's own timezone (`AT TIME ZONE shops.timezone`), minus `days_off`; « this week » = at least one window in the next 7 local days; « free today » = the existing slot engine, only for the page's candidates (see below) | btree `(shop_id, weekday)` already exists |
 
 - **Why `earthdistance` and not PostGIS first:** the points are the *centres of the areas served* (no street address, by the
   privacy rule), so metre precision is meaningless; `cube`/`earthdistance` are contrib extensions available on managed
@@ -92,12 +92,18 @@ Order of the index work, each checked with `EXPLAIN (ANALYZE, BUFFERS)` on the s
 - **The read model** (`shop_search`) is refreshed by the writers that already change a published shop (publish, page save,
   services and hours saves), in the same transaction; a nightly check compares it with `publicShop` (a guard, not a source).
   It removes the 1 + 4N queries: the list is one indexed query.
-- **« Free time today »** is the one expensive fact (the slot engine). It is not part of the list query: the endpoint first
-  selects the page's candidate ids (limit 30), then computes `freeToday` for those only (bounded concurrency, cached 60 s per
-  shop and day). The filter `open=free-today` therefore runs the candidate query over-fetching (limit × 3) and keeps the
-  free ones; documented limit, measured in slice 2.
-- **Latency target:** p95 < 200 ms server-side for the combined query on the dev dataset and on 20 000 shops (excluding the free-today
-  step: p95 < 400 ms with it); the PR of slice 2 carries the `EXPLAIN` plans and a timing script.
+- **« Free time today »** is the one expensive fact (the slot engine, 35 ms a shop). **Amended (CTO decision on #574, slice 2):** it is
+  **precomputed**, not computed on the list path. `shop_search` stores each shop's `next_free_at` (the earliest bookable time in
+  the next 7 local days, over its first three services), `open_week` and the local day and clock they were computed at. A trigger
+  on every writer that moves the answer (appointments, bookings, hours, days off, rules, people, services, calendars' busy times)
+  raises `avail_stale` in the writer's transaction; `settleAvailability(db, now)` recomputes the due rows with the injected
+  clock (stale, a new local day for the shop's zone, the stored time passed, or a clock earlier than the one stored), leased
+  with `FOR UPDATE SKIP LOCKED`, the flag lowered before computing so a change made meanwhile is not lost. The server runs it
+  every minute. The list only reads the column: `open=free-today` is a plain condition (`next_free_at` still ahead and on the
+  shop's local today) and the card's « prochain créneau » is the stored time; the shop page still computes live. **Stale window:**
+  at most one sweep interval (a minute) after a change, and a shop never swept yet (new, or just migrated) is not « free today »
+  until its first sweep. `open_week` is by days (today counts whole), so it only moves at the day change.
+- **Latency target:** p95 < 200 ms server-side for the combined query on the dev dataset and on 20 000 shops, free-today included now that it is stored (it was p95 < 400 ms with the slot engine, which missed: 0.9 to 1.7 s cold for 30 shops); the PR of slice 2 carries the `EXPLAIN` plans and a timing script.
 - **Later, only if Postgres is not enough** (facets over 100 000 shops, typo tolerance beyond trigrams): Meilisearch or
   Typesense behind a port; not now (cost, operations, a second source of truth).
 
@@ -216,6 +222,15 @@ is changed, so a map with zero configuration is good.
 6. A `@krizaka/query/url` facade (Decision 2) — slice 3.
 
 Each: meta, stories, tests, docs on ui.krizaka.com, released; then the Akinaza slice consumes it.
+
+## Deviations found while building slice 2 (akinaza#574, PR #580)
+
+1. **`earthdistance` is not used**: it is not a *trusted* extension (no `trusted = true` in its control file; `pg_trgm`, `unaccent`, `cube` are), so the application role cannot create it. The position is a core `point` with a GiST index; the box prefilters, a haversine decides and orders.
+2. **Offset, not keyset cursor** (`offset` + `next`): a page is at most 200 and the order (name or distance) is stable; keyset waits for a list that outgrows it.
+3. **Default `limit` is 200**, what the endpoint served before, so the current page keeps working; the filter bar (slice 5) asks for 30.
+4. **Service type and price band are not in the schema yet**: a service has a name, not a type (the text search covers service names) and shops have no price band; they wait for the admin service-type list (slice 8).
+5. **Open now / this week count a person**: a shop is open when someone's own window is open and that person is not off that day (the rule of `isOpenNow`, per person); « this week » is by local days.
+6. **Free today is stored, not computed per request** (the amendment of Decision 4 above), with a sweep and a stale window of a minute.
 
 ## Consequences
 

@@ -7,7 +7,7 @@ import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 import { exploreQuerySchema } from "@akinaza/core";
-import { createDb, exploreSearch, exploreStatement, forgetFreeToday, migrate, pg } from "@akinaza/db";
+import { createDb, exploreSearch, exploreStatement, migrate, pg, settleAvailability } from "@akinaza/db";
 import { PgDialect } from "drizzle-orm/pg-core";
 
 const server = process.env.PLAN_PG;
@@ -56,19 +56,25 @@ try {
     "near 3 km": { near: [-73.58, 45.5], within: 3, limit: 30 },
     "bbox of the viewport": { bbox: [-73.62, 45.47, -73.55, 45.52], limit: 30 },
     "combined: text + open now + near 10 km": { q: "salon", open: "now", near: [-73.58, 45.5], within: 10, limit: 30 },
-    "free-today (with the slot engine)": { open: "free-today", near: [-73.58, 45.5], within: 3, limit: 30 },
+    "free-today (stored)": { open: "free-today", near: [-73.58, 45.5], within: 3, limit: 30 },
   };
   const pct = (xs, p) => [...xs].sort((x, y) => x - y)[Math.min(xs.length - 1, Math.floor(xs.length * p))].toFixed(1);
   const time = async (fn) => { const s = performance.now(); const out = await fn(); return [performance.now() - s, out]; };
-  console.log("\nshape | SQL only p50/p95 ms | page cold (slot engine) p50/p95 ms | page warm (answers kept) p50/p95 ms | rows");
+  // The sweep fills the stored availability (what the server's tick does): the whole set once, then a day change.
+  const sweep = async (at) => { let n = 0, k; const s = performance.now(); while ((k = await settleAvailability(db, at, 500)) > 0) n += k; return `${n} shops in ${((performance.now() - s) / 1000).toFixed(1)} s`; };
+  console.log("first sweep:", await sweep(NOW));
+  if (process.env.SKIP_DAY_CHANGE !== "1") {
+    console.log("day-change sweep:", await sweep(new Date(NOW.getTime() + 86_400_000)), "(then back to NOW)");
+    await sweep(NOW);
+  }
+  console.log("\nshape | SQL only p50/p95 ms | page p50/p95 ms (first run is cold: plan and pages not cached) | rows");
   for (const [label, raw] of Object.entries(shapes)) {
     const query = exploreSearchQuery(raw);
-    const sqlOnly = [], cold = [], warm = [];
+    const sqlOnly = [], page = [];
     let rows = 0;
     for (let i = 0; i < RUNS; i++) sqlOnly.push((await time(() => db.execute(exploreStatement(query, NOW).statement)))[0]);
-    for (let i = 0; i < RUNS; i++) { forgetFreeToday(); const [ms, page] = await time(() => exploreSearch(db, query, NOW)); cold.push(ms); rows = page.shops.length; }
-    for (let i = 0; i < RUNS; i++) warm.push((await time(() => exploreSearch(db, query, NOW)))[0]);
-    console.log(`${label} | ${pct(sqlOnly, 0.5)} / ${pct(sqlOnly, 0.95)} | ${pct(cold, 0.5)} / ${pct(cold, 0.95)} | ${pct(warm, 0.5)} / ${pct(warm, 0.95)} | ${rows}`);
+    for (let i = 0; i < RUNS; i++) { const [ms, result] = await time(() => exploreSearch(db, query, NOW)); page.push(ms); rows = result.shops.length; }
+    console.log(`${label} | ${pct(sqlOnly, 0.5)} / ${pct(sqlOnly, 0.95)} | ${pct(page, 0.5)} / ${pct(page, 0.95)} | ${rows}`);
   }
   const { statement } = exploreStatement(exploreSearchQuery(shapes[process.env.PLAN_SHAPE ?? "combined: text + open now + near 10 km"]), NOW);
   const { sql: text, params } = new PgDialect().sqlToQuery(statement);

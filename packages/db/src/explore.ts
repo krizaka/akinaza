@@ -4,15 +4,23 @@ import { and, type SQL, sql } from "drizzle-orm";
 import type { Db } from "./client";
 import { listSlots } from "./service-shop";
 
-// @fixed: a shop's « free slot today » is read from its first services only, each one query
+// @fixed: a shop's « next free time » is read from its first services only, each one query
 const SERVICES_CHECKED = 3;
-// @fixed: how many shops' free times are computed at once (the slot engine is the one costly fact)
+// @fixed: how many shops' free times the sweep computes at once (the slot engine is the one costly fact)
 const SLOT_CONCURRENCY = 8;
+// @fixed: how many local days ahead the stored « next free time » looks, and what « open this week » means
+const AHEAD_DAYS = 7;
+// @fixed: the most rows one sweep settles; the rest wait for the next tick
+const SETTLE_BATCH = 200;
 const EARTH_RADIUS_M = 6_371_000;
 const KM_PER_DEGREE = 111.32;
 
 /** What an Explorer page answers: the shops (with their distance from `near`, when given) and where the next page starts. */
-export type ExploreShopResult = ExploreShop & { distanceMeters: number | null };
+export type ExploreShopResult = ExploreShop & {
+  distanceMeters: number | null;
+  /** The shop's next bookable time as the sweep stored it (« prochain créneau »); the shop page computes the live one. */
+  nextFreeAt: string | null;
+};
 export interface ExplorePage { shops: ExploreShopResult[]; next: number | null }
 
 /** The shop's local clock at `now`, in SQL: the instant is a bound value (the injected clock), the zone is the shop's own. */
@@ -26,14 +34,16 @@ const openNowSql = (now: Date) => sql`EXISTS (
     AND sc.starts_at <= ${localNow(now)}::time AND ${localNow(now)}::time < sc.ends_at
     AND NOT EXISTS (SELECT 1 FROM days_off d WHERE d.staff_id = st.id AND d.on_date = ${localNow(now)}::date))`;
 
-/** A window still to come in the next `days` local days (today counts only until its window ends), not a day off. */
+/** The shop has a weekly window on one of the next `days` local days (today whole), not a day off: « open this week » is by days, so it moves only at the day change. */
 const windowAheadSql = (now: Date, days: number) => sql`EXISTS (
   SELECT 1 FROM generate_series(0, ${days - 1}) k
   CROSS JOIN LATERAL (SELECT ${localNow(now)}::date + k AS day) x
   JOIN staff st ON st.shop_id = s.shop_id AND st.active
   JOIN schedules sc ON sc.staff_id = st.id AND sc.weekday = EXTRACT(dow FROM x.day)::int
-  WHERE (k > 0 OR sc.ends_at > ${localNow(now)}::time)
-    AND NOT EXISTS (SELECT 1 FROM days_off d WHERE d.staff_id = st.id AND d.on_date = x.day))`;
+  WHERE NOT EXISTS (SELECT 1 FROM days_off d WHERE d.staff_id = st.id AND d.on_date = x.day))`;
+
+/** The stored next free time is still ahead and falls on the shop's local today. */
+const freeTodaySql = (now: Date) => sql`(s.next_free_at > ${now.toISOString()}::timestamptz AND (s.next_free_at AT TIME ZONE s.timezone)::date = ${localNow(now)}::date)`;
 
 /** Haversine distance in metres from `origin` to the shop's position (null when the shop has none). */
 const distanceSql = ([lng, lat]: readonly [number, number]) => sql`(2 * ${EARTH_RADIUS_M} * asin(sqrt(least(1,
@@ -61,9 +71,9 @@ export function compileExplore(query: ExploreQuery, now: Date): CompiledExplore 
   }
   if (query.kinds) conditions.push(sql`s.kind IN (${sql.join(query.kinds.map((k) => sql`${k}`), sql`, `)})`);
   if (query.open === "now") conditions.push(openNowSql(now));
-  if (query.open === "week") conditions.push(windowAheadSql(now, 7));
-  // The free time itself is read after (the slot engine); here only the shops with a window left today are candidates.
-  if (query.open === "free-today") conditions.push(windowAheadSql(now, 1));
+  // Both read what the sweep stored (`settleAvailability`): the slot engine never runs on the list path.
+  if (query.open === "week") conditions.push(sql`s.open_week`);
+  if (query.open === "free-today") conditions.push(freeTodaySql(now));
   if (query.bbox) {
     const [w, south, e, n] = query.bbox;
     conditions.push(sql`s.pt <@ box(point(${w}, ${south}), point(${e}, ${n}))`);
@@ -82,51 +92,64 @@ export function compileExplore(query: ExploreQuery, now: Date): CompiledExplore 
 
 interface Row extends Record<string, unknown> {
   shop_id: string; slug: string; name: string; kind: ExploreShop["kind"]; area: string | null; tagline_fr: string | null; tagline_en: string | null;
-  timezone: string; quartiers: string[]; lat: number | null; lng: number | null; open_now: boolean; window_left: boolean; distance_m: number | null;
+  timezone: string; quartiers: string[]; lat: number | null; lng: number | null; open_now: boolean; free_today: boolean; next_free_at: string | null; distance_m: number | null;
 }
 
-/** Runs `work` over `items`, at most `size` at a time, keeping the order. */
-async function inBatches<T, R>(items: readonly T[], size: number, work: (item: T) => Promise<R>): Promise<R[]> {
-  const out: R[] = [];
-  for (let i = 0; i < items.length; i += size) out.push(...(await Promise.all(items.slice(i, i + size).map(work))));
-  return out;
+/** Runs `work` over `items`, at most `size` at a time. */
+async function inBatches<T>(items: readonly T[], size: number, work: (item: T) => Promise<void>): Promise<void> {
+  for (let i = 0; i < items.length; i += size) await Promise.all(items.slice(i, i + size).map(work));
 }
 
-// @fixed: the answers kept at most; the oldest go first
-const FREE_TODAY_KEPT = 5_000;
-const freeTodayCache = new Map<string, boolean>();
-
-/** Forgets the remembered answers (a test starts clean). */
-export function forgetFreeToday(): void { freeTodayCache.clear(); }
-
-/** Does the shop have a free time today? The services are tried in order, the first free one answers; the answer is kept for the clock minute it was read in (ADR-006 decision 4: the slot engine is the one costly fact of the page). */
-async function freeToday(db: Db, shopId: string, timezone: string, now: Date): Promise<boolean> {
-  const today = new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
-  const key = `${shopId}|${today}|${now.toISOString().slice(0, 16)}`; // the given clock's minute: the clock is injected, never read here
-  const kept = freeTodayCache.get(key);
-  if (kept !== undefined) return kept;
+/** The first time a client could book at the shop within the next days (the earliest of its first services), null = none. */
+async function nextFreeTime(db: Db, shopId: string, now: Date): Promise<Date | null> {
   const rows = (await db.execute(sql`SELECT id FROM services WHERE shop_id = ${shopId} AND active ORDER BY duration_minutes, name_en LIMIT ${SERVICES_CHECKED}`)).rows as { id: string }[];
-  let free = false;
-  for (const s of rows) {
-    free = await listSlots(db, { shopId, serviceId: s.id, zoneId: null, now, days: 1, fromDay: today }).then((slots) => slots.length > 0, () => false);
-    if (free) break;
+  let first: Date | null = null;
+  for (const service of rows) {
+    const slots = await listSlots(db, { shopId, serviceId: service.id, zoneId: null, now, days: AHEAD_DAYS }).catch(() => []);
+    const at = slots[0]?.startsAt;
+    if (at && (!first || at < first)) first = at;
   }
-  if (freeTodayCache.size >= FREE_TODAY_KEPT) freeTodayCache.delete(freeTodayCache.keys().next().value!);
-  freeTodayCache.set(key, free);
-  return free;
+  return first;
+}
+
+/**
+ * The sweep (ADR-006 decision 4, CTO decision on akinaza#574): recomputes the stored availability of the rows that are due, at the
+ * injected clock. A row is due when something it depends on changed (a trigger raised `avail_stale`: booking, hours, day off, rule,
+ * service, calendar), when its shop's local day moved on, or when the stored time has passed. The flag is lowered before the
+ * computing, so a change made meanwhile raises it again and the next sweep redoes the shop. Rows are leased (`SKIP LOCKED`), so
+ * several instances never do the same shop. Returns how many shops were settled.
+ */
+export async function settleAvailability(db: Db, now: Date, batch: number = SETTLE_BATCH): Promise<number> {
+  const at = now.toISOString();
+  const claimed = (await db.execute(sql`
+    UPDATE shop_search u SET avail_stale = false
+     WHERE u.shop_id IN (
+       SELECT q.shop_id FROM shop_search q
+        WHERE q.avail_stale OR q.avail_day IS DISTINCT FROM (${at}::timestamptz AT TIME ZONE q.timezone)::date
+           OR q.avail_at > ${at}::timestamptz OR (q.next_free_at IS NOT NULL AND q.next_free_at <= ${at}::timestamptz)
+        ORDER BY q.avail_stale DESC, q.shop_id
+        LIMIT ${batch} FOR UPDATE SKIP LOCKED)
+    RETURNING u.shop_id`)).rows as { shop_id: string }[];
+  await inBatches(claimed, SLOT_CONCURRENCY, async ({ shop_id: shopId }) => {
+    const free = await nextFreeTime(db, shopId, now);
+    await db.execute(sql`
+      UPDATE shop_search s SET next_free_at = ${free ? free.toISOString() : null}::timestamptz,
+             open_week = ${windowAheadSql(now, AHEAD_DAYS)}, avail_day = ${localNow(now)}::date, avail_at = ${at}::timestamptz
+       WHERE s.shop_id = ${shopId}`);
+  });
+  return claimed.length;
 }
 
 /** The SELECT of one page, as the SQL that runs (exported so the plan script explains exactly it). */
 export function exploreStatement(query: ExploreQuery, now: Date): { statement: SQL; fetched: number } {
   const { conditions, distance } = compileExplore(query, now);
-  // « A free time today » is known only after the slot engine: read three pages' worth of candidates, keep the free ones.
-  const fetched = query.open === "free-today" ? query.limit * 3 : query.limit;
-  // The page is chosen first (filters, order, limit on the indexed read model); only its few shops get the per-row facts (open now, a window left today).
+  const fetched = query.limit;
+  // The page is chosen first (filters, order, limit on the indexed read model); only its few shops get the per-row fact (open now).
   const statement = sql`
-    SELECT s.shop_id, s.slug, s.name, s.kind, s.area, s.tagline_fr, s.tagline_en, s.timezone, s.quartiers, s.lat, s.lng, s.distance_m,
-           ${openNowSql(now)} AS open_now, ${windowAheadSql(now, 1)} AS window_left
+    SELECT s.shop_id, s.slug, s.name, s.kind, s.area, s.tagline_fr, s.tagline_en, s.timezone, s.quartiers, s.lat, s.lng, s.distance_m, s.next_free_at, ${freeTodaySql(now)} AS free_today,
+           ${openNowSql(now)} AS open_now
     FROM (
-      SELECT s.shop_id, s.slug, s.name, s.kind, s.area, s.tagline_fr, s.tagline_en, s.timezone, s.quartiers, s.lat, s.lng,
+      SELECT s.shop_id, s.slug, s.name, s.kind, s.area, s.tagline_fr, s.tagline_en, s.timezone, s.quartiers, s.lat, s.lng, s.next_free_at,
              ${distance ?? sql`NULL::float8`} AS distance_m
       FROM shop_search s
       WHERE ${and(...conditions)}
@@ -139,8 +162,7 @@ export function exploreStatement(query: ExploreQuery, now: Date): { statement: S
 export async function exploreSearch(db: Db, query: ExploreQuery, now: Date): Promise<ExplorePage> {
   const { statement, fetched } = exploreStatement(query, now);
   const rows = (await db.execute(statement)).rows as Row[];
-  const candidates = rows.slice(0, fetched);
-  const built = await inBatches(candidates, SLOT_CONCURRENCY, async (r): Promise<ExploreShopResult> => ({
+  const shops = rows.slice(0, fetched).map((r): ExploreShopResult => ({
     slug: r.slug,
     name: r.name,
     kind: r.kind,
@@ -150,11 +172,10 @@ export async function exploreSearch(db: Db, query: ExploreQuery, now: Date): Pro
     quartiers: r.quartiers,
     point: r.lat !== null && r.lng !== null ? [r.lng, r.lat] : null,
     openNow: r.open_now,
-    // No window left today = nothing to look up; otherwise the slot engine decides.
-    freeToday: r.window_left && (await freeToday(db, r.shop_id, r.timezone, now)),
+    freeToday: r.free_today,
+    nextFreeAt: r.next_free_at === null ? null : new Date(r.next_free_at).toISOString(),
     distanceMeters: r.distance_m === null ? null : Math.round(r.distance_m),
   }));
-  const shops = (query.open === "free-today" ? built.filter((s) => s.freeToday) : built).slice(0, query.limit);
   return { shops, next: rows.length > fetched ? query.offset + fetched : null };
 }
 

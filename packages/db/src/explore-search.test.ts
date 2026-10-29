@@ -2,9 +2,10 @@ import { exploreQuerySchema, type ExploreQuery } from "@akinaza/core";
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { exploreSearch, forgetFreeToday } from "./explore";
-import { daysOff, services, shopZones, shops, staff } from "./schema";
+import { exploreSearch, settleAvailability } from "./explore";
+import { appointments, busyIntervals, calendarConnections, daysOff, schedules, services, shopRules, shopZones, shops, staff } from "./schema";
 import { addZone } from "./service-shop";
+import { book } from "./shop-ops";
 import { freshDatabase } from "./test/db";
 import { NOW, studioShop, walkerShop } from "./test/fixtures";
 
@@ -17,7 +18,13 @@ const SAT = new Date("2026-10-24T14:00:00Z");
 let t: Awaited<ReturnType<typeof freshDatabase>>;
 let walker: Awaited<ReturnType<typeof walkerShop>>;
 let studio: Awaited<ReturnType<typeof studioShop>>;
-const ask = async (query: Partial<Record<keyof ExploreQuery, unknown>>, now = MON_10) => (await exploreSearch(t.db, exploreQuerySchema.parse(query), now)).shops.map((s) => s.slug);
+// The stored availability is read by the list; the sweep that fills it runs first, at the same clock (as the server's tick does).
+const search = async (query: Partial<Record<keyof ExploreQuery, unknown>>, now = MON_10) => {
+  await settleAvailability(t.db, now);
+  return exploreSearch(t.db, exploreQuerySchema.parse(query), now);
+};
+const ask = async (query: Partial<Record<keyof ExploreQuery, unknown>>, now = MON_10) => (await search(query, now)).shops.map((s) => s.slug);
+const stale = async (shopId: string) => (await t.db.execute(sql`SELECT avail_stale FROM shop_search WHERE shop_id = ${shopId}`)).rows[0]!.avail_stale as boolean;
 
 beforeAll(async () => {
   t = await freshDatabase();
@@ -25,7 +32,6 @@ beforeAll(async () => {
   studio = await studioShop(t.db, "x");
   // Saint-Henri (the walker) and downtown (the studio, about 2.8 km away).
   await t.db.update(shopZones).set({ lat: 45.4797, lng: -73.5848 }).where(eq(shopZones.id, walker.zones.stHenri));
-  forgetFreeToday();
   const downtown = await addZone(t.db, studio.shopId, "Centre-ville");
   await t.db.update(shopZones).set({ lat: 45.5017, lng: -73.5673 }).where(eq(shopZones.id, downtown));
 });
@@ -63,7 +69,7 @@ describe("Explorer's combined search (real PostgreSQL)", () => {
     expect(await ask({ open: "now" }, SAT)).toEqual([]);
   });
 
-  it("open this week looks at the next 7 local days, and today counts only until its window ends", async () => {
+  it("open this week looks at the next 7 local days (today whole), by day", async () => {
     expect(await ask({ open: "week" }, SAT)).toEqual(["pattes-x", "studio-x"]); // Monday is two days away
     expect(await ask({ open: "week" }, MON_16)).toEqual(["pattes-x", "studio-x"]); // the walker opens again tomorrow
   });
@@ -119,10 +125,10 @@ describe("Explorer's combined search (real PostgreSQL)", () => {
   });
 
   it("keeps a free-today search to the shops that really have a free time", async () => {
-    const free = await exploreSearch(t.db, exploreQuerySchema.parse({ open: "free-today" }), MON_10);
+    const free = await search({ open: "free-today" }, MON_10);
     expect(free.shops.length).toBeGreaterThan(0);
     expect(free.shops.every((s) => s.freeToday)).toBe(true);
-    expect((await exploreSearch(t.db, exploreQuerySchema.parse({ open: "free-today" }), SAT)).shops).toEqual([]);
+    expect((await search({ open: "free-today" }, SAT)).shops).toEqual([]);
   });
 
   it("the read model follows every writer: a rename, a new service, an unpublish and a deleted area", async () => {
@@ -143,12 +149,73 @@ describe("Explorer's combined search (real PostgreSQL)", () => {
     expect(json).not.toMatch(/Notre-Dame|rue Exemple|legalName|ownerId|gstNumber|qstNumber|address/);
   });
 
-  it("keeps a shop's free-today answer for the clock minute it was read in, then asks the slot engine again", async () => {
-    forgetFreeToday();
-    const free = async (now: Date) => (await exploreSearch(t.db, exploreQuerySchema.parse({ q: "studio" }), now)).shops[0]!.freeToday;
-    expect(await free(MON_10)).toBe(true);
-    await t.db.update(services).set({ active: false }).where(eq(services.shopId, studio.shopId)); // the studio sells nothing any more
-    expect(await free(new Date("2026-10-19T14:00:30Z"))).toBe(true); // the same minute: remembered
-    expect(await free(new Date("2026-10-19T14:01:01Z"))).toBe(false); // the next minute: asked again
+  it("stores each shop's next free time and answers the list from it, without the slot engine (free today, the time, the shop's own day)", async () => {
+    const page = await search({ q: "studio" }, MON_10);
+    expect(page.shops[0]!.freeToday).toBe(true);
+    expect(new Date(page.shops[0]!.nextFreeAt!).getTime()).toBeGreaterThanOrEqual(MON_10.getTime());
+    expect(new Date(page.shops[0]!.nextFreeAt!).getTime()).toBeLessThan(MON_21.getTime());
+    // Saturday: closed, the next time is Monday: stored, not « free today ».
+    const sat = (await search({ q: "studio" }, SAT)).shops[0]!;
+    expect(sat.freeToday).toBe(false);
+    expect(sat.nextFreeAt).toMatch(/^2026-10-26T/);
+  });
+
+  it("a changed answer waits for the sweep (the stale window), then follows: a day off, the services, the day change and the passing time", async () => {
+    const [member] = await t.db.select().from(staff).where(eq(staff.shopId, studio.shopId));
+    expect((await search({ q: "studio" }, MON_10)).shops[0]!.freeToday).toBe(true);
+    expect(await stale(studio.shopId)).toBe(false);
+    await t.db.insert(daysOff).values({ staffId: member!.id, onDate: "2026-10-19", reason: "test" });
+    expect(await stale(studio.shopId)).toBe(true);
+    // Before the sweep the list still says what was stored; the sweep settles it.
+    expect((await exploreSearch(t.db, exploreQuerySchema.parse({ q: "studio" }), MON_10)).shops[0]!.freeToday).toBe(true);
+    expect(await settleAvailability(t.db, MON_10)).toBeGreaterThanOrEqual(1);
+    expect(await stale(studio.shopId)).toBe(false);
+    const off = (await search({ q: "studio" }, MON_10)).shops[0]!;
+    expect(off.freeToday).toBe(false);
+    expect(off.nextFreeAt).toMatch(/^2026-10-20T/); // tomorrow
+    await t.db.delete(daysOff).where(eq(daysOff.staffId, member!.id));
+    // The day changes with no event at all: Tuesday's sweep moves the stored time to Tuesday.
+    const tuesday = new Date("2026-10-20T14:00:00Z");
+    const next = (await search({ q: "studio" }, tuesday)).shops[0]!;
+    expect(next.freeToday).toBe(true);
+    expect(next.nextFreeAt!.slice(0, 10)).toBe("2026-10-20");
+    // The stored time passes (after the last window): due again, no longer free today.
+    const evening = new Date("2026-10-20T22:00:00Z");
+    expect((await search({ q: "studio" }, evening)).shops[0]!.freeToday).toBe(false);
+    // The studio sells nothing any more.
+    await t.db.update(services).set({ active: false }).where(eq(services.shopId, studio.shopId));
+    expect((await search({ q: "studio" }, tuesday)).shops[0]!.nextFreeAt).toBeNull();
+    await t.db.update(services).set({ active: true }).where(eq(services.shopId, studio.shopId));
+  });
+
+  it("every writer that moves the answer raises the flag: a booking and its cancellation, hours, a day off, a rule, a person, a service and a calendar", async () => {
+    const [member] = await t.db.select().from(staff).where(eq(staff.shopId, studio.shopId));
+    const [service] = await t.db.select().from(services).where(eq(services.shopId, studio.shopId));
+    const settled = async () => { await settleAvailability(t.db, MON_10); expect(await stale(studio.shopId)).toBe(false); };
+    const raises = async (label: string, change: () => Promise<unknown>) => {
+      await settled();
+      await change();
+      expect(await stale(studio.shopId), label).toBe(true);
+    };
+    let appointmentId = "";
+    await raises("a booking", async () => { appointmentId = (await book(t.db, { shopId: studio.shopId, staffId: member!.id, serviceId: service!.id, startsAt: new Date("2026-10-21T15:00:00Z") })).id; });
+    await raises("a cancellation", () => t.db.update(appointments).set({ status: "cancelled" }).where(eq(appointments.id, appointmentId)));
+    await raises("hours", () => t.db.insert(schedules).values({ staffId: member!.id, weekday: 6, startsAt: "10:00", endsAt: "12:00" }));
+    await raises("a day off", () => t.db.insert(daysOff).values({ staffId: member!.id, onDate: "2026-11-02", reason: "test" }));
+    await raises("a rule", () => t.db.update(shopRules).set({ minNoticeMinutes: 90 }).where(eq(shopRules.shopId, studio.shopId)));
+    await raises("a service", () => t.db.update(services).set({ durationMinutes: 45 }).where(eq(services.id, service!.id)));
+    await raises("a person", () => t.db.update(staff).set({ active: true }).where(eq(staff.id, member!.id)));
+    const [connection] = await t.db.insert(calendarConnections).values({ shopId: studio.shopId, kind: "ics", label: "Agenda", secretEnc: "x", consentTextVersion: "v1", consentedAt: MON_10 }).returning();
+    await raises("a calendar's busy time", () => t.db.insert(busyIntervals).values({ connectionId: connection!.id, shopId: studio.shopId, staffId: null, during: "[2026-10-22T14:00:00Z,2026-10-22T15:00:00Z)" }));
+    await t.db.delete(schedules).where(eq(schedules.weekday, 6));
+    await t.db.delete(daysOff).where(eq(daysOff.staffId, member!.id));
+    await t.db.update(shopRules).set({ minNoticeMinutes: 120 }).where(eq(shopRules.shopId, studio.shopId));
+  });
+
+  it("two sweeps at once never settle the same shop twice (leased), and a change made while computing is not lost", async () => {
+    await t.db.execute(sql`UPDATE shop_search SET avail_stale = true`);
+    const [a, b] = await Promise.all([settleAvailability(t.db, MON_10), settleAvailability(t.db, MON_10)]);
+    expect(a + b).toBe(1); // one published shop left: it is settled once, by one of the two
+    expect(await settleAvailability(t.db, MON_10)).toBe(0);
   });
 });
