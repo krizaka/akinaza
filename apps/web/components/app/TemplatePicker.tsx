@@ -42,9 +42,8 @@ export function TemplatePicker({ data, shopId }: Readonly<{ data: TemplateChoice
       {chosen ? (
         <div className="flex flex-col gap-3">
           {update ? <p className="m-0 text-sm text-fg-secondary">{say("shopSetup.templates.updateLead", { version: chosen.version })}</p> : null}
-          {isCurrent ? (
-            <p className="m-0 text-sm text-fg-secondary">{say("shopSetup.templates.isCurrent")}</p>
-          ) : data.sectionsCustom ? (
+          {isCurrent && <p className="m-0 text-sm text-fg-secondary">{say("shopSetup.templates.isCurrent")}</p>}
+          {!isCurrent && (data.sectionsCustom ? (
             <>
               <p className="m-0 text-sm text-fg-secondary">{say("shopSetup.templates.customNote")}</p>
               <div className="flex flex-wrap gap-2">
@@ -54,7 +53,7 @@ export function TemplatePicker({ data, shopId }: Readonly<{ data: TemplateChoice
             </>
           ) : (
             <Button size="md" variant="primary" className="self-start" disabled={call.pending} onClick={() => void apply()}>{say(`shopSetup.templates.${words.one}`, vars)}</Button>
-          )}
+          ))}
         </div>
       ) : null}
       {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}

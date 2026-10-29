@@ -58,7 +58,8 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
   };
   // A count on the day and on the invoices, said in words with the place's name; nothing for a zero.
   const badgeOf = (key: AppPlace) => {
-    const n = key === "today" ? counts.today : key === "invoices" ? counts.toCollect : undefined;
+    const counted: Partial<Record<AppPlace, number>> = { today: counts.today, invoices: counts.toCollect };
+    const n = counted[key];
     return n ? { badge: n, badgeLabel: say(key === "today" ? "shell.badges.today" : "shell.badges.toCollect", { count: n }) } : {};
   };
   const sections: FrameSection[] = places.map(({ key, href }) => ({ id: key, label: say(`shell.${key}`), href, icon: ICONS[key], ...badgeOf(key) }));

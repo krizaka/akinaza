@@ -9,6 +9,8 @@ import { useCallback, useRef, useState } from "react";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { useI18n, useSay } from "@/lib/i18n-client";
 
+const VERSION_WORDS: Record<string, string> = { draft: "composerPanel.versionDraft", published: "composerPanel.versionPublished" };
+
 export interface ComposerVersion {
   version: number;
   status: "draft" | "published" | "archived";
@@ -113,7 +115,7 @@ export function ShopComposerPanel({ draft, published, accent, accents, presets, 
   if (!canWrite) return <p className="m-0 rounded-lg border border-border-default p-4 text-sm text-fg-secondary">{say("composerPanel.readOnly")}</p>;
 
   const offered = accents[current.preset.id] ?? [];
-  const named = (version: ComposerVersion) => say(version.status === "draft" ? "composerPanel.versionDraft" : version.status === "published" ? "composerPanel.versionPublished" : "composerPanel.versionArchived");
+  const named = (version: ComposerVersion) => say(VERSION_WORDS[version.status] ?? "composerPanel.versionArchived");
   return (
     <div ref={root} className="flex min-w-0 flex-col gap-4">
       <section aria-label={say("composerPanel.accent")} className="flex flex-col gap-2">
