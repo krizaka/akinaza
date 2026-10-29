@@ -4,6 +4,8 @@
 # The browsers are installed and cached by node-ci (`playwright: chromium`).
 set -euo pipefail
 export NODE_ENV=production
+# The app's declared public origin (landingRedirect requires it in production: never read from the request's Host).
+export APP_PUBLIC_URL=http://localhost:3000
 # CI-only secrets, generated for this run (never a literal: gitleaks scans the repository).
 export AUTH_SESSION_SECRET="$(openssl rand -hex 32)"
 export APP_DATA_ENCRYPTION_KEY="$(openssl rand -base64 32)"

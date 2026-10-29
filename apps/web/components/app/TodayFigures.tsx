@@ -9,7 +9,7 @@ import { FiguresPanel } from "./FiguresPanel";
 export const TODAY_FIGURES = ["toCollect", "appointments", "noShows"] as const satisfies readonly FigureId[];
 
 /** The figure cards of Today (#260): the same explained figures as the books, a heading above, nothing fetched here. */
-export function TodayFigures({ figures, locale, routes, timeZone, now }: { figures: Record<FigureId, Figure>; locale: Locale; routes: ShopRoutes; timeZone: string; now: string }) {
+export function TodayFigures({ figures, locale, routes, timeZone, now }: Readonly<{ figures: Record<FigureId, Figure>; locale: Locale; routes: ShopRoutes; timeZone: string; now: string }>) {
   const t = getDictionary(locale).console.figures;
   return (
     <section aria-labelledby="today-figures" className="flex flex-col gap-2" data-testid="today-figures">

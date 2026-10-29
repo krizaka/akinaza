@@ -19,7 +19,7 @@ const settingsForm = createKrizakaForm({
   defaultValues: { message: "", fromName: "", copy: false, linkDays: 30 },
 });
 
-export function InvoiceMailSettings({ initial }: { initial: { message: string; fromName: string | null; copy: boolean; linkDays: number } }) {
+export function InvoiceMailSettings({ initial }: Readonly<{ initial: { message: string; fromName: string | null; copy: boolean; linkDays: number } }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const form = settingsForm.useForm({

@@ -22,7 +22,7 @@ const toolbar = (filename: string) => (
 );
 
 /** The accounts: who, role, state, memberships, last seen; searchable, filterable, exportable. */
-export function UsersTable({ users }: { users: AdminUser[] }) {
+export function UsersTable({ users }: Readonly<{ users: AdminUser[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo<DataTableColumn<AdminUser>[]>(
     () => [
@@ -37,7 +37,7 @@ export function UsersTable({ users }: { users: AdminUser[] }) {
   return <DataTable caption={say("admin.users.caption")} rows={users} columns={columns} getRowId={(u) => u.id} rowLabel={(u) => u.email} defaultPageSize={25} defaultSort={{ column: "lastSeenAt", direction: "descending" }} toolbar={toolbar("akinaza-users.csv")} />;
 }
 
-export function ShopsTable({ shops }: { shops: AdminShop[] }) {
+export function ShopsTable({ shops }: Readonly<{ shops: AdminShop[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo<DataTableColumn<AdminShop>[]>(
     () => [
@@ -55,7 +55,7 @@ export function ShopsTable({ shops }: { shops: AdminShop[] }) {
 }
 
 /** Invoices with their taxes and what the ledger holds for each: a difference is shown in red. */
-export function InvoicesTable({ invoices }: { invoices: AdminInvoice[] }) {
+export function InvoicesTable({ invoices }: Readonly<{ invoices: AdminInvoice[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo<DataTableColumn<AdminInvoice>[]>(
     () => [
@@ -75,7 +75,7 @@ export function InvoicesTable({ invoices }: { invoices: AdminInvoice[] }) {
 }
 
 /** The ledger against the invoices, per shop and month. */
-export function LedgerTable({ checks }: { checks: LedgerCheck[] }) {
+export function LedgerTable({ checks }: Readonly<{ checks: LedgerCheck[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo<DataTableColumn<LedgerCheck>[]>(
     () => [
@@ -93,7 +93,7 @@ export function LedgerTable({ checks }: { checks: LedgerCheck[] }) {
 }
 
 /** The audit log: sortable, filterable by action, exportable. */
-export function AuditTable({ entries }: { entries: AuditEntry[] }) {
+export function AuditTable({ entries }: Readonly<{ entries: AuditEntry[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo<DataTableColumn<AuditEntry>[]>(
     () => [

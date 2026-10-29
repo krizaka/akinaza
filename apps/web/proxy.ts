@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+import { HOST_FREE_PATHS, isAllowedHost } from "./lib/allowed-hosts";
 import { contentSecurityPolicy, isShopPath, newNonce, upgradesInsecure } from "./lib/csp";
 import { type HostRoute, isAdminHost, routeFor, shopOfHost } from "./lib/host";
 import { CLOSED_ROBOTS, closedRobots, devRedirect, indexableOn, isDevHost, NOINDEX } from "./lib/indexing";
@@ -35,6 +36,8 @@ export function proxy(request: NextRequest) {
   const host = request.headers.get("host");
   const closed = !indexableOn(host);
   const pathname = request.nextUrl.pathname;
+  // ADR-005 slice 4 (#536): a host this deployment does not serve is answered 421 before anything is routed or built from it (the platform's health check names its own).
+  if (!HOST_FREE_PATHS.includes(pathname) && !isAllowedHost(host, process.env)) return new NextResponse("Misdirected Request", { status: 421, headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });
   // dev.<product>.com (APP_DEV_HOST): robots.txt closes everything; a page goes to www (308); the API, .well-known and
   // healthz keep serving - all noindex. Nothing below runs for it.
   if (isDevHost(host)) {

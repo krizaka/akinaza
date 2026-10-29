@@ -9,7 +9,7 @@ import { useSay } from "@/lib/i18n-client";
  * A page of the signed-in space that failed to load (Today, Clients, Invoices, Books... or the shop layout above them): the settle pattern. A calm sentence and
  * one action; the error's own words (message, digest, stack) never reach the screen.
  */
-export function PageError({ reset }: { reset: () => void }) {
+export function PageError({ reset }: Readonly<{ reset: () => void }>) {
   const { say } = useSay();
   return (
     <div role="alert" className="flex flex-col gap-4">

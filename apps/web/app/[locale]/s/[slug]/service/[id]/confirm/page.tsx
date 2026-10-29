@@ -23,7 +23,7 @@ export const metadata: Metadata = { robots: { index: false, follow: false } };
  * Step 4 of the one booking path (akinaza#381): service → person → time → confirm. The sign-in happens here, at the last step, and the person
  * comes back to it with the service, the person, the area and the time still chosen in the address.
  */
-export default async function ConfirmPage({ params, searchParams }: { params: Promise<{ locale: string; slug: string; id: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+export default async function ConfirmPage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; slug: string; id: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }>) {
   const { locale: raw, slug, id } = await params;
   const query = await searchParams;
   const locale = asLocale(raw);

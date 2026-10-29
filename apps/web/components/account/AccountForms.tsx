@@ -16,7 +16,7 @@ import { useSay } from "@/lib/i18n-client";
 const forgot = createKrizakaForm({ schema: z.object({ email: z.string().trim().min(1).email() }), defaultValues: { email: "" } });
 
 /** `minutes`: how long the link lives, the administrator's setting read by the page. */
-export function ForgotForm({ minutes }: { minutes: number }) {
+export function ForgotForm({ minutes }: Readonly<{ minutes: number }>) {
   const { say, locale } = useSay();
   const [sent, setSent] = useState(false);
   const [problem, setProblem] = useState<string | null>(null);
@@ -47,7 +47,7 @@ export function ForgotForm({ minutes }: { minutes: number }) {
 
 const reset = createKrizakaForm({ schema: z.object({ password: z.string().min(1).max(256) }), defaultValues: { password: "" } });
 
-export function ResetForm({ token, signInHref }: { token: string; signInHref: string }) {
+export function ResetForm({ token, signInHref }: Readonly<{ token: string; signInHref: string }>) {
   const { say, locale } = useSay();
   const router = useRouter();
   const [problem, setProblem] = useState<string | null>(null);

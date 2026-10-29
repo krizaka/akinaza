@@ -28,7 +28,7 @@ const modeOf = (themeId: string): "light" | "dark" | "system" => (themeId === "l
  * System, Light, Dark and the optional Blueprint and Carbone surfaces, never the Cahier papers (those are the public shop pages'). A choice
  * applies at once; the mode is saved on the account, the language reloads the page in it. Akinaza keeps its own accent (no accent row), and no sound.
  */
-export function PreferencesSettings({ preferences }: { preferences: PreferencesView }) {
+export function PreferencesSettings({ preferences }: Readonly<{ preferences: PreferencesView }>) {
   const { say } = useSay();
   const router = useRouter();
   const state = useAppearance();

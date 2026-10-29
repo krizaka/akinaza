@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /** A shop's public page: the cover, the services as cards, the next free times (the real availability), the hours, the areas on a map, who you will meet, the way in. */
-export default async function ShopPage({ params, searchParams }: { params: Promise<{ locale: string; slug: string }>; searchParams: Promise<{ look?: string }> }) {
+export default async function ShopPage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; slug: string }>; searchParams: Promise<{ look?: string }> }>) {
   const { locale: raw, slug } = await params;
   const { look } = await searchParams;
   const content = asPageLocale(raw);

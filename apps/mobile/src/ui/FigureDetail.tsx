@@ -14,7 +14,7 @@ const ACCOUNTANT = new Set<string>(LEXICON.filter((term) => term.accountant).map
  * One figure opened (`figures?figure=<id>`): its value and state, what it means, how it is computed here, where it comes from,
  * how fresh it is, and the lexique's words it uses — the same wording as the web's console (`console.lexicon`).
  */
-export function FigureDetail({ figure, now, onBack }: { figure: FigureAnswer; now: string; onBack: () => void }) {
+export function FigureDetail({ figure, now, onBack }: Readonly<{ figure: FigureAnswer; now: string; onBack: () => void }>) {
   const { t: typed } = useI18n();
   const t = typed as unknown as Say;
   const { locale } = useLocale();

@@ -19,7 +19,7 @@ export const generateMetadata = titleOf("clients");
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
 
 /** The shop's clients on the catalogue template (D5): the plan strip, the search and the filters in the address, the rows with their state and « Facturer ». */
-export default async function Clients({ params: routeParams, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+export default async function Clients({ params: routeParams, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }>) {
   const { locale: rawLocale, shop: shopId } = await routeParams;
   const locale = asLocale(rawLocale);
   const { shop, session, role } = await memberShop(shopId, "clients");

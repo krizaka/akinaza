@@ -104,7 +104,8 @@ export function clockLabel(clock: string, locale: Locale): string {
   const m = clock.slice(3, 5);
   if (locale === "fr") return m === "00" ? `${h}${NBSP}h` : `${h}${NBSP}h${NBSP}${m}`;
   const h12 = h % 12 === 0 ? 12 : h % 12;
-  return `${h12}${m === "00" ? "" : `:${m}`} ${h < 12 ? "am" : "pm"}`;
+  const minutes = m === "00" ? "" : `:${m}`;
+  return `${h12}${minutes} ${h < 12 ? "am" : "pm"}`;
 }
 
 const lang = (locale: Locale) => (locale === "fr" ? "fr-CA" : "en-CA");

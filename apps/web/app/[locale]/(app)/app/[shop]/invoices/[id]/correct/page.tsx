@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export const generateMetadata = titleOf("invoices");
 
 /** « Modifier » an issued invoice: its lines prefilled; confirming credits the original and issues the replacement (#207). */
-export default async function CorrectInvoicePage({ params }: { params: Promise<{ locale: string; shop: string; id: string }> }) {
+export default async function CorrectInvoicePage({ params }: Readonly<{ params: Promise<{ locale: string; shop: string; id: string }> }>) {
   const { locale: raw, shop: shopId, id } = await params;
   const locale = asLocale(raw);
   if (!z.string().uuid().safeParse(id).success) notFound();
