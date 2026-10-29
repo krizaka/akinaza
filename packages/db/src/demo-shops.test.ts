@@ -94,11 +94,11 @@ describe("the demo shops use the proposed images (#267)", () => {
 
 describe("the demo shops each wear a template of their trade (#261, step 6)", () => {
   it("has the template applied at its latest version, in the template's order, and a second run keeps it", async () => {
-    const { latestTemplate } = await import("@akinaza/core");
+    const { latestTemplate, TEMPLATES, TEMPLATES_V2 } = await import("@akinaza/core");
     const { sectionsFromTemplate, shopPageConfigOf } = await import("./shop-page");
     expect(DEMO_SHOPS.map((d) => d.template)).toEqual(["salon-vitrine", "workshop-histoire", "consulting-carte"]);
     for (const demo of DEMO_SHOPS) {
-      const template = latestTemplate(demo.template)!;
+      const template = latestTemplate(demo.template, [...TEMPLATES, ...TEMPLATES_V2])!;
       expect(template.shopTypes, demo.template).toContain(demo.shopType);
       const page = (await publicShop(t.db, demo.shop.slug))!;
       const config = await shopPageConfigOf(t.db, page.shop.id);
