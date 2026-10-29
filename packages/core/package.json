@@ -15,11 +15,12 @@
   "dependencies": {
     "@date-fns/tz": "^1.5.0",
     "@krizaka/brief": "0.1.0",
-    "@krizaka/org": "^0.3.1",
     "@krizaka/intl": "0.3.0",
+    "@krizaka/org": "^0.3.1",
     "@krizaka/tokens": "^3.70.0",
     "@krizaka/ui": "^3.70.0",
     "date-fns": "^4.4.0",
+    "safe-regex2": "^5.1.2",
     "zod": "^4.6.5"
   },
   "devDependencies": {

@@ -75,3 +75,17 @@ describe("the protected shop-address terms (ADR-005 slice 4, #537)", () => {
     expect(holdSlug("pattes-saint-henri", terms).held).toBe(false);
   });
 });
+
+describe("the console saves only safe protected terms (#537)", () => {
+  const schema = SETTINGS["slugs.protectedTerms"].schema;
+  it("accepts words, comments and a safe pattern", () => {
+    expect(schema.safeParse("# brands\npaypal\n/^bank(ing)?$/").success).toBe(true);
+  });
+  it("refuses a pattern that does not compile, a ReDoS pattern and a word with a space", () => {
+    expect(schema.safeParse("/(unclosed/").success).toBe(false);
+    expect(schema.safeParse("/(a+)+$/").success).toBe(false);
+    expect(schema.safeParse("/(a|aa)+$/").success).toBe(false);
+    expect(schema.safeParse("pay pal").success).toBe(false);
+  });
+});
+

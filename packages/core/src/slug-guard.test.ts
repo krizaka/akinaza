@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { foldLookalikes, holdSlug, parseProtectedTerms } from "./slug-guard";
+import { foldLookalikes, holdSlug, parseProtectedTerms, protectedTermsIssues } from "./slug-guard";
 
 const TERMS = parseProtectedTerms(["# brands", "desjardins", "paypal", "", "# lure terms", "login", "verify", "secure", "/^bank(ing)?$/", "/pass-?wo?rd/"].join("\n")).terms;
 
@@ -55,5 +55,32 @@ describe("holdSlug: a slug that wears a protected word is held for review, never
   it("matches across hyphens (pay-pal) but a regex anchored on the whole slug does not match a longer one", () => {
     expect(holdSlug("pay-pal", TERMS).held).toBe(true);
     expect(holdSlug("the-bank-of-me", TERMS).held).toBe(false);
+  });
+});
+
+describe("protectedTermsIssues (the console's save check, #537)", () => {
+  it("accepts words, comments and safe patterns", () => {
+    expect(protectedTermsIssues("# brands\npaypal\nl0gin\n/^bank(ing)?$/\n/pass-?wo?rd/")).toEqual([]);
+  });
+  it("refuses a pattern that does not compile, with the line number", () => {
+    expect(protectedTermsIssues("login\n/(unclosed/")).toEqual([{ line: 2, text: "/(unclosed/", reason: "invalid" }]);
+  });
+  it("refuses a pattern that can backtrack catastrophically (ReDoS), and never runs it", () => {
+    expect(protectedTermsIssues("/(a+)+$/\n/(x*)*y/\n/(a|aa)+$/")).toEqual([
+      { line: 1, text: "/(a+)+$/", reason: "unsafe" },
+      { line: 2, text: "/(x*)*y/", reason: "unsafe" },
+      { line: 3, text: "/(a|aa)+$/", reason: "unsafe" },
+    ]);
+  });
+  it("refuses a pattern longer than 100 characters", () => {
+    expect(protectedTermsIssues(`/${"a".repeat(101)}/`)).toEqual([{ line: 1, text: `/${"a".repeat(101)}/`, reason: "too-long" }]);
+  });
+  it("refuses a word the slug could never contain", () => {
+    expect(protectedTermsIssues("pay pal\nok-word\nUPPER")).toEqual([{ line: 1, text: "pay pal", reason: "word" }]);
+  });
+  it("parseProtectedTerms drops an unsafe pattern too, so a stored one cannot run", () => {
+    const { terms, invalid } = parseProtectedTerms("/(a+)+$/\nlogin");
+    expect(terms.map((t) => t.source)).toEqual(["login"]);
+    expect(invalid).toEqual(["/(a+)+$/"]);
   });
 });
