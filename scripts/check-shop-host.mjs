@@ -19,6 +19,11 @@ function ask(base, host, path, headers = {}) {
   });
 }
 
+/** A line of the report as one printable line: what a server answered (a header, a body) never forges a log line (Sonar S5145, log injection). */
+export function printable(text) {
+  return String(text).replace(/[\r\n]/g, "_").replace(/[^\x20-\x7e]/g, "?");
+}
+
 /** The problems of a shop's page on its own host: pure, so each rule is tested without a server. */
 export function shopPageProblems(answer, { origin, appOrigin }) {
   const problems = [];
@@ -87,9 +92,9 @@ async function main() {
   const stranger = await ask(base, `${slug}.${domain}.evil.example`, "/fr");
   expect(stranger.status === 421, `a look-alike host answered ${stranger.status}`);
 
-  console.log(`check-shop-host: ${slug} on ${shopHost}, 9 requests`);
+  console.log(`check-shop-host: ${printable(slug)} on ${printable(shopHost)}, 9 requests`);
   if (problems.length) {
-    console.error(`${problems.length} problem(s):\n${problems.map((p) => `  ${p}`).join("\n")}`);
+    console.error(`${problems.length} problem(s):\n${problems.map((p) => `  ${printable(p)}`).join("\n")}`);
     process.exit(1);
   }
 }

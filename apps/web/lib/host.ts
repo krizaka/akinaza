@@ -79,30 +79,39 @@ function hostedRoute(host: string | null | undefined, pathname: string, site: st
   return isAdminHost(host) ? null : oldPathRoute(pathname, hosting);
 }
 
-export function routeFor(host: string | null | undefined, pathname: string, preferred: "en" | "fr", site = SITE_URL, hosting: ShopHosting | null = null): HostRoute {
-  const hosted = hosting ? hostedRoute(host, pathname, site, hosting) : null;
-  if (hosted) return hosted;
-  const shop = shopOfHost(host, new URL(site).hostname.replace(/^www\./, ""));
-  const locale = LOCALE.exec(pathname)?.[1] ?? (SPANISH_STOREFRONT.test(pathname) || (shop && pathname === "/es") ? "es" : undefined);
-  if (shop) {
-    // The shop page at the root (the short address stays in the bar), its journey as it links it, everything else on www.
-    if (pathname === "/robots.txt") return { kind: "robotsClosed" };
-    if (pathname === "/" || (locale && pathname === `/${locale}`)) return { kind: "rewrite", path: `/${locale ?? preferred}/s/${shop}` };
-    const rest = locale ? pathname.slice(locale.length + 1) : "";
-    if (rest === `/s/${shop}` || rest.startsWith(`/s/${shop}/`)) return { kind: "next" };
-    return { kind: "redirect", path: new URL(pathname, site).toString() };
-  }
-  if (isAdminHost(host)) {
-    if (pathname === "/robots.txt") return { kind: "robotsClosed" };
-    if (pathname === "/sitemap.xml" || pathname === "/llms.txt") return { kind: "notFound" };
-    if (!locale) return { kind: "redirect", path: `/${preferred}${pathname === "/" ? "" : pathname}` };
-    const rest = pathname.slice(locale.length + 1);
-    if (rest === "/console" || rest.startsWith("/console/")) return { kind: "redirect", path: `/${locale}${rest.slice("/console".length)}` };
-    return { kind: "rewrite", path: `/${locale}/console${rest}` };
-  }
+/** `<slug>.<apex>` (the short address): the shop page at the root, its journey as it links it, everything else on www. */
+function shortShopRoute(shop: string, locale: string | undefined, pathname: string, preferred: "en" | "fr", site: string): HostRoute {
+  if (pathname === "/robots.txt") return { kind: "robotsClosed" };
+  if (pathname === "/" || (locale && pathname === `/${locale}`)) return { kind: "rewrite", path: `/${locale ?? preferred}/s/${shop}` };
+  const rest = locale ? pathname.slice(locale.length + 1) : "";
+  if (rest === `/s/${shop}` || rest.startsWith(`/s/${shop}/`)) return { kind: "next" };
+  return { kind: "redirect", path: new URL(pathname, site).toString() };
+}
+
+/** `admin.*`: the console, served at the root of the host; no sitemap, no llms.txt. */
+function adminRoute(locale: string | undefined, pathname: string, preferred: "en" | "fr"): HostRoute {
+  if (pathname === "/robots.txt") return { kind: "robotsClosed" };
+  if (pathname === "/sitemap.xml" || pathname === "/llms.txt") return { kind: "notFound" };
+  if (!locale) return { kind: "redirect", path: `/${preferred}${pathname === "/" ? "" : pathname}` };
+  const rest = pathname.slice(locale.length + 1);
+  if (rest === "/console" || rest.startsWith("/console/")) return { kind: "redirect", path: `/${locale}${rest.slice("/console".length)}` };
+  return { kind: "rewrite", path: `/${locale}/console${rest}` };
+}
+
+/** The app's own host: its files, the locale prefix, and no console (it lives on the admin host). */
+function appHostRoute(locale: string | undefined, pathname: string, preferred: "en" | "fr"): HostRoute {
   if (pathname === "/robots.txt" || pathname === "/sitemap.xml" || pathname === "/llms.txt") return { kind: "next" };
   if (!locale) return { kind: "redirect", path: `/${preferred}${pathname === "/" ? "" : pathname}` };
   const rest = pathname.slice(locale.length + 1);
   if (rest === "/console" || rest.startsWith("/console/")) return { kind: "notFound" };
   return { kind: "next" };
+}
+
+export function routeFor(host: string | null | undefined, pathname: string, preferred: "en" | "fr", site = SITE_URL, hosting: ShopHosting | null = null): HostRoute {
+  const hosted = hosting ? hostedRoute(host, pathname, site, hosting) : null;
+  if (hosted) return hosted;
+  const shop = shopOfHost(host, new URL(site).hostname.replace(/^www\./, ""));
+  const locale = LOCALE.exec(pathname)?.[1] ?? (SPANISH_STOREFRONT.test(pathname) || (shop && pathname === "/es") ? "es" : undefined);
+  if (shop) return shortShopRoute(shop, locale, pathname, preferred, site);
+  return isAdminHost(host) ? adminRoute(locale, pathname, preferred) : appHostRoute(locale, pathname, preferred);
 }

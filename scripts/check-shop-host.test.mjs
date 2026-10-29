@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { leadsTo, shopPageProblems } from "./check-shop-host.mjs";
+import { leadsTo, printable, shopPageProblems } from "./check-shop-host.mjs";
 
 const ctx = { origin: "https://salon.akinaza.shop", appOrigin: "https://www.akinaza.com" };
 const good = {
@@ -35,5 +35,12 @@ describe("check-shop-host", () => {
     expect(leadsTo(answer("/fr/s/salon/service/1/confirm?slot=9"), target, { listenOrigin: "http://localhost:3001" })).toBe(false);
     expect(leadsTo(answer("https://evil.example/fr/s/salon/service/1/confirm?slot=9"), target, { listenOrigin: "https://www.akinaza.com" })).toBe(false);
     expect(leadsTo(answer(target, 307), target)).toBe(false);
+  });
+});
+
+describe("printable (a server's answer never forges a line of the report)", () => {
+  it("keeps one line of plain characters", () => {
+    expect(printable("script-src 'self'")).toBe("script-src 'self'");
+    expect(printable("a\r\nFAIL: forged\u001b[31m")).toBe("a__FAIL: forged?[31m");
   });
 });

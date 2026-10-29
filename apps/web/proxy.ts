@@ -123,27 +123,35 @@ function serve(request: NextRequest, closed: boolean, ownShopHost: boolean): Nex
       break;
     case "notFound":
       return new NextResponse("Not found", { status: 404, headers: admin ? { "x-robots-tag": "noindex, nofollow" } : {} });
-    case "redirect": {
-      // The public host, not the platform's internal one: admin.akinaza.com stays admin.akinaza.com.
-      const proto = request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol.replace(":", "");
-      const target = new URL(route.path, host ? `${proto}://${host}` : request.url);
-      // A move of the shop domain keeps the query and answers 308 (the booking hop and the old addresses); the others keep their 307.
-      if (route.permanent) target.search = request.nextUrl.search;
-      return NextResponse.redirect(target, route.permanent ? { status: 308, headers: { "x-robots-tag": NOINDEX } } : undefined);
-    }
+    case "redirect":
+      return redirectOf(request, route, host);
     case "rewrite":
       response = NextResponse.rewrite(new URL(route.path, request.url), { request: { headers: forwarded } });
       break;
     default:
       response = NextResponse.next({ request: { headers: forwarded } });
   }
+  return dressed(response, request, { csp, noindex: admin || closed || shopHost, noStore: ownShopHost });
+}
+
+/** A redirect on the public host, not the platform's internal one: admin.akinaza.com stays admin.akinaza.com. */
+function redirectOf(request: NextRequest, route: Extract<HostRoute, { kind: "redirect" }>, host: string | null): NextResponse {
+  const proto = request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol.replace(":", "");
+  const target = new URL(route.path, host ? `${proto}://${host}` : request.url);
+  // A move of the shop domain keeps the query and answers 308 (the booking hop and the old addresses); the others keep their 307.
+  if (route.permanent) target.search = request.nextUrl.search;
+  return NextResponse.redirect(target, route.permanent ? { status: 308, headers: { "x-robots-tag": NOINDEX } } : undefined);
+}
+
+/** What every served response wears: the language of its address in a cookie, no index where the page is not for search, no shared cache on a shop's host, the policy. */
+function dressed(response: NextResponse, request: NextRequest, { csp, noindex, noStore }: { csp: string; noindex: boolean; noStore: boolean }): NextResponse {
   const segment = request.nextUrl.pathname.split("/")[1];
   if ((segment === "en" || segment === "fr") && request.cookies.get(LOCALE_COOKIE)?.value !== segment) {
     response.cookies.set(ownCookie(LOCALE_COOKIE, segment, { httpOnly: false, maxAge: 60 * 60 * 24 * 365 }));
   }
-  if (admin || closed || shopHost) response.headers.set("x-robots-tag", NOINDEX);
+  if (noindex) response.headers.set("x-robots-tag", NOINDEX);
   // The page of a shop is for one request: never shared from a cache whose key could lose the host (ADR-005 §3).
-  if (ownShopHost) response.headers.set("cache-control", "private, no-store");
+  if (noStore) response.headers.set("cache-control", "private, no-store");
   response.headers.set("Content-Security-Policy", csp);
   return response;
 }
