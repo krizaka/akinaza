@@ -10,7 +10,7 @@ import { useSay } from "@/lib/i18n-client";
 import { budgetShare } from "@/lib/operations-shared";
 
 /** What an operator reads to know whether Akinaza is well: the database budget, and whether the tax ledger still agrees with the invoices. */
-export function OperationsView({ ops }: { ops: Operations }) {
+export function OperationsView({ ops }: Readonly<{ ops: Operations }>) {
   const { say } = useSay();
   const t = (key: string, vars?: Record<string, string | number>) => say(`admin.operations.${key}`, vars);
   const bad = (n: number) => <Badge tone={n > 0 ? "danger" : "success"}>{n}</Badge>;

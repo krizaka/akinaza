@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /** « Add a shop »: one more shop for the account of the person working in this one. */
-export default async function NewShopPage({ params }: { params: Promise<{ locale: string; shop: string }> }) {
+export default async function NewShopPage({ params }: Readonly<{ params: Promise<{ locale: string; shop: string }> }>) {
   const { locale: raw, shop: shopId } = await params;
   const locale = asLocale(raw);
   const { session } = await memberShop(shopId, "settings");

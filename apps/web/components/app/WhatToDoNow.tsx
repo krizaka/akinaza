@@ -12,7 +12,7 @@ import type { ShopRoutes } from "@/lib/routes";
  * « Que faire maintenant » (#260): the two or three actions built from the shop's own rows, each with its reason and where it leads. The block asks
  * for at least two; one action is a card of its own, and none shows nothing (an empty shop is not given invented work).
  */
-export function WhatToDoNow({ actions, locale, routes }: { actions: readonly NextAction[]; locale: Locale; routes: ShopRoutes }) {
+export function WhatToDoNow({ actions, locale, routes }: Readonly<{ actions: readonly NextAction[]; locale: Locale; routes: ShopRoutes }>) {
   const t = getDictionary(locale).console.figures;
   const views = actions.map((a) => actionView(a, locale, routes));
   const toBlock = (v: (typeof views)[number]) => ({

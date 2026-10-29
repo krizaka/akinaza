@@ -37,7 +37,7 @@ type Row = AgendaItem & { appointment: TodayAppointment; visit: DayVisitView | n
  * The next step of a visit, one quiet button: start it, then finish it (the same calls as the walker's day). The step that
  * succeeded rings once on the button (`data-kz-status="success"`, motion.css, D11); nothing rings on the page's arrival.
  */
-function VisitAction({ appointment }: { appointment: TodayAppointment }) {
+function VisitAction({ appointment }: Readonly<{ appointment: TodayAppointment }>) {
   const { say } = useSay();
   const call = useCall();
   const [succeeded, setSucceeded] = useState(false);
@@ -103,7 +103,7 @@ function quickLinks({ board, newInvoiceHref, hasNext, publicPageHref, routes, sa
 }
 
 /** The day's one primary (D1b): open the next appointment; when nobody comes next, a new invoice. The frame's header yields here. */
-function DayPrimary({ next, nextHref, newInvoiceHref, time }: { next: { id: string; client: string | null; startsAt: string } | null; nextHref: string | null; newInvoiceHref: string | null; time: (iso: string) => string }) {
+function DayPrimary({ next, nextHref, newInvoiceHref, time }: Readonly<{ next: { id: string; client: string | null; startsAt: string } | null; nextHref: string | null; newInvoiceHref: string | null; time: (iso: string) => string }>) {
   const { say } = useSay();
   if (next && nextHref) {
     return (
@@ -129,7 +129,7 @@ function DayPrimary({ next, nextHref, newInvoiceHref, time }: { next: { id: stri
 }
 
 /** The activity of the period: one discreet row of three figures, never stacked full width (B2), and the period's chips. */
-function ActivityWidget({ board, totals, period, address }: { board: TodayBoard; totals: { invoiced: number; collected: number; appointments: number }; period: BoardPeriod; address: (next: DayAddressChange) => string }) {
+function ActivityWidget({ board, totals, period, address }: Readonly<{ board: TodayBoard; totals: { invoiced: number; collected: number; appointments: number }; period: BoardPeriod; address: (next: DayAddressChange) => string }>) {
   const { say, locale } = useSay();
   // The series are cents: the chart reads them as money (its text version said « 25,295 » for $252.95).
   const moneyFormat = (cents: number) => formatMoney(cents, locale);
@@ -168,7 +168,7 @@ function ActivityWidget({ board, totals, period, address }: { board: TodayBoard;
 }
 
 /** « À encaisser »: what is owed, and either what is late (with its meter) or the beaver's good news. */
-function BalanceWidget({ balance }: { balance: TodayBoard["balance"] }) {
+function BalanceWidget({ balance }: Readonly<{ balance: TodayBoard["balance"] }>) {
   const { say, locale } = useSay();
   const overdue = say("today.balance.overdue", { amount: formatMoney(balance.overdueCents, locale) });
   return (
@@ -215,7 +215,7 @@ function appointmentRow(a: TodayAppointment, visit: DayVisitView | null, ctx: { 
 }
 
 /** The strip of days: earlier, the ISO week and date, later, and back to today when another day is shown. */
-function DayNav({ day, today, address }: { day: string; today: string; address: (next: DayAddressChange) => string }) {
+function DayNav({ day, today, address }: Readonly<{ day: string; today: string; address: (next: DayAddressChange) => string }>) {
   const { say, locale } = useSay();
   return (
     <nav aria-label={say("today.calendar")} className="flex items-center gap-2">
@@ -236,7 +236,7 @@ function DayNav({ day, today, address }: { day: string; today: string; address: 
 }
 
 /** The binder's dividers: the day's appointments, what to bill, what to collect, the week. */
-function Binder({ board, count, invoicesHref, weekHref }: { board: TodayBoard; count: number; invoicesHref: string; weekHref: string }) {
+function Binder({ board, count, invoicesHref, weekHref }: Readonly<{ board: TodayBoard; count: number; invoicesHref: string; weekHref: string }>) {
   const { say } = useSay();
   return (
     <nav aria-label={say("today.glance.title")} className="flex flex-col gap-2">
@@ -253,7 +253,7 @@ function Binder({ board, count, invoicesHref, weekHref }: { board: TodayBoard; c
 }
 
 /** The column beside the agenda: the board's failure said in place, the quick accesses, the activity and « À encaisser ». */
-function SideColumn({ board, boardFailed, totals, quiet, quick, period, address }: { board: TodayBoard | null; boardFailed: boolean; totals: { invoiced: number; collected: number; appointments: number } | null; quiet: boolean; quick: { href: string; label: string }[]; period: BoardPeriod; address: (next: DayAddressChange) => string }) {
+function SideColumn({ board, boardFailed, totals, quiet, quick, period, address }: Readonly<{ board: TodayBoard | null; boardFailed: boolean; totals: { invoiced: number; collected: number; appointments: number } | null; quiet: boolean; quick: { href: string; label: string }[]; period: BoardPeriod; address: (next: DayAddressChange) => string }>) {
   const { say } = useSay();
   const shown = board !== null && !quiet;
   return (
@@ -279,7 +279,7 @@ function SideColumn({ board, boardFailed, totals, quiet, quick, period, address 
 }
 
 /** The side sheet of the open appointment: a walk shows its dogs and progress, any other its service, staff, price and state. */
-function DetailSheet({ open, timeZone, time, dogs, billing, clientHref }: { open: Row; timeZone: string; time: (iso: string) => string; dogs: (count: number) => string; billing: string | null; clientHref: string | null }) {
+function DetailSheet({ open, timeZone, time, dogs, billing, clientHref }: Readonly<{ open: Row; timeZone: string; time: (iso: string) => string; dogs: (count: number) => string; billing: string | null; clientHref: string | null }>) {
   const { say, locale } = useSay();
   const { appointment, visit } = open;
   return (
@@ -360,7 +360,7 @@ export interface TodayDayProps {
  * the dogs, the owners, the access notes, the start and the end, the report. The day (`?day=`) and the open appointment
  * (`?appointment=`) are in the address.
  */
-export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, allow, title, description, visits, banner, dependants, board, boardFailed = false, period, publicPageHref = null, newInvoiceHref = null }: TodayDayProps) {
+export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, allow, title, description, visits, banner, dependants, board, boardFailed = false, period, publicPageHref = null, newInvoiceHref = null }: Readonly<TodayDayProps>) {
   const { say, locale } = useSay();
   const router = useRouter();
   const routes = useShopRoutes();

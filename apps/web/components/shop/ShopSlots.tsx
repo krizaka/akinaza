@@ -26,7 +26,7 @@ const weekWords = (monday: string, locale: string) => {
  * The next free times, by week (`SlotPicker` with ← Today →) and by part of the day: each time a link to the booking with the service,
  * the area and the time already chosen. The server read two weeks; the weeks are cut here, on the days it returned.
  */
-export function ShopSlots({ days, labels, locale, footer }: { days: DayView[]; labels: ShopSlotsLabels; locale: string; footer?: string }) {
+export function ShopSlots({ days, labels, locale, footer }: Readonly<{ days: DayView[]; labels: ShopSlotsLabels; locale: string; footer?: string }>) {
   const first = days[0] ? mondayOf(days[0].id) : undefined;
   const last = days.length ? mondayOf(days[days.length - 1]!.id) : first;
   const [week, setWeek] = useState(first);

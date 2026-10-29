@@ -18,7 +18,7 @@ import { useSay } from "@/lib/i18n-client";
 import { formatDate } from "./format";
 
 /** One account and what an administrator does to it: suspend or restore, role, sessions, Law 25 export and erasure. */
-export function UserCard({ initial, self }: { initial: UserDetail; self: boolean }) {
+export function UserCard({ initial, self }: Readonly<{ initial: UserDetail; self: boolean }>) {
   const { say, locale } = useSay();
   const router = useRouter();
   const [user, setUser] = useState(initial);

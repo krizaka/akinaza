@@ -26,7 +26,7 @@ type Result = Partial<Record<"sent" | "pending" | "failed" | "skipped", number>>
  * seconds. The figures are the shop's own (its appointments, its invoices), the assumption written under them; nothing is sent
  * without a press. Today announces it with `BriefBanner`.
  */
-export function MondayBrief({ items, done, services, publicPage }: { items: BriefCard[]; done: Record<string, Result>; services: Record<string, { fr: string; en: string }>; publicPage: boolean }) {
+export function MondayBrief({ items, done, services, publicPage }: Readonly<{ items: BriefCard[]; done: Record<string, Result>; services: Record<string, { fr: string; en: string }>; publicPage: boolean }>) {
   const { say, locale } = useSay();
   const money = (cents: number) => formatMoney(cents, locale);
   return (
@@ -44,7 +44,7 @@ export function MondayBrief({ items, done, services, publicPage }: { items: Brie
   );
 }
 
-function BriefItem({ item, done, serviceName, publicPage, money }: { item: BriefCard; done: Result | null; serviceName: string; publicPage: boolean; money: (c: number) => string }) {
+function BriefItem({ item, done, serviceName, publicPage, money }: Readonly<{ item: BriefCard; done: Result | null; serviceName: string; publicPage: boolean; money: (c: number) => string }>) {
   const { say } = useSay();
   const routes = useShopRoutes();
   const f = item.figures;
@@ -84,7 +84,7 @@ function BriefItem({ item, done, serviceName, publicPage, money }: { item: Brief
   );
 }
 
-function InviteButton({ id, invitees, done, publicPage }: { id: string; invitees: number; done: Result | null; publicPage: boolean }) {
+function InviteButton({ id, invitees, done, publicPage }: Readonly<{ id: string; invitees: number; done: Result | null; publicPage: boolean }>) {
   const { say } = useSay();
   const { run, pending, problem } = useCall();
   const [result, setResult] = useState<Result | null>(done);

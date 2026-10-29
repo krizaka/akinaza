@@ -60,7 +60,7 @@ function tabCount(t: ClientFileTab, counts: { invoices: number; visits: number; 
 }
 
 /** A list of the file under its heading: the table, or the sentence saying there is nothing yet. */
-function ListSection({ id, title, empty, children }: { id: string; title: string; empty: string | null; children: React.ReactNode }) {
+function ListSection({ id, title, empty, children }: Readonly<{ id: string; title: string; empty: string | null; children: React.ReactNode }>) {
   return (
     <section aria-labelledby={id} className="flex flex-col gap-3">
       <h2 id={id} className="text-lg font-semibold text-fg">{title}</h2>
@@ -77,7 +77,7 @@ function visitSummary(visits: Visit[], now: number) {
 }
 
 /** The line under the name: phone, e-mail, since when, and the client's tags with their editor for who may organise. */
-function ClientMeta({ client, timeZone, tags, organize }: { client: ClientFilePanelProps["file"]["client"]; timeZone: string; tags: NonNullable<ClientFilePanelProps["tags"]>; organize: ClientFilePanelProps["organize"] }) {
+function ClientMeta({ client, timeZone, tags, organize }: Readonly<{ client: ClientFilePanelProps["file"]["client"]; timeZone: string; tags: NonNullable<ClientFilePanelProps["tags"]>; organize: ClientFilePanelProps["organize"] }>) {
   const { say, locale } = useSay();
   const parts = [
     client.phone ? (
@@ -111,7 +111,7 @@ function ClientMeta({ client, timeZone, tags, organize }: { client: ClientFilePa
   );
 }
 
-export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, notes, tab, today, organize, tags = [] }: ClientFilePanelProps) {
+export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, notes, tab, today, organize, tags = [] }: Readonly<ClientFilePanelProps>) {
   const { say, locale } = useSay();
   const routes = useShopRoutes();
   const labels = useTableLabels();

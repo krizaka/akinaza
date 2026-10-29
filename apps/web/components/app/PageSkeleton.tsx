@@ -18,7 +18,7 @@ const Rows = ({ count, height = "h-12" }: { count: number; height?: string }) =>
  * and two columns; a list's heading, strip, filters and rows; a file's header and sections — so nothing shifts when it arrives.
  * Never a full-page spinner; the skeletons stand still under reduced motion (@krizaka/ui).
  */
-export function PageSkeleton({ kind }: { kind: "day" | "list" | "detail" }) {
+export function PageSkeleton({ kind }: Readonly<{ kind: "day" | "list" | "detail" }>) {
   const { say } = useSay();
   const busy = { "aria-busy": true, "aria-label": say("states.loading") } as const;
   if (kind === "day")

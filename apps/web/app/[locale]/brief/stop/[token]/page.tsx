@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false }, referrer: "no-referrer" };
 
 /** « Ne plus recevoir le point du lundi »: one sentence, one button (a POST — opening the link changes nothing). */
-export default async function StopBriefPage({ params }: { params: Promise<{ locale: string; token: string }> }) {
+export default async function StopBriefPage({ params }: Readonly<{ params: Promise<{ locale: string; token: string }> }>) {
   const { locale: raw, token } = await params;
   const locale = asLocale(raw);
   // A link that leads nowhere is a 404, never a page that looks alive (akinaza#381).

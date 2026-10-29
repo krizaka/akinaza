@@ -13,7 +13,7 @@ export type InvoiceView = NonNullable<Awaited<ReturnType<typeof invoiceDetail>>>
  * is due, its payment terms and due date (krizaka/akinaza#113: a buyer needs them from $500, DORS/91-45 art. 3).
  * Each label and its value are plain text, so the document reads the same as a PDF text layer or a screen reader.
  */
-export function InvoiceDocument({ invoice, locale, backHref, heading: Heading = "h1" }: { invoice: InvoiceView; locale: Locale; backHref?: string; /** `h2` inside a page whose `h1` is the invoice's number (DetailLayout). */ heading?: "h1" | "h2" }) {
+export function InvoiceDocument({ invoice, locale, backHref, heading: Heading = "h1" }: Readonly<{ invoice: InvoiceView; locale: Locale; backHref?: string; /** `h2` inside a page whose `h1` is the invoice's number (DetailLayout). */ heading?: "h1" | "h2" }>) {
   const t = getDictionary(invoice.language).console.invoiceDoc;
   const back = getDictionary(locale).console.invoices.back;
   const lang = INTL_LOCALE[invoice.language];

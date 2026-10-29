@@ -48,7 +48,7 @@ export interface ShopFrameProps {
  * where the page holds its own (`screenPrimary`); the page's `h1` is in the content (`PageHeader`), never here. The administration
  * is `AppFrame.tsx`.
  */
-export function ShopFrame({ locale, account, places, shop, newInvoiceHref, search = false, counts = {}, dev = false, home, profileHref, children }: ShopFrameProps) {
+export function ShopFrame({ locale, account, places, shop, newInvoiceHref, search = false, counts = {}, dev = false, home, profileHref, children }: Readonly<ShopFrameProps>) {
   const { say } = useSay();
   const [searchOpen, setSearchOpen] = useState(false);
   const { path, account: who, language } = useFrameAccount({ locale, id: account.id, email: account.email, name: account.name, avatarSeed: account.avatarSeed, profileHref });

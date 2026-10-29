@@ -18,7 +18,7 @@ async function reachable(run: () => Promise<unknown>): Promise<boolean> {
 }
 
 /** Health (version, database, realtime) and the counts — read on the server at each visit. */
-export default async function AdminOverview({ params }: { params: Promise<{ locale: string }> }) {
+export default async function AdminOverview({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale).console.admin;
   const [o, db] = await Promise.all([overview(), reachable(() => query("SELECT 1"))]);

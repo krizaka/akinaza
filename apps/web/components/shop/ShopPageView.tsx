@@ -257,7 +257,7 @@ const renderSection = (section: Section, c: Ctx): ReactNode => SECTIONS[section.
  * team, hours, reviews) is the page's view, resolved by `buildStorefront`; the document says which sections, which variants and which settings. A section with nothing
  * to show is not drawn. The cover is the LCP (preloaded, a fixed ratio in the hero); every photo appears once (`planPhotos`); embeds stay behind their facade.
  */
-export function ShopPageView({ page, view, locale, accent, paper, today, nextTime }: ShopPageViewProps) {
+export function ShopPageView({ page, view, locale, accent, paper, today, nextTime }: Readonly<ShopPageViewProps>) {
   const t = translator(locale);
   const community = view.community;
   const pool: PhotoPool = {
