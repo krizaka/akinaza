@@ -125,7 +125,7 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
 // krizaka-ui#827: a signed-in visitor never sees the public landing page; the bar's hint flag follows the session cookie.
 describe("a signed-in visitor lands on their home, never on the landing page (krizaka-ui#827)", () => {
   const ask = (path: string, cookie?: string, host = "www.akinaza.com") => proxy(new NextRequest(`https://${host}${path}`, { headers: { host, ...(cookie ? { cookie } : {}) } }));
-  const goes = (res: Response) => (res.headers.get("location") ? new URL(res.headers.get("location")!).pathname : null);
+  const goes = (res: Response) => res.headers.get("location");
 
   it("/ , /fr and /en with the session cookie answer 307 to the home in the language, private and varying with the cookie", () => {
     for (const [path, home, cookie] of [
@@ -136,6 +136,7 @@ describe("a signed-in visitor lands on their home, never on the landing page (kr
     ] as const) {
       const res = ask(path, cookie);
       expect(res.status).toBe(307);
+      // Relative, never an origin: behind a proxy or in CI the server's idea of its own origin is not the browser's.
       expect(goes(res)).toBe(home);
       expect(res.headers.get("cache-control")).toBe("private, no-store");
       expect(res.headers.get("vary")).toBe("Cookie");

@@ -41,7 +41,12 @@ export function proxy(request: NextRequest) {
   const route = routeFor(host, request.nextUrl.pathname, chosen, site);
   const admin = isAdminHost(host);
   const home = admin ? null : landingRedirect(request, { cookie: SESSION_COOKIE, landing: LANDING, home: () => `/${pageLocaleOf(pathname, chosen)}/app` });
-  if (home) return home;
+  if (home) {
+    // Relative: the browser keeps the origin it asked (the library's absolute Location took the server's idea of its own origin: https://localhost in CI).
+    const target = new URL(home.headers.get("Location") ?? "/", request.url);
+    home.headers.set("Location", `${target.pathname}${target.search}`);
+    return home;
+  }
   // <slug>.akinaza.com shows a shop page that www also serves: never indexed twice.
   const shopHost = shopOfHost(host, new URL(site).hostname.replace(/^www\./, "")) !== null;
   // A deployment closed to search engines (APP_SEARCH_INDEXING=off): robots.txt disallows everything (the sitemap is still served, noindexed).
