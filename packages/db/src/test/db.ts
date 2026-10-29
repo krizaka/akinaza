@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
-import type { Socket } from "node:net";
 import { fileURLToPath } from "node:url";
 
+import { endPool } from "@krizaka/db/testing";
 import { inject } from "vitest";
 
 import { createDb, type Db, pg } from "../client";
@@ -39,21 +39,6 @@ export async function freshEmptyDatabase(): Promise<{ db: Db; pool: pg.Pool; dro
       await again.end();
     },
   };
-}
-
-/**
- * Ends a pool and waits until its sockets are really closed. `pool.end()` resolves once every client is asked to end, before the
- * server has closed its side: a `DROP DATABASE … WITH (FORCE)` right after kills a backend that is still there, the idle client
- * reads « terminating connection due to administrator command » (57P01) and the pool raises an uncaught error.
- */
-export async function endPool(pool: pg.Pool): Promise<void> {
-  const sockets = new Set<Promise<void>>();
-  for (const client of (pool as unknown as { _clients: { connection: { stream: Socket } }[] })._clients) {
-    const { stream } = client.connection;
-    if (!stream.destroyed) sockets.add(new Promise((resolve) => stream.once("close", () => resolve())));
-  }
-  await pool.end();
-  await Promise.all(sockets);
 }
 
 /** The message of the error a promise rejects with (PostgreSQL's RAISE text, or the app's). */
