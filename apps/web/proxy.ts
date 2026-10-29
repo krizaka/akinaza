@@ -41,13 +41,7 @@ export function proxy(request: NextRequest) {
   const route = routeFor(host, request.nextUrl.pathname, chosen, site);
   const admin = isAdminHost(host);
   const home = admin ? null : landingRedirect(request, { cookie: SESSION_COOKIE, landing: LANDING, home: () => `/${pageLocaleOf(pathname, chosen)}/app` });
-  if (home) {
-    // Next's proxy needs an absolute Location (it makes it relative itself when the origin matches). The origin is the one the browser asked: its Host and the proxy's
-    // x-forwarded-proto (http without it), never the server's idea of its own origin, which was https://localhost in CI (ERR_SSL_PROTOCOL_ERROR).
-    const target = new URL(home.headers.get("Location") ?? "/", `${request.headers.get("x-forwarded-proto") ?? "http"}://${host ?? request.nextUrl.host}`);
-    home.headers.set("Location", target.toString());
-    return home;
-  }
+  if (home) return home;
   // <slug>.akinaza.com shows a shop page that www also serves: never indexed twice.
   const shopHost = shopOfHost(host, new URL(site).hostname.replace(/^www\./, "")) !== null;
   // A deployment closed to search engines (APP_SEARCH_INDEXING=off): robots.txt disallows everything (the sitemap is still served, noindexed).
