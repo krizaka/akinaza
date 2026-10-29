@@ -5,6 +5,9 @@ const packageVersion = JSON.parse(readFileSync(new URL("./package.json", import.
 // package.json's version + the short commit DigitalOcean passes at build (APP_COMMIT_SHA): the version every page shows.
 const appVersion = process.env.APP_VERSION?.trim() || (process.env.APP_COMMIT_SHA ? `${packageVersion}+${process.env.APP_COMMIT_SHA.slice(0, 7)}` : packageVersion);
 const production = process.env.NODE_ENV === "production";
+// A deployment whose declared public origin is plain http (the CI server of the crawls) cannot take `upgrade-insecure-requests`: it would send a
+// redirect hop (a prefetch of the landing that lands on /app) to https, where nothing listens. Any https or undeclared origin keeps it.
+const plainHttp = (process.env.APP_PUBLIC_URL ?? "").startsWith("http://");
 
 /**
  * Content Security Policy: nothing but this origin — no third-party script or font, and a frame only for the three embed hosts, after a click. Next renders
@@ -29,7 +32,7 @@ const csp = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",
-  ...(production ? ["upgrade-insecure-requests"] : []),
+  ...(production && !plainHttp ? ["upgrade-insecure-requests"] : []),
 ].join("; ");
 
 const securityHeaders = [

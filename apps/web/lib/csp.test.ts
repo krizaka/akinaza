@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import nextConfig from "../next.config.mjs";
 
@@ -18,5 +18,28 @@ describe("the content security policy", async () => {
   });
   it("still refuses to be framed by anyone but itself", () => {
     expect(directive("frame-ancestors")).toEqual(["'self'"]);
+  });
+  it("upgrades insecure requests in production unless the declared public origin is plain http", async () => {
+    const cspWith = async (env: Record<string, string | undefined>) => {
+      const saved = { ...process.env };
+      for (const [k, v] of Object.entries(env)) {
+        if (v === undefined) delete process.env[k];
+        else process.env[k] = v;
+      }
+      try {
+        vi.resetModules();
+        const config = (await import("../next.config.mjs")).default;
+        const all = (await config.headers?.()) as { headers: { key: string; value: string }[] }[];
+        return all.flatMap((h) => h.headers).find((h) => h.key === "Content-Security-Policy")!.value;
+      } finally {
+        for (const k of Object.keys(env)) {
+          if (saved[k] === undefined) delete process.env[k];
+          else process.env[k] = saved[k];
+        }
+      }
+    };
+    expect(await cspWith({ NODE_ENV: "production", APP_PUBLIC_URL: "https://www.akinaza.com" })).toContain("upgrade-insecure-requests");
+    expect(await cspWith({ NODE_ENV: "production", APP_PUBLIC_URL: undefined })).toContain("upgrade-insecure-requests");
+    expect(await cspWith({ NODE_ENV: "production", APP_PUBLIC_URL: "http://localhost:3000" })).not.toContain("upgrade-insecure-requests");
   });
 });

@@ -50,6 +50,7 @@ jobs:
       env: |
         DATABASE_URL=postgresql://akinaza:ci-only-password@localhost:5432/akinaza
         DATABASE_IT=1
+        APP_PUBLIC_URL=http://localhost:3000
       playwright: chromium
       # SEO family contract on the built site, sign-up closed, no horizontal overflow (scripts/ci-after-build.sh).
       after-build: scripts/ci-after-build.sh
