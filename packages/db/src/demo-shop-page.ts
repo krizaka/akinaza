@@ -24,12 +24,15 @@ export interface DemoPage {
   starter: ShopStarterId;
   cover: Shot;
   gallery: Shot[];
+  /** The gallery composition this demo shows instead of its starter's (akinaza#481: the salon shows the mosaic, so the dev seed and the deployed demo draw it). */
+  galleryVariant?: "mosaic";
 }
 
 export const DEMO_PAGES: readonly DemoPage[] = [
   {
     slug: "cedre-ciseaux",
     starter: "salonCompact",
+    galleryVariant: "mosaic",
     cover: { url: photo("salon-cover", "dfc17581a8"), altFr: "Le salon, vu de la porte : trois fauteuils devant de grands miroirs", altEn: "The salon seen from the door: three chairs in front of big mirrors" },
     gallery: [
       { url: photo("salon-chair", "4df3bb0234"), altFr: "Un fauteuil de coiffure devant le miroir", altEn: "A hairdressing chair in front of the mirror", captionFr: "Le fauteuil", captionEn: "The chair" },
@@ -65,6 +68,7 @@ const media = (s: Shot, wide = false): MediaInput => ({ ...s, wide });
 export async function seedDemoPage(db: Db, shopId: string, demo: DemoPage): Promise<{ photos: number; published: boolean }> {
   await saveShopMedia(db, shopId, { cover: media(demo.cover, true), gallery: demo.gallery.map((g) => media(g)) });
   const target = structuredClone(shopStarters[demo.starter]);
+  if (demo.galleryVariant) for (const section of target.sections) if (section.type === "gallery") section.variant = demo.galleryVariant;
   const { page, version } = await publishedShopPage(db, shopId);
   if (version !== null && JSON.stringify(page) === JSON.stringify(target)) return { photos: demo.gallery.length + 1, published: false };
   await saveShopPageDraft(db, shopId, target, null);
