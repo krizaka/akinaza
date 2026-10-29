@@ -8,7 +8,7 @@ export APP_ENVIRONMENT=dev
 export APP_SEARCH_INDEXING=off
 export DATABASE_URL="postgresql://ci:ci-only-password@postgres:5432/ci"
 export AUTH_SESSION_SECRET=ci-only-session-secret-0123456789abcdef
-export APP_DATA_ENCRYPTION_KEY=Y2ktb25seS1kYXRhLWtleS0zMi1ieXRlcy0xMjM0NTY=
+export APP_DATA_ENCRYPTION_KEY="$(openssl rand -base64 32)" # a throwaway key per run: the database starts empty and is thrown away
 export PORT=3000
 pnpm --filter @akinaza/web build
 export NODE_ENV=production
