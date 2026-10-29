@@ -4,6 +4,7 @@ import { agendaScope, requireShop } from "@/lib/access";
 import { dayParam, queryOf } from "@/lib/day-param";
 import { db } from "@/lib/db";
 import { handle } from "@/lib/http";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export function GET(req: Request) {
   return handle(async () => {
     const { shop, role, session } = await requireShop(req, "agenda");
     const asked = queryOf(req).date;
-    const day = asked === undefined ? await shopDay(db(), shop.id, new Date()) : dayParam.parse(asked);
+    const day = asked === undefined ? await shopDay(db(), shop.id, requestNow()) : dayParam.parse(asked);
     return Response.json({ shopId: shop.id, timezone: shop.timezone, day, visits: await dayVisits(db(), shop.id, day, agendaScope(role, session.account.id)) }, { headers: { "Cache-Control": "private, no-store" } });
   });
 }

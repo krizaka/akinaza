@@ -42,6 +42,7 @@ import { team } from "@/lib/team";
 import { templateChoices } from "@/lib/template-choices";
 import { templateCatalogue, templateRules } from "@/lib/template-rules";
 import { translationRules } from "@/lib/translation-settings";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -113,7 +114,7 @@ async function CommunityTab({ shopId, tab }: Readonly<{ shopId: string; tab: "wa
   }
   if (tab === "board") {
     const flyers = await announcementsOf(db(), shop.id);
-    return <BoardEditor today={localDay(new Date(), shop.timezone)} flyers={flyers.map((f) => ({ id: f.id, textFr: f.textFr, textEn: f.textEn, photoUrl: f.photoUrl, endsOn: f.endsOn, createdAt: f.createdAt.toISOString() }))} />;
+    return <BoardEditor today={localDay(requestNow(), shop.timezone)} flyers={flyers.map((f) => ({ id: f.id, textFr: f.textFr, textEn: f.textEn, photoUrl: f.photoUrl, endsOn: f.endsOn, createdAt: f.createdAt.toISOString() }))} />;
   }
   const [reviews, rules] = await Promise.all([reviewsOf(db(), shop.id), reviewRules()]);
   const score = reviewScore(reviews, rules);
@@ -123,7 +124,7 @@ async function CommunityTab({ shopId, tab }: Readonly<{ shopId: string; tab: "wa
 /** Boutique › Langues: the languages on, each text in each of them (#258). */
 async function LanguagesSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   const { shop } = await memberShop(shopId, "settings");
-  const [rows, rules, used] = await Promise.all([translationRows(db(), shop.id), translationRules(), translationRunsOn(db(), shop.id, localDay(new Date(), shop.timezone))]);
+  const [rows, rules, used] = await Promise.all([translationRows(db(), shop.id), translationRules(), translationRunsOn(db(), shop.id, localDay(requestNow(), shop.timezone))]);
   const data: LanguagesData = { source: rows.source as "fr" | "en", enabled: rows.enabled, allowed: rules.allowed, translationOn: rules.enabled, dailyLimit: rules.dailyLimit, usedToday: used, fields: rows.fields, setupHref: shopRoutes(locale, shop.id).setup };
   return <ShopLanguages data={data} />;
 }
@@ -132,7 +133,7 @@ async function LanguagesSection({ locale, shopId }: Readonly<{ locale: RouteLoca
 async function TeamSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   const { session, shop, role } = await memberShop(shopId, "team");
   const roles = team();
-  const now = new Date();
+  const now = requestNow();
   const [members, invitations, people, timeOff] = await Promise.all([roles.members(shop.id), roles.pendingInvitations(shop.id, now), shopStaff(db(), shop.id), teamTimeOff(db(), shop.id, localDay(now, shop.timezone))]);
   const manages = SHOP_ROLES.manages[role];
   return (

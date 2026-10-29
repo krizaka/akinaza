@@ -227,6 +227,12 @@ Slices 1–4 below need none of this and close today's risks on today's hosts.
    App Platform's TXT validation for the wildcard certificate), the domain and its wildcard in
    `deploy/digitalocean/app.yaml`, `APP_SHOP_DOMAIN` declared in `lib/env.ts`, the booking hop, 308 migration,
    canonicals, then removal of `*.akinaza.com`. Guard: redirect table test, the seo-family check per host.
+   **Code landed (2026-10-29, `APP_SHOP_DOMAIN`):** `lib/shop-domain.ts` (the domain, the shop of a host, the canonical origin from configuration), `lib/host.ts`
+   (`<slug>.akinaza.shop` serves the shop; the booking's last step and everything of the app is a 308 hop to www; the old `<slug>.akinaza.com` and
+   `/<locale>/s/<slug>` are 308s), the proxy (existence of the shop by an internal route and a short, bounded memory: 404 for an unknown or held shop, 308 for a
+   former slug, #549; the app's session cookie dropped from what a shop page reads; strict CSP with `form-action` and `frame-ancestors` limited to the app; `no-store`;
+   robots and a per-shop sitemap on the shop host), the page's canonical on the shop domain, `scripts/check-shop-host.mjs` (CI journey through a seeded shop).
+   Unset, nothing changes. **Not applied:** the DNS (krizaka-infra `stacks/dns/zone_akinaza_shop.tf`) and `deploy/digitalocean/app.yaml` are for Oussama to apply, DNS first.
 6. #539 — Custom domains (after the Cloudflare decision): spike on App Platform + Cloudflare for SaaS, `shop_domains`, TXT
    ownership, the `CustomHostnames` port, the console's view, no-store HTML. Guard: state-machine tests, takeover test.
 7. #540 — PSL submission (`_psl` TXT + the `publicsuffix/list` PR, after the multi-year renewal) — Incubation until eligible.

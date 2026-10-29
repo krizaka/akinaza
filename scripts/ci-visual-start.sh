@@ -10,6 +10,8 @@ export DATABASE_URL="postgresql://ci:ci-only-password@postgres:5432/ci"
 export AUTH_SESSION_SECRET=ci-only-session-secret-0123456789abcdef
 export APP_DATA_ENCRYPTION_KEY="$(openssl rand -base64 32)" # a throwaway key per run: the database starts empty and is thrown away
 export PORT=3000
+# One fixed instant for the pages' clock and the cast's days (a Wednesday, 11 am in Montreal): the open-now chip and the free times never follow the hour of the run. Honoured only with APP_ENVIRONMENT=dev.
+export APP_FIXED_NOW=2026-10-28T15:00:00Z
 # The app's declared public origin (landingRedirect requires it in production: never read from the request's Host).
 export APP_PUBLIC_URL=http://localhost:3000
 pnpm --filter @akinaza/web build
