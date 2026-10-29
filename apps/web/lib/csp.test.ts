@@ -81,6 +81,14 @@ describe("which pages are strict", () => {
   });
 });
 
+describe("the one inline script of a shop page", () => {
+  it("is the theme script, and the layout hands it the response's nonce", () => {
+    const layout = readFileSync(new URL("../app/[locale]/layout.tsx", import.meta.url), "utf8");
+    expect(layout).toContain('get("x-nonce")');
+    expect(layout).toContain("<ThemeScript defaultMode=\"dark\" nonce={nonce} />");
+  });
+});
+
 describe("JSON-LD", () => {
   it("escapes < so a value can never close the script element", () => {
     const html = jsonLdHtml({ name: "</script><script>alert(1)</script>" });
