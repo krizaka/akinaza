@@ -27,7 +27,7 @@
     "@date-fns/tz": "^1.5.0",
     "@krizaka/api-keys": "0.1.0",
     "@krizaka/auth": "^0.11.0",
-    "@krizaka/db": "0.2.0",
+    "@krizaka/db": "0.3.0",
     "@krizaka/intl": "0.3.0",
     "@krizaka/org": "^0.3.1",
     "@krizaka/organize": "0.4.0",
