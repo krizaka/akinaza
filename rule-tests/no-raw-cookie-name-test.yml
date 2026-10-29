@@ -1,0 +1,15 @@
+id: no-raw-cookie-name
+valid:
+  - |
+    export const SESSION_COOKIE = cookieName("akinaza_session");
+  - |
+    const LOCALE_COOKIE = cookieName("NEXT_LOCALE");
+  - |
+    const label = "akinaza_sessions";
+invalid:
+  - |
+    export const SESSION_COOKIE = "akinaza_session";
+  - |
+    request.cookies.get("NEXT_LOCALE");
+  - |
+    const SHOP = 'akinaza_shop';

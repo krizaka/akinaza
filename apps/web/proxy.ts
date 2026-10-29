@@ -1,11 +1,23 @@
 import { type NextRequest, NextResponse } from "next/server";
 
 import { HOST_FREE_PATHS, isAllowedHost } from "./lib/allowed-hosts";
+import { cookieName, ownCookie } from "./lib/cookie";
+import { refusesCrossSiteWrite } from "./lib/csrf";
 import { contentSecurityPolicy, isShopPath, newNonce, upgradesInsecure } from "./lib/csp";
 import { type HostRoute, isAdminHost, routeFor, shopOfHost } from "./lib/host";
 import { CLOSED_ROBOTS, closedRobots, devRedirect, indexableOn, isDevHost, NOINDEX } from "./lib/indexing";
 import { LOCALE_HEADER, negotiateLocale, pageLocaleOf,PATH_HEADER } from "./lib/locale-negotiation";
+import { SESSION_COOKIE } from "./lib/session-cookie";
 import { SITE_URL } from "./lib/site";
+
+const LOCALE_COOKIE = cookieName("NEXT_LOCALE");
+
+/** ADR-005 slice 1 (akinaza#534): a write to the API that carries the web session comes from this origin, else 403 (a shop host is same-site: SameSite=Lax does not stop it). */
+function crossSiteWrite(request: NextRequest): NextResponse | null {
+  if (!request.nextUrl.pathname.startsWith("/api/")) return null;
+  const refused = refusesCrossSiteWrite({ method: request.method, headers: request.headers, origin: process.env.APP_PUBLIC_URL ?? SITE_URL, sessionCookie: SESSION_COOKIE });
+  return refused ? NextResponse.json({ error: { code: "CROSS_SITE_WRITE", message: "This request does not come from the app" } }, { status: 403 }) : null;
+}
 
 /** The policy of a response (lib/csp.ts), read per request: the nonce of a shop page is this response's own, the declared origin is the runtime's. */
 function policy(nonce?: string): string {
@@ -38,6 +50,9 @@ export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   // ADR-005 slice 4 (#536): a host this deployment does not serve is answered 421 before anything is routed or built from it (the platform's health check names its own).
   if (!HOST_FREE_PATHS.includes(pathname) && !isAllowedHost(host, process.env)) return new NextResponse("Misdirected Request", { status: 421, headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });
+  // The dev host serves the API too: the check comes first.
+  const refused = crossSiteWrite(request);
+  if (refused) return refused;
   // dev.<product>.com (APP_DEV_HOST): robots.txt closes everything; a page goes to www (308); the API, .well-known and
   // healthz keep serving - all noindex. Nothing below runs for it.
   if (isDevHost(host)) {
@@ -57,7 +72,7 @@ export function proxy(request: NextRequest) {
     response.headers.set("Content-Security-Policy", policy());
     return response;
   }
-  const chosen = negotiateLocale(request.cookies.get("NEXT_LOCALE")?.value, request.headers.get("accept-language"));
+  const chosen = negotiateLocale(request.cookies.get(LOCALE_COOKIE)?.value, request.headers.get("accept-language"));
   const site = process.env.APP_PUBLIC_URL ?? SITE_URL;
   const route = routeFor(host, request.nextUrl.pathname, chosen, site);
   const admin = isAdminHost(host);
@@ -88,8 +103,8 @@ export function proxy(request: NextRequest) {
       response = NextResponse.next({ request: { headers: forwarded } });
   }
   const segment = request.nextUrl.pathname.split("/")[1];
-  if ((segment === "en" || segment === "fr") && request.cookies.get("NEXT_LOCALE")?.value !== segment) {
-    response.cookies.set("NEXT_LOCALE", segment, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
+  if ((segment === "en" || segment === "fr") && request.cookies.get(LOCALE_COOKIE)?.value !== segment) {
+    response.cookies.set(ownCookie(LOCALE_COOKIE, segment, { httpOnly: false, maxAge: 60 * 60 * 24 * 365 }));
   }
   if (admin || closed || shopHost) response.headers.set("x-robots-tag", NOINDEX);
   response.headers.set("Content-Security-Policy", csp);

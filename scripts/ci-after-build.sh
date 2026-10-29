@@ -24,6 +24,8 @@ QA_USER_EMAIL=qa-user@akinaza.test QA_USER_PASSWORD=ci-only-password-user QA_ADM
 QA_WALKER_PASSWORD="$HYDRATION_OWNER_PASSWORD" QA_CLIENTS_PASSWORD="$HYDRATION_CLIENT_PASSWORD" pnpm --filter @akinaza/web exec tsx scripts/seed-saint-henri.mjs
 for _ in $(seq 1 60); do curl -sf http://localhost:3000/api/healthz && break; sleep 1; done
 pnpm run seo:check
+# Every cookie the app sets is host-only (no Domain, Path=/, __Host- on https): akinaza#534, ADR-005.
+node scripts/check-cookies.mjs --base http://localhost:3000 --email "$HYDRATION_CLIENT_EMAIL" --password "$HYDRATION_CLIENT_PASSWORD"
 # The brand icons and their lock = the CDN manifest (the unit test checks icons = lock offline).
 node scripts/sync-brand-icons.mjs --check
 # Responsive guard: no horizontal overflow at 360–1440 px in both themes, and the accessibility guard (axe-core, contrast included).

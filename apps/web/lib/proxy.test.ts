@@ -123,6 +123,29 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
   });
 });
 
+describe("the proxy on the API's writes (ADR-005 slice 1, akinaza#534)", () => {
+  const post = (headers: Record<string, string>) => proxy(new NextRequest("https://www.akinaza.com/api/me/profile", { method: "POST", headers: { host: "www.akinaza.com", ...headers } }));
+
+  it("refuses a write from a shop host (same-site) or with the session and no origin, 403", async () => {
+    const fromShop = post({ "sec-fetch-site": "same-site", cookie: "akinaza_session=x" });
+    expect(fromShop.status).toBe(403);
+    expect((await fromShop.json()).error.code).toBe("CROSS_SITE_WRITE");
+    expect(post({ origin: "https://pattes.akinaza.com" }).status).toBe(403);
+    expect(post({ cookie: "akinaza_session=x" }).status).toBe(403);
+  });
+  it("lets the app's own writes, a bearer and a cookie-less client through", () => {
+    expect(post({ "sec-fetch-site": "same-origin", cookie: "akinaza_session=x" }).status).toBe(200);
+    expect(post({ authorization: "Bearer t" }).status).toBe(200);
+    expect(post({}).status).toBe(200);
+  });
+  it("sets the language cookie host-only, with no Domain", () => {
+    const response = proxy(new NextRequest("https://www.akinaza.com/fr", { headers: { host: "www.akinaza.com" } }));
+    const set = response.headers.get("set-cookie") ?? "";
+    expect(set).toMatch(/NEXT_LOCALE=fr/);
+    expect(set.toLowerCase()).not.toContain("domain=");
+  });
+});
+
 /** ADR-005 slice 3 (#535): the proxy sets the policy of each response; the public shop pages get a fresh nonce, on the request too (Next stamps its scripts with it). */
 describe("the Content-Security-Policy of the proxy", () => {
   const at = (host: string, path: string) => proxy(new NextRequest(`https://${host}${path}`, { headers: { host } }));
