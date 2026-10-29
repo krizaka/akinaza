@@ -1,11 +1,12 @@
 import { NextRequest } from "next/server";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { config, proxy } from "../proxy";
 import { LOCALE_HEADER, PATH_HEADER } from "./locale-negotiation";
 
 const get = (path: string) => proxy(new NextRequest(`https://dev.akinaza.com${path}`, { headers: { host: "dev.akinaza.com" } }));
 
+beforeEach(() => vi.stubEnv("APP_ALLOWED_HOSTS", "dev.akinaza.com"));
 afterEach(() => vi.unstubAllEnvs());
 
 describe("the proxy of a deployment closed to search engines (APP_SEARCH_INDEXING=off)", () => {

@@ -10,6 +10,8 @@ export DATABASE_URL="postgresql://ci:ci-only-password@postgres:5432/ci"
 export AUTH_SESSION_SECRET=ci-only-session-secret-0123456789abcdef
 export APP_DATA_ENCRYPTION_KEY="$(openssl rand -base64 32)" # a throwaway key per run: the database starts empty and is thrown away
 export PORT=3000
+# The app's declared public origin (landingRedirect requires it in production: never read from the request's Host).
+export APP_PUBLIC_URL=http://localhost:3000
 pnpm --filter @akinaza/web build
 export NODE_ENV=production
 trap 'tail -100 web-visual.log || true' ERR
