@@ -1,0 +1,28 @@
+id: no-cookie-domain
+language: Tsx
+severity: error
+message: "A cookie of the app is host-only: no `Domain` attribute. A `Domain=akinaza.com` cookie is sent to every shop host (and any script there can toss one back to `www`: session fixation)."
+note: "ADR-005 slice 1, akinaza#534. Make a cookie with `ownCookie` of lib/cookie.ts (host-only, Path=/, Secure, HttpOnly); name it with `cookieName` (`__Host-`)."
+rule:
+  any:
+    - kind: pair
+      has:
+        field: key
+        regex: ^domain$
+      inside:
+        stopBy: end
+        kind: call_expression
+        has:
+          field: function
+          regex: (cookies\(\)\)?|jar|cookies|response|res)\.set$
+    - kind: template_string
+      regex: ;\s*Domain=
+    - kind: string
+      regex: ;\s*Domain=
+ignores:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/dist/**"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/__tests__/**"
