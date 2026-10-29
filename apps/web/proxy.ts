@@ -109,7 +109,7 @@ function serve(request: NextRequest, closed: boolean, ownShopHost: boolean): Nex
   const shopHost = shop !== null;
   // A shop's own page is nobody's landing: the app's session never goes there (ADR-005), so no hint can send a visitor away from it.
   const home = admin || shop ? null : landingRedirect(request, { cookie: SESSION_COOKIE, landing: LANDING, home: () => `/${pageLocaleOf(pathname, chosen)}/app`, origin: site });
-  if (home) return home;
+  if (home) return NextResponse.redirect(home.headers.get("location") ?? "/", { status: home.status, headers: home.headers });
   // A deployment closed to search engines (APP_SEARCH_INDEXING=off): robots.txt disallows everything (the sitemap is still served, noindexed).
   if (closed && request.nextUrl.pathname === "/robots.txt") return new NextResponse(CLOSED_ROBOTS, { headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });
   // The language of the address, handed to the pages (the 404 has no params): set on the request, never trusted from the client.
