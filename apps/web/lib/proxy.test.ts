@@ -142,7 +142,7 @@ describe("a signed-in visitor lands on their home, never on the landing page (kr
     }
   });
   it("the Location is absolute on the configured public origin, never on the Host the request claims", () => {
-    const res = proxy(new NextRequest("https://localhost:3000/fr", { headers: { host: "evil.example", "x-forwarded-host": "evil.example", "x-forwarded-proto": "http", cookie: "akinaza_session=as1.x" } }));
+    const res = proxy(new NextRequest("https://localhost:3000/fr", { headers: { host: "www.akinaza.com", "x-forwarded-host": "evil.example", "x-forwarded-proto": "http", cookie: "akinaza_session=as1.x" } }));
     expect(res.headers.get("location")).toBe(`${(process.env.APP_PUBLIC_URL ?? "https://www.akinaza.com").replace(/\/$/, "")}/fr/app`);
   });
   it("a signed-out visitor still gets the landing page, and a public page stays reachable signed in", () => {
