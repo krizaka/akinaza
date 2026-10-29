@@ -215,18 +215,6 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, 
   }
 }
 
-/** The shops whose address is held for review, oldest first: what the administrator's queue lists. */
-export async function heldShops(db: Db): Promise<{ shopId: string; name: string; slug: string; term: string | null; heldAt: Date | null; ownerId: string | null }[]> {
-  const rows = await db.select({ shopId: shops.id, name: shops.name, slug: shops.slug, term: shops.slugHeldTerm, heldAt: shops.slugHeldAt, ownerId: shops.ownerId }).from(shops).where(eq(shops.slugHeld, true)).orderBy(asc(shops.slugHeldAt), asc(shops.id));
-  return rows.map((row) => ({ ...row, slug: row.slug! }));
-}
-
-/** The administrator clears a held address: the shop is public again (when published). False when the shop was not held. */
-export async function clearSlugHold(db: Db, shopId: string): Promise<boolean> {
-  const cleared = await db.update(shops).set({ slugHeld: false, slugHeldTerm: null, slugHeldAt: null }).where(and(eq(shops.id, shopId), eq(shops.slugHeld, true))).returning({ id: shops.id });
-  return cleared.length > 0;
-}
-
 /** An area of the map: where it is centred (WGS 84). */
 export const zonePlaceSchema = z.object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) });
 

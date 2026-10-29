@@ -25,6 +25,8 @@ export const MAIL_TEMPLATES = {
   "brief-invite": { shop: "text", client: "text", days: "text", url: "text" },
   /** The Monday brief to the shop's owner: up to three lines, a link to the app, a one-click way to stop it. */
   "brief-weekly": { shop: "text", line1: "text", line2: "text", has2: "flag", line3: "text", has3: "flag", url: "text", stop: "text" },
+  /** The owner of a shop whose address was held when the shops were re-judged against the protected terms (ADR-005, #537): the page is private until reviewed; a link to choose another address. */
+  "slug-held": { shop: "text", address: "text", url: "text" },
 } as const satisfies Record<string, Record<string, VarKind>>;
 
 export type MailTemplateId = keyof typeof MAIL_TEMPLATES;

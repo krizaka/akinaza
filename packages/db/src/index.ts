@@ -7,6 +7,7 @@ export * from "./client-files";
 export * from "./demo-shop-page";
 export * from "./demo-shops";
 export * from "./service-shop";
+export * from "./slug-review";
 export * from "./shop-page";
 export * from "./shop-community";
 export * from "./visits";

@@ -1,0 +1,35 @@
+import { describe, expect, it } from "vitest";
+
+import { addTerm, lineIssue, removeTerm, replaceTerm, termRows } from "./protected-terms-edit";
+
+const STORED = "# brands\nlogin\n\n/^pay.?pal$/\n/(a+)+$/";
+
+describe("the protected terms the console edits", () => {
+  it("lists words, patterns and comments with their position, and flags a stored line that cannot be kept", () => {
+    expect(termRows(STORED).map((r) => [r.index, r.kind, r.issue])).toEqual([
+      [0, "comment", undefined],
+      [1, "word", undefined],
+      [3, "pattern", undefined],
+      [4, "pattern", "unsafe"],
+    ]);
+  });
+
+  it("validates the line while typing: a word, a safe pattern, an unsafe one, a bad one, too long, not a word", () => {
+    expect(lineIssue("paypal")).toBeUndefined();
+    expect(lineIssue("/^pay.?pal$/")).toBeUndefined();
+    expect(lineIssue("/(a+)+$/")).toBe("unsafe");
+    expect(lineIssue("/(a|aa)+$/")).toBe("unsafe");
+    expect(lineIssue("/(/")).toBe("invalid");
+    expect(lineIssue(`/${"a".repeat(101)}/`)).toBe("too-long");
+    expect(lineIssue("two words")).toBe("word");
+    expect(lineIssue("   ")).toBeUndefined();
+  });
+
+  it("adds (once), edits and removes a line without touching the others", () => {
+    expect(addTerm(STORED, " Secure ")).toBe(`${STORED}\nSecure`);
+    expect(addTerm(`${STORED}\nSecure`, "secure")).toBe(`${STORED}\nSecure`);
+    expect(addTerm("", "login")).toBe("login");
+    expect(replaceTerm(STORED, 1, "signin ").split("\n")[1]).toBe("signin");
+    expect(removeTerm(STORED, 4)).toBe("# brands\nlogin\n\n/^pay.?pal$/");
+  });
+});
