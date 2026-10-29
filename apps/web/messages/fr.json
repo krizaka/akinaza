@@ -2728,6 +2728,8 @@
         "appointmentsDue": "Rendez-vous prévus"
       },
       "nextTitle": "Que faire maintenant",
+      "todayTitle": "Vos chiffres",
+      "todayLead": "Ce qu'on vous doit et comment se passent les rendez-vous, avec le calcul de chaque chiffre.",
       "nothingToDo": "Rien ne vous attend pour l'instant.",
       "actions": {
         "chase": {
