@@ -17,6 +17,7 @@
     "no-hand-ms-minutes": 0,
     "no-hand-ms-one-hour": 0,
     "no-locale-ternary": 15,
+    "no-raw-json-in-inner-html": 0,
     "no-status-move": 0,
     "no-ts-enum": 0,
     "no-types-at-package-root": 0,

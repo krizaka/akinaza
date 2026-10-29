@@ -5,7 +5,7 @@
  * hashed, immutable names (`sites/akinaza/tour/`, a prefix owned by this site: FOREIGN_WRITERS in krizaka-com);
  * a new capture is a new hash here.
  */
-/** The Krizaka media CDN: the one host the page's CSP lets serve images (next.config.mjs). */
+/** The Krizaka media CDN: the one host the page's CSP lets serve images (lib/csp.ts). */
 export const MEDIA_CDN = "https://krizaka-assets.b-cdn.net";
 
 export type TourLocale = "en" | "fr";

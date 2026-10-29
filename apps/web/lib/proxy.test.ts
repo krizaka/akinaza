@@ -121,3 +121,43 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
     expect(pageMatcher.test("/maps/v1/tiles/quebec-20261012.pmtiles")).toBe(false);
   });
 });
+
+/** ADR-005 slice 3 (#535): the proxy sets the policy of each response; the public shop pages get a fresh nonce, on the request too (Next stamps its scripts with it). */
+describe("the Content-Security-Policy of the proxy", () => {
+  const at = (host: string, path: string) => proxy(new NextRequest(`https://${host}${path}`, { headers: { host } }));
+  const scripts = (response: Response) => (response.headers.get("content-security-policy") ?? "").split("; ").find((d) => d.startsWith("script-src "));
+  const nonceOf = (response: Response) => /'nonce-([^']+)'/.exec(scripts(response) ?? "")?.[1];
+
+  it("a public shop page carries a nonce policy, the same nonce on the request, and a fresh one each time", () => {
+    const first = at("www.akinaza.com", "/fr/s/pattes-saint-henri");
+    const nonce = nonceOf(first);
+    expect(nonce).toBeTruthy();
+    expect(scripts(first)).not.toContain("'unsafe-inline'");
+    expect(first.headers.get("content-security-policy")).toContain("default-src 'none'");
+    expect(first.headers.get("x-middleware-request-x-nonce")).toBe(nonce);
+    expect(first.headers.get("x-middleware-request-content-security-policy")).toBe(first.headers.get("content-security-policy"));
+    expect(nonceOf(at("www.akinaza.com", "/fr/s/pattes-saint-henri"))).not.toBe(nonce);
+  });
+  it("a shop's own host is the same page, so the same strict policy", () => {
+    const home = at("pattes.akinaza.com", "/fr");
+    expect(nonceOf(home)).toBeTruthy();
+  });
+  it("the app and the public pages keep the static policy, with no nonce", () => {
+    for (const path of ["/fr/app", "/fr", "/fr/explore", "/en/pricing"]) {
+      const response = at("www.akinaza.com", path);
+      expect(scripts(response), path).toContain("'unsafe-inline'");
+      expect(nonceOf(response), path).toBeUndefined();
+      expect(response.headers.get("x-middleware-request-x-nonce"), path).toBeNull();
+    }
+  });
+  it("the API has a policy too", () => {
+    expect(at("www.akinaza.com", "/api/health").headers.get("content-security-policy")).toContain("default-src 'self'");
+  });
+  it("drops upgrade-insecure-requests when the declared public origin is plain http, read at request time", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("APP_PUBLIC_URL", "https://www.akinaza.com");
+    expect(at("www.akinaza.com", "/fr/s/x").headers.get("content-security-policy")).toContain("upgrade-insecure-requests");
+    vi.stubEnv("APP_PUBLIC_URL", "http://localhost:3000");
+    expect(at("localhost:3000", "/fr/s/x").headers.get("content-security-policy")).not.toContain("upgrade-insecure-requests");
+  });
+});

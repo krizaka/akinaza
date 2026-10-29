@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { jsonLdHtml } from "@/lib/csp";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 import { EFVP_URL, pagePath, PRIVACY_UPDATED, TRANSFERS_URL } from "@/lib/site";
@@ -19,7 +20,7 @@ export default async function Privacy({ params }: { params: Promise<{ locale: st
   const t = getDictionary(locale);
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="privacy" />
       <main id="content" className="pt-20">
         <PageHero back={{ href: pagePath(locale, "home"), label: t.meta.siteName }} linkAs={Link} title={t.privacy.title} lead={format(t.privacy.updated, { date: PRIVACY_UPDATED })} />
