@@ -141,6 +141,12 @@ describe("a signed-in visitor lands on their home, never on the landing page (kr
       expect(res.headers.get("vary")).toBe("Cookie");
     }
   });
+  it("the Location is absolute (Next's proxy throws on a relative one) and on the origin the browser asked, whatever the server thinks its own is", () => {
+    const res = proxy(new NextRequest("https://localhost:3000/fr", { headers: { host: "localhost:3000", cookie: "akinaza_session=as1.x" } }));
+    expect(res.headers.get("location")).toBe("http://localhost:3000/fr/app");
+    const behind = proxy(new NextRequest("http://www.akinaza.com/fr", { headers: { host: "www.akinaza.com", "x-forwarded-proto": "https", cookie: "akinaza_session=as1.x" } }));
+    expect(behind.headers.get("location")).toBe("https://www.akinaza.com/fr/app");
+  });
   it("a signed-out visitor still gets the landing page, and a public page stays reachable signed in", () => {
     expect(goes(ask("/fr"))).toBeNull();
     expect(goes(ask("/fr/pricing", "akinaza_session=as1.x"))).toBeNull();
