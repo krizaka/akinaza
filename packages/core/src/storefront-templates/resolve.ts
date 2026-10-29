@@ -1,12 +1,12 @@
 import type { ShopType } from "../shop-media";
-import { TEMPLATES } from "./catalogue";
+import { TEMPLATES, TEMPLATES_V2 } from "./catalogue";
 import type { Template } from "./schema";
 
 /**
  * The template a shop renders with: the one it **applied** (`id@version`, kept even when the template has improved since), or `null` - **a shop with no template
  * stays on today's rendering, always**, whatever an administrator sets later (#261, ADR). An id the catalogue no longer knows is also `null`: the page never breaks.
  */
-export function resolveTemplate(shop: { templateId?: string | null; templateVersion?: number | null }, catalogue: readonly Template[] = TEMPLATES): Template | null {
+export function resolveTemplate(shop: { templateId?: string | null; templateVersion?: number | null }, catalogue: readonly Template[] = [...TEMPLATES, ...TEMPLATES_V2]): Template | null {
   if (!shop.templateId) return null;
   const sameId = catalogue.filter((t) => t.id === shop.templateId);
   return sameId.find((t) => t.version === shop.templateVersion) ?? null;
