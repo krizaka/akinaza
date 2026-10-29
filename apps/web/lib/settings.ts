@@ -1,6 +1,6 @@
 import { type FramePaper, type ShopType, TEMPLATES } from "@akinaza/core";
 import { PASSWORD_RESET_MAX_MINUTES, PASSWORD_RESET_MIN_MINUTES, PASSWORD_RESET_TTL_MINUTES } from "@krizaka/auth";
-import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, SCOPE, type SettingsService, subset, WORKSPACE_SCOPES } from "@krizaka/settings";
+import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, SCOPE, type SettingsService, subset, text, WORKSPACE_SCOPES } from "@krizaka/settings";
 import { storageSettings } from "@krizaka/storage/settings";
 
 import { query } from "./db";
@@ -48,6 +48,8 @@ export const SETTINGS = {
   "storefront.languages.allowed": subset("storefront", ["fr", "en", "es"] as const, ["fr", "en", "es"], GLOBAL_ONLY),
   "limits.translationsPerShopPerDay": integer("limits", 20, { min: 1, max: 500, unit: "runs" }, GLOBAL_ONLY),
   // The private calendar feeds of the shop and its staff (#282, ADR-004): off, every feed address answers 404 and none can be made.
+  // Anti-phishing shop addresses (ADR-005 slice 4, #537): one term per line (a word, or /regex/ on the folded slug; # comments). A slug wearing one is held for review, never refused (core slug-guard). Lure words only: the protected brands are added in the console once Oussama has approved them.
+  "slugs.protectedTerms": text("slugs", ["login", "signin", "verify", "verification", "secure", "security", "account", "password", "wallet", "support", "billing", "payment"].join("\n"), { max: 4000, empty: true }, GLOBAL_ONLY),
   "exports.icsFeed.enabled": flag("exports", true, GLOBAL_ONLY),
   // The owner's data downloads (#420, ADR-004 §5): appointments (CSV, ICS), clients and invoices (CSV). Off, none is served.
   "exports.data.enabled": flag("exports", true, GLOBAL_ONLY),

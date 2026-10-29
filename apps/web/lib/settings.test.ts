@@ -59,3 +59,17 @@ describe("the notebook storefront is the owner's setting (akinaza#316, #261: on 
     expect(await cahierStorefrontOn("another-owner")).toBe(true);
   });
 });
+
+describe("the protected shop-address terms (ADR-005 slice 4, #537)", () => {
+  it("default to lure words only, global only, all readable by the slug guard, and hold a look-alike login address", async () => {
+    const { holdSlug, parseProtectedTerms } = await import("@akinaza/core");
+    const def = SETTINGS["slugs.protectedTerms"];
+    expect(def.scopes).toEqual(["global"]);
+    expect(def.schema.safeParse(def.default).success).toBe(true);
+    const { terms, invalid } = parseProtectedTerms(def.default);
+    expect(invalid).toEqual([]);
+    expect(terms.length).toBeGreaterThan(5);
+    expect(holdSlug("mon-l0gin", terms).held).toBe(true);
+    expect(holdSlug("pattes-saint-henri", terms).held).toBe(false);
+  });
+});
