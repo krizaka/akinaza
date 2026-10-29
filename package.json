@@ -16,6 +16,7 @@
     "check": "pnpm run lint && pnpm run typecheck && pnpm run test",
     "dev:check": "turbo run lint typecheck test --filter='...[origin/main]' && vitest run",
     "dev:seed": "pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs",
+    "dev:seed-demos": "pnpm --filter @akinaza/db seed:demos && pnpm --filter @akinaza/web exec tsx scripts/seed-demo-flags.mjs",
     "prepare": "git config core.hooksPath .githooks 2>/dev/null || true",
     "check:perf": "node scripts/check-perf-budgets.mjs",
     "check:overflow": "node scripts/check-overflow.mjs",
