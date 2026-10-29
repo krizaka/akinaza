@@ -101,7 +101,7 @@ const { state, shopId } = await session();
 await record(
   "web-composer",
   async (page) => {
-    await page.goto(`${base}/${locale}/app/${shopId}/boutique/page?tab=composer`, { waitUntil: "networkidle" });
+    await page.goto(`${base}/${locale}/app/${shopId}/settings/page?tab=composer`, { waitUntil: "networkidle" });
     const sections = page.getByRole("navigation", { name: W.sections, exact: true });
     await sections.waitFor({ timeout: 30_000 });
     await page.waitForTimeout(1800);

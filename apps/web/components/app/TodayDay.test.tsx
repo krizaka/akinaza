@@ -6,7 +6,7 @@ import { shopRoutes } from "@/lib/routes";
 import { billAppointmentHref, TodayDay, type TodayDayProps } from "./TodayDay";
 import type { DayVisitView } from "./VisitDetail";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }), usePathname: () => "/fr/app/s-1/aujourdhui" }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }), usePathname: () => "/fr/app/s-1/today" }));
 vi.mock("@/lib/i18n-client", () => ({
   useSay: () => ({ say: (key: string, vars?: Record<string, string | number>) => (vars ? `${key} ${Object.values(vars).join(" ")}` : key), locale: "fr" }),
   useVocabulary: () => ({ type: "pets", dependants: true, visitReports: true }),
@@ -69,8 +69,8 @@ describe("Aujourd'hui on the home grammar (D4): the headline, the date on the ri
   it("puts the date on the right with the previous and next day, and draws no strip of days", () => {
     const html = render({ board });
     expect(html).not.toContain("today.dayStrip");
-    expect(html).toContain('href="/fr/app/s-1/aujourdhui?day=2026-10-22"');
-    expect(html).toContain('href="/fr/app/s-1/aujourdhui?day=2026-10-24"');
+    expect(html).toContain('href="/fr/app/s-1/today?day=2026-10-22"');
+    expect(html).toContain('href="/fr/app/s-1/today?day=2026-10-24"');
     expect(text(html)).toMatch(/today\.week 43/);
   });
 
@@ -108,9 +108,9 @@ describe("Aujourd'hui on the home grammar (D4): the headline, the date on the ri
 
   it("keeps the period in the address: 7, 30 or 90 days, the current one marked", () => {
     const html = render({ board, period: 30 });
-    for (const p of [30, 90]) expect(html).toContain(`href="/fr/app/s-1/aujourdhui?period=${p}"`);
-    expect(html).toContain('href="/fr/app/s-1/aujourdhui"'); // 7 days, the default: no parameter
-    expect(html).toMatch(/aria-current="page"[^>]*href="\/fr\/app\/s-1\/aujourdhui\?period=30"|href="\/fr\/app\/s-1\/aujourdhui\?period=30"[^>]*aria-current="page"/);
+    for (const p of [30, 90]) expect(html).toContain(`href="/fr/app/s-1/today?period=${p}"`);
+    expect(html).toContain('href="/fr/app/s-1/today"'); // 7 days, the default: no parameter
+    expect(html).toMatch(/aria-current="page"[^>]*href="\/fr\/app\/s-1\/today\?period=30"|href="\/fr\/app\/s-1\/today\?period=30"[^>]*aria-current="page"/);
   });
 
   it("says nothing is late with the beaver when the balance has no overdue invoice", () => {
@@ -128,7 +128,7 @@ describe("Aujourd'hui on the home grammar (D4): the headline, the date on the ri
   });
 
   it("opens an appointment from the address: each row links to ?appointment=<id>", () => {
-    expect(render({ board })).toContain('href="/fr/app/s-1/aujourdhui?appointment=a-1"');
+    expect(render({ board })).toContain('href="/fr/app/s-1/today?appointment=a-1"');
   });
 
   it("shows no money to who may not see it: no activity, no balance", () => {
@@ -144,7 +144,7 @@ describe("the day's one primary (D1b): the next appointment, else a new invoice"
   it("opens the next appointment, named by its client and its time", () => {
     const [primary, ...others] = primaries(render({ newInvoiceHref: "/fr/app/s-1/invoices/new" }));
     expect(others).toEqual([]);
-    expect(primary).toContain('href="/fr/app/s-1/aujourdhui?appointment=a-1"');
+    expect(primary).toContain('href="/fr/app/s-1/today?appointment=a-1"');
     expect(text(primary!)).toContain("today.nextPrimary Sofia Rossi");
   });
 

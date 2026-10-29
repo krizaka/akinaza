@@ -31,9 +31,13 @@ export const retiredAddresses = [
   { source: "/:locale(en|fr)/changelog", destination: "/:locale", permanent: true },
   { source: "/:locale(en|fr)/app/connections", destination: "/:locale/app", permanent: true },
   // « Ma page boutique », the languages and the team moved into Boutique (K4).
-  { source: `/:locale(en|fr)/app/:shop(${UUID})/shop`, destination: "/:locale/app/:shop/boutique/page", permanent: true },
-  { source: `/:locale(en|fr)/app/:shop(${UUID})/shop/languages`, destination: "/:locale/app/:shop/boutique/languages", permanent: true },
-  { source: `/:locale(en|fr)/app/:shop(${UUID})/team`, destination: "/:locale/app/:shop/boutique/team", permanent: true },
+  { source: `/:locale(en|fr)/app/:shop(${UUID})/shop`, destination: "/:locale/app/:shop/settings/page", permanent: true },
+  { source: `/:locale(en|fr)/app/:shop(${UUID})/shop/languages`, destination: "/:locale/app/:shop/settings/languages", permanent: true },
+  { source: `/:locale(en|fr)/app/:shop(${UUID})/team`, destination: "/:locale/app/:shop/settings/team", permanent: true },
+  // One language of addresses in the signed-in space: English, in both locales (akinaza#582). The French words answer 308.
+  { source: `/:locale(en|fr)/app/:shop(${UUID})/aujourdhui`, destination: "/:locale/app/:shop/today", permanent: true },
+  { source: `/:locale(en|fr)/app/:shop(${UUID})/boutique`, destination: "/:locale/app/:shop/settings", permanent: true },
+  { source: `/:locale(en|fr)/app/:shop(${UUID})/boutique/:section`, destination: "/:locale/app/:shop/settings/:section", permanent: true },
   // One way to book: the public steps, signing in at the last one. The old signed-in page keeps its service, person, area and time.
   { source: "/:locale(en|fr)/s/:slug/book", has: [{ type: "query", key: "service", value: `(?<service>${UUID})` }], destination: "/:locale/s/:slug/service/:service/confirm", permanent: true },
   { source: "/:locale(en|fr)/s/:slug/book", destination: "/:locale/s/:slug", permanent: true },

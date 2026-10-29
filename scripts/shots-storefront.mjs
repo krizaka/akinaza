@@ -26,17 +26,17 @@ export const SCENES = {
   workshop: { path: (locale) => `/${locale}/s/encre-vive`, expect: { fr: "Encre Vive Studio", en: "Encre Vive Studio" }, signedIn: false },
   consulting: { path: (locale) => `/${locale}/s/ferland-conseil`, expect: { fr: "Ferland Conseil", en: "Ferland Conseil" }, signedIn: false },
   // The owner's guide (akinaza#382, `pnpm run shots:docs`): its figures are captured from the demo shop, never drawn.
-  "docs-shop": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/page`, expect: { fr: "Votre page boutique", en: "Your shop page" }, signedIn: true },
+  "docs-shop": { path: (locale, shop) => `/${locale}/app/${shop.id}/settings/page`, expect: { fr: "Votre page boutique", en: "Your shop page" }, signedIn: true },
   "docs-bookings": { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Pattes de Saint-Henri", en: "Pattes de Saint-Henri" }, signedIn: false },
   "docs-invoices": { path: (locale, shop) => `/${locale}/app/${shop.id}/invoices/new`, expect: { fr: "Nouvelle facture", en: "New invoice" }, signedIn: true },
   "docs-books": { path: (locale, shop) => `/${locale}/app/${shop.id}/books`, expect: { fr: "Vos livres", en: "Your books" }, signedIn: true },
   // The owner's figures (#260): what to do now on Today, the figures with their formulas on the books, and the thresholds the owner tunes.
-  "figures-today": { path: (locale, shop) => `/${locale}/app/${shop.id}/aujourdhui`, expect: { fr: "Que faire maintenant", en: "What to do now" }, signedIn: true },
+  "figures-today": { path: (locale, shop) => `/${locale}/app/${shop.id}/today`, expect: { fr: "Que faire maintenant", en: "What to do now" }, signedIn: true },
   "figures-books": { path: (locale, shop) => `/${locale}/app/${shop.id}/books`, expect: { fr: "Vos chiffres", en: "Your figures" }, signedIn: true },
-  "figures-thresholds": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/figures`, expect: { fr: "Quand un chiffre demande votre attention", en: "When a figure needs your attention" }, signedIn: true },
+  "figures-thresholds": { path: (locale, shop) => `/${locale}/app/${shop.id}/settings/figures`, expect: { fr: "Quand un chiffre demande votre attention", en: "When a figure needs your attention" }, signedIn: true },
   // The private calendar links (#282, ADR-004).
-  "agenda-sources": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/agenda`, expect: { fr: "Vos autres agendas", en: "Your other calendars" }, signedIn: true },
-  "agenda-feed": { path: (locale, shop) => `/${locale}/app/${shop.id}/boutique/agenda`, expect: { fr: "Votre agenda sur votre téléphone", en: "Your calendar on your phone" }, signedIn: true },
+  "agenda-sources": { path: (locale, shop) => `/${locale}/app/${shop.id}/settings/agenda`, expect: { fr: "Vos autres agendas", en: "Your other calendars" }, signedIn: true },
+  "agenda-feed": { path: (locale, shop) => `/${locale}/app/${shop.id}/settings/agenda`, expect: { fr: "Votre agenda sur votre téléphone", en: "Your calendar on your phone" }, signedIn: true },
   "docs-data": { path: (locale) => `/${locale}/app/profile/data`, expect: { fr: "Vos données", en: "Your data" }, signedIn: true },
 };
 /** The scenes of the owner's guide, one per page of it (`docs.pages.<id>`). */
