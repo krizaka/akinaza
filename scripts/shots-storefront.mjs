@@ -44,6 +44,9 @@ export const DOCS_SCENES = Object.keys(SCENES).filter((s) => s.startsWith("docs-
 export const THEMES = ["dark", "light"];
 export const DEVICES = { desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844 } };
 
+/** The extra features switched on for the run only (`SHOTS_FLAGS=features.cahierStorefront,…`): the throw-away database, never a shared one. */
+export const flagsOf = (value) => (value ?? "").split(",").map((s) => s.trim()).filter((s) => /^features\.[A-Za-z]+$/.test(s));
+
 /** `look-phone-dark.png`: one file per scene, device and theme. */
 export const shotName = (scene, device, theme) => `${scene}-${device}-${theme}.png`;
 
@@ -199,6 +202,7 @@ async function main() {
     run(["--filter", "@akinaza/web", "exec", "tsx", "scripts/seed-saint-henri.mjs"], { QA_WALKER_PASSWORD: walkerPassword, QA_CLIENTS_PASSWORD: clientsPassword });
     run(["--filter", "@akinaza/db", "seed:demos"]);
     run(["--filter", "@akinaza/web", "exec", "tsx", "scripts/set-setting.mjs", "features.storefrontTemplates", "true", "--actor", "shots-storefront"]);
+    for (const flag of flagsOf(process.env.SHOTS_FLAGS)) run(["--filter", "@akinaza/web", "exec", "tsx", "scripts/set-setting.mjs", flag, "true", "--actor", "shots-storefront"]);
     const { rows } = await db.query("SELECT s.id, s.slug, a.email FROM shops s JOIN accounts a ON a.id = s.owner_id WHERE s.slug = 'pattes-saint-henri'");
     if (!rows[0]) throw new Error("the Saint-Henri shop was not seeded");
     const shop = { id: rows[0].id, slug: rows[0].slug };
