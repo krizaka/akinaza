@@ -61,7 +61,14 @@ try {
   const pct = (xs, p) => [...xs].sort((x, y) => x - y)[Math.min(xs.length - 1, Math.floor(xs.length * p))].toFixed(1);
   const time = async (fn) => { const s = performance.now(); const out = await fn(); return [performance.now() - s, out]; };
   // The sweep fills the stored availability (what the server's tick does): the whole set once, then a day change.
-  const sweep = async (at) => { let n = 0, k; const s = performance.now(); while ((k = await settleAvailability(db, at, 500)) > 0) n += k; return `${n} shops in ${((performance.now() - s) / 1000).toFixed(1)} s`; };
+  const sweep = async (at) => {
+    let n = 0;
+    const s = performance.now();
+    for (let k = await settleAvailability(db, at, 500); k > 0; k = await settleAvailability(db, at, 500)) {
+      n += k;
+    }
+    return `${n} shops in ${((performance.now() - s) / 1000).toFixed(1)} s`;
+  };
   console.log("first sweep:", await sweep(NOW));
   if (process.env.SKIP_DAY_CHANGE !== "1") {
     console.log("day-change sweep:", await sweep(new Date(NOW.getTime() + 86_400_000)), "(then back to NOW)");
