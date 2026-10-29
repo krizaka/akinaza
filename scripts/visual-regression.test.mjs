@@ -34,6 +34,8 @@ describe("the visual regression", () => {
   it("draws the « open now » chip, not hides it: the run fixes the server's clock instead (APP_FIXED_NOW, dev only)", () => {
     const journeys = read("apps/web/e2e/visual/journeys.visual.mjs");
     expect(journeys).not.toContain("withoutLive");
+    expect(journeys).not.toContain("data-live"); // the chip is drawn, never masked: the clock is fixed
+    expect(read("apps/web/components/shop/ShopPageView.tsx")).not.toContain("data-live");
     expect(journeys).toMatch(/name: "shop-page"/);
     expect(read("scripts/ci-visual-start.sh")).toMatch(/^export APP_FIXED_NOW=\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/m);
     expect(read("apps/web/scripts/seed-cast.mjs")).toContain("APP_FIXED_NOW");
