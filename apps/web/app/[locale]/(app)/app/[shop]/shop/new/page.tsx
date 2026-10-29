@@ -18,6 +18,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function NewShopPage({ params }: { params: Promise<{ locale: string; shop: string }> }) {
   const { locale: raw, shop: shopId } = await params;
   const locale = asLocale(raw);
-  await memberShop(shopId, "settings");
-  return <NewShop locale={locale} backHref={shopRoutes(locale, shopId).setup} offers={templateChoicesByTrade(await templateRules(), SHOP_TYPES, await templateCatalogue())} />;
+  const { session } = await memberShop(shopId, "settings");
+  return <NewShop locale={locale} backHref={shopRoutes(locale, shopId).setup} offers={templateChoicesByTrade(await templateRules(), SHOP_TYPES, await templateCatalogue(session.account.id))} />;
 }

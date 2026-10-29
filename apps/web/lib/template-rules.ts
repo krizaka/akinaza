@@ -1,7 +1,7 @@
 import type { ShopType, Template } from "@akinaza/core";
 import { SHOP_TYPES, TEMPLATES, TEMPLATES_V2 } from "@akinaza/core";
 
-import { appSettings } from "@/lib/settings";
+import { appSettings, cahierStorefrontOn } from "@/lib/settings";
 
 /** What the administrator holds for the storefront templates: the switch, the templates offered, and the one the picker preselects for each trade. */
 export async function templateRules(): Promise<{ enabled: boolean; offered: string[]; defaults: Record<ShopType, string> }> {
@@ -15,6 +15,6 @@ export async function templateRules(): Promise<{ enabled: boolean; offered: stri
 }
 
 /** The templates a shop can apply: the notebook's `@2` joins the `@1` ones while `features.cahierStorefront` is on (akinaza#316); a shop on `@1` sees « update available » then, and keeps its own until the owner updates. */
-export async function templateCatalogue(): Promise<readonly Template[]> {
-  return (await appSettings().get("features.cahierStorefront", { userId: null })) ? [...TEMPLATES, ...TEMPLATES_V2] : TEMPLATES;
+export async function templateCatalogue(userId: string | null): Promise<readonly Template[]> {
+  return (await cahierStorefrontOn(userId)) ? [...TEMPLATES, ...TEMPLATES_V2] : TEMPLATES;
 }

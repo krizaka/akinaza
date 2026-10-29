@@ -1,6 +1,10 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { CAHIER_VERSION, framePaperOf, TEMPLATES_V2 } from "@akinaza/core";
+
 import { demoCounts, DEMO_SHOPS, seedDemoShops } from "./demo-shops";
+import { shopPageConfigOf } from "./shop-page";
+import { shopPaperOf } from "./shop-page-versions";
 import { listSlots, publicShop } from "./service-shop";
 import { freshDatabase } from "./test/db";
 import { NOW } from "./test/fixtures";
@@ -19,6 +23,21 @@ describe("the three fictional demo shops", () => {
     const second = await seedDemoShops(t.db);
     expect(second.every((s) => !s.created)).toBe(true);
     expect(second.map((s) => s.shopId)).toEqual(first.map((s) => s.shopId));
+  });
+
+  it("wear the notebook's template of their trade, and its paper is stored (akinaza#316: the demos show the @2 paper once features.cahierStorefront is on)", async () => {
+    const shops = await seedDemoShops(t.db);
+    for (const demo of DEMO_SHOPS) {
+      const shopId = shops.find((s) => s.slug === demo.shop.slug)!.shopId;
+      const config = await shopPageConfigOf(t.db, shopId);
+      expect(config.templateId, demo.shop.slug).toBe(demo.template);
+      expect(config.templateVersion, demo.shop.slug).toBe(CAHIER_VERSION);
+      const template = TEMPLATES_V2.find((x) => x.id === demo.template)!;
+      expect(await shopPaperOf(t.db, shopId), demo.shop.slug).toBe(framePaperOf(template.paper));
+    }
+    // At least one demo draws a paper that is visible (the studio's kraft); « plain » is the frame's own and draws none, by design.
+    const studio = shops.find((s) => s.slug === "encre-vive")!;
+    expect(await shopPaperOf(t.db, studio.shopId)).toBe("kraft");
   });
 
   it("are registered for the GST and the QST, so the tax shown is exact", async () => {
