@@ -10,5 +10,5 @@ import { demoOwnerFlagArgs } from "@akinaza/db";
 
 const setSetting = fileURLToPath(new URL("./set-setting.mjs", import.meta.url));
 for (const args of demoOwnerFlagArgs()) {
-  execFileSync("tsx", [setSetting, ...args], { stdio: "inherit" });
+  execFileSync(process.execPath, ["--import", "tsx", setSetting, ...args], { stdio: "inherit" });
 }
