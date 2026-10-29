@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 
 import { BriefBanner } from "@/components/app/BriefBanner";
 import { TodayDay } from "@/components/app/TodayDay";
+import { TodayFigures } from "@/components/app/TodayFigures";
 import { type DayVisitView, WalkerDay } from "@/components/app/WalkerDay";
 import { WhatToDoNow } from "@/components/app/WhatToDoNow";
 import { loadShopBrief } from "@/lib/brief";
@@ -88,6 +89,7 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
           <>
             {brief ? <BriefBanner count={brief.items.length} href={routes.brief} /> : null}
             {figures?.ok ? <WhatToDoNow actions={figures.value.actions} locale={locale} routes={routes} /> : null}
+            {figures?.ok ? <TodayFigures figures={figures.value.figures} locale={locale} routes={routes} timeZone={shop.timezone} now={new Date().toISOString()} /> : null}
           </>
         ) : null
       }
