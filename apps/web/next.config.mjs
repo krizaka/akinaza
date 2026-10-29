@@ -4,40 +4,11 @@ import { fileURLToPath } from "node:url";
 const packageVersion = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), "utf8")).version;
 // package.json's version + the short commit DigitalOcean passes at build (APP_COMMIT_SHA): the version every page shows.
 const appVersion = process.env.APP_VERSION?.trim() || (process.env.APP_COMMIT_SHA ? `${packageVersion}+${process.env.APP_COMMIT_SHA.slice(0, 7)}` : packageVersion);
-const production = process.env.NODE_ENV === "production";
-// A deployment whose declared public origin is plain http (the CI server of the crawls) cannot take `upgrade-insecure-requests`: it would send a
-// redirect hop (a prefetch of the landing that lands on /app) to https, where nothing listens. Any https or undeclared origin keeps it.
-const plainHttp = (process.env.APP_PUBLIC_URL ?? "").startsWith("http://");
 
-/**
- * Content Security Policy: nothing but this origin — no third-party script or font, and a frame only for the three embed hosts, after a click. Next renders
- * inline bootstrap scripts without a nonce, so scripts keep 'unsafe-inline'. Development adds what the dev server needs.
- */
-/** The only third parties a page may frame: the players of a TikTok, a YouTube Short and an Instagram reel, behind a click (packages/core/src/community.ts `externalReel`). */
-export const EMBED_FRAME_HOSTS = ["https://www.youtube-nocookie.com", "https://www.tiktok.com", "https://www.instagram.com"];
-
-const csp = [
-  "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${production ? "" : " 'unsafe-eval'"}`,
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://krizaka-assets.b-cdn.net",
-  "media-src 'self' https://krizaka-assets.b-cdn.net",
-  "font-src 'self' data:",
-  // The map's engine (MapLibre) runs its worker from a blob; its tiles and glyphs come through this origin (/maps/v1).
-  "worker-src 'self' blob:",
-  `connect-src 'self'${production ? "" : " ws: http://localhost:* http://127.0.0.1:*"}`,
-  // The studio previews the page in a frame of its own origin; the three video platforms may fill a frame only after a visitor pressed a facade's button (nothing is framed before the click).
-  `frame-src 'self' ${EMBED_FRAME_HOSTS.join(" ")}`,
-  "object-src 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "frame-ancestors 'self'",
-  ...(production && !plainHttp ? ["upgrade-insecure-requests"] : []),
-].join("; ");
+// The Content-Security-Policy is not here: a nonce is per response, so the proxy sets it (lib/csp.ts, proxy.ts), the strict one on the shop pages.
 
 const securityHeaders = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
-  { key: "Content-Security-Policy", value: csp },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

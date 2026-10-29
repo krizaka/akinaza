@@ -15,6 +15,7 @@ import { InvoicePreview } from "@/components/home/previews/InvoicePreview";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { pageSession } from "@/lib/access";
+import { jsonLdHtml } from "@/lib/csp";
 import { env } from "@/lib/env";
 import { homeFeed } from "@/lib/home-feed";
 import { asLocale, getDictionary } from "@/lib/i18n";
@@ -46,7 +47,7 @@ export default async function Home({ params }: Readonly<{ params: Promise<{ loca
   return (
     <>
       <link rel="preload" as="image" href={heroTake(locale).poster} fetchPriority="high" />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="home" />
       <main id="content">
         <LandingPage
