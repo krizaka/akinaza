@@ -1,5 +1,4 @@
 import { exploreQuerySchema, type ExploreQuery } from "@akinaza/core";
-import { addSeconds } from "date-fns";
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -144,12 +143,12 @@ describe("Explorer's combined search (real PostgreSQL)", () => {
     expect(json).not.toMatch(/Notre-Dame|rue Exemple|legalName|ownerId|gstNumber|qstNumber|address/);
   });
 
-  it("keeps a shop's free-today answer for a minute of the given clock, then asks the slot engine again", async () => {
+  it("keeps a shop's free-today answer for the clock minute it was read in, then asks the slot engine again", async () => {
     forgetFreeToday();
     const free = async (now: Date) => (await exploreSearch(t.db, exploreQuerySchema.parse({ q: "studio" }), now)).shops[0]!.freeToday;
     expect(await free(MON_10)).toBe(true);
     await t.db.update(services).set({ active: false }).where(eq(services.shopId, studio.shopId)); // the studio sells nothing any more
-    expect(await free(addSeconds(MON_10, 30))).toBe(true); // within the minute: remembered
-    expect(await free(addSeconds(MON_10, 61))).toBe(false); // after: asked again
+    expect(await free(new Date("2026-10-19T14:00:30Z"))).toBe(true); // the same minute: remembered
+    expect(await free(new Date("2026-10-19T14:01:01Z"))).toBe(false); // the next minute: asked again
   });
 });

@@ -1,5 +1,4 @@
 import { type ExploreQuery, exploreQuerySchema, type ExploreShop, searchTokens } from "@akinaza/core";
-import { differenceInMilliseconds } from "date-fns";
 import { and, type SQL, sql } from "drizzle-orm";
 
 import type { Db } from "./client";
@@ -93,22 +92,19 @@ async function inBatches<T, R>(items: readonly T[], size: number, work: (item: T
   return out;
 }
 
-// @fixed: a shop's free-today answer is reused this long (ADR-006 decision 4): the slot engine is the one costly fact of the page
-const FREE_TODAY_TTL_MS = 60_000;
 // @fixed: the answers kept at most; the oldest go first
 const FREE_TODAY_KEPT = 5_000;
-const freeTodayCache = new Map<string, { at: Date; free: boolean }>();
+const freeTodayCache = new Map<string, boolean>();
 
 /** Forgets the remembered answers (a test starts clean). */
 export function forgetFreeToday(): void { freeTodayCache.clear(); }
 
-/** Does the shop have a free time today? The services are tried in order, the first free one answers; the answer is kept for a minute of the given clock. */
+/** Does the shop have a free time today? The services are tried in order, the first free one answers; the answer is kept for the clock minute it was read in (ADR-006 decision 4: the slot engine is the one costly fact of the page). */
 async function freeToday(db: Db, shopId: string, timezone: string, now: Date): Promise<boolean> {
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
-  const key = `${shopId}|${today}`;
+  const key = `${shopId}|${today}|${now.toISOString().slice(0, 16)}`; // the given clock's minute: the clock is injected, never read here
   const kept = freeTodayCache.get(key);
-  const age = kept ? differenceInMilliseconds(now, kept.at) : -1;
-  if (kept && age >= 0 && age < FREE_TODAY_TTL_MS) return kept.free;
+  if (kept !== undefined) return kept;
   const rows = (await db.execute(sql`SELECT id FROM services WHERE shop_id = ${shopId} AND active ORDER BY duration_minutes, name_en LIMIT ${SERVICES_CHECKED}`)).rows as { id: string }[];
   let free = false;
   for (const s of rows) {
@@ -116,7 +112,7 @@ async function freeToday(db: Db, shopId: string, timezone: string, now: Date): P
     if (free) break;
   }
   if (freeTodayCache.size >= FREE_TODAY_KEPT) freeTodayCache.delete(freeTodayCache.keys().next().value!);
-  freeTodayCache.set(key, { at: now, free });
+  freeTodayCache.set(key, free);
   return free;
 }
 
