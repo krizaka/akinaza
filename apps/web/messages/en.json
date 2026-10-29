@@ -100,7 +100,7 @@
       "book": {
         "title": "Clients book on their own",
         "text": "A taken time disappears at once: nobody is booked twice.",
-        "alt": "The booking page: the service, the dog, the free times and the confirmation."
+        "alt": "The shop's public page: its services with their prices, each with a button to choose it and book."
       },
       "invoice": {
         "title": "The invoice, taxes included",

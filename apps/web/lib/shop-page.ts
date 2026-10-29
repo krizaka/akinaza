@@ -37,6 +37,6 @@ export async function loadPublicShopOrMove(locale: string, slug: string, rest = 
 
 /** `?staff=…&zone=…` from a page's search params (empty when there are none): a redirect keeps the choices made. */
 export function queryString(query: Record<string, string | string[] | undefined>): string {
-  const pairs = Object.entries(query).flatMap(([k, v]) => (v === undefined ? [] : Array.isArray(v) ? v : [v]).map((x) => [k, x] as [string, string]));
+  const pairs = Object.entries(query).flatMap(([k, v]) => [v ?? []].flat().map((x) => [k, x] as [string, string]));
   return pairs.length ? `?${new URLSearchParams(pairs).toString()}` : "";
 }

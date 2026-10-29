@@ -23,7 +23,11 @@ export interface InvoiceRequest {
  * The shop of the address (`/fr/app/<shop>/…`, as the web's): the walker routes pick it with `?shopId=`; without one, the server
  * answers for the member's default shop (the app's first screen, before it knows which).
  */
-export const inShop = (path: string, shopId?: string): string => (shopId ? `${path}${path.includes("?") ? "&" : "?"}shopId=${encodeURIComponent(shopId)}` : path);
+export const inShop = (path: string, shopId?: string): string => {
+  if (!shopId) return path;
+  const joiner = path.includes("?") ? "&" : "?";
+  return `${path}${joiner}shopId=${encodeURIComponent(shopId)}`;
+};
 
 export function createAkinazaApi(api: Pick<ApiClient, "call">, session: Pick<SessionStore, "saveToken" | "clearToken">) {
   const get = <T extends z.ZodType>(schema: T, path: string): Promise<z.infer<T>> => api.call<unknown>(path).then((value) => schema.parse(value));

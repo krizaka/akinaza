@@ -12,10 +12,16 @@ export interface Period {
 
 const day = (d: Date) => format(d, "yyyy-MM-dd");
 
+/** How many calendar months a filing period spans. */
+function monthsIn(filing: Filing): number {
+  if (filing === FILING.monthly) return 1;
+  return filing === FILING.quarterly ? 3 : 12;
+}
+
 /** The declaration period that contains `today` (the shop's calendar day): calendar months, quarters or years. */
 export function declarationPeriod(today: string, filing: Filing): Period {
   const d = parseISO(today);
-  const monthsPerPeriod = filing === FILING.monthly ? 1 : filing === FILING.quarterly ? 3 : 12;
+  const monthsPerPeriod = monthsIn(filing);
   const first = startOfMonth(new Date(d.getFullYear(), d.getMonth() - (d.getMonth() % monthsPerPeriod), 1));
   return { start: day(first), end: day(endOfMonth(addMonths(first, monthsPerPeriod - 1))) };
 }
