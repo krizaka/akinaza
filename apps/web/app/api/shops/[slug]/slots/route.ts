@@ -5,6 +5,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { handle, refuse } from "@/lib/http";
 import { limit } from "@/lib/rate-limit";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export function GET(req: Request, { params }: { params: Promise<{ slug: string }
     if (!parsed.success) throw refuse(400, "BAD_REQUEST", "Invalid query");
     const page = await publicShop(db(), slugSchema.parse((await params).slug));
     if (!page) throw refuse(404, "NOT_FOUND", "Not found");
-    const slots = await listSlots(db(), { shopId: page.shop.id, serviceId: parsed.data.serviceId, zoneId: parsed.data.zoneId, staffId: parsed.data.staffId, fromDay: parsed.data.from, days: 14, now: new Date() });
+    const slots = await listSlots(db(), { shopId: page.shop.id, serviceId: parsed.data.serviceId, zoneId: parsed.data.zoneId, staffId: parsed.data.staffId, fromDay: parsed.data.from, days: 14, now: requestNow() });
     return Response.json({ slots: slots.map((s) => ({ staffId: s.staffId, startsAt: s.startsAt.toISOString(), endsAt: s.endsAt.toISOString(), seatsLeft: s.seatsLeft, capacity: s.capacity, joins: s.joins })) });
   });
 }

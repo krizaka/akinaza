@@ -8,6 +8,7 @@ import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { handle, readJson } from "@/lib/http";
 import { translationRules } from "@/lib/translation-settings";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export function GET(req: Request) {
     const { shop } = await requireOwner(req);
     const rules = await translationRules();
     const rows = await translationRows(db(), shop.id);
-    const today = localDay(new Date(), shop.timezone);
+    const today = localDay(requestNow(), shop.timezone);
     return Response.json({ ...rows, allowed: rules.allowed, translationOn: rules.enabled, dailyLimit: rules.dailyLimit, usedToday: await translationRunsOn(db(), shop.id, today) }, { headers: { "Cache-Control": "private, no-store" } });
   });
 }

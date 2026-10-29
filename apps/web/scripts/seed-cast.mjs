@@ -107,6 +107,8 @@ async function main() {
   try {
     await migrate(pool, fileURLToPath(new URL("../../../packages/db/drizzle", import.meta.url))); // idempotent: the app does the same at start
     const ids = [];
+    // The visual run fixes the instant the pages are drawn at (APP_FIXED_NOW, dev only): the cast is seeded around the same one.
+    const fixedNow = process.env.APP_FIXED_NOW;
     for (const a of accounts) {
       const [row] = (
         await pool.query(
@@ -118,7 +120,7 @@ async function main() {
       ).rows;
       ids.push(row.id);
     }
-    const result = await seedSaintHenri(createDb(pool), key, new Date());
+    const result = await seedSaintHenri(createDb(pool), key, fixedNow ? new Date(fixedNow) : new Date());
     console.log(`seed-cast: ${WALKER.displayName} (${SAINT_HENRI.shop.name}), ${accounts.length - 3} clients, ${ERIC.displayName}, ${ADMIN.displayName} (administrator); shop ${result.created ? "created" : "already there"}`);
     const { fingerprint, counts } = await fingerprintOf((sql, values) => pool.query(sql, values), ids, ids[0]);
     console.log(`fingerprint: ${fingerprint}`);

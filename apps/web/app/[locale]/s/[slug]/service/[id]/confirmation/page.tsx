@@ -8,6 +8,7 @@ import { notFound, redirect } from "next/navigation";
 import { ButtonLink } from "@/components/ButtonLink";
 import { CancelBooking } from "@/components/journey/CancelBooking";
 import { JourneyFrame } from "@/components/journey/JourneyFrame";
+import { requestNow } from "@/app/request-now";
 import { pageSession } from "@/lib/access";
 import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";
@@ -29,7 +30,7 @@ export default async function ConfirmationPage({ params, searchParams }: Readonl
   const here = backToHere(`/${locale}/s/${slug}/service/${id}/confirmation`, query);
   if (!session) redirect(`/${locale}/sign-in?next=${encodeURIComponent(here)}`);
   const bookingId = searchValue(query.booking);
-  const detail = bookingId ? await bookingDetail(db(), session.account.id, bookingId, new Date()) : null;
+  const detail = bookingId ? await bookingDetail(db(), session.account.id, bookingId, requestNow()) : null;
   if (!detail) notFound();
   const file = (await clientFilesOf(db(), session.account.id)).find((f) => f.shopSlug === detail.shop.slug);
   const step = confirmationStep({ detail, locale });
