@@ -1,0 +1,24 @@
+id: no-raw-cookie-name
+language: Tsx
+severity: error
+message: "The name of a cookie of the app goes through `cookieName(...)` of lib/cookie.ts: on https it is `__Host-` prefixed, and a literal name would miss the prefix."
+note: "ADR-005 slice 1, akinaza#534. `SESSION_COOKIE`, `SHOP_COOKIE` are already named; a new cookie is `cookieName(\"akinaza_<what>\")`."
+rule:
+  kind: string
+  regex: ^["'](akinaza_session|akinaza_shop|NEXT_LOCALE)["']$
+  not:
+    inside:
+      stopBy: end
+      kind: call_expression
+      has:
+        field: function
+        regex: ^cookieName$
+ignores:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/dist/**"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/__tests__/**"
+  - "**/tests/**"
+  - "scripts/**"

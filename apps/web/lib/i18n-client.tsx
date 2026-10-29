@@ -44,3 +44,7 @@ export function useSay(explicit?: BusinessType) {
   );
   return { say, locale };
 }
+
+/** The translator and the locale `useSay` returns, for code outside a component (a column list built at module level takes them as parameters). */
+export type Say = ReturnType<typeof useSay>["say"];
+export type SayLocale = ReturnType<typeof useSay>["locale"];

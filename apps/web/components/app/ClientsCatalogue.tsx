@@ -18,13 +18,74 @@ import { useShopRoutes } from "@/components/app/ShopSession";
 import { ButtonLink } from "@/components/ButtonLink";
 import { CLIENT_FILTERS, type ClientsQuery, clientsView } from "@/lib/clients-view";
 import { formatDate, formatMoney } from "@/lib/format";
-import { useSay } from "@/lib/i18n-client";
+import { type Say, type SayLocale, useSay } from "@/lib/i18n-client";
 import { listHref, type OrganizeData, type TagLite } from "@/lib/organize-view";
+import type { ShopRoutes } from "@/lib/routes";
 import { useTableLabels } from "@/lib/table-labels";
 
 /** The address of the list for a query: an empty search and « all » leave no parameter; the tags, dates and view in force stay (the URL is the state). */
 const hrefOf = (organize: OrganizeData) => (pathname: string, { q, filter }: ClientsQuery) =>
   listHref(pathname, { ...organize.filters, q: undefined }, organize.view, { q: q || undefined, filter: filter === "all" ? undefined : filter });
+
+type ClientColumnsContext = { say: Say; locale: SayLocale; timeZone: string; routes: ShopRoutes; tagsByClient: Record<string, TagLite[]> };
+
+/** Built outside the component: the cells are render functions, not components of the table's parent. */
+const clientColumns = ({ say, locale, timeZone, routes, tagsByClient }: ClientColumnsContext): DataTableColumn<ClientRowView>[] => {
+  const day = (iso: string | null) => (iso ? formatDate(iso, locale, timeZone) : say("clients.never"));
+  return [
+    {
+      id: "client",
+      header: say("clients.columns.client"),
+      type: "title",
+      card: "title",
+      sortable: true,
+      minWidth: 220,
+      value: (c) => c.fullName,
+      cell: (c) => (
+        <Link href={routes.client(c.id)} className="flex items-center gap-3 font-semibold text-fg hover:underline">
+          <ClientAvatar id={c.id} name={c.fullName} />
+          {c.fullName}
+        </Link>
+      ),
+      subtitle: (c) => c.email ?? c.phone ?? "",
+    },
+    { id: "tags", header: say("organize.columns.tags"), priority: 2, value: (c) => (tagsByClient[c.id] ?? []).map((t) => t.name).join(", "), cell: (c) => <TagChips tags={tagsByClient[c.id]} /> },
+    {
+      id: "state",
+      header: say("clients.columns.state"),
+      type: "status",
+      value: (c) => c.owedCents,
+      cell: (c) => (c.owedCents > 0 ? <Badge tone="warning">{say("clients.state.owes", { amount: formatMoney(c.owedCents, locale) })}</Badge> : <Badge tone="success">{say("clients.state.upToDate")}</Badge>),
+    },
+    { id: "visits", header: say("clients.columns.visits"), type: "number", sortable: true, priority: 3, value: (c) => c.visits },
+    { id: "last", header: say("clients.columns.last"), sortable: true, priority: 2, nowrap: true, value: (c) => c.lastVisitAt ?? "", cell: (c) => day(c.lastVisitAt) },
+    { id: "next", header: say("clients.columns.next"), sortable: true, priority: 2, nowrap: true, value: (c) => c.nextVisitAt ?? "", cell: (c) => day(c.nextVisitAt) },
+    {
+      id: "bill",
+      header: say("clients.columns.bill"),
+      headerHidden: true,
+      hideable: false,
+      cell: (c) => (
+        <ButtonLink href={routes.newInvoiceFor({ client: c.id })} variant="secondary" size="sm">
+          {say("clients.file.bill")}
+        </ButtonLink>
+      ),
+    },
+  ];};
+
+/** The actions of a selection, built outside the component: a render function, not a component of the table's parent. */
+function bulkActions({ organize, selected, onExport, exportLabel }: { organize: OrganizeData; selected: string[]; onExport: () => void; exportLabel: string }) {
+  return function BulkActions({ clear }: Readonly<{ clear: () => void }>) {
+    return (
+      <>
+        <SelectionTags organize={organize} selected={selected} onDone={clear} />
+        <Button variant="secondary" size="sm" onClick={onExport}>
+          {exportLabel}
+        </Button>
+      </>
+    );
+  };
+}
 
 /**
  * Clients on the catalogue template (D5, review K3b): the plan strip (how many, what they owe, a meter of who is up to date),
@@ -40,49 +101,7 @@ export function ClientsCatalogue({ clients, query, timeZone, organize, tagsByCli
   const [selected, setSelected] = useState<string[]>([]);
   const href = hrefOf(organize);
   const view = useMemo(() => clientsView(clients, query), [clients, query]);
-  const columns = useMemo<DataTableColumn<ClientRowView>[]>(() => {
-    const day = (iso: string | null) => (iso ? formatDate(iso, locale, timeZone) : say("clients.never"));
-    return [
-      {
-        id: "client",
-        header: say("clients.columns.client"),
-        type: "title",
-        card: "title",
-        sortable: true,
-        minWidth: 220,
-        value: (c) => c.fullName,
-        cell: (c) => (
-          <Link href={routes.client(c.id)} className="flex items-center gap-3 font-semibold text-fg hover:underline">
-            <ClientAvatar id={c.id} name={c.fullName} />
-            {c.fullName}
-          </Link>
-        ),
-        subtitle: (c) => c.email ?? c.phone ?? "",
-      },
-      { id: "tags", header: say("organize.columns.tags"), priority: 2, value: (c) => (tagsByClient[c.id] ?? []).map((t) => t.name).join(", "), cell: (c) => <TagChips tags={tagsByClient[c.id]} /> },
-      {
-        id: "state",
-        header: say("clients.columns.state"),
-        type: "status",
-        value: (c) => c.owedCents,
-        cell: (c) => (c.owedCents > 0 ? <Badge tone="warning">{say("clients.state.owes", { amount: formatMoney(c.owedCents, locale) })}</Badge> : <Badge tone="success">{say("clients.state.upToDate")}</Badge>),
-      },
-      { id: "visits", header: say("clients.columns.visits"), type: "number", sortable: true, priority: 3, value: (c) => c.visits },
-      { id: "last", header: say("clients.columns.last"), sortable: true, priority: 2, nowrap: true, value: (c) => c.lastVisitAt ?? "", cell: (c) => day(c.lastVisitAt) },
-      { id: "next", header: say("clients.columns.next"), sortable: true, priority: 2, nowrap: true, value: (c) => c.nextVisitAt ?? "", cell: (c) => day(c.nextVisitAt) },
-      {
-        id: "bill",
-        header: say("clients.columns.bill"),
-        headerHidden: true,
-        hideable: false,
-        cell: (c) => (
-          <ButtonLink href={routes.newInvoiceFor({ client: c.id })} variant="secondary" size="sm">
-            {say("clients.file.bill")}
-          </ButtonLink>
-        ),
-      },
-    ];
-  }, [say, locale, timeZone, routes, tagsByClient]);
+  const columns = useMemo(() => clientColumns({ say, locale, timeZone, routes, tagsByClient }), [say, locale, timeZone, routes, tagsByClient]);
   const exportSelection = () => {
     const rows = view.rows.filter((r) => selected.includes(r.id));
     const csv = dataTableCsv(rows, [
@@ -138,14 +157,7 @@ export function ClientsCatalogue({ clients, query, timeZone, organize, tagsByCli
         selected={selected}
         onSelectedChange={setSelected}
         bulkMax={200}
-        bulkActions={({ clear }) => (
-          <>
-            <SelectionTags organize={organize} selected={selected} onDone={clear} />
-            <Button variant="secondary" size="sm" onClick={exportSelection}>
-              {say("clients.selection.export")}
-            </Button>
-          </>
-        )}
+        bulkActions={bulkActions({ organize, selected, onExport: exportSelection, exportLabel: say("clients.selection.export") })}
         defaultSort={{ column: "client", direction: "ascending" }}
         empty={<EmptyState icon={<Mascot bird="beaver" mood="thinking" size={120} />} title={say("clients.noMatch")} action={<ButtonLink href={href(pathname, { q: "", filter: "all" })} variant="secondary" size="sm">{say("clients.clear")}</ButtonLink>} />}
       />

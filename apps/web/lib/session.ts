@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 
+import { ownCookie } from "./cookie";
 import { query } from "./db";
 import { sessionSecret } from "./env";
 import { SESSION_COOKIE } from "./session-cookie";
@@ -7,7 +8,7 @@ import { SESSION_COOKIE } from "./session-cookie";
 /**
  * Web sessions. The cookie holds a random token (`as1.` + 32 bytes); the table keeps only its keyed hash, so a leaked
  * table opens nothing. The account is re-read on every request (a suspension applies at once). 14 days, HttpOnly,
- * Secure in production, SameSite=Lax.
+ * Secure in production, SameSite=Lax, host-only (`__Host-` on https, no Domain: lib/cookie.ts).
  */
 export { SESSION_COOKIE };
 export const SESSION_TTL_DAYS = 14;
@@ -54,5 +55,5 @@ export async function revokeSession(token: string | undefined): Promise<void> {
 }
 
 export function sessionCookie(token: string, expires: Date) {
-  return { name: SESSION_COOKIE, value: token, httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" as const, path: "/", expires };
+  return ownCookie(SESSION_COOKIE, token, { expires });
 }

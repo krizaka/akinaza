@@ -51,7 +51,8 @@ const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: LOCALE === "fr" ? "fr-CA" : "en-CA", timezoneId: "America/Toronto" });
 const page = await context.newPage();
 const api = async (route, init) => {
-  const res = await context.request.fetch(`${BASE}${route}`, init);
+  // The studio's own calls, as its page makes them: a browser says `Sec-Fetch-Site: same-origin`, which the API's write check (lib/csrf.ts) asks of a request that carries the session.
+  const res = await context.request.fetch(`${BASE}${route}`, { ...init, headers: { "sec-fetch-site": "same-origin", ...init?.headers } });
   return { status: res.status(), body: (res.headers()["content-type"] ?? "").includes("json") ? await res.json() : await res.text() };
 };
 const orderOf = (doc) => doc.sections.map((s) => s.key);
