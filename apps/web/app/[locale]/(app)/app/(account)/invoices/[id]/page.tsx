@@ -11,7 +11,7 @@ import { asLocale } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
-export default async function ClientInvoicePage({ params }: { params: Promise<{ locale: string; id: string }> }) {
+export default async function ClientInvoicePage({ params }: Readonly<{ params: Promise<{ locale: string; id: string }> }>) {
   const { locale: raw, id } = await params;
   const locale = asLocale(raw);
   if (!z.string().uuid().safeParse(id).success) notFound();

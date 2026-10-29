@@ -5,7 +5,7 @@ import Link from "next/link";
 import { InvoiceDocument, type InvoiceView } from "@/components/app/InvoiceDocument";
 import { format, getDictionary, type Locale } from "@/lib/i18n";
 
-export function InvoicePublicDocument({ invoice, locale, today, token }: { invoice: InvoiceView & { paidCents: number }; locale: Locale; today: string; token?: string }) {
+export function InvoicePublicDocument({ invoice, locale, today, token }: Readonly<{ invoice: InvoiceView & { paidCents: number }; locale: Locale; today: string; token?: string }>) {
   const t = getDictionary(locale).console.invoicePublic;
   const balance = remainingCents({ totalCents: invoice.totalCents, paidCents: invoice.paidCents, dueOn: invoice.dueOn, isCredit: !!invoice.creditOf, superseded: !!invoice.replacedBy || !!invoice.creditedBy });
   const state = invoiceState({ totalCents: invoice.totalCents, paidCents: invoice.paidCents, dueOn: invoice.dueOn, isCredit: !!invoice.creditOf, superseded: !!invoice.replacedBy || !!invoice.creditedBy }, today);

@@ -27,7 +27,7 @@ const businessTypeOf = (trade: ShopType) => (trade === "pets" ? ("pets" as const
  * With templates offered (#261): the trade is asked (it stands for the business type) and a template preselected — the administrator's default for the trade —
  * which applies only because the owner keeps it chosen; « Plain page » keeps today's page. `first` is a client opening their first shop (K7): the same form, its own words.
  */
-export function NewShop({ locale, backHref, first = false, offers = null }: { locale: RouteLocale; backHref: string; first?: boolean; /** The templates of every trade, or null while the administrator's switch is off. */ offers?: Record<ShopType, TemplateChoices> | null }) {
+export function NewShop({ locale, backHref, first = false, offers = null }: Readonly<{ locale: RouteLocale; backHref: string; first?: boolean; /** The templates of every trade, or null while the administrator's switch is off. */ offers?: Record<ShopType, TemplateChoices> | null }>) {
   const words = first ? "shopSetup.openShop" : "shopSetup.addShop";
   const { say, locale: uiLocale } = useSay();
   const router = useRouter();

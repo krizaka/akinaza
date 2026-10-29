@@ -46,7 +46,7 @@ const money = (cents: number, locale: string) => new Intl.NumberFormat(locale ==
  * « Ma page boutique » (K4): the section the hub opens, one at a time. The section is named by the hub's navigation (`?tab=`), never a
  * row of tabs; each section saves on its own. The shop's name, its status and its public link are the hub's header, not this one.
  */
-export function ShopSetupView({ data, tab = "identity" }: { data: SetupData; /** The section the hub opens (`?tab=`). */ tab?: PageTab }) {
+export function ShopSetupView({ data, tab = "identity" }: Readonly<{ data: SetupData; /** The section the hub opens (`?tab=`). */ tab?: PageTab }>) {
   const { say } = useSay();
   if (!data.page || !data.shopId) return <IdentitySection page={data.page} />;
   const body: Record<PageTab, React.ReactNode> = {
@@ -94,7 +94,7 @@ const logoForm = createKrizakaForm({
   defaultValues: { files: [] as File[] },
 });
 
-function ShopPageCard({ shopId, publicUrl, config: initial }: { shopId: string; publicUrl: string | null; config: ShopPageConfig }) {
+function ShopPageCard({ shopId, publicUrl, config: initial }: Readonly<{ shopId: string; publicUrl: string | null; config: ShopPageConfig }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [config, setConfig] = useState(initial);
@@ -169,7 +169,7 @@ function ShopPageCard({ shopId, publicUrl, config: initial }: { shopId: string; 
 const coord = z.string().trim().max(14).regex(/^(-?\d+([.,]\d+)?)?$/);
 const zoneForm = createKrizakaForm({ schema: z.object({ name: z.string().trim().min(1).max(80), lat: coord, lng: coord }), defaultValues: { name: "", lat: "", lng: "" } });
 
-function ZonesCard({ zones }: { zones: SetupData["zones"] }) {
+function ZonesCard({ zones }: Readonly<{ zones: SetupData["zones"] }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const form = zoneForm.useForm({
@@ -231,7 +231,7 @@ const serviceForm = createKrizakaForm({
 
 type Service = SetupData["services"][number];
 
-function ServicesCard({ services }: { services: SetupData["services"] }) {
+function ServicesCard({ services }: Readonly<{ services: SetupData["services"] }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [editing, setEditing] = useState<Service | null>(null);
@@ -269,7 +269,7 @@ function ServicesCard({ services }: { services: SetupData["services"] }) {
 }
 
 /** A new service, or (with `editing`) the one the owner picked: the same form, its fields filled. */
-function ServiceForm({ editing, onDone }: { editing: Service | null; onDone: () => void }) {
+function ServiceForm({ editing, onDone }: Readonly<{ editing: Service | null; onDone: () => void }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const form = serviceForm.useForm({
@@ -340,7 +340,7 @@ const mediaForm = createKrizakaForm({
   defaultValues: { coverUrl: "", coverAltFr: "", coverAltEn: "", gallery: "", coverFiles: [] as File[], galleryFiles: [] as File[] },
 });
 
-function MediaCard({ media }: { media: SetupData["media"] }) {
+function MediaCard({ media }: Readonly<{ media: SetupData["media"] }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [saved, setSaved] = useState(false);
@@ -404,7 +404,7 @@ const clock = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
 const hoursForm = createKrizakaForm({ schema: z.object({ weekday: z.string().regex(/^[0-6]$/), startsAt: clock, endsAt: clock }), defaultValues: { weekday: "1", startsAt: "09:00", endsAt: "17:00" } });
 const dayOffForm = createKrizakaForm({ schema: z.object({ day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), reason: z.string().trim().max(120) }), defaultValues: { day: "", reason: "" } });
 
-function HoursCard({ windows, daysOff }: { windows: SetupData["windows"]; daysOff: SetupData["daysOff"] }) {
+function HoursCard({ windows, daysOff }: Readonly<{ windows: SetupData["windows"]; daysOff: SetupData["daysOff"] }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const i18n = { t: (key: string, vars?: Readonly<Record<string, string | number | boolean | Date | null | undefined>>) => say(key, vars as Record<string, string | number> | undefined), locale };
@@ -486,7 +486,7 @@ const rulesForm = createKrizakaForm({
   defaultValues: { cancellationHours: "24", bookingHorizonDays: "60", slotStepMinutes: "30", minNoticeMinutes: "120", reportLinkDays: "30", paymentTermsDays: "30" },
 });
 
-function RulesCard({ rules }: { rules: NonNullable<SetupData["rules"]> }) {
+function RulesCard({ rules }: Readonly<{ rules: NonNullable<SetupData["rules"]> }>) {
   const { say, locale } = useSay();
   const { visitReports } = useVocabulary();
   const call = useCall();

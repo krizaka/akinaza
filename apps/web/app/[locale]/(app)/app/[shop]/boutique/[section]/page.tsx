@@ -244,7 +244,7 @@ function boutiqueBody({ section, tab, community, locale, shopId }: Readonly<{ se
 }
 
 /** One section of Boutique, named by the address. A section the role may not open is a 404, whatever the link says. */
-export default async function BoutiqueSectionPage({ params, searchParams }: { params: Promise<{ locale: string; shop: string; section: string }>; searchParams: Promise<{ tab?: string }> }) {
+export default async function BoutiqueSectionPage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string; section: string }>; searchParams: Promise<{ tab?: string }> }>) {
   const { locale: rawLocale, shop: shopId, section: rawSection } = await params;
   const locale = asLocale(rawLocale);
   if (!isBoutiqueSection(rawSection)) notFound();

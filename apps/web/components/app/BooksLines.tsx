@@ -18,7 +18,7 @@ export interface BooksLineView {
  * The lines of the return (FPZ-500) with the figure of each and where it comes from: the invoice or the expense behind it,
  * unfolded in place. A computed line says how it is computed. A card per line on a phone.
  */
-export function BooksLines({ lines }: { lines: BooksLineView[] }) {
+export function BooksLines({ lines }: Readonly<{ lines: BooksLineView[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo<DataTableColumn<BooksLineView>[]>(
     () => [

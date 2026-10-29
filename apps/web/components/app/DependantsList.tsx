@@ -14,7 +14,7 @@ export interface DependantView {
 }
 
 /** A client's dogs (or whoever the business type calls their dependants): breed, size, temperament, vet and emergency contact. Nothing for a business with none. */
-export function DependantsList({ dependants }: { dependants: DependantView[] }) {
+export function DependantsList({ dependants }: Readonly<{ dependants: DependantView[] }>) {
   const { say } = useSay();
   const vocabulary = useVocabulary();
   if (!vocabulary.dependants || dependants.length === 0) return null;

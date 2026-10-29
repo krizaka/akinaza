@@ -21,7 +21,7 @@ export interface SessionView {
 }
 
 /** The sign-ins of the account: where from and since when, this one flagged; one action ends all the others. */
-export function SessionsPanel({ sessions }: { sessions: SessionView[] }) {
+export function SessionsPanel({ sessions }: Readonly<{ sessions: SessionView[] }>) {
   const { say, locale } = useSay();
   const router = useRouter();
   const [problem, setProblem] = useState<string | null>(null);

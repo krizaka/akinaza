@@ -54,7 +54,7 @@ export interface ClientFileView {
  * shop to download, « Effacer » in its own block away from it. The screen's one primary action is booking again at the first
  * shop; « Ouvrir une boutique » is an action of the page, never a place on the rail.
  */
-export function ClientHome({ files }: { files: ClientFileView[] }) {
+export function ClientHome({ files }: Readonly<{ files: ClientFileView[] }>) {
   const { say, locale } = useSay();
   const primaryAt = files.findIndex((f) => f.client.shopSlug !== null);
   return (
@@ -78,7 +78,7 @@ export function ClientHome({ files }: { files: ClientFileView[] }) {
   );
 }
 
-function FileSection({ file, primary }: { file: ClientFileView; /** Whether « Réserver chez … » is the screen's primary action (one per screen). */ primary: boolean }) {
+function FileSection({ file, primary }: Readonly<{ file: ClientFileView; /** Whether « Réserver chez … » is the screen's primary action (one per screen). */ primary: boolean }>) {
   const { say, locale } = useSay();
   const { dependants } = useVocabulary();
   const when = (iso: string) => formatDate(iso, { locale: INTL_LOCALE[locale], style: "long", timeStyle: "short", timeZone: file.timeZone });
@@ -110,7 +110,7 @@ function FileSection({ file, primary }: { file: ClientFileView; /** Whether « R
 const standing = (i: ClientFileView["invoices"][number]) => ({ totalCents: i.totalCents, paidCents: i.paidCents, dueOn: i.dueOn, isCredit: i.creditOf !== null, superseded: i.superseded });
 
 /** A shop's invoices as rows (D7): the number, the day it was issued, its state in the list's words and tone, its amount. */
-function InvoiceRows({ file }: { file: ClientFileView }) {
+function InvoiceRows({ file }: Readonly<{ file: ClientFileView }>) {
   const { say, locale } = useSay();
   return (
     <section className="flex flex-col gap-2">
@@ -146,7 +146,7 @@ function InvoiceRows({ file }: { file: ClientFileView }) {
  * « Mes données » (Loi 25), once for every shop (D7): a row per shop with its download, then « Effacer un dossier » in a block of
  * its own, so the danger is never beside the copy. Each erasure speaks the shop's vocabulary.
  */
-function DataSection({ files }: { files: ClientFileView[] }) {
+function DataSection({ files }: Readonly<{ files: ClientFileView[] }>) {
   const { say } = useSay();
   return (
     <section aria-labelledby="client-data" className="flex flex-col gap-4 border-t border-border-default pt-6">
@@ -187,7 +187,7 @@ function DataSection({ files }: { files: ClientFileView[] }) {
   );
 }
 
-function BookingList({ title, items, file, when, cancellable = false }: { title: string; items: ClientFileView["bookings"]; file: ClientFileView; when: (iso: string) => string; cancellable?: boolean }) {
+function BookingList({ title, items, file, when, cancellable = false }: Readonly<{ title: string; items: ClientFileView["bookings"]; file: ClientFileView; when: (iso: string) => string; cancellable?: boolean }>) {
   const { say, locale } = useSay();
   const call = useCall();
   if (items.length === 0) return null;
@@ -244,7 +244,7 @@ function BookingList({ title, items, file, when, cancellable = false }: { title:
 
 const eraseForm = createKrizakaForm({ schema: z.object({ confirmEmail: z.string().trim().min(1).email() }), defaultValues: { confirmEmail: "" } });
 
-function EraseFile({ file }: { file: ClientFileView }) {
+function EraseFile({ file }: Readonly<{ file: ClientFileView }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [open, setOpen] = useState(false);

@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * The home, short: the promise beside the real app on a phone, the three jobs on real screens (a booking, an invoice, the
  * quarter's books), the founder offer once it is live, one way in, a quiet line of trust. The tax return is prepared, never filed.
  */
-export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Home({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const d = getDictionary(locale).landing;
   const status = productStatus(preview);

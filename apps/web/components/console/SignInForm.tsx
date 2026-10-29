@@ -20,7 +20,7 @@ const signIn = createKrizakaForm({
  * E-mail and password on @krizaka/ui's form; the server sets the session cookie, the page then opens the library.
  * `forgotPassword` offers the public reset page: the administration has none on its own host, so it passes false there.
  */
-export function SignInForm({ next, forgotPassword = true }: { next: string; forgotPassword?: boolean }) {
+export function SignInForm({ next, forgotPassword = true }: Readonly<{ next: string; forgotPassword?: boolean }>) {
   const { say, locale } = useSay();
   const router = useRouter();
   const [problem, setProblem] = useState<string | null>(null);
