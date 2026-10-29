@@ -431,7 +431,7 @@ Shared with Yomizaka's review (file once): **K2** `AppHeader` primary action slo
 ```
 K6 — app-header: a context switcher (the shop, the workspace)
 Why: Akinaza's owner can run several shops; today a native <select> at the top of the sidebar, shown only with two shops,
-and a one-shop owner never sees which shop the frame is about. Orazaka's workspaces and Orochia's channels have the same need.
+and a one-shop owner never sees which shop the frame is about. Orazaka's workspaces and other products' channels have the same need.
 Ask: a `context` slot after `name` — a chip with the context's mark and name that is a DropdownMenu trigger when `options`
 are given (the other contexts + an « add » action), plain text otherwise; truncated at 360 px with the full name as tooltip.
 Tests: one context renders a chip, several render a menu, keyboard, 360 px.

@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 /**
- * E-mail templates are data, not code (the krizaka-notifications convention, shared with Orochia and Yasakia). A template is a folder `apps/web/mail-templates/<id>/`
+ * E-mail templates are data, not code (the krizaka-notifications convention, shared with the other products). A template is a folder `apps/web/mail-templates/<id>/`
  * with one sub-folder per locale holding `subject.txt`, `body.html` and `body.txt`, rendered inside the shared layout
  * (`_layout/layout.html` / `layout.txt` + `_layout/<locale>/footer.txt`). The words live in those files, never here.
  *

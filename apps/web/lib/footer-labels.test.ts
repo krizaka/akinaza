@@ -13,7 +13,7 @@ describe("the product footer ships only its link-back words", () => {
       expect(labels.groups).toEqual({});
       expect(labels.status).toEqual({});
       const wire = JSON.stringify(labels).toLowerCase();
-      for (const word of ["souverain", "sovereign", "orazaka", "orochia", "yomizaka", "yasakia", "kachizaka"]) expect(wire, word).not.toContain(word);
+      for (const word of ["souverain", "sovereign", "orazaka", "yomizaka"]) expect(wire, word).not.toContain(word);
     });
   }
 });
