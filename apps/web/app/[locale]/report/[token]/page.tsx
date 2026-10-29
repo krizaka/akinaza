@@ -11,6 +11,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { db } from "@/lib/db";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 // A private page: its address is the credential. Never indexed, never cached, no referrer to the next site.
@@ -21,7 +22,7 @@ export default async function ReportPage({ params }: Readonly<{ params: Promise<
   const { locale: raw, token } = await params;
   const locale = asLocale(raw);
   const t = getDictionary(locale).console.report;
-  const report = await reportByToken(db(), token, new Date());
+  const report = await reportByToken(db(), token, requestNow());
   // An unknown or expired link is a 404, with the product's calm not-found page (akinaza#381).
   if (!report) notFound();
   const lang = locale === "fr" ? "fr-CA" : "en-CA";

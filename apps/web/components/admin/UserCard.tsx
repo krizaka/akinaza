@@ -52,7 +52,8 @@ export function UserCard({ initial, self }: Readonly<{ initial: UserDetail; self
       </Link>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="break-all font-display text-xl font-extrabold text-fg">{user.email}</h2>
-        {self ? null : user.status === "ACTIVE" ? (
+        {!self &&
+          (user.status === "ACTIVE" ? (
           <Button variant="secondary" size="sm" loading={status.isPending} onClick={() => status.mutate("suspend")}>
             {say("admin.user.suspend")}
           </Button>
@@ -60,7 +61,7 @@ export function UserCard({ initial, self }: Readonly<{ initial: UserDetail; self
           <Button variant="primary" size="sm" loading={status.isPending} onClick={() => status.mutate("restore")}>
             {say("admin.user.restore")}
           </Button>
-        )}
+        ))}
       </div>
       {problem ? <Alert tone="danger">{problem}</Alert> : null}
       {note ? <Alert tone="success">{note}</Alert> : null}

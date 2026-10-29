@@ -4,8 +4,64 @@
 // Waiting for a real run (Orazaka answering) can be sped up with `take.fast(start, end, speed)`; the speed-up is the only
 // edit, and it is said in the metadata.
 import { execFileSync } from "node:child_process";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
+
+/** ffmpeg by its absolute path (never looked up in a writable PATH directory): the FFMPEG variable when set, else the first install found. */
+function ffmpegBin() {
+  const found = [process.env.FFMPEG, "/opt/homebrew/bin/ffmpeg", "/usr/local/bin/ffmpeg", "/usr/bin/ffmpeg"].find((file) => file && existsSync(file));
+  if (!found) throw new Error("ffmpeg not found: install it, or set FFMPEG to its path");
+  return found;
+}
+
+/** Runs ffmpeg quietly on the given arguments (overwriting its output). */
+export const ffmpeg = (args) => execFileSync(ffmpegBin(), ["-y", "-loglevel", "error", ...args]);
+
+/** A smooth scroll: many small steps, so the capture really has motion to show. */
+export const glide = (page, dy, ms = 1400) =>
+  page.evaluate(
+    ([distance, duration]) =>
+      new Promise((resolve) => {
+        const start = performance.now();
+        const from = window.scrollY;
+        const step = (t) => {
+          const k = Math.min(1, (t - start) / duration);
+          window.scrollTo(0, from + distance * (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2));
+          if (k < 1) requestAnimationFrame(step);
+          else resolve();
+        };
+        requestAnimationFrame(step);
+      }),
+    [dy, ms],
+  );
+
+/** Collects every frame the compositor paints (with its timestamp) into `frames`; the caller sends `Page.startScreencast` on the returned session. */
+export async function listenScreencast(context, page, frames) {
+  const cdp = await context.newCDPSession(page);
+  cdp.on("Page.screencastFrame", async ({ data, metadata, sessionId }) => {
+    frames.push({ t: metadata.timestamp, data });
+    await cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {});
+  });
+  return cdp;
+}
+
+/** Seconds from the first frame to the last. */
+export const spanOf = (frames) => (frames.length ? frames.at(-1).t - frames[0].t : 0);
+
+/** Writes the frames as numbered JPEGs and the ffmpeg concat list that holds each one until the next (the screencast only sends what changed). Returns the list's path. */
+export function writeConcatList(frames, dir) {
+  const name = (i) => path.join(dir, `${String(i).padStart(5, "0")}.jpg`);
+  let list = "";
+  frames.forEach((f, i) => {
+    writeFileSync(name(i), Buffer.from(f.data, "base64"));
+    const next = frames[i + 1]?.t ?? f.t + 1 / 30;
+    list += `file '${name(i)}'\nduration ${Math.max(next - f.t, 1 / 120).toFixed(5)}\n`;
+  });
+  list += `file '${name(frames.length - 1)}'\n`;
+  const file = path.join(dir, "list.txt");
+  writeFileSync(file, list);
+  return file;
+}
 
 const pad = (n, w = 2) => String(Math.floor(n)).padStart(w, "0");
 /** `00:01:02.500` */

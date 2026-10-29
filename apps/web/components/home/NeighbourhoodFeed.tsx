@@ -39,7 +39,8 @@ function Feed({ initial, locale, words }: Readonly<{ initial: FeedView; locale: 
         ))}
       </div>
       {feed.isError ? <p role="alert" className="m-0 text-sm text-fg-secondary">{words.error}</p> : null}
-      {view.flyers.length > 0 ? <Bulletin flyers={view.flyers} label={words.boardLabel} visit={(shop) => words.visit.replace("{shop}", shop)} /> : feed.isPending || feed.isError ? null : <p className="m-0 text-base text-fg-secondary">{words.empty}</p>}
+      {view.flyers.length > 0 && <Bulletin flyers={view.flyers} label={words.boardLabel} visit={(shop) => words.visit.replace("{shop}", shop)} />}
+      {view.flyers.length === 0 && !feed.isPending && !feed.isError && <p className="m-0 text-base text-fg-secondary">{words.empty}</p>}
     </div>
   );
 }

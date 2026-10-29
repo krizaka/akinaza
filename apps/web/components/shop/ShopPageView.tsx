@@ -82,10 +82,14 @@ type Ctx = {
 const commonOf = (section: Section) => ({ id: section.key, "data-shop-key": section.key }) as const;
 
 
+/**
+ * A fact on the hero is drawn over the shop's photo: it wears the `scrim` tone (white on a 60 % black veil, whatever the theme and the photo), never a
+ * tinted tone whose text follows the theme (green on a dark photo was unreadable in the light theme, akinaza#567).
+ */
 function heroFact(b: NonNullable<Args<"hero">["section"]["blocks"]>[number], { view, community }: Pick<Ctx, "view" | "community">): ReactNode {
-  if (b.settings.kind === "open-now" && view.status) return <Badge key={b.key} tone={view.status.open ? "success" : "neutral"} dot={view.status.open} size="md">{view.status.label}{view.status.detail ? ` · ${view.status.detail}` : ""}</Badge>;
-  if (b.settings.kind === "area" && view.area) return <Badge key={b.key} tone="neutral" size="md">{view.area}</Badge>;
-  if (b.settings.kind === "score" && community?.reviews) return <Badge key={b.key} tone="neutral" size="md">{community.reviews.scoreText}</Badge>;
+  if (b.settings.kind === "open-now" && view.status) return <Badge key={b.key} tone="scrim" dot={view.status.open} size="md">{view.status.label}{view.status.detail ? ` · ${view.status.detail}` : ""}</Badge>;
+  if (b.settings.kind === "area" && view.area) return <Badge key={b.key} tone="scrim" size="md">{view.area}</Badge>;
+  if (b.settings.kind === "score" && community?.reviews) return <Badge key={b.key} tone="scrim" size="md">{community.reviews.scoreText}</Badge>;
   return null;
 }
 
@@ -179,6 +183,11 @@ function policiesSection({ section, c }: Args<"policies">): ReactNode {
 const wallNotes = (pieces: readonly { kind: string; id: string; text?: string; signature?: string }[]) =>
   pieces.flatMap((p) => (p.kind === "note" ? [{ id: p.id, text: p.text ?? "", signature: p.signature || undefined }] : []));
 
+function galleryLead(view: StorefrontView, variant: string, t: Ctx["t"]): string | undefined {
+  if (variant === "wall") return t("console.shopPage.wallLead");
+  return view.galleryIllustrative ? t("console.shopPage.galleryIllustrativeNote") : undefined;
+}
+
 function galleryLabel(view: StorefrontView, variant: string, t: Ctx["t"]): string {
   return view.galleryIllustrative && variant !== "wall" ? t("console.shopPage.galleryIllustrativeLabel") : t("console.shopPage.galleryLabel", { shop: view.name });
 }
@@ -193,7 +202,7 @@ function gallerySection({ section, c }: Args<"gallery">): ReactNode {
   const notes = wallNotes(pieces);
   if (!photos.length && !notes.length) return null;
   const label = galleryLabel(view, section.variant, t);
-  return <GallerySection {...common} variant={section.variant} photos={photos} notes={notes} sign={pieces.find((p) => p.kind === "sign")?.text || undefined} texture={community?.wall?.texture ?? section.settings.texture} title={title(section.variant === "wall" ? t("console.shopPage.wallTitle") : label)} lead={lead ?? (section.variant === "wall" ? t("console.shopPage.wallLead") : view.galleryIllustrative ? t("console.shopPage.galleryIllustrativeNote") : undefined)} label={label} />;
+  return <GallerySection {...common} variant={section.variant} photos={photos} notes={notes} sign={pieces.find((p) => p.kind === "sign")?.text || undefined} texture={community?.wall?.texture ?? section.settings.texture} title={title(section.variant === "wall" ? t("console.shopPage.wallTitle") : label)} lead={lead ?? galleryLead(view, section.variant, t)} label={label} />;
 }
 
 const shortsOf = (community: Ctx["community"], claim: Ctx["claim"]) => (community?.elsewhere ?? []).flatMap((v) => (v.platform && v.externalUrl ? [{ id: v.id, platform: v.platform, url: v.externalUrl, title: v.title, poster: claim(v.poster) }] : []));

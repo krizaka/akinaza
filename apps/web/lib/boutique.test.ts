@@ -14,7 +14,7 @@ const WORDS: BoutiqueNavWords = {
   data: "Your data",
   shops: "Your shops",
 };
-const href = (section: string, tab?: string) => `/en/app/s-1/boutique/${section}${tab ? `?tab=${tab}` : ""}`;
+const href = (section: string, tab?: string) => `/en/app/s-1/settings/${section}${tab ? `?tab=${tab}` : ""}`;
 const tabsFor = (role: "owner" | "manager" | "staff") => pageTabsAllowed((permission) => may(role, permission));
 const allowedFor = (role: "owner" | "manager" | "staff") => boutiqueSectionsAllowed((permission) => may(role, permission));
 
@@ -59,8 +59,8 @@ describe("Boutique, the hub of the shop's configuration (K4)", () => {
     const groups = boutiqueGroups({ allowed: allowedFor("owner"), href, current: { section: "page", tab: "contact" }, words: WORDS });
     const current = groups.flatMap((g) => g.items).filter((i) => i.current).map((i) => i.id);
     expect(current).toEqual(["page-contact"]);
-    expect(groups[0]!.items[2]!.href).toBe("/en/app/s-1/boutique/page?tab=contact");
-    expect(groups[1]!.items[0]!.href).toBe("/en/app/s-1/boutique/team");
+    expect(groups[0]!.items[2]!.href).toBe("/en/app/s-1/settings/page?tab=contact");
+    expect(groups[1]!.items[0]!.href).toBe("/en/app/s-1/settings/team");
   });
 
   it("shows a manager what is pinned on the page and the team, and a staff member no group at all", () => {

@@ -26,6 +26,11 @@ for _ in $(seq 1 60); do curl -sf http://localhost:3000/api/healthz && break; sl
 pnpm run seo:check
 # Every cookie the app sets is host-only (no Domain, Path=/, __Host- on https): akinaza#534, ADR-005.
 node scripts/check-cookies.mjs --base http://localhost:3000 --email "$HYDRATION_CLIENT_EMAIL" --password "$HYDRATION_CLIENT_PASSWORD"
+# A shop through its own domain, end to end (ADR-005 slices 4-5, akinaza#538/#549): a second server on the same build and database declares the shop domain
+# (the first keeps the shops on the app, as the crawls below expect); the check forges the Host header.
+(cd apps/web && PORT=3001 APP_PUBLIC_URL=http://localhost:3001 APP_SHOP_DOMAIN=shops.localhost pnpm exec next start -p 3001 > ../../web-shops.log 2>&1 &)
+for _ in $(seq 1 60); do curl -sf http://127.0.0.1:3001/api/healthz > /dev/null && break; sleep 1; done
+node scripts/check-shop-host.mjs --base http://127.0.0.1:3001 --shop-domain shops.localhost --slug pattes-saint-henri --port 3001
 # The brand icons and their lock = the CDN manifest (the unit test checks icons = lock offline).
 node scripts/sync-brand-icons.mjs --check
 # Responsive guard: no horizontal overflow at 360–1440 px in both themes, and the accessibility guard (axe-core, contrast included).

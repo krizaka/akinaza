@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { JourneyFrame } from "@/components/journey/JourneyFrame";
 import { ShopSlots } from "@/components/shop/ShopSlots";
 import { StorefrontLive } from "@/components/shop/StorefrontLive";
+import { requestNow } from "@/app/request-now";
 import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";
 import { asLocale, translator } from "@/lib/i18n";
@@ -24,7 +25,7 @@ export default async function TimesPage({ params, searchParams }: Readonly<{ par
   const t = translator(locale);
   const page = await loadPublicShopOrMove(locale, slug, `/service/${id}/slots${queryString(query)}`);
   if (!page || !page.services.some((s) => s.id === id)) notFound();
-  const now = new Date();
+  const now = requestNow();
   const choice = resolveChoice(page, { staff: searchValue(query.staff), zone: searchValue(query.zone) });
   const slots = await listSlots(db(), { shopId: page.shop.id, serviceId: id, zoneId: choice.zoneId, staffId: choice.staffId, now, days: 14 });
   const step = timesStep({ page, locale, now, serviceId: id, staffId: choice.staffId, zoneId: choice.zoneId, slots });

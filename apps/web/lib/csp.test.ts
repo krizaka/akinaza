@@ -100,3 +100,16 @@ describe("JSON-LD", () => {
     for (const page of pages) expect(readFileSync(new URL(page, import.meta.url), "utf8"), page).not.toContain("__html: JSON.stringify");
   });
 });
+
+describe("a shop on its own domain (ADR-005 §6, akinaza#538)", () => {
+  const csp = contentSecurityPolicy({ ...opts, nonce: "bm9uY2U=", appOrigin: "https://www.akinaza.com" });
+  it("may submit to the app (the booking hop) and be framed only by the app (the studio's preview), nobody else", () => {
+    expect(directive(csp, "form-action")).toEqual(["'self'", "https://www.akinaza.com"]);
+    expect(directive(csp, "frame-ancestors")).toEqual(["https://www.akinaza.com"]);
+  });
+  it("stays the strict policy: a nonce, no inline script", () => {
+    expect(directive(csp, "script-src")).not.toContain("'unsafe-inline'");
+    expect(directive(csp, "script-src")).toContain("'nonce-bm9uY2U='");
+    expect(directive(csp, "default-src")).toEqual(["'none'"]);
+  });
+});

@@ -9,6 +9,7 @@ import { feedOverview } from "@/lib/feed-overview";
 import { feedTokenHash, feedUrl, newFeedToken } from "@/lib/feed-token";
 import { handle, readJson, refuse } from "@/lib/http";
 import { appSettings } from "@/lib/settings";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,7 @@ export function POST(req: Request) {
   return handle(async () => {
     const { shop, session, staffId } = await allowed(req);
     const token = newFeedToken();
-    const feed = await rotateFeedToken(db(), { shopId: shop.id, staffId }, feedTokenHash(token, sessionSecret()), new Date());
+    const feed = await rotateFeedToken(db(), { shopId: shop.id, staffId }, feedTokenHash(token, sessionSecret()), requestNow());
     if (!feed) throw refuse(404, "NOT_FOUND", "Not found");
     await audit({ action: feed.rotatedAt ? "shop.feed_rotated" : "shop.feed_created", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { staffId }, headers: req.headers });
     return Response.json({ url: feedUrl(readEnv().APP_PUBLIC_URL, token), createdAt: feed.createdAt, rotatedAt: feed.rotatedAt }, { headers: { "Cache-Control": "private, no-store" } });
@@ -53,7 +54,7 @@ export function POST(req: Request) {
 export function DELETE(req: Request) {
   return handle(async () => {
     const { shop, session, staffId } = await allowed(req);
-    const revoked = await revokeFeedToken(db(), { shopId: shop.id, staffId }, new Date());
+    const revoked = await revokeFeedToken(db(), { shopId: shop.id, staffId }, requestNow());
     if (revoked) await audit({ action: "shop.feed_revoked", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { staffId }, headers: req.headers });
     return Response.json({ revoked });
   });

@@ -4,6 +4,7 @@ import { requireSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { handle, idParam, refuse } from "@/lib/http";
 import { buildIcs } from "@/lib/ics";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,7 @@ export const dynamic = "force-dynamic";
 export function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
     const { account } = await requireSession(req);
-    const now = new Date();
+    const now = requestNow();
     const booking = await bookingDetail(db(), account.id, idParam((await params).id), now);
     if (!booking) throw refuse(404, "NOT_FOUND", "Not found");
     const name = account.locale === "fr" ? booking.service.nameFr : booking.service.nameEn;

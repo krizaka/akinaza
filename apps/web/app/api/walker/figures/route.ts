@@ -4,6 +4,7 @@ import { requireShop } from "@/lib/access";
 import { db } from "@/lib/db";
 import { loadFigures } from "@/lib/figures";
 import { handle } from "@/lib/http";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +15,7 @@ export const dynamic = "force-dynamic";
 export function GET(req: Request) {
   return handle(async () => {
     const { shop } = await requireShop(req, "reports");
-    const now = new Date();
+    const now = requestNow();
     const { figures, actions, period } = await loadFigures(shop, await shopDay(db(), shop.id, now), now);
     return Response.json({ period, figures: Object.values(figures), actions }, { headers: { "Cache-Control": "private, no-store" } });
   });

@@ -30,23 +30,23 @@ export function safeNext(next: string | undefined, locale: Locale): string {
  */
 export const routes = {
   home: (locale: Locale) => app(locale),
-  today: (locale: Locale, shop: string, day?: string) => `${app(locale, shop, "aujourdhui")}${query({ day })}`,
+  today: (locale: Locale, shop: string, day?: string) => `${app(locale, shop, "today")}${query({ day })}`,
   clients: (locale: Locale, shop: string, search?: string) => `${app(locale, shop, "clients")}${query({ q: search })}`,
   invoices: (locale: Locale, shop: string) => app(locale, shop, "invoices"),
   newInvoice: (locale: Locale, shop: string, client?: string) => `${app(locale, shop, "invoices", "new")}${query({ client })}`,
   books: (locale: Locale, shop: string, period?: string) => `${app(locale, shop, "books")}${query({ period })}`,
   figures: (locale: Locale, shop: string) => app(locale, shop, "figures"),
-  boutique: (locale: Locale, shop: string) => app(locale, shop, "boutique"),
+  boutique: (locale: Locale, shop: string) => app(locale, shop, "settings"),
   profile: (locale: Locale) => app(locale, "profile"),
 } as const;
 
 /** The five places of the shop, in the web rail's order and words (D8): the tab bar is built from it. */
 export const TABS = [
-  { name: "aujourdhui", label: "tabs.today", href: (locale: Locale, shop: string) => routes.today(locale, shop) },
+  { name: "today", label: "tabs.today", href: (locale: Locale, shop: string) => routes.today(locale, shop) },
   { name: "clients", label: "tabs.clients", href: (locale: Locale, shop: string) => routes.clients(locale, shop) },
   { name: "invoices", label: "tabs.invoices", href: (locale: Locale, shop: string) => routes.invoices(locale, shop) },
   { name: "books", label: "tabs.books", href: (locale: Locale, shop: string) => routes.books(locale, shop) },
-  { name: "boutique", label: "tabs.boutique", href: (locale: Locale, shop: string) => routes.boutique(locale, shop) },
+  { name: "settings", label: "tabs.boutique", href: (locale: Locale, shop: string) => routes.boutique(locale, shop) },
 ] as const;
 export type TabName = (typeof TABS)[number]["name"];
 

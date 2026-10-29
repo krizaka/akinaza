@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
@@ -37,5 +37,35 @@ describe("record-krizaka-first-client (the studio's walkthroughs)", () => {
     expect(source).toMatch(/need\("E2E_PASSWORD"\)/);
     expect(source).not.toMatch(/password:\s*["'`][^"'`]{6,}["'`]/i);
     expect(source).not.toMatch(/console\.log\([^)]*password/i);
+  });
+
+  it("opens the invoice form where it is (the list has a « New invoice » button since the page split), not on the list", () => {
+    const invoice = source.slice(source.indexOf('await clip("invoice"'), source.indexOf('await clip("books"'));
+    expect(invoice).toContain('go("app/invoices/new")');
+    expect(invoice).not.toMatch(/go\("app\/invoices"\)/);
+  });
+
+  it("only visits pages that exist (a stale path made the 2026-10-29 run fail at its first label)", () => {
+    const pages = [...source.matchAll(/go\(`?"?(app[^"`?$]*)/g)].map((m) => m[1].replace(/\/$/, ""));
+    expect(pages.length).toBeGreaterThan(3);
+    for (const page of pages.filter((p) => p !== "app")) {
+      const dir = page.slice("app/".length);
+      const file = new URL(`../apps/web/app/[locale]/(app)/app/[shop]/${dir}/page.tsx`, import.meta.url);
+      expect(existsSync(file), `${page} has no page`).toBe(true);
+    }
+  });
+
+  it("reaches the console under the shop's id and leaves the invoice's language to the client's file", () => {
+    expect(source).toMatch(/\[0-9a-f-\]\{36\}/);
+    expect(source).not.toMatch(/Language of the invoice/);
+  });
+
+  it("follows the issued invoice to its page instead of looking for an « Open » link on the list", () => {
+    expect(source).toMatch(/waitForURL\(\/\\\/invoices\\\/\[0-9a-f-\]\{36\}\//);
+    expect(source).not.toMatch(/name: T\.open/);
+  });
+
+  it("scrolls the invoice list by its table (the page has no level-2 heading)", () => {
+    expect(source).not.toMatch(/getByRole\("heading", \{ level: 2 \}\)\.last\(\)/);
   });
 });
