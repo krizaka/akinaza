@@ -6,6 +6,7 @@ import { db } from "@/lib/db";
 import { handle, idParam, readJson, refuse } from "@/lib/http";
 import { appSettings } from "@/lib/settings";
 import { slugPolicy } from "@/lib/slug-policy";
+import { forgetShops } from "@/lib/shop-directory";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,9 @@ export function POST(req: Request) {
       await audit({ action: "shop.added", actorId: session.account.id, actorLabel: session.account.email, targetId: created.shopId, headers: req.headers });
       return Response.json(created, { status: 201 });
     }
-    return Response.json(await saveShopPage(db(), session.account.id, input, shopId ? { shopId: idParam(shopId) } : {}, await slugPolicy()));
+    const saved = await saveShopPage(db(), session.account.id, input, shopId ? { shopId: idParam(shopId) } : {}, await slugPolicy());
+    forgetShops(); // published, unpublished or renamed: the shop host answers from the database again (akinaza#549)
+    return Response.json(saved);
   });
 }
 

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireSession } from "@/lib/access";
 import { appSettings } from "@/lib/settings";
+import { createShopDirectory, type ShopVerdict } from "@/lib/shop-directory";
 
 import { POST } from "./route";
 
@@ -53,5 +54,17 @@ describe("adding a shop (#265)", () => {
     vi.mocked(saveShopPage).mockResolvedValue({ shopId: "a", created: false, held: false });
     await post();
     expect(vi.mocked(saveShopPage).mock.calls[0]![3]).toEqual({});
+  });
+
+  it("forgets what the shop hosts' memory knows, so a published, unpublished or renamed shop answers from the database at once (#549)", async () => {
+    vi.mocked(saveShopPage).mockResolvedValue({ shopId: "a", created: false });
+    let verdict: ShopVerdict = { kind: "shop" };
+    const lookup = vi.fn(async () => verdict);
+    const proxySide = createShopDirectory(lookup);
+    await proxySide("atelier-b");
+    verdict = { kind: "none" };
+    expect(await proxySide("atelier-b")).toEqual({ kind: "shop" });
+    await post();
+    expect(await proxySide("atelier-b")).toEqual({ kind: "none" });
   });
 });

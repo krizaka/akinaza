@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createShopDirectory, type ShopVerdict, verdictFromAnswer } from "./shop-directory";
+import { createShopDirectory, forgetShops, type ShopVerdict, verdictFromAnswer } from "./shop-directory";
 
 /** ADR-005 slice 4 (akinaza#549): the proxy asks whether a shop host names a shop, through a short, bounded memory. */
 describe("the shop directory", () => {
@@ -46,5 +46,17 @@ describe("the shop directory", () => {
     expect(lookup).not.toHaveBeenCalled();
     await verdictOf("label-0");
     expect(lookup).toHaveBeenCalledTimes(1);
+  });
+
+  it("forgets at once when a shop is published, held or renamed, even if another module graph asks (a shared memory), so a held shop stops answering within the request", async () => {
+    let held = false;
+    const lookup = vi.fn(async (): Promise<ShopVerdict> => (held ? { kind: "none" } : { kind: "shop" }));
+    const proxySide = createShopDirectory(lookup); // the proxy's directory: the memory is the process's
+    expect(await proxySide("salon")).toEqual({ kind: "shop" });
+    held = true;
+    expect(await proxySide("salon")).toEqual({ kind: "shop" }); // cached: that is the point of the TTL
+    forgetShops(); // what the publish / rename / hold routes call
+    expect(await proxySide("salon")).toEqual({ kind: "none" });
+    forgetShops();
   });
 });
