@@ -6,6 +6,7 @@ import { shopRoutes } from "@/lib/routes";
 
 import { FiguresPanel } from "./FiguresPanel";
 import { LexiconSection } from "./LexiconSection";
+import { TODAY_FIGURES, TodayFigures } from "./TodayFigures";
 import { WhatToDoNow } from "./WhatToDoNow";
 
 const routes = shopRoutes("en", "11111111-1111-4111-8111-111111111111");
@@ -69,5 +70,17 @@ describe("the lexique (#260)", () => {
   it("lists every word of the figures", () => {
     const html = renderToStaticMarkup(<LexiconSection locale="en" />);
     for (const word of ["GST / QST", "Margin", "No-show", "Return period"]) expect(html).toContain(word);
+  });
+});
+
+describe("the figures on Today (#260)", () => {
+  it("shows what is owed, the appointments and the no-shows, each explained, under a heading in the owner's language", () => {
+    expect(TODAY_FIGURES).toEqual(["toCollect", "appointments", "noShows"]);
+    const en = renderToStaticMarkup(<TodayFigures figures={figures} locale="en" routes={routes} timeZone="America/Toronto" now="2026-10-23T13:00:00.000Z" />);
+    expect(en.match(/<article/g)).toHaveLength(3);
+    expect(en).toContain("Your figures");
+    const fr = renderToStaticMarkup(<TodayFigures figures={figures} locale="fr" routes={routes} timeZone="America/Toronto" now="2026-10-23T13:00:00.000Z" />);
+    expect(fr).toContain("Vos chiffres");
+    expect(fr).toContain("Comment c&#x27;est calculé");
   });
 });

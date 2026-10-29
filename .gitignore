@@ -25,3 +25,11 @@ apps/web/next-env.d.ts
 docs/screenshots/
 .github/pr-assets/
 perf-report.json
+.visual-now
+web-visual.log
+test-results/
+playwright-report/
+.visual-now
+web-visual.log
+test-results/
+playwright-report/

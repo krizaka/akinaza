@@ -1,4 +1,4 @@
-import type { ShopRules, ShopType } from "@akinaza/core";
+import { CAHIER_VERSION, type ShopRules, type ShopType, TEMPLATES, TEMPLATES_V2 } from "@akinaza/core";
 import { and, eq } from "drizzle-orm";
 
 import type { Db } from "./client";
@@ -129,10 +129,10 @@ async function keepType(db: Db, shopId: string, shopType: ShopType): Promise<voi
   if (config.shopType !== shopType) await saveShopPageConfig(db, shopId, { ...config, shopType });
 }
 
-/** The demo's template, once: a page that wears one keeps it (and its version). Through `applyTemplate`, the template's order, as a new shop would get it. */
+/** The demo's template at the notebook's version (akinaza#316): applied once, and a demo still on `@1` is moved to `@2` (the owner's update, the same way). Through `applyTemplate`, the template's order. */
 async function keepTemplate(db: Db, shopId: string, template: string): Promise<void> {
   const config = await shopPageConfigOf(db, shopId);
-  if (!config.templateId) await applyTemplate(db, shopId, { templateId: template, keepOrder: false });
+  if (!config.templateId || (config.templateVersion ?? 0) < CAHIER_VERSION) await applyTemplate(db, shopId, { templateId: template, templateVersion: CAHIER_VERSION, keepOrder: false }, [...TEMPLATES, ...TEMPLATES_V2]);
 }
 
 async function shopOfSlug(db: Db, slug: string): Promise<{ id: string } | null> {
@@ -170,6 +170,19 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
   await keepTemplate(db, shopId, demo.template);
   await seedDemoCommunity(db, shopId, demo.shop.slug);
   return { shopId, created: true };
+}
+
+/**
+ * The per-person switches the demo shops' owners wear on a seeded deployment (local = deployed): set by `seed-demo-flags.mjs`
+ * through the documented setting command (`set-setting.mjs --user`), never by hand in the database.
+ */
+export const DEMO_OWNER_FLAGS: Readonly<Record<string, boolean>> = { "features.cahierStorefront": true };
+
+/** One `set-setting.mjs` argument list per owner and flag: the demo owners are the seed's own `.test` addresses. */
+export function demoOwnerFlagArgs(shops: readonly DemoShop[] = DEMO_SHOPS): string[][] {
+  return [...new Set(shops.map((d) => d.ownerEmail))].flatMap((email) =>
+    Object.entries(DEMO_OWNER_FLAGS).map(([key, value]) => [key, JSON.stringify(value), "--user", email, "--actor", "seed-demo-flags"]),
+  );
 }
 
 export async function seedDemoShops(db: Db): Promise<{ slug: string; shopId: string; created: boolean }[]> {

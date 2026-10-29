@@ -1,6 +1,6 @@
 
 import { demoLookDocument, demoLooksOf, localDay } from "@akinaza/core";
-import { communityOf, publishedShopPage, shopAccentOf, teamDay } from "@akinaza/db";
+import { communityOf, ownerOfShop, publishedShopPage, shopAccentOf, shopPaperOf, teamDay } from "@akinaza/db";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
@@ -17,7 +17,7 @@ import { db } from "@/lib/db";
 import { proposedDefaults } from "@/lib/default-media-settings";
 import { asLocale, asPageLocale, getDictionary, uiLocaleOf } from "@/lib/i18n";
 import { SESSION_COOKIE } from "@/lib/session";
-import { appSettings, shopSectionFeatures } from "@/lib/settings";
+import { appSettings, shopPaperShown, shopSectionFeatures } from "@/lib/settings";
 import { loadPublicShop, loadPublicShopOrMove } from "@/lib/shop-page";
 import { buildStorefront } from "@/lib/storefront";
 
@@ -51,6 +51,7 @@ export default async function ShopPage({ params, searchParams }: { params: Promi
   // Who is here today, computed on the server from bare time ranges: the page receives a state per first name, nothing else.
   const [team, enabledUpcomingSections, community, rules, document] = await Promise.all([teamDay(db(), page.shop.id, now), shopSectionFeatures(), communityOf(db(), page.shop.id), reviewRules(), publishedShopPage(db(), page.shop.id)]);
   const accent = (await shopAccentOf(db(), page.shop.id)) ?? undefined;
+  const paper = await shopPaperShown(await shopPaperOf(db(), page.shop.id), await ownerOfShop(db(), page.shop.id));
   const placed = buildCommunity({ community, locale, today: localDay(now, page.shop.timezone), rules, enabled: enabledUpcomingSections });
   const view = buildStorefront({ page, locale, contentLocale: content, now, teamDay: team, enabledUpcomingSections, community: placed, defaults: await proposedDefaults(page) });
   // The demo shops offer the other compositions of Krizaka UI (`?look=`); any other shop ignores the parameter.
@@ -64,7 +65,7 @@ export default async function ShopPage({ params, searchParams }: { params: Promi
       <SiteHeader locale={locale} current="home" path={`/${content}/s/${slug}`} languages={page.languages.enabled} contentLocale={content} anonymous={anonymous} />
       {live ? <StorefrontLive slug={slug} enabled /> : null}
       <DemoLookSwitch slug={slug} current={shown} path={`/${content}/s/${slug}`} locale={locale} />
-      <main id="content" data-shop-look={shown || undefined}><ShopPageView page={shownPage} view={view} locale={locale} nextTime={nextTime} accent={other ? undefined : accent} today={localDay(now, page.shop.timezone)} /></main>
+      <main id="content" data-shop-look={shown || undefined}><ShopPageView page={shownPage} view={view} locale={locale} nextTime={nextTime} accent={other ? undefined : accent} paper={other ? undefined : paper} today={localDay(now, page.shop.timezone)} /></main>
       <SiteFooter locale={locale} />
     </>
   );

@@ -2728,6 +2728,8 @@
         "appointmentsDue": "Appointments due"
       },
       "nextTitle": "What to do now",
+      "todayTitle": "Your figures",
+      "todayLead": "What is owed to you and how the appointments went, with how each figure is computed.",
       "nothingToDo": "Nothing needs you right now.",
       "actions": {
         "chase": {
