@@ -244,3 +244,5 @@ Slices 1–4 below need none of this and close today's risks on today's hosts.
 - DigitalOcean App Platform limits: docs.digitalocean.com/products/app-platform/details/limits/ (500 domains per app).
 - Caddy: caddyserver.com/docs/automatic-https#on-demand-tls.
 - web.dev « Mitigate cross-site scripting (XSS) with a strict Content Security Policy ».
+
+> Decision (CTO, 2026-10-29, reversible, #537): the protected-terms list is seeded with the Krizaka family names, the reserved technical words and the lure words; third-party brands are left out and added by the admin in the console when there is a reason.

@@ -48,8 +48,8 @@ export const SETTINGS = {
   "storefront.languages.allowed": subset("storefront", ["fr", "en", "es"] as const, ["fr", "en", "es"], GLOBAL_ONLY),
   "limits.translationsPerShopPerDay": integer("limits", 20, { min: 1, max: 500, unit: "runs" }, GLOBAL_ONLY),
   // The private calendar feeds of the shop and its staff (#282, ADR-004): off, every feed address answers 404 and none can be made.
-  // Anti-phishing shop addresses (ADR-005 slice 4, #537): one term per line (a word, or /regex/ on the folded slug; # comments). A slug wearing one is held for review, never refused (core slug-guard). Lure words only: the protected brands are added in the console once Oussama has approved them.
-  "slugs.protectedTerms": text("slugs", ["login", "signin", "verify", "verification", "secure", "security", "account", "password", "wallet", "support", "billing", "payment"].join("\n"), { max: 4000, empty: true }, GLOBAL_ONLY),
+  // Anti-phishing shop addresses (ADR-005 slice 4, #537): one term per line (a word, or /regex/ on the folded slug; # comments). A slug wearing one is held for review, never refused (core slug-guard). Seed (CTO decision, reversible): the Krizaka family names, the reserved technical words and the lure words; third-party brands are added in the console when there is a reason.
+  "slugs.protectedTerms": text("slugs", ["krizaka", "akinaza", "yomizaka", "orazaka", "admin", "api", "www", "app", "auth", "login", "signin", "help", "support", "billing", "mail", "status", "security", "secure", "account", "dashboard", "verify", "verification", "password", "wallet", "payment"].join("\n"), { max: 4000, empty: true }, GLOBAL_ONLY),
   "exports.icsFeed.enabled": flag("exports", true, GLOBAL_ONLY),
   // The owner's data downloads (#420, ADR-004 §5): appointments (CSV, ICS), clients and invoices (CSV). Off, none is served.
   "exports.data.enabled": flag("exports", true, GLOBAL_ONLY),
