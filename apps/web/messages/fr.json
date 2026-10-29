@@ -1536,6 +1536,7 @@
         "publishedHint": "Les clients peuvent alors la trouver par son adresse et réserver.",
         "submit": "Enregistrer la page",
         "saved": "Page enregistrée.",
+        "held": "Enregistré. Cette adresse ressemble à un nom que nous protégeons contre l'usurpation : votre page reste privée le temps de la vérifier. Rien d'autre ne change, et vous pouvez choisir une autre adresse dès maintenant.",
         "area": "Secteur affiché sur la page",
         "areaHint": "Saint-Henri, Montréal — jamais l'adresse civique.",
         "bioFr": "Qui vous êtes (français)",

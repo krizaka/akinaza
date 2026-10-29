@@ -3,7 +3,7 @@ import { and, asc, eq, isNotNull } from "drizzle-orm";
 
 import type { Db } from "./client";
 import { ShopError } from "./errors";
-import { shops } from "./schema";
+import { isPublicShop, shops } from "./schema";
 import { listSlots, publicShop } from "./service-shop";
 
 // @fixed: Explorer lists this many published shops at most (the page is a map and a list, not a directory)
@@ -17,7 +17,7 @@ const SERVICES_CHECKED = 3;
  * address, no count of appointments. Built from `publicShop`, the one projection that cannot leak a column.
  */
 export async function exploreShops(db: Db, now: Date): Promise<ExploreShop[]> {
-  const rows = await db.select({ slug: shops.slug, kind: shops.kind }).from(shops).where(and(eq(shops.published, true), isNotNull(shops.slug))).orderBy(asc(shops.name)).limit(MAX_SHOPS);
+  const rows = await db.select({ slug: shops.slug, kind: shops.kind }).from(shops).where(and(isPublicShop(), isNotNull(shops.slug))).orderBy(asc(shops.name)).limit(MAX_SHOPS);
   const built = await Promise.all(
     rows.map(async (row): Promise<ExploreShop | null> => {
       // A published shop whose page cannot be read yet (no rules or staff) is left out: one shop never fails the whole list.

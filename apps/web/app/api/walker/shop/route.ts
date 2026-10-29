@@ -5,6 +5,7 @@ import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { handle, idParam, readJson, refuse } from "@/lib/http";
 import { appSettings } from "@/lib/settings";
+import { slugPolicy } from "@/lib/slug-policy";
 
 export const dynamic = "force-dynamic";
 
@@ -21,11 +22,11 @@ export function POST(req: Request) {
     if (params.get("additional") === "1") {
       if (shopId) throw refuse(400, "BAD_REQUEST", "Either a shop or a new one");
       // The bound is the service's (saveShopPage counts and inserts under one lock): the route only says what it is.
-      const created = await saveShopPage(db(), session.account.id, { ...input, published: false }, { additional: true, maxShops: await appSettings().get("limits.shopsPerOwner") });
+      const created = await saveShopPage(db(), session.account.id, { ...input, published: false }, { additional: true, maxShops: await appSettings().get("limits.shopsPerOwner") }, await slugPolicy());
       await audit({ action: "shop.added", actorId: session.account.id, actorLabel: session.account.email, targetId: created.shopId, headers: req.headers });
       return Response.json(created, { status: 201 });
     }
-    return Response.json(await saveShopPage(db(), session.account.id, input, shopId ? { shopId: idParam(shopId) } : {}));
+    return Response.json(await saveShopPage(db(), session.account.id, input, shopId ? { shopId: idParam(shopId) } : {}, await slugPolicy()));
   });
 }
 
