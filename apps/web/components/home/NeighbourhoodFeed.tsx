@@ -20,9 +20,10 @@ export interface FeedWords {
 
 function Feed({ initial, locale, words }: { initial: FeedView; locale: string; words: FeedWords }) {
   const [quartier, setQuartier] = useState<string | null>(null);
+  const quartierQuery = quartier ? `&quartier=${encodeURIComponent(quartier)}` : "";
   const feed = useQuery({
     queryKey: ["neighbourhood-feed", locale, quartier],
-    queryFn: ({ signal }) => krizakaFetch(`/api/feed?locale=${locale}${quartier ? `&quartier=${encodeURIComponent(quartier)}` : ""}`, { signal }) as Promise<FeedView>,
+    queryFn: ({ signal }) => krizakaFetch(`/api/feed?locale=${locale}${quartierQuery}`, { signal }) as Promise<FeedView>,
     // The server drew the unfiltered board: it is the first answer, a neighbourhood asks the API.
     ...(quartier === null ? { initialData: initial } : {}),
     staleTime: 60_000,

@@ -158,7 +158,7 @@ function ActivityWidget({ board, totals, period, address }: { board: TodayBoard;
             <dt className="text-xs leading-tight text-fg-secondary">{say(`today.activity.${key}`)} · {say("today.activity.daysLong", { days: period })}</dt>
             <dd className="truncate text-sm font-semibold tabular-nums text-fg">{value}</dd>
             <dd>
-              <Sparkline title={`${say(`today.activity.${key}`)} · ${say("today.activity.daysLong", { days: period })}`} data={series} categories={board.activity.days} variant={variant} format={format} width={72} height={24} />
+              <Sparkline title={[say(`today.activity.${key}`), say("today.activity.daysLong", { days: period })].join(" · ")} data={series} categories={board.activity.days} variant={variant} format={format} width={72} height={24} />
             </dd>
           </div>
         ))}

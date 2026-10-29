@@ -96,7 +96,8 @@ export function TagBinder({ organize, path, own = {} }: { organize: OrganizeData
   const { say } = useSay();
   const search = useSearchParams();
   const [adding, setAdding] = useState(false);
-  const current = `${path}${search.toString() ? `?${search.toString()}` : ""}`;
+  const searchText = search.toString();
+  const current = searchText ? `${path}?${searchText}` : path;
   const only = (id?: string): ViewFilters => ({ ...organize.filters, tags: id ? [id] : undefined });
   if (organize.tags.length === 0 && !organize.canWrite) return null;
   return (

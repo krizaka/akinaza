@@ -19,7 +19,8 @@ export interface ShopSlotsLabels {
 /** The week in words (`19 – 25 oct.`), on the calendar days themselves (no time zone: they are dates). */
 const weekWords = (monday: string, locale: string) => {
   const part = new Intl.DateTimeFormat(locale, { timeZone: "UTC", day: "numeric", month: "short" });
-  return `${part.format(new Date(`${monday}T12:00:00Z`))} – ${part.format(new Date(`${shiftDay(monday, 6)}T12:00:00Z`))}`;
+  const dayWords = (day: string) => part.format(new Date(`${day}T12:00:00Z`));
+  return `${dayWords(monday)} – ${dayWords(shiftDay(monday, 6))}`;
 };
 
 /**
