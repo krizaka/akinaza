@@ -6,7 +6,7 @@ import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { shopRoutes } from "@/lib/routes";
 import { templateChoicesByTrade } from "@/lib/template-choices";
-import { templateRules } from "@/lib/template-rules";
+import { templateCatalogue, templateRules } from "@/lib/template-rules";
 
 export const dynamic = "force-dynamic";
 
@@ -19,5 +19,5 @@ export default async function NewShopPage({ params }: { params: Promise<{ locale
   const { locale: raw, shop: shopId } = await params;
   const locale = asLocale(raw);
   await memberShop(shopId, "settings");
-  return <NewShop locale={locale} backHref={shopRoutes(locale, shopId).setup} offers={templateChoicesByTrade(await templateRules(), SHOP_TYPES)} />;
+  return <NewShop locale={locale} backHref={shopRoutes(locale, shopId).setup} offers={templateChoicesByTrade(await templateRules(), SHOP_TYPES, await templateCatalogue())} />;
 }

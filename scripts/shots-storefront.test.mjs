@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { DEVICES, plan, SCENES, shotName, THEMES } from "./shots-storefront.mjs";
+import { DEVICES, flagsOf, plan, SCENES, shotName, THEMES } from "./shots-storefront.mjs";
 
 const source = readFileSync(new URL("./shots-storefront.mjs", import.meta.url), "utf8");
 
@@ -57,5 +57,12 @@ describe("the owner's guide's captures (akinaza#382)", () => {
     for (const s of DOCS_SCENES) expect(SCENES[s].expect).toMatchObject({ fr: expect.any(String), en: expect.any(String) });
     const script = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8")).scripts["shots:docs"];
     for (const s of DOCS_SCENES) expect(script).toContain(s);
+  });
+});
+
+describe("flagsOf: features switched on for a capture run only", () => {
+  it("reads a comma list and keeps only feature keys", () => {
+    expect(flagsOf("features.cahierStorefront, features.x ,plans.free.apiKeys,;rm")).toEqual(["features.cahierStorefront", "features.x"]);
+    expect(flagsOf(undefined)).toEqual([]);
   });
 });

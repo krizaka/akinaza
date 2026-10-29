@@ -40,7 +40,7 @@ import { appSettings } from "@/lib/settings";
 import { accentsByLook } from "@/lib/shop-accents";
 import { team } from "@/lib/team";
 import { templateChoices } from "@/lib/template-choices";
-import { templateRules } from "@/lib/template-rules";
+import { templateCatalogue, templateRules } from "@/lib/template-rules";
 import { translationRules } from "@/lib/translation-settings";
 
 export const dynamic = "force-dynamic";
@@ -57,11 +57,11 @@ async function PageSection({ locale, shopId, tab }: Readonly<{ locale: RouteLoca
   const base = readEnv().APP_PUBLIC_URL;
   const setup = await loadShop(db(), shop);
   const [media, pageConfig] = await Promise.all([shopMediaOf(db(), shop.id), shopPageConfigOf(db(), shop.id)]);
-  const [rules, templates] = await Promise.all([defaultMediaSettings(), templateRules()]);
+  const [rules, templates, catalogue] = await Promise.all([defaultMediaSettings(), templateRules(), templateCatalogue()]);
   const proposed = rules.enabled ? { config: pageConfig, shopType: shopTypeOf(shop.businessType, pageConfig.shopType), proposals: proposalsFor(rules.types), media: { cover: media.cover ? line(media.cover) : null, gallery: media.gallery.map(line) } } : null;
   const data: SetupData = {
     proposed,
-    templates: templateChoices(templates, shopTypeOf(shop.businessType, pageConfig.shopType), pageConfig),
+    templates: templateChoices(templates, shopTypeOf(shop.businessType, pageConfig.shopType), pageConfig, catalogue),
     shopId: shop.id,
     pageConfig,
     page: { name: shop.name, legalName: shop.legalName, address: shop.address, slug: shop.slug ?? "", ownerName: setup.staff.name, taglineFr: shop.taglineFr ?? "", taglineEn: shop.taglineEn ?? "", published: shop.published, area: shop.area ?? "", bioFr: shop.bioFr ?? "", bioEn: shop.bioEn ?? "", publicPhone: shop.publicPhone ?? "", publicEmail: shop.publicEmail ?? "", seatUnitFr: shop.seatUnitFr ?? "", seatUnitEn: shop.seatUnitEn ?? "", businessType: shop.businessType },

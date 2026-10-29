@@ -1,4 +1,4 @@
-import { SHOP_TYPES, TEMPLATES } from "@akinaza/core";
+import { SHOP_TYPES, TEMPLATES, TEMPLATES_V2 } from "@akinaza/core";
 import { describe, expect, it } from "vitest";
 
 import { templateChoices, templateChoicesByTrade, type TemplateRules } from "./template-choices";
@@ -59,5 +59,15 @@ describe("a template that improved (#261, step 5)", () => {
     expect(c.choices.filter((t) => t.id === "salon-vitrine")).toHaveLength(1);
     expect(templateChoices(rules(), "salon", { templateId: "salon-vitrine", templateVersion: 2, sectionsCustom: false }, catalogue)!.updateAvailable).toBeNull();
     expect(templateChoices(rules(), "salon", null, catalogue)!.updateAvailable).toBeNull();
+  });
+});
+
+describe("the notebook's catalogue (akinaza#316)", () => {
+  it("offers « update available » from the shipped @1 to the shipped @2, and the trade's templates at @2", () => {
+    const catalogue = [...TEMPLATES, ...TEMPLATES_V2];
+    const c = templateChoices(rules(), "salon", { templateId: "salon-vitrine", templateVersion: 1, sectionsCustom: false }, catalogue)!;
+    expect(c.updateAvailable).toEqual({ version: 2 });
+    expect(c.choices.every((x) => x.version === 2)).toBe(true);
+    expect(templateChoices(rules(), "salon", { templateId: "salon-vitrine", templateVersion: 1, sectionsCustom: false })!.updateAvailable).toBeNull();
   });
 });
