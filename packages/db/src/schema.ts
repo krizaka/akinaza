@@ -126,6 +126,10 @@ export const shops = pgTable(
     slugHeld: boolean("slug_held").notNull().default(false),
     slugHeldTerm: text("slug_held_term"),
     slugHeldAt: timestamp("slug_held_at", { withTimezone: true }),
+    /** The administrator's review (0047): why the hold was kept, when it was last looked at, and the address cleared (a re-judge never holds it again). */
+    slugHoldNote: text("slug_hold_note"),
+    slugHoldReviewedAt: timestamp("slug_hold_reviewed_at", { withTimezone: true }),
+    slugClearedFor: text("slug_cleared_for"),
     taglineFr: text("tagline_fr"),
     taglineEn: text("tagline_en"),
     /** The locality shown on the public page (« Saint-Henri, Montréal »): never the street address. */
