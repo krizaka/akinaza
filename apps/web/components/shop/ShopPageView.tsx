@@ -1,5 +1,7 @@
+import type { FramePaper } from "@akinaza/core";
 import { Badge } from "@krizaka/ui/badge";
 import { OpeningHours } from "@krizaka/ui/opening-hours";
+import { PaperGrain } from "@krizaka/ui/page";
 import type { ShopPage } from "@krizaka/ui/shop";
 import { ShopFrame } from "@krizaka/ui/shop";
 import { BookingSection, type BookingTime } from "@krizaka/ui/shop/booking";
@@ -40,6 +42,8 @@ export interface ShopPageViewProps {
   locale: Locale;
   /** The preset's paper and its tested accents are the frame's own: the page only names the preset and the density. */
   accent?: string;
+  /** The paper under the page (the applied template's, when the notebook storefront is on); none = the look's own. */
+  paper?: FramePaper;
   /** The shop's day (`2026-10-27`) for the bulletin board. */
   today: string;
   /** The closing call's next free time (`nextFreeTime`), when the page has one and a time is free. */
@@ -248,7 +252,7 @@ const renderSection = (section: Section, c: Ctx): ReactNode => SECTIONS[section.
  * team, hours, reviews) is the page's view, resolved by `buildStorefront`; the document says which sections, which variants and which settings. A section with nothing
  * to show is not drawn. The cover is the LCP (preloaded, a fixed ratio in the hero); every photo appears once (`planPhotos`); embeds stay behind their facade.
  */
-export function ShopPageView({ page, view, locale, accent, today, nextTime }: ShopPageViewProps) {
+export function ShopPageView({ page, view, locale, accent, paper, today, nextTime }: ShopPageViewProps) {
   const t = translator(locale);
   const community = view.community;
   const pool: PhotoPool = {
@@ -293,9 +297,10 @@ export function ShopPageView({ page, view, locale, accent, today, nextTime }: Sh
     platformName,
   };
 
-  const accentOf = accent ? { accent } : {};
+  const accentOf = { ...(accent ? { accent } : {}), ...(paper ? { paper } : {}) };
   return (
     <ShopFrame preset={page.preset.id} density={page.density} {...accentOf} data-testid="shop-page">
+      {paper === "kraft" ? <PaperGrain /> : null}
       <MapSetup />
       {page.sections.filter((s) => !s.disabled).map((s) => <Fragment key={s.key}>{renderSection(s, ctx)}</Fragment>)}
     </ShopFrame>
