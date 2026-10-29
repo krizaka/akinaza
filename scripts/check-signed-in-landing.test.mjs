@@ -19,6 +19,14 @@ describe("the signed-in landing check (krizaka-ui#827)", () => {
     assert.match(String(watchSignInLink), /DOMContentLoaded/);
   });
 
+  it("measures the computed display of the sign-in links under html[data-session], and requires the marker (CTO decision, Option 1)", () => {
+    const source = String(watchSignInLink);
+    assert.match(source, /getComputedStyle\(link\)\.display !== "none"/);
+    assert.match(source, /data-signed-out-only/);
+    assert.match(source, /data-session/);
+    assert.match(source, /first-paint/);
+  });
+
   it("counts the app's home and a shop's pages as the app, never a public page", () => {
     assert.ok(inApp("/fr/app", "fr"));
     assert.ok(inApp("/fr/app/ce0fa722/aujourdhui", "fr"));

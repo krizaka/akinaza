@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 // A signed-in person never sees the public side first (krizaka-ui#827), proven in a real browser as the seeded persona:
 //   1. `/` and `/<locale>` land on the home (`/<locale>/app`), server-side, with no page of the landing in between;
-//   2. a public page that stays reachable signed in (pricing) never draws « Sign in » in the bar — not at the first paint,
-//      not for an instant while `/api/me` answers (a MutationObserver from document start records any sign-in link of the header);
+//   2. a public page that stays reachable signed in (pricing) never SHOWS « Sign in » in the bar — not at the first paint,
+//      not for an instant while `/api/me` answers. The static HTML may hold the link, but under `html[data-session]` (set
+//      before paint from the kz-session hint) it carries `data-signed-out-only` and is computed `display: none`; an observer
+//      from document start records any breach;
 //   3. the same public page signed out still offers « Sign in » (the guard is not vacuous).
 //
 //   E2E_EMAIL=… E2E_PASSWORD=… node scripts/check-signed-in-landing.mjs --base http://localhost:3000 [--locale fr]
@@ -21,14 +23,41 @@ const arg = (name, fallback) => {
   return i >= 0 ? process.argv[i + 1] : fallback;
 };
 
-/** Records, from the first moment of the document, whether the header ever held a link to the sign-in page. */
+/** The one selector of a sign-in link in the bar. */
+export const SIGN_IN_LINK = '[data-site-bar] a[href$="/sign-in"]';
+
+/**
+ * Records, from the first moment of the document, every « Sign in » link of the bar and what a hinted visitor would see of it
+ * (CTO decision, krizaka-ui#827, Option 1). Under `html[data-session]` (set by the head script from the `kz-session` hint)
+ * every such link must carry `data-signed-out-only` AND be computed `display: none` from the first paint on: the DOM may hold
+ * the link, the eye never sees it. The computed style is read at the first paint (stylesheets block it, so the rule is
+ * there) and again at every later mutation. Problems land in `window.__signInProblems`.
+ */
 export const watchSignInLink = () => {
+  window.__signInProblems = [];
   window.__sawSignIn = false;
-  const look = () => {
-    if (document.querySelector('[data-site-bar] a[href$="/sign-in"]')) window.__sawSignIn = true;
+  let painted = false;
+  const flag = (why) => {
+    if (!window.__signInProblems.includes(why)) window.__signInProblems.push(why);
   };
-  new MutationObserver(look).observe(document, { childList: true, subtree: true });
-  document.addEventListener("DOMContentLoaded", look);
+  const inspect = () => {
+    const links = document.querySelectorAll('[data-site-bar] a[href$="/sign-in"]');
+    if (links.length) window.__sawSignIn = true;
+    const hinted = document.documentElement.hasAttribute("data-session");
+    for (const link of links) {
+      if (!hinted) flag("a sign-in link is in the bar and html has no data-session (the head script did not run, or the hint cookie is missing)");
+      else if (!link.hasAttribute("data-signed-out-only")) flag("a sign-in link of the bar lacks data-signed-out-only");
+      else if (painted && getComputedStyle(link).display !== "none") flag("a sign-in link of the bar is visible under html[data-session] (computed display is not none)");
+    }
+  };
+  new MutationObserver(inspect).observe(document, { childList: true, subtree: true, attributes: true });
+  document.addEventListener("DOMContentLoaded", inspect);
+  new PerformanceObserver((list, observer) => {
+    if (!list.getEntries().some((entry) => entry.name === "first-paint")) return;
+    painted = true;
+    inspect();
+    observer.disconnect();
+  }).observe({ type: "paint", buffered: true });
 };
 
 /** The path of a URL, for a message. Pure, tested. */
@@ -62,7 +91,9 @@ export async function check({ base, locale = "fr", email, password }) {
     if (!/cookie/i.test(raw.headers().vary ?? "")) problems.push(`/${locale} signed in: Vary must name Cookie, got ${raw.headers().vary}`);
     await loadSettled(page, `${base}/${locale}/pricing`);
     await page.waitForFunction(() => document.querySelector('[data-site-bar] button, [data-site-bar] [data-state]') !== null, null, { timeout: 15_000 }).catch(() => {});
-    if (await page.evaluate(() => window.__sawSignIn)) problems.push(`/${locale}/pricing signed in: the bar drew « Sign in » for an instant`);
+    const seen = await page.evaluate(() => ({ hinted: document.documentElement.hasAttribute("data-session"), problems: window.__signInProblems }));
+    if (!seen.hinted) problems.push(`/${locale}/pricing signed in: html has no data-session (the head script must set it from the kz-session hint)`);
+    for (const why of seen.problems) problems.push(`/${locale}/pricing signed in: ${why}`);
     await context.close();
   } finally {
     await browser.close();
