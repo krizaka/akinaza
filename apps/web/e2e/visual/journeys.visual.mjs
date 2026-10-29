@@ -38,6 +38,24 @@ async function firstService(page, { origin }) {
   return href;
 }
 
+/** The last step of the booking path, signed in: the first free slot of the first service, taken in turn so two captures never book the same one. */
+let slotTurn = 0;
+async function freeSlot(page, { origin }) {
+  const service = await firstService(page, { origin });
+  await page.goto(new URL(`${service}/slots`, origin).toString());
+  const slots = page.locator('a[href*="/confirm"]');
+  await slots.first().waitFor({ timeout: 30_000 });
+  const href = await slots.nth(slotTurn++ % (await slots.count())).getAttribute("href");
+  if (!href) throw new Error("no free slot on the seeded service: is the cast seeded?");
+  return href;
+}
+
+/** Confirms the booking, as the person does: the booking has its own page afterwards. */
+async function submitBooking(page) {
+  await page.locator("form button[type=submit]").first().click();
+  await page.waitForURL(/\/confirmation\?booking=/, { timeout: 30_000 });
+}
+
 defineJourneyTests({
   test,
   expect,
@@ -48,6 +66,8 @@ defineJourneyTests({
     { name: "landing", path: "/fr", mask: LIVE },
     { name: "shop-page", path: SHOP, mask: LIVE },
     { name: "service-booking", path: firstService, mask: LIVE },
+    { name: "booking-confirm", path: freeSlot, session: true, mask: LIVE, viewports: ["desktop"] },
+    { name: "booking-confirmed", path: freeSlot, session: true, mask: LIVE, viewports: ["desktop"], ready: submitBooking },
     { name: "sign-in", path: "/fr/sign-in" },
     { name: "walker-today", path: "/fr/app", session: true, mask: LIVE },
   ],
