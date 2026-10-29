@@ -3,7 +3,8 @@ import { type NextRequest, NextResponse } from "next/server";
 import { HOST_FREE_PATHS, isAllowedHost } from "./lib/allowed-hosts";
 import { cookieName, ownCookie } from "./lib/cookie";
 import { refusesCrossSiteWrite } from "./lib/csrf";
-import { isAdminHost, routeFor, shopOfHost } from "./lib/host";
+import { contentSecurityPolicy, isShopPath, newNonce, upgradesInsecure } from "./lib/csp";
+import { type HostRoute, isAdminHost, routeFor, shopOfHost } from "./lib/host";
 import { CLOSED_ROBOTS, closedRobots, devRedirect, indexableOn, isDevHost, NOINDEX } from "./lib/indexing";
 import { LOCALE_HEADER, negotiateLocale, pageLocaleOf,PATH_HEADER } from "./lib/locale-negotiation";
 import { SESSION_COOKIE } from "./lib/session-cookie";
@@ -16,6 +17,26 @@ function crossSiteWrite(request: NextRequest): NextResponse | null {
   if (!request.nextUrl.pathname.startsWith("/api/")) return null;
   const refused = refusesCrossSiteWrite({ method: request.method, headers: request.headers, origin: process.env.APP_PUBLIC_URL ?? SITE_URL, sessionCookie: SESSION_COOKIE });
   return refused ? NextResponse.json({ error: { code: "CROSS_SITE_WRITE", message: "This request does not come from the app" } }, { status: 403 }) : null;
+}
+
+/** The policy of a response (lib/csp.ts), read per request: the nonce of a shop page is this response's own, the declared origin is the runtime's. */
+function policy(nonce?: string): string {
+  const production = process.env.NODE_ENV === "production";
+  return contentSecurityPolicy({ nonce, production, upgradeInsecure: upgradesInsecure(production, process.env.APP_PUBLIC_URL) });
+}
+
+/**
+ * The policy of a page. The public shop pages run only scripts that carry this response's nonce (ADR-005, #535): it goes on the request too, where Next
+ * reads it to stamp its own scripts. The route says which page it is (a shop host is rewritten to the shop's path).
+ */
+function stampPolicy(forwarded: Headers, route: HostRoute, pathname: string): string {
+  const path = route.kind === "rewrite" ? route.path : pathname;
+  if (!isShopPath(path)) return policy();
+  const nonce = newNonce();
+  const csp = policy(nonce);
+  forwarded.set("content-security-policy", csp);
+  forwarded.set("x-nonce", nonce);
+  return csp;
 }
 
 /**
@@ -41,12 +62,14 @@ export function proxy(request: NextRequest) {
     if (to) return NextResponse.redirect(to, { status: 308, headers });
     const response = NextResponse.next();
     response.headers.set("x-robots-tag", NOINDEX);
+    response.headers.set("Content-Security-Policy", policy());
     return response;
   }
   // The API and /.well-known pass untouched; on a host closed to search engines they say noindex.
   if (pathname.startsWith("/api/") || pathname.startsWith("/.well-known/")) {
     const response = NextResponse.next();
     if (closed) response.headers.set("x-robots-tag", NOINDEX);
+    response.headers.set("Content-Security-Policy", policy());
     return response;
   }
   const chosen = negotiateLocale(request.cookies.get(LOCALE_COOKIE)?.value, request.headers.get("accept-language"));
@@ -61,6 +84,7 @@ export function proxy(request: NextRequest) {
   const forwarded = new Headers(request.headers);
   forwarded.set(LOCALE_HEADER, pageLocaleOf(pathname, chosen));
   forwarded.set(PATH_HEADER, pathname + request.nextUrl.search);
+  const csp = stampPolicy(forwarded, route, pathname);
   let response: NextResponse;
   switch (route.kind) {
     case "robotsClosed":
@@ -83,6 +107,7 @@ export function proxy(request: NextRequest) {
     response.cookies.set(ownCookie(LOCALE_COOKIE, segment, { httpOnly: false, maxAge: 60 * 60 * 24 * 365 }));
   }
   if (admin || closed || shopHost) response.headers.set("x-robots-tag", NOINDEX);
+  response.headers.set("Content-Security-Policy", csp);
   return response;
 }
 
