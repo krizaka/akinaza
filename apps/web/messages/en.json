@@ -891,7 +891,7 @@
           "address": "Address",
           "term": "Matched term",
           "heldAt": "Held on",
-          "reviewed": "Review",
+          "reviewed": "Status",
           "kept": "Kept held",
           "new": "To review",
           "review": "Review"
