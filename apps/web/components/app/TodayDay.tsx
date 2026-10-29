@@ -51,6 +51,9 @@ function VisitAction({ appointment }: Readonly<{ appointment: TodayAppointment }
   );
 }
 
+/** The agenda's action for a row, at module level: a render function must not be a component defined in the day's render. */
+const visitAction = (row: { appointment: TodayAppointment }) => <VisitAction appointment={row.appointment} />;
+
 /** « Facturer ce rendez-vous » (D3): a finished appointment opens « Nouvelle facture » with its client, its service and one unit. */
 export function billAppointmentHref(a: TodayAppointment, routes: Pick<ShopRoutes, "newInvoiceFor">, mayInvoice: boolean): string | null {
   if (!mayInvoice || a.status !== AppointmentStatus.Done) return null;
@@ -415,7 +418,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
             now={isToday ? now : null}
             selectedId={selectedId}
             linkAs={Link}
-            action={(row) => <VisitAction appointment={row.appointment} />}
+            action={visitAction}
             labels={{ now: (at) => say("today.now", { time: at }) }}
             empty={<EmptyState icon={<Mascot bird="beaver" mood="empty" size={120} />} title={say("today.noneTitle")} description={say(isToday ? "today.none" : "today.noneOtherDay")} />}
           />

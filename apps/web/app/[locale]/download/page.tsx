@@ -8,6 +8,7 @@ import { AppVideoPlayer } from "@/components/download/AppVideoPlayer";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { APP_VIDEOS, videoId, videoUrl } from "@/lib/app-videos";
+import { jsonLdHtml } from "@/lib/csp";
 import { downloadPageOpen } from "@/lib/downloads";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
@@ -28,7 +29,7 @@ export default async function Download({ params }: Readonly<{ params: Promise<{ 
   const t = getDictionary(locale);
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="download" />
       <main id="content">
         <PageHero back={{ href: pagePath(locale, "home"), label: t.meta.siteName }} linkAs={Link} title={t.download.title} backdrop="plain" lead={t.download.lead} />

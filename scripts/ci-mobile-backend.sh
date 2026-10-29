@@ -23,6 +23,8 @@ export TZ=UTC
 
 pnpm --filter @akinaza/web build
 export NODE_ENV=production
+# The app's declared public origin (landingRedirect requires it in production: never read from the request's Host).
+export APP_PUBLIC_URL=http://localhost:3000
 trap 'tail -100 web-mobile-e2e.log || true' ERR
 (cd apps/web && nohup npx next start -p 3000 > ../../web-mobile-e2e.log 2>&1 &)
 for _ in $(seq 1 90); do curl -sf http://localhost:3000/api/healthz >/dev/null && break; sleep 1; done
