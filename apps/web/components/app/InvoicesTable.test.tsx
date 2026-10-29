@@ -167,4 +167,9 @@ describe("the columns' widths (akinaza#581)", () => {
     expect(cellOf(html, en.console.invoices.table.client)).toMatch(/w-full/);
     expect(cellOf(html, en.console.invoices.table.number)).not.toMatch(/w-full/);
   });
+
+  it("the dates stay on one line", () => {
+    const html = markup("en");
+    for (const label of [en.console.invoices.table.issued, en.console.invoices.table.due]) expect(cellOf(html, label), label).toMatch(/whitespace-nowrap/);
+  });
 });
