@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { shopPageProblems } from "./check-shop-host.mjs";
+import { leadsTo, shopPageProblems } from "./check-shop-host.mjs";
 
 const ctx = { origin: "https://salon.akinaza.shop", appOrigin: "https://www.akinaza.com" };
 const good = {
@@ -25,5 +25,15 @@ describe("check-shop-host", () => {
     };
     const problems = shopPageProblems(bad, ctx).join("\n");
     for (const rule of ["script-src is not the strict one", "frame-ancestors", "form-action", "session cookie", "has a Domain", "can be cached", "canonical"]) expect(problems).toContain(rule);
+  });
+  it("a redirect leads to the app: absolute, or relative only where the app origin is the server's own (Next relativizes it)", () => {
+    const target = "https://www.akinaza.com/fr/s/salon/service/1/confirm?slot=9";
+    const answer = (location, status = 308) => ({ status, headers: { location } });
+    expect(leadsTo(answer(target), target)).toBe(true);
+    expect(leadsTo(answer("/fr/s/salon/service/1/confirm?slot=9"), target)).toBe(false);
+    expect(leadsTo(answer("/fr/s/salon/service/1/confirm?slot=9"), target, { listenOrigin: "https://www.akinaza.com" })).toBe(true);
+    expect(leadsTo(answer("/fr/s/salon/service/1/confirm?slot=9"), target, { listenOrigin: "http://localhost:3001" })).toBe(false);
+    expect(leadsTo(answer("https://evil.example/fr/s/salon/service/1/confirm?slot=9"), target, { listenOrigin: "https://www.akinaza.com" })).toBe(false);
+    expect(leadsTo(answer(target, 307), target)).toBe(false);
   });
 });

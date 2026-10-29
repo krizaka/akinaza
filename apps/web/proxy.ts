@@ -119,7 +119,7 @@ function serve(request: NextRequest, closed: boolean, ownShopHost: boolean): Nex
       return new NextResponse(`User-agent: *\nDisallow: /\n${sitemap}`, { headers: { "content-type": "text/plain", "x-robots-tag": "noindex, nofollow" } });
     }
     case "shopSitemap":
-      response = NextResponse.rewrite(new URL(`${SHOP_SITEMAP_PATH}?slug=${route.slug}`, request.url), { request: { headers: forwarded } });
+      response = NextResponse.rewrite(new URL(SHOP_SITEMAP_PATH, request.url), { request: { headers: forwarded } });
       break;
     case "notFound":
       return new NextResponse("Not found", { status: 404, headers: admin ? { "x-robots-tag": "noindex, nofollow" } : {} });

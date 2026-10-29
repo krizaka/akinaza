@@ -39,6 +39,18 @@ export function shopPageProblems(answer, { origin, appOrigin }) {
   return problems;
 }
 
+/**
+ * Whether a redirect leads to `target` on the app. Next relativizes a Location that points at its own listen origin (resolve-routes: getRelativeURL against
+ * `http://localhost:<port>`), and this check's server declares that very origin as the app's; in production the app is another origin, so the header is absolute.
+ * A relative Location is the same address only when the app origin is the listen origin (`listenOrigin`); anything else is a miss.
+ */
+export function leadsTo(answer, target, { listenOrigin } = {}) {
+  const location = String(answer.headers.location ?? "");
+  const url = new URL(target);
+  const relative = `${url.pathname}${url.search}`;
+  return answer.status === 308 && (location === target || (url.origin === listenOrigin && location === relative));
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const arg = (flag, fallback) => (args.includes(flag) ? args[args.indexOf(flag) + 1] : fallback);
@@ -57,7 +69,7 @@ async function main() {
   expect(!page.body.includes("forged"), "the session cookie reached the page");
 
   const hop = await ask(base, shopHost, `/fr/s/${slug}/service/1/confirm?slot=9`);
-  expect(hop.status === 308 && hop.headers.location === `${appOrigin}/fr/s/${slug}/service/1/confirm?slot=9`, `the booking hop is ${hop.status} ${hop.headers.location}`);
+  expect(leadsTo(hop, `${appOrigin}/fr/s/${slug}/service/1/confirm?slot=9`, { listenOrigin: appOrigin }), `the booking hop is ${hop.status} ${hop.headers.location}`);
 
   const ghost = await ask(base, `no-such-shop.${domain}:${port}`, "/fr");
   expect(ghost.status === 404 && String(ghost.headers["x-robots-tag"]).includes("noindex") && !ghost.body.includes("no-such-shop"), `an unknown shop answered ${ghost.status}`);
