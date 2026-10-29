@@ -10,11 +10,12 @@
 // The database is a seeded, throw-away one (`seed-krizaka.mjs`, `apply-shop-template.mjs krizaka-demo consulting-histoire`, the
 // `features.cahierStorefront` flag for Éric): dev.akinaza.com redirects its pages to www by design. Needs Chromium for playwright-core and ffmpeg.
 // The password stays in the environment and is never printed. Nothing is sent: Éric only reads.
-import { execFileSync } from "node:child_process";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+
+import { ffmpeg, glide, listenScreencast, spanOf, writeConcatList } from "./lib/take.mjs";
 
 export const PHONE = { width: 390, height: 844 };
 export const SCALE = 2;
@@ -55,27 +56,8 @@ async function main() {
   const frames = [];
   const calls = [];
   const log = (ok, what) => process.stdout.write(`${ok ? "ok  " : "FAIL"} ${what}\n`);
-  let t0 = null;
-  const now = () => (frames.length ? frames.at(-1).t - t0 : 0);
+  const now = () => spanOf(frames);
   const mark = (name) => beats.push({ name, at: Number(now().toFixed(3)) });
-
-  /** A smooth scroll: many small steps, so the capture really has motion to show. */
-  const glide = (page, dy, ms = 1400) =>
-    page.evaluate(
-      ([distance, duration]) =>
-        new Promise((resolve) => {
-          const start = performance.now();
-          const from = window.scrollY;
-          const step = (t) => {
-            const k = Math.min(1, (t - start) / duration);
-            window.scrollTo(0, from + distance * (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2));
-            if (k < 1) requestAnimationFrame(step);
-            else resolve();
-          };
-          requestAnimationFrame(step);
-        }),
-      [dy, ms],
-    );
 
   const browser = await chromium.launch();
   const context = await browser.newContext({ viewport: PHONE, deviceScaleFactor: SCALE, locale: LOCALE === "fr" ? "fr-CA" : "en-CA", timezoneId: "America/Toronto", isMobile: true, hasTouch: true, colorScheme: "dark" });
@@ -96,13 +78,7 @@ async function main() {
     if (url.pathname.startsWith("/api/")) calls.push({ method: res.request().method(), path: url.pathname, status: res.status() });
   });
   page.on("pageerror", (e) => log(false, `no page error (${e.message.slice(0, 120)})`));
-  const cdp = await context.newCDPSession(page);
-  cdp.on("Page.screencastFrame", async ({ data, metadata, sessionId }) => {
-    const t = metadata.timestamp;
-    if (t0 === null) t0 = t;
-    frames.push({ t, data });
-    await cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {});
-  });
+  const cdp = await listenScreencast(context, page, frames);
   const settle = async (text) => {
     await page.waitForLoadState("networkidle");
     await page.getByText(text).first().waitFor({ timeout: 60_000 });
@@ -180,18 +156,10 @@ async function main() {
   }
 
   // Encode: each frame is held until the next one (the screencast only sends what changed), then a constant 30 fps.
-  const duration = frames.at(-1).t - t0;
-  let list = "";
-  frames.forEach((f, i) => {
-    const file = path.join(FRAMES, `${String(i).padStart(5, "0")}.jpg`);
-    writeFileSync(file, Buffer.from(f.data, "base64"));
-    const next = frames[i + 1]?.t ?? f.t + 1 / 30;
-    list += `file '${file}'\nduration ${Math.max(next - f.t, 1 / 120).toFixed(5)}\n`;
-  });
-  list += `file '${path.join(FRAMES, `${String(frames.length - 1).padStart(5, "0")}.jpg`)}'\n`;
-  writeFileSync(path.join(FRAMES, "list.txt"), list);
-  const ff = (args) => execFileSync("ffmpeg", ["-y", "-loglevel", "error", ...args]);
-  const input = ["-f", "concat", "-safe", "0", "-i", path.join(FRAMES, "list.txt"), "-vf", "fps=30,scale=540:-2:flags=lanczos", "-an"];
+  const duration = spanOf(frames);
+  const list = writeConcatList(frames, FRAMES);
+  const ff = ffmpeg;
+  const input = ["-f", "concat", "-safe", "0", "-i", list, "-vf", "fps=30,scale=540:-2:flags=lanczos", "-an"];
   ff([...input, "-c:v", "libx264", "-crf", "24", "-preset", "slow", "-pix_fmt", "yuv420p", "-movflags", "+faststart", path.join(OUT, files.mp4)]);
   ff([...input, "-c:v", "libvpx-vp9", "-crf", "36", "-b:v", "0", "-row-mt", "1", path.join(OUT, files.webm)]);
   // The poster is the take's first second at the stills' size (780 × 1688): the page's LCP.
