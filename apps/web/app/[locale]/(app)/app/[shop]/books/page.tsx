@@ -8,6 +8,7 @@ import { Stat, StatGrid } from "@krizaka/ui/stat";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { requestNow } from "@/app/request-now";
 import { BooksLines } from "@/components/app/BooksLines";
 import { FiguresPanel } from "@/components/app/FiguresPanel";
 import { LexiconSection } from "@/components/app/LexiconSection";
@@ -20,7 +21,6 @@ import { formatLongDay, formatMoney } from "@/lib/format";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { shopRoutes } from "@/lib/routes";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

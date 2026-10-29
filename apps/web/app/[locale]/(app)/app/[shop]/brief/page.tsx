@@ -3,6 +3,7 @@ import { shopDay } from "@akinaza/db";
 import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 
+import { requestNow } from "@/app/request-now";
 import { FiguresPanel } from "@/components/app/FiguresPanel";
 import { LexiconSection } from "@/components/app/LexiconSection";
 import { MondayBrief } from "@/components/app/MondayBrief";
@@ -13,7 +14,6 @@ import { loadFigures } from "@/lib/figures";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { shopRoutes } from "@/lib/routes";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
