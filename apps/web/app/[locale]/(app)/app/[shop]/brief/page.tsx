@@ -3,6 +3,7 @@ import { shopDay } from "@akinaza/db";
 import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 
+import { requestNow } from "@/app/request-now";
 import { FiguresPanel } from "@/components/app/FiguresPanel";
 import { LexiconSection } from "@/components/app/LexiconSection";
 import { MondayBrief } from "@/components/app/MondayBrief";
@@ -25,9 +26,9 @@ export default async function BriefPage({ params }: Readonly<{ params: Promise<{
   const { locale: raw, shop: shopId } = await params;
   const locale = asLocale(raw);
   const { shop } = await memberShop(shopId, "reports");
-  const brief = await loadShopBrief(shop, new Date());
+  const brief = await loadShopBrief(shop, requestNow());
   const t = getDictionary(locale).console.brief;
-  const now = new Date();
+  const now = requestNow();
   const { figures, actions } = await loadFigures(shop, await shopDay(db(), shop.id, now), now);
   const routes = shopRoutes(locale, shop.id);
   const f = getDictionary(locale).console.figures;

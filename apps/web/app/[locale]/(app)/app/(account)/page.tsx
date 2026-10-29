@@ -9,6 +9,7 @@ import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { lastMember } from "@/lib/member-shop";
 import { shopRoutes } from "@/lib/routes";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,7 @@ export default async function Home({ params }: Readonly<{ params: Promise<{ loca
 
 async function ClientSpace({ accountId }: Readonly<{ accountId: string }>) {
   const files = await clientFilesOf(db(), accountId);
-  const clock = new Date();
+  const clock = requestNow();
   const now = clock.toISOString();
   return (
     <ClientHome
