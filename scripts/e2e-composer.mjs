@@ -89,6 +89,9 @@ try {
   check((await sectionsNav.getByRole("listitem").count()) === startOrder.length, "the composer lists the page's sections");
 
   // 2 - reorder with the keyboard, change the style: the autosave stores the draft.
+  // The page is drawn by the server first: a key or a choice before React has taken it over does nothing (the CI flake of #515). Wait for the takeover.
+  const firstButton = await sectionsNav.getByRole("button").first().elementHandle();
+  await page.waitForFunction((el) => Object.keys(el).some((k) => k.startsWith("__reactProps$")), firstButton);
   await sectionsNav.getByRole("listitem").nth(1).getByRole("button").first().focus();
   await page.keyboard.press("Alt+ArrowDown");
   const picker = page.getByLabel(W.style);
