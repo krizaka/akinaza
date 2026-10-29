@@ -363,7 +363,8 @@ function MediaCard({ media }: { media: SetupData["media"] }) {
         uploaded.push(`${url} | | `);
       }
       if (coverUrl === null) return;
-      const cover = coverUrl ? keepExtras([{ url: coverUrl, altFr: values.coverAltFr, altEn: values.coverAltEn }], media.cover ? [media.cover] : [])[0]! : null;
+      const keptCover = media.cover ? [media.cover] : [];
+      const cover = coverUrl ? keepExtras([{ url: coverUrl, altFr: values.coverAltFr, altEn: values.coverAltEn }], keptCover)[0]! : null;
       const gallery = [...keepExtras(parseGallery(values.gallery), media.gallery), ...parseGallery(uploaded.join("\n"))].slice(0, 12);
       setSaved((await call.run("/api/walker/media", { json: { cover, gallery } })) !== null);
       form.reset({ ...values, coverUrl, coverFiles: [], galleryFiles: [], gallery: galleryText(gallery) });

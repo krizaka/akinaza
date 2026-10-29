@@ -9,6 +9,10 @@ export function InvoicePublicDocument({ invoice, locale, today, token }: { invoi
   const t = getDictionary(locale).console.invoicePublic;
   const balance = remainingCents({ totalCents: invoice.totalCents, paidCents: invoice.paidCents, dueOn: invoice.dueOn, isCredit: !!invoice.creditOf, superseded: !!invoice.replacedBy || !!invoice.creditedBy });
   const state = invoiceState({ totalCents: invoice.totalCents, paidCents: invoice.paidCents, dueOn: invoice.dueOn, isCredit: !!invoice.creditOf, superseded: !!invoice.replacedBy || !!invoice.creditedBy }, today);
+  const payTerms = (() => {
+    if (invoice.termsDays === 0) return t.payOnReceipt;
+    return invoice.termsDays ? format(t.terms, { days: invoice.termsDays }) : t.noTerms;
+  })();
   const language = invoice.language === "fr" ? "fr-CA" : "en-CA";
   const money = new Intl.NumberFormat(language, { style: "currency", currency: "CAD" });
   return (
@@ -24,7 +28,7 @@ export function InvoicePublicDocument({ invoice, locale, today, token }: { invoi
           <dt className="text-fg-secondary">{t.balance}</dt><dd className="text-right font-semibold tabular-nums text-fg">{money.format(balance / 100)}</dd>
           <dt className="text-fg-secondary">{t.state}</dt><dd className="text-right text-fg">{t.states[state]}</dd>
         </dl>
-        <p className="mt-3 text-sm text-fg-secondary">{invoice.termsDays === 0 ? t.payOnReceipt : invoice.termsDays ? format(t.terms, { days: invoice.termsDays }) : t.noTerms}</p>
+        <p className="mt-3 text-sm text-fg-secondary">{payTerms}</p>
         {invoice.shop.publicEmail ? <p className="mt-2 text-sm text-fg-secondary">{t.contact} <a className="text-fg-accent underline" href={`mailto:${invoice.shop.publicEmail}`}>{invoice.shop.publicEmail}</a></p> : null}
       </section>
     </main>

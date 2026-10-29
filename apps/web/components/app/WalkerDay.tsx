@@ -37,11 +37,19 @@ export function WalkerDay({ visits, timeZone, nav }: { visits: DayVisitView[]; t
   );
 }
 
+/** The visit's badge: done, under way, or only booked. */
+function statusOf(done: boolean, live: boolean) {
+  if (done) return { tone: "success", key: "walker.statusDone" } as const;
+  if (live) return { tone: "warning", key: "walker.statusLive" } as const;
+  return { tone: "neutral", key: "walker.statusBooked" } as const;
+}
+
 function VisitCard({ visit, timeZone }: { visit: DayVisitView; timeZone: string }) {
   const { say, locale } = useSay();
   const { dependants } = useVocabulary();
   const live = visit.checkedInAt && !visit.checkedOutAt;
   const done = !!visit.checkedOutAt;
+  const status = statusOf(done, !!live);
   return (
     <Card.Root className="p-4" aria-labelledby={`visit-${visit.appointmentId}`}>
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -56,7 +64,7 @@ function VisitCard({ visit, timeZone }: { visit: DayVisitView; timeZone: string 
         </div>
         <div className="flex flex-wrap gap-2">
           {visit.zone ? <Badge tone="accent">{visit.zone}</Badge> : null}
-          <Badge tone={done ? "success" : live ? "warning" : "neutral"}>{say(done ? "walker.statusDone" : live ? "walker.statusLive" : "walker.statusBooked")}</Badge>
+          <Badge tone={status.tone}>{say(status.key)}</Badge>
         </div>
       </div>
       <div className="mt-3">

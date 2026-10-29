@@ -136,14 +136,12 @@ const longDate = (day: string, locale: Locale) => new Intl.DateTimeFormat(lang(l
 function memberView(member: { id: string; name: string }, day: MemberDay | undefined, now: Date, timezone: string, locale: Locale, t: ReturnType<typeof translator>): StorefrontView["team"][number] {
   if (!day) return { id: member.id, name: member.name, state: null, free: false };
   const state = memberStateAt(day, now, timezone);
-  const label =
-    state.kind === MEMBER_STATE.busy
-      ? t("console.shopPage.member.busy", { time: clockLabel(state.until, locale) })
-      : state.kind === MEMBER_STATE.startsAt
-        ? t("console.shopPage.member.startsAt", { time: clockLabel(state.time, locale) })
-        : state.kind === MEMBER_STATE.off
-          ? t("console.shopPage.member.off", { day: longDate(state.until, locale) })
-          : t(`console.shopPage.member.${state.kind}`);
+  const label = (() => {
+    if (state.kind === MEMBER_STATE.busy) return t("console.shopPage.member.busy", { time: clockLabel(state.until, locale) });
+    if (state.kind === MEMBER_STATE.startsAt) return t("console.shopPage.member.startsAt", { time: clockLabel(state.time, locale) });
+    if (state.kind === MEMBER_STATE.off) return t("console.shopPage.member.off", { day: longDate(state.until, locale) });
+    return t(`console.shopPage.member.${state.kind}`);
+  })();
   return { id: member.id, name: member.name, state: label, free: state.kind === MEMBER_STATE.free };
 }
 
@@ -185,7 +183,7 @@ export function buildStorefront(input: { page: PublicShop; /** The shop as a pla
   const translated = new Map((page.translations ?? []).map((x) => [`${x.key}|${x.locale}`, x.text]));
   const sourceIsFr = (page.languages?.source ?? "fr") === "fr";
   const own = (kind: "shop" | "service", refId: string, field: string, fr: string | null | undefined, en: string | null | undefined): string | null => {
-    const written = content === "fr" ? fr : content === "en" ? en : null;
+    const written = ({ fr, en } as Record<string, string | null | undefined>)[content] ?? null;
     if (written?.trim()) return written;
     const done = translated.get(`${kind}:${refId}:${field}|${content}`);
     if (done) return done;
@@ -253,11 +251,14 @@ export function buildStorefront(input: { page: PublicShop; /** The shop as a pla
   const appliedTemplate = resolveTemplate({ templateId: page.pageConfig?.templateId, templateVersion: page.pageConfig?.templateVersion }, input.catalogue);
   const preparedSections = { wall: enabled.wall ?? false, reels: enabled.reels ?? false, announcements: enabled.announcements ?? false, reviews: enabled.reviews ?? false, follow: enabled.follow ?? false };
 
+  const proposedCover = proposed?.cover ? { src: proposed.cover.poster, alt: describe(proposed.cover.altKey), video: { webm: proposed.cover.webm, mp4: proposed.cover.mp4 } } : null;
+  const cover = page.media.cover ? mediaView(page.media.cover, locale) : proposedCover;
+
   return {
     name: page.shop.name,
     area: page.shop.area || null,
     tagline: own("shop", page.shop.id, "tagline", page.shop.taglineFr, page.shop.taglineEn),
-    cover: page.media.cover ? mediaView(page.media.cover, locale) : proposed?.cover ? { src: proposed.cover.poster, alt: describe(proposed.cover.altKey), video: { webm: proposed.cover.webm, mp4: proposed.cover.mp4 } } : null,
+    cover,
     status,
     bookHref: serviceId ? pageHref(serviceId) : base,
     services,

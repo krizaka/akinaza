@@ -131,7 +131,12 @@ export function ReportBox({ booking, timeZone }: { booking: DayVisitView["bookin
     setNotice(null);
     const result = await call.run<{ status: "sent" | "pending" | "failed" }>(`/api/walker/bookings/${booking.bookingId}/report/send`);
     if (!result) return;
-    setNotice(result.status === "sent" ? { tone: "success", text: say("walker.sentNow", { owner }) } : result.status === "pending" ? { tone: "info", text: say("walker.queued") } : { tone: "danger", text: say("walker.failed") });
+    const notices = {
+      sent: { tone: "success", text: say("walker.sentNow", { owner }) },
+      pending: { tone: "info", text: say("walker.queued") },
+      failed: { tone: "danger", text: say("walker.failed") },
+    } as const;
+    setNotice(notices[result.status]);
   };
   return (
     <div className="rounded-lg border border-border-default bg-surface-1 p-3">
