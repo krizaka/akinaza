@@ -1,0 +1,8 @@
+id: no-raw-json-in-inner-html
+snapshots:
+  "<script type=\"application/ld+json\" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />\n":
+    labels:
+    - source: JSON.stringify(data)
+      style: primary
+      start: 70
+      end: 90

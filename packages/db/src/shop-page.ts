@@ -1,4 +1,4 @@
-import { SHOP_TYPES, TEMPLATES, type Template } from "@akinaza/core";
+import { framePaperOf, SHOP_TYPES, TEMPLATES, type Template } from "@akinaza/core";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -98,8 +98,10 @@ export async function applyTemplate(db: Db, shopId: string, input: { templateId:
     const custom = row?.sectionsCustom ?? false;
     if (custom && input.keepOrder === undefined) throw new ShopError("AK_SECTIONS_CUSTOM", "AK_SECTIONS_CUSTOM");
     const keep = input.keepOrder === true;
-    const sections = keep ? (row ? withTrust(row.sections) : DEFAULT_SHOP_PAGE_SECTIONS.map((s) => ({ ...s }))) : sectionsFromTemplate(template, (row ? withTrust(row.sections) : DEFAULT_SHOP_PAGE_SECTIONS) as ShopPageSectionSetting[]);
-    const values = { sections, templateId: template.id, templateVersion: template.version, sectionsCustom: keep ? custom : false };
+    const stored = row ? withTrust(row.sections) : null;
+    const kept = stored ?? DEFAULT_SHOP_PAGE_SECTIONS.map((s) => ({ ...s }));
+    const sections = keep ? kept : sectionsFromTemplate(template, (stored ?? DEFAULT_SHOP_PAGE_SECTIONS) as ShopPageSectionSetting[]);
+    const values = { sections, templateId: template.id, templateVersion: template.version, sectionsCustom: keep ? custom : false, paper: framePaperOf(template.paper) };
     await tx.insert(shopPage).values({ shopId, ...values }).onConflictDoUpdate({ target: shopPage.shopId, set: { ...values, updatedAt: sql`now()` } });
     return template;
   });

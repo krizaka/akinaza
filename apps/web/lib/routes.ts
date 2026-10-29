@@ -32,7 +32,7 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
     newInvoiceFor: (prefill: { client?: string; service?: string; quantity?: string; appointment?: string }) => `${root}/invoices/new${query(prefill)}`,
     books: (period?: string) => `${root}/books${query({ period })}`,
     /** Boutique (K4): one hub on SettingsLayout, one address per section; `?tab=` names the section of the page. */
-    boutique: (section?: string, tab?: string) => `${root}/boutique${section ? `/${section}` : ""}${query({ tab })}`,
+    boutique: (section?: string, tab?: string) => `${[root, "boutique", section].filter(Boolean).join("/")}${query({ tab })}`,
     /** Boutique › Équipe. */
     team: `${root}/boutique/team`,
     /** Boutique › Page, the first section of the hub (« Ma page boutique »). */

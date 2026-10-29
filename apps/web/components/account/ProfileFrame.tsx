@@ -18,7 +18,7 @@ export interface ProfileFrameProps {
  * The frame of every account page (the app-settings template): the person's name as the title — « Mon compte » until they
  * give one, never their e-mail — and the sections beside the page.
  */
-export function ProfileFrame({ locale, current, account, sections = ACCOUNT_SECTIONS, children }: ProfileFrameProps) {
+export function ProfileFrame({ locale, current, account, sections = ACCOUNT_SECTIONS, children }: Readonly<ProfileFrameProps>) {
   const t = getDictionary(locale).console.account.profile;
   const routes = accountRoutes(locale);
   const name = account.name?.trim();

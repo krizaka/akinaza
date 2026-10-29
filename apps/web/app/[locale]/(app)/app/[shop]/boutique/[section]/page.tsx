@@ -40,7 +40,7 @@ import { appSettings } from "@/lib/settings";
 import { accentsByLook } from "@/lib/shop-accents";
 import { team } from "@/lib/team";
 import { templateChoices } from "@/lib/template-choices";
-import { templateRules } from "@/lib/template-rules";
+import { templateCatalogue, templateRules } from "@/lib/template-rules";
 import { translationRules } from "@/lib/translation-settings";
 
 export const dynamic = "force-dynamic";
@@ -53,15 +53,15 @@ const line = (m: { url: string; altFr: string; altEn: string; captionFr: string 
 
 /** Boutique › Page: the shop as the walker builds its public page (identity, texts, zones, services, hours, rules, media, look, publish). */
 async function PageSection({ locale, shopId, tab }: Readonly<{ locale: RouteLocale; shopId: string; tab: PageTab }>) {
-  const { shop } = await memberShop(shopId, "settings");
+  const { shop, session } = await memberShop(shopId, "settings");
   const base = readEnv().APP_PUBLIC_URL;
   const setup = await loadShop(db(), shop);
   const [media, pageConfig] = await Promise.all([shopMediaOf(db(), shop.id), shopPageConfigOf(db(), shop.id)]);
-  const [rules, templates] = await Promise.all([defaultMediaSettings(), templateRules()]);
+  const [rules, templates, catalogue] = await Promise.all([defaultMediaSettings(), templateRules(), templateCatalogue(session.account.id)]);
   const proposed = rules.enabled ? { config: pageConfig, shopType: shopTypeOf(shop.businessType, pageConfig.shopType), proposals: proposalsFor(rules.types), media: { cover: media.cover ? line(media.cover) : null, gallery: media.gallery.map(line) } } : null;
   const data: SetupData = {
     proposed,
-    templates: templateChoices(templates, shopTypeOf(shop.businessType, pageConfig.shopType), pageConfig),
+    templates: templateChoices(templates, shopTypeOf(shop.businessType, pageConfig.shopType), pageConfig, catalogue),
     shopId: shop.id,
     pageConfig,
     page: { name: shop.name, legalName: shop.legalName, address: shop.address, slug: shop.slug ?? "", ownerName: setup.staff.name, taglineFr: shop.taglineFr ?? "", taglineEn: shop.taglineEn ?? "", published: shop.published, area: shop.area ?? "", bioFr: shop.bioFr ?? "", bioEn: shop.bioEn ?? "", publicPhone: shop.publicPhone ?? "", publicEmail: shop.publicEmail ?? "", seatUnitFr: shop.seatUnitFr ?? "", seatUnitEn: shop.seatUnitEn ?? "", businessType: shop.businessType },
@@ -244,7 +244,7 @@ function boutiqueBody({ section, tab, community, locale, shopId }: Readonly<{ se
 }
 
 /** One section of Boutique, named by the address. A section the role may not open is a 404, whatever the link says. */
-export default async function BoutiqueSectionPage({ params, searchParams }: { params: Promise<{ locale: string; shop: string; section: string }>; searchParams: Promise<{ tab?: string }> }) {
+export default async function BoutiqueSectionPage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string; section: string }>; searchParams: Promise<{ tab?: string }> }>) {
   const { locale: rawLocale, shop: shopId, section: rawSection } = await params;
   const locale = asLocale(rawLocale);
   if (!isBoutiqueSection(rawSection)) notFound();

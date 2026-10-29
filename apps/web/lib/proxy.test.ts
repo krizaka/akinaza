@@ -1,11 +1,12 @@
 import { NextRequest } from "next/server";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { config, proxy } from "../proxy";
 import { LOCALE_HEADER, PATH_HEADER } from "./locale-negotiation";
 
 const get = (path: string) => proxy(new NextRequest(`https://dev.akinaza.com${path}`, { headers: { host: "dev.akinaza.com" } }));
 
+beforeEach(() => vi.stubEnv("APP_ALLOWED_HOSTS", "dev.akinaza.com"));
 afterEach(() => vi.unstubAllEnvs());
 
 describe("the proxy of a deployment closed to search engines (APP_SEARCH_INDEXING=off)", () => {
@@ -119,5 +120,68 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
     expect(pageMatcher.test("/maps/v1/tiles/12/2048/1360.pbf")).toBe(false);
     expect(pageMatcher.test("/maps/v1/fonts/Noto Sans Regular/0-255.pbf")).toBe(false);
     expect(pageMatcher.test("/maps/v1/tiles/quebec-20261012.pmtiles")).toBe(false);
+  });
+});
+
+describe("the proxy on the API's writes (ADR-005 slice 1, akinaza#534)", () => {
+  const post = (headers: Record<string, string>) => proxy(new NextRequest("https://www.akinaza.com/api/me/profile", { method: "POST", headers: { host: "www.akinaza.com", ...headers } }));
+
+  it("refuses a write from a shop host (same-site) or with the session and no origin, 403", async () => {
+    const fromShop = post({ "sec-fetch-site": "same-site", cookie: "akinaza_session=x" });
+    expect(fromShop.status).toBe(403);
+    expect((await fromShop.json()).error.code).toBe("CROSS_SITE_WRITE");
+    expect(post({ origin: "https://pattes.akinaza.com" }).status).toBe(403);
+    expect(post({ cookie: "akinaza_session=x" }).status).toBe(403);
+  });
+  it("lets the app's own writes, a bearer and a cookie-less client through", () => {
+    expect(post({ "sec-fetch-site": "same-origin", cookie: "akinaza_session=x" }).status).toBe(200);
+    expect(post({ authorization: "Bearer t" }).status).toBe(200);
+    expect(post({}).status).toBe(200);
+  });
+  it("sets the language cookie host-only, with no Domain", () => {
+    const response = proxy(new NextRequest("https://www.akinaza.com/fr", { headers: { host: "www.akinaza.com" } }));
+    const set = response.headers.get("set-cookie") ?? "";
+    expect(set).toMatch(/NEXT_LOCALE=fr/);
+    expect(set.toLowerCase()).not.toContain("domain=");
+  });
+});
+
+/** ADR-005 slice 3 (#535): the proxy sets the policy of each response; the public shop pages get a fresh nonce, on the request too (Next stamps its scripts with it). */
+describe("the Content-Security-Policy of the proxy", () => {
+  const at = (host: string, path: string) => proxy(new NextRequest(`https://${host}${path}`, { headers: { host } }));
+  const scripts = (response: Response) => (response.headers.get("content-security-policy") ?? "").split("; ").find((d) => d.startsWith("script-src "));
+  const nonceOf = (response: Response) => /'nonce-([^']+)'/.exec(scripts(response) ?? "")?.[1];
+
+  it("a public shop page carries a nonce policy, the same nonce on the request, and a fresh one each time", () => {
+    const first = at("www.akinaza.com", "/fr/s/pattes-saint-henri");
+    const nonce = nonceOf(first);
+    expect(nonce).toBeTruthy();
+    expect(scripts(first)).not.toContain("'unsafe-inline'");
+    expect(first.headers.get("content-security-policy")).toContain("default-src 'none'");
+    expect(first.headers.get("x-middleware-request-x-nonce")).toBe(nonce);
+    expect(first.headers.get("x-middleware-request-content-security-policy")).toBe(first.headers.get("content-security-policy"));
+    expect(nonceOf(at("www.akinaza.com", "/fr/s/pattes-saint-henri"))).not.toBe(nonce);
+  });
+  it("a shop's own host is the same page, so the same strict policy", () => {
+    const home = at("pattes.akinaza.com", "/fr");
+    expect(nonceOf(home)).toBeTruthy();
+  });
+  it("the app and the public pages keep the static policy, with no nonce", () => {
+    for (const path of ["/fr/app", "/fr", "/fr/explore", "/en/pricing"]) {
+      const response = at("www.akinaza.com", path);
+      expect(scripts(response), path).toContain("'unsafe-inline'");
+      expect(nonceOf(response), path).toBeUndefined();
+      expect(response.headers.get("x-middleware-request-x-nonce"), path).toBeNull();
+    }
+  });
+  it("the API has a policy too", () => {
+    expect(at("www.akinaza.com", "/api/health").headers.get("content-security-policy")).toContain("default-src 'self'");
+  });
+  it("drops upgrade-insecure-requests when the declared public origin is plain http, read at request time", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("APP_PUBLIC_URL", "https://www.akinaza.com");
+    expect(at("www.akinaza.com", "/fr/s/x").headers.get("content-security-policy")).toContain("upgrade-insecure-requests");
+    vi.stubEnv("APP_PUBLIC_URL", "http://localhost:3000");
+    expect(at("localhost:3000", "/fr/s/x").headers.get("content-security-policy")).not.toContain("upgrade-insecure-requests");
   });
 });

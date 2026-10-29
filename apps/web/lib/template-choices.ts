@@ -39,7 +39,7 @@ export function templateChoices(rules: TemplateRules, shopType: ShopType, config
 }
 
 /** The choices of every trade (the picker at shop creation, before the trade is known), or null while the switch is off. */
-export function templateChoicesByTrade(rules: TemplateRules, types: readonly ShopType[]): Record<ShopType, TemplateChoices> | null {
+export function templateChoicesByTrade(rules: TemplateRules, types: readonly ShopType[], catalogue?: readonly Template[]): Record<ShopType, TemplateChoices> | null {
   if (!rules.enabled) return null;
-  return Object.fromEntries(types.map((type) => [type, templateChoices(rules, type, null)!])) as Record<ShopType, TemplateChoices>;
+  return Object.fromEntries(types.map((type) => [type, templateChoices(rules, type, null, catalogue)!])) as Record<ShopType, TemplateChoices>;
 }

@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 
 import { BriefBanner } from "@/components/app/BriefBanner";
 import { TodayDay } from "@/components/app/TodayDay";
+import { TodayFigures } from "@/components/app/TodayFigures";
 import { type DayVisitView, WalkerDay } from "@/components/app/WalkerDay";
 import { WhatToDoNow } from "@/components/app/WhatToDoNow";
 import { loadShopBrief } from "@/lib/brief";
@@ -36,7 +37,7 @@ const withMinutes = (v: Omit<DayVisitView, "minutes">): DayVisitView => ({ ...v,
  * — with the Monday brief announced above it and the last invoices beside. A dog walker's staff keep the card view built for a
  * phone in the street. The shop is the address's: a deep link opens it whatever the cookie remembers.
  */
-export default async function Today({ params, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ day?: string; appointment?: string; period?: string }> }) {
+export default async function Today({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ day?: string; appointment?: string; period?: string }> }>) {
   const { locale: raw, shop: shopId } = await params;
   const locale = asLocale(raw);
   const { session, shop, role } = await memberShop(shopId, "agenda");
@@ -53,7 +54,7 @@ export default async function Today({ params, searchParams }: { params: Promise<
 }
 
 /** The agenda day of the owner (and a manager), for every trade; a staff member of another trade sees their own appointments here. */
-async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants, board, boardFailed, period }: { locale: Locale; shop: MemberShop; role: ShopRole; staffAccountId: string | undefined; query: { day?: string; appointment?: string }; dependants: boolean; /** Null for who may not see the shop's money. */ board: Awaited<ReturnType<typeof todayBoard>> | null; boardFailed: boolean; period: BoardPeriod }) {
+async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants, board, boardFailed, period }: Readonly<{ locale: Locale; shop: MemberShop; role: ShopRole; staffAccountId: string | undefined; query: { day?: string; appointment?: string }; dependants: boolean; /** Null for who may not see the shop's money. */ board: Awaited<ReturnType<typeof todayBoard>> | null; boardFailed: boolean; period: BoardPeriod }>) {
   const t = getDictionary(locale).console;
   const routes = shopRoutes(locale, shop.id);
   const view = await todayView(shop, { day: query.day, staffAccountId });
@@ -88,6 +89,7 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
           <>
             {brief ? <BriefBanner count={brief.items.length} href={routes.brief} /> : null}
             {figures?.ok ? <WhatToDoNow actions={figures.value.actions} locale={locale} routes={routes} /> : null}
+            {figures?.ok ? <TodayFigures figures={figures.value.figures} locale={locale} routes={routes} timeZone={shop.timezone} now={new Date().toISOString()} /> : null}
           </>
         ) : null
       }
@@ -97,7 +99,7 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
 }
 
 /** The walker's day on a phone: one card per walk, the check-in the biggest thing on it (docs/UX_DECISIONS.md § 4). */
-async function StaffDay({ locale, shop, day: requested }: { locale: Locale; shop: MemberShop; day: string | undefined }) {
+async function StaffDay({ locale, shop, day: requested }: Readonly<{ locale: Locale; shop: MemberShop; day: string | undefined }>) {
   const t = consoleFor(locale, shop.businessType);
   const routes = shopRoutes(locale, shop.id);
   const today = await shopDay(db(), shop.id, new Date());

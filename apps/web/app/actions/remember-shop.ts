@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 
 import { pageSession } from "@/lib/access";
+import { ownCookie } from "@/lib/cookie";
 import { SHOP_COOKIE } from "@/lib/current-shop";
 import { memberOf } from "@/lib/member-shop";
 
@@ -12,5 +13,5 @@ const ONE_YEAR_SECONDS = 365 * 24 * 3600; // @fixed: the last shop should outliv
 export async function rememberShop(shopId: string): Promise<void> {
   const signedIn = await pageSession();
   if (!signedIn || !(await memberOf(signedIn.account.id, shopId))) return;
-  (await cookies()).set(SHOP_COOKIE, shopId, { httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production", path: "/", maxAge: ONE_YEAR_SECONDS });
+  (await cookies()).set(ownCookie(SHOP_COOKIE, shopId, { maxAge: ONE_YEAR_SECONDS }));
 }

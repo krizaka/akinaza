@@ -31,7 +31,7 @@ export interface ProfileView {
 const patchProfile = (body: Record<string, unknown>) => krizakaFetch("/api/me/profile", { method: "PATCH", json: body }).then(() => undefined);
 
 /** Changing the address sends a link to the new one: nothing changes until it is opened. */
-function EmailChange({ pending }: { pending: string | null }) {
+function EmailChange({ pending }: Readonly<{ pending: string | null }>) {
   const { say } = useSay();
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
@@ -91,7 +91,7 @@ function EmailChange({ pending }: { pending: string | null }) {
  * The profile: who you are (name, picture) and the address, each with its own place; one save for the name and the picture.
  * The identity card's heading is the name — « Pas encore de nom » until there is one, never the address, which has its own line.
  */
-export function ProfileSettings({ profile }: { profile: ProfileView }) {
+export function ProfileSettings({ profile }: Readonly<{ profile: ProfileView }>) {
   const { say, locale } = useSay();
   const form = useSectionDraft({ name: profile.name ?? "", avatar: avatarChoice(profile) }, (values) => patchProfile({ name: values.name.trim() || null, avatarSeed: values.avatar || null }));
   const shown = { id: profile.id, avatarSeed: form.draft.avatar };

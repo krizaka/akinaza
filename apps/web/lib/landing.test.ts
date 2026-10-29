@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
+import { contentSecurityPolicy } from "./csp";
 import { DEMO_SHOP, heroActions, HOME_SECTIONS, productStatus, SCREENS } from "./landing";
 import { llmsText } from "./seo";
 import { heroTake, MEDIA_CDN, screenStill } from "./tour";
@@ -104,7 +105,7 @@ describe("the first screen loads its proof first", () => {
     expect(video).not.toContain("autoPlay");
   });
   it("the CSP lets the CDN serve media (a video is not an image)", () => {
-    expect(read("next.config.mjs")).toContain("media-src 'self' https://krizaka-assets.b-cdn.net");
+    expect(contentSecurityPolicy({ production: true, upgradeInsecure: true })).toContain("media-src 'self' https://krizaka-assets.b-cdn.net");
   });
 });
 

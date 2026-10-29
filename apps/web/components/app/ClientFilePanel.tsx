@@ -19,9 +19,10 @@ import { ButtonLink } from "@/components/ButtonLink";
 import { CLIENT_FILE_TABS, type ClientFileTab } from "@/lib/clients-view";
 import { AppointmentStatus, STATUS_TONE } from "@/lib/day";
 import { formatDate, formatMoney, formatTime } from "@/lib/format";
-import { useSay } from "@/lib/i18n-client";
+import { type Say, type SayLocale, useSay } from "@/lib/i18n-client";
 import { STATE_TONE } from "@/lib/invoice-tone";
 import type { OrganizeData, TagLite } from "@/lib/organize-view";
+import type { ShopRoutes } from "@/lib/routes";
 import { useTableLabels } from "@/lib/table-labels";
 
 type Visit = ClientFile["visits"][number];
@@ -60,7 +61,7 @@ function tabCount(t: ClientFileTab, counts: { invoices: number; visits: number; 
 }
 
 /** A list of the file under its heading: the table, or the sentence saying there is nothing yet. */
-function ListSection({ id, title, empty, children }: { id: string; title: string; empty: string | null; children: React.ReactNode }) {
+function ListSection({ id, title, empty, children }: Readonly<{ id: string; title: string; empty: string | null; children: React.ReactNode }>) {
   return (
     <section aria-labelledby={id} className="flex flex-col gap-3">
       <h2 id={id} className="text-lg font-semibold text-fg">{title}</h2>
@@ -77,7 +78,7 @@ function visitSummary(visits: Visit[], now: number) {
 }
 
 /** The line under the name: phone, e-mail, since when, and the client's tags with their editor for who may organise. */
-function ClientMeta({ client, timeZone, tags, organize }: { client: ClientFilePanelProps["file"]["client"]; timeZone: string; tags: NonNullable<ClientFilePanelProps["tags"]>; organize: ClientFilePanelProps["organize"] }) {
+function ClientMeta({ client, timeZone, tags, organize }: Readonly<{ client: ClientFilePanelProps["file"]["client"]; timeZone: string; tags: NonNullable<ClientFilePanelProps["tags"]>; organize: ClientFilePanelProps["organize"] }>) {
   const { say, locale } = useSay();
   const parts = [
     client.phone ? (
@@ -111,7 +112,50 @@ function ClientMeta({ client, timeZone, tags, organize }: { client: ClientFilePa
   );
 }
 
-export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, notes, tab, today, organize, tags = [] }: ClientFilePanelProps) {
+type VisitColumnsContext = { say: Say; locale: SayLocale; timeZone: string };
+
+/** Built outside the component: the cells are render functions, not components of the table's parent. */
+const visitColumnsOf = ({ say, locale, timeZone }: VisitColumnsContext): DataTableColumn<Visit>[] => [
+  { id: "date", header: say("clients.file.date"), type: "title", card: "title", sortable: true, value: (v) => v.startsAt, cell: (v) => <span className="whitespace-nowrap">{`${formatDate(v.startsAt, locale, timeZone)} · ${formatTime(v.startsAt, locale, timeZone)}`}</span> },
+  { id: "service", header: say("clients.file.service"), value: (v) => v.service[locale] },
+  { id: "staff", header: say("clients.file.with"), priority: 2, value: (v) => v.staff },
+  { id: "status", header: say("clients.file.status"), type: "status", value: (v) => v.status, cell: (v) => <Badge tone={STATUS_TONE[v.status]}>{say(`today.statuses.${v.status}`)}</Badge> },
+  { id: "price", header: say("clients.file.price"), type: "number", priority: 2, value: (v) => v.priceCents, cell: (v) => formatMoney(v.priceCents, locale) },];
+
+type BillColumnsOfContext = { say: Say; locale: SayLocale; routes: ShopRoutes; today: string };
+
+/** Built outside the component: the cells are render functions, not components of the table's parent. */
+const billColumnsOf = ({ say, locale, routes, today }: BillColumnsOfContext): DataTableColumn<Bill>[] => [
+  {
+    id: "number",
+    header: say("clients.file.number"),
+    type: "title",
+    card: "title",
+    value: (i) => i.number,
+    cell: (i) => (
+      <Link href={routes.invoice(i.id)} className="font-mono font-semibold text-fg-accent underline">
+        {i.number}
+      </Link>
+    ),
+  },
+  { id: "date", header: say("clients.file.date"), sortable: true, value: (i) => i.issuedOn, cell: (i) => <span className="whitespace-nowrap">{formatDate(`${i.issuedOn}T12:00:00Z`, locale, "UTC")}</span> },
+  {
+    id: "state",
+    header: say("clients.file.status"),
+    type: "status",
+    value: (i) => invoiceState(standing(i), today),
+    cell: (i) => {
+      const state = invoiceState(standing(i), today);
+      return (
+        <Badge tone={STATE_TONE[state]} data-state={state}>
+          {say(`invoices.state.${state}`)}
+        </Badge>
+      );
+    },
+  },
+  { id: "total", header: say("clients.file.total"), type: "number", value: (i) => i.totalCents, cell: (i) => formatMoney(i.totalCents, locale) },];
+
+export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, notes, tab, today, organize, tags = [] }: Readonly<ClientFilePanelProps>) {
   const { say, locale } = useSay();
   const routes = useShopRoutes();
   const labels = useTableLabels();
@@ -122,49 +166,8 @@ export function ClientFilePanel({ file, timeZone, nowIso, mayInvoice = false, no
   const tabHref = (t: ClientFileTab) => (t === "summary" ? routes.client(client.id) : `${routes.client(client.id)}?tab=${t}`);
   const day = (iso: string | undefined) => (iso ? formatDate(iso, locale, timeZone) : say("clients.never"));
 
-  const visitColumns = useMemo<DataTableColumn<Visit>[]>(
-    () => [
-      { id: "date", header: say("clients.file.date"), type: "title", card: "title", sortable: true, value: (v) => v.startsAt, cell: (v) => <span className="whitespace-nowrap">{`${formatDate(v.startsAt, locale, timeZone)} · ${formatTime(v.startsAt, locale, timeZone)}`}</span> },
-      { id: "service", header: say("clients.file.service"), value: (v) => v.service[locale] },
-      { id: "staff", header: say("clients.file.with"), priority: 2, value: (v) => v.staff },
-      { id: "status", header: say("clients.file.status"), type: "status", value: (v) => v.status, cell: (v) => <Badge tone={STATUS_TONE[v.status]}>{say(`today.statuses.${v.status}`)}</Badge> },
-      { id: "price", header: say("clients.file.price"), type: "number", priority: 2, value: (v) => v.priceCents, cell: (v) => formatMoney(v.priceCents, locale) },
-    ],
-    [say, locale, timeZone],
-  );
-  const billColumns = useMemo<DataTableColumn<Bill>[]>(
-    () => [
-      {
-        id: "number",
-        header: say("clients.file.number"),
-        type: "title",
-        card: "title",
-        value: (i) => i.number,
-        cell: (i) => (
-          <Link href={routes.invoice(i.id)} className="font-mono font-semibold text-fg-accent underline">
-            {i.number}
-          </Link>
-        ),
-      },
-      { id: "date", header: say("clients.file.date"), sortable: true, value: (i) => i.issuedOn, cell: (i) => <span className="whitespace-nowrap">{formatDate(`${i.issuedOn}T12:00:00Z`, locale, "UTC")}</span> },
-      {
-        id: "state",
-        header: say("clients.file.status"),
-        type: "status",
-        value: (i) => invoiceState(standing(i), today),
-        cell: (i) => {
-          const state = invoiceState(standing(i), today);
-          return (
-            <Badge tone={STATE_TONE[state]} data-state={state}>
-              {say(`invoices.state.${state}`)}
-            </Badge>
-          );
-        },
-      },
-      { id: "total", header: say("clients.file.total"), type: "number", value: (i) => i.totalCents, cell: (i) => formatMoney(i.totalCents, locale) },
-    ],
-    [say, locale, routes, today],
-  );
+  const visitColumns = useMemo(() => visitColumnsOf({ say, locale, timeZone }), [say, locale, timeZone]);
+  const billColumns = useMemo(() => billColumnsOf({ say, locale, routes, today }), [say, locale, routes, today]);
 
   const notesColumn = <ClientNotes clientId={client.id} notes={notes} timeZone={timeZone} />;
   return (

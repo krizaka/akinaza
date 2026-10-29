@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false }, referrer: "no-referrer" };
 
 /** The report behind the private link in the e-mail: the dog, the walk, the note and the photo. */
-export default async function ReportPage({ params }: { params: Promise<{ locale: string; token: string }> }) {
+export default async function ReportPage({ params }: Readonly<{ params: Promise<{ locale: string; token: string }> }>) {
   const { locale: raw, token } = await params;
   const locale = asLocale(raw);
   const t = getDictionary(locale).console.report;

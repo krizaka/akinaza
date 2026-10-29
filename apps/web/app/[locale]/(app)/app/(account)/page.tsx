@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * A bare `/app`: someone who works in a shop goes to the last one they worked in (the address of a shop always wins over this);
  * a client lands on their bookings — only their own files, at every shop they deal with (`clientFilesOf` keys on the account).
  */
-export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Home({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const { account } = (await pageSession())!;
   const member = await lastMember(account.id);
@@ -28,7 +28,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   return <ClientSpace accountId={account.id} />;
 }
 
-async function ClientSpace({ accountId }: { accountId: string }) {
+async function ClientSpace({ accountId }: Readonly<{ accountId: string }>) {
   const files = await clientFilesOf(db(), accountId);
   const clock = new Date();
   const now = clock.toISOString();

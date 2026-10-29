@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { jsonLdHtml } from "@/lib/csp";
 import { docHref } from "@/lib/docs";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
@@ -19,7 +20,7 @@ export default async function Docs({ params }: Readonly<{ params: Promise<{ loca
   const d = getDictionary(locale).docs;
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="docs" />
       <main id="content" className="pt-20">
         <DocsHubPage
