@@ -180,7 +180,8 @@ const ratio = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b
 describe("the facts of a hero, drawn over the shop's photo (akinaza#567)", () => {
   it.each(["en", "fr"] as const)("wear the scrim tone, not a tinted one (%s)", (locale) => {
     const html = renderToStaticMarkup(<Storefront locale={locale} view={buildStorefront({ page: walker, locale, now: NOW })} />);
-    const tones = [...html.matchAll(/data-live[^>]*data-tone="([a-z]+)"|data-tone="([a-z]+)"[^>]*data-live/g)].map((m) => m[1] ?? m[2]);
+    const hero = html.slice(0, html.indexOf("</section>")); // the facts are the badges of the first section
+    const tones = [...hero.matchAll(/data-tone="([a-z]+)"/g)].map((m) => m[1]);
     expect(tones.length).toBeGreaterThan(0);
     expect(new Set(tones)).toEqual(new Set(["scrim"]));
   });
