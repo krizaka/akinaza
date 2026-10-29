@@ -1,4 +1,4 @@
-import { type ShopType, TEMPLATES } from "@akinaza/core";
+import { type FramePaper, type ShopType, TEMPLATES } from "@akinaza/core";
 import { PASSWORD_RESET_MAX_MINUTES, PASSWORD_RESET_MIN_MINUTES, PASSWORD_RESET_TTL_MINUTES } from "@krizaka/auth";
 import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, type SettingsService, subset, WORKSPACE_SCOPES } from "@krizaka/settings";
 import { storageSettings } from "@krizaka/storage/settings";
@@ -25,6 +25,8 @@ export const SETTINGS = {
   "features.shopFollow": flag("features", false),
   "features.shopReviews": flag("features", true),
   "features.shopAnnouncements": flag("features", true),
+  // The notebook storefront (akinaza#305): the paper of the applied template under the public page. Off = the look's own paper, as before.
+  "features.cahierStorefront": flag("features", false),
   // The reviews (B45, #313): the prior mean (in tenths of a star) and its weight of the Bayesian score, and how many counted reviews before the score is shown.
   "reviews.minCount": integer("reviews", 5, { min: 1, max: 100, unit: "reviews" }, GLOBAL_ONLY),
   "reviews.priorTenths": integer("reviews", 42, { min: 10, max: 50, unit: "tenths of a star" }, GLOBAL_ONLY),
@@ -122,6 +124,12 @@ export async function shopSectionFeatures(): Promise<Record<"wall" | "reels" | "
     service.get("features.shopAnnouncements", options),
   ]);
   return { wall, reels, follow, reviews, announcements };
+}
+
+/** The paper under a shop page: the applied template's while the notebook storefront is on, else none (the look's own). */
+export async function shopPaperShown(paper: FramePaper | null): Promise<FramePaper | undefined> {
+  if (!paper) return undefined;
+  return (await appSettings().get("features.cahierStorefront", { userId: null })) ? paper : undefined;
 }
 
 /** The features that can be switched off: the server refuses what is off, whatever the browser shows. */

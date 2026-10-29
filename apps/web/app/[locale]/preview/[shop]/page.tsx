@@ -1,5 +1,5 @@
 import { localDay } from "@akinaza/core";
-import { communityOf, draftShopPage, previewShop, shopAccentOf, teamDay } from "@akinaza/db";
+import { communityOf, draftShopPage, previewShop, shopAccentOf, shopPaperOf, teamDay } from "@akinaza/db";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -12,7 +12,7 @@ import { db } from "@/lib/db";
 import { proposedDefaults } from "@/lib/default-media-settings";
 import { asPageLocale, uiLocaleOf } from "@/lib/i18n";
 import { may, memberOf } from "@/lib/member-shop";
-import { shopSectionFeatures } from "@/lib/settings";
+import { shopPaperShown, shopSectionFeatures } from "@/lib/settings";
 import { buildStorefront } from "@/lib/storefront";
 
 export const dynamic = "force-dynamic";
@@ -34,13 +34,13 @@ export default async function ShopPreview({ params }: { params: Promise<{ locale
   const content = asPageLocale(raw);
   const locale = uiLocaleOf(content);
   const now = new Date();
-  const [team, enabledUpcomingSections, community, rules, document, accent] = await Promise.all([teamDay(db(), shopId, now), shopSectionFeatures(), communityOf(db(), shopId), reviewRules(), draftShopPage(db(), shopId), shopAccentOf(db(), shopId)]);
+  const [team, enabledUpcomingSections, community, rules, document, accent, paper] = await Promise.all([teamDay(db(), shopId, now), shopSectionFeatures(), communityOf(db(), shopId), reviewRules(), draftShopPage(db(), shopId), shopAccentOf(db(), shopId), shopPaperOf(db(), shopId).then(shopPaperShown)]);
   const placed = buildCommunity({ community, locale, today: localDay(now, page.shop.timezone), rules, enabled: enabledUpcomingSections });
   const view = buildStorefront({ page, locale, contentLocale: content, now, teamDay: team, enabledUpcomingSections, community: placed, defaults: await proposedDefaults(page) });
   return (
     <main id="content">
       <PreviewBridge />
-      <ShopPageView page={document.page} view={view} locale={locale} accent={accent ?? undefined} today={localDay(now, page.shop.timezone)} />
+      <ShopPageView page={document.page} view={view} locale={locale} accent={accent ?? undefined} paper={paper} today={localDay(now, page.shop.timezone)} />
     </main>
   );
 }
