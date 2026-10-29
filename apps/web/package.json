@@ -16,7 +16,7 @@
     "@akinaza/core": "workspace:*",
     "@akinaza/db": "workspace:*",
     "@krizaka/api-keys": "^0.1.0",
-    "@krizaka/auth": "^0.11.2",
+    "@krizaka/auth": "^0.12.0",
     "@krizaka/brief": "0.1.0",
     "@krizaka/charts": "^0.6.1",
     "@krizaka/fonts": "0.5.0",

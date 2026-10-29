@@ -40,7 +40,7 @@ export function proxy(request: NextRequest) {
   const site = process.env.APP_PUBLIC_URL ?? SITE_URL;
   const route = routeFor(host, request.nextUrl.pathname, chosen, site);
   const admin = isAdminHost(host);
-  const home = admin ? null : landingRedirect(request, { cookie: SESSION_COOKIE, landing: LANDING, home: () => `/${pageLocaleOf(pathname, chosen)}/app` });
+  const home = admin ? null : landingRedirect(request, { cookie: SESSION_COOKIE, landing: LANDING, home: () => `/${pageLocaleOf(pathname, chosen)}/app`, origin: site });
   if (home) return home;
   // <slug>.akinaza.com shows a shop page that www also serves: never indexed twice.
   const shopHost = shopOfHost(host, new URL(site).hostname.replace(/^www\./, "")) !== null;
