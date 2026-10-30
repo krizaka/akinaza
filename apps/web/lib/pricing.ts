@@ -15,6 +15,7 @@ import { AVAILABILITY, definePrices, type Price, type PriceSeed, UNIT } from "@k
 export const FOUNDER = "akinaza.founder";
 export const STARTER = "akinaza.starter";
 export const SCALE = "akinaza.scale";
+export const CUSTOM_DOMAIN = "akinaza.custom-domain";
 export type PriceKey = typeof FOUNDER | typeof STARTER | typeof SCALE;
 
 export const PRICE_SEED = [
@@ -27,6 +28,15 @@ export const PRICE_SEED = [
 ] as const satisfies readonly PriceSeed[];
 
 export const PRICES = definePrices(PRICE_SEED);
+
+/** Paid options, beside the plans: never sold as a subscription plan (no processor entry), billed with the plan they are added to. */
+export const ADDON_SEED = [
+  /** The paid option « your own domain » (ADR-005 §3, #539): no figure in code, the administrator schedules the price; `maxDomains` is the per-shop limit. Enabled per shop from the console only once a price is in force. */
+  { product: "akinaza", plan: "custom-domain", unit: UNIT.month, amountCents: null, availability: AVAILABILITY.internal, limits: { maxDomains: 5 } },
+] as const satisfies readonly PriceSeed[];
+
+/** The whole catalogue the console edits: the plans and the options. */
+export const CATALOGUE = definePrices([...PRICE_SEED, ...ADDON_SEED]);
 
 /** The processor's plan of each entry: the kind the payments port knows and the lookup key of its price (`infra/payments/catalogue.json`). */
 export const PROCESSOR_PLANS = {

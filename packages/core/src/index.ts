@@ -24,3 +24,4 @@ export * from "./avatar";
 export * from "./slug-guard";
 export * from "./explore-query";
 export * from "./explore-url";
+export * from "./custom-domain";

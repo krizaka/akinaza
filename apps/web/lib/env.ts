@@ -27,6 +27,13 @@ export const envSchema = z.object({
   APP_SHOP_DOMAIN: z.string().optional(),
   /** Hosts this deployment also answers to, comma separated, exact names (a preview with an address of its own). Every other host is a 421 (lib/allowed-hosts.ts). */
   APP_ALLOWED_HOSTS: list,
+  /** The edge service that issues a certificate per merchant domain (ADR-005 §3, akinaza#539): its name is a value (`cloudflare`; `memory` for development and tests only). Unset: the option cannot be used. */
+  APP_EDGE_PROVIDER: z.enum(["cloudflare", "memory"]).optional(),
+  /** The edge service's API token and zone of the shop domain (keys by name, never printed). */
+  APP_EDGE_API_TOKEN: z.string().optional(),
+  APP_EDGE_ZONE_ID: z.string().optional(),
+  /** The name merchants point their CNAME at (default `edge.akinaza.shop`). */
+  APP_EDGE_CNAME_TARGET: z.string().optional(),
   /** Explorer's address search: a geocoding service that speaks the Nominatim protocol, and the attribution its terms ask for. Unset = the search is off (the map and the list still work). */
   APP_GEOCODER_URL: z.string().url().optional(),
   APP_GEOCODER_ATTRIBUTION_TEXT: z.string().optional(),

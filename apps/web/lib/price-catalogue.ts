@@ -1,7 +1,7 @@
 import { type PriceCatalogue, priceCatalogue, priceStore, publicCatalogue, type PublicPrice } from "@krizaka/settings";
 
 import { query } from "./db";
-import { PRICES } from "./pricing";
+import { CATALOGUE } from "./pricing";
 
 /**
  * The one catalogue of prices on the server (akinaza#371): the seed of `lib/pricing.ts`, plus the versions the administrator
@@ -11,7 +11,7 @@ import { PRICES } from "./pricing";
 const holder = globalThis as unknown as { __akinazaPrices?: PriceCatalogue };
 
 export function appPrices(): PriceCatalogue {
-  holder.__akinazaPrices ??= priceCatalogue(PRICES, priceStore({ query: async (sql, params) => query(sql, params as unknown[]) as never }));
+  holder.__akinazaPrices ??= priceCatalogue(CATALOGUE, priceStore({ query: async (sql, params) => query(sql, params as unknown[]) as never }));
   return holder.__akinazaPrices;
 }
 
