@@ -5,9 +5,9 @@ import * as React from "react";
 
 import { I18nProvider } from "@/i18n";
 
-import Today from "../../app/[locale]/app/[shop]/aujourdhui";
+import Today from "../../app/[locale]/app/[shop]/today";
 import Books from "../../app/[locale]/app/[shop]/books";
-import Boutique from "../../app/[locale]/app/[shop]/boutique";
+import Boutique from "../../app/[locale]/app/[shop]/settings";
 import Clients from "../../app/[locale]/app/[shop]/clients";
 import Figures from "../../app/[locale]/app/[shop]/figures";
 import Invoices from "../../app/[locale]/app/[shop]/invoices/index";
@@ -19,7 +19,7 @@ const mockRouter = { navigate: jest.fn(), replace: jest.fn(), setParams: jest.fn
 let mockParams: Record<string, string> = {};
 jest.mock("expo-router", () => ({
   useRouter: () => mockRouter,
-  usePathname: () => `/fr/app/${SHOP}/aujourdhui`,
+  usePathname: () => `/fr/app/${SHOP}/today`,
   useLocalSearchParams: () => mockParams,
   useGlobalSearchParams: () => ({ ...mockParams, shop: SHOP }),
   Redirect: ({ href }: { href: string }) => {
@@ -74,7 +74,7 @@ describe("the phone app's five tabs, each with its three states (D8)", () => {
   it("opens /fr/app at the shop's own Aujourd'hui, the web's address", async () => {
     api.day!.mockResolvedValue(day([]));
     await show(<Home />);
-    expect((await screen.findByTestId("redirect")).props.children).toBe(`/fr/app/${SHOP}/aujourdhui`);
+    expect((await screen.findByTestId("redirect")).props.children).toBe(`/fr/app/${SHOP}/today`);
   });
 
   it("Aujourd'hui: the day strip holds the calendar, the day's visits of the shop of the address, a day pressed goes in the URL", async () => {

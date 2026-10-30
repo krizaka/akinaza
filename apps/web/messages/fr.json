@@ -96,11 +96,12 @@
         "scaleSoon": "ses fonctions B2B arrivent bientôt"
       }
     },
+    "screensTitle": "Ce que fait Akinaza",
     "screens": {
       "book": {
         "title": "Vos clients réservent seuls",
         "text": "Une heure prise disparaît aussitôt : personne n'est réservé deux fois.",
-        "alt": "La page de réservation : le service, le chien, les créneaux libres et la confirmation."
+        "alt": "La page publique du commerce : ses services avec leurs prix, chacun avec un bouton pour le choisir et réserver."
       },
       "invoice": {
         "title": "La facture, taxes comprises",
@@ -1536,6 +1537,7 @@
         "publishedHint": "Les clients peuvent alors la trouver par son adresse et réserver.",
         "submit": "Enregistrer la page",
         "saved": "Page enregistrée.",
+        "held": "Enregistré. Cette adresse ressemble à un nom que nous protégeons contre l'usurpation : votre page reste privée le temps de la vérifier. Rien d'autre ne change, et vous pouvez choisir une autre adresse dès maintenant.",
         "area": "Secteur affiché sur la page",
         "areaHint": "Saint-Henri, Montréal — jamais l'adresse civique.",
         "bioFr": "Qui vous êtes (français)",

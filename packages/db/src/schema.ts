@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { bigserial, boolean, check, customType, date, doublePrecision, index, integer, jsonb, pgTable, primaryKey, smallint, text, time, timestamp, unique, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 /** A PostgreSQL `bytea` — a report photo (a resized image, 1.5 MB at most). */
@@ -122,6 +122,10 @@ export const shops = pgTable(
     invoiceMailCopy: boolean("invoice_mail_copy").notNull().default(false),
     invoiceLinkDays: integer("invoice_link_days").notNull().default(30),
     published: boolean("published").notNull().default(false),
+    /** The slug wears a protected term (ADR-005 slice 4, #537): the shop is saved but NOT public until the administrator clears it (0045). `slugHeldTerm` is the term that matched. */
+    slugHeld: boolean("slug_held").notNull().default(false),
+    slugHeldTerm: text("slug_held_term"),
+    slugHeldAt: timestamp("slug_held_at", { withTimezone: true }),
     taglineFr: text("tagline_fr"),
     taglineEn: text("tagline_en"),
     /** The locality shown on the public page (« Saint-Henri, Montréal »): never the street address. */
@@ -150,6 +154,7 @@ export const shops = pgTable(
     check("shops_public_text", sql`length(coalesce(${t.area}, '')) <= 80 AND length(coalesce(${t.bioFr}, '')) <= 600 AND length(coalesce(${t.bioEn}, '')) <= 600 AND length(coalesce(${t.publicPhone}, '')) <= 40 AND length(coalesce(${t.publicEmail}, '')) <= 120 AND length(coalesce(${t.seatUnitFr}, '')) <= 30 AND length(coalesce(${t.seatUnitEn}, '')) <= 30`),
     uniqueIndex("shops_slug").on(t.slug).where(sql`${t.slug} IS NOT NULL`),
     check("shops_slug_format", sql`${t.slug} IS NULL OR (${t.slug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$' AND length(${t.slug}) BETWEEN 3 AND 40)`),
+    check("shops_held_has_slug", sql`NOT ${t.slugHeld} OR ${t.slug} IS NOT NULL`),
     check("shops_published_has_slug", sql`NOT ${t.published} OR ${t.slug} IS NOT NULL`),
     check("shops_kind", sql`${t.kind} IN ('salon','boutique','services','other')`),
     check("shops_payment_terms", sql`${t.paymentTermsDays} BETWEEN 0 AND 365`),
@@ -160,6 +165,9 @@ export const shops = pgTable(
     check("shops_tax_numbers", sql`NOT ${t.registrant} OR (coalesce(${t.gstNumber}, '') ~ '^[0-9]{9}RT[0-9]{4}$' AND coalesce(${t.qstNumber}, '') ~ '^[0-9]{10}TQ[0-9]{4}$')`),
   ],
 );
+
+/** A shop is public when it is published and its address is not held for review: every public read (page, map, booking, feed) filters on this one condition. */
+export const isPublicShop = () => and(eq(shops.published, true), eq(shops.slugHeld, false));
 
 /** An area a shop serves (Saint-Henri, Griffintown…). A visit belongs to one. */
 /** A shop's former page addresses: each leads to the shop (308) while it exists; never taken by another shop (0021, trigger). */

@@ -10,6 +10,7 @@ import { asLocale } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -24,5 +25,5 @@ export default async function InvoicePage({ params, searchParams }: Readonly<{ p
   const invoice = await invoiceDetail(db(), shop.id, id);
   if (!invoice) notFound();
   const [deliveries, mail] = await Promise.all([invoiceDeliveryHistory(db(), shop.id, id), invoiceMailSettings(db(), shop.id)]);
-  return <InvoiceDetailView invoice={invoice} deliveries={deliveries} locale={locale} routes={shopRoutes(locale, shop.id)} today={localDay(new Date(), shop.timezone)} defaultMessage={mail?.shop.message} issued={(await searchParams).issued === "1"} />;
+  return <InvoiceDetailView invoice={invoice} deliveries={deliveries} locale={locale} routes={shopRoutes(locale, shop.id)} today={localDay(requestNow(), shop.timezone)} defaultMessage={mail?.shop.message} issued={(await searchParams).issued === "1"} />;
 }

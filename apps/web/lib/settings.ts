@@ -1,7 +1,9 @@
-import { type FramePaper, type ShopType, TEMPLATES } from "@akinaza/core";
+import { type FramePaper, protectedTermsIssues, type ShopType, TEMPLATES } from "@akinaza/core";
 import { PASSWORD_RESET_MAX_MINUTES, PASSWORD_RESET_MIN_MINUTES, PASSWORD_RESET_TTL_MINUTES } from "@krizaka/auth";
-import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, SCOPE, type SettingsService, subset, WORKSPACE_SCOPES } from "@krizaka/settings";
+import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, SCOPE, type SettingsService, subset, text, WORKSPACE_SCOPES } from "@krizaka/settings";
 import { storageSettings } from "@krizaka/storage/settings";
+
+import { z } from "zod";
 
 import { query } from "./db";
 import { refuse } from "./http";
@@ -13,6 +15,11 @@ import { refuse } from "./http";
 /** The ids of the catalogue: what the administrator can offer or preselect. */
 const TEMPLATE_IDS = [...new Set(TEMPLATES.map((t) => t.id))] as unknown as readonly [string, ...string[]];
 const defaultTemplate = (type: ShopType) => choice("storefront", TEMPLATE_IDS, TEMPLATES.find((t) => t.shopTypes.includes(type))!.id, GLOBAL_ONLY);
+
+/** The console saves the protected terms only when every line can be kept: a pattern that does not compile or could backtrack catastrophically (ReDoS) is refused before it is stored (#537). */
+function withTermsCheck<T extends { schema: z.ZodType<string> }>(def: T): T {
+  return { ...def, schema: def.schema.refine((value) => protectedTermsIssues(value).length === 0, { message: "A term is not a word or a safe /pattern/" }) };
+}
 
 export const SETTINGS = {
   "app.maintenance": flag("general", false),
@@ -48,6 +55,8 @@ export const SETTINGS = {
   "storefront.languages.allowed": subset("storefront", ["fr", "en", "es"] as const, ["fr", "en", "es"], GLOBAL_ONLY),
   "limits.translationsPerShopPerDay": integer("limits", 20, { min: 1, max: 500, unit: "runs" }, GLOBAL_ONLY),
   // The private calendar feeds of the shop and its staff (#282, ADR-004): off, every feed address answers 404 and none can be made.
+  // Anti-phishing shop addresses (ADR-005 slice 4, #537): one term per line (a word, or /regex/ on the folded slug; # comments). A slug wearing one is held for review, never refused (core slug-guard). Seed (CTO decision, reversible): the Krizaka family names, the reserved technical words and the lure words; third-party brands are added in the console when there is a reason.
+  "slugs.protectedTerms": withTermsCheck(text("slugs", ["krizaka", "akinaza", "yomizaka", "orazaka", "admin", "api", "www", "app", "auth", "login", "signin", "help", "support", "billing", "mail", "status", "security", "secure", "account", "dashboard", "verify", "verification", "password", "wallet", "payment"].join("\n"), { max: 4000, empty: true }, GLOBAL_ONLY)),
   "exports.icsFeed.enabled": flag("exports", true, GLOBAL_ONLY),
   // The owner's data downloads (#420, ADR-004 §5): appointments (CSV, ICS), clients and invoices (CSV). Off, none is served.
   "exports.data.enabled": flag("exports", true, GLOBAL_ONLY),

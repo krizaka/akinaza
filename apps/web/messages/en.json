@@ -96,11 +96,12 @@
         "scaleSoon": "its B2B features are coming soon"
       }
     },
+    "screensTitle": "What Akinaza does",
     "screens": {
       "book": {
         "title": "Clients book on their own",
         "text": "A taken time disappears at once: nobody is booked twice.",
-        "alt": "The booking page: the service, the dog, the free times and the confirmation."
+        "alt": "The shop's public page: its services with their prices, each with a button to choose it and book."
       },
       "invoice": {
         "title": "The invoice, taxes included",
@@ -1536,6 +1537,7 @@
         "publishedHint": "Clients can then find it by its address and book.",
         "submit": "Save the page",
         "saved": "Page saved.",
+        "held": "Saved. This address looks like a name we protect against impersonation: your page stays private until we have checked it. Nothing else changes, and you can pick another address now.",
         "area": "Locality shown on the page",
         "areaHint": "Saint-Henri, Montréal — never the street address.",
         "bioFr": "Who you are (French)",

@@ -19,7 +19,7 @@ const NOW = (() => {
   }
 })();
 // Times and free slots follow the day; the map's tiles come from the network, so the map itself is masked.
-const LIVE = ["time", "[data-live]", ".maplibregl-map"];
+const LIVE = ["time", ".maplibregl-map"];
 
 /** Signs in through the form, as a person would; the session cookie is kept for the signed-in captures. */
 async function signIn(page) {

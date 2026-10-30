@@ -1,6 +1,6 @@
 {
   "counters": {
-    "no-ambient-clock": 5,
+    "no-ambient-clock": 1,
     "no-apply-once-outside-transaction": 0,
     "no-bare-digits-on-random-bytes": 0,
     "no-bare-digits-on-serialized": 0,
@@ -17,10 +17,13 @@
     "no-hand-ms-hours": 0,
     "no-hand-ms-minutes": 0,
     "no-hand-ms-one-hour": 0,
+    "no-hand-written-validation-regex": 25,
+    "no-hardcoded-default-media": 0,
     "no-locale-ternary": 15,
     "no-raw-cookie-name": 0,
     "no-raw-json-in-inner-html": 0,
     "no-status-move": 0,
+    "no-sync-fs-in-runtime": 3,
     "no-ts-enum": 0,
     "no-types-at-package-root": 0,
     "no-unjustified-numeric-export": 3,

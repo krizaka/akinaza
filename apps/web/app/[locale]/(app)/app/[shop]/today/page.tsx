@@ -4,6 +4,7 @@ import { dayVisits, offOn, shopDay, type ShopRole, todayBoard } from "@akinaza/d
 import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 
+import { requestNow } from "@/app/request-now";
 import { BriefBanner } from "@/components/app/BriefBanner";
 import { TodayDay } from "@/components/app/TodayDay";
 import { TodayFigures } from "@/components/app/TodayFigures";
@@ -43,8 +44,8 @@ export default async function Today({ params, searchParams }: Readonly<{ params:
   const { session, shop, role } = await memberShop(shopId, "agenda");
   const query = await searchParams;
   const { dependants } = vocabularyOf(shop.businessType);
-  if (dayView(role, dependants) === "cards") return <StaffDay locale={locale} shop={shop} day={query.day} />;
-  const today = localDay(new Date(), shop.timezone);
+  if (dayView(role, dependants) === "cards") {return <StaffDay locale={locale} shop={shop} day={query.day} />;}
+  const today = localDay(requestNow(), shop.timezone);
   const period: BoardPeriod = BOARD_PERIODS.find((p) => String(p) === query.period) ?? BOARD_PERIODS[0];
   // The board (the binder, the activity, « À encaisser ») is the shop's money: loaded only for who may see the invoices.
   // A board that fails leaves the day standing: the side column says so in place (D6).
@@ -61,10 +62,10 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
   // Who is off that day (akinaza#208): a name and the last day of their time off, never the reason.
   const [off, brief, visits, figures] = await Promise.all([
     offOn(db(), shop.id, view.day),
-    may(role, "reports") ? loadShopBrief(shop, new Date()) : null,
+    may(role, "reports") ? loadShopBrief(shop, requestNow()) : null,
     dependants ? dayVisits(db(), shop.id, view.day) : [],
     // « Que faire maintenant » is the shop's money and hours: only who may read the reports sees it, and a failure leaves the day standing.
-    may(role, "reports") ? settle(loadFigures(shop, view.today, new Date())) : null,
+    may(role, "reports") ? settle(loadFigures(shop, view.today, requestNow())) : null,
   ]);
   const offLine = off.length ? format(t.today.offToday, { names: off.map((o) => format(t.today.offUntil, { name: o.name, until: formatLongDay(o.until, locale) })).join(", ") }) : null;
   return (
@@ -73,7 +74,7 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
       shop={view.shop}
       day={view.day}
       today={view.today}
-      nowIso={new Date().toISOString()}
+      nowIso={requestNow().toISOString()}
       selectedId={query.appointment ?? null}
       allow={{ clients: may(role, "clients"), revenue: board !== null }}
       title={t.meta.today}
@@ -89,7 +90,7 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
           <>
             {brief ? <BriefBanner count={brief.items.length} href={routes.brief} /> : null}
             {figures?.ok ? <WhatToDoNow actions={figures.value.actions} locale={locale} routes={routes} /> : null}
-            {figures?.ok ? <TodayFigures figures={figures.value.figures} locale={locale} routes={routes} timeZone={shop.timezone} now={new Date().toISOString()} /> : null}
+            {figures?.ok ? <TodayFigures figures={figures.value.figures} locale={locale} routes={routes} timeZone={shop.timezone} now={requestNow().toISOString()} /> : null}
           </>
         ) : null
       }
@@ -102,7 +103,7 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
 async function StaffDay({ locale, shop, day: requested }: Readonly<{ locale: Locale; shop: MemberShop; day: string | undefined }>) {
   const t = consoleFor(locale, shop.businessType);
   const routes = shopRoutes(locale, shop.id);
-  const today = await shopDay(db(), shop.id, new Date());
+  const today = await shopDay(db(), shop.id, requestNow());
   const day = requested && /^\d{4}-\d{2}-\d{2}$/.test(requested) ? requested : today;
   const visits = await dayVisits(db(), shop.id, day);
   const step = (n: number) => routes.today(shiftDay(day, n));

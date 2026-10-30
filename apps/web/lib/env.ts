@@ -23,6 +23,8 @@ export const envSchema = z.object({
   APP_PUBLIC_URL: z.string().url().default("https://www.akinaza.com"),
   /** The development address (`dev.akinaza.com`): every page goes to www (308); only the API, auth callbacks, webhooks, /.well-known and /healthz keep serving there, all noindex (lib/indexing.ts). Unset: no dev host. */
   APP_DEV_HOST: z.string().optional(),
+  /** The registrable domain the shops live on (`akinaza.shop`): `<slug>.<domain>` serves a shop and nothing of the app, no session reaches it, the old addresses answer 308 (ADR-005 slice 5, lib/shop-domain.ts). Unset: shops stay on `<slug>.akinaza.com`. */
+  APP_SHOP_DOMAIN: z.string().optional(),
   /** Hosts this deployment also answers to, comma separated, exact names (a preview with an address of its own). Every other host is a 421 (lib/allowed-hosts.ts). */
   APP_ALLOWED_HOSTS: list,
   /** Explorer's address search: a geocoding service that speaks the Nominatim protocol, and the attribution its terms ask for. Unset = the search is off (the map and the list still work). */
@@ -54,6 +56,8 @@ export const envSchema = z.object({
   ABUSE_TRUSTED_PROXY_HOPS: z.coerce.number().int().min(1).max(10).default(1),
   /** The stage of the deployment: `dev` shows the « Development version » notice on every page (`StageNotice`); `prod` hides it. Read at build too: the pages are static. */
   APP_ENVIRONMENT: z.enum(["dev", "prod"]).default("dev"),
+  /** A fixed instant (ISO 8601) for the pages' clock, honoured only when `APP_ENVIRONMENT` is `dev` (visual and e2e runs: `app/request-now.ts`). Ignored in `prod`. */
+  APP_FIXED_NOW: z.string().datetime().optional(),
   /** `off` on every dev / preview deployment: noindex everywhere, robots.txt closed, the development notice in the footer. */
   APP_SEARCH_INDEXING: z.enum(["on", "off"]).default("on"),
   /** Connections this process's pool may hold (the cluster's budget is shared: dev uses 2 behind a PgBouncer pool). */

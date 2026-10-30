@@ -10,11 +10,11 @@ import { useShop } from "@/use-shop";
 
 // The web rail's icons (apps/web ShopFrame), place for place.
 const ICONS: Record<TabName, (color: string) => React.ReactNode> = {
-  aujourdhui: (color) => <ClockIcon color={color} />,
+  today: (color) => <ClockIcon color={color} />,
   clients: (color) => <UsersIcon color={color} />,
   invoices: (color) => <BillingIcon color={color} />,
   books: (color) => <BookmarkIcon color={color} />,
-  boutique: (color) => <HomeIcon color={color} />,
+  settings: (color) => <HomeIcon color={color} />,
 };
 
 type TabBarProps = Parameters<NonNullable<React.ComponentProps<typeof Tabs>["tabBar"]>>[0];
