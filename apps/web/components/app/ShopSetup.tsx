@@ -29,7 +29,7 @@ export interface SetupData {
   pageConfig: ShopPageConfig;
   publicUrl: string | null;
   zones: { id: string; name: string }[];
-  services: { id: string; nameFr: string; nameEn: string; durationMinutes: number; priceCents: number; capacity: number; descriptionFr: string; descriptionEn: string; includedFr: string[]; includedEn: string[]; priceVaries: boolean }[];
+  services: { id: string; nameFr: string; nameEn: string; durationMinutes: number; priceCents: number; capacity: number; descriptionFr: string; descriptionEn: string; includedFr: string[]; includedEn: string[]; priceVaries: boolean; linkUrl?: string }[];
   media: { cover: (GalleryLine) | null; gallery: GalleryLine[] };
   windows: { id: string; weekday: number; startsAt: string; endsAt: string }[];
   daysOff: { id: string; onDate: string; reason: string | null }[];
@@ -121,19 +121,17 @@ function ShopPageCard({ shopId, publicUrl, config: initial }: Readonly<{ shopId:
     [sections[from], sections[to]] = [sections[to]!, sections[from]!];
     void save({ ...config, sections });
   };
-  const form = logoForm.useForm({
-    i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
-    onSubmit: async ({ files }) => {
-      const file = files[0];
-      if (!file) return;
-      const body = new FormData();
-      body.set("file", await shrinkImage(file, STOREFRONT_LONG_SIDE), "logo.jpg");
-      body.set("purpose", "brand");
-      const url = (await call.run<{ url: string }>(`/api/walker/media/upload?shopId=${encodeURIComponent(shopId)}`, { body }, { refresh: false }))?.url;
-      if (url) await save({ ...config, logoUrl: url });
-      form.reset({ files: [] });
-    },
-  });
+  const uploadLogo = async (file: File | undefined, field: "logoUrl" | "logoDarkUrl") => {
+    if (!file) return;
+    const body = new FormData();
+    body.set("file", await shrinkImage(file, STOREFRONT_LONG_SIDE), "logo.jpg");
+    body.set("purpose", "brand");
+    const url = (await call.run<{ url: string }>(`/api/walker/media/upload?shopId=${encodeURIComponent(shopId)}`, { body }, { refresh: false }))?.url;
+    if (url) await save({ ...config, [field]: url });
+  };
+  const i18n = { t: (key: string, vars?: unknown) => say(key, vars as Record<string, string | number> | undefined), locale };
+  const form = logoForm.useForm({ i18n, onSubmit: async ({ files }) => { await uploadLogo(files[0], "logoUrl"); form.reset({ files: [] }); } });
+  const darkForm = logoForm.useForm({ i18n, onSubmit: async ({ files }) => { await uploadLogo(files[0], "logoDarkUrl"); darkForm.reset({ files: [] }); } });
   return (
     <Card.Root className="p-4 lg:col-span-2">
       <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.layout.title")}</h2>
@@ -161,6 +159,10 @@ function ShopPageCard({ shopId, publicUrl, config: initial }: Readonly<{ shopId:
         <form.FileUpload name="files" label={say("shopSetup.layout.logo")} title={say("shopSetup.layout.logo")} browseLabel={say("shopSetup.media.browse")} hint={say("shopSetup.media.uploadHint")} accept="image/*" maxSize={2 * 1024 * 1024} maxFiles={1} removeLabel={(name) => say("shopSetup.media.remove", { name })} refusalLabel={(r) => say("shopSetup.media.tooBig", { name: r.file.name })} />
         <form.Submit size="md" variant="secondary">{say("shopSetup.layout.uploadLogo")}</form.Submit>
       </form.Form>
+      <darkForm.Form aria-label={say("shopSetup.layout.logoDark")} className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+        <darkForm.FileUpload name="files" label={say("shopSetup.layout.logoDark")} title={say("shopSetup.layout.logoDark")} browseLabel={say("shopSetup.media.browse")} hint={say("shopSetup.layout.logoDarkHint")} accept="image/*" maxSize={2 * 1024 * 1024} maxFiles={1} removeLabel={(name) => say("shopSetup.media.remove", { name })} refusalLabel={(r) => say("shopSetup.media.tooBig", { name: r.file.name })} />
+        <darkForm.Submit size="md" variant="secondary">{say("shopSetup.layout.uploadLogoDark")}</darkForm.Submit>
+      </darkForm.Form>
       {call.problem ? <Alert tone="danger" className="mt-3">{call.problem}</Alert> : null}
       {saved ? <Alert tone="success" className="mt-3">{say("shopSetup.layout.saved")}</Alert> : null}
     </Card.Root>
@@ -226,8 +228,9 @@ const serviceForm = createKrizakaForm({
     includedFr: z.string().max(600),
     includedEn: z.string().max(600),
     priceVaries: z.boolean(),
+    linkUrl: z.string().trim().max(500).refine((v) => v === "" || v.startsWith("https://"), { message: "https" }),
   }),
-  defaultValues: { nameFr: "", nameEn: "", durationMinutes: "60", priceCents: 3000, capacity: "1", descriptionFr: "", descriptionEn: "", includedFr: "", includedEn: "", priceVaries: false },
+  defaultValues: { nameFr: "", nameEn: "", durationMinutes: "60", priceCents: 3000, capacity: "1", descriptionFr: "", descriptionEn: "", includedFr: "", includedEn: "", priceVaries: false, linkUrl: "" },
 });
 
 type Service = SetupData["services"][number];
@@ -236,25 +239,33 @@ function ServicesCard({ services }: Readonly<{ services: SetupData["services"] }
   const { say, locale } = useSay();
   const call = useCall();
   const [editing, setEditing] = useState<Service | null>(null);
+  /** The owner's order of the offers (#597): swap with the neighbour, then the whole order is sent. */
+  const move = (index: number, direction: -1 | 1) => {
+    const order = services.map((s) => s.id);
+    [order[index], order[index + direction]] = [order[index + direction]!, order[index]!];
+    void call.run("/api/walker/services/order", { json: { order }, method: "PUT" });
+  };
   return (
     <Card.Root className="p-4">
       <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.services.title")}</h2>
       {services.length ? (
         <ul className="mb-4 flex flex-col divide-y divide-border-default">
-          {services.map((s) => (
+          {services.map((s, index) => (
             <li key={s.id} className="flex items-start justify-between gap-3 py-2">
               <div>
-                <p className="font-semibold text-fg">{locale === "fr" ? s.nameFr : s.nameEn}</p>
+                <p className="font-semibold text-fg">{{ fr: s.nameFr, en: s.nameEn }[locale]}</p>
                 <p className="text-sm text-fg-secondary">
                   {say("shopSetup.services.line", { minutes: s.durationMinutes, price: isOnQuote(s) ? say("shopSetup.services.onQuote") : money(s.priceCents, locale) })}
                   {s.capacity > 1 ? ` · ${say("shopSetup.services.group", { count: s.capacity })}` : ""}
                 </p>
               </div>
               <div className="flex shrink-0 gap-1">
-                <Button size="sm" variant="ghost" aria-label={say("shopSetup.services.edit", { name: locale === "fr" ? s.nameFr : s.nameEn })} onClick={() => setEditing(s)}>
+                <Button size="sm" variant="ghost" disabled={index === 0} aria-label={say("shopSetup.services.moveUp", { name: { fr: s.nameFr, en: s.nameEn }[locale] })} onClick={() => move(index, -1)}>↑</Button>
+                <Button size="sm" variant="ghost" disabled={index === services.length - 1} aria-label={say("shopSetup.services.moveDown", { name: { fr: s.nameFr, en: s.nameEn }[locale] })} onClick={() => move(index, 1)}>↓</Button>
+                <Button size="sm" variant="ghost" aria-label={say("shopSetup.services.edit", { name: { fr: s.nameFr, en: s.nameEn }[locale] })} onClick={() => setEditing(s)}>
                   ✎
                 </Button>
-                <Button size="sm" variant="ghost" aria-label={say("shopSetup.services.remove", { name: locale === "fr" ? s.nameFr : s.nameEn })} onClick={() => call.run("/api/walker/services", { json: { id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, active: false } })}>
+                <Button size="sm" variant="ghost" aria-label={say("shopSetup.services.remove", { name: { fr: s.nameFr, en: s.nameEn }[locale] })} onClick={() => call.run("/api/walker/services", { json: { id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, active: false } })}>
                   ×
                 </Button>
               </div>
@@ -276,7 +287,7 @@ function ServiceForm({ editing, onDone }: Readonly<{ editing: Service | null; on
   const form = serviceForm.useForm({
     i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
     ...(editing
-      ? { defaultValues: { nameFr: editing.nameFr, nameEn: editing.nameEn, durationMinutes: String(editing.durationMinutes), priceCents: editing.priceCents, capacity: String(editing.capacity), descriptionFr: editing.descriptionFr, descriptionEn: editing.descriptionEn, includedFr: joinLines(editing.includedFr), includedEn: joinLines(editing.includedEn), priceVaries: editing.priceVaries } }
+      ? { defaultValues: { nameFr: editing.nameFr, nameEn: editing.nameEn, durationMinutes: String(editing.durationMinutes), priceCents: editing.priceCents, capacity: String(editing.capacity), descriptionFr: editing.descriptionFr, descriptionEn: editing.descriptionEn, includedFr: joinLines(editing.includedFr), includedEn: joinLines(editing.includedEn), priceVaries: editing.priceVaries, linkUrl: editing.linkUrl ?? "" } }
       : {}),
     onSubmit: async (values) => {
       const done = await call.run("/api/walker/services", {
@@ -292,6 +303,7 @@ function ServiceForm({ editing, onDone }: Readonly<{ editing: Service | null; on
           includedFr: splitLines(values.includedFr, 6),
           includedEn: splitLines(values.includedEn, 6),
           priceVaries: values.priceVaries,
+          linkUrl: values.linkUrl === "" ? null : values.linkUrl,
         },
       });
       if (done !== null) {
@@ -313,6 +325,9 @@ function ServiceForm({ editing, onDone }: Readonly<{ editing: Service | null; on
       <form.TextField name="descriptionEn" label={say("shopSetup.services.descriptionEn")} />
       <form.TextArea name="includedFr" label={say("shopSetup.services.includedFr")} hint={say("shopSetup.services.includedHint")} rows={3} />
       <form.TextArea name="includedEn" label={say("shopSetup.services.includedEn")} hint={say("shopSetup.services.includedHint")} rows={3} />
+      <div className="sm:col-span-2">
+        <form.TextField name="linkUrl" label={say("shopSetup.services.link")} hint={say("shopSetup.services.linkHint")} inputMode="url" />
+      </div>
       <div className="sm:col-span-2">
         <form.Switch name="priceVaries" label={say("shopSetup.services.priceVaries")} />
       </div>

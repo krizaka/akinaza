@@ -1137,7 +1137,8 @@
       "INCIDENT_NOT_ASSESSED": "Assess the risk first.",
       "INCIDENT_NO_NOTICE_DUE": "No notice is due: the risk of serious injury was not retained.",
       "INCIDENT_NOTICES_MISSING": "Both notices must be recorded before closing.",
-      "REEL_ORDER": "The order changed in the meantime: reload the page."
+      "REEL_ORDER": "The order changed in the meantime: reload the page.",
+      "SERVICE_ORDER": "The offers changed in the meantime: reload the page."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -1575,6 +1576,9 @@
         "preparing": "being prepared",
         "logo": "Shop logo",
         "uploadLogo": "Upload logo",
+        "logoDark": "Shop logo for the dark theme (optional)",
+        "logoDarkHint": "Shown instead of the logo on the dark theme.",
+        "uploadLogoDark": "Upload the dark logo",
         "moveUp": "Move {section} up",
         "moveDown": "Move {section} down",
         "sections": {
@@ -1656,6 +1660,10 @@
         "includedHint": "One per line, six at most.",
         "priceVaries": "The price varies (shows « From »; with no price listed it reads « On quote »)",
         "onQuote": "on quote",
+        "link": "Page the offer leads to (optional)",
+        "linkHint": "https:// only. A product on its own site: the card leads there instead of the booking page.",
+        "moveUp": "Move {name} up",
+        "moveDown": "Move {name} down",
         "edit": "Edit {name}",
         "editing": "Editing a service",
         "save": "Save the service",

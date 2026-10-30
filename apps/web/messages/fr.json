@@ -1137,7 +1137,8 @@
       "INCIDENT_NOT_ASSESSED": "Évaluez d'abord le risque.",
       "INCIDENT_NO_NOTICE_DUE": "Aucun avis n'est requis : le risque de préjudice sérieux n'a pas été retenu.",
       "INCIDENT_NOTICES_MISSING": "Les deux avis doivent être consignés avant la fermeture.",
-      "REEL_ORDER": "L'ordre a changé entre-temps : rechargez la page."
+      "REEL_ORDER": "L'ordre a changé entre-temps : rechargez la page.",
+      "SERVICE_ORDER": "Les offres ont changé entre-temps : rechargez la page."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -1575,6 +1576,9 @@
         "preparing": "en préparation",
         "logo": "Logo de la boutique",
         "uploadLogo": "Téléverser le logo",
+        "logoDark": "Logo de la boutique pour le thème sombre (facultatif)",
+        "logoDarkHint": "Affiché à la place du logo sur le thème sombre.",
+        "uploadLogoDark": "Téléverser le logo sombre",
         "moveUp": "Monter {section}",
         "moveDown": "Descendre {section}",
         "sections": {
@@ -1656,6 +1660,10 @@
         "includedHint": "Un par ligne, six au plus.",
         "priceVaries": "Le prix varie (affiche « À partir de »; sans prix indiqué il affiche « Sur devis »)",
         "onQuote": "sur devis",
+        "link": "Page où mène l'offre (facultatif)",
+        "linkHint": "https:// seulement. Un produit sur son propre site : la carte mène là plutôt qu'à la réservation.",
+        "moveUp": "Monter {name}",
+        "moveDown": "Descendre {name}",
         "edit": "Modifier {name}",
         "editing": "Modification d'un service",
         "save": "Enregistrer le service",

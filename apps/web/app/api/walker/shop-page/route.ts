@@ -17,10 +17,12 @@ export function POST(req: Request) {
     // Any part of the configuration: what the call does not name stays as it was.
     const config = await readJson(req, shopPageSaveSchema);
     const current = await shopPageConfigOf(db(), shop.id);
-    if (config.logoUrl && config.logoUrl !== current.logoUrl) {
+    // Each logo (light, dark) is a file of this shop's own brand directory.
+    for (const [next, before] of [[config.logoUrl, current.logoUrl], [config.logoDarkUrl, current.logoDarkUrl]] as const) {
+      if (!next || next === before) continue;
       const media = await mediaStorage();
       const logoPrefix = media ? `https://${media.cdn}/${mediaPrefix(shop.id, "brand")}` : null;
-      const filename = logoPrefix && config.logoUrl.startsWith(logoPrefix) ? config.logoUrl.slice(logoPrefix.length) : "";
+      const filename = logoPrefix && next.startsWith(logoPrefix) ? next.slice(logoPrefix.length) : "";
       if (!LOGO_FILE.test(filename)) throw refuse(400, "BAD_REQUEST", "Logo must be uploaded through the storefront media endpoint");
     }
     await saveShopPageConfig(db(), shop.id, config);
