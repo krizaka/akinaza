@@ -65,7 +65,9 @@ export function ShopVideoTv({ id, title, lead, playlist, transition, label, chan
   const sources: RetroTvSource[] = playlist.map((p) => ({ id: p.id, title: p.title, src: p.src, poster: p.poster }));
   const embed = (source: RetroTvSource): ReactNode => {
     const p = byId.get(source.id);
-    if (!p?.platform || !p.url) return null;
+    if (!p?.platform || !p.url) {
+      return null;
+    }
     return <EmbedFacade platform={p.platform} url={p.url} title={p.title} playLabel={playLabels[p.platform]} poster={p.poster} notice={notice} />;
   };
   return (

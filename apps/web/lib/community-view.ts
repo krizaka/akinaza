@@ -102,7 +102,9 @@ const plural = <T extends string>(count: number, one: T, other: T): T => (count 
 function reviewsView({ community, locale, rules }: Readonly<{ community: CommunityView; locale: Locale; rules: ScoreRules }>): ReviewsView | null {
   const t = translator(locale);
   const result = reviewScore(community.reviews, rules);
-  if (!result.shown || result.score === null) return null;
+  if (!result.shown || result.score === null) {
+    return null;
+  }
   const shownScore = numberOf(result.score, locale);
   const d = result.distribution;
   return {

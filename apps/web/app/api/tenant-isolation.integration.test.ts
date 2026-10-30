@@ -190,7 +190,9 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     expect(foreign.status, "a foreign id must answer like an unknown one").toBe(absent.status);
     expect(foreign.body?.code).toEqual(absent.body?.code);
     // ... which is a 404, except the two idempotent deletes (hours, zones), a no-op that leaves the data alone.
-    if (r.idempotent) expect(foreign.status).toBe(200);
+    if (r.idempotent) {
+      expect(foreign.status).toBe(200);
+    }
     else expect(foreign.status, JSON.stringify(foreign.body)).toBe(r.refused ?? 404);
     await r.intact?.();
   });

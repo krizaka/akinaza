@@ -61,15 +61,21 @@ export function ReelsEditor({ reels, links, transition, limits }: Readonly<Reels
   const titleOf = (r: ReelLine) => ({ fr: r.titleFr || r.titleEn, en: r.titleEn || r.titleFr })[locale] || (r.platform ? say(`studio.reels.platforms.${r.platform}`) : say(`studio.reels.kinds.${r.kind}`));
 
   const reorder = async (from: number, to: number) => {
-    if (from === to) return;
+    if (from === to) {
+      return;
+    }
     const next = moveReel(reels.map((r) => r.id), from, to);
-    if ((await call.run("/api/walker/reels/playlist", { method: "PUT", json: { order: next } })) !== null) setLiveNote(say("studio.reels.moved", { title: titleOf(reels[from]!), place: next.indexOf(reels[from]!.id) + 1 }));
+    if ((await call.run("/api/walker/reels/playlist", { method: "PUT", json: { order: next } })) !== null) {
+      setLiveNote(say("studio.reels.moved", { title: titleOf(reels[from]!), place: next.indexOf(reels[from]!.id) + 1 }));
+    }
   };
 
   const dropOn = (index: number) => {
     const from = dragging;
     setDragging(null);
-    if (from !== null) void reorder(from, index);
+    if (from !== null) {
+      void reorder(from, index);
+    }
   };
 
   const link = linkForm.useForm({
@@ -88,7 +94,9 @@ export function ReelsEditor({ reels, links, transition, limits }: Readonly<Reels
       const poster = v.posterFiles[0];
       // The owner's own picture, or a frame taken from the video on this phone.
       const frame = poster ? await shrinkImage(poster, STOREFRONT_LONG_SIDE) : await videoPosterFrame(v.videoFiles[0]!);
-      if (frame) body.set("poster", frame, "poster.jpg");
+      if (frame) {
+        body.set("poster", frame, "poster.jpg");
+      }
       body.set("titleFr", v.titleFr);
       body.set("titleEn", v.titleEn);
       if ((await call.run("/api/walker/reels/upload", { body })) !== null) { setDone("reel"); upload.reset(); }
@@ -100,7 +108,9 @@ export function ReelsEditor({ reels, links, transition, limits }: Readonly<Reels
     onSubmit: async (v) => {
       setDone(null);
       const json = Object.fromEntries(SOCIAL_PLATFORMS.map((p) => [p, v[p].trim() === "" ? null : v[p].trim()]));
-      if ((await call.run("/api/walker/social-links", { method: "PUT", json })) !== null) setDone("links");
+      if ((await call.run("/api/walker/social-links", { method: "PUT", json })) !== null) {
+        setDone("links");
+      }
     },
   });
 

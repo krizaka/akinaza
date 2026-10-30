@@ -22,8 +22,12 @@ export function PUT(req: Request) {
     const { session, shop } = await requireShop(req, "catalogue");
     await assertShopFeature("features.shopReels");
     const { order, transition } = await readJson(req, body);
-    if (order && !(await reorderReels(db(), shop.id, order))) throw refuse(409, "REEL_ORDER", "The order must list this shop's videos, each once");
-    if (transition) await setReelTransition(db(), shop.id, transition);
+    if (order && !(await reorderReels(db(), shop.id, order))) {
+      throw refuse(409, "REEL_ORDER", "The order must list this shop's videos, each once");
+    }
+    if (transition) {
+      await setReelTransition(db(), shop.id, transition);
+    }
     await audit({ action: "shop.reel_playlist_changed", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { reordered: Boolean(order), transition: transition ?? null }, headers: req.headers });
     await announcePage(shop.id);
     return Response.json({ ok: true });

@@ -87,9 +87,15 @@ const commonOf = (section: Section) => ({ id: section.key, "data-shop-key": sect
  * tinted tone whose text follows the theme (green on a dark photo was unreadable in the light theme, akinaza#567).
  */
 function heroFact(b: NonNullable<Args<"hero">["section"]["blocks"]>[number], { view, community }: Pick<Ctx, "view" | "community">): ReactNode {
-  if (b.settings.kind === "open-now" && view.status) return <Badge key={b.key} tone="scrim" dot={view.status.open} size="md">{view.status.label}{view.status.detail ? ` · ${view.status.detail}` : ""}</Badge>;
-  if (b.settings.kind === "area" && view.area) return <Badge key={b.key} tone="scrim" size="md">{view.area}</Badge>;
-  if (b.settings.kind === "score" && community?.reviews) return <Badge key={b.key} tone="scrim" size="md">{community.reviews.scoreText}</Badge>;
+  if (b.settings.kind === "open-now" && view.status) {
+    return <Badge key={b.key} tone="scrim" dot={view.status.open} size="md">{view.status.label}{view.status.detail ? ` · ${view.status.detail}` : ""}</Badge>;
+  }
+  if (b.settings.kind === "area" && view.area) {
+    return <Badge key={b.key} tone="scrim" size="md">{view.area}</Badge>;
+  }
+  if (b.settings.kind === "score" && community?.reviews) {
+    return <Badge key={b.key} tone="scrim" size="md">{community.reviews.scoreText}</Badge>;
+  }
   return null;
 }
 
@@ -117,7 +123,9 @@ function servicesSection({ section, c }: Args<"services">): ReactNode {
   const common = commonOf(section);
   const chosen = new Set(section.settings.source === "pick" ? (section.blocks ?? []).flatMap((b) => (b.type === "service" ? [b.settings.serviceId] : [])) : []);
   const services = view.services.filter((s) => section.settings.source === "all" || chosen.has(s.id)).slice(0, section.variant === "cards" ? 6 : undefined).map((s) => ({ id: s.id, name: s.name, price: s.price, priceFrom: s.priceFrom ?? undefined, duration: s.duration, capacity: s.capacity ?? undefined, description: s.description ?? undefined, included: s.included, popular: Boolean(s.tag), href: s.href }));
-  if (!services.length) return null;
+  if (!services.length) {
+    return null;
+  }
   const aside = section.settings.aside === "hours" ? <OpeningHours label={t("console.shopPage.hours")} days={view.hours.days} today={view.hours.today} status={view.hours.status} /> : undefined;
   return <ServicesSection {...common} variant={section.variant} services={services} title={title(t("console.shopPage.servicesTitle"))} lead={lead ?? t("console.shopPage.servicesLead")} groupBy={section.settings.groupBy} columns={section.settings.columns} aside={aside} chooseLabel={t("console.shopPage.choose")} popularLabel={t("console.shopPage.popular")} listLabel={t("console.shopPage.servicesLabel")} linkAs={Link} />;
 }
@@ -126,7 +134,9 @@ function bookingSection({ section, c }: Args<"booking">): ReactNode {
   const { view, t, plan, contact } = c;
   const common = commonOf(section);
   const base = { ...common, variant: section.variant, label: t("console.shopPage.book"), href: view.bookHref, actionLabel: t("console.shopPage.book"), title: t("console.shopPage.closingTitle"), body: t("console.shopPage.closingBody"), linkAs: Link };
-  if (section.variant !== "closing") return <BookingSection {...base} />;
+  if (section.variant !== "closing") {
+    return <BookingSection {...base} />;
+  }
   const photo = plan.sections[section.key]?.[0];
   // The mark stands in for a photo, once: the logo the hero already shows is not drawn again.
   const logo = c.claim(view.logoUrl ?? defaultPicture("shop", view.name, 256)?.src ?? null);
@@ -156,7 +166,9 @@ function visitSection({ section, c }: Args<"visit">): ReactNode {
   const common = commonOf(section);
   const mapped = section.variant !== "card" && view.map ? { label: t("console.shopPage.mapLabel"), center: view.map.center, zoom: view.map.zoom, places: view.map.places.map((p) => ({ position: p.position, label: p.name })), showLabel: t("console.shopPage.mapLabel") } : undefined;
   // A map section with no place to draw is not a second card of the hours.
-  if (section.variant !== "card" && !mapped) return null;
+  if (section.variant !== "card" && !mapped) {
+    return null;
+  }
   return <VisitSection {...common} variant={mapped ? section.variant : "card"} title={title(mapped ? t("console.shopPage.zones") : t("console.shopPage.hours"))} hours={view.hours.days} today={view.hours.today} status={view.hours.status} hoursLabel={t("console.shopPage.hours")} phone={section.settings.showPhone && contact?.phone && contact.phoneHref ? { href: contact.phoneHref, label: contact.phone } : undefined} map={mapped} />;
 }
 
@@ -165,7 +177,9 @@ function storySection({ section, c }: Args<"story">): ReactNode {
   const title = (fallback: string) => c.titleOf(section, fallback);
   const common = commonOf(section);
   const body = text(section.settings.body) ?? view.about?.text;
-  if (!body) return null;
+  if (!body) {
+    return null;
+  }
   const actions = contact ? <>{contact.phone && contact.phoneHref ? <ButtonLink href={contact.phoneHref} variant="secondary" size="md">{t("console.shopPage.call")} · {contact.phone}</ButtonLink> : null}{contact.email ? <ButtonLink href={`mailto:${contact.email}`} variant="ghost" size="md">{t("console.shopPage.write")}</ButtonLink> : null}</> : undefined;
   return <StorySection {...common} variant={section.variant} title={title(t("console.shopPage.about"))} body={body} owner={view.about ? { name: view.about.name } : undefined} actions={actions} />;
 }
@@ -184,7 +198,9 @@ const wallNotes = (pieces: readonly { kind: string; id: string; text?: string; s
   pieces.flatMap((p) => (p.kind === "note" ? [{ id: p.id, text: p.text ?? "", signature: p.signature || undefined }] : []));
 
 function galleryLead(view: StorefrontView, variant: string, t: Ctx["t"]): string | undefined {
-  if (variant === "wall") return t("console.shopPage.wallLead");
+  if (variant === "wall") {
+    return t("console.shopPage.wallLead");
+  }
   return view.galleryIllustrative ? t("console.shopPage.galleryIllustrativeNote") : undefined;
 }
 
@@ -200,7 +216,9 @@ function gallerySection({ section, c }: Args<"gallery">): ReactNode {
   const photos = (plan.sections[section.key] ?? []).map((p) => ({ id: p.id, photo: { src: p.src, alt: p.alt }, caption: p.caption, video: p.video }));
   const pieces = section.variant === "wall" ? (community?.wall?.pieces ?? []) : [];
   const notes = wallNotes(pieces);
-  if (!photos.length && !notes.length) return null;
+  if (!photos.length && !notes.length) {
+    return null;
+  }
   const label = galleryLabel(view, section.variant, t);
   return <GallerySection {...common} variant={section.variant} photos={photos} notes={notes} sign={pieces.find((p) => p.kind === "sign")?.text || undefined} texture={community?.wall?.texture ?? section.settings.texture} title={title(section.variant === "wall" ? t("console.shopPage.wallTitle") : label)} lead={lead ?? galleryLead(view, section.variant, t)} label={label} />;
 }
@@ -214,11 +232,15 @@ function videoSection({ section, c }: Args<"video">): ReactNode {
   const common = commonOf(section);
   if (section.variant === "tv") {
     const playlist = (community?.playlist ?? []).map((v) => ({ id: v.id, title: v.title || t("console.shopPage.tvTitle", { shop: view.name }), src: v.mp4 ?? v.webm ?? undefined, poster: claim(v.poster), platform: v.platform ?? undefined, url: v.externalUrl ?? undefined }));
-    if (!playlist.length) return null;
+    if (!playlist.length) {
+      return null;
+    }
     return <ShopVideoLazy {...common} title={title(t("console.shopPage.reelsTitle"))} lead={lead} playlist={playlist} transition={community?.transition ?? "channel"} label={t("console.shopPage.tvTitle", { shop: view.name })} channel={t("console.shopPage.tvChannel")} labels={tvLabels(t)} playLabels={playLabels} notice={notice} />;
   }
   const reels = shortsOf(community, claim);
-  if (!reels.length) return null;
+  if (!reels.length) {
+    return null;
+  }
   return <VideoSection {...common} variant="shorts" title={title(t("console.shopPage.reelsTitle"))} lead={lead} reels={reels} playLabels={playLabels} notice={notice} />;
 }
 

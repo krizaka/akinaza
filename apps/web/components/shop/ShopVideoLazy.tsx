@@ -23,16 +23,24 @@ export function ShopVideoLazy(props: Readonly<TvProps>) {
   const [near, setNear] = useState(false);
   // Observing the element is a subscription to the browser, not data: no effect, a ref callback that disconnects once it has answered.
   const watch = useCallback((el: HTMLDivElement | null) => {
-    if (!el) return;
-    if (typeof IntersectionObserver === "undefined") return setNear(true);
+    if (!el) {
+      return;
+    }
+    if (typeof IntersectionObserver === "undefined") {
+      return setNear(true);
+    }
     const io = new IntersectionObserver((entries) => {
-      if (!entries.some((e) => e.isIntersecting)) return;
+      if (!entries.some((e) => e.isIntersecting)) {
+        return;
+      }
       setNear(true);
       io.disconnect();
     }, { rootMargin: NEAR });
     io.observe(el);
   }, []);
-  if (near) return <Tv {...props} />;
+  if (near) {
+    return <Tv {...props} />;
+  }
   const poster = props.playlist[0]?.poster;
   return (
     <Section id={props.id} title={props.title} lead={props.lead} data-shop-key={props["data-shop-key"]} data-variant="tv">
