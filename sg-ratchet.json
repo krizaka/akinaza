@@ -27,6 +27,7 @@
     "no-ts-enum": 0,
     "no-types-at-package-root": 0,
     "no-unjustified-numeric-export": 3,
-    "no-utc-day-slice": 0
+    "no-utc-day-slice": 0,
+    "shop-frame-from-look": 0
   }
 }

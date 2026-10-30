@@ -1,5 +1,6 @@
 import type { FramePaper } from "@akinaza/core";
 import { Badge } from "@krizaka/ui/badge";
+import { cn } from "@krizaka/ui/cn";
 import { OpeningHours } from "@krizaka/ui/opening-hours";
 import { PaperGrain } from "@krizaka/ui/page";
 import type { ShopPage } from "@krizaka/ui/shop";
@@ -16,7 +17,6 @@ import { StorySection } from "@krizaka/ui/shop/story";
 import { TeamSection } from "@krizaka/ui/shop/team";
 import { VideoSection } from "@krizaka/ui/shop/video";
 import { VisitSection } from "@krizaka/ui/shop/visit";
-import { cn } from "@krizaka/ui/cn";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
@@ -30,6 +30,7 @@ import { ShopVideoLazy } from "@/components/shop/ShopVideoLazy";
 import { coverPhoneSet, coverSizes, coverSrcSet, PHONE_MEDIA } from "@/lib/cover-renditions";
 import { type Locale, translator } from "@/lib/i18n";
 import { defaultBanner, defaultPicture } from "@/lib/org-defaults";
+import { shopFrameLook } from "@/lib/shop-frame-look";
 import { photoLedger, type PhotoPool, planPhotos } from "@/lib/shop-page-media";
 import type { StorefrontView } from "@/lib/storefront";
 
@@ -37,7 +38,6 @@ const PLATFORMS = ["tiktok", "youtube-shorts", "instagram"] as const;
 type Platform = (typeof PLATFORMS)[number];
 const isPlatform = (value: string): value is Platform => (PLATFORMS as readonly string[]).includes(value);
 
-/** The accent the owner chose within the look, else the look's own. */
 /** The « Book » button of every section that offers it, made outside the page component (a render function, not a component defined in its render). */
 function bookButton(href: string, label: string) {
   return function renderBook(size: "md" | "lg" = "lg") {
@@ -53,7 +53,7 @@ export interface ShopPageViewProps {
   page: ShopPage;
   view: StorefrontView;
   locale: Locale;
-  /** The preset's paper and its tested accents are the frame's own: the page only names the preset and the density. */
+  /** The owner's accent (`shop_page.accent`): worn only when the page's look lists it (`shopFrameLook`). */
   accent?: string;
   /** The paper under the page (the applied template's, when the notebook storefront is on); none = the look's own. */
   paper?: FramePaper;
@@ -388,9 +388,9 @@ export function ShopPageView({ page, view, locale, accent, paper, today, nextTim
     locale,
   };
 
-  const accentOf = { ...(accent ? { accent } : {}), ...(paper ? { paper } : {}) };
+  // The whole look at once (its motion and rhythm, the owner's accent only when this look lists it), never prop by prop.
   return (
-    <ShopFrame preset={page.preset.id} density={page.density} {...accentOf} data-testid="shop-page">
+    <ShopFrame {...shopFrameLook(page, accent)} {...(paper ? { paper } : {})} data-testid="shop-page">
       {paper === "kraft" ? <PaperGrain /> : null}
       <MapSetup />
       {page.sections.filter((s) => !s.disabled).map((s) => <Fragment key={s.key}>{renderSection(s, ctx)}</Fragment>)}

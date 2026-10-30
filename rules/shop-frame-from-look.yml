@@ -1,0 +1,26 @@
+id: shop-frame-from-look
+language: Tsx
+severity: error
+message: "The shop page's `ShopFrame` (`@krizaka/ui/shop`) takes its look all at once: `<ShopFrame {...shopFrameLook(page, accent)}>`. Wiring `preset`, `density`, `accent`, `motion` or `face` by hand dropped the look's motion and rhythm, and wore an accent the look does not list."
+rule:
+  kind: jsx_attribute
+  has:
+    kind: property_identifier
+    regex: '^(preset|density|accent|motion|face)$'
+  inside:
+    any:
+      - kind: jsx_opening_element
+      - kind: jsx_self_closing_element
+    has:
+      field: name
+      regex: '^ShopFrame$'
+    inside:
+      kind: program
+      stopBy: end
+      has:
+        kind: import_statement
+        regex: 'from "@krizaka/ui/shop"'
+ignores:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/dist/**"

@@ -1,0 +1,15 @@
+id: shop-frame-from-look
+valid:
+  - |
+    import { ShopFrame } from "@krizaka/ui/shop";
+    const a = <ShopFrame {...shopFrameLook(page, accent)} paper="kraft" data-testid="shop-page">{x}</ShopFrame>;
+  - |
+    import { ShopFrame } from "@/components/app/ShopFrame";
+    const b = <ShopFrame locale="fr" shop={shop}>{x}</ShopFrame>;
+invalid:
+  - |
+    import { ShopFrame } from "@krizaka/ui/shop";
+    const a = <ShopFrame preset={page.preset.id} density={page.density} data-testid="shop-page">{x}</ShopFrame>;
+  - |
+    import { ShopFrame, ShopSection } from "@krizaka/ui/shop";
+    const b = <ShopFrame {...shopFrameLook(page)} motion="lively" />;
