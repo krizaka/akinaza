@@ -8,6 +8,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { configuredKinds } from "@/app/calendar-edge";
+import { requestNow } from "@/app/request-now";
 import { BoardEditor } from "@/components/app/BoardEditor";
 import { CalendarSources } from "@/components/app/CalendarSources";
 import { DataExports } from "@/components/app/DataExports";
@@ -40,7 +41,7 @@ import { appSettings } from "@/lib/settings";
 import { accentsByLook } from "@/lib/shop-accents";
 import { team } from "@/lib/team";
 import { templateChoices } from "@/lib/template-choices";
-import { templateRules } from "@/lib/template-rules";
+import { templateCatalogue, templateRules } from "@/lib/template-rules";
 import { translationRules } from "@/lib/translation-settings";
 
 export const dynamic = "force-dynamic";
@@ -53,15 +54,15 @@ const line = (m: { url: string; altFr: string; altEn: string; captionFr: string 
 
 /** Boutique › Page: the shop as the walker builds its public page (identity, texts, zones, services, hours, rules, media, look, publish). */
 async function PageSection({ locale, shopId, tab }: Readonly<{ locale: RouteLocale; shopId: string; tab: PageTab }>) {
-  const { shop } = await memberShop(shopId, "settings");
+  const { shop, session } = await memberShop(shopId, "settings");
   const base = readEnv().APP_PUBLIC_URL;
   const setup = await loadShop(db(), shop);
   const [media, pageConfig] = await Promise.all([shopMediaOf(db(), shop.id), shopPageConfigOf(db(), shop.id)]);
-  const [rules, templates] = await Promise.all([defaultMediaSettings(), templateRules()]);
+  const [rules, templates, catalogue] = await Promise.all([defaultMediaSettings(), templateRules(), templateCatalogue(session.account.id)]);
   const proposed = rules.enabled ? { config: pageConfig, shopType: shopTypeOf(shop.businessType, pageConfig.shopType), proposals: proposalsFor(rules.types), media: { cover: media.cover ? line(media.cover) : null, gallery: media.gallery.map(line) } } : null;
   const data: SetupData = {
     proposed,
-    templates: templateChoices(templates, shopTypeOf(shop.businessType, pageConfig.shopType), pageConfig),
+    templates: templateChoices(templates, shopTypeOf(shop.businessType, pageConfig.shopType), pageConfig, catalogue),
     shopId: shop.id,
     pageConfig,
     page: { name: shop.name, legalName: shop.legalName, address: shop.address, slug: shop.slug ?? "", ownerName: setup.staff.name, taglineFr: shop.taglineFr ?? "", taglineEn: shop.taglineEn ?? "", published: shop.published, area: shop.area ?? "", bioFr: shop.bioFr ?? "", bioEn: shop.bioEn ?? "", publicPhone: shop.publicPhone ?? "", publicEmail: shop.publicEmail ?? "", seatUnitFr: shop.seatUnitFr ?? "", seatUnitEn: shop.seatUnitEn ?? "", businessType: shop.businessType },
@@ -113,7 +114,7 @@ async function CommunityTab({ shopId, tab }: Readonly<{ shopId: string; tab: "wa
   }
   if (tab === "board") {
     const flyers = await announcementsOf(db(), shop.id);
-    return <BoardEditor today={localDay(new Date(), shop.timezone)} flyers={flyers.map((f) => ({ id: f.id, textFr: f.textFr, textEn: f.textEn, photoUrl: f.photoUrl, endsOn: f.endsOn, createdAt: f.createdAt.toISOString() }))} />;
+    return <BoardEditor today={localDay(requestNow(), shop.timezone)} flyers={flyers.map((f) => ({ id: f.id, textFr: f.textFr, textEn: f.textEn, photoUrl: f.photoUrl, endsOn: f.endsOn, createdAt: f.createdAt.toISOString() }))} />;
   }
   const [reviews, rules] = await Promise.all([reviewsOf(db(), shop.id), reviewRules()]);
   const score = reviewScore(reviews, rules);
@@ -123,7 +124,7 @@ async function CommunityTab({ shopId, tab }: Readonly<{ shopId: string; tab: "wa
 /** Boutique › Langues: the languages on, each text in each of them (#258). */
 async function LanguagesSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   const { shop } = await memberShop(shopId, "settings");
-  const [rows, rules, used] = await Promise.all([translationRows(db(), shop.id), translationRules(), translationRunsOn(db(), shop.id, localDay(new Date(), shop.timezone))]);
+  const [rows, rules, used] = await Promise.all([translationRows(db(), shop.id), translationRules(), translationRunsOn(db(), shop.id, localDay(requestNow(), shop.timezone))]);
   const data: LanguagesData = { source: rows.source as "fr" | "en", enabled: rows.enabled, allowed: rules.allowed, translationOn: rules.enabled, dailyLimit: rules.dailyLimit, usedToday: used, fields: rows.fields, setupHref: shopRoutes(locale, shop.id).setup };
   return <ShopLanguages data={data} />;
 }
@@ -132,7 +133,7 @@ async function LanguagesSection({ locale, shopId }: Readonly<{ locale: RouteLoca
 async function TeamSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   const { session, shop, role } = await memberShop(shopId, "team");
   const roles = team();
-  const now = new Date();
+  const now = requestNow();
   const [members, invitations, people, timeOff] = await Promise.all([roles.members(shop.id), roles.pendingInvitations(shop.id, now), shopStaff(db(), shop.id), teamTimeOff(db(), shop.id, localDay(now, shop.timezone))]);
   const manages = SHOP_ROLES.manages[role];
   return (
@@ -232,22 +233,22 @@ async function ShopsSection({ locale, shopId }: Readonly<{ locale: RouteLocale; 
 
 /** The body of one section of Boutique. */
 function boutiqueBody({ section, tab, community, locale, shopId }: Readonly<{ section: BoutiqueSection; tab: PageTab; community: boolean; locale: RouteLocale; shopId: string }>) {
-  if (section === "page" && tab === "composer") return <ComposerTab locale={locale} shopId={shopId} />;
-  if (section === "page") return community ? <CommunityTab shopId={shopId} tab={tab as "wall" | "reels" | "board" | "reviews"} /> : <PageSection locale={locale} shopId={shopId} tab={tab} />;
-  if (section === "languages") return <LanguagesSection locale={locale} shopId={shopId} />;
-  if (section === "team") return <TeamSection locale={locale} shopId={shopId} />;
-  if (section === "invoices") return <InvoicesSection locale={locale} shopId={shopId} />;
-  if (section === "agenda") return <AgendaSection locale={locale} shopId={shopId} />;
-  if (section === "figures") return <FiguresSection locale={locale} shopId={shopId} />;
-  if (section === "data") return <DataSection locale={locale} shopId={shopId} />;
+  if (section === "page" && tab === "composer") {return <ComposerTab locale={locale} shopId={shopId} />;}
+  if (section === "page") {return community ? <CommunityTab shopId={shopId} tab={tab as "wall" | "reels" | "board" | "reviews"} /> : <PageSection locale={locale} shopId={shopId} tab={tab} />;}
+  if (section === "languages") {return <LanguagesSection locale={locale} shopId={shopId} />;}
+  if (section === "team") {return <TeamSection locale={locale} shopId={shopId} />;}
+  if (section === "invoices") {return <InvoicesSection locale={locale} shopId={shopId} />;}
+  if (section === "agenda") {return <AgendaSection locale={locale} shopId={shopId} />;}
+  if (section === "figures") {return <FiguresSection locale={locale} shopId={shopId} />;}
+  if (section === "data") {return <DataSection locale={locale} shopId={shopId} />;}
   return <ShopsSection locale={locale} shopId={shopId} />;
 }
 
 /** One section of Boutique, named by the address. A section the role may not open is a 404, whatever the link says. */
-export default async function BoutiqueSectionPage({ params, searchParams }: { params: Promise<{ locale: string; shop: string; section: string }>; searchParams: Promise<{ tab?: string }> }) {
+export default async function BoutiqueSectionPage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string; section: string }>; searchParams: Promise<{ tab?: string }> }>) {
   const { locale: rawLocale, shop: shopId, section: rawSection } = await params;
   const locale = asLocale(rawLocale);
-  if (!isBoutiqueSection(rawSection)) notFound();
+  if (!isBoutiqueSection(rawSection)) {notFound();}
   const section: BoutiqueSection = rawSection;
   const { tab: rawTab } = await searchParams;
   const { shop, role } = await memberShop(shopId, BOUTIQUE_NEEDS[section]);
@@ -255,7 +256,7 @@ export default async function BoutiqueSectionPage({ params, searchParams }: { pa
   // A tab the role may not open is a 404, whatever the link says; without a tab, the first one it may open.
   const tabs = pageTabsAllowed((permission) => may(role, permission));
   const tab: PageTab = isPageTab(rawTab) ? rawTab : (tabs[0] ?? "identity");
-  if (section === "page" && !tabs.includes(tab)) notFound();
+  if (section === "page" && !tabs.includes(tab)) {notFound();}
   const base = readEnv().APP_PUBLIC_URL;
   const header = { name: shop.name, published: shop.published, publicUrl: shop.slug ? `${base}/${locale}/s/${shop.slug}` : null };
   const current = section === "page" ? { section, tab } : { section };

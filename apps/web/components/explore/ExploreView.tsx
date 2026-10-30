@@ -50,7 +50,7 @@ function geoNotice(off: boolean, failed: boolean, words: ExploreWords): { tone: 
   return failed ? { tone: "danger", text: words.search.unavailable } : null;
 }
 
-function Filters({ filters, kinds, words, onChange }: { filters: ExploreFilters; kinds: readonly (typeof KINDS)[number][]; words: ExploreWords; onChange: (next: ExploreFilters) => void }) {
+function Filters({ filters, kinds, words, onChange }: Readonly<{ filters: ExploreFilters; kinds: readonly (typeof KINDS)[number][]; words: ExploreWords; onChange: (next: ExploreFilters) => void }>) {
   const pressed = (on: boolean) => ({ variant: on ? ("primary" as const) : ("ghost" as const), "aria-pressed": on, size: "sm" as const, type: "button" as const });
   return (
     <div role="group" aria-label={words.filters.label} className="flex flex-wrap items-center gap-2">
@@ -65,7 +65,7 @@ function Filters({ filters, kinds, words, onChange }: { filters: ExploreFilters;
   );
 }
 
-function ShopCard({ shop, locale, words, selected, onShowOnMap }: { shop: RankedShop; locale: string; words: ExploreWords; selected: boolean; onShowOnMap: () => void }) {
+function ShopCard({ shop, locale, words, selected, onShowOnMap }: Readonly<{ shop: RankedShop; locale: string; words: ExploreWords; selected: boolean; onShowOnMap: () => void }>) {
   const line = [shop.area, { fr: shop.taglineFr, en: shop.taglineEn }[locale as "fr" | "en"]].filter(Boolean).join(" · ");
   return (
     <li className="rounded-2xl border border-border bg-surface p-4" data-selected={selected || undefined} aria-current={selected || undefined}>
@@ -87,7 +87,7 @@ function ShopCard({ shop, locale, words, selected, onShowOnMap }: { shop: Ranked
   );
 }
 
-function SearchBar({ words, typed, onType, onSubmit, locating, onLocate, notice, denied }: { words: ExploreWords; typed: string; onType: (v: string) => void; onSubmit: () => void; locating: Locating; onLocate: () => void; notice: ReturnType<typeof geoNotice>; denied: boolean }) {
+function SearchBar({ words, typed, onType, onSubmit, locating, onLocate, notice, denied }: Readonly<{ words: ExploreWords; typed: string; onType: (v: string) => void; onSubmit: () => void; locating: Locating; onLocate: () => void; notice: ReturnType<typeof geoNotice>; denied: boolean }>) {
   const locatable = useCanLocate();
   return (
     <>
@@ -106,7 +106,7 @@ function SearchBar({ words, typed, onType, onSubmit, locating, onLocate, notice,
   );
 }
 
-function PlacePicker({ answer, query, origin, words, onPick }: { answer: GeocodeAnswer; query: string; origin: Origin | null; words: ExploreWords; onPick: (p: GeoPlace) => void }) {
+function PlacePicker({ answer, query, origin, words, onPick }: Readonly<{ answer: GeocodeAnswer; query: string; origin: Origin | null; words: ExploreWords; onPick: (p: GeoPlace) => void }>) {
   if (answer.places.length === 0) return <p role="status" className="m-0 text-sm text-fg-secondary">{words.search.none.replace("{query}", query)}</p>;
   return (
     <div className="flex flex-col gap-2">
@@ -125,7 +125,7 @@ function PlacePicker({ answer, query, origin, words, onPick }: { answer: Geocode
   );
 }
 
-function ShopList({ shown, ready, filtersOn, onReset, count, locale, words, selected, onShowOnMap }: { shown: RankedShop[]; ready: boolean; filtersOn: boolean; onReset: () => void; count: string; locale: string; words: ExploreWords; selected: string | null; onShowOnMap: (slug: string) => void }) {
+function ShopList({ shown, ready, filtersOn, onReset, count, locale, words, selected, onShowOnMap }: Readonly<{ shown: RankedShop[]; ready: boolean; filtersOn: boolean; onReset: () => void; count: string; locale: string; words: ExploreWords; selected: string | null; onShowOnMap: (slug: string) => void }>) {
   return (
     <section aria-label={words.list.label} className="flex min-w-0 flex-col gap-3" data-testid="explore-list">
       <p role="status" className="m-0 text-sm text-fg-secondary">{ready ? count : words.loading}</p>
@@ -163,7 +163,7 @@ function useLocate(onFound: (o: Origin) => void) {
   return { locating, locate };
 }
 
-function Explorer({ locale, words }: { locale: string; words: ExploreWords }) {
+function Explorer({ locale, words }: Readonly<{ locale: string; words: ExploreWords }>) {
   const [filters, setFilters] = useState<ExploreFilters>(NO_FILTERS);
   const [typed, setTyped] = useState("");
   const [submitted, setSubmitted] = useState("");
@@ -236,7 +236,7 @@ function Explorer({ locale, words }: { locale: string; words: ExploreWords }) {
 }
 
 /** Explorer: shops by quartier on a map and in a list, searched by address or postal code, ranked by distance (data through @krizaka/query, never an effect). */
-export function ExploreView(props: { locale: string; words: ExploreWords }) {
+export function ExploreView(props: Readonly<{ locale: string; words: ExploreWords }>) {
   return (
     <KrizakaQueryProvider>
       <Explorer {...props} />

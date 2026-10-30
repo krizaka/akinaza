@@ -17,7 +17,7 @@ export const { I18nProvider, useI18n } = createI18nReact<ConsoleMessages, Locale
 const VocabularyContext = createContext<BusinessType>("pets");
 
 /** The words of a shop's business type for everything below. The default, outside a shop, is the base (pet-care) wording of the first business Akinaza served. */
-export function VocabularyProvider({ type, children }: { type: BusinessType; children: React.ReactNode }) {
+export function VocabularyProvider({ type, children }: Readonly<{ type: BusinessType; children: React.ReactNode }>) {
   return <VocabularyContext.Provider value={type}>{children}</VocabularyContext.Provider>;
 }
 
@@ -44,3 +44,7 @@ export function useSay(explicit?: BusinessType) {
   );
   return { say, locale };
 }
+
+/** The translator and the locale `useSay` returns, for code outside a component (a column list built at module level takes them as parameters). */
+export type Say = ReturnType<typeof useSay>["say"];
+export type SayLocale = ReturnType<typeof useSay>["locale"];

@@ -48,7 +48,7 @@ export interface ShopFrameProps {
  * where the page holds its own (`screenPrimary`); the page's `h1` is in the content (`PageHeader`), never here. The administration
  * is `AppFrame.tsx`.
  */
-export function ShopFrame({ locale, account, places, shop, newInvoiceHref, search = false, counts = {}, dev = false, home, profileHref, children }: ShopFrameProps) {
+export function ShopFrame({ locale, account, places, shop, newInvoiceHref, search = false, counts = {}, dev = false, home, profileHref, children }: Readonly<ShopFrameProps>) {
   const { say } = useSay();
   const [searchOpen, setSearchOpen] = useState(false);
   const { path, account: who, language } = useFrameAccount({ locale, id: account.id, email: account.email, name: account.name, avatarSeed: account.avatarSeed, profileHref });
@@ -58,7 +58,8 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
   };
   // A count on the day and on the invoices, said in words with the place's name; nothing for a zero.
   const badgeOf = (key: AppPlace) => {
-    const n = key === "today" ? counts.today : key === "invoices" ? counts.toCollect : undefined;
+    const counted: Partial<Record<AppPlace, number>> = { today: counts.today, invoices: counts.toCollect };
+    const n = counted[key];
     return n ? { badge: n, badgeLabel: say(key === "today" ? "shell.badges.today" : "shell.badges.toCollect", { count: n }) } : {};
   };
   const sections: FrameSection[] = places.map(({ key, href }) => ({ id: key, label: say(`shell.${key}`), href, icon: ICONS[key], ...badgeOf(key) }));

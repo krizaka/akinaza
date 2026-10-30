@@ -1,7 +1,8 @@
-import { type ShopType, TEMPLATES } from "@akinaza/core";
+import { type FramePaper, protectedTermsIssues, type ShopType, TEMPLATES } from "@akinaza/core";
 import { PASSWORD_RESET_MAX_MINUTES, PASSWORD_RESET_MIN_MINUTES, PASSWORD_RESET_TTL_MINUTES } from "@krizaka/auth";
-import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, type SettingsService, subset, WORKSPACE_SCOPES } from "@krizaka/settings";
+import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, SCOPE, type SettingsService, subset, text, WORKSPACE_SCOPES } from "@krizaka/settings";
 import { storageSettings } from "@krizaka/storage/settings";
+import { z } from "zod";
 
 import { query } from "./db";
 import { refuse } from "./http";
@@ -14,6 +15,11 @@ import { refuse } from "./http";
 const TEMPLATE_IDS = [...new Set(TEMPLATES.map((t) => t.id))] as unknown as readonly [string, ...string[]];
 const defaultTemplate = (type: ShopType) => choice("storefront", TEMPLATE_IDS, TEMPLATES.find((t) => t.shopTypes.includes(type))!.id, GLOBAL_ONLY);
 
+/** The console saves the protected terms only when every line can be kept: a pattern that does not compile or could backtrack catastrophically (ReDoS) is refused before it is stored (#537). */
+function withTermsCheck<T extends { schema: z.ZodType<string> }>(def: T): T {
+  return { ...def, schema: def.schema.refine((value) => protectedTermsIssues(value).length === 0, { message: "A term is not a word or a safe /pattern/" }) };
+}
+
 export const SETTINGS = {
   "app.maintenance": flag("general", false),
   "app.maintenanceMessage": bilingual("general", { fr: "Akinaza est en maintenance. Revenez dans quelques minutes.", en: "Akinaza is down for maintenance. Please come back in a few minutes." }),
@@ -25,6 +31,8 @@ export const SETTINGS = {
   "features.shopFollow": flag("features", false),
   "features.shopReviews": flag("features", true),
   "features.shopAnnouncements": flag("features", true),
+  // The notebook storefront (akinaza#305): the paper of the applied template under the public page. Off = the look's own paper, as before. A person's own value (an owner's beta, the demo shops' owners) wins over the global one.
+  "features.cahierStorefront": flag("features", false, [SCOPE.global, SCOPE.user]),
   // The reviews (B45, #313): the prior mean (in tenths of a star) and its weight of the Bayesian score, and how many counted reviews before the score is shown.
   "reviews.minCount": integer("reviews", 5, { min: 1, max: 100, unit: "reviews" }, GLOBAL_ONLY),
   "reviews.priorTenths": integer("reviews", 42, { min: 10, max: 50, unit: "tenths of a star" }, GLOBAL_ONLY),
@@ -37,6 +45,9 @@ export const SETTINGS = {
   "limits.webhookEndpoints": integer("limits", 5, { min: 0, max: 50, unit: "endpoints" }, WORKSPACE_SCOPES),
   // Several shops under one account (#265): the most an owner may run.
   "limits.shopsPerOwner": integer("limits", 5, { min: 1, max: 50, unit: "shops" }, GLOBAL_ONLY),
+  // The pace of address changes (ADR-005 slice 4, #537): the most one shop changes its address per window (days); the first address does not count.
+  "limits.slugChanges": integer("limits", 3, { min: 1, max: 50, unit: "changes" }, GLOBAL_ONLY),
+  "limits.slugChangeWindowDays": integer("limits", 30, { min: 1, max: 365, unit: "days" }, GLOBAL_ONLY),
   "limits.wallItems": integer("limits", 24, { min: 1, max: 500, unit: "items" }),
   "limits.reelSeconds": integer("limits", 60, { min: 1, max: 300, unit: "seconds" }),
   "limits.reelMegabytes": integer("limits", 40, { min: 1, max: 500, unit: "megabytes" }),
@@ -46,6 +57,8 @@ export const SETTINGS = {
   "storefront.languages.allowed": subset("storefront", ["fr", "en", "es"] as const, ["fr", "en", "es"], GLOBAL_ONLY),
   "limits.translationsPerShopPerDay": integer("limits", 20, { min: 1, max: 500, unit: "runs" }, GLOBAL_ONLY),
   // The private calendar feeds of the shop and its staff (#282, ADR-004): off, every feed address answers 404 and none can be made.
+  // Anti-phishing shop addresses (ADR-005 slice 4, #537): one term per line (a word, or /regex/ on the folded slug; # comments). A slug wearing one is held for review, never refused (core slug-guard). Seed (CTO decision, reversible): the Krizaka family names, the reserved technical words and the lure words; third-party brands are added in the console when there is a reason.
+  "slugs.protectedTerms": withTermsCheck(text("slugs", ["krizaka", "akinaza", "yomizaka", "orazaka", "admin", "api", "www", "app", "auth", "login", "signin", "help", "support", "billing", "mail", "status", "security", "secure", "account", "dashboard", "verify", "verification", "password", "wallet", "payment"].join("\n"), { max: 4000, empty: true }, GLOBAL_ONLY)),
   "exports.icsFeed.enabled": flag("exports", true, GLOBAL_ONLY),
   // The owner's data downloads (#420, ADR-004 §5): appointments (CSV, ICS), clients and invoices (CSV). Off, none is served.
   "exports.data.enabled": flag("exports", true, GLOBAL_ONLY),
@@ -122,6 +135,20 @@ export async function shopSectionFeatures(): Promise<Record<"wall" | "reels" | "
     service.get("features.shopAnnouncements", options),
   ]);
   return { wall, reels, follow, reviews, announcements };
+}
+
+/**
+ * Whether the notebook storefront is on for a person (`features.cahierStorefront`): their own value (an administrator's beta for one account, the demo shops' owners
+ * included), else the global one. Never a code constant: the setting is a row of the administration.
+ */
+export async function cahierStorefrontOn(userId: string | null): Promise<boolean> {
+  return appSettings().get("features.cahierStorefront", { userId });
+}
+
+/** The paper under a shop page: the applied template's while the notebook storefront is on for the shop's owner, else none (the look's own). */
+export async function shopPaperShown(paper: FramePaper | null, ownerId: string | null): Promise<FramePaper | undefined> {
+  if (!paper) return undefined;
+  return (await cahierStorefrontOn(ownerId)) ? paper : undefined;
 }
 
 /** The features that can be switched off: the server refuses what is off, whatever the browser shows. */

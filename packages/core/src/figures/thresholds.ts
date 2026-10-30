@@ -52,8 +52,10 @@ export type FigureState = (typeof FIGURE_STATE)[keyof typeof FIGURE_STATE];
 /** `higher` is better (collected share, margin) or `lower` is better (overdue share, no-shows). */
 export function judge(value: number | null, bounds: { watch: number; alert: number }, better: "higher" | "lower"): FigureState {
   if (value === null) return FIGURE_STATE.info;
-  if (better === "higher") return value < bounds.alert ? FIGURE_STATE.alert : value < bounds.watch ? FIGURE_STATE.watch : FIGURE_STATE.good;
-  return value > bounds.alert ? FIGURE_STATE.alert : value > bounds.watch ? FIGURE_STATE.watch : FIGURE_STATE.good;
+  // Past a bound in the worse direction: below it when higher is better, above it when lower is better.
+  const worse = (bound: number) => (better === "higher" ? value < bound : value > bound);
+  if (worse(bounds.alert)) return FIGURE_STATE.alert;
+  return worse(bounds.watch) ? FIGURE_STATE.watch : FIGURE_STATE.good;
 }
 
 const clampPct = (n: number) => Math.min(100, Math.max(0, Math.round(n)));

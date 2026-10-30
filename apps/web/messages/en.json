@@ -96,11 +96,12 @@
         "scaleSoon": "its B2B features are coming soon"
       }
     },
+    "screensTitle": "What Akinaza does",
     "screens": {
       "book": {
         "title": "Clients book on their own",
         "text": "A taken time disappears at once: nobody is booked twice.",
-        "alt": "The booking page: the service, the dog, the free times and the confirmation."
+        "alt": "The shop's public page: its services with their prices, each with a button to choose it and book."
       },
       "invoice": {
         "title": "The invoice, taxes included",
@@ -396,7 +397,7 @@
       },
       {
         "q": "Does Akinaza file my tax return?",
-        "a": "No. It prepares the figures and you file them."
+        "a": "Not yet. Today Akinaza prepares the figures and you file them. Going further is on our roadmap: letting you run your shop yourself as far as possible, in Québec."
       },
       {
         "q": "What if the price changes?",
@@ -982,6 +983,7 @@
       "CONFIRM_MISMATCH": "The e-mail typed does not match the account.",
       "RETENTION_REQUIRED": "This account owns a shop whose invoices are kept for six years.",
       "SLUG_TAKEN": "This address is already taken, or it was another page's address.",
+      "SLUG_RATE_LIMIT": "You changed this address too often. Try again in a few days.",
       "NOT_PUBLISHABLE": "Add at least one service before publishing the page.",
       "ZONE_EXISTS": "This zone is already in the list.",
       "WINDOW_OVERLAP": "This window overlaps another one that day.",
@@ -1536,6 +1538,7 @@
         "publishedHint": "Clients can then find it by its address and book.",
         "submit": "Save the page",
         "saved": "Page saved.",
+        "held": "Saved. This address looks like a name we protect against impersonation: your page stays private until we have checked it. Nothing else changes, and you can pick another address now.",
         "area": "Locality shown on the page",
         "areaHint": "Saint-Henri, Montréal — never the street address.",
         "bioFr": "Who you are (French)",
@@ -2728,6 +2731,8 @@
         "appointmentsDue": "Appointments due"
       },
       "nextTitle": "What to do now",
+      "todayTitle": "Your figures",
+      "todayLead": "What is owed to you and how the appointments went, with how each figure is computed.",
       "nothingToDo": "Nothing needs you right now.",
       "actions": {
         "chase": {

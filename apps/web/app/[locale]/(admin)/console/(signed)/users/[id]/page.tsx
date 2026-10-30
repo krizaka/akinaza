@@ -7,7 +7,7 @@ import { auditLog, userDetail } from "@/lib/admin";
 import { HttpError } from "@/lib/http";
 
 /** One account: its facts, what an administrator does to it, its history. */
-export default async function AdminUser({ params }: { params: Promise<{ id: string }> }) {
+export default async function AdminUser({ params }: Readonly<{ params: Promise<{ id: string }> }>) {
   const { id } = await params;
   const admin = await pageAdmin();
   const user = await userDetail(id).catch((error: unknown) => {

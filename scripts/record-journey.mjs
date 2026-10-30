@@ -12,10 +12,11 @@
 //
 // Needs Chromium for playwright-core and ffmpeg. Passwords stay in the environment and are never printed. It adds one
 // booking, one check-in/out and one sent report on the persona's data: demo database only.
-import { execFileSync } from "node:child_process";
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
+
+import { ffmpeg, glide, listenScreencast, spanOf, writeConcatList } from "./lib/take.mjs";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright-core");
@@ -46,28 +47,9 @@ const calls = [];
 const beats = [];
 const frames = [];
 const log = (ok, what) => process.stdout.write(`${ok ? "ok  " : "FAIL"} ${what}\n`);
-let t0 = null;
-const now = () => (frames.length ? frames[frames.length - 1].t - t0 : 0);
+const now = () => spanOf(frames);
 const mark = (name) => beats.push({ name, at: Number(now().toFixed(3)) });
 const hold = (page, ms) => page.waitForTimeout(ms);
-
-/** A smooth scroll: many small steps, so the capture really has motion to show. */
-async function glide(page, dy, ms = 1400) {
-  await page.evaluate(
-    ([distance, duration]) =>
-      new Promise((resolve) => {
-        const start = performance.now();
-        const from = window.scrollY;
-        const step = (t) => {
-          const k = Math.min(1, (t - start) / duration);
-          window.scrollTo(0, from + distance * (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2));
-          k < 1 ? requestAnimationFrame(step) : resolve();
-        };
-        requestAnimationFrame(step);
-      }),
-    [dy, ms],
-  );
-}
 
 async function signInAs(context, who) {
   await context.clearCookies();
@@ -90,13 +72,7 @@ page.on("response", (res) => {
 });
 page.on("pageerror", (e) => log(false, `no page error (${e.message.slice(0, 120)})`));
 
-const cdp = await context.newCDPSession(page);
-cdp.on("Page.screencastFrame", async ({ data, metadata, sessionId }) => {
-  const t = metadata.timestamp;
-  if (t0 === null) t0 = t;
-  frames.push({ t, data });
-  await cdp.send("Page.screencastFrameAck", { sessionId }).catch(() => {});
-});
+const cdp = await listenScreencast(context, page, frames);
 
 try {
   await page.goto(`${BASE}/${LOCALE}/s/${SLUG}`, { waitUntil: "networkidle" });
@@ -233,18 +209,10 @@ try {
 }
 
 // Encode: each frame is held until the next one (the screencast only sends what changed), then a constant 30 fps.
-const duration = frames.at(-1).t - t0;
-let list = "";
-frames.forEach((f, i) => {
-  const file = path.join(FRAMES, `${String(i).padStart(5, "0")}.jpg`);
-  writeFileSync(file, Buffer.from(f.data, "base64"));
-  const next = frames[i + 1]?.t ?? f.t + 1 / 30;
-  list += `file '${file}'\nduration ${Math.max(next - f.t, 1 / 120).toFixed(5)}\n`;
-});
-list += `file '${path.join(FRAMES, `${String(frames.length - 1).padStart(5, "0")}.jpg`)}'\n`;
-writeFileSync(path.join(FRAMES, "list.txt"), list);
+const duration = spanOf(frames);
+const list = writeConcatList(frames, FRAMES);
 const full = path.join(OUT, `take-${LOCALE}.mp4`);
-execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", path.join(FRAMES, "list.txt"), "-vf", "fps=30,scale=780:-2:flags=lanczos", "-c:v", "libx264", "-crf", "20", "-preset", "slow", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-an", full]);
+ffmpeg(["-f", "concat", "-safe", "0", "-i", list, "-vf", "fps=30,scale=780:-2:flags=lanczos", "-c:v", "libx264", "-crf", "20", "-preset", "slow", "-pix_fmt", "yuv420p", "-movflags", "+faststart", "-an", full]);
 
 // The real capture rate: frames the compositor painted per second while the page was moving (gaps under 100 ms).
 const gaps = frames.slice(1).map((f, i) => f.t - frames[i].t);

@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { bigserial, boolean, check, customType, date, doublePrecision, index, integer, jsonb, pgTable, primaryKey, smallint, text, time, timestamp, unique, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 /** A PostgreSQL `bytea` — a report photo (a resized image, 1.5 MB at most). */
@@ -122,6 +122,10 @@ export const shops = pgTable(
     invoiceMailCopy: boolean("invoice_mail_copy").notNull().default(false),
     invoiceLinkDays: integer("invoice_link_days").notNull().default(30),
     published: boolean("published").notNull().default(false),
+    /** The slug wears a protected term (ADR-005 slice 4, #537): the shop is saved but NOT public until the administrator clears it (0045). `slugHeldTerm` is the term that matched. */
+    slugHeld: boolean("slug_held").notNull().default(false),
+    slugHeldTerm: text("slug_held_term"),
+    slugHeldAt: timestamp("slug_held_at", { withTimezone: true }),
     taglineFr: text("tagline_fr"),
     taglineEn: text("tagline_en"),
     /** The locality shown on the public page (« Saint-Henri, Montréal »): never the street address. */
@@ -150,6 +154,7 @@ export const shops = pgTable(
     check("shops_public_text", sql`length(coalesce(${t.area}, '')) <= 80 AND length(coalesce(${t.bioFr}, '')) <= 600 AND length(coalesce(${t.bioEn}, '')) <= 600 AND length(coalesce(${t.publicPhone}, '')) <= 40 AND length(coalesce(${t.publicEmail}, '')) <= 120 AND length(coalesce(${t.seatUnitFr}, '')) <= 30 AND length(coalesce(${t.seatUnitEn}, '')) <= 30`),
     uniqueIndex("shops_slug").on(t.slug).where(sql`${t.slug} IS NOT NULL`),
     check("shops_slug_format", sql`${t.slug} IS NULL OR (${t.slug} ~ '^[a-z0-9]+(-[a-z0-9]+)*$' AND length(${t.slug}) BETWEEN 3 AND 40)`),
+    check("shops_held_has_slug", sql`NOT ${t.slugHeld} OR ${t.slug} IS NOT NULL`),
     check("shops_published_has_slug", sql`NOT ${t.published} OR ${t.slug} IS NOT NULL`),
     check("shops_kind", sql`${t.kind} IN ('salon','boutique','services','other')`),
     check("shops_payment_terms", sql`${t.paymentTermsDays} BETWEEN 0 AND 365`),
@@ -161,6 +166,9 @@ export const shops = pgTable(
   ],
 );
 
+/** A shop is public when it is published and its address is not held for review: every public read (page, map, booking, feed) filters on this one condition. */
+export const isPublicShop = () => and(eq(shops.published, true), eq(shops.slugHeld, false));
+
 /** An area a shop serves (Saint-Henri, Griffintown…). A visit belongs to one. */
 /** A shop's former page addresses: each leads to the shop (308) while it exists; never taken by another shop (0021, trigger). */
 export const shopFormerSlugs = pgTable("shop_former_slugs", {
@@ -168,6 +176,13 @@ export const shopFormerSlugs = pgTable("shop_former_slugs", {
   shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
   retiredAt: timestamp("retired_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/** Each change of a shop's address (the first one does not count): the pace limit counts them in a window (0046, ADR-005 slice 4, #537). */
+export const shopSlugChanges = pgTable("shop_slug_changes", {
+  id: id(),
+  shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index("shop_slug_changes_shop_at").on(t.shopId, t.at)]);
 
 /** What the owner did with a recommendation of the Monday brief: once per recommendation, its result kept (0022). */
 export const briefActions = pgTable("brief_actions", {
@@ -248,9 +263,11 @@ export const shopPage = pgTable(
     style: jsonb("style").$type<Record<string, unknown>>().notNull().default(sql`'{}'::jsonb`),
     /** The accent the owner chose within the look (one of the preset's tested accents, akinaza#402); null = the look's own. */
     accent: text("accent"),
+    /** The paper under the public page (akinaza#305): set by the template the owner applied; null = the look's own. */
+    paper: text("paper", { enum: ["plain", "seyes", "kraft", "washi"] }),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [check("shop_page_accent", sql`${t.accent} IS NULL OR ${t.accent} ~ '^[a-z0-9:-]{1,40}$'`), check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
+  (t) => [check("shop_page_paper", sql`${t.paper} IS NULL OR ${t.paper} IN ('plain','seyes','kraft','washi')`), check("shop_page_accent", sql`${t.accent} IS NULL OR ${t.accent} ~ '^[a-z0-9:-]{1,40}$'`), check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
 );
 
 /** The shop page as a document (akinaza#400): one draft, one published, the rest archived (the last 20 kept). The published one IS the page. */

@@ -9,6 +9,9 @@ const BRIEF_TICK_MS = 900_000;
 // @fixed: how often the connected calendars that are due are looked at, in milliseconds (each has its own interval, set by the administrator)
 const CALENDAR_TICK_MS = 60_000;
 
+// @fixed: how often Explorer's stored availability (next free time, open this week) is settled, in milliseconds: the stale window the list can show
+const EXPLORE_TICK_MS = 60_000;
+
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
   const { assertProductionEnv, readEnv } = await import("./lib/env");
@@ -32,4 +35,8 @@ export async function register() {
   const { dataKey } = await import("./lib/env");
   const { calendarSourceMaker } = await import("./app/calendar-edge");
   setInterval(() => void calendarSourceMaker().then((make) => syncDueCalendars(systemClock.now(), dataKey(), make)).catch((error) => console.error("[akinaza] calendar tick failed", error)), CALENDAR_TICK_MS).unref();
+  // Explorer's stored availability (ADR-006 decision 4): the rows a change, a new day or the passing time made due are recomputed; the sweep leases them in the database.
+  const { settleAvailability } = await import("@akinaza/db");
+  const { db } = await import("./lib/db");
+  setInterval(() => void settleAvailability(db(), systemClock.now()).catch((error) => console.error("[akinaza] explore availability tick failed", error)), EXPLORE_TICK_MS).unref();
 }

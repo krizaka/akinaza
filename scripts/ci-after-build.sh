@@ -4,6 +4,8 @@
 # The browsers are installed and cached by node-ci (`playwright: chromium`).
 set -euo pipefail
 export NODE_ENV=production
+# The app's declared public origin (landingRedirect requires it in production: never read from the request's Host).
+export APP_PUBLIC_URL=http://localhost:3000
 # CI-only secrets, generated for this run (never a literal: gitleaks scans the repository).
 export AUTH_SESSION_SECRET="$(openssl rand -hex 32)"
 export APP_DATA_ENCRYPTION_KEY="$(openssl rand -base64 32)"
@@ -20,8 +22,18 @@ export HYDRATION_CLIENT_EMAIL=camille.tremblay@akinaza.test HYDRATION_CLIENT_PAS
 pnpm --filter @akinaza/db seed:demos
 QA_USER_EMAIL=qa-user@akinaza.test QA_USER_PASSWORD=ci-only-password-user QA_ADMIN_EMAIL=qa-admin@akinaza.test QA_ADMIN_PASSWORD=ci-only-password-admin node apps/web/scripts/qa-accounts.mjs
 QA_WALKER_PASSWORD="$HYDRATION_OWNER_PASSWORD" QA_CLIENTS_PASSWORD="$HYDRATION_CLIENT_PASSWORD" pnpm --filter @akinaza/web exec tsx scripts/seed-saint-henri.mjs
+# The owner states of the page audit (akinaza#405): an owner whose shop is empty and one whose shop has one item per list, crawled by check:overflow.
+export HYDRATION_EMPTY_OWNER_EMAIL=ines.debut@akinaza.test HYDRATION_ONE_OWNER_EMAIL=yan.seul@akinaza.test HYDRATION_STATES_PASSWORD=ci-only-password-states
+QA_OWNER_STATES_PASSWORD="$HYDRATION_STATES_PASSWORD" pnpm --filter @akinaza/web exec tsx scripts/seed-owner-states.mjs
 for _ in $(seq 1 60); do curl -sf http://localhost:3000/api/healthz && break; sleep 1; done
 pnpm run seo:check
+# Every cookie the app sets is host-only (no Domain, Path=/, __Host- on https): akinaza#534, ADR-005.
+node scripts/check-cookies.mjs --base http://localhost:3000 --email "$HYDRATION_CLIENT_EMAIL" --password "$HYDRATION_CLIENT_PASSWORD"
+# A shop through its own domain, end to end (ADR-005 slices 4-5, akinaza#538/#549): a second server on the same build and database declares the shop domain
+# (the first keeps the shops on the app, as the crawls below expect); the check forges the Host header.
+(cd apps/web && PORT=3001 APP_PUBLIC_URL=http://localhost:3001 APP_SHOP_DOMAIN=shops.localhost pnpm exec next start -p 3001 > ../../web-shops.log 2>&1 &)
+for _ in $(seq 1 60); do curl -sf http://127.0.0.1:3001/api/healthz > /dev/null && break; sleep 1; done
+node scripts/check-shop-host.mjs --base http://127.0.0.1:3001 --shop-domain shops.localhost --slug pattes-saint-henri --port 3001
 # The brand icons and their lock = the CDN manifest (the unit test checks icons = lock offline).
 node scripts/sync-brand-icons.mjs --check
 # Responsive guard: no horizontal overflow at 360–1440 px in both themes, and the accessibility guard (axe-core, contrast included).
@@ -37,3 +49,5 @@ pnpm run check:hydration -- --base http://localhost:3000
 # The shop page composer end to end (akinaza#427): reorder, autosave, publish, rollback resets the draft, discard; no overflow.
 E2E_BASE=http://localhost:3000 E2E_OWNER_EMAIL="$HYDRATION_OWNER_EMAIL" E2E_OWNER_PASS="$HYDRATION_OWNER_PASSWORD" E2E_OUT=e2e-composer-out pnpm run e2e:composer
 test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3000/api/auth/sign-up)" = "403"
+# A signed-in person never sees the public side first (krizaka-ui#827): / lands on the home, a public page never draws « Sign in ».
+E2E_EMAIL="$HYDRATION_OWNER_EMAIL" E2E_PASSWORD="$HYDRATION_OWNER_PASSWORD" node scripts/check-signed-in-landing.mjs --base http://localhost:3000

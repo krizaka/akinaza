@@ -1,0 +1,9 @@
+id: no-raw-json-in-inner-html
+valid:
+  - |
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(data) }} />
+  - |
+    const text = JSON.stringify(data);
+invalid:
+  - |
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />

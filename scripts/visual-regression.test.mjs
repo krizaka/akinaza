@@ -1,0 +1,53 @@
+import { readFileSync } from "node:fs";
+
+import { describe, expect, it } from "vitest";
+
+const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
+
+// The visual regression of the main journeys (krizaka/.github#375): compare on pull requests, update on dispatch, one source.
+describe("the visual regression", () => {
+  const compare = read(".github/workflows/visual.yml");
+  const update = read(".github/workflows/update-visual-baselines.yml");
+
+  it("calls the org's reusable workflow, pinned by SHA, in both modes with the same journeys and baselines", () => {
+    for (const w of [compare, update]) {
+      expect(w).toMatch(/visual-regression\.yml@[0-9a-f]{40}/);
+      expect(w).toContain("start-script: scripts/ci-visual-start.sh");
+      expect(w).toContain("snapshot-paths: apps/web/e2e/visual/__screenshots__");
+    }
+    expect(update).toContain("update: true");
+    expect(update).toContain("workflow_dispatch");
+    expect(compare).toContain("pull_request");
+  });
+
+  it("the Playwright version is the one of the pinned container image", () => {
+    const pinned = JSON.parse(read("package.json")).devDependencies["@playwright/test"];
+    expect(pinned).toBe("1.64.0"); // the org's image is mcr.microsoft.com/playwright:v1.64.0-noble: bump both together
+  });
+
+  it("covers the main journeys: the public side, a shop, a service and the walker's day, in both themes", () => {
+    const journeys = read("apps/web/e2e/visual/journeys.visual.mjs");
+    for (const name of ["landing", "shop-page", "service-booking", "sign-in", "walker-today"]) expect(journeys).toContain(`name: "${name}"`);
+    expect(journeys).toContain("mask: LIVE");
+  });
+
+  it("draws the « open now » chip, not hides it: the run fixes the server's clock instead (APP_FIXED_NOW, dev only)", () => {
+    const journeys = read("apps/web/e2e/visual/journeys.visual.mjs");
+    expect(journeys).not.toContain("withoutLive");
+    expect(journeys).not.toContain("data-live"); // the chip is drawn, never masked: the clock is fixed
+    expect(read("apps/web/components/shop/ShopPageView.tsx")).not.toContain("data-live");
+    expect(journeys).toMatch(/name: "shop-page"/);
+    expect(read("scripts/ci-visual-start.sh")).toMatch(/^export APP_FIXED_NOW=\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/m);
+    expect(read("apps/web/scripts/seed-cast.mjs")).toContain("APP_FIXED_NOW");
+  });
+
+  it("starts the app on the cast, dev only, and records the moment of the seed", () => {
+    const start = read("scripts/ci-visual-start.sh");
+    expect(start).toContain("APP_ENVIRONMENT=dev");
+    expect(start).toContain("seed-cast.mjs");
+    expect(start).toContain(".visual-now");
+    // the browser's clock is the fixed instant, never the day of the run (baselines drifted at midnight)
+    expect(start).toMatch(/printf '%s\\n' "\$APP_FIXED_NOW" > \.visual-now/);
+    expect(start).not.toMatch(/date -u .*> \.visual-now/);
+  });
+});

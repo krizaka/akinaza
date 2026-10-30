@@ -10,7 +10,10 @@ export const indexable = (env: Record<string, string | undefined> = process.env)
 export const NOINDEX = "noindex, nofollow";
 export const CLOSED_ROBOTS = `User-agent: *\nDisallow: /\nSitemap: ${SITE_URL}/sitemap.xml\n`;
 /** Closed to every crawler; the dev host, which sends every page to www, names no sitemap. */
-export const closedRobots = (siteUrl?: string): string => `User-agent: *\nDisallow: /\n${siteUrl ? `Sitemap: ${siteUrl}/sitemap.xml\n` : ""}`;
+export const closedRobots = (siteUrl?: string): string => {
+  const sitemap = siteUrl ? `Sitemap: ${siteUrl}/sitemap.xml\n` : "";
+  return `User-agent: *\nDisallow: /\n${sitemap}`;
+};
 
 /* --- Two addresses, one app (epic krizaka/.github#119, krizaka-com AGENTS section 2.4) ---
    www.<product>.com (APP_PUBLIC_URL) is the public face and is indexed. dev.<product>.com (APP_DEV_HOST) is the

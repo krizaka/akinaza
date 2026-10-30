@@ -1,5 +1,9 @@
 {
   "disclaimer": "Akinaza prepares your figures and never files your return.",
+  "stage": {
+    "title": "Development version",
+    "message": "Data can be reset at any time. This is not a commercial offer yet."
+  },
   "app": {
     "name": "Akinaza",
     "tagline": "Your shop, for less. It prepares your return and never files it."

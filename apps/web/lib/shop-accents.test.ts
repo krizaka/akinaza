@@ -1,3 +1,4 @@
+import { shopPresets } from "@krizaka/tokens/shop-presets";
 import { describe, expect, it } from "vitest";
 
 import { accentsByLook,acceptedAccents } from "./shop-accents";
@@ -12,7 +13,7 @@ describe("the accents of a look", () => {
   });
   it("lists every look, and every accent is a plain name the database accepts", () => {
     const all = accentsByLook();
-    expect(Object.keys(all)).toHaveLength(12);
+    expect(Object.keys(all)).toHaveLength(shopPresets.length);
     for (const list of Object.values(all)) for (const name of list) expect(name).toMatch(/^[a-z0-9:-]{1,40}$/);
   });
 });

@@ -16,7 +16,7 @@ import { ClientAvatar } from "@/components/app/ClientsTable";
 import { useShopRoutes } from "@/components/app/ShopSession";
 import { errorKey } from "@/lib/client";
 import { formatDate } from "@/lib/format";
-import { useSay } from "@/lib/i18n-client";
+import { type Say, type SayLocale, useSay } from "@/lib/i18n-client";
 
 export interface TeamMemberView {
   accountId: string;
@@ -61,7 +61,7 @@ function useTeamCall() {
 
 const invite = createKrizakaForm({ schema: z.object({ email: z.string().trim().min(1).email().max(320), role: z.string().min(1) }), defaultValues: { email: "", role: "staff" } });
 
-function InviteForm({ assignable }: { assignable: ShopRole[] }) {
+function InviteForm({ assignable }: Readonly<{ assignable: ShopRole[] }>) {
   const { say, locale } = useSay();
   const call = useTeamCall();
   const [link, setLink] = useState<string | null>(null);
@@ -92,63 +92,65 @@ function InviteForm({ assignable }: { assignable: ShopRole[] }) {
 }
 
 /** The team of a shop: who works in it with which role, who is invited, and the form to invite. Owner and manager; the roles one may hand out come from the role table. */
-export function TeamPanel({ members, invitations, assignable, timeZone }: TeamPanelProps) {
+type TeamCall = ReturnType<typeof useTeamCall>;
+type TeamColumnsContext = { say: Say; locale: SayLocale; timeZone: string; assignable: ShopRole[]; call: TeamCall };
+
+/** Built outside the component: the cells are render functions, not components of the table's parent. */
+const teamColumns = ({ say, locale, timeZone, assignable, call }: TeamColumnsContext): DataTableColumn<TeamMemberView>[] => [
+  {
+    id: "member",
+    header: say("team.columns.member"),
+    type: "title",
+    card: "title",
+    sortable: true,
+    value: (m) => m.name ?? m.email,
+    subtitle: (m) => (m.name ? m.email : ""),
+    cell: (m) => (
+      <span className="flex items-center gap-3 font-semibold text-fg">
+        <ClientAvatar id={m.accountId} name={m.name ?? m.email} />
+        {m.name ?? m.email}
+        {m.isYou ? <Badge tone="neutral">{say("team.you")}</Badge> : null}
+      </span>
+    ),
+  },
+  {
+    id: "role",
+    header: say("team.columns.role"),
+    sortable: true,
+    value: (m) => m.role,
+    cell: (m) =>
+      m.manageable && !m.isYou ? (
+        <Select aria-label={say("team.changeRole", { name: m.name ?? m.email })} value={m.role} disabled={call.pending} onChange={(event) => void call.run({ path: `/api/walker/team/members/${m.accountId}`, method: "PATCH", json: { role: event.target.value } }).catch(() => undefined)}>
+          {assignable.map((role) => (
+            <option key={role} value={role}>
+              {say(`team.roles.${role}`)}
+            </option>
+          ))}
+        </Select>
+      ) : (
+        <Badge tone="accent">{say(`team.roles.${m.role}`)}</Badge>
+      ),
+  },
+  { id: "since", header: say("team.columns.since"), priority: 2, value: (m) => m.since, cell: (m) => formatDate(m.since, locale, timeZone) },
+  {
+    id: "actions",
+    header: say("team.columns.actions"),
+    headerHidden: true,
+    hideable: false,
+    align: "end",
+    value: () => "",
+    cell: (m) =>
+      m.manageable && !m.isYou ? (
+        <ConfirmButton size="sm" variant="ghost" confirmLabel={say("team.removeConfirm")} onConfirm={() => void call.run({ path: `/api/walker/team/members/${m.accountId}`, method: "DELETE" }).catch(() => undefined)}>
+          {say("team.remove")}
+        </ConfirmButton>
+      ) : null,
+  },];
+
+export function TeamPanel({ members, invitations, assignable, timeZone }: Readonly<TeamPanelProps>) {
   const { say, locale } = useSay();
   const call = useTeamCall();
-  const columns = useMemo<DataTableColumn<TeamMemberView>[]>(
-    () => [
-      {
-        id: "member",
-        header: say("team.columns.member"),
-        type: "title",
-        card: "title",
-        sortable: true,
-        value: (m) => m.name ?? m.email,
-        subtitle: (m) => (m.name ? m.email : ""),
-        cell: (m) => (
-          <span className="flex items-center gap-3 font-semibold text-fg">
-            <ClientAvatar id={m.accountId} name={m.name ?? m.email} />
-            {m.name ?? m.email}
-            {m.isYou ? <Badge tone="neutral">{say("team.you")}</Badge> : null}
-          </span>
-        ),
-      },
-      {
-        id: "role",
-        header: say("team.columns.role"),
-        sortable: true,
-        value: (m) => m.role,
-        cell: (m) =>
-          m.manageable && !m.isYou ? (
-            <Select aria-label={say("team.changeRole", { name: m.name ?? m.email })} value={m.role} disabled={call.pending} onChange={(event) => void call.run({ path: `/api/walker/team/members/${m.accountId}`, method: "PATCH", json: { role: event.target.value } }).catch(() => undefined)}>
-              {assignable.map((role) => (
-                <option key={role} value={role}>
-                  {say(`team.roles.${role}`)}
-                </option>
-              ))}
-            </Select>
-          ) : (
-            <Badge tone="accent">{say(`team.roles.${m.role}`)}</Badge>
-          ),
-      },
-      { id: "since", header: say("team.columns.since"), priority: 2, value: (m) => m.since, cell: (m) => formatDate(m.since, locale, timeZone) },
-      {
-        id: "actions",
-        header: say("team.columns.actions"),
-        headerHidden: true,
-        hideable: false,
-        align: "end",
-        value: () => "",
-        cell: (m) =>
-          m.manageable && !m.isYou ? (
-            <ConfirmButton size="sm" variant="ghost" confirmLabel={say("team.removeConfirm")} onConfirm={() => void call.run({ path: `/api/walker/team/members/${m.accountId}`, method: "DELETE" }).catch(() => undefined)}>
-              {say("team.remove")}
-            </ConfirmButton>
-          ) : null,
-      },
-    ],
-    [say, locale, timeZone, assignable, call],
-  );
+  const columns = useMemo(() => teamColumns({ say, locale, timeZone, assignable, call }), [say, locale, timeZone, assignable, call]);
   return (
     <div className="flex flex-col gap-8">
       {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}

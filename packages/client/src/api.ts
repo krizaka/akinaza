@@ -23,7 +23,11 @@ export interface InvoiceRequest {
  * The shop of the address (`/fr/app/<shop>/…`, as the web's): the walker routes pick it with `?shopId=`; without one, the server
  * answers for the member's default shop (the app's first screen, before it knows which).
  */
-export const inShop = (path: string, shopId?: string): string => (shopId ? `${path}${path.includes("?") ? "&" : "?"}shopId=${encodeURIComponent(shopId)}` : path);
+export const inShop = (path: string, shopId?: string): string => {
+  if (!shopId) return path;
+  const joiner = path.includes("?") ? "&" : "?";
+  return `${path}${joiner}shopId=${encodeURIComponent(shopId)}`;
+};
 
 export function createAkinazaApi(api: Pick<ApiClient, "call">, session: Pick<SessionStore, "saveToken" | "clearToken">) {
   const get = <T extends z.ZodType>(schema: T, path: string): Promise<z.infer<T>> => api.call<unknown>(path).then((value) => schema.parse(value));
@@ -41,13 +45,13 @@ export function createAkinazaApi(api: Pick<ApiClient, "call">, session: Pick<Ses
     /** Who is signed in (`GET /api/me`, the bearer): what the header's account button shows. */
     me: () => get(meAnswer, "/api/me").then((r) => r.account ?? null),
     /** The owner's day (today in the shop's time zone when `date` is omitted). */
-    day: (date?: string, shopId?: string) => get(dayAnswer, inShop(`/api/walker/day${date ? `?date=${date}` : ""}`, shopId)),
+    day: (date?: string, shopId?: string) => get(dayAnswer, inShop(date ? `/api/walker/day?date=${date}` : "/api/walker/day", shopId)),
     calendar: (from: string, to: string, shopId?: string) => get(calendarAnswer, inShop(`/api/walker/calendar?from=${from}&to=${to}`, shopId)).then((r) => r.days),
     clients: (shopId?: string) => get(clientsAnswer, inShop("/api/walker/clients", shopId)).then((r) => r.clients),
     invoices: (shopId?: string) => get(invoicesAnswer, inShop("/api/walker/invoices", shopId)).then((r) => r.invoices),
     shop: (shopId?: string) => get(shopAnswer, inShop("/api/walker/shop", shopId)),
     /** « Livres »: the period's prepared GST/QST (`2026-Q3`, `2026-02`; the latest completed quarter by default). */
-    books: (period?: string, shopId?: string) => get(booksAnswer, inShop(`/api/walker/books${period ? `?period=${encodeURIComponent(period)}` : ""}`, shopId)),
+    books: (period?: string, shopId?: string) => get(booksAnswer, inShop(period ? `/api/walker/books?period=${encodeURIComponent(period)}` : "/api/walker/books", shopId)),
     /** « Vos chiffres » (#260): each figure with its value, formula as data, sources and state, and « que faire maintenant ». */
     figures: (shopId?: string) => get(figuresAnswer, inShop("/api/walker/figures", shopId)),
     async issueInvoice(request: InvoiceRequest, shopId?: string) {

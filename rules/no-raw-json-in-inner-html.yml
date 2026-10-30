@@ -1,0 +1,13 @@
+id: no-raw-json-in-inner-html
+language: Tsx
+severity: error
+message: "`JSON.stringify` straight into `dangerouslySetInnerHTML` lets a value holding `</script>` close the element: use `jsonLdHtml` (lib/csp.ts), which escapes `<` (ADR-005, akinaza#535)."
+rule:
+  pattern: JSON.stringify($$$A)
+  inside:
+    kind: pair
+    has:
+      field: key
+      regex: "^__html$"
+ignores:
+  - "**/node_modules/**"

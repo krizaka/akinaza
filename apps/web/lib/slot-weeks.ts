@@ -4,7 +4,10 @@ import { shiftDay } from "./day";
 export const DAY_PARTS = ["morning", "afternoon", "evening"] as const;
 export type DayPart = (typeof DAY_PARTS)[number];
 
-export const partOfHour = (hour: number): DayPart => (hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening");
+export const partOfHour = (hour: number): DayPart => {
+  if (hour < 12) return "morning";
+  return hour < 17 ? "afternoon" : "evening";
+};
 
 /** The hour (0–23) of an instant on the shop's clock. */
 export function hourIn(instant: Date, timeZone: string): number {

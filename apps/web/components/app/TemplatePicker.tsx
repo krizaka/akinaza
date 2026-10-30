@@ -15,7 +15,7 @@ import type { TemplateChoices } from "@/lib/template-choices";
  * when none is applied. Applying replaces the section order with the template's — unless the owner reordered or hid sections by hand: then they say whether to keep their
  * order. Texts, photos and translations are never touched.
  */
-export function TemplatePicker({ data, shopId }: { data: TemplateChoices; shopId: string }) {
+export function TemplatePicker({ data, shopId }: Readonly<{ data: TemplateChoices; shopId: string }>) {
   const { say } = useSay();
   const call = useCall();
   const [value, setValue] = useState(data.current?.id ?? data.preselected ?? data.choices[0]?.id ?? "");
@@ -42,9 +42,8 @@ export function TemplatePicker({ data, shopId }: { data: TemplateChoices; shopId
       {chosen ? (
         <div className="flex flex-col gap-3">
           {update ? <p className="m-0 text-sm text-fg-secondary">{say("shopSetup.templates.updateLead", { version: chosen.version })}</p> : null}
-          {isCurrent ? (
-            <p className="m-0 text-sm text-fg-secondary">{say("shopSetup.templates.isCurrent")}</p>
-          ) : data.sectionsCustom ? (
+          {isCurrent && <p className="m-0 text-sm text-fg-secondary">{say("shopSetup.templates.isCurrent")}</p>}
+          {!isCurrent && (data.sectionsCustom ? (
             <>
               <p className="m-0 text-sm text-fg-secondary">{say("shopSetup.templates.customNote")}</p>
               <div className="flex flex-wrap gap-2">
@@ -54,7 +53,7 @@ export function TemplatePicker({ data, shopId }: { data: TemplateChoices; shopId
             </>
           ) : (
             <Button size="md" variant="primary" className="self-start" disabled={call.pending} onClick={() => void apply()}>{say(`shopSetup.templates.${words.one}`, vars)}</Button>
-          )}
+          ))}
         </div>
       ) : null}
       {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
