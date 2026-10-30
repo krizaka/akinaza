@@ -48,7 +48,7 @@ const SPANISH_STOREFRONT = /^\/es\/s\/[^/]+\/?$/;
 const moved = (path: string): HostRoute => ({ kind: "redirect", path, permanent: true });
 
 /** A request on `<slug>.<shop domain>`: the shop page at the root, its public pages as linked, and a top-level hop to the app for everything else (the booking's last step included). */
-function ownShopRoute(slug: string, pathname: string, site: string): HostRoute {
+export function ownShopRoute(slug: string, pathname: string, site: string): HostRoute {
   if (pathname === "/robots.txt") {return { kind: "robotsClosed" };}
   if (pathname === "/sitemap.xml") {return { kind: "shopSitemap", slug };}
   const locale = LOCALE.exec(pathname)?.[1] ?? (SPANISH_STOREFRONT.test(pathname) || pathname === "/es" ? "es" : undefined);

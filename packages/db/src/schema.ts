@@ -132,6 +132,10 @@ export const shops = pgTable(
     slugHoldNote: text("slug_hold_note"),
     slugHoldReviewedAt: timestamp("slug_hold_reviewed_at", { withTimezone: true }),
     slugClearedFor: text("slug_cleared_for"),
+    /** The paid option « your own domain », enabled per shop by an administrator (0051, akinaza#539); the catalogue version it was sold at. */
+    customDomainEnabled: boolean("custom_domain_enabled").notNull().default(false),
+    customDomainPriceVersion: text("custom_domain_price_version"),
+    customDomainEnabledAt: timestamp("custom_domain_enabled_at", { withTimezone: true }),
     taglineFr: text("tagline_fr"),
     taglineEn: text("tagline_en"),
     /** The locality shown on the public page (« Saint-Henri, Montréal »): never the street address. */
@@ -190,6 +194,26 @@ export const shopSlugChanges = pgTable("shop_slug_changes", {
   shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
   at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [index("shop_slug_changes_shop_at").on(t.shopId, t.at)]);
+
+/** A merchant's own domain (0051, akinaza#539): the TXT proof, the edge service's hostname, the state a check moves (packages/core custom-domain.ts). */
+export const shopDomains = pgTable(
+  "shop_domains",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    hostname: text("hostname").notNull(),
+    state: text("state", { enum: ["pending-txt", "pending-tls", "active", "failed", "suspended", "removed"] }).notNull().default("pending-txt"),
+    token: text("token").notNull(),
+    providerId: text("provider_id"),
+    attempts: integer("attempts").notNull().default(0),
+    lastError: text("last_error"),
+    lastCheckedAt: timestamp("last_checked_at", { withTimezone: true }),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
+    createdAt: created(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("shop_domains_claim").on(t.hostname).where(sql`state IN ('pending-tls','active')`), index("shop_domains_shop").on(t.shopId)],
+);
 
 /** What the owner did with a recommendation of the Monday brief: once per recommendation, its result kept (0022). */
 export const briefActions = pgTable("brief_actions", {

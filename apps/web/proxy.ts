@@ -1,3 +1,4 @@
+import { readHostname } from "@akinaza/core";
 import { landingRedirect, sessionHint } from "@krizaka/auth";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -5,11 +6,11 @@ import { HOST_FREE_PATHS, isAllowedHost } from "./lib/allowed-hosts";
 import { cookieName, dropCookie, ownCookie } from "./lib/cookie";
 import { contentSecurityPolicy, isShopPath, newNonce, upgradesInsecure } from "./lib/csp";
 import { refusesCrossSiteWrite } from "./lib/csrf";
-import { type HostRoute, isAdminHost, routeFor, type ShopHosting } from "./lib/host";
+import { type HostRoute, isAdminHost, ownShopRoute, routeFor, type ShopHosting } from "./lib/host";
 import { CLOSED_ROBOTS, closedRobots, devRedirect, indexableOn, isDevHost, NOINDEX } from "./lib/indexing";
 import { LOCALE_HEADER, negotiateLocale, pageLocaleOf,PATH_HEADER } from "./lib/locale-negotiation";
 import { SESSION_COOKIE } from "./lib/session-cookie";
-import { SHOP_SITEMAP_PATH, shopVerdict, Verdict } from "./lib/shop-directory";
+import { customHostVerdict, SHOP_SITEMAP_PATH, shopVerdict, Verdict } from "./lib/shop-directory";
 import { appOriginOf, shopDomain, shopHostOf, shopOriginOf } from "./lib/shop-domain";
 import { SITE_URL } from "./lib/site";
 
@@ -55,7 +56,9 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   const closed = !indexableOn(host);
   const pathname = request.nextUrl.pathname;
   // ADR-005 slice 4 (#536): a host this deployment does not serve is answered 421 before anything is routed or built from it (the platform's health check names its own).
-  if (!HOST_FREE_PATHS.includes(pathname) && !isAllowedHost(host, process.env)) {return new NextResponse("Misdirected Request", { status: 421, headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });}
+  // A merchant's own domain (ADR-005 §3, #539) is the one other host: served only while the database says it is active (verified TXT, certificate, option on, shop published).
+  const custom = HOST_FREE_PATHS.includes(pathname) || isAllowedHost(host, process.env) ? null : await customHostOf(host);
+  if (!custom && !HOST_FREE_PATHS.includes(pathname) && !isAllowedHost(host, process.env)) {return misdirected();}
   // The dev host serves the API too: the check comes first.
   const refused = crossSiteWrite(request);
   if (refused) {return refused;}
@@ -78,16 +81,39 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
     response.headers.set("Content-Security-Policy", policy());
     return response;
   }
+  if (custom) return serve(request, closed, true, custom);
   // A shop's own host (ADR-005 slice 4, #549): served only when that shop exists and is public, else 404 before anything is routed; a former address goes to the current one (308).
   const shop = shopHostOf(host, process.env);
   if (shop) {
     return shopVerdict(shop.slug).then((verdict) => {
       if (verdict.kind === Verdict.None) {return new NextResponse("Not found", { status: 404, headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX, "cache-control": "private, no-store" } });}
+      // Once the shop has a verified domain of its own, that is its one canonical address (ADR-005 §9): every other address leads there.
+      if (verdict.kind === Verdict.Shop && verdict.domain) {return NextResponse.redirect(`https://${verdict.domain}${pathname}${request.nextUrl.search}`, { status: 308, headers: { "x-robots-tag": NOINDEX } });}
       if (verdict.kind === Verdict.Moved) {return NextResponse.redirect(`${shopOriginOf(verdict.slug, process.env)}${pathname}${request.nextUrl.search}`, { status: 308, headers: { "x-robots-tag": NOINDEX } });}
       return serve(request, closed, shop.own);
     });
   }
   return serve(request, closed, false);
+}
+
+/** 421: never stored, never indexed. */
+const misdirected = () => new NextResponse("Misdirected Request", { status: 421, headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX, "cache-control": "private, no-store" } });
+
+/** The origin a shop's robots.txt names its sitemap on: its verified custom host, else its shop-domain address; none off a shop host. */
+function sitemapOrigin(custom: CustomHost | null, shop: { slug: string } | null, site: string): string | null {
+  if (custom) return `${new URL(site).protocol}//${custom.host}`;
+  return shop ? shopOriginOf(shop.slug, process.env) : null;
+}
+
+/** A merchant's own host, once the directory knows it: the shop it serves and the verified name pages and sitemaps use (never a header). */
+type CustomHost = { slug: string; own: true; host: string };
+
+/** The shop a host serves, when it is a custom domain: null for an unknown, unverified, suspended or unpaid one (and when the directory cannot be asked: 421, never a guess). */
+async function customHostOf(host: string | null): Promise<CustomHost | null> {
+  const name = (host ?? "").trim().toLowerCase().replace(/:\d+$/, "");
+  if (!name || !readHostname(name).ok) return null;
+  const verdict = await customHostVerdict(name);
+  return verdict.kind === Verdict.Shop && verdict.slug ? { slug: verdict.slug, own: true, host: name } : null;
 }
 
 /** The shop domain's moves (lib/host.ts `hostedRoute`), when it is declared. */
@@ -97,15 +123,15 @@ function hostingOf(): ShopHosting | null {
 }
 
 /** `ownShopHost`: the request is on `<slug>.<APP_SHOP_DOMAIN>`, where nothing of the app's session ever goes (ADR-005 §1, §4). */
-function serve(request: NextRequest, closed: boolean, ownShopHost: boolean): NextResponse {
+function serve(request: NextRequest, closed: boolean, ownShopHost: boolean, custom: CustomHost | null = null): NextResponse {
   const host = request.headers.get("host");
   const pathname = request.nextUrl.pathname;
   const chosen = negotiateLocale(request.cookies.get(LOCALE_COOKIE)?.value, request.headers.get("accept-language"));
   const site = process.env.APP_PUBLIC_URL ?? SITE_URL;
-  const route = routeFor(host, request.nextUrl.pathname, chosen, site, hostingOf());
+  const route = custom ? ownShopRoute(custom.slug, pathname, site) : routeFor(host, request.nextUrl.pathname, chosen, site, hostingOf());
   const admin = isAdminHost(host);
   // A shop's address shows a page that www may also serve: never indexed twice.
-  const shop = shopHostOf(host, process.env);
+  const shop = custom ?? shopHostOf(host, process.env);
   const shopHost = shop !== null;
   // A shop's own page is nobody's landing: the app's session never goes there (ADR-005), so no hint can send a visitor away from it.
   const home = admin || shop ? null : landingRedirect(request, { cookie: SESSION_COOKIE, landing: LANDING, home: () => `/${pageLocaleOf(pathname, chosen)}/app`, origin: site });
@@ -122,7 +148,8 @@ function serve(request: NextRequest, closed: boolean, ownShopHost: boolean): Nex
   let response: NextResponse;
   switch (route.kind) {
     case "robotsClosed": {
-      const sitemap = shop ? `Sitemap: ${shopOriginOf(shop.slug, process.env)}/sitemap.xml\n` : "";
+      const origin = sitemapOrigin(custom, shop, site);
+      const sitemap = origin ? `Sitemap: ${origin}/sitemap.xml\n` : "";
       return new NextResponse(`User-agent: *\nDisallow: /\n${sitemap}`, { headers: { "content-type": "text/plain", "x-robots-tag": "noindex, nofollow" } });
     }
     case "shopSitemap":
