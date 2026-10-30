@@ -8,8 +8,8 @@ import { asLocale } from "@/lib/i18n";
 export default async function SignedAdmin({ children, params }: Readonly<{ children: React.ReactNode; params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const session = await pageSession();
-  if (!session) redirect(`/${locale}/sign-in`);
-  if (!(await pageAdmin())) notFound();
+  if (!session) {redirect(`/${locale}/sign-in`);}
+  if (!(await pageAdmin())) {notFound();}
   return (
     <AppFrame locale={locale} email={session.account.email} base={`/${locale}`} items={["overview", "users", "shops", "invoices", "ledger", "operations", "organize", "prices", "incidents", "addresses", "audit"]}>
       {children}

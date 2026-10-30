@@ -16,7 +16,7 @@ export function POST(req: Request, { params }: { params: Promise<{ id: string }>
     const admin = await requireAdmin(req);
     const shopId = idParam((await params).id);
     const { reason } = await readJson(req, body);
-    if (!(await keepSlugHold(db(), shopId, reason))) throw refuse(404, "NOT_FOUND", "This shop is not held");
+    if (!(await keepSlugHold(db(), shopId, reason))) {throw refuse(404, "NOT_FOUND", "This shop is not held");}
     await audit({ action: "shop.slug_hold_kept", actorId: admin.account.id, actorLabel: admin.account.email, targetId: shopId, detail: { reason }, headers: req.headers });
     return Response.json({ ok: true });
   });
