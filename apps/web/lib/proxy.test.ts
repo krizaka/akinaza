@@ -276,7 +276,7 @@ describe("the proxy on the shops' own domain", () => {
 
   it("answers a host this deployment does not serve 421 even under the shop domain (a nested label, another domain)", async () => {
     setup();
-    for (const host of ["a.b.akinaza.shop", "salon.akinaza.shop.evil.example"]) expect((await on(host, "/en")).status, host).toBe(421);
+    for (const host of ["a.b.akinaza.shop", "salon.akinaza.shop.evil.example"]) {expect((await on(host, "/en")).status, host).toBe(421);}
   });
 
   it("sends the old addresses to the shop domain with a 308, the query kept: <slug>.akinaza.com and /<locale>/s/<slug> on www", async () => {
