@@ -103,9 +103,9 @@ export async function seedDemoCommunity(db: Db, shopId: string, slug: string): P
     }, 24);
   }
   if ((await reelsOf(db, shopId)).length === 0) {
-    // The public Short first (older), then the shop's own reel, which is the latest and plays in the television.
-    await addExternalReel(db, shopId, plan.external.url, { titleFr: plan.external.titleFr, titleEn: plan.external.titleEn, posterUrl: files.reel.poster });
+    // The playlist: the shop's own reel first (it plays in the television), then a public Short behind its facade.
     await addUploadedReel(db, shopId, { mp4Url: files.reel.mp4, webmUrl: files.reel.webm, posterUrl: files.reel.poster, seconds: files.reel.seconds, titleFr: "La semaine au salon", titleEn: "A week at the shop" });
+    await addExternalReel(db, shopId, plan.external.url, { titleFr: plan.external.titleFr, titleEn: plan.external.titleEn, posterUrl: files.reel.poster });
   }
   const links = await socialLinksOf(db, shopId);
   await saveSocialLinks(db, shopId, Object.fromEntries(Object.entries(plan.links).filter(([platform]) => !(platform in links))));

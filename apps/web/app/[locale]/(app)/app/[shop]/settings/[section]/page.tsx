@@ -1,5 +1,5 @@
 import { localDay, OWNER_BOUNDS, OWNER_TUNABLE, type OwnerTunable, reviewScore, shopTypeOf, WALL_LIMITS } from "@akinaza/core";
-import { announcementsOf, draftShopPage, invoiceMailSettings, loadShop, publishedShopPage, reelsOf, reviewsOf, SHOP_ROLES, shopAccentOf, shopFigureOverrides, shopMediaOf, shopPageConfigOf, shopPageVersionsOf, shopStaff, socialLinksOf, teamTimeOff, translationRows, translationRunsOn,wallOf } from "@akinaza/db";
+import { announcementsOf, draftShopPage, invoiceMailSettings, loadShop, publishedShopPage, reelsOf, reelTransitionOf, reviewsOf, SHOP_ROLES, shopAccentOf, shopFigureOverrides, shopMediaOf, shopPageConfigOf, shopPageVersionsOf, shopStaff, socialLinksOf, teamTimeOff, translationRows, translationRunsOn,wallOf } from "@akinaza/db";
 import { shopPresets } from "@krizaka/tokens/shop-presets";
 import { Button } from "@krizaka/ui/button";
 import { PageHeader } from "@krizaka/ui/page-header";
@@ -109,8 +109,8 @@ async function CommunityTab({ shopId, tab }: Readonly<{ shopId: string; tab: "wa
     return <WallEditor wall={wall} limits={{ wallItems: limits.wallItems, drawn: WALL_LIMITS.drawn }} />;
   }
   if (tab === "reels") {
-    const [reels, links] = await Promise.all([reelsOf(db(), shop.id), socialLinksOf(db(), shop.id)]);
-    return <ReelsEditor reels={reels.map((r) => ({ id: r.id, kind: r.kind, platform: r.platform, titleFr: r.titleFr, titleEn: r.titleEn, externalUrl: r.externalUrl, seconds: r.seconds }))} links={links} limits={limits} />;
+    const [reels, links, transition] = await Promise.all([reelsOf(db(), shop.id), socialLinksOf(db(), shop.id), reelTransitionOf(db(), shop.id)]);
+    return <ReelsEditor reels={reels.map((r) => ({ id: r.id, kind: r.kind, platform: r.platform, titleFr: r.titleFr, titleEn: r.titleEn, externalUrl: r.externalUrl, seconds: r.seconds }))} links={links} transition={transition} limits={limits} />;
   }
   if (tab === "board") {
     const flyers = await announcementsOf(db(), shop.id);

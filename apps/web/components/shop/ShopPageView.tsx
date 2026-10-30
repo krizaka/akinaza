@@ -212,12 +212,28 @@ function videoSection({ section, c }: Args<"video">): ReactNode {
   const title = (fallback: string) => c.titleOf(section, fallback);
   const lead = text(section.text?.lead);
   const common = commonOf(section);
-  const tv = section.variant === "tv" ? community?.tv : null;
-  const reels = section.variant === "shorts" ? shortsOf(community, claim) : [];
-  if (!tv && !reels.length) return null;
-  const Video = section.variant === "tv" ? ShopVideoLazy : VideoSection;
-  return <Video {...common} variant={section.variant} title={title(t("console.shopPage.reelsTitle"))} lead={lead} reels={reels} clip={tv ? { src: tv.mp4 ?? tv.webm ?? undefined, poster: claim(tv.poster), title: t("console.shopPage.tvTitle", { shop: view.name }) } : undefined} playLabels={playLabels} notice={notice} cabinet={section.settings.cabinet} channel={t("console.shopPage.tvChannel")} />;
+  if (section.variant === "tv") {
+    const playlist = (community?.playlist ?? []).map((v) => ({ id: v.id, title: v.title || t("console.shopPage.tvTitle", { shop: view.name }), src: v.mp4 ?? v.webm ?? undefined, poster: claim(v.poster), platform: v.platform ?? undefined, url: v.externalUrl ?? undefined }));
+    if (!playlist.length) return null;
+    return <ShopVideoLazy {...common} title={title(t("console.shopPage.reelsTitle"))} lead={lead} playlist={playlist} transition={community?.transition ?? "channel"} label={t("console.shopPage.tvTitle", { shop: view.name })} channel={t("console.shopPage.tvChannel")} labels={tvLabels(t)} playLabels={playLabels} notice={notice} />;
+  }
+  const reels = shortsOf(community, claim);
+  if (!reels.length) return null;
+  return <VideoSection {...common} variant="shorts" title={title(t("console.shopPage.reelsTitle"))} lead={lead} reels={reels} playLabels={playLabels} notice={notice} />;
 }
+
+/** The television's controls in the page's language (the library's English by default). */
+const tvLabels = (t: Ctx["t"]) => ({
+  play: t("console.shopPage.tvLabels.play"),
+  pause: t("console.shopPage.tvLabels.pause"),
+  next: t("console.shopPage.tvLabels.next"),
+  previous: t("console.shopPage.tvLabels.previous"),
+  soundOff: t("console.shopPage.tvLabels.soundOff"),
+  soundOn: t("console.shopPage.tvLabels.soundOn"),
+  captions: t("console.shopPage.tvLabels.captions"),
+  seek: t("console.shopPage.tvLabels.seek"),
+  nowPlaying: t("console.shopPage.tvLabels.nowPlaying"),
+});
 
 function socialSection({ section, c }: Args<"social">): ReactNode {
   const { t, community, playLabels, notice, platformName } = c;

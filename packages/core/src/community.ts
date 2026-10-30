@@ -145,6 +145,11 @@ export function externalReel(value: string): ExternalReel | null {
   return null;
 }
 
+/** How one video gives way to the next on the shop's television (akinaza#469): the channel switch (static and a roll, the set's signature), a crossfade, a slide. */
+export const REEL_TRANSITIONS = ["channel", "crossfade", "slide"] as const;
+export type ReelTransition = (typeof REEL_TRANSITIONS)[number];
+export const DEFAULT_REEL_TRANSITION: ReelTransition = "channel";
+
 export const SOCIAL_PLATFORMS = ["tiktok", "youtube", "instagram", "facebook"] as const;
 export type SocialPlatform = (typeof SOCIAL_PLATFORMS)[number];
 const SOCIAL_HOSTS: Record<SocialPlatform, readonly string[]> = {

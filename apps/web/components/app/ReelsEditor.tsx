@@ -1,6 +1,6 @@
 "use client";
 
-import { SOCIAL_PLATFORMS, type SocialPlatform } from "@akinaza/core";
+import { REEL_TRANSITIONS, type ReelTransition, SOCIAL_PLATFORMS, type SocialPlatform } from "@akinaza/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
@@ -11,7 +11,9 @@ import { z } from "zod";
 
 import { useCall } from "@/components/app/useCall";
 import { useSay } from "@/lib/i18n-client";
+import { moveReel } from "@/lib/reel-order";
 import { shrinkImage, STOREFRONT_LONG_SIDE } from "@/lib/shrink-image";
+import { videoPosterFrame } from "@/lib/video-poster";
 
 export interface ReelLine {
   id: string;
@@ -26,6 +28,7 @@ export interface ReelLine {
 export interface ReelsEditorProps {
   reels: ReelLine[];
   links: Partial<Record<SocialPlatform, string>>;
+  transition: ReelTransition;
   limits: { reelSeconds: number; reelMegabytes: number };
 }
 
@@ -48,12 +51,26 @@ const linksForm = createKrizakaForm({
 });
 
 /** Boutique › Vidéo et profils (#312): the latest video of the page (an upload, or a link behind a facade) and the shop's plain profile links. */
-export function ReelsEditor({ reels, links, limits }: Readonly<ReelsEditorProps>) {
+export function ReelsEditor({ reels, links, transition, limits }: Readonly<ReelsEditorProps>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [done, setDone] = useState<"reel" | "links" | null>(null);
+  const [dragging, setDragging] = useState<number | null>(null);
+  const [liveNote, setLiveNote] = useState("");
   const i18n = { t: (key: string, vars?: Readonly<Record<string, string | number | boolean | Date | null | undefined>>) => say(key, vars as Record<string, string | number> | undefined), locale };
   const titleOf = (r: ReelLine) => ({ fr: r.titleFr || r.titleEn, en: r.titleEn || r.titleFr })[locale] || (r.platform ? say(`studio.reels.platforms.${r.platform}`) : say(`studio.reels.kinds.${r.kind}`));
+
+  const reorder = async (from: number, to: number) => {
+    if (from === to) return;
+    const next = moveReel(reels.map((r) => r.id), from, to);
+    if ((await call.run("/api/walker/reels/playlist", { method: "PUT", json: { order: next } })) !== null) setLiveNote(say("studio.reels.moved", { title: titleOf(reels[from]!), place: next.indexOf(reels[from]!.id) + 1 }));
+  };
+
+  const dropOn = (index: number) => {
+    const from = dragging;
+    setDragging(null);
+    if (from !== null) void reorder(from, index);
+  };
 
   const link = linkForm.useForm({
     i18n,
@@ -69,7 +86,9 @@ export function ReelsEditor({ reels, links, limits }: Readonly<ReelsEditorProps>
       const body = new FormData();
       body.set("video", v.videoFiles[0]!);
       const poster = v.posterFiles[0];
-      if (poster) body.set("poster", await shrinkImage(poster, STOREFRONT_LONG_SIDE), "poster.jpg");
+      // The owner's own picture, or a frame taken from the video on this phone.
+      const frame = poster ? await shrinkImage(poster, STOREFRONT_LONG_SIDE) : await videoPosterFrame(v.videoFiles[0]!);
+      if (frame) body.set("poster", frame, "poster.jpg");
       body.set("titleFr", v.titleFr);
       body.set("titleEn", v.titleEn);
       if ((await call.run("/api/walker/reels/upload", { body })) !== null) { setDone("reel"); upload.reset(); }
@@ -93,20 +112,46 @@ export function ReelsEditor({ reels, links, limits }: Readonly<ReelsEditorProps>
           <p className="m-0 text-sm text-fg-secondary">{say("studio.reels.lead")}</p>
         </div>
         {reels.length === 0 ? <p className="m-0 text-sm text-fg-secondary">{say("studio.reels.none")}</p> : (
-          <ul className="m-0 flex list-none flex-col gap-2 p-0">
-            {reels.map((r, index) => (
-              <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-default p-3">
-                <span className="flex min-w-0 flex-col gap-1">
-                  <span className="break-words text-sm font-semibold text-fg">{titleOf(r)}</span>
-                  <span className="flex flex-wrap items-center gap-2 text-xs text-fg-secondary">
-                    <Badge tone="neutral" size="sm">{say(`studio.reels.kinds.${r.kind}`)}</Badge>
-                    {index === 0 ? <Badge tone="success" size="sm">{say("studio.reels.shown")}</Badge> : null}
+          <>
+            <p className="m-0 text-xs text-fg-secondary">{say("studio.reels.orderHint")}</p>
+            <ol aria-label={say("studio.reels.playlist")} className="m-0 flex list-none flex-col gap-2 p-0">
+              {reels.map((r, index) => (
+                <li
+                  key={r.id}
+                  draggable
+                  onDragStart={() => setDragging(index)}
+                  onDragOver={(event) => event.preventDefault()}
+                  onDrop={() => dropOn(index)}
+                  onDragEnd={() => setDragging(null)}
+                  data-dragging={dragging === index ? "" : undefined}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border-default p-3 data-[dragging]:opacity-60"
+                >
+                  <span className="flex min-w-0 flex-col gap-1">
+                    <span className="break-words text-sm font-semibold text-fg">{index + 1}. {titleOf(r)}</span>
+                    <span className="flex flex-wrap items-center gap-2 text-xs text-fg-secondary">
+                      <Badge tone="neutral" size="sm">{say(`studio.reels.kinds.${r.kind}`)}</Badge>
+                      {index === 0 ? <Badge tone="success" size="sm">{say("studio.reels.shown")}</Badge> : null}
+                    </span>
                   </span>
-                </span>
-                <Button variant="ghost" size="md" disabled={call.pending} onClick={() => void call.run(`/api/walker/reels/${r.id}`, { method: "DELETE" })}>{say("studio.reels.remove")}</Button>
-              </li>
-            ))}
-          </ul>
+                  <span className="flex flex-wrap items-center gap-1">
+                    <Button variant="ghost" size="md" disabled={call.pending || index === 0} aria-label={say("studio.reels.up", { title: titleOf(r) })} onClick={() => void reorder(index, index - 1)}>{say("studio.reels.upShort")}</Button>
+                    <Button variant="ghost" size="md" disabled={call.pending || index === reels.length - 1} aria-label={say("studio.reels.down", { title: titleOf(r) })} onClick={() => void reorder(index, index + 1)}>{say("studio.reels.downShort")}</Button>
+                    <Button variant="ghost" size="md" disabled={call.pending} onClick={() => void call.run(`/api/walker/reels/${r.id}`, { method: "DELETE" })}>{say("studio.reels.remove")}</Button>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p role="status" aria-live="polite" className="sr-only">{liveNote}</p>
+            <div role="group" aria-label={say("studio.reels.transition")} className="flex flex-col gap-2">
+              <span className="text-sm font-semibold text-fg">{say("studio.reels.transition")}</span>
+              <span className="flex flex-wrap gap-2">
+                {REEL_TRANSITIONS.map((name) => (
+                  <Button key={name} variant={name === transition ? "primary" : "secondary"} size="md" aria-pressed={name === transition} disabled={call.pending} onClick={() => void call.run("/api/walker/reels/playlist", { method: "PUT", json: { transition: name } })}>{say(`studio.reels.transitions.${name}`)}</Button>
+                ))}
+              </span>
+              <span className="text-xs text-fg-secondary">{say("studio.reels.transitionHint")}</span>
+            </div>
+          </>
         )}
         <upload.Form aria-label={say("studio.reels.upload")} className="grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2">

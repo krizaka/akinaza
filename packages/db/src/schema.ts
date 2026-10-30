@@ -105,6 +105,8 @@ export const shops = pgTable(
     businessType: text("business_type", { enum: ["professional", "pets"] }).notNull().default("professional"),
     /** The terms new invoices are issued under, in days (0 = due on receipt): a buyer needs them from $500 (krizaka/akinaza#113). */
     paymentTermsDays: integer("payment_terms_days").notNull().default(30),
+    /** How the page's television passes from one video to the next (akinaza#469): channel, crossfade or slide. */
+    reelTransition: text("reel_transition", { enum: ["channel", "crossfade", "slide"] }).notNull().default("channel"),
     /** Registered for the GST and the QST (a small supplier under $30 000 is not). */
     registrant: boolean("registrant").notNull().default(true),
     gstNumber: text("gst_number"),
@@ -161,6 +163,7 @@ export const shops = pgTable(
     check("shops_held_has_slug", sql`NOT ${t.slugHeld} OR ${t.slug} IS NOT NULL`),
     check("shops_published_has_slug", sql`NOT ${t.published} OR ${t.slug} IS NOT NULL`),
     check("shops_kind", sql`${t.kind} IN ('salon','boutique','services','other')`),
+    check("shops_reel_transition", sql`${t.reelTransition} IN ('channel','crossfade','slide')`),
     check("shops_payment_terms", sql`${t.paymentTermsDays} BETWEEN 0 AND 365`),
     check("shops_invoice_link_days", sql`${t.invoiceLinkDays} BETWEEN 1 AND 365`),
     check("shops_invoice_mail_message", sql`length(${t.invoiceMailMessage}) <= 500`),
@@ -423,6 +426,8 @@ export const shopReels = pgTable(
     id: id(),
     shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
     kind: text("kind", { enum: ["upload", "external"] }).notNull(),
+    /** The place in the owner's playlist (0 = first); the page plays them in this order, then again (akinaza#469). */
+    position: integer("position").notNull(),
     mp4Url: text("mp4_url"),
     webmUrl: text("webm_url"),
     posterUrl: text("poster_url"),
@@ -438,6 +443,7 @@ export const shopReels = pgTable(
     index("shop_reels_shop").on(t.shopId, t.createdAt),
     check("shop_reels_kind", sql`(${t.kind} = 'upload' AND (${t.mp4Url} IS NOT NULL OR ${t.webmUrl} IS NOT NULL) AND ${t.platform} IS NULL) OR (${t.kind} = 'external' AND ${t.platform} IS NOT NULL AND ${t.externalUrl} IS NOT NULL AND ${t.embedUrl} IS NOT NULL)`),
     check("shop_reels_urls", sql`coalesce(${t.mp4Url}, 'https://') ~ '^https://' AND coalesce(${t.webmUrl}, 'https://') ~ '^https://' AND coalesce(${t.posterUrl}, 'https://') ~ '^https://' AND coalesce(${t.externalUrl}, 'https://') ~ '^https://' AND coalesce(${t.embedUrl}, 'https://') ~ '^https://'`),
+    check("shop_reels_position", sql`${t.position} >= 0 AND ${t.position} < 100`),
     check("shop_reels_titles", sql`length(${t.titleFr}) <= 60 AND length(${t.titleEn}) <= 60`),
   ],
 );

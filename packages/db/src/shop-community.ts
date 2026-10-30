@@ -1,4 +1,4 @@
-import { ANNOUNCEMENT_LIMITS, REVIEW_STATE, WALL_KIND, externalReel, REVIEW_LIMITS, REVIEW_STATES, SOCIAL_PLATFORMS, socialLink, type SocialPlatform, type WallItem, wallSchema, type WallTexture } from "@akinaza/core";
+import { ANNOUNCEMENT_LIMITS, REEL_TRANSITIONS, type ReelTransition, REVIEW_STATE, WALL_KIND, externalReel, REVIEW_LIMITS, REVIEW_STATES, SOCIAL_PLATFORMS, socialLink, type SocialPlatform, type WallItem, wallSchema, type WallTexture } from "@akinaza/core";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -64,11 +64,13 @@ export interface ReelRow {
   embedUrl: string | null;
   titleFr: string;
   titleEn: string;
+  position: number;
   createdAt: Date;
 }
 
+/** The owner's playlist, in the order the page plays it (akinaza#469). */
 export async function reelsOf(db: Db, shopId: string): Promise<ReelRow[]> {
-  return db.select().from(shopReels).where(eq(shopReels.shopId, shopId)).orderBy(desc(shopReels.createdAt), desc(shopReels.id));
+  return db.select().from(shopReels).where(eq(shopReels.shopId, shopId)).orderBy(asc(shopReels.position), asc(shopReels.createdAt), asc(shopReels.id));
 }
 
 const httpsOrNull = z.string().max(500).regex(/^https:\/\//).nullable();
@@ -76,17 +78,19 @@ const titles = { titleFr: z.string().max(60), titleEn: z.string().max(60) };
 const uploadedReelSchema = z.object({ mp4Url: httpsOrNull, webmUrl: httpsOrNull, posterUrl: httpsOrNull, seconds: z.number().positive().max(3600), ...titles }).refine((r) => r.mp4Url || r.webmUrl, { message: "A video address" });
 const externalTitles = z.object({ ...titles, posterUrl: httpsOrNull.optional() });
 
-async function assertRoom(tx: Pick<Db, "select">, shopId: string): Promise<void> {
-  const [row] = await tx.select({ n: sql<number>`count(*)::int` }).from(shopReels).where(eq(shopReels.shopId, shopId));
+/** Checks the shop has room for one more, and gives the place it takes: the end of the playlist. */
+async function nextPosition(tx: Pick<Db, "select">, shopId: string): Promise<number> {
+  const [row] = await tx.select({ n: sql<number>`count(*)::int`, last: sql<number>`coalesce(max(${shopReels.position}), -1)::int` }).from(shopReels).where(eq(shopReels.shopId, shopId));
   if ((row?.n ?? 0) >= MAX_REELS) throw new ShopError("AK_REEL_LIMIT");
+  return (row?.last ?? -1) + 1;
 }
 
 export async function addUploadedReel(db: Db, shopId: string, input: z.input<typeof uploadedReelSchema>): Promise<string> {
   const reel = uploadedReelSchema.parse(input);
   return db.transaction(async (tx) => {
     await tx.execute(sql`SELECT id FROM shops WHERE id = ${shopId} FOR UPDATE`);
-    await assertRoom(tx, shopId);
-    const [row] = await tx.insert(shopReels).values({ shopId, kind: "upload", ...reel }).returning({ id: shopReels.id });
+    const position = await nextPosition(tx, shopId);
+    const [row] = await tx.insert(shopReels).values({ shopId, position, kind: "upload", ...reel }).returning({ id: shopReels.id });
     return row!.id;
   });
 }
@@ -98,8 +102,8 @@ export async function addExternalReel(db: Db, shopId: string, url: string, raw: 
   const names = externalTitles.parse(raw);
   return db.transaction(async (tx) => {
     await tx.execute(sql`SELECT id FROM shops WHERE id = ${shopId} FOR UPDATE`);
-    await assertRoom(tx, shopId);
-    const [row] = await tx.insert(shopReels).values({ shopId, kind: "external", platform: link.platform, externalUrl: link.url, embedUrl: link.embedUrl, ...names, posterUrl: names.posterUrl ?? null }).returning({ id: shopReels.id });
+    const position = await nextPosition(tx, shopId);
+    const [row] = await tx.insert(shopReels).values({ shopId, position, kind: "external", platform: link.platform, externalUrl: link.url, embedUrl: link.embedUrl, ...names, posterUrl: names.posterUrl ?? null }).returning({ id: shopReels.id });
     return row!.id;
   });
 }
@@ -107,6 +111,28 @@ export async function addExternalReel(db: Db, shopId: string, url: string, raw: 
 export async function removeReel(db: Db, shopId: string, reelId: string): Promise<boolean> {
   const rows = await db.delete(shopReels).where(and(eq(shopReels.shopId, shopId), eq(shopReels.id, reelId))).returning({ id: shopReels.id });
   return rows.length > 0;
+}
+
+/** Puts the videos in the owner's order. The list must be exactly this shop's videos, each once: anything else changes nothing and answers false. */
+export async function reorderReels(db: Db, shopId: string, ids: readonly string[]): Promise<boolean> {
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT id FROM shops WHERE id = ${shopId} FOR UPDATE`);
+    const current = await tx.select({ id: shopReels.id }).from(shopReels).where(eq(shopReels.shopId, shopId));
+    if (new Set(ids).size !== ids.length || ids.length !== current.length || !current.every((r) => ids.includes(r.id))) return false;
+    for (const [position, id] of ids.entries()) await tx.update(shopReels).set({ position }).where(and(eq(shopReels.shopId, shopId), eq(shopReels.id, id)));
+    return true;
+  });
+}
+
+export async function reelTransitionOf(db: Db, shopId: string): Promise<ReelTransition> {
+  const [row] = await db.select({ t: shops.reelTransition }).from(shops).where(eq(shops.id, shopId));
+  return row?.t ?? "channel";
+}
+
+/** How the page's television passes to the next video: one of the three (`REEL_TRANSITIONS`). */
+export async function setReelTransition(db: Db, shopId: string, transition: ReelTransition): Promise<void> {
+  const chosen = z.enum(REEL_TRANSITIONS).parse(transition);
+  await db.update(shops).set({ reelTransition: chosen }).where(eq(shops.id, shopId));
 }
 
 // ---- the profile links ---------------------------------------------------------------------------------------------------------------------------
@@ -265,10 +291,12 @@ export interface PublicReview {
 }
 export interface CommunityView {
   wall: WallRow;
-  /** The latest reel, if any. */
+  /** The first video of the playlist, if any. */
   reel: ReelRow | null;
-  /** Every reel, the newest first. */
+  /** Every video, in the owner's order. */
   reels: ReelRow[];
+  /** How the television passes from one to the next. */
+  reelTransition: ReelTransition;
   links: SocialLinks;
   announcements: AnnouncementRow[];
   /** Published reviews only; the verified flag is kept for the score. */
@@ -277,11 +305,12 @@ export interface CommunityView {
 
 /** The public projection of the shop as a place: no client id, no hidden or removed review, no e-mail. */
 export async function communityOf(db: Db, shopId: string): Promise<CommunityView> {
-  const [wall, reels, links, announcements, reviews] = await Promise.all([wallOf(db, shopId), reelsOf(db, shopId), socialLinksOf(db, shopId), announcementsOf(db, shopId), reviewsOf(db, shopId)]);
+  const [wall, reels, reelTransition, links, announcements, reviews] = await Promise.all([wallOf(db, shopId), reelsOf(db, shopId), reelTransitionOf(db, shopId), socialLinksOf(db, shopId), announcementsOf(db, shopId), reviewsOf(db, shopId)]);
   return {
     wall,
     reel: reels[0] ?? null,
     reels,
+    reelTransition,
     links,
     announcements,
     reviews: reviews.filter((r) => r.state === REVIEW_STATE.published).map((r) => ({ id: r.id, firstName: r.firstName, lastInitial: r.lastInitial, rating: r.rating, body: r.body, serviceName: r.serviceName, reply: r.reply, createdAt: r.createdAt, verified: r.verified, state: r.state })),

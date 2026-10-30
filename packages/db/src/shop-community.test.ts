@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { eq } from "drizzle-orm";
 
 import { eraseClient } from "./shop-ops";
-import { addAnnouncement, feedFlyers, addExternalReel, addReview, addUploadedReel, announcementsOf, communityOf, reelsOf, removeAnnouncement, removeReel, replyToReview, reviewsOf, saveSocialLinks, saveWall, setReviewState, socialLinksOf, wallOf } from "./shop-community";
+import { addAnnouncement, feedFlyers, addExternalReel, addReview, addUploadedReel, announcementsOf, communityOf, reelsOf, removeAnnouncement, removeReel, reelTransitionOf, reorderReels, setReelTransition, replyToReview, reviewsOf, saveSocialLinks, saveWall, setReviewState, socialLinksOf, wallOf } from "./shop-community";
 import { shops } from "./schema";
 import { freshDatabase, refusal } from "./test/db";
 import { walkerShop } from "./test/fixtures";
@@ -69,14 +69,47 @@ describe("the wall (#310)", () => {
 });
 
 describe("the reels (#312)", () => {
-  it("keeps an uploaded reel as CDN addresses and shows the latest", async () => {
+  it("keeps an uploaded reel as CDN addresses, in the order they were added", async () => {
     const s = await walkerShop(t.db, "reel-up");
     await addUploadedReel(t.db, s.shopId, { mp4Url: "https://cdn.example/a.mp4", webmUrl: "https://cdn.example/a.webm", posterUrl: "https://cdn.example/a.webp", seconds: 7.8, titleFr: "Ma semaine", titleEn: "My week" });
     await addExternalReel(t.db, s.shopId, "https://www.youtube.com/shorts/abcDEF12345", { titleFr: "", titleEn: "" });
     const reels = await reelsOf(t.db, s.shopId);
     expect(reels).toHaveLength(2);
-    expect(reels[0]!.kind).toBe("external");
-    expect((await communityOf(t.db, s.shopId)).reel?.kind).toBe("external");
+    expect(reels.map((r) => r.kind)).toEqual(["upload", "external"]);
+    expect((await communityOf(t.db, s.shopId)).reel?.kind).toBe("upload");
+  });
+
+  it("plays the videos in the owner's order: reordered, and a removal closes the gap (#469)", async () => {
+    const s = await walkerShop(t.db, "reel-order");
+    const ids: string[] = [];
+    for (const n of ["a", "b", "c"]) ids.push(await addUploadedReel(t.db, s.shopId, { mp4Url: `https://cdn.example/${n}.mp4`, webmUrl: null, posterUrl: null, seconds: 5, titleFr: n, titleEn: n }));
+    expect((await reelsOf(t.db, s.shopId)).map((r) => r.titleEn)).toEqual(["a", "b", "c"]);
+    expect(await reorderReels(t.db, s.shopId, [ids[2]!, ids[0]!, ids[1]!])).toBe(true);
+    expect((await reelsOf(t.db, s.shopId)).map((r) => r.titleEn)).toEqual(["c", "a", "b"]);
+    await removeReel(t.db, s.shopId, ids[0]!);
+    await addUploadedReel(t.db, s.shopId, { mp4Url: "https://cdn.example/d.mp4", webmUrl: null, posterUrl: null, seconds: 5, titleFr: "d", titleEn: "d" });
+    expect((await reelsOf(t.db, s.shopId)).map((r) => r.titleEn)).toEqual(["c", "b", "d"]);
+  });
+
+  it("refuses an order that is not exactly this shop's videos, and never touches another shop (#469)", async () => {
+    const a = await walkerShop(t.db, "reel-ord-a");
+    const b = await walkerShop(t.db, "reel-ord-b");
+    const one = await addUploadedReel(t.db, a.shopId, { mp4Url: "https://cdn.example/1.mp4", webmUrl: null, posterUrl: null, seconds: 5, titleFr: "", titleEn: "1" });
+    const two = await addUploadedReel(t.db, a.shopId, { mp4Url: "https://cdn.example/2.mp4", webmUrl: null, posterUrl: null, seconds: 5, titleFr: "", titleEn: "2" });
+    const other = await addUploadedReel(t.db, b.shopId, { mp4Url: "https://cdn.example/3.mp4", webmUrl: null, posterUrl: null, seconds: 5, titleFr: "", titleEn: "3" });
+    expect(await reorderReels(t.db, a.shopId, [two])).toBe(false);
+    expect(await reorderReels(t.db, a.shopId, [two, one, one])).toBe(false);
+    expect(await reorderReels(t.db, a.shopId, [two, other])).toBe(false);
+    expect((await reelsOf(t.db, a.shopId)).map((r) => r.titleEn)).toEqual(["1", "2"]);
+    expect((await reelsOf(t.db, b.shopId)).map((r) => r.titleEn)).toEqual(["3"]);
+  });
+
+  it("keeps the transition between two videos: the channel switch unless the owner chose another (#469)", async () => {
+    const s = await walkerShop(t.db, "reel-transition");
+    expect(await reelTransitionOf(t.db, s.shopId)).toBe("channel");
+    await setReelTransition(t.db, s.shopId, "slide");
+    expect(await reelTransitionOf(t.db, s.shopId)).toBe("slide");
+    await expect(setReelTransition(t.db, s.shopId, "spin" as never)).rejects.toThrow();
   });
 
   it("refuses a link to any other host", async () => {
