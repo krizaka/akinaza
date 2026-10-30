@@ -7,7 +7,7 @@ import { getDictionary, type Locale } from "@/lib/i18n";
 export function LexiconSection({ locale }: Readonly<{ locale: Locale }>) {
   const t = getDictionary(locale).console;
   return (
-    <section aria-label={t.lexicon.title} className="flex flex-col gap-2" data-testid="lexicon">
+    <div className="flex flex-col gap-2" data-testid="lexicon">
       <Glossary
         title={t.lexicon.title}
         terms={LEXICON.map(({ id, accountant }) => ({
@@ -16,6 +16,6 @@ export function LexiconSection({ locale }: Readonly<{ locale: Locale }>) {
           definition: accountant ? `${t.lexicon.terms[id].definition} ${t.lexicon.accountant}` : t.lexicon.terms[id].definition,
         }))}
       />
-    </section>
+    </div>
   );
 }
