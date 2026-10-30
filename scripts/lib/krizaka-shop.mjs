@@ -17,31 +17,24 @@ export const SHOP = {
 };
 
 /** Every product is « in development » (nothing is sold yet); the Entreprise offer is the one thing on quote. A 0 $ price that « varies » reads « On quote ». */
+const NOT_ON_SALE = { fr: ["Le code est public", "Pas encore en vente"], en: ["The code is public", "Not on sale yet"] };
+
+/** A product of the family, in development: its sentence in both languages, its site, and the one thing it promises. */
+function product(name, host, [whatFr, whatEn], [promiseFr, promiseEn]) {
+  return {
+    nameFr: name,
+    nameEn: name,
+    descriptionFr: `En développement. ${whatFr} Voir ${host}.`,
+    descriptionEn: `In development. ${whatEn} See ${host}.`,
+    includedFr: [promiseFr, ...NOT_ON_SALE.fr],
+    includedEn: [promiseEn, ...NOT_ON_SALE.en],
+  };
+}
+
 export const OFFERS = [
-  {
-    nameFr: "Yomizaka",
-    nameEn: "Yomizaka",
-    descriptionFr: "En développement. Yomizaka lit un bail ou un document et en tire ce qui compte. Voir dev.yomizaka.com.",
-    descriptionEn: "In development. Yomizaka reads a lease or a document and pulls out what matters. See dev.yomizaka.com.",
-    includedFr: ["Un produit bâti au grand jour", "Le code est public", "Pas encore en vente"],
-    includedEn: ["A product built in the open", "The code is public", "Not on sale yet"],
-  },
-  {
-    nameFr: "Akinaza",
-    nameEn: "Akinaza",
-    descriptionFr: "En développement. Akinaza donne une page, des rendez-vous, des factures et des livres aux petites entreprises de services. Voir dev.akinaza.com.",
-    descriptionEn: "In development. Akinaza gives small service businesses a page, bookings, invoices and books. See dev.akinaza.com.",
-    includedFr: ["Elle prépare vos taxes, vous les produisez", "Le code est public", "Pas encore en vente"],
-    includedEn: ["It prepares your taxes, you file them", "The code is public", "Not on sale yet"],
-  },
-  {
-    nameFr: "Orazaka",
-    nameEn: "Orazaka",
-    descriptionFr: "En développement. Orazaka est le moteur d'IA souverain sur lequel nos produits s'appuient. Voir dev.orazaka.com.",
-    descriptionEn: "In development. Orazaka is the sovereign AI engine our products run on. See dev.orazaka.com.",
-    includedFr: ["Un moteur que vous hébergez vous-même", "Le code est public", "Pas encore en vente"],
-    includedEn: ["An engine you host yourself", "The code is public", "Not on sale yet"],
-  },
+  product("Yomizaka", "dev.yomizaka.com", ["Yomizaka lit un bail ou un document et en tire ce qui compte.", "Yomizaka reads a lease or a document and pulls out what matters."], ["Un produit bâti au grand jour", "A product built in the open"]),
+  product("Akinaza", "dev.akinaza.com", ["Akinaza donne une page, des rendez-vous, des factures et des livres aux petites entreprises de services.", "Akinaza gives small service businesses a page, bookings, invoices and books."], ["Elle prépare vos taxes, vous les produisez", "It prepares your taxes, you file them"]),
+  product("Orazaka", "dev.orazaka.com", ["Orazaka est le moteur d'IA souverain sur lequel nos produits s'appuient.", "Orazaka is the sovereign AI engine our products run on."], ["Un moteur que vous hébergez vous-même", "An engine you host yourself"]),
   {
     nameFr: "Krizaka Entreprise",
     nameEn: "Krizaka Entreprise",
