@@ -53,17 +53,35 @@ export function ownerSession(owner) {
   };
 }
 
-export function check({ base, shots, owner }) {
-  return auditRoutes({ ...OPTIONS, base, routes: PAGES, shots, a11y: A11Y, session: owner ? ownerSession(owner) : undefined });
+/**
+ * The seed states of an owner (akinaza#405): the cast's shops are busy, so each list is also crawled with NOTHING in it (an empty shop) and with ONE
+ * item (one service, client, invoice, expense), as the owners `seed-owner-states` creates. Same frame pages, same measures; the axe ratchet counts
+ * the public pages and the busy owner once, so these runs add the layout, console and tap-target checks only.
+ */
+export const STATE_OWNERS = [
+  { state: "empty", emailVariable: "HYDRATION_EMPTY_OWNER_EMAIL" },
+  { state: "one", emailVariable: "HYDRATION_ONE_OWNER_EMAIL" },
+];
+
+export async function check({ base, shots, owner, states = [] }) {
+  const problems = await auditRoutes({ ...OPTIONS, base, routes: PAGES, shots, a11y: A11Y, session: owner ? ownerSession(owner) : undefined });
+  for (const state of states) {
+    const found = await auditRoutes({ ...OPTIONS, base, routes: [], shots: shots && `${shots}/${state.state}`, session: ownerSession(state) });
+    problems.push(...found.map((line) => `[${state.state} shop] ${line}`));
+  }
+  return problems;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const { HYDRATION_OWNER_EMAIL: email, HYDRATION_OWNER_PASSWORD: secret } = process.env;
   if (!email || !secret) process.stdout.write("check-overflow: no HYDRATION_OWNER_* credentials, the signed-in frame is not checked\n");
-  const problems = await check({ base: arg("base", "http://localhost:3000"), shots: arg("shots"), owner: email && secret ? { email, secret } : undefined });
+  const password = process.env.HYDRATION_STATES_PASSWORD;
+  const states = STATE_OWNERS.flatMap((s) => (process.env[s.emailVariable] && password ? [{ state: s.state, email: process.env[s.emailVariable], secret: password }] : []));
+  if (states.length < STATE_OWNERS.length) process.stdout.write("check-overflow: no HYDRATION_STATES_PASSWORD or owner e-mails, the empty and one-item shops are not checked\n");
+  const problems = await check({ base: arg("base", "http://localhost:3000"), shots: arg("shots"), owner: email && secret ? { email, secret } : undefined, states });
   if (problems.length) {
     console.error(`${problems.length} responsive problem(s):\n  ${problems.join("\n  ")}`);
     process.exit(1);
   }
-  console.log(`no horizontal overflow: ${PAGES.length} public pages${email && secret ? ` and ${FRAME_PAGES.length * FRAME_LOCALES.length} pages of the signed-in frame` : ""} x ${WIDTHS.length} widths x ${THEMES.length} themes`);
+  console.log(`no horizontal overflow: ${PAGES.length} public pages${email && secret ? ` and ${FRAME_PAGES.length * FRAME_LOCALES.length} pages of the signed-in frame${states.length ? `, as the busy, the empty and the one-item shop` : ""}` : ""} x ${WIDTHS.length} widths x ${THEMES.length} themes`);
 }

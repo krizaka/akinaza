@@ -15,6 +15,7 @@ import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri } from "@akinaza/db/see
 import { castOf, persona, seedFingerprint } from "@krizaka/org";
 
 import { hashPassword } from "./qa-accounts.mjs";
+import { ensureOwnerStates } from "./seed-owner-states.mjs";
 
 /** What a LOCAL database gets when nothing is given. Never used on a host that is not this machine. */
 export const LOCAL_SECRET = "local-cast-password-0123";
@@ -122,6 +123,8 @@ async function main() {
     }
     const result = await seedSaintHenri(createDb(pool), key, fixedNow ? new Date(fixedNow) : new Date());
     console.log(`seed-cast: ${WALKER.displayName} (${SAINT_HENRI.shop.name}), ${accounts.length - 3} clients, ${ERIC.displayName}, ${ADMIN.displayName} (administrator); shop ${result.created ? "created" : "already there"}`);
+    // The two owner states of the page audit (#405: an empty shop, a shop with one item per list): outside the fingerprint, which counts the cast alone.
+    await ensureOwnerStates(pool, accounts[0].secret);
     const { fingerprint, counts } = await fingerprintOf((sql, values) => pool.query(sql, values), ids, ids[0]);
     console.log(`fingerprint: ${fingerprint}`);
     if (process.argv.includes("--check")) {

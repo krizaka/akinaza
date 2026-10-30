@@ -21,7 +21,9 @@ function useSectionSave(page: Page | null) {
   const { say, locale } = useSay();
   const call = useCall();
   const [saved, setSaved] = useState(false);
+  const [held, setHeld] = useState(false);
   return {
+    held,
     say,
     locale,
     call,
@@ -29,8 +31,11 @@ function useSectionSave(page: Page | null) {
     i18n: { t: (key: string, vars?: Record<string, unknown>) => say(key, vars as Record<string, string | number> | undefined), locale },
     save: async (values: Partial<Page>) => {
       setSaved(false);
+      setHeld(false);
       const next = { ...EMPTY, ...(page ?? {}), ...values };
-      setSaved((await call.run("/api/walker/shop", { json: next })) !== null);
+      const answer = (await call.run("/api/walker/shop", { json: next })) as { held?: boolean } | null;
+      setSaved(answer !== null);
+      setHeld(answer?.held === true);
     },
   };
 }
@@ -68,7 +73,8 @@ function SectionStatus({ s }: Readonly<{ s: ReturnType<typeof useSectionSave> }>
   return (
     <>
       {s.call.problem ? <Alert tone="danger">{s.call.problem}</Alert> : null}
-      {s.saved ? <Alert tone="success">{s.say("shopSetup.sections.saved")}</Alert> : null}
+      {s.saved && !s.held ? <Alert tone="success">{s.say("shopSetup.sections.saved")}</Alert> : null}
+      {s.saved && s.held ? <Alert tone="warning">{s.say("shopSetup.sections.held")}</Alert> : null}
     </>
   );
 }

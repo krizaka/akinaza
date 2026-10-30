@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { A11Y, A11Y_WIDTHS, CHECKS, FRAME_LOCALES, FRAME_PAGES, OPTIONS, PAGES, SETTLE_MS, THEMES, WIDTHS } from "./check-overflow.mjs";
+import { A11Y, A11Y_WIDTHS, CHECKS, FRAME_LOCALES, FRAME_PAGES, OPTIONS, PAGES, SETTLE_MS, STATE_OWNERS, THEMES, WIDTHS } from "./check-overflow.mjs";
 
 describe("the dev-preview crawl (ui.themes-devices)", () => {
   it("covers both languages of the public pages and the sign-in, in both themes, from a phone to a desktop", () => {
@@ -48,5 +48,13 @@ describe("the dev-preview crawl (ui.themes-devices)", () => {
     expect(css).toMatch(/\[data-app-frame-slot\] > \.min-h-dvh \{ min-height: calc\(100dvh - var\(--kz-top-chrome-h, 0px\)\)/);
     expect(css).toMatch(/\.md\\:h-dvh \{ height: calc\(100dvh - var\(--kz-top-chrome-h/);
     for (const f of ["ShopFrame", "AppFrame"]) expect(readFileSync(new URL(`../apps/web/components/app/${f}.tsx`, import.meta.url), "utf8")).toContain("<FrameSlot>");
+  });
+
+  it("crawls the frame as an owner with an EMPTY shop and an owner with ONE item per list, seeded by CI like the dev seed (akinaza#405)", () => {
+    expect(STATE_OWNERS.map((o) => o.state)).toEqual(["empty", "one"]);
+    const ci = readFileSync(new URL("./ci-after-build.sh", import.meta.url), "utf8");
+    expect(ci).toContain("scripts/seed-owner-states.mjs");
+    for (const o of STATE_OWNERS) expect(ci).toContain(`${o.emailVariable}=`);
+    expect(readFileSync(new URL("../apps/web/scripts/seed-cast.mjs", import.meta.url), "utf8")).toContain("ensureOwnerStates(");
   });
 });

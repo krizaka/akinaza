@@ -22,6 +22,9 @@ export HYDRATION_CLIENT_EMAIL=camille.tremblay@akinaza.test HYDRATION_CLIENT_PAS
 pnpm --filter @akinaza/db seed:demos
 QA_USER_EMAIL=qa-user@akinaza.test QA_USER_PASSWORD=ci-only-password-user QA_ADMIN_EMAIL=qa-admin@akinaza.test QA_ADMIN_PASSWORD=ci-only-password-admin node apps/web/scripts/qa-accounts.mjs
 QA_WALKER_PASSWORD="$HYDRATION_OWNER_PASSWORD" QA_CLIENTS_PASSWORD="$HYDRATION_CLIENT_PASSWORD" pnpm --filter @akinaza/web exec tsx scripts/seed-saint-henri.mjs
+# The owner states of the page audit (akinaza#405): an owner whose shop is empty and one whose shop has one item per list, crawled by check:overflow.
+export HYDRATION_EMPTY_OWNER_EMAIL=ines.debut@akinaza.test HYDRATION_ONE_OWNER_EMAIL=yan.seul@akinaza.test HYDRATION_STATES_PASSWORD=ci-only-password-states
+QA_OWNER_STATES_PASSWORD="$HYDRATION_STATES_PASSWORD" pnpm --filter @akinaza/web exec tsx scripts/seed-owner-states.mjs
 for _ in $(seq 1 60); do curl -sf http://localhost:3000/api/healthz && break; sleep 1; done
 pnpm run seo:check
 # Every cookie the app sets is host-only (no Domain, Path=/, __Host- on https): akinaza#534, ADR-005.
