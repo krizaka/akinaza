@@ -1,0 +1,8 @@
+Hello,
+
+The address of your shop {shop}, {address}, looks like a name we protect against impersonation (a bank, a payment service, a word such as "login"). Your page stays private until we have checked it. Nothing else changes: your bookings, invoices and clients are as they were.
+
+You can pick another address now and your page is public again at once:
+{url}
+
+If you think this is a mistake, reply to this e-mail: a person reads it.

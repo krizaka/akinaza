@@ -5,6 +5,7 @@ import type { CommunityPublicView } from "@/lib/community-view";
 import type { DefaultImage, ResolvedDefaults } from "@/lib/default-media";
 import { type Locale, type PageLocale, translator } from "@/lib/i18n";
 import { serviceHref } from "@/lib/journey-paths";
+import { isOnQuote } from "@/lib/service-price";
 
 /**
  * A shop's public page, as the page draws it: every section is computed from the shop's data (its hours, services, zones,
@@ -215,8 +216,8 @@ export function buildStorefront(input: { page: PublicShop; /** The shop as a pla
     included: (own("service", s.id, "included", s.includedFr.join("\n"), s.includedEn.join("\n")) ?? "").split("\n").filter(Boolean),
     duration: t("console.shopPage.minutes", { minutes: s.durationMinutes }),
     capacity: capacityLabel(s.capacity, unit, t),
-    price: money(s.priceCents, locale),
-    priceFrom: s.priceVaries ? t("console.shopPage.from") : null,
+    price: isOnQuote(s) ? t("console.shopPage.onQuote") : money(s.priceCents, locale),
+    priceFrom: s.priceVaries && !isOnQuote(s) ? t("console.shopPage.from") : null,
     tag: s.id === page.popularServiceId ? t("console.shopPage.popular") : null,
     href: pageHref(s.id),
     image: image(index),

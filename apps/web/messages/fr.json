@@ -644,7 +644,8 @@
       },
       "organize": "Étiquettes et vues",
       "prices": "Prix",
-      "incidents": "Incidents"
+      "incidents": "Incidents",
+      "addresses": "Adresses des boutiques"
     },
     "admin": {
       "health": "Santé",
@@ -879,6 +880,67 @@
         "seedLine": "Valeur de départ : {price}",
         "historyLine": "{at}, {actor} : {before} → {after}, à partir du {from}"
       },
+      "slugHolds": {
+        "title": "Adresses des boutiques",
+        "lead": "Une adresse de boutique qui porte un nom protégé (une banque, un service de paiement, un mot comme login) est retenue : la boutique est enregistrée mais sa page reste privée le temps que vous l'examiniez. Passez la file en revue, tenez la liste des termes, et jugez les boutiques qui existaient avant cette vérification.",
+        "queue": {
+          "title": "Adresses retenues",
+          "lead": "Les plus anciennes d'abord. Valider une adresse rend la page publique (si elle est publiée) et elle n'est plus retenue pour cette adresse ; la garder retenue en consigne la raison.",
+          "empty": "Aucune adresse n'est retenue.",
+          "shop": "Boutique",
+          "address": "Adresse",
+          "term": "Terme repéré",
+          "heldAt": "Retenue le",
+          "reviewed": "Statut",
+          "kept": "Gardée retenue",
+          "new": "À examiner",
+          "review": "Examiner"
+        },
+        "review": {
+          "title": "Examen : {shop}",
+          "hide": "Fermer",
+          "preview": "L'adresse telle que la lisent les visiteurs",
+          "owner": "Propriétaire",
+          "page": "Page",
+          "published": "Publiée, privée tant qu'elle est retenue",
+          "draft": "Non publiée",
+          "note": "Dernière décision",
+          "effect": "Les deux décisions sont inscrites au journal d'audit. Le propriétaire n'est pas averti d'une décision ici.",
+          "clear": "Valider : l'adresse convient",
+          "reason": "Raison de la garder retenue",
+          "reasonHint": "Conservée dans la file et dans le journal d'audit, 500 caractères au plus.",
+          "keep": "Garder retenue avec cette raison"
+        },
+        "terms": {
+          "title": "Termes protégés",
+          "lead": "Un mot ou une /expression régulière/ par entrée. Un mot est cherché dans l'adresse une fois les chiffres trompeurs lus comme des lettres (0 pour o, 1 pour l, 3 pour e, 5 pour s) et les traits d'union ignorés. Un motif est testé sur toute l'adresse. Un motif qui pourrait être très long à évaluer est refusé.",
+          "add": "Ajouter un terme",
+          "addSubmit": "Ajouter",
+          "edit": "Modifier",
+          "save": "Enregistrer",
+          "cancel": "Annuler",
+          "remove": "Retirer",
+          "empty": "Aucun terme : aucune adresse n'est retenue.",
+          "hint": "Un mot (login) ou un motif entre barres obliques (/^pay.?pal$/).",
+          "kinds": { "word": "Mot", "pattern": "Motif", "comment": "Commentaire" },
+          "issues": {
+            "word": "Un mot ne peut contenir que des lettres, des chiffres et des traits d'union.",
+            "invalid": "Ce n'est pas une expression régulière valide.",
+            "unsafe": "Ce motif pourrait être très long sur certaines adresses (groupes répétés). Écrivez-le en plusieurs entrées ou avec des groupes plus simples.",
+            "too-long": "Un motif contient 100 caractères au plus."
+          }
+        },
+        "rejudge": {
+          "title": "Juger les boutiques existantes",
+          "lead": "Les boutiques créées avant cette vérification n'ont jamais été jugées. Le rapport liste celles que les termes actuels retiendraient ; rien ne change tant que vous n'appliquez pas.",
+          "dry": "Lancer le rapport (ne change rien)",
+          "foundNone": "Aucune boutique existante n'est retenue par les termes actuels.",
+          "found": "Boutiques existantes qui seraient retenues : {count}.",
+          "effect": "Appliquer retient ces boutiques et envoie à chaque propriétaire, dans sa langue, un courriel : la page reste privée le temps de la vérification, et comment choisir une autre adresse.",
+          "apply": "Retenir ces boutiques et avertir leurs propriétaires",
+          "applied": "Boutiques retenues : {count}. Propriétaires avertis : {notified}."
+        }
+      },
       "incidents": {
         "title": "Incidents de confidentialité",
         "lead": "Le registre exigé par la Loi sur la protection des renseignements personnels dans le secteur privé (art. 3.5 à 3.8) : tous les incidents, graves ou non, conservés cinq ans. Il contient des faits et des catégories de renseignements, jamais les données d'une personne. Évaluez le risque de préjudice sérieux ; s'il existe, avisez la Commission d'accès à l'information et les personnes concernées, puis fermez. Il couvre les données d'Akinaza : fiches de clients des boutiques, factures et relevés fiscaux.",
@@ -960,6 +1022,7 @@
       "SUSPENDED": "Ce compte est suspendu.",
       "SIGNUP_CLOSED": "Les inscriptions sont fermées.",
       "RATE_LIMITED": "Trop d'essais. Réessayez dans un moment.",
+      "BAD_VALUE": "Cette valeur ne peut pas être enregistrée : un terme est un mot ou un /motif/ sûr.",
       "UNAUTHENTICATED": "Votre session a pris fin. Reconnectez-vous.",
       "FORBIDDEN": "Non autorisé.",
       "IP_NOT_ALLOWED": "Pas depuis cette adresse.",
@@ -983,6 +1046,7 @@
       "CONFIRM_MISMATCH": "Le courriel saisi ne correspond pas au compte.",
       "RETENTION_REQUIRED": "Ce compte possède un commerce dont les factures sont conservées six ans.",
       "SLUG_TAKEN": "Cette adresse est déjà prise, ou c'était l'adresse d'une autre page.",
+      "SLUG_RATE_LIMIT": "Vous avez changé cette adresse trop souvent. Réessayez dans quelques jours.",
       "NOT_PUBLISHABLE": "Ajoutez au moins un service avant de publier la page.",
       "ZONE_EXISTS": "Cette zone est déjà dans la liste.",
       "WINDOW_OVERLAP": "Cette plage chevauche une autre plage du même jour.",
@@ -1586,7 +1650,8 @@
         "includedFr": "Ce qui est inclus (français)",
         "includedEn": "Ce qui est inclus (anglais)",
         "includedHint": "Un par ligne, six au plus.",
-        "priceVaries": "Le prix varie (affiche « À partir de »)",
+        "priceVaries": "Le prix varie (affiche « À partir de »; sans prix indiqué il affiche « Sur devis »)",
+        "onQuote": "sur devis",
         "edit": "Modifier {name}",
         "editing": "Modification d'un service",
         "save": "Enregistrer le service",
@@ -1690,6 +1755,7 @@
         "link": "Ajouter une boutique",
         "back": "Retour à votre page boutique",
         "submit": "Créer la boutique",
+        "slugInvalid": "Cette adresse de page est impossible : de 3 à 40 lettres minuscules, chiffres et traits d'union, et pas un mot que le site utilise lui-même (api, admin, www…).",
         "trade": "Votre métier",
         "tradeHint": "Il choisit les mots de vos pages, les images proposées et les modèles.",
         "template": "Modèle de page",
@@ -1929,6 +1995,7 @@
       "choose": "Choisir",
       "popular": "Populaire",
       "from": "À partir de",
+      "onQuote": "Sur devis",
       "minutes": "{minutes} min",
       "capacityUnit": "Jusqu'à {count} {unit}",
       "capacitySeats": "Jusqu'à {count} places",
@@ -2473,6 +2540,7 @@
       "taxNote": "Taxes calculées au cent près.",
       "cancelRule": "Annulation sans frais jusqu'à {hours} h avant.",
       "freeService": "Gratuit",
+      "onQuote": "Sur devis",
       "pickTime": "Choisissez une heure",
       "pickTimeLead": "Seules les heures vraiment libres sont affichées. Touchez-en une pour réserver.",
       "changePerson": "Changer de personne",

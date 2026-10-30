@@ -79,6 +79,10 @@ describe("the rest of the model", () => {
     expect(slugSchema.parse(" Pattes-Saint-Henri ")).toBe("pattes-saint-henri");
     for (const bad of ["ab", "-x-y", "a_b_c", "api", "sign-in", "x".repeat(41)]) expect(slugSchema.safeParse(bad).success).toBe(false);
   });
+  it("lets the company claim its own name: « krizaka » is a protected term (held until an administrator clears it), not a reserved word (#489)", () => {
+    expect(slugSchema.parse("krizaka")).toBe("krizaka");
+    for (const bad of ["akinaza", "www", "admin"]) expect(slugSchema.safeParse(bad).success).toBe(false);
+  });
   it("validates a dog's profile at the door", () => {
     expect(dependantInputSchema.parse({ kind: "dog", name: "Rex", profile: { size: "large", vet: { name: "Clinique Saint-Henri", phone: "514-555-0100" } } }).profile.size).toBe("large");
     expect(dependantInputSchema.safeParse({ kind: "dog", name: "Rex", profile: { size: "huge" } }).success).toBe(false);

@@ -337,6 +337,20 @@
       "when": 1795000016000,
       "tag": "0047_slug_hold",
       "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1795000017000,
+      "tag": "0048_slug_changes",
+      "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1795000018000,
+      "tag": "0049_slug_review",
+      "breakpoints": true
     }
   ]
 }

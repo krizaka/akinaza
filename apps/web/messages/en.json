@@ -644,7 +644,8 @@
       },
       "organize": "Tags and views",
       "prices": "Prices",
-      "incidents": "Incidents"
+      "incidents": "Incidents",
+      "addresses": "Shop addresses"
     },
     "admin": {
       "health": "Health",
@@ -879,6 +880,67 @@
         "seedLine": "Starting value: {price}",
         "historyLine": "{at}, {actor}: {before} → {after}, from {from}"
       },
+      "slugHolds": {
+        "title": "Shop addresses",
+        "lead": "A shop address wearing a protected name (a bank, a payment service, a word such as login) is held: the shop is saved but its page stays private until you have looked at it. Review the queue, keep the list of terms, and judge the shops that existed before this check.",
+        "queue": {
+          "title": "Held addresses",
+          "lead": "Oldest first. Clearing an address makes the page public again (when published) and it is never held again for that address; keeping it held records why.",
+          "empty": "No address is held.",
+          "shop": "Shop",
+          "address": "Address",
+          "term": "Matched term",
+          "heldAt": "Held on",
+          "reviewed": "Status",
+          "kept": "Kept held",
+          "new": "To review",
+          "review": "Review"
+        },
+        "review": {
+          "title": "Review: {shop}",
+          "hide": "Close",
+          "preview": "Address as visitors read it",
+          "owner": "Owner",
+          "page": "Page",
+          "published": "Published, private while held",
+          "draft": "Not published",
+          "note": "Last decision",
+          "effect": "Both decisions are written to the audit log. The owner is not told about a decision here.",
+          "clear": "Clear: the address is fine",
+          "reason": "Reason for keeping it held",
+          "reasonHint": "Kept in the queue and in the audit log, up to 500 characters.",
+          "keep": "Keep held with this reason"
+        },
+        "terms": {
+          "title": "Protected terms",
+          "lead": "One word or one /regular expression/ per entry. A word is looked for inside the address once look-alike digits are read as letters (0 as o, 1 as l, 3 as e, 5 as s) and hyphens are ignored. A pattern is tested on the whole address. A pattern that could take very long to evaluate is refused.",
+          "add": "Add a term",
+          "addSubmit": "Add",
+          "edit": "Edit",
+          "save": "Save",
+          "cancel": "Cancel",
+          "remove": "Remove",
+          "empty": "No term: no address is held.",
+          "hint": "A word (login) or a pattern between slashes (/^pay.?pal$/).",
+          "kinds": { "word": "Word", "pattern": "Pattern", "comment": "Comment" },
+          "issues": {
+            "word": "A word can only hold letters, digits and hyphens.",
+            "invalid": "This is not a valid regular expression.",
+            "unsafe": "This pattern could take very long on some addresses (repeated groups). Write it with separate entries or simpler groups.",
+            "too-long": "A pattern holds at most 100 characters."
+          }
+        },
+        "rejudge": {
+          "title": "Judge existing shops",
+          "lead": "Shops created before this check were never judged. The report lists the ones that the current terms would hold; nothing changes until you apply.",
+          "dry": "Run the report (changes nothing)",
+          "foundNone": "No existing shop is caught by the current terms.",
+          "found": "Existing shops that would be held: {count}.",
+          "effect": "Applying holds these shops and e-mails each owner, in their language, that the page is private until checked and how to choose another address.",
+          "apply": "Hold these shops and notify their owners",
+          "applied": "Shops held: {count}. Owners e-mailed: {notified}."
+        }
+      },
       "incidents": {
         "title": "Confidentiality incidents",
         "lead": "The register required by the Act respecting the protection of personal information in the private sector (ss. 3.5 to 3.8): every incident, serious or not, kept five years. It holds facts and categories of information, never a person's data. Assess the risk of serious injury; if there is one, notify the Commission d'accès à l'information and the people concerned, then close. It covers Akinaza's data: shop customers' files, invoices and tax slips.",
@@ -960,6 +1022,7 @@
       "SUSPENDED": "This account is suspended.",
       "SIGNUP_CLOSED": "Sign-up is closed.",
       "RATE_LIMITED": "Too many attempts. Try again in a moment.",
+      "BAD_VALUE": "This value cannot be saved: a term must be a word or a safe /pattern/.",
       "UNAUTHENTICATED": "Your session has ended. Sign in again.",
       "FORBIDDEN": "Not allowed.",
       "IP_NOT_ALLOWED": "Not from this address.",
@@ -983,6 +1046,7 @@
       "CONFIRM_MISMATCH": "The e-mail typed does not match the account.",
       "RETENTION_REQUIRED": "This account owns a shop whose invoices are kept for six years.",
       "SLUG_TAKEN": "This address is already taken, or it was another page's address.",
+      "SLUG_RATE_LIMIT": "You changed this address too often. Try again in a few days.",
       "NOT_PUBLISHABLE": "Add at least one service before publishing the page.",
       "ZONE_EXISTS": "This zone is already in the list.",
       "WINDOW_OVERLAP": "This window overlaps another one that day.",
@@ -1586,7 +1650,8 @@
         "includedFr": "What is included (French)",
         "includedEn": "What is included (English)",
         "includedHint": "One per line, six at most.",
-        "priceVaries": "The price varies (shows « From »)",
+        "priceVaries": "The price varies (shows « From »; with no price listed it reads « On quote »)",
+        "onQuote": "on quote",
         "edit": "Edit {name}",
         "editing": "Editing a service",
         "save": "Save the service",
@@ -1690,6 +1755,7 @@
         "link": "Add a shop",
         "back": "Back to your shop page",
         "submit": "Create the shop",
+        "slugInvalid": "This page address cannot be used: 3 to 40 lowercase letters, digits and hyphens, and not a word the site itself uses (api, admin, www…).",
         "trade": "Your trade",
         "tradeHint": "It picks the words of your pages, the proposed images and the templates.",
         "template": "Page template",
@@ -1929,6 +1995,7 @@
       "choose": "Choose",
       "popular": "Popular",
       "from": "From",
+      "onQuote": "On quote",
       "minutes": "{minutes} min",
       "capacityUnit": "Up to {count} {unit}",
       "capacitySeats": "Up to {count} spots",
@@ -2473,6 +2540,7 @@
       "taxNote": "Taxes calculated to the cent.",
       "cancelRule": "Free cancellation until {hours} h before.",
       "freeService": "Free",
+      "onQuote": "On quote",
       "pickTime": "Pick a time",
       "pickTimeLead": "Only times that are really free are shown. Tap one to book it.",
       "changePerson": "Change person",

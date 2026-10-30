@@ -126,6 +126,10 @@ export const shops = pgTable(
     slugHeld: boolean("slug_held").notNull().default(false),
     slugHeldTerm: text("slug_held_term"),
     slugHeldAt: timestamp("slug_held_at", { withTimezone: true }),
+    /** The administrator's review (0047): why the hold was kept, when it was last looked at, and the address cleared (a re-judge never holds it again). */
+    slugHoldNote: text("slug_hold_note"),
+    slugHoldReviewedAt: timestamp("slug_hold_reviewed_at", { withTimezone: true }),
+    slugClearedFor: text("slug_cleared_for"),
     taglineFr: text("tagline_fr"),
     taglineEn: text("tagline_en"),
     /** The locality shown on the public page (« Saint-Henri, Montréal »): never the street address. */
@@ -176,6 +180,13 @@ export const shopFormerSlugs = pgTable("shop_former_slugs", {
   shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
   retiredAt: timestamp("retired_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+/** Each change of a shop's address (the first one does not count): the pace limit counts them in a window (0046, ADR-005 slice 4, #537). */
+export const shopSlugChanges = pgTable("shop_slug_changes", {
+  id: id(),
+  shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [index("shop_slug_changes_shop_at").on(t.shopId, t.at)]);
 
 /** What the owner did with a recommendation of the Monday brief: once per recommendation, its result kept (0022). */
 export const briefActions = pgTable("brief_actions", {
