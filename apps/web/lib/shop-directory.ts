@@ -16,8 +16,26 @@ const HIT_MS = 60_000;
 const MISS_MS = 10_000;
 const MAX = 1000;
 
-export function createShopDirectory(lookup: ShopLookup, now: () => number = Date.now) {
-  const seen = new Map<string, { verdict: ShopVerdict; until: number }>();
+type Seen = Map<string, { verdict: ShopVerdict; until: number }>;
+
+/**
+ * The memory the proxy reads, kept on `globalThis` so that a route handler of the same process (publish, rename, hold) can empty it: the proxy and the routes are
+ * separate bundles, one module graph each. Another instance learns the change within the TTLs above.
+ */
+const SHARED = Symbol.for("akinaza.shop-directory");
+function sharedMemory(): Seen {
+  const holder = globalThis as unknown as Record<symbol, Seen | undefined>;
+  const memory = holder[SHARED] ?? new Map();
+  holder[SHARED] = memory;
+  return memory;
+}
+
+/** A shop was published, unpublished, held, cleared or renamed (akinaza#549): the next request on its host asks the database again, here at once. */
+export function forgetShops(): void {
+  sharedMemory().clear();
+}
+
+export function createShopDirectory(lookup: ShopLookup, now: () => number = Date.now, seen: Seen = sharedMemory()) {
   return async function verdictOf(slug: string): Promise<ShopVerdict> {
     const cached = seen.get(slug);
     if (cached && cached.until > now()) {return cached.verdict;}
