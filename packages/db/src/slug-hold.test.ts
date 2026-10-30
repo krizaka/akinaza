@@ -1,5 +1,5 @@
 import { parseProtectedTerms } from "@akinaza/core";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { exploreShops } from "./explore";
@@ -65,6 +65,18 @@ describe("a shop address wearing a protected term is held (ADR-005 slice 4, #537
     expect((await saveShopPage(t.db, owner.id, page("secure-coiffure"), {}, { terms })).held).toBe(true);
     expect((await saveShopPage(t.db, owner.id, page("coiffure-laurier"), {}, { terms })).held).toBe(false);
     expect(await row(shopId)).toMatchObject({ slugHeld: false, slugHeldTerm: null });
+  });
+
+  it("keeps a held shop out of the Explorer read model, and puts it back once cleared (0047)", async () => {
+    const inIndex = async (id: string) => (await t.db.execute(sql`SELECT 1 FROM shop_search WHERE shop_id = ${id}`)).rows.length === 1;
+    const owner = await account(t.db, "held6@example.test");
+    const { shopId } = await saveShopPage(t.db, owner.id, page("paypal-explorer"), {}, { terms });
+    await publish(shopId);
+    expect(await inIndex(shopId)).toBe(false);
+    await clearSlugHold(t.db, shopId);
+    expect(await inIndex(shopId)).toBe(true);
+    await t.db.update(shops).set({ slugHeld: true, slugHeldTerm: "paypal", slugHeldAt: new Date() }).where(eq(shops.id, shopId));
+    expect(await inIndex(shopId)).toBe(false);
   });
 
   it("holds nothing when no terms are given (the seeds, the tests of other features)", async () => {
