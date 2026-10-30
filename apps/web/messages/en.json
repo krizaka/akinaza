@@ -1586,7 +1586,7 @@
         "includedFr": "What is included (French)",
         "includedEn": "What is included (English)",
         "includedHint": "One per line, six at most.",
-        "priceVaries": "The price varies (shows « From »; at $0 it reads « On quote »)",
+        "priceVaries": "The price varies (shows « From »; with no price listed it reads « On quote »)",
         "onQuote": "on quote",
         "edit": "Edit {name}",
         "editing": "Editing a service",
