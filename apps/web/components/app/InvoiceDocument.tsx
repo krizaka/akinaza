@@ -21,7 +21,12 @@ export function InvoiceDocument({ invoice, locale, backHref, heading: Heading = 
   const money = (cents: number) => formatMoney(cents, invoice.language);
   const date = new Date(`${invoice.issuedOn}T12:00:00Z`).toLocaleDateString(lang, { dateStyle: "long", timeZone: "UTC" });
   const due = invoice.dueOn && invoice.termsDays !== null ? new Date(`${invoice.dueOn}T12:00:00Z`).toLocaleDateString(lang, { dateStyle: "long", timeZone: "UTC" }) : null;
-  const terms = invoice.termsDays === 0 ? t.termsOnReceipt : invoice.termsDays === 1 ? t.termsNetOne : format(t.termsNet, { days: invoice.termsDays ?? 0 });
+  const termsOf = () => {
+    if (invoice.termsDays === 0) return t.termsOnReceipt;
+    if (invoice.termsDays === 1) return t.termsNetOne;
+    return format(t.termsNet, { days: invoice.termsDays ?? 0 });
+  };
+  const terms = termsOf();
   return (
     <article lang={invoice.language} className="flex max-w-3xl flex-col gap-5 rounded-lg border border-border-default bg-surface-1 p-5 sm:p-8" aria-labelledby="invoice-title">
       {backHref ? <p><Link className="text-sm text-fg-accent underline" href={backHref} lang={locale}>← {back}</Link></p> : null}

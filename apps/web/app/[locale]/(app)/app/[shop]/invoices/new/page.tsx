@@ -11,6 +11,7 @@ import { invoiceChoices } from "@/lib/invoice-choices";
 import { prefillDraft } from "@/lib/invoice-draft";
 import { memberShop } from "@/lib/member-shop";
 import { shopRoutes } from "@/lib/routes";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ export default async function NewInvoice({ params, searchParams }: Readonly<{ pa
   const locale = asLocale(rawLocale);
   const { shop } = await memberShop(shopId, "invoices");
   const t = getDictionary(locale).console.invoices;
-  const [today, choices] = await Promise.all([shopDay(db(), shop.id, new Date()), invoiceChoices(shop.id)]);
+  const [today, choices] = await Promise.all([shopDay(db(), shop.id, requestNow()), invoiceChoices(shop.id)]);
   const start = prefillDraft(await searchParams, choices);
   if (!start.found) notFound();
   return (

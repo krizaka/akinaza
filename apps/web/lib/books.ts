@@ -49,7 +49,10 @@ export function periodFor(param: string | undefined, today: string): Period {
 }
 
 export type Outcome = "remit" | "claim" | "zero";
-const outcome = (net: number): Outcome => (net > 0 ? "remit" : net < 0 ? "claim" : "zero");
+const outcome = (net: number): Outcome => {
+  if (net > 0) return "remit";
+  return net < 0 ? "claim" : "zero";
+};
 
 export interface BooksView {
   lines: (ReturnLine & { computed: boolean })[];

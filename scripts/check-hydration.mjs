@@ -46,7 +46,7 @@ export const PUBLIC_PAGES = [
 ];
 
 /** The owner's space, relative to `/app/<shop>` (`/app` itself leads to the shop's day and says which shop). */
-export const OWNER_PAGES = ["/aujourdhui", "/clients", "/invoices", "/invoices/new", "/books", "/team", "/shop", "/shop/languages"];
+export const OWNER_PAGES = ["/today", "/clients", "/invoices", "/invoices/new", "/books", "/team", "/shop", "/shop/languages"];
 /** The account's own pages. */
 export const ACCOUNT_PAGES = ["/app/profile", "/app/profile/security"];
 
@@ -61,7 +61,7 @@ export const detailPagesFor = (list, href) => (list.endsWith("/invoices") ? [hre
  * the owner's day, lists and invoice screens — the header's « Nouvelle facture » or the page's own (the next appointment, « Envoyer
  * la facture », the form's submit). A Boutique section holds its save; a page with nothing to do may have none.
  */
-const ONE_PRIMARY = /\/app\/[^/]+\/(aujourdhui|clients|invoices|books)(\/[^/?]+(\/correct)?)?(\?.*)?$/;
+const ONE_PRIMARY = /\/app\/[^/]+\/(today|clients|invoices|books)(\/[^/?]+(\/correct)?)?(\?.*)?$/;
 export const primaryProblem = (path, count) => {
   if (count > 1) return `${count} primary actions (one at most)`;
   if (count !== 1 && ONE_PRIMARY.test(path)) return `${count} primary actions (one expected)`;
@@ -72,7 +72,7 @@ export const primaryProblem = (path, count) => {
  * No shift between the loading state and the loaded page (D6): the day, Clients and Factures draw their loading state in the
  * page's own boxes, so their layout shift (CLS, without input) stays under 0.01.
  */
-const STEADY = /\/app\/[^/]+\/(aujourdhui|clients|invoices)(\?.*)?$/;
+const STEADY = /\/app\/[^/]+\/(today|clients|invoices)(\?.*)?$/;
 export const shiftProblem = (path, cls) => (STEADY.test(path) && cls >= 0.01 ? `layout shift ${cls.toFixed(3)} (under 0.01 expected)` : null);
 
 /** What every page owes besides one rendering: exactly one `h1` (the page's, never the frame's), one primary in view at most (a form may draw its submit once per width: the aside, the sticky action), no horizontal overflow. */
@@ -179,10 +179,10 @@ export async function check({ base, owner, client, visitor = BROWSER }) {
         await signIn(context, base, owner.email, owner.password);
         const page = await context.newPage();
         await page.goto(`${base}/fr/app`, { waitUntil: "load" });
-        const root = new URL(page.url()).pathname.replace(/\/aujourdhui.*$/, "");
+        const root = new URL(page.url()).pathname.replace(/\/today.*$/, "");
         await context.close();
         if (!/\/fr\/app\/[^/]+$/.test(root)) throw new Error(`the owner's /app did not lead to a shop's day (${root})`);
-        const paths = [...OWNER_PAGES.map((p) => `${root}${p}`), root.replace("/fr/", "/en/") + "/aujourdhui", ...ACCOUNT_PAGES.map((p) => `/fr${p}`)];
+        const paths = [...OWNER_PAGES.map((p) => `${root}${p}`), root.replace("/fr/", "/en/") + "/today", ...ACCOUNT_PAGES.map((p) => `/fr${p}`)];
         await crawl(browser, { base, paths, theme, account: { ...owner, role: "owner" }, problems, visited, visitor });
       }
       if (client) await crawl(browser, { base, paths: ["/fr/app", "/fr/app/profile", "/fr/s/pattes-saint-henri"], theme, account: { ...client, role: "client" }, problems, visited, visitor });

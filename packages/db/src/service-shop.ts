@@ -156,7 +156,8 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, 
         if (owned!.n >= which.maxShops) refuse("AK_SHOP_LIMIT");
       }
       const askedId = which.additional ? undefined : which.shopId;
-      const [existing] = which.additional ? [] : await tx.select().from(shops).where(askedId ? and(eq(shops.ownerId, ownerId), eq(shops.id, askedId)) : eq(shops.ownerId, ownerId)).orderBy(desc(shops.isDefault), asc(shops.createdAt)).limit(1).for("update");
+      const ownShops = askedId ? and(eq(shops.ownerId, ownerId), eq(shops.id, askedId)) : eq(shops.ownerId, ownerId);
+      const [existing] = which.additional ? [] : await tx.select().from(shops).where(ownShops).orderBy(desc(shops.isDefault), asc(shops.createdAt)).limit(1).for("update");
       if (askedId && !existing) refuse("AK_SHOP_UNKNOWN");
       if (input.published) {
         const count = existing ? (await tx.select({ n: sql<number>`count(*)::int` }).from(services).where(and(eq(services.shopId, existing.id), eq(services.active, true))))[0]!.n : 0;
@@ -736,7 +737,8 @@ export async function bookVisit(db: Db, input: BookInput): Promise<{ appointment
       const zones = await tx.select().from(shopZones).where(and(eq(shopZones.shopId, shop.id), eq(shopZones.active, true)));
       if (zones.length > 0 && !zones.some((z) => z.id === input.zoneId)) refuse("AK_ZONE_REQUIRED");
       // A pet-care shop books for a dog. Any other business takes the client for themselves: their own entry stands for them.
-      const dependantIds = input.dependantIds.length > 0 ? input.dependantIds : vocabularyOf(shop.businessType).dependants ? refuse("AK_DEPENDANTS_REQUIRED") : [await selfDependant(tx, client)];
+      let dependantIds = input.dependantIds;
+      if (dependantIds.length === 0) dependantIds = vocabularyOf(shop.businessType).dependants ? refuse("AK_DEPENDANTS_REQUIRED") : [await selfDependant(tx, client)];
       if (dependantIds.length > service.capacity) refuse("AK_CAPACITY_FULL");
       if (input.staffId) await staffFor(tx, shop.id, input.staffId);
       // Everyone's row is locked in a fixed order, so two bookings (for anyone, or for the same person) queue.

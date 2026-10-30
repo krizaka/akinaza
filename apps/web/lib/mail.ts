@@ -99,9 +99,10 @@ export async function sendInvoiceMail(db: Db, shopId: string, invoiceId: string,
   const locale = invoice.language;
   const f = formatter(locale);
   const money = new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" });
+  const onReceipt = locale === "fr" ? "À réception" : "On receipt";
   const dueDate = invoice.dueOn
     ? f.date.format(new Date(`${invoice.dueOn}T12:00:00Z`))
-    : locale === "fr" ? "À réception" : "On receipt";
+    : onReceipt;
   const optionalMessage = message ?? config.shop.message;
   const rendered = renderMailTemplate(
     "invoice-issued",

@@ -154,3 +154,22 @@ describe("Factures in French (D2, review K3): the chrome, the columns, the deriv
   });
 });
 
+
+describe("the columns' widths (akinaza#581)", () => {
+  // The table reads a column's role from its `type`: « title » takes the remaining width (w-full), « link » stays at its content.
+  const cellOf = (html: string, label: string) => {
+    const found = [...html.matchAll(/<td\b[^>]*data-label="([^"]*)"[^>]*class="([^"]*)"/g)].find((m) => m[1] === label);
+    return found?.[2] ?? "";
+  };
+
+  it("the client takes the width, the number stays narrow", () => {
+    const html = markup("en");
+    expect(cellOf(html, en.console.invoices.table.client)).toMatch(/w-full/);
+    expect(cellOf(html, en.console.invoices.table.number)).not.toMatch(/w-full/);
+  });
+
+  it("the dates stay on one line", () => {
+    const html = markup("en");
+    for (const label of [en.console.invoices.table.issued, en.console.invoices.table.due]) expect(cellOf(html, label), label).toMatch(/whitespace-nowrap/);
+  });
+});

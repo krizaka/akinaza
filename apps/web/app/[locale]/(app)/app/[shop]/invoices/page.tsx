@@ -14,6 +14,7 @@ import { memberShop } from "@/lib/member-shop";
 import { organizeData, tagsOfRows } from "@/lib/organize-data";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +48,7 @@ export default async function Invoices({ params, searchParams }: Readonly<{ para
           />
         ) : (
           <InvoicesTable
-            today={localDay(new Date(), shop.timezone)}
+            today={localDay(requestNow(), shop.timezone)}
             defaultMessage={mail?.shop.message}
             organize={organized.data}
             tagsByInvoice={tags}

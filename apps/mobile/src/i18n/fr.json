@@ -1,5 +1,9 @@
 {
   "disclaimer": "Akinaza prépare vos chiffres et ne produit jamais votre déclaration.",
+  "stage": {
+    "title": "Version de développement",
+    "message": "Les données peuvent être réinitialisées à tout moment. Ce n’est pas encore une offre commerciale."
+  },
   "app": {
     "name": "Akinaza",
     "tagline": "Votre commerce, pour moins cher. Prépare votre déclaration, ne la produit jamais."

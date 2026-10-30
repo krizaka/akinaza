@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { ShopFrame, type ShopFrameProps } from "./ShopFrame";
 
-const where = vi.hoisted(() => ({ path: "/fr/app/s-1/aujourdhui" }));
+const where = vi.hoisted(() => ({ path: "/fr/app/s-1/today" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }), usePathname: () => where.path }));
 vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
 vi.mock("@/lib/i18n-client", () => ({ useSay: () => ({ say: (key: string, vars?: Record<string, string>) => (vars ? `${key} ${Object.values(vars).join(" ")}` : key), locale: "fr" }) }));
@@ -14,7 +14,7 @@ const OWNER: ShopFrameProps = {
   locale: "fr",
   account: { email: "lea@example.test", name: "Léa" },
   places: [
-    { key: "today", href: `${shop}/aujourdhui` },
+    { key: "today", href: `${shop}/today` },
     { key: "clients", href: `${shop}/clients` },
     { key: "invoices", href: `${shop}/invoices` },
     { key: "books", href: `${shop}/books` },
@@ -61,7 +61,7 @@ describe("the owner's frame (docs/ux/2026-10-full-review.md § 4.1): where you w
       // The menu is in the top bar, not on the rail.
       expect(list.slice(list.indexOf("<header"), list.indexOf("</header>"))).toContain('aria-label="Compte"');
     } finally {
-      where.path = "/fr/app/s-1/aujourdhui";
+      where.path = "/fr/app/s-1/today";
     }
   });
 
@@ -77,7 +77,7 @@ describe("the owner's frame (docs/ux/2026-10-full-review.md § 4.1): where you w
       expect(items[4]).toContain('aria-current="page"');
       expect(items[0]).not.toContain('aria-current="page"');
     } finally {
-      where.path = "/fr/app/s-1/aujourdhui";
+      where.path = "/fr/app/s-1/today";
     }
   });
 
@@ -87,14 +87,14 @@ describe("the owner's frame (docs/ux/2026-10-full-review.md § 4.1): where you w
       try {
         expect(render(OWNER)).not.toContain('data-testid="primary-action"');
       } finally {
-        where.path = "/fr/app/s-1/aujourdhui";
+        where.path = "/fr/app/s-1/today";
       }
     }
     where.path = "/fr/app/s-1/clients";
     try {
       expect(render(OWNER)).toContain('data-testid="primary-action"');
     } finally {
-      where.path = "/fr/app/s-1/aujourdhui";
+      where.path = "/fr/app/s-1/today";
     }
   });
 
@@ -139,7 +139,7 @@ describe("the B2 frame (D1b): the search, the language, the rail with its words 
 
 describe("the same frame for other roles and for a client", () => {
   it("shows no primary action to a staff member, whose rail is the day alone", () => {
-    const html = render({ ...OWNER, places: [{ key: "today", href: `${shop}/aujourdhui` }], newInvoiceHref: null, shop: { current: { id: "s-1", name: "Pattes de Saint-Henri" }, others: [], addHref: null } });
+    const html = render({ ...OWNER, places: [{ key: "today", href: `${shop}/today` }], newInvoiceHref: null, shop: { current: { id: "s-1", name: "Pattes de Saint-Henri" }, others: [], addHref: null } });
     expect(railItems(html)).toHaveLength(1);
     expect(html).not.toContain('data-testid="primary-action"');
     expect(html).toMatch(/data-testid="shop-chip"[^>]*>Pattes de Saint-Henri</);

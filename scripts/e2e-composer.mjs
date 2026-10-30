@@ -71,7 +71,7 @@ try {
   await page.getByRole("button", { name: W.signIn }).click();
   await page.waitForURL(/\/app\/[0-9a-f-]{36}/);
   const shopId = page.url().match(/\/app\/([0-9a-f-]{36})/)[1];
-  const composerUrl = `${BASE}/${LOCALE}/app/${shopId}/boutique/page?tab=composer`;
+  const composerUrl = `${BASE}/${LOCALE}/app/${shopId}/settings/page?tab=composer`;
   const slug = SLUG;
 
   // Start clean: nothing pending, so the draft is the page.
@@ -90,11 +90,21 @@ try {
   check((await sectionsNav.getByRole("listitem").count()) === startOrder.length, "the composer lists the page's sections");
 
   // 2 - reorder with the keyboard, change the style: the autosave stores the draft.
+  // The page is drawn by the server first: a key or a choice before React has taken the controls over does nothing, and the autosave then never has a change to store (the CI flake of #543). Wait for the takeover of the controls we use, then for each action's visible effect, never a sleep.
+  const picker = page.getByLabel(W.style);
+  const hydrated = (el) => Object.keys(el).some((k) => k.startsWith("__reactProps$"));
+  await page.waitForFunction(hydrated, await sectionsNav.getByRole("button").first().elementHandle());
+  await page.waitForFunction(hydrated, await picker.elementHandle());
+  const listOrder = () => sectionsNav.getByRole("listitem").allInnerTexts().then((texts) => texts.join("|"));
+  const orderBefore = await listOrder();
   await sectionsNav.getByRole("listitem").nth(1).getByRole("button").first().focus();
   await page.keyboard.press("Alt+ArrowDown");
-  const picker = page.getByLabel(W.style);
+  await until(async () => (await listOrder()) !== orderBefore, "the list shows the section moved down");
   const other = await picker.evaluate((el, current) => [...el.options].map((o) => o.value).find((v) => v !== current), startPreset);
-  if (other) await picker.selectOption(other);
+  if (other) {
+    await picker.selectOption(other);
+    await until(async () => (await picker.inputValue()) === other, "the style picker keeps the new style");
+  }
   const stored = await until(async () => {
     const d = await draftDoc();
     return d.draft && (!other || d.page.preset.id === other) && orderOf(d.page).join() !== startOrder.join() ? d : null;

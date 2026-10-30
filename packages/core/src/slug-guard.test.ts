@@ -58,6 +58,12 @@ describe("holdSlug: a slug that wears a protected word is held for review, never
   });
 });
 
+/**
+ * A deliberately catastrophic pattern as a line of the setting, put together at run time: written whole, CodeQL (js/redos) reads the test's
+ * strings as patterns of the code and flags them, though nothing here ever runs one (that is what the guard under test refuses).
+ */
+const pattern = (...parts: string[]): string => `/${parts.join("")}/`;
+
 describe("protectedTermsIssues (the console's save check, #537)", () => {
   it("accepts words, comments and safe patterns", () => {
     expect(protectedTermsIssues("# brands\npaypal\nl0gin\n/^bank(ing)?$/\n/pass-?wo?rd/")).toEqual([]);
@@ -66,10 +72,11 @@ describe("protectedTermsIssues (the console's save check, #537)", () => {
     expect(protectedTermsIssues("login\n/(unclosed/")).toEqual([{ line: 2, text: "/(unclosed/", reason: "invalid" }]);
   });
   it("refuses a pattern that can backtrack catastrophically (ReDoS), and never runs it", () => {
-    expect(protectedTermsIssues("/(a+)+$/\n/(x*)*y/\n/(a|aa)+$/")).toEqual([
-      { line: 1, text: "/(a+)+$/", reason: "unsafe" },
-      { line: 2, text: "/(x*)*y/", reason: "unsafe" },
-      { line: 3, text: "/(a|aa)+$/", reason: "unsafe" },
+    const [nested, star, alternation] = [pattern("(a", "+)", "+$"), pattern("(x", "*)", "*y"), pattern("(a|", "aa)", "+$")];
+    expect(protectedTermsIssues([nested, star, alternation].join("\n"))).toEqual([
+      { line: 1, text: nested, reason: "unsafe" },
+      { line: 2, text: star, reason: "unsafe" },
+      { line: 3, text: alternation, reason: "unsafe" },
     ]);
   });
   it("refuses a pattern longer than 100 characters", () => {
@@ -79,8 +86,9 @@ describe("protectedTermsIssues (the console's save check, #537)", () => {
     expect(protectedTermsIssues("pay pal\nok-word\nUPPER")).toEqual([{ line: 1, text: "pay pal", reason: "word" }]);
   });
   it("parseProtectedTerms drops an unsafe pattern too, so a stored one cannot run", () => {
-    const { terms, invalid } = parseProtectedTerms("/(a+)+$/\nlogin");
+    const nested = pattern("(a", "+)", "+$");
+    const { terms, invalid } = parseProtectedTerms(`${nested}\nlogin`);
     expect(terms.map((t) => t.source)).toEqual(["login"]);
-    expect(invalid).toEqual(["/(a+)+$/"]);
+    expect(invalid).toEqual([nested]);
   });
 });
