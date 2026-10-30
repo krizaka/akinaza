@@ -55,7 +55,7 @@ describe.runIf(enabled)("the Monday brief's invitation (#200)", () => {
     const [mail] = await mine();
     expect(mail!.subject).toBe("Le point du lundi — Salon Brief");
     expect(mail!.body_text).toMatch(/créneaux libres dans les 7 prochains jours/);
-    expect(mail!.body_text).toContain(`https://www.akinaza.com/fr/app/${shop.id}/aujourdhui`);
+    expect(mail!.body_text).toContain(`https://www.akinaza.com/fr/app/${shop.id}/today`);
     await sendDueBriefs(now, settings); // the next tick: nothing more for this shop this week
     expect(await mine()).toHaveLength(1);
     const token = /\/fr\/brief\/stop\/([A-Za-z0-9_-]{43})/.exec(mail!.body_text)?.[1];

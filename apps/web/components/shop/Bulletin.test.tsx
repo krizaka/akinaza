@@ -37,6 +37,8 @@ describe("the neighbourhood board as post-its (#504)", () => {
       expect(out).toContain(`href="/en/s/${id}"`);
     expect(out).toContain("See Shop a");
     expect(out).not.toContain("bg-surface-1");
+    // The board sits inside the page's <main>: a post-it is not a complementary landmark there (axe landmark-complementary-is-top-level, #448).
+    expect(out).not.toContain("<aside");
   });
 
   it("uses no literal colour: the papers are the page's tokens", () => {

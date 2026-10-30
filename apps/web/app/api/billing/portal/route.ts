@@ -7,6 +7,7 @@ import { env } from "@/lib/env";
 import { handle, refuse } from "@/lib/http";
 import { paymentsFrom } from "@/lib/payments/config";
 import { limit } from "@/lib/rate-limit";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,7 @@ export function POST(req: Request) {
     if (!port) throw refuse(503, "PAYMENTS_OFF", "Payment is not available yet");
     const { account } = await requireSession(req);
     limit("billing", req, account.id, [20, 3600]);
-    const sub = await subscriptionOf(query, account.id, new Date());
+    const sub = await subscriptionOf(query, account.id, requestNow());
     if (!sub.customerId) throw refuse(409, "NO_SUBSCRIPTION", "There is no subscription to manage");
     try {
       const page = await port.portal(sub.customerId, `${e.APP_PUBLIC_URL.replace(/\/$/, "")}/${account.locale}/app`, account.locale);

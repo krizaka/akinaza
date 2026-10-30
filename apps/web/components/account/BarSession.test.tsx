@@ -7,6 +7,13 @@ import fr from "@/messages/fr.json";
 
 import { BarActionsView, type BarWords, Island, ME_KEY, settleSignOut } from "./BarSession";
 
+vi.mock("next/link", () => ({
+  default: ({ href, prefetch, children, ...rest }: { href: string; prefetch?: boolean; children: React.ReactNode }) => (
+    <a href={href} data-prefetch={String(prefetch)} {...rest}>
+      {children}
+    </a>
+  ),
+}));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => "/en" }));
 
 const wordsOf = (c: typeof en): BarWords => ({ signIn: c.chrome.signIn, tryIt: c.chrome.tryIt, openApp: c.chrome.openApp, account: c.chrome.account, settings: c.chrome.settings, language: c.chrome.languageLabel, theme: c.chrome.themeToggle, signOut: c.chrome.signOut });
@@ -15,6 +22,12 @@ const render = (me: Parameters<typeof BarActionsView>[0]["me"], locale: "en" | "
 const text = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
 
 describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
+  it("the signed-out actions carry data-signed-out-only, so html[data-session] hides them from the first paint (krizaka-ui#827)", () => {
+    for (const placement of ["bar", "panel"] as const) {
+      const html = render({ signedIn: false, signupOpen: true }, "en", placement);
+      expect(html).toMatch(/<a[^>]*data-signed-out-only[^>]*href="\/en\/sign-in"|<a[^>]*href="\/en\/sign-in"[^>]*data-signed-out-only/);
+    }
+  });
   it("signed out, sign-up closed: « Sign in » is the action, no sales call", () => {
     const html = render({ signedIn: false, signupOpen: false });
     expect(text(html)).toContain("Sign in");
@@ -50,6 +63,8 @@ describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
     const panel = render(me, "en", "panel");
     expect(panel).not.toContain('aria-label="Account"');
     expect(text(panel)).toContain("Open the app");
+    // The production CSP upgrades insecure requests: a prefetch of /app would go to https on a plain-http server and fail (check:hydration).
+    expect(panel).toContain('data-prefetch="false"');
   });
 
   it("speaks French from the catalogue, in the phone's panel too", () => {

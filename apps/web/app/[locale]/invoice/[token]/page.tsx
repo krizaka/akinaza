@@ -8,6 +8,7 @@ import { InvoicePublicDocument } from "@/components/app/InvoicePublicDocument";
 import { PrintInvoiceButton } from "@/components/app/PrintInvoiceButton";
 import { db } from "@/lib/db";
 import { asLocale } from "@/lib/i18n";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false }, referrer: "no-referrer" };
@@ -18,13 +19,13 @@ export default async function PublicInvoicePage({ params, searchParams }: Readon
   const { replacement } = await searchParams;
   const replacementId = replacement && z.string().uuid().safeParse(replacement).success ? replacement : null;
   const invoice = replacementId
-    ? await invoiceReplacementByToken(db(), token, replacementId, new Date())
-    : await invoiceByToken(db(), token, new Date());
+    ? await invoiceReplacementByToken(db(), token, replacementId, requestNow())
+    : await invoiceByToken(db(), token, requestNow());
   // An unknown or expired link is a 404, with the product's calm not-found page (akinaza#381).
   if (!invoice) notFound();
   return (
     <>
-      <InvoicePublicDocument invoice={invoice} locale={locale} today={localDay(new Date(), invoice.shop.timezone)} token={token} />
+      <InvoicePublicDocument invoice={invoice} locale={locale} today={localDay(requestNow(), invoice.shop.timezone)} token={token} />
       <div className="mx-auto w-full max-w-3xl px-5 pb-8 sm:px-8"><PrintInvoiceButton /></div>
     </>
   );

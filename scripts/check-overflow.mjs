@@ -19,7 +19,7 @@ export const A11Y_BASELINE = fileURLToPath(new URL("../a11y-baseline.json", impo
 /** The two demo shops and every composition they offer (akinaza#404): the Krizaka UI showcase must not overflow at any width. */
 export const SHOP_PAGES = ["/en/s/cedre-ciseaux", "/fr/s/cedre-ciseaux?look=editorial", "/en/s/cedre-ciseaux?look=gallery", "/fr/s/pattes-saint-henri", "/en/s/pattes-saint-henri?look=journal"];
 /** The signed-in frame (akinaza#396, the « never overflows » containment of the shared `AppFrame`), relative to `/<locale>/app/<shop>`: the owner's rail, header and account menu at every width. */
-export const FRAME_PAGES = ["/aujourdhui", "/clients", "/invoices", "/books", "/shop"];
+export const FRAME_PAGES = ["/today", "/clients", "/invoices", "/books", "/shop"];
 export const FRAME_LOCALES = ["fr", "en"];
 export const PAGES = ["/en", "/fr", "/en/explore", "/fr/explore", "/en/privacy", "/fr/privacy", "/en/changelog", "/fr/changelog", "/en/sign-in", "/fr/sign-in", ...SHOP_PAGES];
 

@@ -46,7 +46,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ kind: st
   const now = systemClock.now();
   const state = verifyState(url.searchParams.get("state") ?? "", sessionSecret(), now);
   if (!isOAuthKind(kind) || state?.kind !== kind) return new Response("Not found", { status: 404, headers: { "Set-Cookie": clearPkceCookie(secure) } });
-  const agenda = `/${state.locale}/app/${state.shopId}/boutique/agenda`;
+  const agenda = `/${state.locale}/app/${state.shopId}/settings/agenda`;
   try {
     const verifier = verifierFor(req.headers.get("cookie"), state.nonce);
     const { shop, role, session } = await requireShop(new Request(new URL(`/?shopId=${state.shopId}`, req.url), { headers: req.headers }), "agenda");

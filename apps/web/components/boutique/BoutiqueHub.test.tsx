@@ -4,7 +4,7 @@ import { renderIn } from "@/lib/test-i18n";
 
 import { BoutiqueHub, type BoutiqueHubProps } from "./BoutiqueHub";
 
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app/s1/boutique/page", useSearchParams: () => new URLSearchParams() }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app/s1/settings/page", useSearchParams: () => new URLSearchParams() }));
 
 const props = (over: Partial<BoutiqueHubProps> = {}): BoutiqueHubProps => ({
   locale: "en",
@@ -37,17 +37,17 @@ describe("Boutique, the shop's hub on SettingsLayout (K4)", () => {
     const html = render(props());
     expect(text(html)).toContain("Your page");
     expect(text(html)).toContain("Your activity");
-    expect(html).toContain('href="/en/app/s1/boutique/page?tab=identity"');
-    expect(html).toContain('href="/en/app/s1/boutique/team"');
-    expect(html).toContain('href="/en/app/s1/boutique/languages"');
-    expect(html).toContain('href="/en/app/s1/boutique/invoices"');
-    expect(html).toContain('href="/en/app/s1/boutique/shops"');
+    expect(html).toContain('href="/en/app/s1/settings/page?tab=identity"');
+    expect(html).toContain('href="/en/app/s1/settings/team"');
+    expect(html).toContain('href="/en/app/s1/settings/languages"');
+    expect(html).toContain('href="/en/app/s1/settings/invoices"');
+    expect(html).toContain('href="/en/app/s1/settings/shops"');
     expect(html).toMatch(/aria-current="(page|true)"/);
   });
 
   it("shows a manager the team and nothing of the shop's own settings", () => {
     const html = render(props({ allowed: ["team"], current: { section: "team" } }));
-    expect(html).toContain('href="/en/app/s1/boutique/team"');
+    expect(html).toContain('href="/en/app/s1/settings/team"');
     expect(html).not.toContain("boutique/invoices");
     expect(html).not.toContain("boutique/page");
   });
