@@ -40,6 +40,7 @@ export const TABLE_OWNERSHIP: Readonly<Record<string, TableOwnership>> = {
   invoices: shop,
   services: shop,
   shop_former_slugs: shop,
+  shop_slug_changes: shop,
   shop_media: shop,
   shop_page: shop,
   shop_figure_rules: shop,

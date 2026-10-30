@@ -983,6 +983,7 @@
       "CONFIRM_MISMATCH": "Le courriel saisi ne correspond pas au compte.",
       "RETENTION_REQUIRED": "Ce compte possède un commerce dont les factures sont conservées six ans.",
       "SLUG_TAKEN": "Cette adresse est déjà prise, ou c'était l'adresse d'une autre page.",
+      "SLUG_RATE_LIMIT": "Vous avez changé cette adresse trop souvent. Réessayez dans quelques jours.",
       "NOT_PUBLISHABLE": "Ajoutez au moins un service avant de publier la page.",
       "ZONE_EXISTS": "Cette zone est déjà dans la liste.",
       "WINDOW_OVERLAP": "Cette plage chevauche une autre plage du même jour.",

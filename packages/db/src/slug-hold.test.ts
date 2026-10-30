@@ -84,3 +84,55 @@ describe("a shop address wearing a protected term is held (ADR-005 slice 4, #537
     expect((await saveShopPage(t.db, owner.id, page("login-seed"))).held).toBe(false);
   });
 });
+
+describe("the pace of address changes (ADR-005 slice 4, #537; real PostgreSQL 16)", () => {
+  const pace = { slugChanges: { max: 2, days: 7 } };
+  const changes = (id: string) => t.pool.query("SELECT count(*)::int AS n FROM shop_slug_changes WHERE shop_id = $1", [id]).then((r) => r.rows[0].n as number);
+
+  it("lets a shop change its address up to the bound in the window, then refuses with AK_SLUG_RATE_LIMIT and leaves the shop as it was", async () => {
+    const owner = await account(t.db, "pace1@example.test");
+    const { shopId } = await saveShopPage(t.db, owner.id, page("pace-un"), {}, pace);
+    expect(await changes(shopId)).toBe(0); // the first address is not a change
+    await saveShopPage(t.db, owner.id, page("pace-deux"), {}, pace);
+    await saveShopPage(t.db, owner.id, page("pace-trois"), {}, pace);
+    await expect(saveShopPage(t.db, owner.id, page("pace-quatre"), {}, pace)).rejects.toMatchObject({ code: "AK_SLUG_RATE_LIMIT" });
+    expect((await row(shopId)).slug).toBe("pace-trois");
+    expect(await changes(shopId)).toBe(2);
+  });
+
+  it("does not count a save that keeps the address, and lets the other fields change at the bound", async () => {
+    const owner = await account(t.db, "pace2@example.test");
+    const { shopId } = await saveShopPage(t.db, owner.id, page("pace-a"), {}, pace);
+    await saveShopPage(t.db, owner.id, page("pace-b"), {}, pace);
+    await saveShopPage(t.db, owner.id, page("pace-c"), {}, pace);
+    await saveShopPage(t.db, owner.id, { ...page("pace-c"), name: "Autre nom" }, {}, pace);
+    expect((await row(shopId)).name).toBe("Autre nom");
+  });
+
+  it("counts only the window: older changes leave it, so the shop may change again", async () => {
+    const owner = await account(t.db, "pace3@example.test");
+    const { shopId } = await saveShopPage(t.db, owner.id, page("old-a"), {}, pace);
+    await saveShopPage(t.db, owner.id, page("old-b"), {}, pace);
+    await saveShopPage(t.db, owner.id, page("old-c"), {}, pace);
+    await t.pool.query("UPDATE shop_slug_changes SET at = now() - interval '8 days' WHERE shop_id = $1", [shopId]);
+    await saveShopPage(t.db, owner.id, page("old-d"), {}, pace);
+    expect((await row(shopId)).slug).toBe("old-d");
+  });
+
+  it("is per shop: another shop of the same owner has its own count", async () => {
+    const owner = await account(t.db, "pace4@example.test");
+    await saveShopPage(t.db, owner.id, page("duo-a"), {}, pace);
+    await saveShopPage(t.db, owner.id, page("duo-b"), {}, pace);
+    await saveShopPage(t.db, owner.id, page("duo-c"), {}, pace);
+    const second = await saveShopPage(t.db, owner.id, page("duo-x"), { additional: true, maxShops: 5 }, pace);
+    await saveShopPage(t.db, owner.id, page("duo-y"), { shopId: second.shopId }, pace);
+    expect((await row(second.shopId)).slug).toBe("duo-y");
+  });
+
+  it("sets no pace when none is given (seeds and other tests)", async () => {
+    const owner = await account(t.db, "pace5@example.test");
+    let shopId = "";
+    for (const slug of ["free-a", "free-b", "free-c", "free-d", "free-e"]) shopId = (await saveShopPage(t.db, owner.id, page(slug))).shopId;
+    expect((await row(shopId)).slug).toBe("free-e");
+  });
+});
