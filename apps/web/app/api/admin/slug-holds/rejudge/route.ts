@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { systemClock } from "@/app/system-clock";
 import { requireAdmin } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
@@ -19,7 +20,7 @@ export function POST(req: Request) {
   return handle(async () => {
     const admin = await requireAdmin(req);
     const { apply } = await readJson(req, body);
-    const report = await rejudgeAndNotify(db(), { apply, now: new Date(), settings: mailSettings() });
+    const report = await rejudgeAndNotify(db(), { apply, now: systemClock.now(), settings: mailSettings() });
     if (apply) {await audit({ action: "shop.slug_rejudged", actorId: admin.account.id, actorLabel: admin.account.email, detail: { held: report.shops.length, notified: report.notified }, headers: req.headers });}
     return Response.json({ apply, ...report }, { headers: { "Cache-Control": "private, no-store" } });
   });
