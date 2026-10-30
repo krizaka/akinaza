@@ -29,10 +29,10 @@ const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, locale: LOCALE === "fr" ? "fr-CA" : "en-CA" });
 const page = await context.newPage();
 await page.addInitScript(() => {
-  window.__shift = 0;
+  globalThis.__shift = 0;
   new PerformanceObserver((list) => {
     for (const e of list.getEntries()) {
-      if (!e.hadRecentInput) window.__shift += e.value;
+      if (!e.hadRecentInput) globalThis.__shift += e.value;
     }
   }).observe({ type: "layout-shift", buffered: true });
 });
@@ -87,7 +87,7 @@ await page.waitForFunction(() => !new URL(location.href).searchParams.has("kind"
 check(!search().has("kind") && !search().has("q"), "« Clear all » empties the address");
 await shoot("3-cleared");
 
-const shift = await page.evaluate(() => window.__shift);
+const shift = await page.evaluate(() => globalThis.__shift);
 check(shift < 0.02, `no layout shift (${shift.toFixed(4)})`);
 await browser.close();
 if (failures.length > 0) {

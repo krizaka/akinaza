@@ -28,6 +28,8 @@ export function chipLabel(chip: ExploreChip, w: FilterWords): string {
       return w.here;
     case "within":
       return format(w.km, { km: chip.value });
+    default:
+      return chip.value;
   }
 }
 
