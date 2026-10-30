@@ -330,6 +330,13 @@
       "when": 1795000015000,
       "tag": "0046_explore_availability",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1795000016000,
+      "tag": "0047_slug_hold",
+      "breakpoints": true
     }
   ]
 }

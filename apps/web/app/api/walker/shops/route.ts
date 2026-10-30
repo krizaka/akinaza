@@ -6,6 +6,7 @@ import { handle, readJson } from "@/lib/http";
 import { organize } from "@/lib/organize";
 import { limit } from "@/lib/rate-limit";
 import { appSettings } from "@/lib/settings";
+import { slugPolicy } from "@/lib/slug-policy";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,6 @@ export function POST(req: Request) {
     const session = await requireSession(req);
     limit("shops", req, session.account.id, [20, 3600]);
     const input = await readJson(req, shopPageSchema);
-    return Response.json(await saveShopPage(db(), session.account.id, input, { additional: true, maxShops: await appSettings().get("limits.shopsPerOwner") }), { status: 201 });
+    return Response.json(await saveShopPage(db(), session.account.id, input, { additional: true, maxShops: await appSettings().get("limits.shopsPerOwner") }, await slugPolicy()), { status: 201 });
   });
 }
