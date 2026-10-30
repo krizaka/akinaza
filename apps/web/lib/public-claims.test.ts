@@ -60,6 +60,14 @@ const NOT_RESIDENCY: Record<string, string> = {
   "terms.sections.2.p": "names the Canada Revenue Agency, a tax authority, not a storage place",
   "terms.sections.11.p": "the federal laws of Canada that govern the terms, not a storage place",
   "docs.pages.books.sections.2.p.0": "names the Canada Revenue Agency, a tax authority, not a storage place",
+  // The console's Storage screen (akinaza#397): the administrator's own screen, each sentence says what ONE chosen region means (from the package's region table; storage-regions.test.ts holds it), never what is deployed.
+  "console.admin.storage.canada": "the group title of the Canadian regions on the administrator's screen",
+  "console.admin.storage.residency.canada": "what the chosen region means, from the region table",
+  "console.admin.storage.residency.canada-ab": "what the chosen region means, from the region table",
+  "console.admin.storage.residency.canada-on": "what the chosen region means, from the region table",
+  "console.admin.storage.residency.canada-qc": "what the chosen region means, from the region table",
+  "console.admin.storage.residency.elsewhere": "what the chosen region means, from the region table",
+  "console.admin.storage.residency.unknown": "what an unmapped region means: nothing claims Canada",
 };
 
 function leaves(node: unknown, path: string[] = []): Array<[string, string]> {
