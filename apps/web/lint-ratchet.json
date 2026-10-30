@@ -26,7 +26,7 @@
     "localTableOrForm": 1,
     "retiredImport": 0,
     "routeStateSelection": 2,
-    "cognitiveComplexity": 2,
+    "cognitiveComplexity": 0,
     "sonar": 12,
     "codeRules": 942,
     "code/curly": 927,
