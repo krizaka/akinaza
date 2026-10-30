@@ -1,0 +1,1 @@
+Your shop address is being checked — {shop}

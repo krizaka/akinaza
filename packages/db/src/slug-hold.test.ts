@@ -4,7 +4,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { exploreShops } from "./explore";
 import { shops } from "./schema";
-import { clearSlugHold, currentSlugOf, heldShops, publicShop, saveShopPage } from "./service-shop";
+import { currentSlugOf, publicShop, saveShopPage } from "./service-shop";
+import { clearSlugHold, heldShops, keepSlugHold, rejudgeShops } from "./slug-review";
 import { freshDatabase } from "./test/db";
 import { account } from "./test/fixtures";
 
@@ -134,5 +135,41 @@ describe("the pace of address changes (ADR-005 slice 4, #537; real PostgreSQL 16
     let shopId = "";
     for (const slug of ["free-a", "free-b", "free-c", "free-d", "free-e"]) shopId = (await saveShopPage(t.db, owner.id, page(slug))).shopId;
     expect((await row(shopId)).slug).toBe("free-e");
+  });
+});
+
+describe("the administrator's review of held addresses (ADR-005 slice 4, #537)", () => {
+  it("keeps a hold with a reason, shown in the queue with the owner and the matched term", async () => {
+    const owner = await account(t.db, "review1@example.test");
+    const { shopId } = await saveShopPage(t.db, owner.id, page("verify-toilettage"), {}, { terms: parseProtectedTerms("verify").terms });
+    expect(await keepSlugHold(t.db, shopId, "  Looks like a phishing page  ")).toBe(true);
+    const queued = (await heldShops(t.db)).find((s) => s.shopId === shopId);
+    expect(queued).toMatchObject({ term: "verify", ownerEmail: "review1@example.test", note: "Looks like a phishing page" });
+    expect(queued?.reviewedAt).toBeInstanceOf(Date);
+    expect(await keepSlugHold(t.db, "00000000-0000-4000-8000-000000000000", "x")).toBe(false);
+  });
+
+  it("re-judges the shops that predate the hold: a dry run reports and changes nothing, apply holds them, a cleared address is never held again", async () => {
+    const old = await account(t.db, "rejudge1@example.test");
+    const cleared = await account(t.db, "rejudge2@example.test");
+    const fine = await account(t.db, "rejudge3@example.test");
+    const a = await saveShopPage(t.db, old.id, page("wallet-salon"), {});
+    const b = await saveShopPage(t.db, cleared.id, page("wallet-chiens"), {});
+    await saveShopPage(t.db, fine.id, page("pattes-rosemont"), {});
+    const wallet = parseProtectedTerms("wallet").terms;
+    // The administrator already looked at b: hold it by hand, then clear it.
+    await t.db.update(shops).set({ slugHeld: true, slugHeldTerm: "wallet", slugHeldAt: new Date() }).where(eq(shops.id, b.shopId));
+    expect(await clearSlugHold(t.db, b.shopId)).toBe(true);
+
+    const dry = await rejudgeShops(t.db, wallet, { apply: false });
+    expect(dry.map((s) => s.slug)).toEqual(["wallet-salon"]);
+    expect(dry[0]).toMatchObject({ matched: "wallet", ownerEmail: "rejudge1@example.test", ownerLocale: "fr" });
+    expect((await row(a.shopId)).slugHeld).toBe(false);
+
+    const applied = await rejudgeShops(t.db, wallet, { apply: true });
+    expect(applied.map((s) => s.shopId)).toEqual([a.shopId]);
+    expect(await row(a.shopId)).toMatchObject({ slugHeld: true, slugHeldTerm: "wallet" });
+    expect((await row(b.shopId)).slugHeld).toBe(false);
+    expect(await rejudgeShops(t.db, wallet, { apply: true })).toEqual([]);
   });
 });

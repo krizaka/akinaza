@@ -1,0 +1,8 @@
+Bonjour,
+
+L'adresse de votre boutique {shop}, {address}, ressemble à un nom que nous protégeons contre l'usurpation (une banque, un service de paiement, un mot comme « login »). Votre page reste privée le temps de la vérifier. Rien d'autre ne change : vos réservations, vos factures et vos clients sont comme avant.
+
+Vous pouvez choisir une autre adresse dès maintenant, et votre page redevient publique aussitôt :
+{url}
+
+Si vous pensez qu'il s'agit d'une erreur, répondez à ce courriel : une personne le lit.
