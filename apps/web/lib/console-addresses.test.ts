@@ -30,7 +30,7 @@ describe("no English console path contains a French word (akinaza#582)", () => {
   it("every address the routes build, in both languages", () => {
     const r = shopRoutes("en", SHOP);
     const built = [r.root, r.today("2026-10-23", "x"), r.brief, r.clients, r.client("c"), r.invoices, r.invoice("i"), r.invoiceCorrect("i"), r.newInvoice, r.books("2026-10"), r.boutique(), r.boutique("team", "t"), r.team, r.setup, r.addShop, ...Object.values(accountRoutes("en")).filter((v): v is string => typeof v === "string")];
-    for (const path of built) for (const locale of ["en", "fr"]) expect(words(path.replace("/en/", `/${locale}/`)).filter((w) => FRENCH.includes(w)), path).toEqual([]);
+    for (const path of built) {for (const locale of ["en", "fr"]) {expect(words(path.replace("/en/", `/${locale}/`)).filter((w) => FRENCH.includes(w)), path).toEqual([]);}}
   });
 
   it("the English addresses are today and settings", () => {

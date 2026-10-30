@@ -20,12 +20,12 @@ export function createShopDirectory(lookup: ShopLookup, now: () => number = Date
   const seen = new Map<string, { verdict: ShopVerdict; until: number }>();
   return async function verdictOf(slug: string): Promise<ShopVerdict> {
     const cached = seen.get(slug);
-    if (cached && cached.until > now()) return cached.verdict;
+    if (cached && cached.until > now()) {return cached.verdict;}
     seen.delete(slug);
     const verdict = await lookup(slug).catch((): ShopVerdict => ({ kind: Verdict.Unknown }));
-    if (verdict.kind === Verdict.Unknown) return verdict;
+    if (verdict.kind === Verdict.Unknown) {return verdict;}
     seen.set(slug, { verdict, until: now() + (verdict.kind === Verdict.None ? MISS_MS : HIT_MS) });
-    if (seen.size > MAX) seen.delete(seen.keys().next().value as string);
+    if (seen.size > MAX) {seen.delete(seen.keys().next().value as string);}
     return verdict;
   };
 }
@@ -34,8 +34,8 @@ type Answer = { slug?: string | null; moved?: string | null };
 
 /** The internal route answers `{ slug }` (a published shop), `{ moved }` (a former address) or `{}`. */
 export function verdictFromAnswer(answer: Answer | null): ShopVerdict {
-  if (!answer) return { kind: Verdict.Unknown };
-  if (answer.slug) return { kind: Verdict.Shop };
+  if (!answer) {return { kind: Verdict.Unknown };}
+  if (answer.slug) {return { kind: Verdict.Shop };}
   return answer.moved ? { kind: Verdict.Moved, slug: answer.moved } : { kind: Verdict.None };
 }
 

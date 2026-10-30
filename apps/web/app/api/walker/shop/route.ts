@@ -20,7 +20,7 @@ export function POST(req: Request) {
     const params = new URL(req.url).searchParams;
     const shopId = params.get("shopId");
     if (params.get("additional") === "1") {
-      if (shopId) throw refuse(400, "BAD_REQUEST", "Either a shop or a new one");
+      if (shopId) {throw refuse(400, "BAD_REQUEST", "Either a shop or a new one");}
       // The bound is the service's (saveShopPage counts and inserts under one lock): the route only says what it is.
       const created = await saveShopPage(db(), session.account.id, { ...input, published: false }, { additional: true, maxShops: await appSettings().get("limits.shopsPerOwner") }, await slugPolicy());
       await audit({ action: "shop.added", actorId: session.account.id, actorLabel: session.account.email, targetId: created.shopId, headers: req.headers });

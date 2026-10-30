@@ -4,6 +4,7 @@ import { dayVisits, offOn, shopDay, type ShopRole, todayBoard } from "@akinaza/d
 import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 
+import { requestNow } from "@/app/request-now";
 import { BriefBanner } from "@/components/app/BriefBanner";
 import { TodayDay } from "@/components/app/TodayDay";
 import { TodayFigures } from "@/components/app/TodayFigures";
@@ -20,7 +21,6 @@ import { shopRoutes } from "@/lib/routes";
 import { settle } from "@/lib/settle";
 import { todayView } from "@/lib/today";
 import { consoleFor } from "@/lib/vocabulary";
-import { requestNow } from "@/app/request-now";
 
 type MemberShop = Awaited<ReturnType<typeof memberShop>>["shop"];
 
@@ -44,7 +44,7 @@ export default async function Today({ params, searchParams }: Readonly<{ params:
   const { session, shop, role } = await memberShop(shopId, "agenda");
   const query = await searchParams;
   const { dependants } = vocabularyOf(shop.businessType);
-  if (dayView(role, dependants) === "cards") return <StaffDay locale={locale} shop={shop} day={query.day} />;
+  if (dayView(role, dependants) === "cards") {return <StaffDay locale={locale} shop={shop} day={query.day} />;}
   const today = localDay(requestNow(), shop.timezone);
   const period: BoardPeriod = BOARD_PERIODS.find((p) => String(p) === query.period) ?? BOARD_PERIODS[0];
   // The board (the binder, the activity, « À encaisser ») is the shop's money: loaded only for who may see the invoices.
@@ -58,7 +58,7 @@ export default async function Today({ params, searchParams }: Readonly<{ params:
 async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants, board, boardFailed, period }: Readonly<{ locale: Locale; shop: MemberShop; role: ShopRole; staffAccountId: string | undefined; query: { day?: string; appointment?: string }; dependants: boolean; /** Null for who may not see the shop's money. */ board: Awaited<ReturnType<typeof todayBoard>> | null; boardFailed: boolean; period: BoardPeriod }>) {
   const t = getDictionary(locale).console;
   const routes = shopRoutes(locale, shop.id);
-  const view = await todayView(shop, { day: query.day, staffAccountId });
+  const view = await todayView(shop, { day: query.day, staffAccountId, now: requestNow() });
   // Who is off that day (akinaza#208): a name and the last day of their time off, never the reason.
   const [off, brief, visits, figures] = await Promise.all([
     offOn(db(), shop.id, view.day),

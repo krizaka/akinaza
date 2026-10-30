@@ -8,6 +8,6 @@ import { systemClock } from "./system-clock";
  */
 export function requestNow(source: Record<string, string | undefined> = process.env): Date {
   const settings = readEnv(source);
-  if (settings.APP_ENVIRONMENT === "dev" && settings.APP_FIXED_NOW) return new Date(settings.APP_FIXED_NOW);
+  if (settings.APP_ENVIRONMENT === "dev" && settings.APP_FIXED_NOW) {return new Date(settings.APP_FIXED_NOW);}
   return systemClock.now();
 }
