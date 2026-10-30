@@ -1,0 +1,13 @@
+id: no-hand-magic-bytes
+language: Tsx
+severity: error
+message: "No hand-written magic numbers (`[0xff, 0xd8, 0xff]`, `[0x89, 0x50, …]`): the type of a file is read from its bytes by `sniffType` of `@krizaka/storage` (png, jpeg, gif, webp, pdf, mp4, webm, svg), and `storage.upload({ allow })` refuses the others. A type it does not know goes into krizaka-ts first (founder, 2026-10-30)."
+rule:
+  kind: array
+  regex: '^\[\s*0x[0-9a-fA-F]{2}\s*,\s*0x[0-9a-fA-F]{2}'
+ignores:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/e2e/**"
