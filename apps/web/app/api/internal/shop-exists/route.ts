@@ -13,8 +13,8 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const parsed = slugSchema.safeParse(new URL(request.url).searchParams.get("slug") ?? "");
   const headers = { "cache-control": "no-store", "x-robots-tag": NOINDEX };
-  if (!parsed.success) return Response.json({}, { headers });
-  if (await publicShop(db(), parsed.data)) return Response.json({ slug: parsed.data }, { headers });
+  if (!parsed.success) {return Response.json({}, { headers });}
+  if (await publicShop(db(), parsed.data)) {return Response.json({ slug: parsed.data }, { headers });}
   const moved = await currentSlugOf(db(), parsed.data);
   return Response.json(moved ? { moved } : {}, { headers });
 }

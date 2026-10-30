@@ -21,7 +21,7 @@ export function shopDomain(vars: Vars): string | null {
 export function shopHostOf(host: string | null | undefined, vars: Vars): { slug: string; own: boolean } | null {
   const own = shopDomain(vars);
   const ownSlug = own ? shopOfHost(host, own) : null;
-  if (ownSlug) return { slug: ownSlug, own: true };
+  if (ownSlug) {return { slug: ownSlug, own: true };}
   const legacy = shopOfHost(host, publicHost(vars).replace(/^www\./, ""));
   return legacy ? { slug: legacy, own: false } : null;
 }
