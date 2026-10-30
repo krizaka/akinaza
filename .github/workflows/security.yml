@@ -9,6 +9,11 @@ on:
 
 permissions: {}
 
+# A new push or an update-branch supersedes the scan of the same PR: cancel it (the queue and main runs are never cancelled).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   security:
     name: Security scan
