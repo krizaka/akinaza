@@ -17,7 +17,7 @@ BEGIN
   FROM shops s
   LEFT JOIN LATERAL (
     SELECT array_agg(name ORDER BY position, name) AS names,
-           (array_agg(lat ORDER BY position, name) FILTER (WHERE lat IS NOT NULL AND lng IS NOT NULL))[1] AS lat,
+           (array_agg(lat ORDER BY position, name) FILTER (WHERE NOT (lat IS NULL OR lng IS NULL)))[1] AS lat,
            (array_agg(lng ORDER BY position, name) FILTER (WHERE lat IS NOT NULL AND lng IS NOT NULL))[1] AS lng
     FROM shop_zones WHERE shop_id = s.id AND active) z ON true
   LEFT JOIN LATERAL (SELECT string_agg(name_fr || ' ' || name_en, ' ') AS names FROM services WHERE shop_id = s.id AND active) v ON true
