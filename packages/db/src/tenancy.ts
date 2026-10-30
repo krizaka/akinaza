@@ -40,6 +40,7 @@ export const TABLE_OWNERSHIP: Readonly<Record<string, TableOwnership>> = {
   invoices: shop,
   services: shop,
   shop_former_slugs: shop,
+  shop_slug_changes: shop,
   shop_media: shop,
   shop_page: shop,
   shop_figure_rules: shop,
@@ -57,6 +58,7 @@ export const TABLE_OWNERSHIP: Readonly<Record<string, TableOwnership>> = {
   shop_translations: shop,
   shop_translation_runs: shop,
   shop_rules: shop,
+  shop_search: shop, // the read model of the published shops (ADR-006): one row per shop, kept by triggers
   shop_tags: shop,
   shop_zones: shop,
   staff: shop,

@@ -14,8 +14,8 @@ export default async function BoutiqueIndex({ params }: { params: Promise<{ loca
   const locale = asLocale(rawLocale);
   const { account } = (await pageSession())!;
   const member = await memberOf(account.id, shopId);
-  if (!member) notFound();
+  if (!member) {notFound();}
   const first = firstBoutiqueSection(boutiqueSectionsAllowed((permission) => may(member.role, permission)));
-  if (!first) notFound();
+  if (!first) {notFound();}
   redirect(shopRoutes(locale, shopId).boutique(first));
 }

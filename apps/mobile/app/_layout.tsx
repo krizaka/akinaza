@@ -11,6 +11,7 @@ import { AuthProvider } from "@/auth";
 import { discovery, session } from "@/config";
 import { I18nProvider } from "@/i18n";
 import { SessionBoundary } from "@/session-boundary";
+import { StageNotice } from "@/ui/StageNotice";
 import { useLocale } from "@/use-locale";
 
 /** A refresh of the signed manifest each time the app comes back to the foreground. */
@@ -20,7 +21,7 @@ const onForeground = (callback: () => void) => {
 };
 
 /** The theme keeps its bars and buttons clear of the notch and the home indicator: it needs the safe-area insets. */
-function Themed({ children }: { children: React.ReactNode }) {
+function Themed({ children }: Readonly<{ children: React.ReactNode }>) {
   const insets = useSafeAreaInsets();
   return (
     <ThemeProvider overrides={brands.akinaza} insets={insets}>
@@ -34,6 +35,7 @@ function Localised() {
   return (
     <I18nProvider locale={locale} setLocale={setLocale}>
       <AuthProvider>
+        <StageNotice />
         <Stack screenOptions={{ headerShown: false }} />
       </AuthProvider>
     </I18nProvider>

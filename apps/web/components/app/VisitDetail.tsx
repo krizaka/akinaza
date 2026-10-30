@@ -41,7 +41,7 @@ const MAX_PHOTO_BEFORE_SHRINK = 25_000_000; // @fixed: a phone camera's raw file
  * each booking with its dog (breed · size · temperament), its owner and a way to call, the access notes folded, and the
  * report once the visit is done.
  */
-export function VisitBookings({ visit, timeZone }: { visit: DayVisitView; timeZone: string }) {
+export function VisitBookings({ visit, timeZone }: Readonly<{ visit: DayVisitView; timeZone: string }>) {
   const { say } = useSay();
   const { dependants, visitReports } = useVocabulary();
   const done = !!visit.checkedOutAt;
@@ -78,7 +78,7 @@ export function VisitBookings({ visit, timeZone }: { visit: DayVisitView; timeZo
 }
 
 /** Where the visit stands — started at, ended at — and its next step: start it, then end it. `wide` fills a phone's card. */
-export function VisitProgress({ visit, timeZone, wide = false }: { visit: DayVisitView; timeZone: string; wide?: boolean }) {
+export function VisitProgress({ visit, timeZone, wide = false }: Readonly<{ visit: DayVisitView; timeZone: string; wide?: boolean }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const live = visit.checkedInAt && !visit.checkedOutAt;
@@ -110,7 +110,7 @@ const reportForm = createKrizakaForm({
 });
 
 /** The report of a visit for one dog: a note and a photo, saved, then sent to the owner. */
-export function ReportBox({ booking, timeZone }: { booking: DayVisitView["bookings"][number]; timeZone: string }) {
+export function ReportBox({ booking, timeZone }: Readonly<{ booking: DayVisitView["bookings"][number]; timeZone: string }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [notice, setNotice] = useState<{ tone: "success" | "info" | "danger"; text: string } | null>(null);
@@ -131,7 +131,12 @@ export function ReportBox({ booking, timeZone }: { booking: DayVisitView["bookin
     setNotice(null);
     const result = await call.run<{ status: "sent" | "pending" | "failed" }>(`/api/walker/bookings/${booking.bookingId}/report/send`);
     if (!result) return;
-    setNotice(result.status === "sent" ? { tone: "success", text: say("walker.sentNow", { owner }) } : result.status === "pending" ? { tone: "info", text: say("walker.queued") } : { tone: "danger", text: say("walker.failed") });
+    const notices = {
+      sent: { tone: "success", text: say("walker.sentNow", { owner }) },
+      pending: { tone: "info", text: say("walker.queued") },
+      failed: { tone: "danger", text: say("walker.failed") },
+    } as const;
+    setNotice(notices[result.status]);
   };
   return (
     <div className="rounded-lg border border-border-default bg-surface-1 p-3">

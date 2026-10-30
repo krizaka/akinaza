@@ -6,6 +6,7 @@ import { cn } from "@krizaka/ui/cn";
 import { MotionObserver } from "@krizaka/ui/motion";
 import { ThemeProvider, ThemeScript } from "@krizaka/ui/theme";
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { RoutePageTransition } from "@/components/RoutePageTransition";
@@ -35,13 +36,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /** The root of every page, in the language of the address, dark by default (the visitor's `kz-theme` wins). */
-export default async function LocaleLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
+export default async function LocaleLayout({ children, params }: Readonly<{ children: React.ReactNode; params: Promise<{ locale: string }> }>) {
   const { locale } = await params;
   if (!PAGE_LOCALES.includes(locale as PageLocale)) notFound();
+  // The nonce of a shop page's strict policy (proxy.ts sets it on the request): the theme script is the one inline script the page runs.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html lang={locale} data-surface="product" suppressHydrationWarning>
       <head>
-        <ThemeScript defaultMode="dark" />
+        <ThemeScript defaultMode="dark" nonce={nonce} />
       </head>
       <body className={cn(shopSans.variable, shopDisplay.variable, "kz-shop-fonts min-h-screen bg-surface-0 text-fg antialiased selection:bg-accent selection:text-on-accent")}>
         <ThemeProvider defaultMode="dark">

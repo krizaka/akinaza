@@ -42,14 +42,14 @@ export function settleSignOut(queryClient: Pick<QueryClient, "setQueryData">, ro
 }
 
 /** The bar's actions for a state we know: pure, so each state is tested without a network. */
-export function BarActionsView({ me, locale, words, placement, onSignOut }: { me: Me; locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel"; onSignOut: () => void }) {
+export function BarActionsView({ me, locale, words, placement, onSignOut }: Readonly<{ me: Me; locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel"; onSignOut: () => void }>) {
   if (me.signedIn && me.account) {
     return (
       <>
         {/* The bar has the account menu only (one entry, no second « Open the app »); the phone's panel has no menu, so it keeps the action. */}
         {placement === "panel" ? (
           <Button asChild variant="primary" size="md" className="mt-2 font-bold">
-            <Link href={`/${locale}/app`}>{words.openApp}</Link>
+            <Link href={`/${locale}/app`} prefetch={false}>{words.openApp}</Link>
           </Button>
         ) : (
           <AkinazaAccountMenu locale={locale} accountId={me.account.id} name={me.account.name} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} words={words} onSignOut={onSignOut} />
@@ -60,7 +60,7 @@ export function BarActionsView({ me, locale, words, placement, onSignOut }: { me
   return <SignedOutActions locale={locale} placement={placement} signupOpen={me.signupOpen} signIn={words.signIn} tryIt={words.tryIt} />;
 }
 
-export function Island({ locale, words, placement }: { locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel" }) {
+export function Island({ locale, words, placement }: Readonly<{ locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel" }>) {
   const queryClient = useQueryClient();
   const router = useRouter();
   const session = useNavSession<NonNullable<Me["account"]>>(ME_ENDPOINT);
@@ -77,7 +77,7 @@ export function Island({ locale, words, placement }: { locale: "en" | "fr"; word
 }
 
 /** The public bar's account state: « Sign in » / « Try Akinaza », or « Open the app » and the avatar when a session is open. */
-export function BarSession(props: { locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel" }) {
+export function BarSession(props: Readonly<{ locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel" }>) {
   return (
     <QueryClientProvider client={barClient()}>
       <Island {...props} />

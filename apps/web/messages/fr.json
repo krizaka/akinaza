@@ -96,11 +96,12 @@
         "scaleSoon": "ses fonctions B2B arrivent bientôt"
       }
     },
+    "screensTitle": "Ce que fait Akinaza",
     "screens": {
       "book": {
         "title": "Vos clients réservent seuls",
         "text": "Une heure prise disparaît aussitôt : personne n'est réservé deux fois.",
-        "alt": "La page de réservation : le service, le chien, les créneaux libres et la confirmation."
+        "alt": "La page publique du commerce : ses services avec leurs prix, chacun avec un bouton pour le choisir et réserver."
       },
       "invoice": {
         "title": "La facture, taxes comprises",
@@ -396,7 +397,7 @@
       },
       {
         "q": "Akinaza produit-elle ma déclaration ?",
-        "a": "Non. Elle prépare les chiffres et c'est vous qui les déclarez."
+        "a": "Pas pour l'instant. Aujourd'hui, Akinaza prépare les chiffres et c'est vous qui les déclarez. Aller plus loin est sur notre feuille de route : vous permettre de gérer vous-même votre boutique le plus loin possible, au Québec."
       },
       {
         "q": "Et si le prix change ?",
@@ -982,6 +983,7 @@
       "CONFIRM_MISMATCH": "Le courriel saisi ne correspond pas au compte.",
       "RETENTION_REQUIRED": "Ce compte possède un commerce dont les factures sont conservées six ans.",
       "SLUG_TAKEN": "Cette adresse est déjà prise, ou c'était l'adresse d'une autre page.",
+      "SLUG_RATE_LIMIT": "Vous avez changé cette adresse trop souvent. Réessayez dans quelques jours.",
       "NOT_PUBLISHABLE": "Ajoutez au moins un service avant de publier la page.",
       "ZONE_EXISTS": "Cette zone est déjà dans la liste.",
       "WINDOW_OVERLAP": "Cette plage chevauche une autre plage du même jour.",
@@ -1536,6 +1538,7 @@
         "publishedHint": "Les clients peuvent alors la trouver par son adresse et réserver.",
         "submit": "Enregistrer la page",
         "saved": "Page enregistrée.",
+        "held": "Enregistré. Cette adresse ressemble à un nom que nous protégeons contre l'usurpation : votre page reste privée le temps de la vérifier. Rien d'autre ne change, et vous pouvez choisir une autre adresse dès maintenant.",
         "area": "Secteur affiché sur la page",
         "areaHint": "Saint-Henri, Montréal — jamais l'adresse civique.",
         "bioFr": "Qui vous êtes (français)",

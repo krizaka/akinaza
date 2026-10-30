@@ -9,6 +9,6 @@ import type { ReactNode } from "react";
  * An update of the same page (the appointment drawer opened through `?visit=`, a day, a filter) never does — it used to
  * close the drawer it had just opened (#171).
  */
-export function RoutePageTransition({ children }: { children: ReactNode }) {
+export function RoutePageTransition({ children }: Readonly<{ children: ReactNode }>) {
   return <PageTransition routeKey={usePathname()}>{children}</PageTransition>;
 }

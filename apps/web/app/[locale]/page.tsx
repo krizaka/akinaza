@@ -15,6 +15,7 @@ import { InvoicePreview } from "@/components/home/previews/InvoicePreview";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { pageSession } from "@/lib/access";
+import { jsonLdHtml } from "@/lib/csp";
 import { env } from "@/lib/env";
 import { homeFeed } from "@/lib/home-feed";
 import { asLocale, getDictionary } from "@/lib/i18n";
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * The home, short: the promise beside the real app on a phone, the three jobs on real screens (a booking, an invoice, the
  * quarter's books), the founder offer once it is live, one way in, a quiet line of trust. The tax return is prepared, never filed.
  */
-export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Home({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const d = getDictionary(locale).landing;
   const status = productStatus(preview);
@@ -46,7 +47,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
   return (
     <>
       <link rel="preload" as="image" href={heroTake(locale).poster} fetchPriority="high" />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="home" />
       <main id="content">
         <LandingPage
@@ -75,6 +76,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
               </p>
             </>
           }
+          featuresHeading={{ title: d.screensTitle }}
           features={SCREENS.map(({ id }) => ({
             id,
             icon: null,

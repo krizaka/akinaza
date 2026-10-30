@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const generateMetadata = titleOf("profile");
 
 /** The account: name, picture, e-mail with its verified state, since when, and the role held in the shop in use. */
-export default async function Profile({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Profile({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale).console.account;
   const { session, profile, member, sections, openedAt, timeZone } = await accountPage();

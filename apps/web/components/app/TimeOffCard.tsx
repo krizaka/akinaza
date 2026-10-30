@@ -27,7 +27,7 @@ const timeOffForm = createKrizakaForm({
 });
 
 /** Time off for anyone on the team, as a date range (akinaza#208): the booking slots leave those days out, Today says who is off. */
-export function TimeOffCard({ data }: { data: TimeOffData }) {
+export function TimeOffCard({ data }: Readonly<{ data: TimeOffData }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const [reversed, setReversed] = useState(false);

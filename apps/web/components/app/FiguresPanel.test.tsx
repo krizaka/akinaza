@@ -71,6 +71,12 @@ describe("the lexique (#260)", () => {
     const html = renderToStaticMarkup(<LexiconSection locale="en" />);
     for (const word of ["GST / QST", "Margin", "No-show", "Return period"]) expect(html).toContain(word);
   });
+
+  it("is one landmark named once: the glossary names itself, the wrapper adds no second region (axe landmark-unique, #448)", () => {
+    const html = renderToStaticMarkup(<LexiconSection locale="en" />);
+    expect(html.match(/<section/g) ?? []).toHaveLength(1);
+    expect(html).not.toContain("aria-label=");
+  });
 });
 
 describe("the figures on Today (#260)", () => {

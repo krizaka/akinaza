@@ -23,7 +23,7 @@ export function formulaText(figure: FigureAnswer, say: Say, locale: Locale): str
     .map((term, i) => {
       const label = say(`figures.terms.${term.label}`);
       const value = valueText(term, locale);
-      return `${i === 0 ? "" : term.op ? `${term.op} ` : "· "}${label} ${value}`;
+      return `${termLead(i, term.op)}${label} ${value}`;
     })
     .join(" ");
   return say("figures.formulaHere", { formula: say(`figures.${figure.id}.formula`), terms });
@@ -33,7 +33,9 @@ const RATE_KEYS = ["collected", "toCollect", "margin", "noShows"];
 /** The meaning, then the second reading of the figure (its rate) when it has one. */
 export function meaningText(figure: FigureAnswer, say: Say): string {
   const base = say(`figures.${figure.id}.meaning`);
-  return figure.rate !== null && RATE_KEYS.includes(figure.id) ? `${base} ${say(`figures.rateOf.${figure.id}`, { rate: figure.rate })}` : base;
+  if (figure.rate === null || !RATE_KEYS.includes(figure.id)) return base;
+  const rateText = say(`figures.rateOf.${figure.id}`, { rate: figure.rate });
+  return `${base} ${rateText}`;
 }
 
 /** « 12 invoices · 3 expenses » (a source with no row is left out). */
@@ -56,4 +58,10 @@ export function actionText(action: NextActionAnswer, say: Say, locale: Locale): 
   // 2026-01-04 was a Sunday: the weekday number (0 = Sunday) names the day in the owner's language.
   const weekday = new Date(Date.UTC(2026, 0, 4 + Number(w.weekday))).toLocaleDateString(locale === "fr" ? "fr-CA" : "en-CA", { weekday: "long", timeZone: "UTC" });
   return { title: say("figures.actions.slot.title", { weekday, time: String(w.startsAt) }), why: say("figures.actions.slot.why", { booked: Number(w.booked), offered: Number(w.offered) }) };
+}
+
+/** What goes before a term of a formula: nothing for the first, its operator, or a dot. */
+function termLead(index: number, op: string | undefined): string {
+  if (index === 0) return "";
+  return op ? `${op} ` : "· ";
 }

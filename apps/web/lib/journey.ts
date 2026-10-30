@@ -58,7 +58,8 @@ export function serviceStep(input: { page: PublicShop; locale: Locale; serviceId
   const { staffId, zoneId } = resolveChoice(page, { staff: input.staffId, zone: input.zoneId });
   const free = service.priceCents === 0;
   const totals = invoiceTotals([{ description: service.nameEn, quantity: 1, unitPriceCents: service.priceCents, category: "standard" }], { registrant: page.shop.registrant });
-  const price = free ? t("console.journey.freeService") : service.priceVaries ? t("console.journey.fromPrice", { price: money(service.priceCents, locale) }) : money(service.priceCents, locale);
+  const listed = service.priceVaries ? t("console.journey.fromPrice", { price: money(service.priceCents, locale) }) : money(service.priceCents, locale);
+  const price = free ? t("console.journey.freeService") : listed;
   const pick = (fr: string | null, en: string | null) => (locale === "fr" ? fr : en) || null;
   return {
     name: locale === "fr" ? service.nameFr : service.nameEn,
@@ -102,9 +103,10 @@ export function timesStep(input: { page: PublicShop; locale: Locale; now: Date; 
   const tomorrow = addLocalDays(today, 1);
   return {
     title: locale === "fr" ? service.nameFr : service.nameEn,
-    who: person ? t("console.journey.with", { name: person.name }) : page.team.length > 1 ? t("console.journey.anyone") : null,
+    who: person ? t("console.journey.with", { name: person.name }) : (page.team.length > 1 && t("console.journey.anyone")) || null,
     footer: t("console.journey.timesFooter", { zone: timezone }),
     days: groupSlotsByDay(input.slots, timezone, { maxDays: 14, maxPerDay: 12 }).map((d) => {
+      const named: Record<string, string> = { [today]: t("console.shopPage.today"), [tomorrow]: t("console.shopPage.tomorrow") };
       const slot = (s: { startsAt: Date }) => ({
         id: s.startsAt.toISOString(),
         label: clock(s.startsAt, timezone, locale),
@@ -112,7 +114,7 @@ export function timesStep(input: { page: PublicShop; locale: Locale; now: Date; 
       });
       return {
         id: d.day,
-        label: d.day === today ? t("console.shopPage.today") : d.day === tomorrow ? t("console.shopPage.tomorrow") : dayLabel(d.day, locale, "short"),
+        label: named[d.day] ?? dayLabel(d.day, locale, "short"),
         sub: dayMonth(d.day, locale),
         slots: d.slots.map(slot),
         groups: groupByPart(d.slots, (s) => hourIn(s.startsAt, timezone)).map((g) => ({ id: g.part, label: t(`console.journey.parts.${g.part}`), slots: g.items.map(slot) })),
@@ -144,6 +146,7 @@ export function confirmationStep(input: { detail: BookingDetail; locale: Locale 
   const day = localDay(detail.startsAt, detail.timezone);
   const phone = detail.shop.publicPhone;
   const digits = phone?.replace(/\D/g, "") ?? "";
+  const dialled = digits.length === 10 ? `+1${digits}` : `+${digits}`;
   return {
     title: locale === "fr" ? detail.service.nameFr : detail.service.nameEn,
     when: `${dayLabel(day, locale, "long")} · ${clock(detail.startsAt, detail.timezone, locale)}`,
@@ -155,6 +158,6 @@ export function confirmationStep(input: { detail: BookingDetail; locale: Locale 
     cancelRule: t("console.journey.cancelRule", { hours: detail.cancellationHours }),
     calendarHref: `/api/me/bookings/${detail.id}/calendar`,
     phone: phone ?? null,
-    phoneHref: digits.length >= 7 ? `tel:${digits.length === 10 ? `+1${digits}` : `+${digits}`}` : null,
+    phoneHref: digits.length >= 7 ? `tel:${dialled}` : null,
   };
 }

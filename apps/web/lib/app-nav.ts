@@ -38,5 +38,5 @@ export function placeHrefFor(locale: RouteLocale, member: { shopId: string; role
  * facture » on the lists, the page's own on the day (the next appointment), the Boutique hub (its section's save), an invoice's
  * screens (send, correct, issue) and a new shop. The header yields wherever the page holds it: never two primaries.
  */
-const PAGE_HOLDS_PRIMARY = /\/app\/[^/]+\/(aujourdhui|boutique|invoices\/[^/?]+|shop\/new)(\/|\?|$)/;
+const PAGE_HOLDS_PRIMARY = /\/app\/[^/]+\/(today|settings|invoices\/[^/?]+|shop\/new)(\/|\?|$)/;
 export const screenPrimary = (pathname: string): "header" | "page" => (PAGE_HOLDS_PRIMARY.test(pathname) ? "page" : "header");

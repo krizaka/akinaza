@@ -27,9 +27,9 @@ describe("the rail of each role (docs/ux/2026-10-full-review.md § 4.1): five de
   });
 
   it("leads « Boutique » to its hub's first section: the page for who may set the shop up, the team for who may only see the team", () => {
-    expect(placeHrefFor("fr", { shopId: "s-1", role: "owner" }, "shop")).toBe("/fr/app/s-1/boutique/page");
-    expect(placeHrefFor("fr", { shopId: "s-1", role: "manager" }, "shop")).toBe("/fr/app/s-1/boutique/team");
-    expect(placeHrefFor("fr", { shopId: "s-1", role: "owner" }, "today")).toBe("/fr/app/s-1/aujourdhui");
+    expect(placeHrefFor("fr", { shopId: "s-1", role: "owner" }, "shop")).toBe("/fr/app/s-1/settings/page");
+    expect(placeHrefFor("fr", { shopId: "s-1", role: "manager" }, "shop")).toBe("/fr/app/s-1/settings/team");
+    expect(placeHrefFor("fr", { shopId: "s-1", role: "owner" }, "today")).toBe("/fr/app/s-1/today");
     expect(placeHrefFor("en", null, "bookings")).toBe("/en/app");
   });
 });
@@ -40,10 +40,10 @@ describe("the rail of each role (docs/ux/2026-10-full-review.md § 4.1): five de
  * invoice's screens (send, correct, issue). Every page of the shop's space is in this table (an old address that answers 308 is a redirect of `next.config.mjs`, not a page): a new one must say who holds its primary.
  */
 const OWNER_SCREENS: Record<string, "header" | "page"> = {
-  "aujourdhui": "page",
+  "today": "page",
   "books": "header",
-  "boutique": "page",
-  "boutique/[section]": "page",
+  "settings": "page",
+  "settings/[section]": "page",
   "brief": "header",
   "clients": "header",
   "clients/[id]": "header",
@@ -69,7 +69,7 @@ describe("one primary per screen: the header's « Nouvelle facture » or the pag
   });
 
   it("gives the day its own primary, the next appointment: the header yields on Aujourd'hui", () => {
-    expect(screenPrimary("/fr/app/s-1/aujourdhui")).toBe("page");
-    expect(screenPrimary("/en/app/s-1/aujourdhui?day=2026-10-23")).toBe("page");
+    expect(screenPrimary("/fr/app/s-1/today")).toBe("page");
+    expect(screenPrimary("/en/app/s-1/today?day=2026-10-23")).toBe("page");
   });
 });

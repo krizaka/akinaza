@@ -5,6 +5,7 @@ import { accounts } from "@/app/accounts";
 import { requireShopClient } from "@/lib/access";
 import { db } from "@/lib/db";
 import { handle, idParam } from "@/lib/http";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export function POST(req: Request, { params }: { params: Promise<{ id: string }>
     const { session, shop, client } = await requireShopClient(req, idParam((await params).id), "clients");
     const { body } = noteSchema.parse(await req.json());
     const profile = await accounts().profile(session.account.id);
-    const note = await addClientNote(db(), shop.id, client.id, { accountId: session.account.id, name: profile.name ?? session.account.email }, body, new Date());
+    const note = await addClientNote(db(), shop.id, client.id, { accountId: session.account.id, name: profile.name ?? session.account.email }, body, requestNow());
     return Response.json({ note }, { status: 201 });
   });
 }

@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { pageSession } from "@/lib/access";
 import { founderSeats } from "@/lib/billing";
+import { jsonLdHtml } from "@/lib/csp";
 import { query } from "@/lib/db";
 import { env } from "@/lib/env";
 import { founderCap, founderEntry, onSale } from "@/lib/founder-offer";
@@ -75,7 +76,7 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
   }));
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd(locale)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="pricing" />
       <main id="content" className="pt-20">
         <PricingPage brand="akinaza" title={d.title} lead={d.lead} plansLabel={d.plansLabel} plans={cards} faq={{ title: d.faqTitle, items: d.faq.map((f) => ({ question: f.q, answer: f.a })) }} />

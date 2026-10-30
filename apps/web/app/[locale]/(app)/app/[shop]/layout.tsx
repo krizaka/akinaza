@@ -7,7 +7,7 @@ import { asLocale } from "@/lib/i18n";
 import { lastMember, memberOf } from "@/lib/member-shop";
 
 /** One shop's space, named by the address: a shop the person does not belong to is a 404, whatever the cookie says. */
-export default async function ShopLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string; shop: string }> }) {
+export default async function ShopLayout({ children, params }: Readonly<{ children: React.ReactNode; params: Promise<{ locale: string; shop: string }> }>) {
   const { locale: raw, shop: shopId } = await params;
   const locale = asLocale(raw);
   const { account } = (await pageSession())!;

@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
+import { contentSecurityPolicy } from "./csp";
 import { DEMO_SHOP, heroActions, HOME_SECTIONS, productStatus, SCREENS } from "./landing";
 import { llmsText } from "./seo";
 import { heroTake, MEDIA_CDN, screenStill } from "./tour";
@@ -24,6 +25,12 @@ describe("the home is short and concrete", () => {
     expect(home).toContain("<HeroPhone");
     expect(HOME_SECTIONS).toEqual(["hero", "screens", "offer", "trust"]);
     expect(SCREENS.map((s) => s.id)).toEqual(["book", "invoice", "books"]);
+  });
+
+  it("names the screens' section with a heading, so the features' h3 follow an h2 (axe heading-order, #448)", () => {
+    expect(home).toContain("featuresHeading={{ title: d.screensTitle }}");
+    expect(en.landing.screensTitle).toBeTruthy();
+    expect(fr.landing.screensTitle).toBeTruthy();
   });
 
   it("carries no filler: no eyebrow, figures band, mascot, comparison, FAQ, changelog or closing panel", () => {
@@ -104,7 +111,7 @@ describe("the first screen loads its proof first", () => {
     expect(video).not.toContain("autoPlay");
   });
   it("the CSP lets the CDN serve media (a video is not an image)", () => {
-    expect(read("next.config.mjs")).toContain("media-src 'self' https://krizaka-assets.b-cdn.net");
+    expect(contentSecurityPolicy({ production: true, upgradeInsecure: true })).toContain("media-src 'self' https://krizaka-assets.b-cdn.net");
   });
 });
 

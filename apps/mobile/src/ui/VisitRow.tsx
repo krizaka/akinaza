@@ -10,7 +10,7 @@ import { useLocale } from "@/use-locale";
 export const STATUS_TONE = { booked: "accent", done: "success", cancelled: "neutral", noShow: "warning" } as const;
 
 /** One appointment in the day's list: the time and the service, who is booked, its state; a press opens it (list to detail). */
-export function VisitRow({ visit, timeZone, selected, onOpen }: { visit: DayVisit; timeZone: string; selected: boolean; onOpen: () => void }) {
+export function VisitRow({ visit, timeZone, selected, onOpen }: Readonly<{ visit: DayVisit; timeZone: string; selected: boolean; onOpen: () => void }>) {
   const { t } = useI18n();
   const { locale } = useLocale();
   const who = visit.bookings.map((b) => b.dependant.name).join(", ");

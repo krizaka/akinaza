@@ -18,7 +18,7 @@ const GROUPS = ["clients", "invoices", "actions"] as const;
  * files and invoices (`/api/walker/search`, the shop's guard) and lists the actions. Enter opens the option; Escape closes and
  * the focus returns to where it was (the dialog's).
  */
-export function ShopSearch({ locale, shopId, actions, open, onOpenChange }: { locale: "en" | "fr"; shopId: string; actions: readonly PaletteItem[]; open: boolean; onOpenChange: (open: boolean) => void }) {
+export function ShopSearch({ locale, shopId, actions, open, onOpenChange }: Readonly<{ locale: "en" | "fr"; shopId: string; actions: readonly PaletteItem[]; open: boolean; onOpenChange: (open: boolean) => void }>) {
   const { say } = useSay();
   const router = useRouter();
   const routes = shopRoutes(locale, shopId);

@@ -30,7 +30,7 @@ export interface SiteBarLabels {
  * to another product.
  *
  * The bar itself is a client island: it receives its words already said (the server composes them, so the catalogues never travel to the browser) and the session's two places as nodes. */
-export function SiteBar({ locale, current, path, languages: offered, contentLocale, labels, sessionBar, sessionPanel }: { locale: Locale; current: PageId; path?: string; /** The languages the page is offered in (a shop page: the owner's list); default: the product's own. */ languages?: readonly string[]; /** The language of the page's content when it is not the product's (Spanish). */ contentLocale?: string; labels: SiteBarLabels; sessionBar: ReactNode; sessionPanel: ReactNode }) {
+export function SiteBar({ locale, current, path, languages: offered, contentLocale, labels, sessionBar, sessionPanel }: Readonly<{ locale: Locale; current: PageId; path?: string; /** The languages the page is offered in (a shop page: the owner's list); default: the product's own. */ languages?: readonly string[]; /** The language of the page's content when it is not the product's (Spanish). */ contentLocale?: string; labels: SiteBarLabels; sessionBar: ReactNode; sessionPanel: ReactNode }>) {
   const t = (key: keyof SiteBarLabels) => labels[key];
   const languages = languagesFor(path ?? pagePath(locale, current), offered);
   const currentLanguage = contentLocale ?? locale;

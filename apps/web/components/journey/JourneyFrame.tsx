@@ -43,7 +43,7 @@ export function JourneyFrame({ locale, path, back, title, lead, head, children }
 }
 
 /** What a step shows while its data loads: the shape of the page, no spinner, no layout shift. */
-export function JourneySkeleton({ rows = 3 }: { rows?: number }) {
+export function JourneySkeleton({ rows = 3 }: Readonly<{ rows?: number }>) {
   return (
     <main id="content" className="pt-24" aria-busy="true" aria-live="polite">
       <div className="mx-auto flex w-full max-w-(--kz-page-max,72rem) flex-col gap-4 px-(--kz-page-gutter,1rem)">
