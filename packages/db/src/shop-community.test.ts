@@ -234,7 +234,9 @@ describe("the demo shops as places (B45)", () => {
     const again = await communityOf(t.db, s.shopId);
     expect(again.wall.items).toHaveLength(first.wall.items.length);
     expect(again.reviews).toHaveLength(8);
-    expect(await reelsOf(t.db, s.shopId)).toHaveLength(2);
+    const playlist = await reelsOf(t.db, s.shopId);
+    expect(playlist.map((r) => r.kind)).toEqual(["upload", "upload", "external"]);
+    expect(playlist[1]?.titleEn).toBe("What the client receives");
   });
   it("gives each demo trade its own photos: a salon's wall shows no dog and a walker's wall no chair", async () => {
     const { seedDemoCommunity } = await import("./demo-community");

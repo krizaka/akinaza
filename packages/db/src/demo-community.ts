@@ -84,6 +84,14 @@ const COMMUNITY: Record<DemoSlug, {
   },
 };
 
+/** The second clip of every demo playlist: Akinaza's own recording of the report the client receives (7 s, phone), on the CDN. */
+const REPORT_CLIP = {
+  webm: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/report.47b4fef558.webm",
+  mp4: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/report.b1f25d285f.mp4",
+  poster: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/phone-report.af3aa7b92b.jpg",
+  seconds: 7.3,
+};
+
 export const isDemoCommunitySlug = (slug: string): slug is DemoSlug => slug in COMMUNITY;
 
 /** Gives a demo shop its place: each part only when the owner has not pinned anything of their own yet. */
@@ -105,6 +113,7 @@ export async function seedDemoCommunity(db: Db, shopId: string, slug: string): P
   if ((await reelsOf(db, shopId)).length === 0) {
     // The playlist: the shop's own reel first (it plays in the television), then a public Short behind its facade.
     await addUploadedReel(db, shopId, { mp4Url: files.reel.mp4, webmUrl: files.reel.webm, posterUrl: files.reel.poster, seconds: files.reel.seconds, titleFr: "La semaine au salon", titleEn: "A week at the shop" });
+    await addUploadedReel(db, shopId, { mp4Url: REPORT_CLIP.mp4, webmUrl: REPORT_CLIP.webm, posterUrl: REPORT_CLIP.poster, seconds: REPORT_CLIP.seconds, titleFr: "Ce que reçoit le client", titleEn: "What the client receives" });
     await addExternalReel(db, shopId, plan.external.url, { titleFr: plan.external.titleFr, titleEn: plan.external.titleEn, posterUrl: files.reel.poster });
   }
   const links = await socialLinksOf(db, shopId);
