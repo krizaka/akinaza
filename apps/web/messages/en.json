@@ -3558,7 +3558,20 @@
       "services": "Services",
       "other": "Other",
       "openNow": "Open now",
-      "freeToday": "A free time today"
+      "freeToday": "A free time today",
+      "text": "Name or service",
+      "textPlaceholder": "A name, a service, a quartier",
+      "opening": "Opening",
+      "week": "Open this week",
+      "distance": "Distance",
+      "km": "{km} km",
+      "distanceNeeds": "Distance is measured from « Near me » or an address.",
+      "clearAll": "Clear all",
+      "remove": "Remove: {filter}",
+      "active": "Active filters",
+      "here": "Around you",
+      "updating": "Updating the list…",
+      "textChip": "“{text}”"
     },
     "list": {
       "label": "Shops",
