@@ -5,7 +5,7 @@
 // Addresses of the walker and the clients are the seed's own fictional `.test` ones; secrets come from the environment and are
 // never printed (a database on this machine gets local defaults).
 //
-//   DATABASE_URL=… [DATABASE_CA_CERT=…] [APP_DATA_ENCRYPTION_KEY=…] [QA_WALKER_PASSWORD=… QA_CLIENTS_PASSWORD=… QA_ADMIN_EMAIL=… QA_ADMIN_PASSWORD=…] \
+//   DATABASE_URL=… [DATABASE_CA_CERT=…] [APP_DATA_ENCRYPTION_KEY=…] [QA_WALKER_PASSWORD=… QA_CLIENTS_PASSWORD=… QA_ADMIN_EMAIL=… QA_ADMIN_PASSWORD=… QA_KRIZAKA_PASSWORD=…] \
 //     pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs [--check]
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -32,6 +32,9 @@ const isLocalHost = (databaseUrl) => {
 export const WALKER = persona("akinaza", "lea");
 export const ERIC = persona("akinaza", "eric");
 export const ADMIN = persona("akinaza", "mira");
+/** The company's own account: it owns the real Krizaka shop (akinaza#489), set up through the owner console. Not a demo persona, not a person's login. */
+export const KRIZAKA = { id: "krizaka", displayName: "Krizaka", locale: "fr", avatar: "krizaka" };
+export const KRIZAKA_EMAIL = "akinaza@krizaka.com";
 
 /** The accounts of the cast: the walker, the five clients (same order as the seed) and the administrator. */
 export function castAccounts(env) {
@@ -53,6 +56,7 @@ export function castAccounts(env) {
     { persona: WALKER, email: SAINT_HENRI_EMAILS[0], role: "USER", secret: walkerSecret },
     ...clientPersonas.map((persona, i) => ({ persona, email: SAINT_HENRI_EMAILS[i + 1], role: "USER", secret: clientsSecret })),
     { persona: ERIC, email: addressOf("QA_USER_EMAIL", ERIC), role: "USER", secret: need("QA_USER_PASSWORD", LOCAL_SECRET) },
+    { persona: KRIZAKA, email: (env.QA_KRIZAKA_EMAIL ?? KRIZAKA_EMAIL).trim().toLowerCase(), role: "USER", secret: need("QA_KRIZAKA_PASSWORD", LOCAL_SECRET) },
     { persona: ADMIN, email: addressOf("QA_ADMIN_EMAIL", ADMIN), role: "ADMIN", secret: need("QA_ADMIN_PASSWORD", LOCAL_SECRET) },
   ];
 }
@@ -122,7 +126,7 @@ async function main() {
       ids.push(row.id);
     }
     const result = await seedSaintHenri(createDb(pool), key, fixedNow ? new Date(fixedNow) : new Date());
-    console.log(`seed-cast: ${WALKER.displayName} (${SAINT_HENRI.shop.name}), ${accounts.length - 3} clients, ${ERIC.displayName}, ${ADMIN.displayName} (administrator); shop ${result.created ? "created" : "already there"}`);
+    console.log(`seed-cast: ${WALKER.displayName} (${SAINT_HENRI.shop.name}), ${accounts.length - 4} clients, ${ERIC.displayName}, ${ADMIN.displayName} (administrator); shop ${result.created ? "created" : "already there"}`);
     // The two owner states of the page audit (#405: an empty shop, a shop with one item per list): outside the fingerprint, which counts the cast alone.
     await ensureOwnerStates(pool, accounts[0].secret);
     const { fingerprint, counts } = await fingerprintOf((sql, values) => pool.query(sql, values), ids, ids[0]);

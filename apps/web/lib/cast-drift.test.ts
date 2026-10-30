@@ -34,13 +34,15 @@ describe("the cast is the only source of the personas", () => {
     expect(accountsFromEnv(env).map((a: { name: string }) => a.name)).toEqual([ERIC.displayName, ADMIN.displayName]);
   });
 
-  it("gives the cast accounts: the walker, five clients, Éric, the administrator; a default secret only on this machine", () => {
+  it("gives the cast accounts: the walker, five clients, Éric, the company (owner of the real Krizaka shop), the administrator; a default secret only on this machine", () => {
     const local = castAccounts({ DATABASE_URL: "postgres://u@localhost:5432/x" });
-    expect(local.map((a: { persona: { id: string } }) => a.persona.id)).toEqual(["lea", "camille", "jordan", "nadia", "etienne", "sofia", "eric", "mira"]);
+    expect(local.map((a: { persona: { id: string } }) => a.persona.id)).toEqual(["lea", "camille", "jordan", "nadia", "etienne", "sofia", "eric", "krizaka", "mira"]);
     expect(local.every((a: { secret: string }) => a.secret === LOCAL_SECRET)).toBe(true);
     expect(() => castAccounts({ DATABASE_URL: "postgres://u@db.example.com/x" })).toThrow(/QA_WALKER_PASSWORD/);
-    const remote = castAccounts({ DATABASE_URL: "postgres://u@db.example.com/x", QA_WALKER_PASSWORD: "w".repeat(14), QA_CLIENTS_PASSWORD: "c".repeat(14), QA_ADMIN_PASSWORD: "a".repeat(14), QA_USER_PASSWORD: "u".repeat(14), QA_ADMIN_EMAIL: "Boss@x.test" });
+    const remote = castAccounts({ DATABASE_URL: "postgres://u@db.example.com/x", QA_WALKER_PASSWORD: "w".repeat(14), QA_CLIENTS_PASSWORD: "c".repeat(14), QA_ADMIN_PASSWORD: "a".repeat(14), QA_KRIZAKA_PASSWORD: "k".repeat(14), QA_USER_PASSWORD: "u".repeat(14), QA_ADMIN_EMAIL: "Boss@x.test" });
     expect(remote.at(-1)).toMatchObject({ email: "boss@x.test", role: "ADMIN" });
+    expect(remote.find((a: { persona: { id: string } }) => a.persona.id === "krizaka")).toMatchObject({ email: "akinaza@krizaka.com", role: "USER" });
+    expect(() => castAccounts({ DATABASE_URL: "postgres://u@db.example.com/x", QA_WALKER_PASSWORD: "w".repeat(14), QA_CLIENTS_PASSWORD: "c".repeat(14), QA_ADMIN_PASSWORD: "a".repeat(14), QA_USER_PASSWORD: "u".repeat(14) })).toThrow(/QA_KRIZAKA_PASSWORD/);
   });
 
   it("counts the walker's shop only, never another cast account's own rows (a dev database holds Éric's studio shop too)", async () => {
