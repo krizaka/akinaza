@@ -13,6 +13,8 @@ import { mkdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 
+import { composerLayoutProblems, measureComposer } from "./composer-layout.mjs";
+
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright-core");
 
@@ -47,6 +49,8 @@ const until = async (fn, what, ms = 15000) => {
   }
 };
 
+// `controlOverlaps` is in @krizaka/page-audit from the release that carries krizaka-ts#298; an older install skips only that check.
+const auditApi = await import("@krizaka/page-audit").then((m) => (m.problemsOf && m.auditPage ? m : null), () => null);
 const browser = await chromium.launch();
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, locale: LOCALE === "fr" ? "fr-CA" : "en-CA", timezoneId: "America/Toronto" });
 const page = await context.newPage();
@@ -171,6 +175,27 @@ try {
       check(overflow <= 0, `the console never overflows (${name}, ${scheme})`);
       await page.screenshot({ path: path.join(OUT, `02-composer-${name}-${scheme}.png`) });
     }
+  }
+
+  // 7 - the layout (krizaka-internal#214): at 1440 x 900 the desktop preview is at least half the screen, no two controls overlap, every radio holds its content inside its card.
+  // Boxes, not pixels: a pixel baseline accepted a phone-width preview and radios over their cards.
+  await page.setViewportSize({ width: 1440, height: 900 });
+  // A first visit: nothing remembered of the folded panels.
+  await page.addInitScript(() => localStorage.removeItem("kz-shop-composer-panels"));
+  for (const scheme of ["dark", "light"]) {
+    await page.emulateMedia({ colorScheme: scheme });
+    await page.goto(composerUrl);
+    await sectionsNav.waitFor();
+    await page.locator('iframe[data-device="desktop"]').waitFor();
+    const layout = composerLayoutProblems(await page.evaluate(measureComposer));
+    check(layout.length === 0, `the composer layout is right at 1440x900 (${scheme})${layout.length ? ` — ${layout.join("; ")}` : ""}`);
+    if (auditApi) {
+      const measured = await page.evaluate(auditApi.auditPage);
+      check(measured.controlOverlaps !== undefined, "the installed @krizaka/page-audit measures controlOverlaps (krizaka-ts#298)");
+      const audit = auditApi.problemsOf(`composer@1440 ${scheme}`, measured, { controlOverlaps: true });
+      check(audit.length === 0, `no two controls overlap (${scheme})${audit.length ? ` — ${audit.join("; ")}` : ""}`);
+    }
+    await page.screenshot({ path: path.join(OUT, `03-layout-1440-${scheme}.png`) });
   }
 } catch (error) {
   failed += 1;
