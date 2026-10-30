@@ -648,7 +648,8 @@
       "organize": "Tags and views",
       "prices": "Prices",
       "incidents": "Incidents",
-      "addresses": "Shop addresses"
+      "addresses": "Shop addresses",
+      "storage": "Storage"
     },
     "admin": {
       "health": "Health",
@@ -1018,6 +1019,36 @@
         "retain": "Kept in the register until {date}.",
         "close": "Close the incident",
         "closedNote": "This entry is closed. It stays in the register and is never edited again."
+      },
+      "storage": {
+        "title": "Where the files are kept",
+        "lead": "The photos, reels and files of the shops and their clients. The provider and region are the administrator's choice, saved in the database and audited; the access keys stay in the environment, never on this screen.",
+        "canada": "In Canada",
+        "elsewhere": "Elsewhere",
+        "provider": {
+          "digitalocean-spaces": "DigitalOcean Spaces",
+          "aws-s3": "Amazon S3",
+          "ovhcloud": "OVHcloud"
+        },
+        "regionLabel": "{provider} · {region}",
+        "current": "Saved now",
+        "none": "Nothing saved here: the deployment's environment decides (and uploads are refused without a storage).",
+        "bucket": "Bucket",
+        "bucketHint": "The bucket created at the provider, in that region.",
+        "save": "Save",
+        "saved": "Saved. New files go to this region; existing files are moved in the background, checked by their SHA-256.",
+        "pick": "Region",
+        "preview": "If you save this:",
+        "residency": {
+          "canada-qc": "Files are kept in Canada, in Québec.",
+          "canada-on": "Files are kept in Canada, in Ontario (Toronto).",
+          "canada-ab": "Files are kept in Canada, in Alberta.",
+          "canada": "Files are kept in Canada (the province is not specified).",
+          "elsewhere": "Files are not kept in Canada: they are stored outside the country.",
+          "unknown": "Where the files are kept is not known: no sentence claims Canada.",
+          "user-cloud": "Files stay in the cloud the person connected themselves.",
+          "device": "Files stay on the server's own disk (development only)."
+        }
       }
     },
     "errors": {
