@@ -3,7 +3,7 @@ import { Badge } from "@krizaka/ui/badge";
 import { OpeningHours } from "@krizaka/ui/opening-hours";
 import { PaperGrain } from "@krizaka/ui/page";
 import type { ShopPage } from "@krizaka/ui/shop";
-import { ShopFrame } from "@krizaka/ui/shop";
+import { ShopFrame, ShopSection } from "@krizaka/ui/shop";
 import { BookingSection, type BookingTime } from "@krizaka/ui/shop/booking";
 import { BulletinSection } from "@krizaka/ui/shop/bulletin";
 import { FaqSection } from "@krizaka/ui/shop/faq";
@@ -23,6 +23,7 @@ import { preload } from "react-dom";
 
 import { ButtonLink } from "@/components/ButtonLink";
 import { MapSetup } from "@/components/shop/MapSetup";
+import { ShopMosaic } from "@/components/shop/ShopMosaic";
 import { ShopReviews } from "@/components/shop/ShopReviews";
 import { ShopVideoLazy } from "@/components/shop/ShopVideoLazy";
 import { coverPhoneSet, coverSizes, coverSrcSet, PHONE_MEDIA } from "@/lib/cover-renditions";
@@ -77,6 +78,7 @@ type Ctx = {
   nextTime: BookingTime | undefined;
   playLabels: Record<Platform, string>;
   notice: string;
+  locale: Locale;
   platformName: (p: Platform) => string;
 };
 const commonOf = (section: Section) => ({ id: section.key, "data-shop-key": section.key }) as const;
@@ -208,6 +210,19 @@ function galleryLabel(view: StorefrontView, variant: string, t: Ctx["t"]): strin
   return view.galleryIllustrative && variant !== "wall" ? t("console.shopPage.galleryIllustrativeLabel") : t("console.shopPage.galleryLabel", { shop: view.name });
 }
 
+/**
+ * The mosaic is the package's `ShopGallery` (akinaza#481): a bento on a desktop, a snap strip on a phone, the lightbox a lazy chunk opened by a tile (no script before). Every tile has a fixed ratio
+ * (CLS 0); the `srcset` is the photo's width variants when it has some (`coverSrcSet`), else the file as it is.
+ */
+function mosaicSection({ section, c, common, label, lead }: Args<"gallery"> & { common: ReturnType<typeof commonOf>; label: string; lead: string | undefined }): ReactNode {
+  const photos = (c.plan.sections[section.key] ?? []).map((p) => ({ id: p.id, src: p.src, alt: p.alt, srcSet: coverSrcSet(p.src) }));
+  return (
+    <ShopSection {...common} title={c.titleOf(section, label)} lead={lead} data-variant="mosaic">
+      <ShopMosaic photos={photos} label={label} locale={c.locale} />
+    </ShopSection>
+  );
+}
+
 function gallerySection({ section, c }: Args<"gallery">): ReactNode {
   const { view, t, text, plan, community } = c;
   const title = (fallback: string) => c.titleOf(section, fallback);
@@ -220,6 +235,9 @@ function gallerySection({ section, c }: Args<"gallery">): ReactNode {
     return null;
   }
   const label = galleryLabel(view, section.variant, t);
+  if (section.variant === "mosaic") {
+    return mosaicSection({ section, c, common, label, lead: lead ?? galleryLead(view, section.variant, t) });
+  }
   return <GallerySection {...common} variant={section.variant} photos={photos} notes={notes} sign={pieces.find((p) => p.kind === "sign")?.text || undefined} texture={community?.wall?.texture ?? section.settings.texture} title={title(section.variant === "wall" ? t("console.shopPage.wallTitle") : label)} lead={lead ?? galleryLead(view, section.variant, t)} label={label} />;
 }
 
@@ -353,6 +371,7 @@ export function ShopPageView({ page, view, locale, accent, paper, today, nextTim
     playLabels: Object.fromEntries(PLATFORMS.map((p) => [p, t("console.shopPage.facadePlay", { platform: platformName(p) })])) as Record<Platform, string>,
     notice: t("console.shopPage.facadeNotice", { platform: PLATFORMS.map(platformName).join(" · ") }),
     platformName,
+    locale,
   };
 
   const accentOf = { ...(accent ? { accent } : {}), ...(paper ? { paper } : {}) };
