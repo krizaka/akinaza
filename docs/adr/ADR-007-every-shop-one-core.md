@@ -1,7 +1,6 @@
 # ADR-007 — Every kind of shop on one core: offer kinds, products and variants, stock, drops, lookbooks, presets
 
-Status: **proposed** (2026-10-30). Issue: krizaka/akinaza#591 (Feature). Accepted by the CTO, with a summary for the founder;
-nothing below is built before that.
+Status: **accepted** (2026-10-30, by the CTO; summary to the founder in the 7-hour report). Issue: krizaka/akinaza#591 (Feature).
 Founder request (2026-10-30): clothing boutiques — the alternative-chic neighbourhood shop, the street-wear shop — must have
 their page on Akinaza, with tools for that kind of shop and « ultra advanced » animations, on an architecture that serves
 **every** kind of shop.
