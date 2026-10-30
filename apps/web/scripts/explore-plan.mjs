@@ -11,7 +11,7 @@ import { createDb, exploreSearch, exploreStatement, migrate, pg, settleAvailabil
 import { PgDialect } from "drizzle-orm/pg-core";
 
 const server = process.env.PLAN_PG;
-if (!server) throw new Error("PLAN_PG (a PostgreSQL connection string for a throw-away server) is required");
+if (!server) {throw new Error("PLAN_PG (a PostgreSQL connection string for a throw-away server) is required");}
 const SHOPS = Number(process.env.SHOPS ?? 20_000);
 const RUNS = Number(process.env.RUNS ?? 40);
 const NOW = new Date("2026-10-19T14:00:00Z"); // Monday 10:00 in Montréal
@@ -59,6 +59,13 @@ try {
     "free-today (stored)": { open: "free-today", near: [-73.58, 45.5], within: 3, limit: 30 },
   };
   const pct = (xs, p) => [...xs].sort((x, y) => x - y)[Math.min(xs.length - 1, Math.floor(xs.length * p))].toFixed(1);
+  const repeat = async (n, fn) => {
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      out.push(await fn());
+    }
+    return out;
+  };
   const time = async (fn) => { const s = performance.now(); const out = await fn(); return [performance.now() - s, out]; };
   // The sweep fills the stored availability (what the server's tick does): the whole set once, then a day change.
   const sweep = async (at) => {
@@ -77,10 +84,10 @@ try {
   console.log("\nshape | SQL only p50/p95 ms | page p50/p95 ms (first run is cold: plan and pages not cached) | rows");
   for (const [label, raw] of Object.entries(shapes)) {
     const query = exploreSearchQuery(raw);
-    const sqlOnly = [], page = [];
-    let rows = 0;
-    for (let i = 0; i < RUNS; i++) sqlOnly.push((await time(() => db.execute(exploreStatement(query, NOW).statement)))[0]);
-    for (let i = 0; i < RUNS; i++) { const [ms, result] = await time(() => exploreSearch(db, query, NOW)); page.push(ms); rows = result.shops.length; }
+    const sqlOnly = await repeat(RUNS, async () => (await time(() => db.execute(exploreStatement(query, NOW).statement)))[0]);
+    const timed = await repeat(RUNS, () => time(() => exploreSearch(db, query, NOW)));
+    const page = timed.map(([ms]) => ms);
+    const rows = timed.at(-1)?.[1].shops.length ?? 0;
     console.log(`${label} | ${pct(sqlOnly, 0.5)} / ${pct(sqlOnly, 0.95)} | ${pct(page, 0.5)} / ${pct(page, 0.95)} | ${rows}`);
   }
   const { statement } = exploreStatement(exploreSearchQuery(shapes[process.env.PLAN_SHAPE ?? "combined: text + open now + near 10 km"]), NOW);
