@@ -23,7 +23,7 @@ const loaded = new Map<string, Route>();
 describe("the owner's read routes for the apps", () => {
   // The cold import of the routes' modules (about 3 s the first time) is the suite's set-up, paid once here: each test then times the 401 alone.
   beforeAll(async () => {
-    for (const [name, load] of Object.entries(ROUTES)) loaded.set(name, await load());
+    for (const [name, load] of Object.entries(ROUTES)) {loaded.set(name, await load());}
   });
 
   it.each([

@@ -25,8 +25,8 @@ describe("the hosts a deployment serves", () => {
   });
   it("with a shop domain declared: <slug>.<shop domain>, the domain itself and its www; never a nested label or another domain", () => {
     const env = { ...production, APP_SHOP_DOMAIN: "akinaza.shop" };
-    for (const host of ["salon-laurier.akinaza.shop", "akinaza.shop", "www.akinaza.shop"]) expect(isAllowedHost(host, env), host).toBe(true);
-    for (const host of ["a.b.akinaza.shop", "ab.akinaza.shop", "salon.akinaza.shop.evil.example", "salon.akinaza.sh"]) expect(isAllowedHost(host, env), host).toBe(false);
+    for (const host of ["salon-laurier.akinaza.shop", "akinaza.shop", "www.akinaza.shop"]) {expect(isAllowedHost(host, env), host).toBe(true);}
+    for (const host of ["a.b.akinaza.shop", "ab.akinaza.shop", "salon.akinaza.shop.evil.example", "salon.akinaza.sh"]) {expect(isAllowedHost(host, env), host).toBe(false);}
     // Undeclared: the shop domain is a stranger.
     expect(isAllowedHost("salon-laurier.akinaza.shop", production)).toBe(false);
   });
