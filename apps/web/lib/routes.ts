@@ -18,7 +18,7 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
   const root = `/${locale}/app/${shopId}`;
   return {
     root,
-    today: (day?: string, appointment?: string) => `${root}/aujourdhui${query({ day, appointment })}`,
+    today: (day?: string, appointment?: string) => `${root}/today${query({ day, appointment })}`,
     /** « Le point du lundi » in full; Today only announces it. */
     brief: `${root}/brief`,
     clients: `${root}/clients`,
@@ -32,11 +32,11 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
     newInvoiceFor: (prefill: { client?: string; service?: string; quantity?: string; appointment?: string }) => `${root}/invoices/new${query(prefill)}`,
     books: (period?: string) => `${root}/books${query({ period })}`,
     /** Boutique (K4): one hub on SettingsLayout, one address per section; `?tab=` names the section of the page. */
-    boutique: (section?: string, tab?: string) => `${[root, "boutique", section].filter(Boolean).join("/")}${query({ tab })}`,
+    boutique: (section?: string, tab?: string) => `${[root, "settings", section].filter(Boolean).join("/")}${query({ tab })}`,
     /** Boutique › Équipe. */
-    team: `${root}/boutique/team`,
+    team: `${root}/settings/team`,
     /** Boutique › Page, the first section of the hub (« Ma page boutique »). */
-    setup: `${root}/boutique/page`,
+    setup: `${root}/settings/page`,
     /** Boutique › Shops: « Add a shop » (one more shop under the same account). */
     addShop: `${root}/shop/new`,
     /** An API address of the shop's space, for the shop of the page: the routes pick the shop with `?shopId=`. */

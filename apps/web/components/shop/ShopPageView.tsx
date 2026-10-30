@@ -84,10 +84,14 @@ type Ctx = {
 const commonOf = (section: Section) => ({ id: section.key, "data-shop-key": section.key }) as const;
 
 
+/**
+ * A fact on the hero is drawn over the shop's photo: it wears the `scrim` tone (white on a 60 % black veil, whatever the theme and the photo), never a
+ * tinted tone whose text follows the theme (green on a dark photo was unreadable in the light theme, akinaza#567).
+ */
 function heroFact(b: NonNullable<Args<"hero">["section"]["blocks"]>[number], { view, community }: Pick<Ctx, "view" | "community">): ReactNode {
-  if (b.settings.kind === "open-now" && view.status) return <Badge key={b.key} data-live tone={view.status.open ? "success" : "neutral"} dot={view.status.open} size="md">{view.status.label}{view.status.detail ? ` · ${view.status.detail}` : ""}</Badge>;
-  if (b.settings.kind === "area" && view.area) return <Badge key={b.key} tone="neutral" size="md">{view.area}</Badge>;
-  if (b.settings.kind === "score" && community?.reviews) return <Badge key={b.key} tone="neutral" size="md">{community.reviews.scoreText}</Badge>;
+  if (b.settings.kind === "open-now" && view.status) return <Badge key={b.key} tone="scrim" dot={view.status.open} size="md">{view.status.label}{view.status.detail ? ` · ${view.status.detail}` : ""}</Badge>;
+  if (b.settings.kind === "area" && view.area) return <Badge key={b.key} tone="scrim" size="md">{view.area}</Badge>;
+  if (b.settings.kind === "score" && community?.reviews) return <Badge key={b.key} tone="scrim" size="md">{community.reviews.scoreText}</Badge>;
   return null;
 }
 

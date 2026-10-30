@@ -9,6 +9,7 @@ import { handle, readJson, refuse } from "@/lib/http";
 import { limit } from "@/lib/rate-limit";
 import { translationPort } from "@/lib/translation";
 import { translationRules } from "@/lib/translation-settings";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export function POST(req: Request) {
     const rules = await translationRules();
     if (!rules.enabled) throw refuse(403, "FEATURE_OFF", "This feature is switched off", { feature: "features.storefrontTranslation" });
     const input = await readJson(req, body);
-    const result = await translateShop(db(), translationPort(), { shopId: shop.id, locale: input.locale, day: localDay(new Date(), shop.timezone), dailyLimit: rules.dailyLimit, redo: input.redo });
+    const result = await translateShop(db(), translationPort(), { shopId: shop.id, locale: input.locale, day: localDay(requestNow(), shop.timezone), dailyLimit: rules.dailyLimit, redo: input.redo });
     await audit({ action: "shop.translated", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { locale: input.locale, runId: result.runId, stored: result.stored.length, skippedEdited: result.skippedEdited.length }, headers: req.headers });
     return Response.json(result);
   });

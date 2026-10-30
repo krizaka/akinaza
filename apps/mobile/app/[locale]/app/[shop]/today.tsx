@@ -16,7 +16,7 @@ import { useLocale } from "@/use-locale";
 import { useShop } from "@/use-shop";
 
 /**
- * Aujourd'hui (`/fr/app/<shop>/aujourdhui?day=2026-10-20`, today by default), as the web's: the day strip holds the calendar —
+ * Aujourd'hui (`/fr/app/<shop>/today?day=2026-10-20`, today by default), as the web's: the day strip holds the calendar —
  * two weeks, the days with appointments marked — and the day's agenda, with the two moves of a visit (start, finish).
  * The day's appointments are a list that opens into a detail (`?visit=`, the URL is the state): two panes on a tablet, one at a time on a phone.
  * TODO(krizaka-ui#628): the agenda becomes the native `Agenda` when it ships; until then, a row per visit.

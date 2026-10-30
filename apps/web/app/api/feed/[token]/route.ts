@@ -7,6 +7,7 @@ import { handle, refuse } from "@/lib/http";
 import { buildFeedIcs } from "@/lib/ics";
 import { limit } from "@/lib/rate-limit";
 import { appSettings } from "@/lib/settings";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ export function GET(req: Request, ctx: { params: Promise<{ token: string }> }) {
     if (!token || !(await appSettings().get("exports.icsFeed.enabled"))) throw NOT_FOUND();
     const feed = await feedByTokenHash(db(), feedTokenHash(token, sessionSecret()));
     if (!feed) throw NOT_FOUND();
-    const now = new Date();
+    const now = requestNow();
     const entries = await feedEntriesAround(db(), feed, now, BEHIND_DAYS, AHEAD_DAYS);
     const body = buildFeedIcs({
       name: await feedTitle(db(), feed),

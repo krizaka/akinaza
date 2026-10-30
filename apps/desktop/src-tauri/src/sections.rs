@@ -8,11 +8,11 @@ use url::Url;
 /// the short address's segment (the web's `(legacy)` pages, which open the shop last worked in). Checked against the web's
 /// pages by `apps/web/lib/app-addresses.test.ts`.
 pub const SECTIONS: [(&str, &str, &str); 5] = [
-    ("section.today", "aujourdhui", ""),
+    ("section.today", "today", ""),
     ("section.clients", "clients", "clients"),
     ("section.invoices", "invoices", "invoices"),
     ("section.books", "books", "books"),
-    ("section.shop", "boutique", "shop"),
+    ("section.shop", "settings", "shop"),
 ];
 
 fn is_shop_id(segment: &str) -> bool {
@@ -66,7 +66,7 @@ mod tests {
     #[test]
     fn in_a_shop_page_a_section_stays_in_that_shop_and_its_language() {
         let here = Url::parse(&format!("{BASE}/en/app/{SHOP}/clients/42")).unwrap();
-        assert_eq!(section_url(BASE, Some(&here), "fr", "section.today").unwrap().as_str(), format!("{BASE}/en/app/{SHOP}/aujourdhui"));
+        assert_eq!(section_url(BASE, Some(&here), "fr", "section.today").unwrap().as_str(), format!("{BASE}/en/app/{SHOP}/today"));
         assert_eq!(section_url(BASE, Some(&here), "fr", "section.books").unwrap().as_str(), format!("{BASE}/en/app/{SHOP}/books"));
     }
 
@@ -91,7 +91,7 @@ mod tests {
             let at = |section: &str| section_url(BASE, Some(&here), "fr", section).unwrap().path().to_string();
             assert_eq!(
                 ["section.today", "section.clients", "section.invoices", "section.books", "section.shop"].map(at),
-                ["aujourdhui", "clients", "invoices", "books", "boutique"].map(|s| format!("/{locale}/app/{SHOP}/{s}")),
+                ["today", "clients", "invoices", "books", "settings"].map(|s| format!("/{locale}/app/{SHOP}/{s}")),
                 "{locale}: in a shop, the web's shopRoutes"
             );
             let short = |section: &str| section_url(BASE, None, locale, section).unwrap().path().to_string();

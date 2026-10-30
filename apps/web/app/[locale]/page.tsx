@@ -76,6 +76,7 @@ export default async function Home({ params }: Readonly<{ params: Promise<{ loca
               </p>
             </>
           }
+          featuresHeading={{ title: d.screensTitle }}
           features={SCREENS.map(({ id }) => ({
             id,
             icon: null,

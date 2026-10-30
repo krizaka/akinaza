@@ -20,6 +20,11 @@ export type CspOptions = {
   production: boolean;
   /** `upgrade-insecure-requests` (production on https only: see `upgradesInsecure`). */
   upgradeInsecure: boolean;
+  /**
+   * Set on a shop's own domain (ADR-005 §6): the app's origin, the only place the page may submit to (the booking hop) and the only page that may frame it
+   * (the studio's preview). Unset: the page's own origin, as before.
+   */
+  appOrigin?: string;
 };
 
 /** A fresh, unguessable nonce for one response (base64 of a random UUID, as Next's guide does). */
@@ -41,7 +46,7 @@ export function isShopPath(pathname: string): boolean {
   return /^\/(?:en|fr|es)\/s\//.test(pathname);
 }
 
-export function contentSecurityPolicy({ nonce, production, upgradeInsecure }: CspOptions): string {
+export function contentSecurityPolicy({ nonce, production, upgradeInsecure, appOrigin }: CspOptions): string {
   const strict = nonce !== undefined;
   const dev = production ? "" : " 'unsafe-eval'";
   const script = strict ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev}` : `script-src 'self' 'unsafe-inline'${dev}`;
@@ -61,8 +66,8 @@ export function contentSecurityPolicy({ nonce, production, upgradeInsecure }: Cs
     ...(strict ? ["manifest-src 'self'"] : []),
     "object-src 'none'",
     strict ? "base-uri 'none'" : "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'self'",
+    appOrigin ? `form-action 'self' ${appOrigin}` : "form-action 'self'",
+    appOrigin ? `frame-ancestors ${appOrigin}` : "frame-ancestors 'self'",
     ...(upgradeInsecure ? ["upgrade-insecure-requests"] : []),
   ].join("; ");
 }

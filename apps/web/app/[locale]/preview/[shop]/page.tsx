@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { PreviewBridge } from "@/components/boutique/PreviewBridge";
 import { ShopPageView } from "@/components/shop/ShopPageView";
+import { requestNow } from "@/app/request-now";
 import { pageSession } from "@/lib/access";
 import { reviewRules } from "@/lib/community";
 import { buildCommunity } from "@/lib/community-view";
@@ -33,7 +34,7 @@ export default async function ShopPreview({ params }: Readonly<{ params: Promise
   if (!page) notFound();
   const content = asPageLocale(raw);
   const locale = uiLocaleOf(content);
-  const now = new Date();
+  const now = requestNow();
   const [team, enabledUpcomingSections, community, rules, document, accent, paper] = await Promise.all([teamDay(db(), shopId, now), shopSectionFeatures(), communityOf(db(), shopId), reviewRules(), draftShopPage(db(), shopId), shopAccentOf(db(), shopId), shopPaperOf(db(), shopId).then(async (paper) => shopPaperShown(paper, await ownerOfShop(db(), shopId)))]);
   const placed = buildCommunity({ community, locale, today: localDay(now, page.shop.timezone), rules, enabled: enabledUpcomingSections });
   const view = buildStorefront({ page, locale, contentLocale: content, now, teamDay: team, enabledUpcomingSections, community: placed, defaults: await proposedDefaults(page) });

@@ -91,7 +91,7 @@ describe("the invoices list organised (akinaza#337)", () => {
 describe("the invoices list (akinaza#218)", () => {
   it("says where each invoice stands, in the shop's words", () => {
     const text = render("fr");
-    for (const word of ["Payée", "En retard", "Payée en partie", "Annulée", "Note de crédit"]) expect(text).toContain(word);
+    for (const word of ["Payée", "En retard", "Payée en partie", "Annulée", "Note de crédit"]) {expect(text).toContain(word);}
     expect(render("en")).toContain("Partly paid");
   });
 
@@ -115,7 +115,7 @@ const ENGLISH_DEFAULTS = [
 describe("Factures in French (D2, review K3): the chrome, the columns, the derived state, overdue first", () => {
   it("shows no English default label of the table in a French render", () => {
     const html = markup("fr");
-    for (const word of ENGLISH_DEFAULTS) expect(html, word).not.toContain(word);
+    for (const word of ENGLISH_DEFAULTS) {expect(html, word).not.toContain(word);}
   });
 
   it("has no « Mois » column: the issue date says it", () => {
@@ -138,7 +138,7 @@ describe("Factures in French (D2, review K3): the chrome, the columns, the deriv
     const chips = [...all.matchAll(/data-invoice="([^"]+)" data-state="([^"]+)"/g)].map((m) => [m[1], m[2]]);
     const expected = known.map((i) => [i.id, invoiceState({ ...i, isCredit: !!i.creditOf }, "2026-10-23")]);
     expect(new Set(chips.map((c) => c[1]))).toEqual(new Set(["paid", "overdue", "partial", "cancelled", "credit", "due"]));
-    for (const pair of expected) expect(chips).toContainEqual(pair);
+    for (const pair of expected) {expect(chips).toContainEqual(pair);}
     expect(html).toContain('data-state="overdue"');
   });
 
@@ -154,3 +154,22 @@ describe("Factures in French (D2, review K3): the chrome, the columns, the deriv
   });
 });
 
+
+describe("the columns' widths (akinaza#581)", () => {
+  // The table reads a column's role from its `type`: « title » takes the remaining width (w-full), « link » stays at its content.
+  const cellOf = (html: string, label: string) => {
+    const found = [...html.matchAll(/<td\b[^>]*data-label="([^"]*)"[^>]*class="([^"]*)"/g)].find((m) => m[1] === label);
+    return found?.[2] ?? "";
+  };
+
+  it("the client takes the width, the number stays narrow", () => {
+    const html = markup("en");
+    expect(cellOf(html, en.console.invoices.table.client)).toMatch(/w-full/);
+    expect(cellOf(html, en.console.invoices.table.number)).not.toMatch(/w-full/);
+  });
+
+  it("the dates stay on one line", () => {
+    const html = markup("en");
+    for (const label of [en.console.invoices.table.issued, en.console.invoices.table.due]) {expect(cellOf(html, label), label).toMatch(/whitespace-nowrap/);}
+  });
+});
