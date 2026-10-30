@@ -3558,7 +3558,20 @@
       "services": "Services",
       "other": "Autres",
       "openNow": "Ouvert maintenant",
-      "freeToday": "Une place aujourd’hui"
+      "freeToday": "Une place aujourd’hui",
+      "text": "Nom ou service",
+      "textPlaceholder": "Un nom, un service, un quartier",
+      "opening": "Ouverture",
+      "week": "Ouvert cette semaine",
+      "distance": "Distance",
+      "km": "{km} km",
+      "distanceNeeds": "La distance se mesure depuis « Près de moi » ou une adresse.",
+      "clearAll": "Tout effacer",
+      "remove": "Retirer : {filter}",
+      "active": "Filtres actifs",
+      "here": "Autour de vous",
+      "updating": "Mise à jour de la liste…",
+      "textChip": "« {text} »"
     },
     "list": {
       "label": "Commerces",
