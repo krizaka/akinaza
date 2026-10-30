@@ -5,34 +5,34 @@
     {
       "platform": "android",
       "flow": "today-books",
-      "seconds": 9.9,
-      "capturedAt": "2026-10-30T06:26:04.287Z",
+      "seconds": 7.9,
+      "capturedAt": "2026-10-30T11:38:27.725Z",
       "files": {
-        "webm": "sites/akinaza/download/android-today-books.8ad6575b9e.webm",
-        "mp4": "sites/akinaza/download/android-today-books.9c53957010.mp4",
-        "poster": "sites/akinaza/download/android-today-books.6b09491873.jpg"
+        "webm": "sites/akinaza/download/android-today-books.1f47599b9c.webm",
+        "mp4": "sites/akinaza/download/android-today-books.82411aa7e4.mp4",
+        "poster": "sites/akinaza/download/android-today-books.1c5f805a27.jpg"
       }
     },
     {
       "platform": "web",
       "flow": "composer",
       "seconds": 10.6,
-      "capturedAt": "2026-10-30T06:25:47.631Z",
+      "capturedAt": "2026-10-30T11:38:07.782Z",
       "files": {
-        "webm": "sites/akinaza/download/web-composer.a3dede0a8e.webm",
-        "mp4": "sites/akinaza/download/web-composer.8e8adc4331.mp4",
-        "poster": "sites/akinaza/download/web-composer.25c342ec7b.jpg"
+        "webm": "sites/akinaza/download/web-composer.749025c178.webm",
+        "mp4": "sites/akinaza/download/web-composer.0053267323.mp4",
+        "poster": "sites/akinaza/download/web-composer.a9b434ba90.jpg"
       }
     },
     {
       "platform": "web",
       "flow": "storefront",
       "seconds": 15.8,
-      "capturedAt": "2026-10-30T06:25:56.002Z",
+      "capturedAt": "2026-10-30T11:38:18.317Z",
       "files": {
-        "webm": "sites/akinaza/download/web-storefront.7dd74062ac.webm",
-        "mp4": "sites/akinaza/download/web-storefront.c0178e20d3.mp4",
-        "poster": "sites/akinaza/download/web-storefront.73a99ee8a9.jpg"
+        "webm": "sites/akinaza/download/web-storefront.c5fdbbe45e.webm",
+        "mp4": "sites/akinaza/download/web-storefront.7f0833a8fe.mp4",
+        "poster": "sites/akinaza/download/web-storefront.77182d4ba5.jpg"
       }
     }
   ]

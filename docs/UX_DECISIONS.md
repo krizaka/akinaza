@@ -425,7 +425,7 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Problem**: a client was a row with spent and visits; nothing said who owes, the file stacked every section, and a note was one
   free text with no author or date.
 - **Principle**: recognition over recall and visibility of system status (Nielsen); a note is accountable when it is signed.
-- **Refused**: a profile banner drawn here (krizaka-ui#650 extracts Orochia's); tags before D10; editing or deleting a note (a
+- **Refused**: a profile banner drawn here (krizaka-ui#650 extracts a product's); tags before D10; editing or deleting a note (a
   note is kept as written; a new note corrects it).
 - **Cost**: one table and its migration (`0032_client_notes`); the old single « notes » field stays read-only in Résumé.
 - **Signal we are wrong**: owners keep their notes elsewhere, or ask to edit a note.
