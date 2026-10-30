@@ -47,7 +47,9 @@ export function memoryEdge(): { hostnames: CustomHostnames; dns: TxtResolver; pr
   return {
     hostnames: { create: async (h) => ({ id: `mem_${h}`, tls: "active" }), status: async (id) => ({ id, tls: "active" }), remove: async () => undefined },
     dns: { txt: async (name) => records.get(name) ?? [] },
-    prove: (name, value) => void records.set(name, [value]),
+    prove: (name, value) => {
+      records.set(name, [value]);
+    },
   };
 }
 

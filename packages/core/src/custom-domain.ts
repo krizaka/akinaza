@@ -134,31 +134,39 @@ export async function checkDomain(
   ports: { dns: TxtResolver; hostnames: CustomHostnames; now: Date; limits: DomainLimits },
 ): Promise<DomainStep> {
   const keep: DomainStep = { state: domain.state, attempts: domain.attempts, providerId: domain.providerId, error: null, release: false };
-  const { dns, hostnames, now, limits } = ports;
-  const expired = // Instants compared as numbers: the date facade (@krizaka/time) does not exist yet, and a new date-fns import is refused (krizaka-first-dates).
-  domain.createdAt.valueOf() + limits.waitMs < now.valueOf();
-  if (domain.state === DOMAIN_STATE.pendingTxt) {
-    if (await ownershipProven(dns, domain.hostname, domain.token)) {
-      const report = await hostnames.create(domain.hostname).catch((): null => null);
-      if (!report) return { ...keep, attempts: domain.attempts + 1, error: DOMAIN_ERROR.edgeUnavailable };
-      return { ...keep, state: DOMAIN_STATE.pendingTls, attempts: 0, providerId: report.id };
-    }
-    const attempts = domain.attempts + 1;
-    return attempts >= limits.maxAttempts || expired ? { ...keep, state: DOMAIN_STATE.failed, attempts, error: DOMAIN_ERROR.txtMissing } : { ...keep, attempts, error: DOMAIN_ERROR.txtMissing };
-  }
-  if (domain.state === DOMAIN_STATE.pendingTls && domain.providerId) {
-    const report = await hostnames.status(domain.providerId).catch((): null => null);
-    if (!report) return { ...keep, error: DOMAIN_ERROR.edgeUnavailable };
-    if (report.tls === "active") return { ...keep, state: DOMAIN_STATE.active, attempts: 0 };
-    if (report.tls === "failed") return { ...keep, state: DOMAIN_STATE.failed, error: DOMAIN_ERROR.tlsFailed, release: true };
-    return expired ? { ...keep, state: DOMAIN_STATE.failed, error: DOMAIN_ERROR.tlsTimeout, release: true } : keep;
-  }
-  if (domain.state === DOMAIN_STATE.active) {
-    if (await ownershipProven(dns, domain.hostname, domain.token)) return { ...keep, attempts: 0 };
-    const attempts = domain.attempts + 1;
-    return attempts >= limits.lapseAttempts ? { ...keep, state: DOMAIN_STATE.suspended, attempts, error: DOMAIN_ERROR.txtMissing, release: true } : { ...keep, attempts, error: DOMAIN_ERROR.txtMissing };
-  }
+  // Instants compared as numbers: the date facade (@krizaka/time) does not exist yet, and a new date-fns import is refused (krizaka-first-dates).
+  const expired = domain.createdAt.valueOf() + ports.limits.waitMs < ports.now.valueOf();
+  if (domain.state === DOMAIN_STATE.pendingTxt) return checkPendingTxt(domain, ports, keep, expired);
+  if (domain.state === DOMAIN_STATE.pendingTls && domain.providerId) return checkPendingTls(domain.providerId, ports.hostnames, keep, expired);
+  if (domain.state === DOMAIN_STATE.active) return checkActive(domain, ports, keep);
   return keep;
+}
+
+type CheckPorts = { dns: TxtResolver; hostnames: CustomHostnames; now: Date; limits: DomainLimits };
+type CheckedDomain = DomainSnapshot & { hostname: string; token: string };
+
+async function checkPendingTxt(domain: CheckedDomain, ports: CheckPorts, keep: DomainStep, expired: boolean): Promise<DomainStep> {
+  if (await ownershipProven(ports.dns, domain.hostname, domain.token)) {
+    const report = await ports.hostnames.create(domain.hostname).catch((): null => null);
+    if (!report) return { ...keep, attempts: domain.attempts + 1, error: DOMAIN_ERROR.edgeUnavailable };
+    return { ...keep, state: DOMAIN_STATE.pendingTls, attempts: 0, providerId: report.id };
+  }
+  const attempts = domain.attempts + 1;
+  return attempts >= ports.limits.maxAttempts || expired ? { ...keep, state: DOMAIN_STATE.failed, attempts, error: DOMAIN_ERROR.txtMissing } : { ...keep, attempts, error: DOMAIN_ERROR.txtMissing };
+}
+
+async function checkPendingTls(providerId: string, hostnames: CustomHostnames, keep: DomainStep, expired: boolean): Promise<DomainStep> {
+  const report = await hostnames.status(providerId).catch((): null => null);
+  if (!report) return { ...keep, error: DOMAIN_ERROR.edgeUnavailable };
+  if (report.tls === "active") return { ...keep, state: DOMAIN_STATE.active, attempts: 0 };
+  if (report.tls === "failed") return { ...keep, state: DOMAIN_STATE.failed, error: DOMAIN_ERROR.tlsFailed, release: true };
+  return expired ? { ...keep, state: DOMAIN_STATE.failed, error: DOMAIN_ERROR.tlsTimeout, release: true } : keep;
+}
+
+async function checkActive(domain: CheckedDomain, ports: CheckPorts, keep: DomainStep): Promise<DomainStep> {
+  if (await ownershipProven(ports.dns, domain.hostname, domain.token)) return { ...keep, attempts: 0 };
+  const attempts = domain.attempts + 1;
+  return attempts >= ports.limits.lapseAttempts ? { ...keep, state: DOMAIN_STATE.suspended, attempts, error: DOMAIN_ERROR.txtMissing, release: true } : { ...keep, attempts, error: DOMAIN_ERROR.txtMissing };
 }
 
 /** The DNS instructions shown to the merchant: the TXT record and the CNAME to the edge. */
