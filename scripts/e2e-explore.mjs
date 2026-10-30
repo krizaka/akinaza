@@ -18,7 +18,7 @@ const OUT = process.env.E2E_OUT;
 if (OUT) mkdirSync(OUT, { recursive: true });
 
 // The words of the interface, in the language of the run (the same strings as messages/<locale>.json, `explore.filters`).
-const W = { en: { clearAll: "Clear all", kind: "Kind of service", salons: "Salons", remove: /^Remove/ }, fr: { clearAll: "Tout effacer", kind: "Type de service", salons: "Salons", remove: /^Retirer/ } }[LOCALE];
+const W = { en: { clearAll: "Clear all", text: "Name or service", kind: "Kind of service", salons: "Salons", remove: /^Remove/ }, fr: { clearAll: "Tout effacer", text: "Nom ou service", kind: "Type de service", salons: "Salons", remove: /^Retirer/ } }[LOCALE];
 const failures = [];
 const check = (ok, what) => {
   console.log(`${ok ? "ok  " : "FAIL"} ${what}`);
@@ -65,14 +65,16 @@ await shoot("2-kind");
 // A name: one request after a pause, the text in the address.
 const requests = [];
 page.on("request", (r) => r.url().includes("/api/explore/shops") && requests.push(r.url()));
-await page.getByRole("searchbox").first().pressSequentially("co", { delay: 40 });
-await page.getByRole("searchbox").first().pressSequentially("if", { delay: 40 });
+await page.getByRole("searchbox", { name: W.text }).pressSequentially("co", { delay: 40 });
+await page.getByRole("searchbox", { name: W.text }).pressSequentially("if", { delay: 40 });
 await page.waitForFunction(() => new URL(location.href).searchParams.get("q") === "coif");
+await page.waitForTimeout(800); // the request leaves just after the address changes
 check(requests.length === 1, `one request for the typed text, not one per key (${requests.length})`);
 
 // The link is the search: a fresh page on the same address shows the same chips.
 const second = await context.newPage();
-await second.goto(page.url(), { waitUntil: "networkidle" });
+await second.goto(page.url(), { waitUntil: "load" });
+await second.getByRole("button", { name: W.remove }).first().waitFor();
 check((await chips(second)) === 2, "the shared link restores the kind and the text");
 await second.close();
 
