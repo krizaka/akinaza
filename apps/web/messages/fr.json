@@ -45,7 +45,8 @@
     },
     "footerLabel": "Pied de page",
     "preferences": "Préférences",
-    "version": "v{version}"
+    "version": "v{version}",
+    "explore": "Explorer"
   },
   "stage": {
     "title": "Version de développement",
@@ -95,11 +96,12 @@
         "scaleSoon": "ses fonctions B2B arrivent bientôt"
       }
     },
+    "screensTitle": "Ce que fait Akinaza",
     "screens": {
       "book": {
         "title": "Vos clients réservent seuls",
         "text": "Une heure prise disparaît aussitôt : personne n'est réservé deux fois.",
-        "alt": "La page de réservation : le service, le chien, les créneaux libres et la confirmation."
+        "alt": "La page publique du commerce : ses services avec leurs prix, chacun avec un bouton pour le choisir et réserver."
       },
       "invoice": {
         "title": "La facture, taxes comprises",
@@ -1535,6 +1537,7 @@
         "publishedHint": "Les clients peuvent alors la trouver par son adresse et réserver.",
         "submit": "Enregistrer la page",
         "saved": "Page enregistrée.",
+        "held": "Enregistré. Cette adresse ressemble à un nom que nous protégeons contre l'usurpation : votre page reste privée le temps de la vérifier. Rien d'autre ne change, et vous pouvez choisir une autre adresse dès maintenant.",
         "area": "Secteur affiché sur la page",
         "areaHint": "Saint-Henri, Montréal — jamais l'adresse civique.",
         "bioFr": "Qui vous êtes (français)",
@@ -1972,6 +1975,7 @@
       "sectionComing": "Cette section est en préparation.",
       "closingTitle": "Prêt quand vous l'êtes",
       "closingBody": "Choisissez une heure en quelques touches.",
+      "nextFreeTime": "Prochaine disponibilité",
       "nav": "Sections de la page",
       "member": {
         "free": "Libre maintenant",
@@ -2726,6 +2730,8 @@
         "appointmentsDue": "Rendez-vous prévus"
       },
       "nextTitle": "Que faire maintenant",
+      "todayTitle": "Vos chiffres",
+      "todayLead": "Ce qu'on vous doit et comment se passent les rendez-vous, avec le calcul de chaque chiffre.",
       "nothingToDo": "Rien ne vous attend pour l'instant.",
       "actions": {
         "chase": {
@@ -3424,5 +3430,69 @@
     "title": "Page introuvable",
     "text": "Cette page n’existe pas, ou n’est pas à vous.",
     "home": "Retour à Akinaza"
+  },
+  "explore": {
+    "title": "Explorer",
+    "lead": "Trouvez un commerce près de chez vous : sur la carte ou dans la liste. Seulement ce que chaque commerce montre déjà sur sa page.",
+    "ariaPage": "Explorer les commerces",
+    "search": {
+      "label": "Adresse ou code postal",
+      "placeholder": "Une adresse ou un code postal",
+      "submit": "Chercher",
+      "nearMe": "Près de moi",
+      "nearMeBusy": "Localisation…",
+      "clear": "Voir tous les commerces",
+      "centredOn": "Du plus proche, depuis {place}",
+      "centredOnYou": "Du plus proche, depuis où vous êtes",
+      "nearMeNote": "Votre position sert une fois, dans cette page, et n’est jamais conservée.",
+      "denied": "Votre position n’est pas disponible. Cherchez plutôt une adresse ou un code postal.",
+      "unavailable": "La recherche d’adresse n’est pas disponible pour le moment. Réessayez dans un instant.",
+      "off": "La recherche d’adresse n’est pas encore en place. « Près de moi » et les filtres fonctionnent.",
+      "none": "Aucun lieu trouvé pour « {query} ». Vérifiez l’adresse ou essayez le code postal.",
+      "pick": "Lieux trouvés",
+      "attribution": "Adresses par"
+    },
+    "filters": {
+      "label": "Filtres",
+      "kind": "Type de service",
+      "all": "Tous",
+      "salon": "Salons",
+      "boutique": "Boutiques",
+      "services": "Services",
+      "other": "Autres",
+      "openNow": "Ouvert maintenant",
+      "freeToday": "Une place aujourd’hui"
+    },
+    "list": {
+      "label": "Commerces",
+      "count": "{count} commerces",
+      "count_one": "1 commerce",
+      "visit": "Voir le commerce",
+      "open": "Ouvert maintenant",
+      "free": "Une place aujourd’hui",
+      "away": "à {distance}",
+      "notOnMap": "Pas sur la carte",
+      "quartiers": "Dessert {quartiers}"
+    },
+    "view": {
+      "list": "Liste",
+      "map": "Carte",
+      "switch": "Afficher"
+    },
+    "map": {
+      "label": "Carte des commerces",
+      "you": "Vous êtes ici",
+      "hint": "La carte se charge à l’ouverture."
+    },
+    "empty": {
+      "title": "Aucun commerce ne correspond",
+      "text": "Essayez avec moins de filtres, ou une autre adresse.",
+      "reset": "Effacer les filtres"
+    },
+    "error": {
+      "text": "Les commerces n’ont pas pu être chargés.",
+      "retry": "Réessayer"
+    },
+    "loading": "Chargement des commerces…"
   }
 }

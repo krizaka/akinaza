@@ -1,4 +1,4 @@
-import { BOOKING_SECTIONS, HERO_SECTION, LEGACY_SECTION_DOCS, LEGACY_SECTION_IDS, presetOf, sectionKey, TRADE_PRESETS, type DocSection } from "@akinaza/core";
+import { MIGRATION_0038_BOOKING_SECTIONS, HERO_SECTION, LEGACY_SECTION_DOCS, LEGACY_SECTION_IDS, presetOf, sectionKey, TRADE_PRESETS, type DocSection } from "@akinaza/core";
 
 /**
  * Migration 0038 (akinaza#400): the shop page as a document, versioned. Its data step turns every existing `shop_page` row into a published v1,
@@ -55,7 +55,7 @@ ${presetRows.join(",\n")}
 ${mapRows.join(",\n")}
         ) AS m(id, rank, doc) ON m.id = l.id
       ), '[]'::jsonb)
-      || ${lit(BOOKING_SECTIONS.map((d) => doc(`s_booking_${d.variant}`, d)))}
+      || ${lit(MIGRATION_0038_BOOKING_SECTIONS.map((d) => doc(`s_booking_${d.variant}`, d)))}
   ),
   now()
 FROM shop_page sp

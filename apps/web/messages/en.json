@@ -45,7 +45,8 @@
     },
     "footerLabel": "Site footer",
     "preferences": "Preferences",
-    "version": "v{version}"
+    "version": "v{version}",
+    "explore": "Explorer"
   },
   "stage": {
     "title": "Development version",
@@ -95,11 +96,12 @@
         "scaleSoon": "its B2B features are coming soon"
       }
     },
+    "screensTitle": "What Akinaza does",
     "screens": {
       "book": {
         "title": "Clients book on their own",
         "text": "A taken time disappears at once: nobody is booked twice.",
-        "alt": "The booking page: the service, the dog, the free times and the confirmation."
+        "alt": "The shop's public page: its services with their prices, each with a button to choose it and book."
       },
       "invoice": {
         "title": "The invoice, taxes included",
@@ -1535,6 +1537,7 @@
         "publishedHint": "Clients can then find it by its address and book.",
         "submit": "Save the page",
         "saved": "Page saved.",
+        "held": "Saved. This address looks like a name we protect against impersonation: your page stays private until we have checked it. Nothing else changes, and you can pick another address now.",
         "area": "Locality shown on the page",
         "areaHint": "Saint-Henri, Montréal — never the street address.",
         "bioFr": "Who you are (French)",
@@ -1972,6 +1975,7 @@
       "sectionComing": "This section is being prepared.",
       "closingTitle": "Ready when you are",
       "closingBody": "Choose a time in a few taps.",
+      "nextFreeTime": "Next free time",
       "nav": "Sections of the page",
       "member": {
         "free": "Free now",
@@ -2726,6 +2730,8 @@
         "appointmentsDue": "Appointments due"
       },
       "nextTitle": "What to do now",
+      "todayTitle": "Your figures",
+      "todayLead": "What is owed to you and how the appointments went, with how each figure is computed.",
       "nothingToDo": "Nothing needs you right now.",
       "actions": {
         "chase": {
@@ -3424,5 +3430,69 @@
     "title": "Page not found",
     "text": "This page does not exist, or is not yours.",
     "home": "Back to Akinaza"
+  },
+  "explore": {
+    "title": "Explorer",
+    "lead": "Find a shop near you: on the map, or in the list. Only what each shop already shows on its own page.",
+    "ariaPage": "Explore the shops",
+    "search": {
+      "label": "Address or postal code",
+      "placeholder": "An address or a postal code",
+      "submit": "Search",
+      "nearMe": "Near me",
+      "nearMeBusy": "Locating you…",
+      "clear": "Show all shops",
+      "centredOn": "Nearest first from {place}",
+      "centredOnYou": "Nearest first from where you are",
+      "nearMeNote": "Your position is used once, in this page, and never stored.",
+      "denied": "Your position is not available. Search an address or a postal code instead.",
+      "unavailable": "The address search is not available right now. Try again in a moment.",
+      "off": "The address search is not set up yet. “Near me” and the filters still work.",
+      "none": "No place found for “{query}”. Check the address or try the postal code.",
+      "pick": "Places found",
+      "attribution": "Addresses by"
+    },
+    "filters": {
+      "label": "Filters",
+      "kind": "Kind of service",
+      "all": "All",
+      "salon": "Salons",
+      "boutique": "Boutiques",
+      "services": "Services",
+      "other": "Other",
+      "openNow": "Open now",
+      "freeToday": "A free time today"
+    },
+    "list": {
+      "label": "Shops",
+      "count": "{count} shops",
+      "count_one": "1 shop",
+      "visit": "See the shop",
+      "open": "Open now",
+      "free": "Free time today",
+      "away": "{distance} away",
+      "notOnMap": "Not on the map",
+      "quartiers": "Serves {quartiers}"
+    },
+    "view": {
+      "list": "List",
+      "map": "Map",
+      "switch": "Show"
+    },
+    "map": {
+      "label": "Map of the shops",
+      "you": "You are here",
+      "hint": "The map loads when you open it."
+    },
+    "empty": {
+      "title": "No shop matches",
+      "text": "Try fewer filters, or another address.",
+      "reset": "Clear the filters"
+    },
+    "error": {
+      "text": "The shops could not be loaded.",
+      "retry": "Try again"
+    },
+    "loading": "Loading the shops…"
   }
 }

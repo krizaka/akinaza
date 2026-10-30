@@ -59,9 +59,9 @@ function redirectOf(path: string, query: Record<string, string> = {}): { to: str
 
 describe("every retired address answers 308 to a page that exists (akinaza#381)", () => {
   const OLD: [string, Record<string, string>, string][] = [
-    [`/fr/app/${SHOP}/shop`, {}, `/fr/app/${SHOP}/boutique/page`],
-    [`/en/app/${SHOP}/shop/languages`, {}, `/en/app/${SHOP}/boutique/languages`],
-    [`/fr/app/${SHOP}/team`, {}, `/fr/app/${SHOP}/boutique/team`],
+    [`/fr/app/${SHOP}/shop`, {}, `/fr/app/${SHOP}/settings/page`],
+    [`/en/app/${SHOP}/shop/languages`, {}, `/en/app/${SHOP}/settings/languages`],
+    [`/fr/app/${SHOP}/team`, {}, `/fr/app/${SHOP}/settings/team`],
     ["/fr/s/cedre-ciseaux/book", { service: SERVICE, start: "2026-10-20T13:00:00.000Z" }, `/fr/s/cedre-ciseaux/service/${SERVICE}/confirm`],
     ["/en/s/cedre-ciseaux/book", {}, "/en/s/cedre-ciseaux"],
     ["/en/s/cedre-ciseaux/book", { service: "not-an-id" }, "/en/s/cedre-ciseaux"],

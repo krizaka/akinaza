@@ -1,0 +1,20 @@
+id: no-raw-cookie-name
+snapshots:
+  "const SHOP = 'akinaza_shop';\n":
+    labels:
+    - source: "'akinaza_shop'"
+      style: primary
+      start: 13
+      end: 27
+  "export const SESSION_COOKIE = \"akinaza_session\";\n":
+    labels:
+    - source: "\"akinaza_session\""
+      style: primary
+      start: 30
+      end: 47
+  "request.cookies.get(\"NEXT_LOCALE\");\n":
+    labels:
+    - source: "\"NEXT_LOCALE\""
+      style: primary
+      start: 20
+      end: 33

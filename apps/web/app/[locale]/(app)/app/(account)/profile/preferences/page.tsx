@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const generateMetadata = titleOf("profile");
 
 /** Appearance: the theme, the density and the language. */
-export default async function Preferences({ params }: { params: Promise<{ locale: string }> }) {
+export default async function Preferences({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const { profile, sections } = await accountPage();
   return (

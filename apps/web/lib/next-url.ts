@@ -15,3 +15,11 @@ export function backToHere(path: string, query: Record<string, string | string[]
   });
   return pairs.length ? `${path}?${new URLSearchParams(pairs).toString()}` : path;
 }
+
+/** The sign-in address the signed-in guard sends a visitor to, carrying the page they asked for (a deep link survives an expired session). */
+export function signInUrl(locale: string, requested: string | null): string {
+  const here = `/${locale}/sign-in`;
+  if (!requested) return here;
+  const next = safeNext(requested, locale);
+  return next === requested ? `${here}?next=${encodeURIComponent(next)}` : here;
+}

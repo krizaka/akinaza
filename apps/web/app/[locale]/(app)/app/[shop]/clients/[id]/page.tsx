@@ -17,19 +17,20 @@ import { organizeData, tagsOfRows } from "@/lib/organize-data";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
 import { isUuid } from "@/lib/shop-id";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
 export const generateMetadata = titleOf("clients");
 
 /** One client's file, with the clients beside it on a computer (one at a time on a phone, the way back above). The address names the client. */
-export default async function ClientPage({ params, searchParams }: { params: Promise<{ locale: string; shop: string; id: string }>; searchParams: Promise<{ tab?: string }> }) {
+export default async function ClientPage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string; id: string }>; searchParams: Promise<{ tab?: string }> }>) {
   const { locale: rawLocale, shop: shopId, id } = await params;
   const locale = asLocale(rawLocale);
   const t = getDictionary(locale).console.clients;
   const { shop, role, session } = await memberShop(shopId, "clients");
   if (!isUuid(id)) notFound();
-  const now = new Date();
+  const now = requestNow();
   const [file, overview] = await Promise.all([clientFile(db(), shop.id, id), clientOverview(db(), shop.id, now)]);
   if (!file) notFound();
   // The client is this shop's (clientFile above): what they keep here, for the visit (akinaza#210).

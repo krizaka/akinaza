@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useSay } from "@/lib/i18n-client";
 
 /** A section that failed to load (D6): said in place, with « Réessayer » — the page is read again; the rest keeps working. */
-export function SectionError({ what }: { what?: string }) {
+export function SectionError({ what }: Readonly<{ what?: string }>) {
   const { say } = useSay();
   const router = useRouter();
   return (

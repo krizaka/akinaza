@@ -9,8 +9,8 @@ const B = "22222222-2222-4222-8222-222222222222";
 describe("the routes of the signed-in space", () => {
   it("puts the shop in the path of every address", () => {
     const r = shopRoutes("fr", A);
-    expect(r.today()).toBe(`/fr/app/${A}/aujourdhui`);
-    expect(r.today("2026-10-23", "x")).toBe(`/fr/app/${A}/aujourdhui?day=2026-10-23&appointment=x`);
+    expect(r.today()).toBe(`/fr/app/${A}/today`);
+    expect(r.today("2026-10-23", "x")).toBe(`/fr/app/${A}/today?day=2026-10-23&appointment=x`);
     expect(r.client("c1")).toBe(`/fr/app/${A}/clients/c1`);
     expect(r.books("this-quarter")).toBe(`/fr/app/${A}/books?period=this-quarter`);
     expect(r.api("/api/walker/team")).toBe(`/api/walker/team?shopId=${A}`);
@@ -38,8 +38,8 @@ describe("the routes of the signed-in space", () => {
   it("carries the page to another shop, except a record that belongs to the first", () => {
     expect(inOtherShop("en", `/en/app/${A}/invoices`, A, B)).toBe(`/en/app/${B}/invoices`);
     expect(inOtherShop("en", `/en/app/${A}/invoices/new`, A, B)).toBe(`/en/app/${B}/invoices/new`);
-    expect(inOtherShop("en", `/en/app/${A}/clients/c1`, A, B)).toBe(`/en/app/${B}/aujourdhui`);
-    expect(inOtherShop("en", "/en/app/profile", A, B)).toBe(`/en/app/${B}/aujourdhui`);
+    expect(inOtherShop("en", `/en/app/${A}/clients/c1`, A, B)).toBe(`/en/app/${B}/today`);
+    expect(inOtherShop("en", "/en/app/profile", A, B)).toBe(`/en/app/${B}/today`);
   });
 
   it("reads a segment that is not a UUID as naming nothing (so the page answers 404, not 500)", () => {

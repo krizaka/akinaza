@@ -15,6 +15,7 @@ import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri } from "@akinaza/db/see
 import { castOf, persona, seedFingerprint } from "@krizaka/org";
 
 import { hashPassword } from "./qa-accounts.mjs";
+import { ensureOwnerStates } from "./seed-owner-states.mjs";
 
 /** What a LOCAL database gets when nothing is given. Never used on a host that is not this machine. */
 export const LOCAL_SECRET = "local-cast-password-0123";
@@ -37,14 +38,14 @@ export function castAccounts(env) {
   const local = isLocalHost(env.DATABASE_URL ?? "");
   const need = (name, fallback) => {
     const value = env[name] ?? (local ? fallback : undefined);
-    if (!value || value.length < 12) throw new Error(`${name} is missing or shorter than 12 characters`);
+    if (!value || value.length < 12) {throw new Error(`${name} is missing or shorter than 12 characters`);}
     return value;
   };
   const walkerSecret = need("QA_WALKER_PASSWORD", LOCAL_SECRET);
   const clientsSecret = need("QA_CLIENTS_PASSWORD", LOCAL_SECRET);
   const addressOf = (name, p) => {
     const email = (env[name] ?? `${p.id}@demo.akinaza.test`).trim().toLowerCase();
-    if (!/^[^@\s]+@[^@\s]+$/.test(email)) throw new Error(`${name} is invalid`);
+    if (!/^[^@\s]+@[^@\s]+$/.test(email)) {throw new Error(`${name} is invalid`);}
     return email;
   };
   const clientPersonas = castOf("akinaza").filter((p) => p.role === "client");
@@ -91,22 +92,24 @@ export function matchesRecorded(counts, expected, exact) {
 /** The seed works on dev and local only. */
 export function assertNotProduction(env) {
   const environment = env.APP_ENVIRONMENT ?? "dev";
-  if (environment !== "dev") throw new Error(`seed-cast works only on dev and local, and APP_ENVIRONMENT is "${environment}" — refused`);
+  if (environment !== "dev") {throw new Error(`seed-cast works only on dev and local, and APP_ENVIRONMENT is "${environment}" — refused`);}
 }
 
 async function main() {
   assertNotProduction(process.env);
   const env = process.env;
   const url = env.DATABASE_URL ?? "";
-  if (!url) throw new Error("DATABASE_URL is required");
+  if (!url) {throw new Error("DATABASE_URL is required");}
   const keyText = env.APP_DATA_ENCRYPTION_KEY ?? (isLocalHost(url) ? LOCAL_KEY : undefined);
   const key = Buffer.from(keyText ?? "", "base64");
-  if (key.length !== 32) throw new Error("APP_DATA_ENCRYPTION_KEY must be 32 bytes, base64");
+  if (key.length !== 32) {throw new Error("APP_DATA_ENCRYPTION_KEY must be 32 bytes, base64");}
   const accounts = castAccounts(env);
   const pool = new pg.Pool(poolConfig(url, env.DATABASE_CA_CERT, 2));
   try {
     await migrate(pool, fileURLToPath(new URL("../../../packages/db/drizzle", import.meta.url))); // idempotent: the app does the same at start
     const ids = [];
+    // The visual run fixes the instant the pages are drawn at (APP_FIXED_NOW, dev only): the cast is seeded around the same one.
+    const fixedNow = process.env.APP_FIXED_NOW;
     for (const a of accounts) {
       const [row] = (
         await pool.query(
@@ -118,14 +121,16 @@ async function main() {
       ).rows;
       ids.push(row.id);
     }
-    const result = await seedSaintHenri(createDb(pool), key, new Date());
+    const result = await seedSaintHenri(createDb(pool), key, fixedNow ? new Date(fixedNow) : new Date());
     console.log(`seed-cast: ${WALKER.displayName} (${SAINT_HENRI.shop.name}), ${accounts.length - 3} clients, ${ERIC.displayName}, ${ADMIN.displayName} (administrator); shop ${result.created ? "created" : "already there"}`);
+    // The two owner states of the page audit (#405: an empty shop, a shop with one item per list): outside the fingerprint, which counts the cast alone.
+    await ensureOwnerStates(pool, accounts[0].secret);
     const { fingerprint, counts } = await fingerprintOf((sql, values) => pool.query(sql, values), ids, ids[0]);
     console.log(`fingerprint: ${fingerprint}`);
     if (process.argv.includes("--check")) {
       const expected = JSON.parse(readFileSync(new URL("./cast-fingerprint.json", import.meta.url), "utf8")).fingerprint;
       const exact = isLocalHost(url);
-      if (!matchesRecorded(counts, expected, exact)) throw new Error(`the seeded data differs from the recorded fingerprint\n  expected ${expected}\n  got      ${fingerprint}`);
+      if (!matchesRecorded(counts, expected, exact)) {throw new Error(`the seeded data differs from the recorded fingerprint\n  expected ${expected}\n  got      ${fingerprint}`);}
       console.log(exact ? "fingerprint: matches the recorded one" : "fingerprint: everything recorded is there (this database is lived in: counts may exceed it)");
     }
   } finally {

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
 /** The 404 of every address, in the language of the address: the beaver, the code, one sentence, the way back to the bar's home. */
-export function NotFoundPage({ locale }: { locale: Locale }) {
+export function NotFoundPage({ locale }: Readonly<{ locale: Locale }>) {
   const t = getDictionary(locale).notFound;
   return (
     <ErrorPage

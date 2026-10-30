@@ -6,8 +6,9 @@ import { GET as profile } from "@/app/api/me/profile/route";
 import { pageSession } from "@/lib/access";
 import { revokeSession } from "@/lib/session";
 
-const jar = vi.hoisted(() => ({ get: vi.fn(), delete: vi.fn() }));
-vi.mock("next/headers", () => ({ cookies: async () => jar }));
+const jar = vi.hoisted(() => ({ get: vi.fn(), set: vi.fn() }));
+const asked = vi.hoisted(() => ({ path: null as string | null }));
+vi.mock("next/headers", () => ({ cookies: async () => jar, headers: async () => new Headers(asked.path ? { "x-akinaza-path": asked.path } : {}) }));
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((to: string) => {
     throw new Error(`REDIRECT ${to}`);
@@ -21,6 +22,13 @@ describe("signed out, the app is closed", () => {
   it.each(["en", "fr"])("a visitor of /%s/app/** is sent to sign-in", async (locale) => {
     vi.mocked(pageSession).mockResolvedValue(null);
     await expect(MemberLayout({ children: null, params: Promise.resolve({ locale }) })).rejects.toThrow(`REDIRECT /${locale}/sign-in`);
+  });
+
+  it("a deep link keeps its destination through sign-in (#287)", async () => {
+    vi.mocked(pageSession).mockResolvedValue(null);
+    asked.path = "/fr/app/invoices";
+    await expect(MemberLayout({ children: null, params: Promise.resolve({ locale: "fr" }) })).rejects.toThrow("REDIRECT /fr/sign-in?next=%2Ffr%2Fapp%2Finvoices");
+    asked.path = null;
   });
 
   it("a signed-in visitor goes through", async () => {
@@ -37,6 +45,6 @@ describe("signed out, the app is closed", () => {
     jar.get.mockReturnValue({ value: `as1.${"B".repeat(43)}` });
     expect((await signOut(new Request("http://localhost/api/auth/sign-out", { method: "POST" }))).status).toBe(204);
     expect(revokeSession).toHaveBeenCalledWith(`as1.${"B".repeat(43)}`);
-    expect(jar.delete).toHaveBeenCalledWith("akinaza_session");
+    expect(jar.set).toHaveBeenCalledWith(expect.objectContaining({ name: "akinaza_session", value: "", maxAge: 0, path: "/" }));
   });
 });

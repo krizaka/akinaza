@@ -23,9 +23,6 @@ describe("env", () => {
     expect(() => assertProductionEnv(PROD)).not.toThrow();
   });
 
-  it("keeps the connections off by default, and never fake in production", () => {
-  });
-
   it("refuses a production start without its secrets, naming them, never showing them", () => {
     expect(() => assertProductionEnv(PROD)).not.toThrow();
     const problems = productionProblems(readEnv({ NODE_ENV: "production", DATABASE_URL: PROD.DATABASE_URL }));

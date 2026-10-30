@@ -34,6 +34,9 @@ know-how it shows: **running a shop, for less** — one tool instead of five, bo
   working papers; **Akinaza
   prepares; the merchant files.** Nothing is transmitted to any government.
 - **Bookings** — services, staff, schedules; the database refuses a double booking (`EXCLUDE` on time ranges).
+- **Explorer** (`/explore`) — the published shops on a map (`@krizaka/ui/map`) and in a list, filtered by kind of service, open now and a free
+  time today, searched by address or postal code or "near me" (asked on a click, never stored) and ranked by distance. The address search is a
+  `GeocodingPort` whose service and attribution are the environment's (`APP_GEOCODER_*`); only what a shop's public page already shows travels.
 - **The shop page in other languages** — the owner writes in French or English and offers the page in the languages they choose, inside the
   administrator's list (`storefront.languages.allowed`; `/fr`, `/en` and `/es` under `/s/<slug>`, a language that is off shows the source language).
   Each text is translated automatically through Orazaka (the `TranslationPort`, the Studio `text-translation`), stored with its status (`auto` or
@@ -101,5 +104,11 @@ The Krizaka names and birds are not licensed: [trademark policy](https://github.
 
 One cast (`@krizaka/org`) and one idempotent seed serve local, CI, Maestro, the recorders and the dev deployment (krizaka/.github#356): the Saint-Henri walker Léa Beaulieu with her shop, her five clients and their dogs, Éric Tremblay (the Krizaka studio's owner) and Mira Haddad, the administrator — the same names as the deployed QA accounts. `apps/web/scripts/qa-accounts.mjs` gives the QA accounts the same persona names; `apps/web/lib/cast-drift.test.ts` fails if a persona's name is spelled anywhere else.
 
+The three demo shops come with `pnpm run dev:seed-demos` (shops, pages, then each owner's `features.cahierStorefront` through `set-setting.mjs --user`, `DEMO_OWNER_FLAGS`): the dev deployment runs the same command.
+
 **Reproduce a hot fix locally**: start a Postgres (`docker run -d -p 5432:5432 -e POSTGRES_USER=akinaza -e POSTGRES_PASSWORD=akinaza -e POSTGRES_DB=akinaza postgres:17-alpine`), `export DATABASE_URL=postgres://akinaza:akinaza@localhost:5432/akinaza`, `pnpm run dev:seed`, `pnpm dev`, and sign in as `lea.beaulieu@akinaza.test` (local password `local-cast-password-0123`). `dev:seed --check` compares the counts per table with `apps/web/scripts/cast-fingerprint.json`; the dev database refuses GitHub's runners (and is not opened to their ranges), so the dev seed runs **from a trusted machine** with the same `--check` (exact on a local database; on the lived-in dev one, « everything recorded is there »): the maintainers' `seed-dev.sh akinaza` reads the credentials at run time and prints none.
 
+
+## Tests
+
+Unit tests (`pnpm test`), the page audit and the **page journeys** (`apps/web/e2e/visual/journeys.visual.mjs`: the landing, a shop page, a service, sign-in and the walker's day, as the seeded cast; pixels of whole pages taken in CI only). To update a baseline run Actions > *Update visual baselines* on your branch; how the layers work and how to read a diff: [krizaka/.github docs/standards/ui-testing.md](https://github.com/krizaka/.github/blob/main/docs/standards/ui-testing.md).

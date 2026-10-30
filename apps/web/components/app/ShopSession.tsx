@@ -11,7 +11,7 @@ const RoutesContext = createContext<ShopRoutes | null>(null);
  * The shop of the address, for everything below it: its routes (every link of the space comes from here) and the memory of it as the
  * last shop worked in. The cookie only records the last shop; the address decides which one is open.
  */
-export function ShopSession({ locale, shopId, remembered, children }: { locale: RouteLocale; shopId: string; remembered: boolean; children: React.ReactNode }) {
+export function ShopSession({ locale, shopId, remembered, children }: Readonly<{ locale: RouteLocale; shopId: string; remembered: boolean; children: React.ReactNode }>) {
   useEffect(() => {
     if (!remembered) void rememberShop(shopId);
   }, [remembered, shopId]);

@@ -4,7 +4,7 @@ import { ClientAvatar } from "@/components/app/ClientsTable";
 import type { ShopRoutes } from "@/lib/routes";
 
 /** The clients as links, the open one marked: the list beside a client's file. */
-export function ClientNav({ clients, currentId, routes }: { clients: { id: string; fullName: string }[]; currentId: string; routes: ShopRoutes }) {
+export function ClientNav({ clients, currentId, routes }: Readonly<{ clients: { id: string; fullName: string }[]; currentId: string; routes: ShopRoutes }>) {
   return (
     <ul className="flex flex-col p-1">
       {clients.map((c) => (

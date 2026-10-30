@@ -24,7 +24,7 @@ export function withDateFnsImports(source) {
   for (const name of existing?.[1].split(",").map((n) => n.trim()).filter(Boolean) ?? []) imported.add(name);
   const missing = DATE_FNS.filter((name) => new RegExp(`\\b${name}\\(`).test(source) && !imported.has(name));
   if (missing.length === 0) return source;
-  const names = [...new Set([...imported, ...missing])].sort();
+  const names = [...new Set([...imported, ...missing])].sort((a, b) => a.localeCompare(b));
   const line = `import { ${names.join(", ")} } from "date-fns";`;
   if (existing) return source.replace(existing[0], line);
   const imports = [...source.matchAll(/^import[\s\S]*?from\s*["'][^"']+["'];?[ \t]*$/gm)];

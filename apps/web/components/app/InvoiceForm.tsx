@@ -51,7 +51,7 @@ const invoiceForm = createKrizakaForm({
 
 type Field = `lines[${number}].${"serviceId" | "description" | "quantity" | "unitPriceCents"}`;
 
-function Step({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
+function Step({ n, title, children }: Readonly<{ n: string; title: string; children: React.ReactNode }>) {
   return (
     <section className="flex flex-col gap-3" aria-label={title}>
       <h2 className="flex items-baseline gap-3 text-lg font-semibold text-fg">
@@ -64,7 +64,7 @@ function Step({ n, title, children }: { n: string; title: string; children: Reac
 }
 
 /** The total of the lines being typed, as the server will compute it. */
-function Totals({ data }: { data: InvoiceFormData }) {
+function Totals({ data }: Readonly<{ data: InvoiceFormData }>) {
   const { say, locale } = useSay();
   const lines = useFormValue<DraftLine[]>("lines");
   const totals = draftPreview(lines ?? [], data.services, { registrant: data.registrant });
@@ -94,7 +94,7 @@ function Totals({ data }: { data: InvoiceFormData }) {
  * shop's terms; the number is given at issue). The total stays in view — beside the form on a desktop, in a sticky action on a
  * phone — and is the server's own computation (`draftPreview`). Issued, it opens the invoice, whose next primary is « Envoyer ».
  */
-export function InvoiceForm({ data, locale: base, start }: InvoiceFormProps) {
+export function InvoiceForm({ data, locale: base, start }: Readonly<InvoiceFormProps>) {
   const { say, locale } = useSay();
   const call = useCall();
   const router = useRouter();

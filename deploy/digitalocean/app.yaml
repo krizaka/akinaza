@@ -13,6 +13,13 @@ domains:
     type: ALIAS
     # And every <slug>.akinaza.com: a shop's own address (#77, level 2; lib/host.ts shopOfHost). Certificate by TXT tokens on Porkbun.
     wildcard: true
+  # The shops' own domain (ADR-005 slice 5, #538): <slug>.akinaza.shop is a shop and nothing of the app, in another site than www. The apex and www lead to
+  # www.akinaza.com (the app, lib/shop-domain.ts). Apply AFTER the DNS of krizaka-infra (stacks/dns/zone_akinaza_shop.tf) answers, else App Platform cannot validate it.
+  - domain: akinaza.shop
+    type: ALIAS
+    wildcard: true
+  - domain: www.akinaza.shop
+    type: ALIAS
   # The development address: every page goes to www (308); the API, .well-known and healthz keep serving, noindex (APP_DEV_HOST).
   - domain: dev.akinaza.com
     type: ALIAS
@@ -59,6 +66,10 @@ services:
       - key: APP_DEV_HOST
         scope: RUN_TIME
         value: dev.akinaza.com
+      # The shops' domain: <slug>.akinaza.shop serves a shop; <slug>.akinaza.com and /<locale>/s/<slug> answer 308 to it (lib/shop-domain.ts).
+      - key: APP_SHOP_DOMAIN
+        scope: RUN_TIME
+        value: akinaza.shop
       - key: APP_COMMIT_SHA
         scope: BUILD_TIME
         value: ${_self.COMMIT_HASH}
