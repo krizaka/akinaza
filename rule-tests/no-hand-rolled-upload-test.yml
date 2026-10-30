@@ -1,0 +1,18 @@
+id: no-hand-rolled-upload
+valid:
+  - |
+    export const POST = (req: Request) => handle(async () => {
+      const { bytes } = await readUpload(req, { field: "file", maxBytes: 1024 });
+      return Response.json({ n: bytes.length });
+    });
+invalid:
+  - |
+    export const POST = (req: Request) => handle(async () => {
+      const form = await req.formData().catch(() => null);
+      const file = form?.get("file");
+      return Response.json({ ok: file instanceof File });
+    });
+  - |
+    export function POST(request: Request) {
+      return request.formData();
+    }
