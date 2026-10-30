@@ -131,6 +131,8 @@ describe("the pace of address changes (ADR-005 slice 4, #537; real PostgreSQL 16
 
   it("sets no pace when none is given (seeds and other tests)", async () => {
     const owner = await account(t.db, "pace5@example.test");
-    for (const slug of ["free-a", "free-b", "free-c", "free-d", "free-e"]) await saveShopPage(t.db, owner.id, page(slug));
+    let shopId = "";
+    for (const slug of ["free-a", "free-b", "free-c", "free-d", "free-e"]) shopId = (await saveShopPage(t.db, owner.id, page(slug))).shopId;
+    expect((await row(shopId)).slug).toBe("free-e");
   });
 });
