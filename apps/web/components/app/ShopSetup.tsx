@@ -17,6 +17,7 @@ import { TemplatePicker } from "@/components/app/TemplatePicker";
 import { useCall } from "@/components/app/useCall";
 import { type PageTab } from "@/lib/boutique";
 import { useSay, useVocabulary } from "@/lib/i18n-client";
+import { isOnQuote } from "@/lib/service-price";
 import { shrinkImage, STOREFRONT_LONG_SIDE } from "@/lib/shrink-image";
 import { type GalleryLine, galleryText, joinLines, keepExtras, parseGallery, splitLines } from "@/lib/storefront-form";
 import type { TemplateChoices } from "@/lib/template-choices";
@@ -245,7 +246,7 @@ function ServicesCard({ services }: Readonly<{ services: SetupData["services"] }
               <div>
                 <p className="font-semibold text-fg">{locale === "fr" ? s.nameFr : s.nameEn}</p>
                 <p className="text-sm text-fg-secondary">
-                  {say("shopSetup.services.line", { minutes: s.durationMinutes, price: money(s.priceCents, locale) })}
+                  {say("shopSetup.services.line", { minutes: s.durationMinutes, price: isOnQuote(s) ? say("shopSetup.services.onQuote") : money(s.priceCents, locale) })}
                   {s.capacity > 1 ? ` · ${say("shopSetup.services.group", { count: s.capacity })}` : ""}
                 </p>
               </div>
