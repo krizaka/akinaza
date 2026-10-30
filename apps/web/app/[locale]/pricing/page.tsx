@@ -17,6 +17,7 @@ import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { heroActions } from "@/lib/landing";
 import { appPrices, publicPrices } from "@/lib/price-catalogue";
 import { pricingPlans } from "@/lib/pricing-view";
+import { accountRoutes } from "@/lib/routes";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +42,7 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
   const plans = pricingPlans(await publicPrices(catalogue, now), locale, { founderOnSale });
   const hero = heroActions(locale, Boolean(await pageSession().catch(() => null)));
   // One primary action on the page: the featured plan's. The others are secondary.
-  const action = (founder: boolean, featured: boolean) =>
+  const action = (founder: boolean, featured: boolean, association = false) =>
     founder ? (
       <form method="post" action={`/api/billing/checkout?redirect=1&locale=${locale}`}>
         <Button type="submit" variant="primary" size="md" shape="cut" className="w-full">
@@ -49,13 +50,24 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
         </Button>
       </form>
     ) : (
-      <ButtonLink href={hero.primary.href} variant={featured ? "primary" : "secondary"} size="md" shape="cut" className="w-full">
-        {t.landing.actions[hero.primary.message]}
+      <ButtonLink href={association ? accountRoutes(locale).section("subscription") : hero.primary.href} variant={featured ? "primary" : "secondary"} size="md" shape="cut" className="w-full">
+        {association ? d.associationCta : t.landing.actions[hero.primary.message]}
       </ButtonLink>
     );
   const badgeOf = (plan: (typeof plans)[number]) => {
-    if (plan.id !== "founder") return undefined;
+    if (plan.id !== "founder") {return undefined;}
     return plan.limit ? format(d.badgeFounderLimit, { limit: plan.limit }) : d.badgeFounder;
+  };
+  // The free period and the Association plan, in the words of the catalogue's figures (the trial's length, the price after it); no urgency, no countdown.
+  const trialWords = (plan: (typeof plans)[number]) => {
+    if (!plan.trial) {return null;}
+    return plan.trial.months ? format(d.trialMonths, { months: plan.trial.months }) : format(d.trialDays, { days: plan.trial.days });
+  };
+  const trialFeatures = (plan: (typeof plans)[number]): string[] => {
+    const words = trialWords(plan);
+    if (!plan.trial || !words || !plan.price) {return [];}
+    if (plan.id !== "association") {return [format(d.trialLine, { trial: words, price: plan.price })];}
+    return [plan.trial.months ? format(d.associationLine, { months: plan.trial.months, price: plan.price }) : format(d.associationLineDays, { days: plan.trial.days, price: plan.price }), d.associationHow];
   };
   const wording = (f: (typeof plans)[number]["features"][number]) => format(f.id === "inherits" ? d.features.inherits : d.features[f.id], f.id === "inherits" ? { plan: d.plans.starter } : f.vars);
   const cards: PricingPlan[] = plans.map((plan, i) => ({
@@ -66,11 +78,11 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
     featured: i === 0,
     badge: badgeOf(plan),
     // The tick means « runs today »; what is planned is apart, under « Soon », with no tick.
-    features: [...(plan.id === "founder" ? [d.founderNote] : []), ...plan.features.filter((f) => !f.soon).map(wording)],
+    features: [...(plan.id === "founder" ? [d.founderNote] : []), ...trialFeatures(plan), ...plan.features.filter((f) => !f.soon).map(wording)],
     action: (
       <>
         <PlannedFeatures title={d.plannedTitle} soon={d.soon} items={plan.features.filter((f) => f.soon).map(wording)} />
-        {action(plan.id === "founder", i === 0)}
+        {action(plan.id === "founder", i === 0, plan.id === "association")}
       </>
     ),
   }));

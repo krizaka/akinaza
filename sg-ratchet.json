@@ -19,7 +19,7 @@
     "no-hand-ms-one-hour": 0,
     "no-hand-written-validation-regex": 25,
     "no-hardcoded-default-media": 0,
-    "no-locale-ternary": 15,
+    "no-locale-ternary": 12,
     "no-raw-cookie-name": 0,
     "no-raw-json-in-inner-html": 0,
     "no-status-move": 0,

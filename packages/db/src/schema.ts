@@ -50,6 +50,30 @@ export const paymentEvents = pgTable("payment_events", {
   receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** The proof an association submits for the Association plan (prices_association migration): one pending at a time, decided once by an administrator. */
+export const associationProofs = pgTable(
+  "association_proofs",
+  {
+    id: id(),
+    accountId: uuid("account_id").notNull().references(() => accounts.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: ["neq", "charity", "incorporation"] }).notNull(),
+    reference: text("reference").notNull(),
+    note: text("note"),
+    status: text("status", { enum: ["pending", "approved", "rejected"] }).notNull().default("pending"),
+    submittedAt: timestamp("submitted_at", { withTimezone: true }).notNull().defaultNow(),
+    decidedAt: timestamp("decided_at", { withTimezone: true }),
+    decidedBy: uuid("decided_by").references(() => accounts.id, { onDelete: "set null" }),
+    decisionNote: text("decision_note"),
+  },
+  (t) => [
+    index("association_proofs_account").on(t.accountId, t.submittedAt),
+    uniqueIndex("association_proofs_one_pending").on(t.accountId).where(sql`${t.status} = 'pending'`),
+    check("association_proofs_kind", sql`${t.kind} IN ('neq','charity','incorporation')`),
+    check("association_proofs_status", sql`${t.status} IN ('pending','approved','rejected')`),
+    check("association_proofs_decided", sql`(${t.status} = 'pending') = (${t.decidedAt} IS NULL)`),
+  ],
+);
+
 export const sessions = pgTable(
   "sessions",
   {
