@@ -37,7 +37,7 @@ export type HostRoute =
 /** Where shops live once they have a domain of their own (lib/shop-domain.ts): the domain, and the canonical origin of a shop (built from configuration, never from Host). */
 export type ShopHosting = { domain: string; origin: (slug: string) => string };
 
-const SHOP_PATH = /^\/(en|fr|es)\/s\/([a-z0-9]+(?:-[a-z0-9]+)*)(\/.*)?$/;
+const SHOP_PATH = /^\/(en|fr|es)\/s\/([^/]+)(\/.*)?$/;
 /** The pages of a shop that need the signed-in app: the booking's confirm step and its confirmation. They are a top-level hop to the app, never served on a shop host. */
 export const isBookingHop = (rest: string): boolean => /^\/service\/[^/]+\/confirm(?:ation)?(?:\/|$)/.test(rest);
 
@@ -61,7 +61,7 @@ function ownShopRoute(slug: string, pathname: string, site: string): HostRoute {
 /** The old addresses of a shop, once its domain is declared: `/<locale>/s/<slug>` on the app (the booking's hop stays there). */
 function oldPathRoute(pathname: string, hosting: ShopHosting): HostRoute | null {
   const page = SHOP_PATH.exec(pathname);
-  if (!page || isBookingHop(page[3] ?? "")) {return null;}
+  if (!page || !SLUG.test(page[2]) || isBookingHop(page[3] ?? "")) {return null;}
   return moved(hosting.origin(page[2]) + (page[3] ? pathname : `/${page[1]}`));
 }
 
