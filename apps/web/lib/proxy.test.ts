@@ -127,6 +127,44 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
   });
 });
 
+// krizaka-ui#827: a signed-in visitor never sees the public landing page; the bar's hint flag follows the session cookie.
+describe("a signed-in visitor lands on their home, never on the landing page (krizaka-ui#827)", () => {
+  const ask = async (path: string, cookie?: string, host = "www.akinaza.com") => proxy(new NextRequest(`https://${host}${path}`, { headers: { host, ...(cookie ? { cookie } : {}) } }));
+  const goes = (res: Response) => (res.headers.get("location") ? new URL(res.headers.get("location")!, "https://www.akinaza.com").pathname : null);
+
+  it("/ , /fr and /en with the session cookie answer 307 to the home in the language, private and varying with the cookie", async () => {
+    for (const [path, home, cookie] of [
+      ["/", "/fr/app", "akinaza_session=as1.x"],
+      ["/", "/en/app", "akinaza_session=as1.x; NEXT_LOCALE=en"],
+      ["/fr", "/fr/app", "akinaza_session=as1.x"],
+      ["/en", "/en/app", "akinaza_session=as1.x"],
+    ] as const) {
+      const res = await ask(path, cookie);
+      expect(res.status).toBe(307);
+      expect(goes(res)).toBe(home);
+      expect(res.headers.get("cache-control")).toBe("private, no-store");
+      expect(res.headers.get("vary")).toBe("Cookie");
+    }
+  });
+  it("the Location is absolute on the configured public origin, never on the Host the request claims", async () => {
+    const res = await proxy(new NextRequest("https://localhost:3000/fr", { headers: { host: "www.akinaza.com", "x-forwarded-host": "evil.example", "x-forwarded-proto": "http", cookie: "akinaza_session=as1.x" } }));
+    expect(res.headers.get("location")).toBe(`${(process.env.APP_PUBLIC_URL ?? "https://www.akinaza.com").replace(/\/$/, "")}/fr/app`);
+  });
+  it("a signed-out visitor still gets the landing page, and a public page stays reachable signed in", async () => {
+    expect(goes(await ask("/fr"))).toBeNull();
+    expect(goes(await ask("/fr/pricing", "akinaza_session=as1.x"))).toBeNull();
+  });
+  it("keeps the readable hint flag in step with the cookie on a public page, never carrying the token", async () => {
+    const set = (await ask("/fr/pricing", "akinaza_session=as1.tok")).headers.get("set-cookie") ?? "";
+    expect(set).toContain("kz-session=1");
+    expect(set).not.toContain("as1.tok");
+    expect((await ask("/fr/pricing", "kz-session=1")).headers.get("set-cookie") ?? "").toContain("Max-Age=0");
+  });
+  it("the administration console is not a landing page", async () => {
+    expect(goes(await ask("/fr", "akinaza_session=as1.x", "admin.akinaza.com"))).not.toBe("/fr/app");
+  });
+});
+
 describe("the proxy on the API's writes (ADR-005 slice 1, akinaza#534)", () => {
   const post = (headers: Record<string, string>) => proxy(new NextRequest("https://www.akinaza.com/api/me/profile", { method: "POST", headers: { host: "www.akinaza.com", ...headers } }));
 

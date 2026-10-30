@@ -129,7 +129,7 @@ async function crawl(browser, { base, paths, theme, account, problems, visited, 
     seen.add(key);
     problems.push(`${current}: ${kind}: ${text.replace(/\s+/g, " ").slice(0, 400)}`);
   };
-  page.on("console", (m) => m.type() === "error" && report(isHydrationError(m.text()) ? "hydration" : "console error", m.text()));
+  page.on("console", (m) => m.type() === "error" && report(isHydrationError(m.text()) ? "hydration" : "console error", `${m.text()} ${m.location().url ?? ""}`));
   page.on("pageerror", (e) => report(isHydrationError(String(e.message)) ? "hydration" : "uncaught", String(e.message)));
   const links = {};
   for (const viewport of VIEWPORTS) {

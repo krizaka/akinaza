@@ -46,3 +46,5 @@ pnpm run check:hydration -- --base http://localhost:3000
 # The shop page composer end to end (akinaza#427): reorder, autosave, publish, rollback resets the draft, discard; no overflow.
 E2E_BASE=http://localhost:3000 E2E_OWNER_EMAIL="$HYDRATION_OWNER_EMAIL" E2E_OWNER_PASS="$HYDRATION_OWNER_PASSWORD" E2E_OUT=e2e-composer-out pnpm run e2e:composer
 test "$(curl -s -o /dev/null -w '%{http_code}' -X POST http://localhost:3000/api/auth/sign-up)" = "403"
+# A signed-in person never sees the public side first (krizaka-ui#827): / lands on the home, a public page never draws « Sign in ».
+E2E_EMAIL="$HYDRATION_OWNER_EMAIL" E2E_PASSWORD="$HYDRATION_OWNER_PASSWORD" node scripts/check-signed-in-landing.mjs --base http://localhost:3000
