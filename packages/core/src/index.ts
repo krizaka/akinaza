@@ -19,4 +19,7 @@ export * from "./community";
 export * from "./retention";
 export * from "./calendar";
 export * from "./shop-page-document";
+export * from "./explore";
 export * from "./avatar";
+export * from "./slug-guard";
+export * from "./explore-query";

@@ -5,7 +5,7 @@ import { format, getDictionary, type Locale } from "@/lib/i18n";
 
 type Delivery = Awaited<ReturnType<typeof invoiceDeliveryHistory>>[number];
 
-export function InvoiceDeliveryHistory({ deliveries, locale }: { deliveries: Delivery[]; locale: Locale }) {
+export function InvoiceDeliveryHistory({ deliveries, locale }: Readonly<{ deliveries: Delivery[]; locale: Locale }>) {
   const t = getDictionary(locale).console.invoices.history;
   if (deliveries.length === 0) return <p className="text-sm text-fg-secondary">{t.none}</p>;
   return (

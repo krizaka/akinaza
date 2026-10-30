@@ -9,6 +9,8 @@ import { POST } from "./route";
 vi.mock("@/lib/access", () => ({ requireSession: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
+const policy = { terms: [{ source: "login" }] };
+vi.mock("@/lib/slug-policy", () => ({ slugPolicy: vi.fn(async () => policy) }));
 vi.mock("@/lib/organize", () => ({ organize: vi.fn() }));
 vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), saveShopPage: vi.fn() }));
 
@@ -19,7 +21,7 @@ describe("POST /api/walker/shops goes through the same shop limit (#265)", () =>
   beforeEach(() => {
     vi.mocked(requireSession).mockResolvedValue({ id: "s", account: { id: "owner", email: "o@example.com", role: "USER", locale: "en" } });
     vi.mocked(appSettings).mockReturnValue({ get: vi.fn(async () => 3) } as never);
-    vi.mocked(saveShopPage).mockResolvedValue({ shopId: "new", created: true });
+    vi.mocked(saveShopPage).mockResolvedValue({ shopId: "new", created: true, held: false });
   });
   afterEach(() => vi.clearAllMocks());
 

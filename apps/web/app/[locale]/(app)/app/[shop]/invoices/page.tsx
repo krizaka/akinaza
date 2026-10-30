@@ -14,13 +14,14 @@ import { memberShop } from "@/lib/member-shop";
 import { organizeData, tagsOfRows } from "@/lib/organize-data";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
 export const generateMetadata = titleOf("invoices");
 
 /** The issued invoices (each opens as a document), and the one primary action: a new invoice, on its own address. */
-export default async function Invoices({ params, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+export default async function Invoices({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }>) {
   const { locale: rawLocale, shop: shopId } = await params;
   const locale = asLocale(rawLocale);
   const { shop, session, role } = await memberShop(shopId, "invoices");
@@ -47,7 +48,7 @@ export default async function Invoices({ params, searchParams }: { params: Promi
           />
         ) : (
           <InvoicesTable
-            today={localDay(new Date(), shop.timezone)}
+            today={localDay(requestNow(), shop.timezone)}
             defaultMessage={mail?.shop.message}
             organize={organized.data}
             tagsByInvoice={tags}

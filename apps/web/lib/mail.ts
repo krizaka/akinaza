@@ -30,9 +30,10 @@ export async function deliver(db: Db, mail: Pending, now: Date, settings: MailSe
   const form = new URLSearchParams({ from, to: mail.toEmail, subject: mail.subject, text: mail.bodyText, html: mail.html });
   if (mail.ccEmail) form.set("cc", mail.ccEmail);
   try {
+    const credentials = Buffer.from(`api:${settings.apiKey}`).toString("base64");
     const response = await send(`${settings.apiUrl.replace(/\/+$/, "")}/v3/${encodeURIComponent(settings.domain!)}/messages`, {
       method: "POST",
-      headers: { Authorization: `Basic ${Buffer.from(`api:${settings.apiKey}`).toString("base64")}`, "Content-Type": "application/x-www-form-urlencoded" },
+      headers: { Authorization: `Basic ${credentials}`, "Content-Type": "application/x-www-form-urlencoded" },
       body: form,
     });
     if (response.ok) {
@@ -98,9 +99,10 @@ export async function sendInvoiceMail(db: Db, shopId: string, invoiceId: string,
   const locale = invoice.language;
   const f = formatter(locale);
   const money = new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", { style: "currency", currency: "CAD" });
+  const onReceipt = locale === "fr" ? "À réception" : "On receipt";
   const dueDate = invoice.dueOn
     ? f.date.format(new Date(`${invoice.dueOn}T12:00:00Z`))
-    : locale === "fr" ? "À réception" : "On receipt";
+    : onReceipt;
   const optionalMessage = message ?? config.shop.message;
   const rendered = renderMailTemplate(
     "invoice-issued",

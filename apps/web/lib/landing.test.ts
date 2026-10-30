@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
+import { contentSecurityPolicy } from "./csp";
 import { DEMO_SHOP, heroActions, HOME_SECTIONS, productStatus, SCREENS } from "./landing";
 import { llmsText } from "./seo";
 import { heroTake, MEDIA_CDN, screenStill } from "./tour";
@@ -26,6 +27,12 @@ describe("the home is short and concrete", () => {
     expect(SCREENS.map((s) => s.id)).toEqual(["book", "invoice", "books"]);
   });
 
+  it("names the screens' section with a heading, so the features' h3 follow an h2 (axe heading-order, #448)", () => {
+    expect(home).toContain("featuresHeading={{ title: d.screensTitle }}");
+    expect(en.landing.screensTitle).toBeTruthy();
+    expect(fr.landing.screensTitle).toBeTruthy();
+  });
+
   it("carries no filler: no eyebrow, figures band, mascot, comparison, FAQ, changelog or closing panel", () => {
     for (const needle of ["eyebrow=", "proofs={", "MascotQuote", "NumberTicker", "ComparisonSection", "FaqSection", "JourneyTour", "closing={{"]) expect(home, needle).not.toContain(needle);
   });
@@ -37,7 +44,7 @@ describe("the home is short and concrete", () => {
   it("each screen is a real capture with its text and alt in both languages, on the CDN", () => {
     for (const locale of ["en", "fr"] as const) {
       for (const { id } of SCREENS) {
-        const base = `${MEDIA_CDN}/site/products/akinaza/tour/phone-${id}-${locale}.`;
+        const base = `${MEDIA_CDN}/sites/akinaza/tour/phone-${id}-${locale}.`;
         expect(screenStill(id, locale).startsWith(base)).toBe(true);
         expect(screenStill(id, locale).slice(base.length)).toMatch(/^[0-9a-f]{10}\.jpg$/);
         for (const m of [en, fr]) expect(m.landing.screens[id].title && m.landing.screens[id].text && m.landing.screens[id].alt, id).toBeTruthy();
@@ -104,7 +111,7 @@ describe("the first screen loads its proof first", () => {
     expect(video).not.toContain("autoPlay");
   });
   it("the CSP lets the CDN serve media (a video is not an image)", () => {
-    expect(read("next.config.mjs")).toContain("media-src 'self' https://krizaka-assets.b-cdn.net");
+    expect(contentSecurityPolicy({ production: true, upgradeInsecure: true })).toContain("media-src 'self' https://krizaka-assets.b-cdn.net");
   });
 });
 

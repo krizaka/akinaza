@@ -5,6 +5,7 @@ import { booksView, periodChoices, periodFor } from "@/lib/books";
 import { queryOf } from "@/lib/day-param";
 import { db } from "@/lib/db";
 import { handle } from "@/lib/http";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,7 @@ export const dynamic = "force-dynamic";
 export function GET(req: Request) {
   return handle(async () => {
     const { shop } = await requireShop(req, "reports");
-    const today = await shopDay(db(), shop.id, new Date());
+    const today = await shopDay(db(), shop.id, requestNow());
     const period = periodFor(queryOf(req).period, today);
     const view = booksView(await prepareShopReturn(db(), shop.id, period.start, period.end));
     return Response.json(

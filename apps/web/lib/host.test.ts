@@ -63,3 +63,56 @@ describe("the Spanish shop page (#258)", () => {
     expect(routeFor("salon-laurier.akinaza.com", "/es", "fr", site)).toEqual({ kind: "rewrite", path: "/es/s/salon-laurier" });
   });
 });
+
+/** ADR-005 slice 5 (akinaza#538): shops on their own registrable domain, the old addresses 308 to it, the booking is a hop to the app. */
+describe("shops on their own domain", () => {
+  const site = "https://www.akinaza.com";
+  const hosting = { domain: "akinaza.shop", origin: (slug: string) => `https://${slug}.akinaza.shop` };
+  const route = (host: string, path: string) => routeFor(host, path, "fr", site, hosting);
+
+  it("serves the shop page at the root of <slug>.akinaza.shop, in the language of the address", () => {
+    expect(route("salon.akinaza.shop", "/")).toEqual({ kind: "rewrite", path: "/fr/s/salon" });
+    expect(route("salon.akinaza.shop", "/en")).toEqual({ kind: "rewrite", path: "/en/s/salon" });
+    expect(route("salon.akinaza.shop", "/es")).toEqual({ kind: "rewrite", path: "/es/s/salon" });
+    expect(route("salon.akinaza.shop", "/en/s/salon")).toEqual({ kind: "next" });
+    expect(route("salon.akinaza.shop", "/en/s/salon/service/42")).toEqual({ kind: "next" });
+    expect(route("salon.akinaza.shop", "/en/s/salon/service/42/slots")).toEqual({ kind: "next" });
+  });
+
+  it("sends the booking's last step and everything of the app to www, 308 (the session never exists on a shop host)", () => {
+    for (const path of ["/en/s/salon/service/42/confirm", "/en/s/salon/service/42/confirmation", "/fr/app", "/en/sign-in", "/en/s/other/service/1", "/en/pricing"]) {
+      expect(route("salon.akinaza.shop", path), path).toEqual({ kind: "redirect", path: `https://www.akinaza.com${path}`, permanent: true });
+    }
+  });
+
+  it("closes the shop host's robots.txt and serves its own sitemap", () => {
+    expect(route("salon.akinaza.shop", "/robots.txt")).toEqual({ kind: "robotsClosed" });
+    expect(route("salon.akinaza.shop", "/sitemap.xml")).toEqual({ kind: "shopSitemap", slug: "salon" });
+  });
+
+  it("leads the shop domain's own apex and www to the app", () => {
+    for (const host of ["akinaza.shop", "www.akinaza.shop"]) {
+      expect(route(host, "/anything")).toEqual({ kind: "redirect", path: "https://www.akinaza.com/", permanent: true });
+    }
+  });
+
+  it("moves the old addresses to the shop domain with a 308: <slug>.akinaza.com and /<locale>/s/<slug>", () => {
+    expect(route("salon.akinaza.com", "/")).toEqual({ kind: "redirect", path: "https://salon.akinaza.shop/", permanent: true });
+    expect(route("salon.akinaza.com", "/en/s/salon/service/3")).toEqual({ kind: "redirect", path: "https://salon.akinaza.shop/en/s/salon/service/3", permanent: true });
+    expect(route("www.akinaza.com", "/en/s/salon")).toEqual({ kind: "redirect", path: "https://salon.akinaza.shop/en", permanent: true });
+    expect(route("www.akinaza.com", "/es/s/salon")).toEqual({ kind: "redirect", path: "https://salon.akinaza.shop/es", permanent: true });
+    expect(route("www.akinaza.com", "/fr/s/salon/service/42/slots")).toEqual({ kind: "redirect", path: "https://salon.akinaza.shop/fr/s/salon/service/42/slots", permanent: true });
+  });
+
+  it("leaves the booking's hop and the app's pages on www, and the console on its host", () => {
+    expect(route("www.akinaza.com", "/en/s/salon/service/42/confirm")).toEqual({ kind: "next" });
+    expect(route("www.akinaza.com", "/en/s/salon/service/42/confirmation")).toEqual({ kind: "next" });
+    expect(route("www.akinaza.com", "/en/pricing")).toEqual({ kind: "next" });
+    expect(route("admin.akinaza.com", "/en/s/salon")).toEqual({ kind: "rewrite", path: "/en/console/s/salon" });
+  });
+
+  it("does nothing without a shop domain: the shops stay on <slug>.<apex>", () => {
+    expect(routeFor("www.akinaza.com", "/en/s/salon", "fr", site)).toEqual({ kind: "next" });
+    expect(routeFor("salon.akinaza.com", "/", "fr", site)).toEqual({ kind: "rewrite", path: "/fr/s/salon" });
+  });
+});

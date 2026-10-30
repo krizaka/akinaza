@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { coverSizes, coverSrcSet } from "./cover-renditions";
 
-const CDN = "https://krizaka-assets.b-cdn.net/site/products/akinaza/demo";
+const CDN = "https://krizaka-assets.b-cdn.net/sites/akinaza/demo";
 
 describe("cover renditions (akinaza#459)", () => {
   it("gives the demo covers three widths, the middle one for a phone", () => {

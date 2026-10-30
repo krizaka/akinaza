@@ -23,7 +23,7 @@ describe("the default media of the storefronts (#267)", () => {
     expect(new Set(DEFAULT_MEDIA.map((m) => m.altKey)).size).toBe(DEFAULT_MEDIA.length);
     const paths = defaultMediaPaths();
     expect(new Set(paths).size).toBe(paths.length);
-    for (const path of paths) expect(path).toMatch(/^products\/akinaza\/defaults\/(salon|coaching|workshop|cleaning|pets|consulting)\/(cover|gallery|service)\/[a-z0-9-]+\.(avif|webp|webm|mp4)$/);
+    for (const path of paths) expect(path).toMatch(/^defaults\/(salon|coaching|workshop|cleaning|pets|consulting)\/(cover|gallery|service)\/[a-z0-9-]+\.(avif|webp|webm|mp4)$/);
   });
 
   it("the cover has its loop and poster, the others only images, each image in AVIF and WebP at every width of its slot", () => {

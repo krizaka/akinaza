@@ -1,6 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { fileURLToPath } from "node:url";
 
+import { endPool } from "@krizaka/db/testing";
 import { inject } from "vitest";
 
 import { createDb, type Db, pg } from "../client";
@@ -31,7 +32,7 @@ export async function freshEmptyDatabase(): Promise<{ db: Db; pool: pg.Pool; dro
     db: createDb(pool),
     pool,
     drop: async () => {
-      await pool.end();
+      await endPool(pool);
       const again = new pg.Client({ connectionString: admin.toString() });
       await again.connect();
       await again.query(`DROP DATABASE IF EXISTS ${name} WITH (FORCE)`);

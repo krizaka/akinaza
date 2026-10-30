@@ -21,7 +21,7 @@ export interface PhotoPool {
 }
 export interface PhotoPlan {
   cover: PhotoPool["cover"];
-  /** The photos of each section, by its key (only gallery sections have any). */
+  /** The photos of each section, by its key (the gallery sections, and the closing call's single photo). */
   sections: Readonly<Record<string, readonly PlacedPhoto[]>>;
 }
 
@@ -29,6 +29,21 @@ export interface PhotoPlan {
 const PHOTOS_PER_GALLERY = 12;
 
 const identity = (src: string) => src.split("?")[0]!;
+
+type Section = Pick<ShopPage, "sections">["sections"][number];
+
+/** The photos a gallery section takes from the pool: the wall's polaroids for `wall`, the gallery otherwise, the picked ones for `pick`, bounded. */
+function galleryPhotos(section: Extract<Section, { type: "gallery" }>, pool: PhotoPool, take: (src: string) => boolean): readonly PlacedPhoto[] {
+  const source = section.variant === "wall" ? pool.wall : pool.gallery;
+  const picked = new Set(section.settings.source === "pick" ? (section.blocks ?? []).flatMap((b) => (b.type === "photo" ? [b.settings.mediaId] : [])) : []);
+  const wanted = section.settings.source === "pick" ? source.filter((p) => picked.has(p.id)) : source;
+  const placed: PlacedPhoto[] = [];
+  for (const p of wanted) {
+    if (placed.length >= PHOTOS_PER_GALLERY) break;
+    if (take(p.src)) placed.push(p);
+  }
+  return placed;
+}
 
 export function planPhotos(doc: Pick<ShopPage, "sections">, pool: PhotoPool): PhotoPlan {
   const used = new Set<string>();
@@ -43,11 +58,12 @@ export function planPhotos(doc: Pick<ShopPage, "sections">, pool: PhotoPool): Ph
   for (const section of doc.sections) {
     if (section.disabled) continue;
     if (section.type === "hero" && !cover && pool.cover && take(pool.cover.src)) cover = pool.cover;
-    if (section.type !== "gallery") continue;
-    const source = section.variant === "wall" ? pool.wall : pool.gallery;
-    const picked = new Set(section.settings.source === "pick" ? (section.blocks ?? []).flatMap((b) => (b.type === "photo" ? [b.settings.mediaId] : [])) : []);
-    const wanted = section.settings.source === "pick" ? source.filter((p) => picked.has(p.id)) : source;
-    sections[section.key] = wanted.filter((p) => take(p.src)).slice(0, PHOTOS_PER_GALLERY);
+    if (section.type === "gallery") sections[section.key] = galleryPhotos(section, pool, take);
+    // The closing call's photo: the first one of the shop no earlier section drew (none: the shop's mark stands in).
+    if (section.type === "booking" && section.variant === "closing") {
+      const left = [...pool.gallery, ...pool.wall].find((p) => take(p.src));
+      if (left) sections[section.key] = [left];
+    }
   }
   return { cover, sections };
 }

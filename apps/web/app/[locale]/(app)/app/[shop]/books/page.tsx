@@ -8,6 +8,7 @@ import { Stat, StatGrid } from "@krizaka/ui/stat";
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { requestNow } from "@/app/request-now";
 import { BooksLines } from "@/components/app/BooksLines";
 import { FiguresPanel } from "@/components/app/FiguresPanel";
 import { LexiconSection } from "@/components/app/LexiconSection";
@@ -31,15 +32,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
  * « Vos livres »: the GST/QST return of a period, prepared from the shop's invoices and expenses, every figure with its
  * sources. It prepares; the merchant reviews and files it themselves with Revenu Québec — nothing is sent from here.
  */
-export default async function Books({ params, searchParams }: { params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ period?: string }> }) {
+export default async function Books({ params, searchParams }: Readonly<{ params: Promise<{ locale: string; shop: string }>; searchParams: Promise<{ period?: string }> }>) {
   const { locale: rawLocale, shop: shopId } = await params;
   const locale = asLocale(rawLocale);
   const { shop } = await memberShop(shopId, "reports");
   const t = getDictionary(locale).console.books;
-  const today = await shopDay(db(), shop.id, new Date());
+  const today = await shopDay(db(), shop.id, requestNow());
   const period = periodFor((await searchParams).period, today);
   const prepared = await prepareShopReturn(db(), shop.id, period.start, period.end);
-  const { figures } = await loadFigures(shop, today, new Date(), { start: period.start, end: period.end });
+  const { figures } = await loadFigures(shop, today, requestNow(), { start: period.start, end: period.end });
   const routes = shopRoutes(locale, shop.id);
   const view = booksView(prepared);
   const money = (cents: number) => formatMoney(cents, locale);
@@ -67,7 +68,7 @@ export default async function Books({ params, searchParams }: { params: Promise<
       <section aria-labelledby="books-figures" className="flex flex-col gap-3">
         <h2 id="books-figures" className="text-lg font-semibold">{t.figuresTitle}</h2>
         <p className="text-sm text-fg-muted">{getDictionary(locale).console.figures.never}</p>
-        <FiguresPanel ids={["gstCollected", "qstCollected", "gstToRemit", "qstToRemit"]} figures={figures} locale={locale} routes={routes} timeZone={shop.timezone} now={new Date().toISOString()} />
+        <FiguresPanel ids={["gstCollected", "qstCollected", "gstToRemit", "qstToRemit"]} figures={figures} locale={locale} routes={routes} timeZone={shop.timezone} now={requestNow().toISOString()} />
       </section>
       {booksIsEmpty(view) ? (
         <EmptyState icon={<Mascot bird="beaver" mood="empty" size={120} />} title={t.empty.title} description={t.empty.body} action={<ButtonLink href={shopRoutes(locale, shop.id).invoices} variant="secondary" size="sm">{t.empty.action}</ButtonLink>} />

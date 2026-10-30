@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /** "Forgot password" on @krizaka/ui's auth template: the same answer for every address. */
-export default async function ForgotPasswordPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function ForgotPasswordPage({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale).console;
   return (

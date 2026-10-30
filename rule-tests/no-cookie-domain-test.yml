@@ -1,0 +1,17 @@
+id: no-cookie-domain
+valid:
+  - |
+    (await cookies()).set(ownCookie(SESSION_COOKIE, token, { expires }));
+  - |
+    const mail = { provider: "mailgun", domain: "mg.example.test" };
+  - |
+    jar.set({ name, value, path: "/", secure: true });
+invalid:
+  - |
+    (await cookies()).set({ name: "a", value: "b", domain: "akinaza.com" });
+  - |
+    response.cookies.set("a", "b", { domain: ".akinaza.com" });
+  - |
+    const header = `a=b; Path=/; Domain=akinaza.com`;
+  - |
+    const header = "a=b; Domain=akinaza.com";

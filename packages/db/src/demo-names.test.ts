@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { DEMO_SHOPS } from "./demo-shops";
 import { KRIZAKA, KRIZAKA_SECOND } from "./seed-krizaka";
+import { OWNER_STATES } from "./seed-owner-states";
 import { SAINT_HENRI } from "./seed-walker";
 
 /**
@@ -13,6 +14,8 @@ const FOOD_AND_DRINK = /(?<!\p{L})(caf[eé]s?|restaurants?|resto|bars?|bistrots?
 const demoNames: [string, string][] = [
   ...[KRIZAKA.shop.name, KRIZAKA.shop.legalName, KRIZAKA_SECOND.shop.name, KRIZAKA_SECOND.shop.legalName].map((n): [string, string] => ["seed-krizaka shop", n]),
   ...KRIZAKA.clients.flatMap((c): [string, string][] => [["seed-krizaka client", c.name], ["seed-krizaka client e-mail", c.email]]),
+  ...[OWNER_STATES.empty.shop, OWNER_STATES.one.shop].flatMap((x): [string, string][] => [["seed-owner-states shop", x.name], ["seed-owner-states shop", x.legalName]]),
+  ["seed-owner-states client", OWNER_STATES.one.client.name],
   ["seed-walker shop", SAINT_HENRI.shop.name],
   ["seed-walker shop", SAINT_HENRI.shop.legalName],
   ...SAINT_HENRI.clients.map((c): [string, string] => ["seed-walker client", c.name]),

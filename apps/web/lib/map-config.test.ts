@@ -2,17 +2,22 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
+import { contentSecurityPolicy } from "./csp";
+
 const config = readFileSync(new URL("../next.config.mjs", import.meta.url), "utf8");
 
 describe("the map of a shop page", () => {
   it("reads its tiles and glyphs through this origin: the media CDN sends no CORS headers", () => {
     expect(config).toContain('source: "/maps/v1/:path*"');
-    expect(config).toContain("https://krizaka-assets.b-cdn.net/maps/v1/:path*");
+    expect(config).toContain("https://krizaka-assets.b-cdn.net/org/v1/maps/:path*");
   });
   it("lets its engine run its worker from a blob, and nothing else", () => {
-    expect(config).toContain("worker-src 'self' blob:");
-    expect(config).toContain("connect-src 'self'"); // the tiles are same-origin: no third-party connection is opened
-    expect(config).not.toMatch(/connect-src[^"]*https:\/\/krizaka-assets/);
+    for (const nonce of [undefined, "bm9uY2U="]) {
+      const csp = contentSecurityPolicy({ nonce, production: true, upgradeInsecure: true });
+      expect(csp).toContain("worker-src 'self' blob:");
+      expect(csp).toContain("connect-src 'self';"); // the tiles are same-origin: no third-party connection is opened
+      expect(csp).not.toMatch(/connect-src[^;]*https:\/\/krizaka-assets/);
+    }
   });
 });
 

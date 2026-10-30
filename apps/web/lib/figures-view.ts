@@ -25,13 +25,16 @@ export function kpiThresholds(state: FigureState, value: number): { direction: "
   }
 }
 
-const unitText = (value: number, unit: Unit, locale: FormatLocale) => (unit === "cents" ? formatMoney(value, locale) : unit === "percent" ? `${value} %` : String(value));
+const unitText = (value: number, unit: Unit, locale: FormatLocale) => {
+  if (unit === "cents") return formatMoney(value, locale);
+  return unit === "percent" ? `${value} %` : String(value);
+};
 
 /** « Total of your invoices before taxes, minus your credit notes. Here: Invoices before taxes $1,000.00 − Expenses for the business $200.00. » */
 export function formulaText(figure: Figure, t: FiguresMessages, locale: FormatLocale): string {
   const label = (term: FormulaTerm) => t.terms[term.label as keyof typeof t.terms] ?? term.label;
   // A term with no operator after the first is a reading of the whole (« of which overdue »), not an addition.
-  const terms = figure.formula.map((term, i) => (i === 0 ? "" : term.op ? `${term.op} ` : "· ") + `${label(term)} ${unitText(term.value, term.unit, locale)}`).join(" ");
+  const terms = figure.formula.map((term, i) => termLead(i, term.op) + `${label(term)} ${unitText(term.value, term.unit, locale)}`).join(" ");
   return format(t.formulaHere, { formula: t[figure.id].formula, terms });
 }
 
@@ -112,6 +115,19 @@ export interface ActionView {
   href: string;
 }
 
+/** The address an action leads to: its invoice, the list, the books of its period, or the team. */
+function actionHref(target: NextAction["target"], routes: ShopRoutes): string {
+  if (target.route === "invoice") return routes.invoice(target.invoiceId);
+  if (target.route === "invoices") return routes.invoices;
+  return target.route === "books" ? routes.books(periodId(target.period.start)) : routes.team;
+}
+
+/** What goes before a term of a formula: nothing for the first, its operator, or a dot. */
+function termLead(index: number, op: string | undefined): string {
+  if (index === 0) return "";
+  return op ? `${op} ` : "· ";
+}
+
 const URGENCY = { now: "high", soon: "medium", week: "low" } as const;
 
 /** « What to do now »: the words of an action (catalogue messages with the action's variables) and the address it leads to. */
@@ -119,7 +135,7 @@ export function actionView(action: NextAction, locale: Locale, routes: ShopRoute
   const t = getDictionary(locale).console.figures;
   const w = action.why;
   const money = (v: unknown) => formatMoney(Number(v), shopLocale);
-  const href = action.target.route === "invoice" ? routes.invoice(action.target.invoiceId) : action.target.route === "invoices" ? routes.invoices : action.target.route === "books" ? routes.books(periodId(action.target.period.start)) : routes.team;
+  const href = actionHref(action.target, routes);
   const base = { id: `${action.kind}:${action.evidence[0] ?? ""}`, urgency: URGENCY[action.urgency], urgencyLabel: t.urgency[action.urgency], href };
   switch (action.kind) {
     case "chase": {

@@ -4,7 +4,7 @@
 // Per shop type: the cover as AVIF/WebP at the widths the hero needs, its poster, and an 8 second silent loop (a slow breathing zoom that ends where it began:
 // webm and mp4); the gallery images; the service images (3:2 crops of the first gallery images). Then the manifest `apps/web/lib/default-media.manifest.json`
 // (logical path -> first 10 hex of the file's SHA-256, the same rule as krizaka-com's cdn-assets.mjs, so the URL here is the one the upload creates).
-// Upload afterwards, from krizaka-com:  node scripts/cdn-assets.mjs upload <out-dir> --to products/akinaza/defaults
+// Upload afterwards, from krizaka-com:  node scripts/cdn-assets.mjs upload <out-dir> --to apps/akinaza/defaults
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -71,5 +71,5 @@ for (const type of SHOP_TYPES) {
 }
 
 const sorted = Object.fromEntries(Object.entries(manifest).sort(([a], [b]) => a.localeCompare(b)));
-writeFileSync(join(here, "../../lib/default-media.manifest.json"), `${JSON.stringify({ cdn: "https://krizaka-assets.b-cdn.net", root: "site", files: sorted }, null, 2)}\n`);
+writeFileSync(join(here, "../../lib/default-media.manifest.json"), `${JSON.stringify({ cdn: "https://krizaka-assets.b-cdn.net", root: "apps/akinaza", files: sorted }, null, 2)}\n`);
 console.log(Object.keys(sorted).length, "files in the manifest");

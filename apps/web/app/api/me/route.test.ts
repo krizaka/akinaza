@@ -26,6 +26,7 @@ describe("GET /api/me, the public bar's hint", () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ signedIn: false, signupOpen: false });
     expect(res.headers.get("cache-control")).toBe("private, no-store");
+    expect(res.headers.get("vary")).toBe("Cookie");
   });
 
   it("an expired or revoked session is signed out too", async () => {
@@ -39,6 +40,13 @@ describe("GET /api/me, the public bar's hint", () => {
     vi.mocked(resolveSession).mockResolvedValue({ id: "sess", account: { id: "a1", email: "camille@example.com", role: "USER", locale: "fr" } });
     const body = await (await ask(`akinaza_session=${TOKEN}`)).json();
     expect(body).toEqual({ signedIn: true, signupOpen: false, account: { id: "a-1", name: "Camille", email: "camille@example.com", avatarSeed: "s3" } });
+  });
+
+  it("the personalised answer of a signed-in person is private, no-store and varies with the cookie (krizaka-ui#800)", async () => {
+    vi.mocked(resolveSession).mockResolvedValue({ id: "sess", account: { id: "a1", email: "camille@example.com", role: "USER", locale: "fr" } });
+    const res = await ask(`akinaza_session=${TOKEN}`);
+    expect(res.headers.get("cache-control")).toBe("private, no-store");
+    expect(res.headers.get("vary")).toBe("Cookie");
   });
 
   it("tells whether sign-up is open from the deployment's own flag, never a constant", async () => {

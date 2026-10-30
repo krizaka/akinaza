@@ -13,7 +13,7 @@ import { errorKey } from "@/lib/client";
 import { useSay } from "@/lib/i18n-client";
 
 /** My data (Loi 25): everything the product holds, as one file; and the deletion of the account, confirmed by the password and a second press. */
-export function DataPanel({ signInHref }: { signInHref: string }) {
+export function DataPanel({ signInHref }: Readonly<{ signInHref: string }>) {
   const { say } = useSay();
   const router = useRouter();
   const [secret, setSecret] = useState("");

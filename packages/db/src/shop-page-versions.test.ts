@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { documentFromLegacy, LEGACY_SECTION_IDS, shopTypeOf } from "@akinaza/core";
+import { documentFromLegacy, LEGACY_SECTION_IDS, MIGRATION_0038_BOOKING_SECTIONS, shopTypeOf } from "@akinaza/core";
 import { parseShopPage } from "@krizaka/ui/shop";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -175,7 +175,7 @@ describe("migration 0038: today's pages become documents", () => {
         expect(rows[0]).toMatchObject({ version: 1, status: "published", schema: 1 });
         expect(parseShopPage(rows[0].doc).ok).toBe(true);
         // The SQL and the pure function agree on every page, so today's content survives exactly.
-        expect(rows[0].doc).toEqual(JSON.parse(JSON.stringify(documentFromLegacy({ sections: c.sections, trade: c.trade }))));
+        expect(rows[0].doc).toEqual(JSON.parse(JSON.stringify(documentFromLegacy({ sections: c.sections, trade: c.trade, booking: MIGRATION_0038_BOOKING_SECTIONS }))));
       }
       // Visible sections stay enabled, the hidden ones are disabled, the order is the owner's.
       const hidden = (await old.pool.query(`SELECT doc FROM shop_page_versions WHERE shop_id = $1`, [cases[2]!.id])).rows[0].doc.sections as { key: string; disabled?: boolean }[];

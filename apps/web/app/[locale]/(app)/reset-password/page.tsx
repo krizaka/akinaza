@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /** The page of a reset link: the token comes from the e-mail (`?token=`); without it, the page says so. */
-export default async function ResetPasswordPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ token?: string }> }) {
+export default async function ResetPasswordPage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string }>; searchParams: Promise<{ token?: string }> }>) {
   const locale = asLocale((await params).locale);
   const t = getDictionary(locale).console;
   const { token } = await searchParams;

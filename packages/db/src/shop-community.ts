@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import type { Db } from "./client";
 import { ShopError } from "./errors";
-import { shopAnnouncements, shopReels, shopReviews, shops, shopSocialLinks, shopWall, shopWallItems } from "./schema";
+import { isPublicShop, shopAnnouncements, shopReels, shopReviews, shops, shopSocialLinks, shopWall, shopWallItems } from "./schema";
 
 /**
  * The shop as a place (akinaza#236, B45): the wall, the reels, the profile links, the bulletin board and the reviews of the public page.
@@ -203,7 +203,7 @@ export async function feedFlyers(db: Db): Promise<FeedFlyerRow[]> {
     })
     .from(shopAnnouncements)
     .innerJoin(shops, eq(shops.id, shopAnnouncements.shopId))
-    .where(and(eq(shops.published, true), sql`${shops.slug} IS NOT NULL`, sql`coalesce(${shops.area}, '') <> ''`, sql`(${shopAnnouncements.endsOn} IS NULL OR ${shopAnnouncements.endsOn} >= (now() AT TIME ZONE ${shops.timezone})::date)`))
+    .where(and(isPublicShop(), sql`${shops.slug} IS NOT NULL`, sql`coalesce(${shops.area}, '') <> ''`, sql`(${shopAnnouncements.endsOn} IS NULL OR ${shopAnnouncements.endsOn} >= (now() AT TIME ZONE ${shops.timezone})::date)`))
     .orderBy(desc(shopAnnouncements.createdAt), desc(shopAnnouncements.id))
     .limit(FEED_READ);
 }

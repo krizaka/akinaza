@@ -1,6 +1,7 @@
 import { frameCounts, shopDay, type ShopRole } from "@akinaza/db";
 
 import { accounts } from "@/app/accounts";
+import { requestNow } from "@/app/request-now";
 import { ShopFrame } from "@/components/app/ShopFrame";
 import { agendaScope } from "@/lib/access";
 import { CLIENT_PLACES, placeHrefFor, placesFor } from "@/lib/app-nav";
@@ -18,7 +19,7 @@ type Membership = { shop: { id: string; name: string; businessType: Parameters<t
  * account menu; the rail counts the day's appointments and the invoices to collect.
  * A client (no shop) gets the same frame around their bookings.
  */
-export async function SpaceChrome({ locale, account, member, children }: { locale: RouteLocale; account: { id: string; email: string }; member: Membership; children: React.ReactNode }) {
+export async function SpaceChrome({ locale, account, member, children }: Readonly<{ locale: RouteLocale; account: { id: string; email: string }; member: Membership; children: React.ReactNode }>) {
   const profile = await accounts().profile(account.id);
   const routes = accountRoutes(locale);
   const common = { locale, account: { id: account.id, email: account.email, name: profile.name, avatarSeed: profile.avatarSeed }, dev: !indexable(), home: routes.home, profileHref: routes.profile };
@@ -31,7 +32,7 @@ export async function SpaceChrome({ locale, account, member, children }: { local
   const membership = { shopId: member.shop.id, role: member.role };
   const mayInvoice = may(member.role, "invoices");
   // The rail's counts: the day's appointments (a staff member's own), the invoices to collect for who may see them.
-  const counts = await frameCounts(db(), member.shop.id, { day: await shopDay(db(), member.shop.id, new Date()), ...agendaScope(member.role, account.id) });
+  const counts = await frameCounts(db(), member.shop.id, { day: await shopDay(db(), member.shop.id, requestNow()), ...agendaScope(member.role, account.id) });
   return (
     <ShopFrame
       {...common}

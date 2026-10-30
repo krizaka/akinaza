@@ -22,7 +22,7 @@
 - **Proposed images and videos (#267).** So that no section of a storefront is empty, each trade (`SHOP_TYPES` in `@akinaza/core`: salon, coaching,
   workshop, cleaning, pets, consulting - never a restaurant or a bar) has default media for the slots `cover` (image + silent loop), `gallery` and `service`
   (`packages/core/src/shop-media.ts`). The files are generated locally and never committed (`apps/web/scripts/default-media/`: FLUX.2 klein through
-  `sd-cli`, ffmpeg loops, `sharp` renditions), live on the media CDN under `site/products/akinaza/defaults/<type>/<slot>/` (hashed names, uploaded with krizaka-com's
+  `sd-cli`, ffmpeg loops, `sharp` renditions), live on the media CDN under `apps/akinaza/defaults/<type>/<slot>/` (hashed names, uploaded with krizaka-com's
   `cdn-assets.mjs`), and are named by `apps/web/lib/default-media.manifest.json` (the only thing committed). They are neutral pictures: no real person, no text,
   never presented as the owner's shop. A slot the owner filled is never replaced; the owner chooses a proposal in « Images proposées » or turns them off
   (`shop_page.use_defaults`); the administrator holds `features.defaultMedia` and `storefront.defaultMedia.types`.
@@ -34,7 +34,7 @@
   version until the owner updates (« update available »). The demo shops (and the Saint-Henri persona) each wear a template of their trade, applied once by their seed.
   The administrator holds `features.storefrontTemplates` (on),
   `storefront.templates.offered` and `storefront.templates.default.<trade>`. A missing block or variant goes to krizaka-ui first.
-- **The shop as a place (B45, #310-#315, #317).** The public page can carry a wall (`shop_wall`, `shop_wall_items`: photos, cards, the sign; percent positions, a tilt of ±8°, a texture among four, `limits.wallItems`, twelve drawn), the latest video (`shop_reels`: an MP4/WebM uploaded - checked by its bytes and its container's duration against `limits.reelSeconds` and `limits.reelMegabytes` - or a link to a TikTok, a YouTube Short or an Instagram reel on an exact host, shown behind a facade: **nothing loads from a platform before the visitor clicks**), the shop's profile links (plain outbound anchors), a bulletin board (`shop_announcements`, three up at a time) and verified reviews (`shop_reviews`, a first name and an initial only, a Bayesian score from `reviews.*`; a small read model until `@krizaka/reviews`, krizaka-ts#37). The rules are `packages/core/src/community.ts`, the operations `packages/db/src/shop-community.ts` (every function takes the shop; another shop's row is not found), the owner's place is Boutique › Page (owner and manager write, staff read the API). The page's `frame-src` names this origin (the studio's preview) and the three embed hosts, nothing else. The demo shops get their place from `demo-community.ts` (media on the CDN under `site/products/akinaza/demo/<slug>/`, never committed).
+- **The shop as a place (B45, #310-#315, #317).** The public page can carry a wall (`shop_wall`, `shop_wall_items`: photos, cards, the sign; percent positions, a tilt of ±8°, a texture among four, `limits.wallItems`, twelve drawn), the latest video (`shop_reels`: an MP4/WebM uploaded - checked by its bytes and its container's duration against `limits.reelSeconds` and `limits.reelMegabytes` - or a link to a TikTok, a YouTube Short or an Instagram reel on an exact host, shown behind a facade: **nothing loads from a platform before the visitor clicks**), the shop's profile links (plain outbound anchors), a bulletin board (`shop_announcements`, three up at a time) and verified reviews (`shop_reviews`, a first name and an initial only, a Bayesian score from `reviews.*`; a small read model until `@krizaka/reviews`, krizaka-ts#37). The rules are `packages/core/src/community.ts`, the operations `packages/db/src/shop-community.ts` (every function takes the shop; another shop's row is not found), the owner's place is Boutique › Page (owner and manager write, staff read the API). The page's `frame-src` names this origin (the studio's preview) and the three embed hosts, nothing else. The demo shops get their place from `demo-community.ts` (media on the CDN under `sites/akinaza/demo/<slug>/`, never committed).
 
 - **No mobile app in the dev preview.** `apps/mobile` is an unbuilt skeleton, outside the workspace until the mobile phase (A5,
   krizaka/.github#52); the walker's phone is served by the phone-first web app. The Dev preview criteria `mobile.*` are `na` for that
@@ -182,3 +182,38 @@ These are the defects code review found most often on 2026-10-23. Check them you
 - **Default media** (avatars, banners, logos): their URLs come from the Krizaka org JSON (`@krizaka/org`: `listDefaults(kind)`, `defaultFor(kind, seed)`) — never hard-coded or bundled in this repository; a folder is never given a person. [Standard](https://github.com/krizaka/.github/blob/main/docs/standards/default-media.md).
 
 **Repository layout:** the root follows [krizaka/.github `docs/standards/repo-layout.md`](https://github.com/krizaka/.github/blob/main/docs/standards/repo-layout.md); the CI guard `check-repo-layout` fails on a stray root file, and a justified extra is declared in `.repo-layout.json` with its why.
+
+## 9. Anti-slop (ADR-015)
+
+What a model tends to write and the code does not need. Each line points at the rule that refuses it
+([ADR-015](https://github.com/krizaka/.github/blob/main/docs/adr/ADR-015-ai-code-audit-measured-and-enforced.md), [docs/standards/guards.md](https://github.com/krizaka/.github/blob/main/docs/standards/guards.md)).
+
+1. **No defensive null on `@NullMarked` code.** No `Objects.requireNonNull` or `if (x == null)` on a value the type already
+   guarantees. Enforced by NullAway at compile time; a new package is `@NullMarked` (ArchUnit).
+2. **A closed set is a type.** An enum, a sealed interface or an `as const` object, never a string compared by hand;
+   strategies are a `Map<Kind, Strategy>` built once at startup. Enforced by PMD / ArchUnit (Java) and `no-enum-string-compare` (ast-grep).
+3. **HTTP in Java is a DTO record, `@Valid` and `ProblemDetail`.** No `Map.of("error", …)`, no entity in a response, one
+   `@RestControllerAdvice` per service. Enforced by ArchUnit.
+4. **No `*Utils`, `*Helper` or `*Manager`.** Name the thing by what it does (§4). Enforced by ArchUnit (ADR-015 §5).
+5. **`?.` and `??` in TypeScript**, not a chain of `&&` or a ternary on null. The target rules are `@typescript-eslint/prefer-optional-chain` and `prefer-nullish-coalescing`; they are not in `@krizaka/config` yet.
+6. **The build is the judge.** Compile, lint and test before every push; `krizaka-edit-check` runs on each edit (below) and
+   NullAway and ArchUnit run at pre-push and in CI. A rule is never silenced to get green.
+
+**The edit hook.** Every repository adds this to `.claude/settings.json`. After each `Edit` or `Write`, the one file is
+checked in under 10 s: ESLint with the repository's config for TypeScript, PMD with the Krizaka rules for Java (never Maven).
+A finding comes back to the agent (exit 2); a timeout is silent.
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "npx --yes -p @krizaka/config krizaka-edit-check", "timeout": 10 }]
+      }
+    ]
+  }
+}
+```
+
+In a TypeScript repository that already depends on `@krizaka/config`, use `npx --no-install krizaka-edit-check` (no download).

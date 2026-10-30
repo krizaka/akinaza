@@ -8,7 +8,7 @@ import { I18nProvider } from "@/i18n";
 
 import AppLayout from "../../app/[locale]/app/_layout";
 import ShopTabs from "../../app/[locale]/app/[shop]/_layout";
-import Today from "../../app/[locale]/app/[shop]/aujourdhui";
+import Today from "../../app/[locale]/app/[shop]/today";
 import Books from "../../app/[locale]/app/[shop]/books";
 import Figures from "../../app/[locale]/app/[shop]/figures";
 
@@ -53,10 +53,10 @@ it("Livres opens Vos chiffres, and stays there", async () => {
       _layout: Root,
       "[locale]/app/_layout": AppLayout,
       "[locale]/app/[shop]/_layout": ShopTabs,
-      "[locale]/app/[shop]/aujourdhui": Today,
+      "[locale]/app/[shop]/today": Today,
       "[locale]/app/[shop]/clients": () => null,
       "[locale]/app/[shop]/invoices/index": () => null,
-      "[locale]/app/[shop]/boutique": () => null,
+      "[locale]/app/[shop]/settings": () => null,
       "[locale]/app/[shop]/books": Books,
       "[locale]/app/[shop]/figures": Figures,
     },

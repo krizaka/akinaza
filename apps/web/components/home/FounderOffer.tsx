@@ -17,7 +17,7 @@ import { contactHref, pagePath } from "@/lib/site";
  * typed in a message. Starter and Scale B2B follow, each with its price from the catalogue. The button is a plain form (no script): it
  * opens the payment page, or the sign-in page when nobody is signed in.
  */
-export async function FounderOffer({ locale }: { locale: Locale }) {
+export async function FounderOffer({ locale }: Readonly<{ locale: Locale }>) {
   const t = getDictionary(locale).landing.founder;
   const catalogue = appPrices();
   const now = systemClock.now();

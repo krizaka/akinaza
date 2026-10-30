@@ -1,6 +1,7 @@
 import { audit } from "./audit";
 import { pool, query } from "./db";
 import { refuse } from "./http";
+import { systemClock } from "@/app/system-clock";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const isUuid = (value: string) => UUID.test(value);
@@ -122,7 +123,7 @@ export async function exportAccount(actor: Actor, id: string, headers?: Headers)
   await audit({ action: "admin.account_exported", actorId: actor.id, actorLabel: actor.email, targetId: id, detail: { shops: shops.length }, headers });
   return {
     format: "akinaza-account-export/1",
-    exportedAt: new Date().toISOString(),
+    exportedAt: systemClock.now().toISOString(),
     account: { id: user.id, email: user.email, role: user.role, status: user.status, createdAt: user.createdAt, lastSeenAt: user.lastSeenAt },
     shops: shops.map((s) => ({ id: s.id, name: s.name, legalName: s.legal_name, kind: s.kind, registrant: s.registrant, createdAt: s.created_at.toISOString() })),
     sessions: sessions.map((s) => ({ createdAt: s.created_at.toISOString(), expiresAt: s.expires_at.toISOString(), ip: s.ip, userAgent: s.user_agent })),

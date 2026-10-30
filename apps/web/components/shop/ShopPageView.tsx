@@ -1,8 +1,10 @@
+import type { FramePaper } from "@akinaza/core";
 import { Badge } from "@krizaka/ui/badge";
 import { OpeningHours } from "@krizaka/ui/opening-hours";
+import { PaperGrain } from "@krizaka/ui/page";
 import type { ShopPage } from "@krizaka/ui/shop";
 import { ShopFrame } from "@krizaka/ui/shop";
-import { BookingSection } from "@krizaka/ui/shop/booking";
+import { BookingSection, type BookingTime } from "@krizaka/ui/shop/booking";
 import { BulletinSection } from "@krizaka/ui/shop/bulletin";
 import { FaqSection } from "@krizaka/ui/shop/faq";
 import { GallerySection } from "@krizaka/ui/shop/gallery";
@@ -34,14 +36,29 @@ type Platform = (typeof PLATFORMS)[number];
 const isPlatform = (value: string): value is Platform => (PLATFORMS as readonly string[]).includes(value);
 
 /** The accent the owner chose within the look, else the look's own. */
+/** The « Book » button of every section that offers it, made outside the page component (a render function, not a component defined in its render). */
+function bookButton(href: string, label: string) {
+  return function renderBook(size: "md" | "lg" = "lg") {
+    return (
+      <ButtonLink href={href} size={size} variant="primary">
+        {label}
+      </ButtonLink>
+    );
+  };
+}
+
 export interface ShopPageViewProps {
   page: ShopPage;
   view: StorefrontView;
   locale: Locale;
   /** The preset's paper and its tested accents are the frame's own: the page only names the preset and the density. */
   accent?: string;
+  /** The paper under the page (the applied template's, when the notebook storefront is on); none = the look's own. */
+  paper?: FramePaper;
   /** The shop's day (`2026-10-27`) for the bulletin board. */
   today: string;
+  /** The closing call's next free time (`nextFreeTime`), when the page has one and a time is free. */
+  nextTime?: BookingTime;
 }
 
 type Section = ShopPage["sections"][number];
@@ -57,6 +74,7 @@ type Ctx = {
   contact: StorefrontView["contact"];
   community: StorefrontView["community"];
   today: string;
+  nextTime: BookingTime | undefined;
   playLabels: Record<Platform, string>;
   notice: string;
   platformName: (p: Platform) => string;
@@ -64,10 +82,14 @@ type Ctx = {
 const commonOf = (section: Section) => ({ id: section.key, "data-shop-key": section.key }) as const;
 
 
+/**
+ * A fact on the hero is drawn over the shop's photo: it wears the `scrim` tone (white on a 60 % black veil, whatever the theme and the photo), never a
+ * tinted tone whose text follows the theme (green on a dark photo was unreadable in the light theme, akinaza#567).
+ */
 function heroFact(b: NonNullable<Args<"hero">["section"]["blocks"]>[number], { view, community }: Pick<Ctx, "view" | "community">): ReactNode {
-  if (b.settings.kind === "open-now" && view.status) return <Badge key={b.key} tone={view.status.open ? "success" : "neutral"} dot={view.status.open} size="md">{view.status.label}{view.status.detail ? ` · ${view.status.detail}` : ""}</Badge>;
-  if (b.settings.kind === "area" && view.area) return <Badge key={b.key} tone="neutral" size="md">{view.area}</Badge>;
-  if (b.settings.kind === "score" && community?.reviews) return <Badge key={b.key} tone="neutral" size="md">{community.reviews.scoreText}</Badge>;
+  if (b.settings.kind === "open-now" && view.status) return <Badge key={b.key} tone="scrim" dot={view.status.open} size="md">{view.status.label}{view.status.detail ? ` · ${view.status.detail}` : ""}</Badge>;
+  if (b.settings.kind === "area" && view.area) return <Badge key={b.key} tone="scrim" size="md">{view.area}</Badge>;
+  if (b.settings.kind === "score" && community?.reviews) return <Badge key={b.key} tone="scrim" size="md">{community.reviews.scoreText}</Badge>;
   return null;
 }
 
@@ -80,7 +102,7 @@ function bannerOf(id: string) {
 function heroSection({ section, c }: Args<"hero">): ReactNode {
   const { view, text, plan, book } = c;
   const common = commonOf(section);
-  const logo = view.logoUrl ?? defaultPicture("shop", view.name, 256)?.src ?? null;
+  const logo = c.claim(view.logoUrl ?? defaultPicture("shop", view.name, 256)?.src ?? null) ?? null;
   const facts = [
     logo ? <Image key="logo" src={logo} alt={view.name} width={64} height={64} unoptimized className="rounded-lg object-cover" /> : null,
     ...(section.blocks ?? []).map((b) => heroFact(b, c)),
@@ -101,9 +123,23 @@ function servicesSection({ section, c }: Args<"services">): ReactNode {
 }
 
 function bookingSection({ section, c }: Args<"booking">): ReactNode {
-  const { view, t } = c;
+  const { view, t, plan, contact } = c;
   const common = commonOf(section);
-  return <BookingSection {...common} variant={section.variant} label={t("console.shopPage.book")} href={view.bookHref} actionLabel={t("console.shopPage.book")} title={t("console.shopPage.closingTitle")} body={t("console.shopPage.closingBody")} linkAs={Link} />;
+  const base = { ...common, variant: section.variant, label: t("console.shopPage.book"), href: view.bookHref, actionLabel: t("console.shopPage.book"), title: t("console.shopPage.closingTitle"), body: t("console.shopPage.closingBody"), linkAs: Link };
+  if (section.variant !== "closing") return <BookingSection {...base} />;
+  const photo = plan.sections[section.key]?.[0];
+  // The mark stands in for a photo, once: the logo the hero already shows is not drawn again.
+  const logo = c.claim(view.logoUrl ?? defaultPicture("shop", view.name, 256)?.src ?? null);
+  return (
+    <BookingSection
+      {...base}
+      photo={photo ? { src: photo.src, alt: photo.alt, srcSet: coverSrcSet(photo.src) } : undefined}
+      mark={logo ? <Image src={logo} alt="" width={64} height={64} unoptimized className="rounded-lg object-cover" /> : undefined}
+      nextTime={c.nextTime}
+      nextTimeLabel={t("console.shopPage.nextFreeTime")}
+      secondary={contact?.phoneHref ? { label: t("console.shopPage.call"), href: contact.phoneHref } : undefined}
+    />
+  );
 }
 
 function teamSection({ section, c }: Args<"team">): ReactNode {
@@ -147,6 +183,11 @@ function policiesSection({ section, c }: Args<"policies">): ReactNode {
 const wallNotes = (pieces: readonly { kind: string; id: string; text?: string; signature?: string }[]) =>
   pieces.flatMap((p) => (p.kind === "note" ? [{ id: p.id, text: p.text ?? "", signature: p.signature || undefined }] : []));
 
+function galleryLead(view: StorefrontView, variant: string, t: Ctx["t"]): string | undefined {
+  if (variant === "wall") return t("console.shopPage.wallLead");
+  return view.galleryIllustrative ? t("console.shopPage.galleryIllustrativeNote") : undefined;
+}
+
 function galleryLabel(view: StorefrontView, variant: string, t: Ctx["t"]): string {
   return view.galleryIllustrative && variant !== "wall" ? t("console.shopPage.galleryIllustrativeLabel") : t("console.shopPage.galleryLabel", { shop: view.name });
 }
@@ -161,7 +202,7 @@ function gallerySection({ section, c }: Args<"gallery">): ReactNode {
   const notes = wallNotes(pieces);
   if (!photos.length && !notes.length) return null;
   const label = galleryLabel(view, section.variant, t);
-  return <GallerySection {...common} variant={section.variant} photos={photos} notes={notes} sign={pieces.find((p) => p.kind === "sign")?.text || undefined} texture={community?.wall?.texture ?? section.settings.texture} title={title(section.variant === "wall" ? t("console.shopPage.wallTitle") : label)} lead={lead ?? (section.variant === "wall" ? t("console.shopPage.wallLead") : view.galleryIllustrative ? t("console.shopPage.galleryIllustrativeNote") : undefined)} label={label} />;
+  return <GallerySection {...common} variant={section.variant} photos={photos} notes={notes} sign={pieces.find((p) => p.kind === "sign")?.text || undefined} texture={community?.wall?.texture ?? section.settings.texture} title={title(section.variant === "wall" ? t("console.shopPage.wallTitle") : label)} lead={lead ?? galleryLead(view, section.variant, t)} label={label} />;
 }
 
 const shortsOf = (community: Ctx["community"], claim: Ctx["claim"]) => (community?.elsewhere ?? []).flatMap((v) => (v.platform && v.externalUrl ? [{ id: v.id, platform: v.platform, url: v.externalUrl, title: v.title, poster: claim(v.poster) }] : []));
@@ -231,7 +272,7 @@ const renderSection = (section: Section, c: Ctx): ReactNode => SECTIONS[section.
  * team, hours, reviews) is the page's view, resolved by `buildStorefront`; the document says which sections, which variants and which settings. A section with nothing
  * to show is not drawn. The cover is the LCP (preloaded, a fixed ratio in the hero); every photo appears once (`planPhotos`); embeds stay behind their facade.
  */
-export function ShopPageView({ page, view, locale, accent, today }: ShopPageViewProps) {
+export function ShopPageView({ page, view, locale, accent, paper, today, nextTime }: Readonly<ShopPageViewProps>) {
   const t = translator(locale);
   const community = view.community;
   const pool: PhotoPool = {
@@ -266,18 +307,20 @@ export function ShopPageView({ page, view, locale, accent, today }: ShopPageView
     titleOf: (section, fallback) => text(section.text?.title) ?? fallback,
     plan,
     claim,
-    book: (size = "lg") => <ButtonLink href={view.bookHref} size={size} variant="primary">{t("console.shopPage.book")}</ButtonLink>,
+    book: bookButton(view.bookHref, t("console.shopPage.book")),
     contact: view.contact,
     community,
     today,
+    nextTime,
     playLabels: Object.fromEntries(PLATFORMS.map((p) => [p, t("console.shopPage.facadePlay", { platform: platformName(p) })])) as Record<Platform, string>,
     notice: t("console.shopPage.facadeNotice", { platform: PLATFORMS.map(platformName).join(" · ") }),
     platformName,
   };
 
-  const accentOf = accent ? { accent } : {};
+  const accentOf = { ...(accent ? { accent } : {}), ...(paper ? { paper } : {}) };
   return (
     <ShopFrame preset={page.preset.id} density={page.density} {...accentOf} data-testid="shop-page">
+      {paper === "kraft" ? <PaperGrain /> : null}
       <MapSetup />
       {page.sections.filter((s) => !s.disabled).map((s) => <Fragment key={s.key}>{renderSection(s, ctx)}</Fragment>)}
     </ShopFrame>

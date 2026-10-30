@@ -5,6 +5,7 @@ import { transaction } from "@/lib/db";
 import { env } from "@/lib/env";
 import { handle, refuse } from "@/lib/http";
 import { paymentsFrom } from "@/lib/payments/config";
+import { systemClock } from "@/app/system-clock";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export function POST(req: Request) {
     const raw = await req.text();
     let outcome: Awaited<ReturnType<typeof applyPaymentEvent>>;
     try {
-      outcome = await applyPaymentEvent(transaction, port.parseWebhook(raw, req.headers, Math.floor(Date.now() / 1000)));
+      outcome = await applyPaymentEvent(transaction, port.parseWebhook(raw, req.headers, Math.floor(systemClock.now().getTime() / 1000)));
     } catch (error) {
       if (error instanceof PaymentsError) throw refuse(400, "BAD_NOTIFICATION", "Notification not accepted");
       throw error;

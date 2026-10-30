@@ -17,6 +17,8 @@ export interface SiteBarLabels {
   sourceCode: string;
   theme: string;
   language: string;
+  /** « Explorer »: the shops on a map (akinaza#235). */
+  explore: string;
   menu: string;
   preferences: string;
 }
@@ -28,12 +30,14 @@ export interface SiteBarLabels {
  * to another product.
  *
  * The bar itself is a client island: it receives its words already said (the server composes them, so the catalogues never travel to the browser) and the session's two places as nodes. */
-export function SiteBar({ locale, current, path, languages: offered, contentLocale, labels, sessionBar, sessionPanel }: { locale: Locale; current: PageId; path?: string; /** The languages the page is offered in (a shop page: the owner's list); default: the product's own. */ languages?: readonly string[]; /** The language of the page's content when it is not the product's (Spanish). */ contentLocale?: string; labels: SiteBarLabels; sessionBar: ReactNode; sessionPanel: ReactNode }) {
+export function SiteBar({ locale, current, path, languages: offered, contentLocale, labels, sessionBar, sessionPanel }: Readonly<{ locale: Locale; current: PageId; path?: string; /** The languages the page is offered in (a shop page: the owner's list); default: the product's own. */ languages?: readonly string[]; /** The language of the page's content when it is not the product's (Spanish). */ contentLocale?: string; labels: SiteBarLabels; sessionBar: ReactNode; sessionPanel: ReactNode }>) {
   const t = (key: keyof SiteBarLabels) => labels[key];
   const languages = languagesFor(path ?? pagePath(locale, current), offered);
   const currentLanguage = contentLocale ?? locale;
   const home = pagePath(locale, "home");
-  const items = publicBarLinks({ pricing: pagePath(locale, "pricing"), docs: pagePath(locale, "docs") }, locale).map((l) => ({ ...l, active: l.id === current || (l.id === "docs" && current.startsWith("docs/")) }));
+  const family = publicBarLinks({ pricing: pagePath(locale, "pricing"), docs: pagePath(locale, "docs") }, locale).map((l) => ({ ...l, active: l.id === current || (l.id === "docs" && current.startsWith("docs/")) }));
+  // « Explorer » first (the public side of the product: find a shop), then the family's links: three in all, under the bar's four.
+  const items = [{ id: "explore", label: t("explore"), href: pagePath(locale, "explore"), active: current === "explore" }, ...family];
   return (
     <div className="pointer-events-none sticky top-0 z-50 h-0 px-3" data-site-bar>
       {/* 12 px under the development notice (or the top): an offset that takes no room in the flow, so nothing moves below it. */}
