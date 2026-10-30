@@ -5,8 +5,8 @@ import { refuse } from "@/lib/http";
 const gate = vi.hoisted(() => ({ session: null as null | { account: { id: string; email: string } } }));
 vi.mock("@/lib/access", () => ({
   requireAdmin: async () => {
-    if (!gate.session) throw refuse(401, "UNAUTHENTICATED", "Sign in first");
-    if (gate.session.account.email.startsWith("user")) throw refuse(403, "FORBIDDEN", "Administrators only");
+    if (!gate.session) {throw refuse(401, "UNAUTHENTICATED", "Sign in first");}
+    if (gate.session.account.email.startsWith("user")) {throw refuse(403, "FORBIDDEN", "Administrators only");}
     return gate.session;
   },
 }));
@@ -19,8 +19,8 @@ vi.mock("@akinaza/db", async (original) => ({
 vi.mock("@/lib/db", () => ({ db: () => ({}) }));
 vi.mock("@/lib/audit", () => ({ audit: async (entry: unknown) => void calls.audited.push(entry) }));
 
-import { GET as list } from "./route";
 import { POST as clear } from "./[id]/route";
+import { GET as list } from "./route";
 
 const ctx = (id: string) => ({ params: Promise.resolve({ id }) });
 const post = () => new Request("http://x/api/admin/slug-holds/x", { method: "POST" });

@@ -12,7 +12,7 @@ export function POST(req: Request, { params }: { params: Promise<{ id: string }>
   return handle(async () => {
     const admin = await requireAdmin(req);
     const shopId = idParam((await params).id);
-    if (!(await clearSlugHold(db(), shopId))) throw refuse(404, "NOT_FOUND", "This shop is not held");
+    if (!(await clearSlugHold(db(), shopId))) {throw refuse(404, "NOT_FOUND", "This shop is not held");}
     await audit({ action: "shop.slug_hold_cleared", actorId: admin.account.id, actorLabel: admin.account.email, targetId: shopId, headers: req.headers });
     return Response.json({ ok: true });
   });
