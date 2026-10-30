@@ -47,7 +47,9 @@ describe("the gallery's mosaic is the ShopGallery of @krizaka/ui (akinaza#481)",
     expect(html).toContain("+ 3 photos");
   });
   it("shows each photo once", () => {
-    for (let n = 1; n <= 7; n++) expect(html.split(`https://cdn.test/g${n}.webp`).length - 1).toBe(1);
+    for (let n = 1; n <= 7; n++) {
+      expect(html.split(`https://cdn.test/g${n}.webp`).length - 1).toBe(1);
+    }
   });
   it("reads in French when the page is French", () => {
     const fr = render(3, "fr");

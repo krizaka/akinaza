@@ -68,7 +68,13 @@ const media = (s: Shot, wide = false): MediaInput => ({ ...s, wide });
 export async function seedDemoPage(db: Db, shopId: string, demo: DemoPage): Promise<{ photos: number; published: boolean }> {
   await saveShopMedia(db, shopId, { cover: media(demo.cover, true), gallery: demo.gallery.map((g) => media(g)) });
   const target = structuredClone(shopStarters[demo.starter]);
-  if (demo.galleryVariant) for (const section of target.sections) if (section.type === "gallery") section.variant = demo.galleryVariant;
+  if (demo.galleryVariant) {
+    for (const section of target.sections) {
+      if (section.type === "gallery") {
+        section.variant = demo.galleryVariant;
+      }
+    }
+  }
   const { page, version } = await publishedShopPage(db, shopId);
   if (version !== null && JSON.stringify(page) === JSON.stringify(target)) return { photos: demo.gallery.length + 1, published: false };
   await saveShopPageDraft(db, shopId, target, null);

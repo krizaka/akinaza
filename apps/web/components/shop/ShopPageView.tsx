@@ -217,7 +217,9 @@ function gallerySection({ section, c }: Args<"gallery">): ReactNode {
   const notes = wallNotes(pieces);
   if (!photos.length && !notes.length) return null;
   const label = galleryLabel(view, section.variant, t);
-  if (section.variant === "mosaic") return mosaicSection({ section, c, common, label, lead: lead ?? galleryLead(view, section.variant, t) });
+  if (section.variant === "mosaic") {
+    return mosaicSection({ section, c, common, label, lead: lead ?? galleryLead(view, section.variant, t) });
+  }
   return <GallerySection {...common} variant={section.variant} photos={photos} notes={notes} sign={pieces.find((p) => p.kind === "sign")?.text || undefined} texture={community?.wall?.texture ?? section.settings.texture} title={title(section.variant === "wall" ? t("console.shopPage.wallTitle") : label)} lead={lead ?? galleryLead(view, section.variant, t)} label={label} />;
 }
 
