@@ -5,9 +5,9 @@ import { describe, expect, it } from "vitest";
 
 import en from "../messages/en.json";
 import fr from "../messages/fr.json";
+import { format } from "./i18n";
 import { ASSOCIATION, FOUNDER, PRICES, SCALE, STARTER } from "./pricing";
 import { pricingPlans } from "./pricing-view";
-import { format } from "./i18n";
 import { pricesInForce } from "./test-prices";
 
 const read = (p: string) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
@@ -87,14 +87,14 @@ describe("the public pricing page reads the catalogue (akinaza#380)", () => {
     expect(plans[1]!.features.filter((f) => f.soon).map((f) => f.id)).toEqual(["payments", "fees", "contract", "transfers"]);
     for (const f of plans.flatMap((p) => p.features.filter((x) => x.soon && x.id !== "fees"))) {
       expect(f.vars, f.id).toEqual({});
-      for (const t of [en, fr]) expect(t.pricing.features[f.id], f.id).not.toMatch(/\d+\s?[%$]|\$\s?\d|\{/);
+      for (const t of [en, fr]) {expect(t.pricing.features[f.id], f.id).not.toMatch(/\d+\s?[%$]|\$\s?\d|\{/);}
     }
   });
 
   it("lists as running only what runs: client payments, their fees, the contract and the transfers are all planned (akinaza#440)", async () => {
     for (const plan of await view()) {
       const running = plan.features.filter((f) => !f.soon).map((f) => f.id);
-      for (const planned of ["payments", "fees", "contract", "transfers"] as const) expect(running, `${plan.id} ${planned}`).not.toContain(planned);
+      for (const planned of ["payments", "fees", "contract", "transfers"] as const) {expect(running, `${plan.id} ${planned}`).not.toContain(planned);}
     }
   });
 
@@ -153,7 +153,7 @@ describe("the free months and the Association plan, in words (founder request 20
   it("every text with a price states the taxes, and none presses the visitor (no countdown, no scarcity)", () => {
     for (const t of [en, fr]) {
       const texts = [t.pricing.trialLine, t.pricing.associationLine, t.pricing.associationLineDays, t.console.account.subscription.planHint, t.console.account.subscription.planHintTrial, t.console.account.subscription.associationHint];
-      for (const text of texts) expect(text, text).toMatch(/plus taxes|taxes en sus/);
+      for (const text of texts) {expect(text, text).toMatch(/plus taxes|taxes en sus/);}
       expect(JSON.stringify([t.pricing, t.console.account.subscription])).not.toMatch(/last chance|hurry|ends (today|soon)|only \d+ left|dernière chance|vite|plus que \d+|se termine bientôt/i);
     }
   });

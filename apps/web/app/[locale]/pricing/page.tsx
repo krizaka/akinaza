@@ -55,18 +55,18 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
       </ButtonLink>
     );
   const badgeOf = (plan: (typeof plans)[number]) => {
-    if (plan.id !== "founder") return undefined;
+    if (plan.id !== "founder") {return undefined;}
     return plan.limit ? format(d.badgeFounderLimit, { limit: plan.limit }) : d.badgeFounder;
   };
   // The free period and the Association plan, in the words of the catalogue's figures (the trial's length, the price after it); no urgency, no countdown.
   const trialWords = (plan: (typeof plans)[number]) => {
-    if (!plan.trial) return null;
+    if (!plan.trial) {return null;}
     return plan.trial.months ? format(d.trialMonths, { months: plan.trial.months }) : format(d.trialDays, { days: plan.trial.days });
   };
   const trialFeatures = (plan: (typeof plans)[number]): string[] => {
     const words = trialWords(plan);
-    if (!plan.trial || !words || !plan.price) return [];
-    if (plan.id !== "association") return [format(d.trialLine, { trial: words, price: plan.price })];
+    if (!plan.trial || !words || !plan.price) {return [];}
+    if (plan.id !== "association") {return [format(d.trialLine, { trial: words, price: plan.price })];}
     return [plan.trial.months ? format(d.associationLine, { months: plan.trial.months, price: plan.price }) : format(d.associationLineDays, { days: plan.trial.days, price: plan.price }), d.associationHow];
   };
   const wording = (f: (typeof plans)[number]["features"][number]) => format(f.id === "inherits" ? d.features.inherits : d.features[f.id], f.id === "inherits" ? { plan: d.plans.starter } : f.vars);

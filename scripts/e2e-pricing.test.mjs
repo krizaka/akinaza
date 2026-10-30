@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { test } from "node:test";
+import { test } from "vitest";
 
 import { CARD, signIn, startTrialCheckout } from "./lib/e2e-pricing.mjs";
 

@@ -80,7 +80,7 @@ export async function readJson<T>(req: Request, schema: { safeParse: (v: unknown
     throw refuse(400, "BAD_REQUEST", "The body is not JSON");
   }
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) throw refuse(400, "BAD_REQUEST", "Invalid body", { fields: parsed.error.issues.map((i) => i.path.join(".")) });
+  if (!parsed.success) {throw refuse(400, "BAD_REQUEST", "Invalid body", { fields: parsed.error.issues.map((i) => i.path.join(".")) });}
   return parsed.data;
 }
 

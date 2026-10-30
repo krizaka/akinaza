@@ -36,7 +36,7 @@
     "e2e:composer": "node scripts/e2e-composer.mjs",
     "shots:storefront": "node scripts/shots-storefront.mjs",
     "shots:docs": "SHOTS_DEVICES=desktop SHOTS_SCENES=docs-shop,docs-bookings,docs-invoices,docs-books,docs-data node scripts/shots-storefront.mjs",
-    "payments:setup": "krizaka-payments-setup --catalogue infra/payments/catalogue.json"
+    "payments:setup": "pnpm --filter @akinaza/web exec tsx scripts/payments-sync.ts"
   },
   "devDependencies": {
     "@ast-grep/cli": "0.51.0",

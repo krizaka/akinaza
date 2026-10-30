@@ -89,7 +89,7 @@ describe("the founder gate reads the cap from the catalogue (akinaza#371)", () =
   });
   it("the checkout sells only the amount the catalogue shows, and records the version it sold", () => {
     const src = read("app/api/billing/checkout/route.ts");
-    expect(src).toMatch(/\.amount !== entry\.amountCents\) throw refuse\(503, "PRICE_NOT_READY"/);
+    expect(src).toMatch(/\.amount !== entry\.amountCents\) \{?throw refuse\(503, "PRICE_NOT_READY"/);
     expect(src).toMatch(/recordOfferedVersion\(query, account\.id, entry\.versionId\)/);
   });
 });

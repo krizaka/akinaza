@@ -113,12 +113,12 @@ const KINDS = ["neq", "charity", "incorporation"] as const;
 
 type Say = ReturnType<typeof useSay>["say"];
 const trialText = (say: Say, trial: { months: number | null; days: number } | null): string => {
-  if (!trial) return "";
+  if (!trial) {return "";}
   return trial.months ? say("account.subscription.trialMonths", { months: trial.months }) : say("account.subscription.trialDays", { days: trial.days });
 };
 
 const rejectionText = (say: Say, status: string | null, note: string | null): string | null => {
-  if (status !== "rejected") return null;
+  if (status !== "rejected") {return null;}
   return note ? say("account.subscription.assoRejected", { note }) : say("account.subscription.assoRejectedPlain");
 };
 
@@ -131,7 +131,7 @@ function AssociationRow({ subscription, pending, onChoose, onProblem }: Readonly
   const plan = subscription.plans?.find((p) => p.id === "association");
   const status = subscription.association?.status ?? null;
   const [sent, setSent] = useState(false);
-  if (!plan) return null;
+  if (!plan) {return null;}
   const rejection = rejectionText(say, status, subscription.association?.note ?? null);
   const trial = trialText(say, plan.trial);
   const pendingNow = status === "pending" || sent;

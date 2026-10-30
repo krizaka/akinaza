@@ -12,7 +12,7 @@ const plans: SubscriptionView["plans"] = [
   { id: "scale", price: "$69", trial: null },
   { id: "association", price: "$1", trial: { months: 3, days: 90 } },
 ];
-const render = (locale: "en" | "fr", view: Partial<SubscriptionView>) => renderIn(locale, "services", <SubscriptionPanel subscription={{ ...base, ...view }} />);
+const render = (locale: "en" | "fr", view: Partial<SubscriptionView>) => renderIn(locale, "professional", <SubscriptionPanel subscription={{ ...base, ...view }} />);
 
 describe("the subscription page offers the catalogue's plans with their free months", () => {
   it("Starter says its free months then its price, taxes stated; Pro has no free period", () => {
@@ -23,7 +23,7 @@ describe("the subscription page offers the catalogue's plans with their free mon
   });
 
   it("says « 3 mois offerts » in French", () => {
-    expect(render("fr", { plans }).replace(/ | /g, " ")).toContain("3 mois offerts, puis $29 par mois, taxes en sus.");
+    expect(render("fr", { plans }).replace(/\u202f|\u00a0/g, " ")).toContain("3 mois offerts, puis $29 par mois, taxes en sus.");
   });
 
   it("the Association plan asks for a proof until approved, waits while pending, and opens once approved", () => {

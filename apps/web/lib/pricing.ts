@@ -6,8 +6,8 @@ import { AVAILABILITY, definePrices, type Price, type PriceSeed, UNIT } from "@k
  * Every page reads the catalogue (`lib/price-catalogue.ts`), never this file. THIS IS THE HISTORY, NOT THE PRICE IN FORCE: a subscriber
  * sold at a seed keeps it, so the 2026-10-30 grid (Starter 29 $ with three free months, Pro 69 $) is a dated version of the
  * catalogue (`packages/db/src/price-schedule.ts`, the prices_association migration), never an edit of these amounts. Amounts are Canadian cents, **plus taxes**
- * (GST and QST are the processor's automatic tax). The processor's catalogue (`infra/payments/catalogue.json`, created by
- * `pnpm run payments:setup`) sells the same amounts, and `pricing.test.ts` keeps them equal.
+ * (GST and QST are the processor's automatic tax). The processor's catalogue is built FROM the database by
+ * `pnpm run payments:setup` (`scripts/payments-sync.ts`, amounts read from `price_versions`; `infra/payments/plans.json` holds only the names, lookup keys and tax codes).
  *
  * Limits, read by the code: `trialDays` (free days at the start of a subscription, once per account; test mode of the processor only),
  * `founderCap` (the founder entry: how many businesses it is offered to — it replaces the former
@@ -44,7 +44,7 @@ export const ADDON_SEED = [
 /** The whole catalogue the console edits: the plans and the options. */
 export const CATALOGUE = definePrices([...PRICE_SEED, ...ADDON_SEED]);
 
-/** The processor's plan of each entry: the kind the payments port knows and the lookup key of its price (`infra/payments/catalogue.json`). */
+/** The processor's plan of each entry: the kind the payments port knows and the lookup key of its price (`infra/payments/plans.json`). */
 export const PROCESSOR_PLANS = {
   [FOUNDER]: { kind: "founder", lookupKey: "akinaza_founder_monthly_cad" },
   [STARTER]: { kind: "starter", lookupKey: "akinaza_starter_monthly_cad" },
@@ -56,7 +56,7 @@ export const PROCESSOR_PLANS = {
 const BPS = 10_000;
 
 const orderCents = (amount: number) => {
-  if (!Number.isInteger(amount) || amount < 0) throw new RangeError("An order amount is a whole number of cents");
+  if (!Number.isInteger(amount) || amount < 0) {throw new RangeError("An order amount is a whole number of cents");}
   return amount;
 };
 

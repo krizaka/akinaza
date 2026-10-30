@@ -12,8 +12,8 @@ import { env } from "@/lib/env";
 import { founderCap, founderEntry,founderOfferCopy } from "@/lib/founder-offer";
 import { asLocale } from "@/lib/i18n";
 import { titleOf } from "@/lib/page-title";
-import { appPrices } from "@/lib/price-catalogue";
 import { PLAN_KEY, trialDaysOf, trialMonthsOf } from "@/lib/plans";
+import { appPrices } from "@/lib/price-catalogue";
 import { priceText } from "@/lib/price-text";
 import { accountRoutes } from "@/lib/routes";
 
@@ -28,7 +28,7 @@ export default async function Subscription({ params }: Readonly<{ params: Promis
   const locale = asLocale((await params).locale);
   const { session, profile, sections } = await accountPage();
   // A manager or a staff member works in someone else's shop: no subscription of theirs to show (`accountSectionsFor`).
-  if (!sections.includes("subscription")) redirect(accountRoutes(locale).profile);
+  if (!sections.includes("subscription")) {redirect(accountRoutes(locale).profile);}
   const e = env();
   const now = systemClock.now();
   const catalogue = appPrices();
@@ -46,7 +46,7 @@ export default async function Subscription({ params }: Readonly<{ params: Promis
           (["starter", "scale", "association"] as const).map(async (id) => {
             const planEntry = await catalogue.entry(PLAN_KEY[id], now);
             const price = priceText(planEntry, locale);
-            if (price === null || planEntry.availability !== "public") return null;
+            if (price === null || planEntry.availability !== "public") {return null;}
             const days = trialDaysOf(planEntry);
             return { id, price, trial: days > 0 ? { months: trialMonthsOf(planEntry), days } : null };
           }),

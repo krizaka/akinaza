@@ -24,7 +24,7 @@ export const isLiveMode = (e: Pick<PaymentsSettings, "PAYMENTS_STRIPE_SECRET_KEY
 
 /** The only place a payments vendor is chosen (the adapter itself is @krizaka/payments). Null = payments are off. */
 export function paymentsFrom(e: PaymentsSettings): PaymentsPort | null {
-  if (e.PAYMENTS_PROVIDER !== "stripe" || !e.PAYMENTS_STRIPE_SECRET_KEY || !e.PAYMENTS_STRIPE_WEBHOOK_SECRET) return null;
+  if (e.PAYMENTS_PROVIDER !== "stripe" || !e.PAYMENTS_STRIPE_SECRET_KEY || !e.PAYMENTS_STRIPE_WEBHOOK_SECRET) {return null;}
   return stripeAdapter({
     secretKey: e.PAYMENTS_STRIPE_SECRET_KEY,
     webhookSecret: e.PAYMENTS_STRIPE_WEBHOOK_SECRET,

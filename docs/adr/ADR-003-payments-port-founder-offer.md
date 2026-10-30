@@ -24,7 +24,7 @@ Live mode is a change of keys and of the processor account, not of code.
 
 ## Addendum (2026-10-25, akinaza#363): the grid, the limit, no fee
 - **Prices are data in one module**, `apps/web/lib/pricing.ts`: founder 39 $ a month, plus taxes, setup included; regular 49 $ a month, plus taxes,
-  **not public** (no page shows it while sign-up is closed). `infra/payments/catalogue.json` holds both for the processor; `lib/pricing.test.ts` keeps them equal.
+  **not public** (no page shows it while sign-up is closed). `infra/payments/plans.json` holds only the names, lookup keys and tax codes; the amounts are read from the database.
   Every price shown says « plus taxes », and no amount is typed in a message.
 - **The founder offer's limit is a setting**, `plans.founder.limit` (default 20 businesses, global). A business holds a seat from its first
   subscription (`accounts.payment_subscription_id`). Once the limit is reached the checkout answers 409 `FOUNDER_OFFER_FULL` and the page says the
@@ -79,8 +79,8 @@ Rules:
 - **All of it is catalogue data, never code.** The seed (`lib/pricing.ts`) is the HISTORY and is not rewritten: the new grid is a dated version of each
   entry in `price_versions` with its line in `settings_audit` (`packages/db/src/price-schedule.ts`, the generated SQL of the `prices_association` migration, a test keeps the
   file and the list equal). The prices, the free period (`trialDays` limit, 90 days, worded « 3 mois offerts » when it is whole months) and the
-  availability of the Association plan are edited from `/console/prices` like any other limit. `infra/payments/catalogue.json` sells the amounts in
-  force; `pnpm run payments:setup` creates the new processor price and moves the lookup key, so an existing subscription keeps its processor price.
+  availability of the Association plan are edited from `/console/prices` like any other limit. The migration is the writer of the first version; every reader (pages, checkout, the processor) reads `price_versions`, and
+  `infra/payments/plans.json` holds no amount. `pnpm run payments:setup` reads the amounts in force from the database (akinaza#633), creates the new processor price and moves the lookup key, so an existing subscription keeps its processor price.
 - **Grandfathering.** `accounts.subscription_price_version` keeps the catalogue version an account was sold at; nothing rewrites it after the first
   subscription, and `catalogue.version(id)` answers the old seed (`seed:akinaza.starter` is still 45 $, the founder 39 $). Tests: `association.test.ts`
   (PostgreSQL, the version sold stays 45 $ while a newcomer is offered 29 $) and `pricing.test.ts`.

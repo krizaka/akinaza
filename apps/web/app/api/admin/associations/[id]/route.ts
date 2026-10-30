@@ -17,7 +17,7 @@ export function POST(req: Request, { params }: { params: Promise<{ id: string }>
     const admin = await requireAdmin(req);
     const id = idParam((await params).id);
     const { decision, note } = await readJson(req, decisionSchema);
-    if (!(await decideAssociation(db(), id, admin.account.id, decision, systemClock.now(), note))) throw refuse(404, "NOT_FOUND", "This proof is not waiting for a decision");
+    if (!(await decideAssociation(db(), id, admin.account.id, decision, systemClock.now(), note))) {throw refuse(404, "NOT_FOUND", "This proof is not waiting for a decision");}
     await audit({ action: `billing.association_${decision}`, actorId: admin.account.id, actorLabel: admin.account.email, targetId: id, detail: note ? { note } : {}, headers: req.headers });
     return Response.json({ ok: true });
   });

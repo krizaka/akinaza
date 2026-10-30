@@ -44,7 +44,7 @@ export async function trialEligible(query: Query, accountId: string): Promise<bo
 /** The processor's customer of an account, created once (the id is kept; a second call reuses it). */
 export async function customerOf(query: Query, accountId: string, create: () => Promise<{ id: string }>): Promise<string> {
   const [r] = await query<{ customer: string | null }>("SELECT payment_customer_id AS customer FROM accounts WHERE id = $1", [accountId]);
-  if (r?.customer) return r.customer;
+  if (r?.customer) {return r.customer;}
   const made = await create();
   const [kept] = await query<{ customer: string }>("UPDATE accounts SET payment_customer_id = COALESCE(payment_customer_id, $2) WHERE id = $1 RETURNING payment_customer_id AS customer", [accountId, made.id]);
   return kept?.customer ?? made.id;
@@ -71,7 +71,7 @@ export type FounderGate = "open" | "member" | "full";
 
 export async function founderGate(query: Query, accountId: string, limit: number): Promise<FounderGate> {
   const [own] = await query<{ sub: string | null }>("SELECT payment_subscription_id AS sub FROM accounts WHERE id = $1", [accountId]);
-  if (own?.sub) return "member";
+  if (own?.sub) {return "member";}
   return (await founderSeats(query, limit)).open ? "open" : "full";
 }
 
@@ -101,7 +101,7 @@ export type Transaction = <T>(work: (query: TxQuery) => Promise<T>) => Promise<T
 export function applyPaymentEvent(transaction: Transaction, event: PaymentEvent): Promise<"applied" | "duplicate" | "ignored"> {
   return applyOnceInTransaction(transaction, event, {
     async subscription_started(e, query) {
-      if (e.customerId) await query("UPDATE accounts SET payment_customer_id = COALESCE(payment_customer_id, $2) WHERE id = $1", [e.accountId, e.customerId]);
+      if (e.customerId) {await query("UPDATE accounts SET payment_customer_id = COALESCE(payment_customer_id, $2) WHERE id = $1", [e.accountId, e.customerId]);}
       await query("UPDATE accounts SET payment_subscription_id = $2, subscription_status = COALESCE(subscription_status, 'active') WHERE id = $1", [e.accountId, e.subscriptionId]);
     },
     async subscription_changed(e, query) {

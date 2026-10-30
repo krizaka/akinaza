@@ -52,9 +52,9 @@ function featuresOf(plan: PlanView["id"], entry: PublicPrice, locale: "en" | "fr
 export function pricingPlans(entries: readonly PublicPrice[], locale: "en" | "fr", options: { founderOnSale: boolean }): PlanView[] {
   const plans: PlanView[] = [];
   for (const id of ["founder", "starter", "scale", "association"] as const) {
-    if (id === "founder" && !options.founderOnSale) continue;
+    if (id === "founder" && !options.founderOnSale) {continue;}
     const entry = entries.find((e) => e.key === KEYS[id]);
-    if (!entry) continue;
+    if (!entry) {continue;}
     plans.push({
       id,
       price: entry.availability === AVAILABILITY.preparing ? null : priceText(entry, locale),

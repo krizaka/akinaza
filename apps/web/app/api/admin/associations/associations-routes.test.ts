@@ -5,8 +5,8 @@ import { refuse } from "@/lib/http";
 const gate = vi.hoisted(() => ({ session: null as null | { account: { id: string; email: string } } }));
 vi.mock("@/lib/access", () => ({
   requireAdmin: async () => {
-    if (!gate.session) throw refuse(401, "UNAUTHENTICATED", "Sign in first");
-    if (gate.session.account.email.startsWith("user")) throw refuse(403, "FORBIDDEN", "Administrators only");
+    if (!gate.session) {throw refuse(401, "UNAUTHENTICATED", "Sign in first");}
+    if (gate.session.account.email.startsWith("user")) {throw refuse(403, "FORBIDDEN", "Administrators only");}
     return gate.session;
   },
 }));

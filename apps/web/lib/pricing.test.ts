@@ -2,7 +2,6 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { scheduledPrice } from "@akinaza/db";
 import { findTypedPrices } from "@krizaka/settings";
 import { describe, expect, it } from "vitest";
 
@@ -11,6 +10,7 @@ import fr from "../messages/fr.json";
 import { readEnv } from "./env";
 import { plansView } from "./founder-offer";
 import { paymentsFrom } from "./payments/config";
+import { processorCatalogue, type ProcessorPlans } from "./payments/processor-catalogue";
 import { publicPrices } from "./price-catalogue";
 import { ASSOCIATION, cardFeeCents, directDebitFeeCents, FOUNDER, type PriceKey, PRICES, PROCESSOR_PLANS, SCALE, STARTER } from "./pricing";
 import { SETTINGS } from "./settings";
@@ -18,13 +18,13 @@ import { pricesInForce } from "./test-prices";
 
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const read = (p: string) => readFileSync(join(ROOT, p), "utf8");
-const catalogue = JSON.parse(read("infra/payments/catalogue.json")) as { plans: Array<Record<string, unknown>> };
+const plans = JSON.parse(read("infra/payments/plans.json")) as ProcessorPlans;
 
 /** Every source file under a folder (tests excluded), for the « never a fee » scan. */
 function sources(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
     const path = join(dir, name);
-    if (statSync(path).isDirectory()) return name === "node_modules" || name === ".next" ? [] : sources(path);
+    if (statSync(path).isDirectory()) {return name === "node_modules" || name === ".next" ? [] : sources(path);}
     return /\.(ts|tsx)$/.test(name) && !/\.test\./.test(name) ? [path] : [];
   });
 }
@@ -57,14 +57,14 @@ describe("the seed of the catalogue is the history: the founder offer, Starter a
     for (const key of PRICES.keys) {
       const price = PRICES.defaultOf(key);
       expect(price.limits.cardFeeBps, key).toBe(0);
-      for (const order of [0, 1, 999, 4500, 1_000_000]) expect(cardFeeCents(price, order), key).toBe(0);
+      for (const order of [0, 1, 999, 4500, 1_000_000]) {expect(cardFeeCents(price, order), key).toBe(0);}
     }
   });
 
   it("the pre-authorised debit fee of any order is at most the entry's cap, in every entry", () => {
     for (const key of PRICES.keys) {
       const price = PRICES.defaultOf(key);
-      for (const order of [0, 1, 4500, 199_999, 200_000, 300_000, 400_000, 10_000_000, 99_999_999]) expect(directDebitFeeCents(price, order), key).toBeLessThanOrEqual(price.limits.directDebitCapCents);
+      for (const order of [0, 1, 4500, 199_999, 200_000, 300_000, 400_000, 10_000_000, 99_999_999]) {expect(directDebitFeeCents(price, order), key).toBeLessThanOrEqual(price.limits.directDebitCapCents);}
     }
   });
 
@@ -81,15 +81,27 @@ describe("the seed of the catalogue is the history: the founder offer, Starter a
     expect(directDebitFeeCents(scale, 400_000)).toBe(1000);
     expect(directDebitFeeCents(scale, 400_400)).toBe(1000);
     expect(directDebitFeeCents(scale, 200_000)).toBe(500);
-    for (const bad of [-1, 1.5, Number.NaN]) expect(() => directDebitFeeCents(starter, bad)).toThrow(RangeError);
+    for (const bad of [-1, 1.5, Number.NaN]) {expect(() => directDebitFeeCents(starter, bad)).toThrow(RangeError);}
   });
 
-  it("the processor's catalogue sells exactly the amounts in force (seed plus the prices schedule), monthly, by the lookup keys of the payments port", () => {
-    expect(catalogue.plans.map((p) => p.lookupKey).sort()).toEqual(Object.values(PROCESSOR_PLANS).map((p) => p.lookupKey).sort());
+  it("the processor's catalogue is built from the prices in force in the database, never from typed amounts (akinaza#633)", async () => {
+    expect(plans.plans.map((p) => p.lookupKey).sort()).toEqual(Object.values(PROCESSOR_PLANS).map((p) => p.lookupKey).sort());
+    expect(read("infra/payments/plans.json")).not.toMatch(/"amount|amountCents|"currency|"interval/);
+    const entries = await (await pricesInForce(new Date("2026-11-01T12:00:00Z"))).catalogue(new Date("2026-11-02T12:00:00Z"));
+    const built = processorCatalogue(plans, entries);
     for (const key of PRICES.keys) {
-      const price = scheduledPrice(key, PRICES.defaultOf(key));
-      expect(catalogue.plans.find((p) => p.lookupKey === PROCESSOR_PLANS[key as PriceKey].lookupKey), key).toMatchObject({ amount: price.amountCents, currency: "cad", interval: price.unit });
+      const entry = entries.find((e) => e.key === key)!;
+      expect(built.plans.find((p) => p.lookupKey === PROCESSOR_PLANS[key as PriceKey].lookupKey), key).toMatchObject({ amount: entry.amountCents, currency: "cad", interval: entry.unit });
     }
+    expect(built.plans.map((p) => p.amount)).toEqual([3900, 2900, 6900, 100]);
+    // A change scheduled from the console reaches the processor's catalogue without any file edit.
+    const prices = await pricesInForce(new Date("2026-11-01T12:00:00Z"));
+    await prices.schedule({ id: null, label: "admin" }, SCALE, { amountCents: 7900 }, new Date("2026-11-03T12:00:00Z"), new Date("2026-11-02T12:00:00Z"));
+    const later = processorCatalogue(plans, await prices.catalogue(new Date("2026-11-04T12:00:00Z")));
+    expect(later.plans.find((p) => p.lookupKey === PROCESSOR_PLANS[SCALE].lookupKey)?.amount).toBe(7900);
+    // An entry without a figure, or a missing one, is refused: the processor never sells a guess.
+    await prices.schedule({ id: null, label: "admin" }, SCALE, { availability: "preparing" }, new Date("2026-11-05T12:00:00Z"), new Date("2026-11-02T12:00:00Z"));
+    expect(() => processorCatalogue(plans, [])).toThrow(/No price/);
   });
 
   it("the environment's default lookup keys are the processor plans', and the payments port reads both plans", async () => {
@@ -121,7 +133,7 @@ describe("the seed of the catalogue is the history: the founder offer, Starter a
   it("the former setting `plans.founder.limit` is retired: the cap has one source, the Starter entry", () => {
     expect(Object.keys(SETTINGS)).not.toContain("plans.founder.limit");
     const files = [...sources(join(ROOT, "apps/web/lib")), ...sources(join(ROOT, "apps/web/components")), ...sources(join(ROOT, "apps/web/app"))];
-    for (const file of files) expect(readFileSync(file, "utf8"), file).not.toMatch(/["']plans\.founder\.limit["']/);
+    for (const file of files) {expect(readFileSync(file, "utf8"), file).not.toMatch(/["']plans\.founder\.limit["']/);}
   });
 });
 
@@ -142,7 +154,7 @@ describe("every price shown says « plus taxes », and none is typed in a messag
     }
     const priced = texts.filter((t) => t.includes("{price}"));
     expect(priced.length).toBe(10);
-    for (const t of priced) expect(t, t).toMatch(SAYS_TAXES);
+    for (const t of priced) {expect(t, t).toMatch(SAYS_TAXES);}
   });
 
   it("the offer says « 0 % on cards » from the catalogue's card rate", () => {
@@ -153,13 +165,13 @@ describe("every price shown says « plus taxes », and none is typed in a messag
   });
 
   it("no claim of conformity, hosting place, uptime or escrow in the pricing words; Scale's B2B features are « soon »", () => {
-    for (const m of [en, fr]) expect(JSON.stringify([m.landing.founder, m.console.account.subscription, m.console.admin.prices])).not.toMatch(/PIPEDA|Loi 25|Law 25|conform|hébergé au|hosted in|uptime|disponibilité de \d|99[.,]9|séquestre|escrow/i);
+    for (const m of [en, fr]) {expect(JSON.stringify([m.landing.founder, m.console.account.subscription, m.console.admin.prices])).not.toMatch(/PIPEDA|Loi 25|Law 25|conform|hébergé au|hosted in|uptime|disponibilité de \d|99[.,]9|séquestre|escrow/i);}
     expect(en.landing.founder.plans.scaleSoon).toMatch(/coming soon/);
     expect(fr.landing.founder.plans.scaleSoon).toMatch(/bientôt/);
   });
 
   it("the seed is the only place a plan amount is written (no 4500 or 9900 elsewhere in the web sources)", () => {
     const files = [...sources(join(ROOT, "apps/web/lib")), ...sources(join(ROOT, "apps/web/components")), ...sources(join(ROOT, "apps/web/app"))].filter((f) => !f.endsWith("lib/pricing.ts"));
-    for (const file of files) expect(readFileSync(file, "utf8"), file).not.toMatch(/\b(4500|9900|3900|4900)\b/);
+    for (const file of files) {expect(readFileSync(file, "utf8"), file).not.toMatch(/\b(4500|9900|3900|4900)\b/);}
   });
 });

@@ -15,12 +15,12 @@ function fake(failNext = { value: false }) {
     const query = (async (text: string, values: unknown[] = []) => {
       if (text.includes("INSERT INTO") && text.includes("payment_events")) {
         const id = String(values[0]);
-        if (staged.events.has(id)) return [];
+        if (staged.events.has(id)) {return [];}
         staged.events.add(id);
         return [{ id }];
       }
       if (text.startsWith("UPDATE accounts SET payment_subscription_id")) {
-        if (failNext.value) throw new Error("database went away");
+        if (failNext.value) {throw new Error("database went away");}
         staged.accounts += 1;
       }
       return [{ id: "a1" }] as Row[];

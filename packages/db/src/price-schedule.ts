@@ -2,9 +2,9 @@
  * The new price grid of 2026-10-30 (the founder asked to lower the prices; ADR-003 addendum): Starter 29 $ a month with three free
  * months, Pro (the former Scale B2B) 69 $, and the founder offer ends. It is DATA in the catalogue, never a rewrite of the seed:
  * the seed stays the history (a subscriber sold at `seed:akinaza.starter` keeps 45 $), and each change is a dated version in
- * `price_versions` with its line in `settings_audit`, exactly what the console's « schedule a change » writes. The migration's
- * SQL is generated from this list (a test keeps them equal) and the processor's catalogue (`infra/payments/catalogue.json`) sells
- * the amounts `scheduledPrice` gives.
+ * `price_versions` with its line in `settings_audit`, exactly what the console's « schedule a change » writes. This list is ONLY the source of the migration's SQL (a test keeps them equal): the first
+ * version is written to the database by the migration, and everything that sells (pages, checkout, the processor's catalogue
+ * through `pnpm run payments:setup`) reads `price_versions`, never this list.
  */
 export const SCHEDULE_LABEL = "migration prices-2026-10";
 
