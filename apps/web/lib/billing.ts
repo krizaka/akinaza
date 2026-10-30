@@ -8,13 +8,18 @@ import type { QueryResultRow } from "pg";
 type Query = <T extends QueryResultRow>(text: string, values?: unknown[]) => Promise<T[]>;
 
 /** The processor's states in which the member has the service. */
-const LIVE_STATUSES: ReadonlySet<string> = new Set(["active", "trialing"]);
+const TRIALING = "trialing";
+const LIVE_STATUSES: ReadonlySet<string> = new Set(["active", TRIALING]);
 
 export interface Subscription {
   active: boolean;
   status: string | null;
   periodEnd: string | null;
   customerId: string | null;
+  /** In its free trial: the service is live, nothing has been charged yet. */
+  trialing: boolean;
+  /** When the free trial ends and the first charge happens (the processor's period end while it is trialing), or null. */
+  trialEndsAt: string | null;
 }
 
 export async function subscriptionOf(query: Query, accountId: string, now: Date): Promise<Subscription> {
@@ -23,7 +28,17 @@ export async function subscriptionOf(query: Query, accountId: string, now: Date)
     [accountId],
   );
   const live = !!r?.status && LIVE_STATUSES.has(r.status);
-  return { active: !!r && live && (!r.end || r.end > now), status: r?.status ?? null, periodEnd: r?.end?.toISOString() ?? null, customerId: r?.customer ?? null };
+  const trialing = r?.status === TRIALING;
+  return { active: !!r && live && (!r.end || r.end > now), status: r?.status ?? null, periodEnd: r?.end?.toISOString() ?? null, customerId: r?.customer ?? null, trialing, trialEndsAt: trialing ? (r?.end?.toISOString() ?? null) : null };
+}
+
+/**
+ * Whether an account may start a free trial: once per account, from its first subscription (a processor subscription never
+ * recorded for it). The trial itself lives on the subscription at the processor (`trialing`), never in a second table.
+ */
+export async function trialEligible(query: Query, accountId: string): Promise<boolean> {
+  const [r] = await query<{ sub: string | null }>("SELECT payment_subscription_id AS sub FROM accounts WHERE id = $1", [accountId]);
+  return !!r && !r.sub;
 }
 
 /** The processor's customer of an account, created once (the id is kept; a second call reuses it). */

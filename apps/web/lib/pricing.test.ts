@@ -2,7 +2,8 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { findTypedPrices, memoryPriceStore, priceCatalogue } from "@krizaka/settings";
+import { scheduledPrice } from "@akinaza/db";
+import { findTypedPrices } from "@krizaka/settings";
 import { describe, expect, it } from "vitest";
 
 import en from "../messages/en.json";
@@ -11,8 +12,9 @@ import { readEnv } from "./env";
 import { plansView } from "./founder-offer";
 import { paymentsFrom } from "./payments/config";
 import { publicPrices } from "./price-catalogue";
-import { cardFeeCents, directDebitFeeCents, FOUNDER, type PriceKey, PRICES, PROCESSOR_PLANS, SCALE, STARTER } from "./pricing";
+import { ASSOCIATION, cardFeeCents, directDebitFeeCents, FOUNDER, type PriceKey, PRICES, PROCESSOR_PLANS, SCALE, STARTER } from "./pricing";
 import { SETTINGS } from "./settings";
+import { pricesInForce } from "./test-prices";
 
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const read = (p: string) => readFileSync(join(ROOT, p), "utf8");
@@ -27,12 +29,28 @@ function sources(dir: string): string[] {
   });
 }
 
-describe("the seed of the catalogue: Starter and Scale (akinaza#371, ADR-009)", () => {
+describe("the seed of the catalogue is the history: the founder offer, Starter and Scale as first sold, and the new Association entry (akinaza#371, ADR-009)", () => {
   it("the founder offer 39 $ a month for the first 20 businesses; Starter 45 $ and Scale B2B 99 $ a month, public — CAD, plus taxes", () => {
-    expect(PRICES.keys).toEqual([FOUNDER, STARTER, SCALE]);
+    expect(PRICES.keys).toEqual([FOUNDER, STARTER, SCALE, ASSOCIATION]);
     expect(PRICES.defaultOf(FOUNDER)).toEqual({ unit: "month", amountCents: 3900, currency: "CAD", taxes: "plus-taxes", availability: "founder-limited", limits: { founderCap: 20, cardFeeBps: 0, directDebitBps: 50, directDebitCapCents: 1500 } });
     expect(PRICES.defaultOf(STARTER)).toEqual({ unit: "month", amountCents: 4500, currency: "CAD", taxes: "plus-taxes", availability: "public", limits: { cardFeeBps: 0, directDebitBps: 50, directDebitCapCents: 1500 } });
     expect(PRICES.defaultOf(SCALE)).toEqual({ unit: "month", amountCents: 9900, currency: "CAD", taxes: "plus-taxes", availability: "public", limits: { cardFeeBps: 0, directDebitBps: 25, directDebitCapCents: 1000 } });
+    // The seed is never rewritten (a subscriber sold at `seed:akinaza.starter` keeps 45 $): the new grid is a dated version of the catalogue.
+    expect(PRICES.defaultOf(ASSOCIATION)).toEqual({ unit: "month", amountCents: 100, currency: "CAD", taxes: "plus-taxes", availability: "public", limits: { trialDays: 90, cardFeeBps: 0, directDebitBps: 50, directDebitCapCents: 1500 } });
+  });
+
+  it("the grid in force: Starter 29 $ with 90 free days, Pro 69 $, Association 1 $ with 90 free days, the founder offer ended", async () => {
+    const at = new Date("2026-11-01T12:00:00Z");
+    const prices = await pricesInForce(at);
+    expect((await prices.entry(STARTER, at)).amountCents).toBe(2900);
+    expect((await prices.entry(STARTER, at)).limits.trialDays).toBe(90);
+    expect((await prices.entry(SCALE, at)).amountCents).toBe(6900);
+    expect((await prices.entry(SCALE, at)).limits.trialDays).toBeUndefined();
+    expect(await prices.entry(ASSOCIATION, at)).toMatchObject({ amountCents: 100, availability: "public" });
+    expect((await prices.entry(FOUNDER, at)).availability).toBe("internal");
+    // Existing subscribers keep the version they were sold at.
+    expect((await prices.version("seed:akinaza.starter"))?.amountCents).toBe(4500);
+    expect((await prices.version("seed:akinaza.founder"))?.amountCents).toBe(3900);
   });
 
   it("0 % on cards in every entry: a card payment of any order carries no fee", () => {
@@ -66,10 +84,10 @@ describe("the seed of the catalogue: Starter and Scale (akinaza#371, ADR-009)", 
     for (const bad of [-1, 1.5, Number.NaN]) expect(() => directDebitFeeCents(starter, bad)).toThrow(RangeError);
   });
 
-  it("the processor's catalogue sells exactly the seed's amounts, monthly, by the lookup keys of the payments port", () => {
+  it("the processor's catalogue sells exactly the amounts in force (seed plus the prices schedule), monthly, by the lookup keys of the payments port", () => {
     expect(catalogue.plans.map((p) => p.lookupKey).sort()).toEqual(Object.values(PROCESSOR_PLANS).map((p) => p.lookupKey).sort());
     for (const key of PRICES.keys) {
-      const price = PRICES.defaultOf(key);
+      const price = scheduledPrice(key, PRICES.defaultOf(key));
       expect(catalogue.plans.find((p) => p.lookupKey === PROCESSOR_PLANS[key as PriceKey].lookupKey), key).toMatchObject({ amount: price.amountCents, currency: "cad", interval: price.unit });
     }
   });
@@ -78,14 +96,15 @@ describe("the seed of the catalogue: Starter and Scale (akinaza#371, ADR-009)", 
     const e = readEnv({});
     expect(e.PAYMENTS_PRICE_KEY_STARTER).toBe(PROCESSOR_PLANS[STARTER].lookupKey);
     expect(e.PAYMENTS_PRICE_KEY_SCALE).toBe(PROCESSOR_PLANS[SCALE].lookupKey);
+    expect(e.PAYMENTS_PRICE_KEY_ASSOCIATION).toBe(PROCESSOR_PLANS[ASSOCIATION].lookupKey);
     const port = paymentsFrom({ ...e, PAYMENTS_PROVIDER: "stripe", PAYMENTS_STRIPE_SECRET_KEY: "x", PAYMENTS_STRIPE_WEBHOOK_SECRET: "y" });
     await expect(port!.price("unknown")).rejects.toThrow(/Unknown plan/);
   });
 
   it("the public view never shows an internal entry, and an entry in preparation shows without a figure", async () => {
-    const prices = priceCatalogue(PRICES, memoryPriceStore());
     const now = new Date("2026-11-01T12:00:00Z");
-    expect(plansView(await publicPrices(prices, now), "en")).toEqual({ starter: { price: "$45" }, scale: { price: "$99" } });
+    const prices = await pricesInForce(now);
+    expect(plansView(await publicPrices(prices, now), "en")).toEqual({ starter: { price: "$29" }, scale: { price: "$69" } });
     await prices.schedule({ id: null, label: "admin" }, SCALE, { availability: "preparing" }, now, now);
     const preparing = await publicPrices(prices, now);
     expect(preparing.find((e) => e.key === SCALE)).toMatchObject({ availability: "preparing", amountCents: null, limits: {} });
@@ -94,7 +113,7 @@ describe("the seed of the catalogue: Starter and Scale (akinaza#371, ADR-009)", 
     await prices.schedule({ id: null, label: "admin" }, FOUNDER, { availability: "internal" }, now, now);
     await prices.schedule({ id: null, label: "admin" }, SCALE, { availability: "internal" }, now, now);
     const later = await publicPrices(prices, now);
-    expect(later.map((e) => e.key)).toEqual([STARTER]);
+    expect(later.map((e) => e.key)).toEqual([STARTER, ASSOCIATION]);
     expect(later.map((e) => e.availability)).not.toContain("internal");
     expect(plansView(later, "fr").scale).toBeNull();
   });

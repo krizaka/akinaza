@@ -71,3 +71,27 @@ Rules:
 - The pricing page reads the catalogue (EN/FR): « 3 mois offerts », « Associations : 3 mois gratuits, puis 1 $ par mois », taxes stated, no urgency. The « Soon » items stay as they are.
 - The processor side is set up in **test mode only** (`sk_live_` is refused). A migration leaves existing subscribers on the version they were sold at (`subscription_price_version`, ADR-009): grandfathered, never repriced.
 - Status: decision recorded here; the implementation (catalogue versions, trial in the checkout, association proof queue, pricing page, captures) is a separate block.
+
+## Addendum (2026-10-30, founder request): lower prices, three free months, the Association plan
+- **The grid** (in force from the `prices_association` migration): Starter 29 $ a month plus taxes with three free months; Pro (the `akinaza.scale` entry, B2B features still « soon »)
+  69 $ a month plus taxes; Association (`akinaza.association`) the Starter features, three free months, then 1 $ a month plus taxes. The founder offer
+  (39 $, `founder-limited`) ends: its entry becomes `internal` (cheaper plans make it pointless); a founder keeps the version it was sold at.
+- **All of it is catalogue data, never code.** The seed (`lib/pricing.ts`) is the HISTORY and is not rewritten: the new grid is a dated version of each
+  entry in `price_versions` with its line in `settings_audit` (`packages/db/src/price-schedule.ts`, the generated SQL of the `prices_association` migration, a test keeps the
+  file and the list equal). The prices, the free period (`trialDays` limit, 90 days, worded « 3 mois offerts » when it is whole months) and the
+  availability of the Association plan are edited from `/console/prices` like any other limit. `infra/payments/catalogue.json` sells the amounts in
+  force; `pnpm run payments:setup` creates the new processor price and moves the lookup key, so an existing subscription keeps its processor price.
+- **Grandfathering.** `accounts.subscription_price_version` keeps the catalogue version an account was sold at; nothing rewrites it after the first
+  subscription, and `catalogue.version(id)` answers the old seed (`seed:akinaza.starter` is still 45 $, the founder 39 $). Tests: `association.test.ts`
+  (PostgreSQL, the version sold stays 45 $ while a newcomer is offered 29 $) and `pricing.test.ts`.
+- **The free period is the subscription's trial at the processor** (`trialing`), no promo machinery of our own: `lib/plans.ts` decides the days (the entry's
+  `trialDays`, once per account: never for an account that already had a subscription), the checkout passes `trialDays` to the port, and the webhook's
+  `trialing` status with its period end is « free until ». A trial on a live processor key is REFUSED (503 `TRIAL_TEST_MODE_ONLY`, `isLiveMode`): it is a test-mode
+  feature until proven. The port's `trialDays` field and `capabilities.trial` come from `@krizaka/payments` 0.6 (krizaka-ts); until Akinaza installs it the
+  checkout answers 503 `TRIAL_NOT_READY` rather than say « free » and charge.
+- **Association proof** (`association_proofs`, one pending per account): the shop sends its NEQ (10 digits), its registered charity number (`123456789RR0001`)
+  or the reference of its incorporation document; an administrator checks it at `/console/associations` and approves or refuses (reason shown to the shop), each
+  decision audited (`billing.association_approved|rejected`). Until approved, the Association checkout answers 403 `ASSOCIATION_NOT_APPROVED` and the account is on
+  Starter. The document itself is not uploaded (a reference is): the verification is against the public registers. Not done: revoking an approval.
+- **The pricing page reads the catalogue** (EN/FR): « 3 mois offerts », « Associations : 3 mois gratuits, puis 1 $ par mois », taxes stated beside every price, no
+  countdown or scarcity (a test refuses such words), the « Bientôt » items kept. The subscription page offers the plans and the proof form.

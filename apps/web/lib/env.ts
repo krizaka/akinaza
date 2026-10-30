@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import type { MailSettings } from "./mail-settings";
-import { FOUNDER, PROCESSOR_PLANS, SCALE, STARTER } from "./pricing";
+import { ASSOCIATION, FOUNDER, PROCESSOR_PLANS, SCALE, STARTER } from "./pricing";
 
 /**
  * Every environment variable of the app, declared once (named by bounded context — APP_, DATABASE_, AUTH_, ABUSE_ —
@@ -87,6 +87,7 @@ export const envSchema = z.object({
   PAYMENTS_PRICE_KEY_FOUNDER: z.string().default(PROCESSOR_PLANS[FOUNDER].lookupKey),
   PAYMENTS_PRICE_KEY_STARTER: z.string().default(PROCESSOR_PLANS[STARTER].lookupKey),
   PAYMENTS_PRICE_KEY_SCALE: z.string().default(PROCESSOR_PLANS[SCALE].lookupKey),
+  PAYMENTS_PRICE_KEY_ASSOCIATION: z.string().default(PROCESSOR_PLANS[ASSOCIATION].lookupKey),
   /** Akinaza's OAuth clients for the owner's calendars (ADR-004), created by the administrator at Google and at Microsoft; a provider without both halves is not offered. Each provider's flag in the administration is off by default. */
   AUTH_CALENDAR_GOOGLE_CLIENT_ID: z.string().optional(),
   AUTH_CALENDAR_GOOGLE_CLIENT_SECRET: z.string().optional(),

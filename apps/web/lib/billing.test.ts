@@ -1,7 +1,7 @@
 import type { PaymentEvent } from "@krizaka/payments";
 import { describe, expect, it } from "vitest";
 
-import { applyPaymentEvent, customerOf, subscriptionOf } from "./billing";
+import { applyPaymentEvent, customerOf, subscriptionOf, trialEligible } from "./billing";
 
 type Row = Record<string, unknown>;
 /**
@@ -76,5 +76,32 @@ describe("the subscription state", () => {
     const existing = (async () => [{ customer: "cus_old" }]) as never;
     expect(await customerOf(existing, "a1", async () => { creates++; return { id: "cus_new" }; })).toBe("cus_old");
     expect(creates).toBe(0);
+  });
+});
+
+describe("the free trial lives on the subscription (trialing), once per account", () => {
+  const rows = (r: Row | null) => (async () => (r ? [r] : [])) as never;
+  const now = new Date("2026-11-01T12:00:00Z");
+
+  it("a trialing subscription is live, says when the trial ends, and has charged nothing yet", async () => {
+    const end = new Date("2027-01-30T12:00:00Z");
+    const sub = await subscriptionOf(rows({ status: "trialing", end, customer: "cus_1" }), "a1", now);
+    expect(sub).toMatchObject({ active: true, trialing: true, trialEndsAt: end.toISOString(), status: "trialing" });
+  });
+
+  it("once the trial ends the processor says active: no longer trialing, the period end is the renewal", async () => {
+    const end = new Date("2027-02-28T12:00:00Z");
+    expect(await subscriptionOf(rows({ status: "active", end, customer: "cus_1" }), "a1", now)).toMatchObject({ active: true, trialing: false, trialEndsAt: null });
+  });
+
+  it("a trial that lapsed unpaid (period passed, no renewal) is not live", async () => {
+    const past = new Date("2026-10-01T12:00:00Z");
+    expect(await subscriptionOf(rows({ status: "trialing", end: past, customer: "cus_1" }), "a1", now)).toMatchObject({ active: false, trialing: true });
+  });
+
+  it("an account never subscribed may start one; an account that had a subscription may not (once per account)", async () => {
+    expect(await trialEligible(rows({ sub: null }), "a1")).toBe(true);
+    expect(await trialEligible(rows({ sub: "sub_1" }), "a1")).toBe(false);
+    expect(await trialEligible(rows(null), "ghost")).toBe(false);
   });
 });

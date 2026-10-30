@@ -376,7 +376,8 @@
     "plans": {
       "founder": "Founder",
       "starter": "Starter",
-      "scale": "Pro"
+      "scale": "Pro",
+      "association": "Association"
     },
     "features": {
       "inherits": "Everything in {plan}, plus the features below as they ship",
@@ -405,8 +406,23 @@
       {
         "q": "What if the price changes?",
         "a": "Your subscription keeps the price it was sold at, and the terms of use say how a change is announced."
+      },
+      {
+        "q": "How does the free period work?",
+        "a": "A first subscription to Starter starts with free months. You enter your card, nothing is charged until they end, and you can cancel before then from the payment page. It applies once per business."
+      },
+      {
+        "q": "Who is an association?",
+        "a": "A registered non-profit (OBNL) or charity. Send your NEQ or charity number from your billing page; an administrator checks it, and the Association plan starts once it is approved. Until then you are on Starter."
       }
-    ]
+    ],
+    "trialMonths": "{months} months free",
+    "trialDays": "{days} days free",
+    "trialLine": "{trial}, then {price} a month plus taxes. You enter your card to start: nothing is charged during the free period, and you can cancel before it ends.",
+    "associationLine": "Associations: {months} months free, then {price} a month plus taxes. For registered non-profits (OBNL) and charities.",
+    "associationLineDays": "Associations: {days} days free, then {price} a month plus taxes. For registered non-profits (OBNL) and charities.",
+    "associationHow": "Send your NEQ, your registered charity number or your incorporation document’s reference from your billing page. We check it; until it is approved you are on Starter.",
+    "associationCta": "Ask for the Association plan"
   },
   "download": {
     "title": "The apps",
@@ -648,7 +664,8 @@
       "organize": "Tags and views",
       "prices": "Prices",
       "incidents": "Incidents",
-      "addresses": "Shop addresses"
+      "addresses": "Shop addresses",
+      "associations": "Associations"
     },
     "admin": {
       "health": "Health",
@@ -843,7 +860,8 @@
         "plans": {
           "founder": "Founder offer",
           "starter": "Starter",
-          "scale": "Scale B2B"
+          "scale": "Pro",
+          "association": "Association"
         },
         "entryHint": "{key} · version {version}",
         "amount": "Price",
@@ -870,7 +888,8 @@
           "founderCap": "Founder offer: businesses",
           "cardFeeBps": "Card fee (basis points)",
           "directDebitBps": "Pre-authorised debit orchestration fee (basis points)",
-          "directDebitCapCents": "Pre-authorised debit cap per order (cents)"
+          "directDebitCapCents": "Pre-authorised debit cap per order (cents)",
+          "trialDays": "Free period (days)"
         },
         "upcoming": "Scheduled from {date}",
         "change": "Change {plan}",
@@ -1018,6 +1037,19 @@
         "retain": "Kept in the register until {date}.",
         "close": "Close the incident",
         "closedNote": "This entry is closed. It stays in the register and is never edited again."
+      },
+      "associations": {
+        "title": "Association proofs",
+        "lead": "Registered non-profits and charities submit one proof (a NEQ, a charity number, an incorporation reference). Check it against the public register, then approve or refuse. Until approved the shop is on Starter. Each decision is audited.",
+        "empty": "Nothing waiting for review.",
+        "account": "Account",
+        "kind": "Proof",
+        "reference": "Number or reference",
+        "submitted": "Sent",
+        "note": "Reason (shown to the shop when refused)",
+        "approve": "Approve",
+        "reject": "Refuse",
+        "done": "Decided."
       }
     },
     "errors": {
@@ -1138,7 +1170,14 @@
       "INCIDENT_NO_NOTICE_DUE": "No notice is due: the risk of serious injury was not retained.",
       "INCIDENT_NOTICES_MISSING": "Both notices must be recorded before closing.",
       "REEL_ORDER": "The order changed in the meantime: reload the page.",
-      "SERVICE_ORDER": "The offers changed in the meantime: reload the page."
+      "SERVICE_ORDER": "The offers changed in the meantime: reload the page.",
+      "ASSOCIATION_PENDING": "A proof is already waiting for review.",
+      "ASSOCIATION_APPROVED": "Your association is already approved.",
+      "ASSOCIATION_REFERENCE": "This number does not look right: a NEQ has 10 digits, a charity number looks like 123456789RR0001.",
+      "ASSOCIATION_NOT_APPROVED": "The Association plan opens once your proof is approved.",
+      "PLAN_NOT_ON_SALE": "This plan is not on sale.",
+      "TRIAL_TEST_MODE_ONLY": "The free period is not available yet.",
+      "TRIAL_NOT_READY": "The free period is being set up. Try again later."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -1402,7 +1441,34 @@
         "yourPriceHint": "The price your subscription was sold at: you keep it as long as you stay.",
         "priceLine": "{price} a month plus taxes",
         "acceptPrefix": "By choosing this offer, you accept the ",
-        "acceptLink": "terms of use"
+        "acceptLink": "terms of use",
+        "planStarter": "Starter",
+        "planScale": "Pro",
+        "planAssociation": "Association",
+        "planHint": "{price} a month plus taxes.",
+        "planHintTrial": "{trial}, then {price} a month plus taxes.",
+        "trialMonths": "{months} months free",
+        "trialDays": "{days} days free",
+        "startTrial": "Start the free period",
+        "choosePlan": "Choose",
+        "trialing": "Free period",
+        "trialEnds": "Free until",
+        "trialEndsHint": "Your card is charged for the first time on this date, unless you cancel before.",
+        "associationTitle": "Association plan",
+        "associationHint": "For registered non-profits (OBNL) and charities: {trial}, then {price} a month plus taxes, once an administrator has approved your proof. Until then you are on Starter.",
+        "assoKind": "Proof",
+        "assoKinds": {
+          "neq": "NEQ (Québec enterprise number)",
+          "charity": "Registered charity number",
+          "incorporation": "Incorporation document (reference)"
+        },
+        "assoReference": "Number or reference",
+        "assoNote": "A word for the reviewer (optional)",
+        "assoSubmit": "Send the proof",
+        "assoPending": "Waiting for review.",
+        "assoApproved": "Approved: the Association plan is available.",
+        "assoRejected": "Not approved: {note} You can send another proof.",
+        "assoRejectedPlain": "Not approved. You can send another proof."
       },
       "data": {
         "title": "Your data",
