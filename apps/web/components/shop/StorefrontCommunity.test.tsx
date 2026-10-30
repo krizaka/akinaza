@@ -28,11 +28,11 @@ const shop: PublicShop = {
 } as unknown as PublicShop;
 
 const at = (day: string) => new Date(`${day}T12:00:00Z`);
-const reel = (over: Partial<CommunityView["reels"][number]>): CommunityView["reels"][number] => ({ id: "r1", kind: "upload", mp4Url: "https://cdn.test/reel.mp4", webmUrl: "https://cdn.test/reel.webm", posterUrl: "https://cdn.test/poster.webp", seconds: 7, platform: null, externalUrl: null, embedUrl: null, titleFr: "La semaine", titleEn: "A week", createdAt: at("2026-10-10"), ...over });
+const reel = (over: Partial<CommunityView["reels"][number]>): CommunityView["reels"][number] => ({ id: "r1", kind: "upload", mp4Url: "https://cdn.test/reel.mp4", webmUrl: "https://cdn.test/reel.webm", posterUrl: "https://cdn.test/poster.webp", seconds: 7, platform: null, externalUrl: null, embedUrl: null, titleFr: "La semaine", titleEn: "A week", position: 0, createdAt: at("2026-10-10"), ...over });
 const review = (i: number, rating = 5): CommunityView["reviews"][number] => ({ id: `v${i}`, firstName: "Camille", lastInitial: "T", rating, body: `Super ${i}`, serviceName: "Cut", reply: i === 0 ? "Merci!" : "", createdAt: at("2026-10-01"), verified: true, state: "published" });
 
 function community(over: Partial<CommunityView> = {}): CommunityView {
-  const reels = over.reels ?? [reel({}), reel({ id: "r0", kind: "external", mp4Url: null, platform: "youtube-shorts", externalUrl: "https://www.youtube.com/shorts/sOpin6X2--0", createdAt: at("2026-10-05") })];
+  const reels = over.reels ?? [reel({}), reel({ id: "r0", kind: "external", mp4Url: null, platform: "youtube-shorts", externalUrl: "https://www.youtube.com/shorts/sOpin6X2--0", position: 1, createdAt: at("2026-10-05") })];
   return {
     wall: { texture: "brick", items: [
       { id: "p1", kind: "polaroid", x: 5, y: 5, rotation: -2, z: 1, attachment: "tape", imageUrl: "https://cdn.test/a.webp", altFr: "Un fauteuil", altEn: "A chair", captionFr: "Le fauteuil", captionEn: "The chair" },
@@ -41,6 +41,7 @@ function community(over: Partial<CommunityView> = {}): CommunityView {
     ] },
     reel: reels[0] ?? null,
     reels,
+    reelTransition: "channel",
     links: { instagram: "https://www.instagram.com/cedre", tiktok: "https://www.tiktok.com/@cedre" },
     announcements: [{ id: "a1", shopId: "s", textFr: "Portes ouvertes", textEn: "Open house", photoUrl: null, photoAlt: "", endsOn: null, createdAt: at("2026-10-12") }] as unknown as CommunityView["announcements"],
     reviews: [0, 1, 2, 3, 4, 5].map((i) => review(i)),
@@ -101,6 +102,12 @@ describe("what is not there is not drawn", () => {
     const noWall = html(community(), { ...ON, wall: false });
     expect(noWall).not.toContain('id="s_wall"');
     expect(noWall).toContain('id="s_reels_1"');
+  });
+  it("hands the television the videos in the owner's order and the transition they chose (#469)", () => {
+    const view = buildCommunity({ community: community({ reelTransition: "slide", reels: [reel({ id: "x", titleEn: "First", position: 0 }), reel({ id: "y", titleEn: "Second", position: 1 }), reel({ id: "z", titleEn: "Third", position: 2 })] }), locale: "en", today: TODAY, rules: RULES, enabled: ON });
+    expect(view.playlist.map((v) => v.title)).toEqual(["First", "Second", "Third"]);
+    expect(view.tv?.id).toBe("x");
+    expect(view.transition).toBe("slide");
   });
   it("hides a flyer after its last day and keeps three at most", () => {
     const old = html(community({ announcements: [{ id: "a1", textFr: "Vieux", textEn: "Old news", photoUrl: null, photoAlt: "", endsOn: "2026-10-01", createdAt: at("2026-09-01") }] as unknown as CommunityView["announcements"] }));

@@ -23,7 +23,10 @@
     "contact": "Contact",
     "legal": "Confidentialité",
     "terms": "Conditions d'utilisation",
-    "footerColumns": { "product": "Produit", "legal": "Légal" },
+    "footerColumns": {
+      "product": "Produit",
+      "legal": "Légal"
+    },
     "menu": {
       "label": "Menu",
       "home": {
@@ -1133,7 +1136,8 @@
       "INCIDENT_CLOSED": "Cet incident est fermé et ne peut plus changer.",
       "INCIDENT_NOT_ASSESSED": "Évaluez d'abord le risque.",
       "INCIDENT_NO_NOTICE_DUE": "Aucun avis n'est requis : le risque de préjudice sérieux n'a pas été retenu.",
-      "INCIDENT_NOTICES_MISSING": "Les deux avis doivent être consignés avant la fermeture."
+      "INCIDENT_NOTICES_MISSING": "Les deux avis doivent être consignés avant la fermeture.",
+      "REEL_ORDER": "L'ordre a changé entre-temps : rechargez la page."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -2111,6 +2115,17 @@
         "gallery": "Galerie",
         "route": "Parcours",
         "journal": "Journal"
+      },
+      "tvLabels": {
+        "play": "Lecture",
+        "pause": "Pause",
+        "next": "Vidéo suivante",
+        "previous": "Vidéo précédente",
+        "soundOff": "Son coupé : activer",
+        "soundOn": "Son activé : couper",
+        "captions": "Sous-titres",
+        "seek": "Position",
+        "nowPlaying": "En cours"
       }
     },
     "book": {
@@ -3239,8 +3254,8 @@
         "max": "500 caractères dans chaque langue."
       },
       "reels": {
-        "title": "Votre dernière vidéo",
-        "lead": "La vidéo la plus récente joue sur votre page dans une vieille télévision. Un lien TikTok, YouTube ou Instagram montre une image et un bouton : rien n'est chargé depuis la plateforme tant que le visiteur n'appuie pas.",
+        "title": "Vos courtes vidéos",
+        "lead": "Vos vidéos défilent l'une après l'autre sur votre page, dans un grand téléviseur d'époque, dans l'ordre ci-dessous, puis reprennent. Un lien TikTok, YouTube ou Instagram montre une image et un bouton : rien n'est chargé depuis la plateforme tant que le visiteur n'appuie pas.",
         "linkLabel": "Lien vers un TikTok, un Short YouTube ou un reel Instagram",
         "linkHint": "Collez l'adresse de la vidéo.",
         "titleFr": "Titre en français (facultatif)",
@@ -3249,11 +3264,11 @@
         "upload": "Téléverser une vidéo",
         "uploadTitle": "Choisir une vidéo",
         "uploadHint": "MP4 ou WebM, à la verticale, {seconds} secondes et {megabytes} Mo au plus.",
-        "poster": "Une image pour la vidéo (facultatif)",
+        "poster": "Une image pour la vidéo (facultatif, prise dans la vidéo si vous n'en choisissez pas)",
         "posterTitle": "Choisir une image",
         "remove": "Retirer",
         "none": "Aucune vidéo pour l'instant.",
-        "shown": "Affichée sur votre page",
+        "shown": "Passe en premier",
         "kinds": {
           "upload": "Vidéo téléversée",
           "external": "Lien"
@@ -3274,7 +3289,21 @@
         },
         "socialHint": "Laissez vide pour retirer un lien.",
         "saveLinks": "Enregistrer les liens",
-        "linksSaved": "Les liens sont enregistrés."
+        "linksSaved": "Les liens sont enregistrés.",
+        "playlist": "Liste de lecture, dans l'ordre",
+        "orderHint": "Glissez une vidéo, ou utilisez les flèches, pour changer l'ordre. La page suit aussitôt.",
+        "up": "Monter {title}",
+        "down": "Descendre {title}",
+        "upShort": "Monter",
+        "downShort": "Descendre",
+        "moved": "{title} est maintenant en position {place}.",
+        "transition": "Comment une vidéo cède la place à la suivante",
+        "transitionHint": "Un visiteur qui demande moins de mouvement obtient toujours une simple coupure.",
+        "transitions": {
+          "channel": "Changement de chaîne",
+          "crossfade": "Fondu enchaîné",
+          "slide": "Glissement"
+        }
       },
       "reviews": {
         "title": "Avis",

@@ -23,7 +23,10 @@
     "contact": "Contact",
     "legal": "Privacy",
     "terms": "Terms of use",
-    "footerColumns": { "product": "Product", "legal": "Legal" },
+    "footerColumns": {
+      "product": "Product",
+      "legal": "Legal"
+    },
     "menu": {
       "label": "Menu",
       "home": {
@@ -1133,7 +1136,8 @@
       "INCIDENT_CLOSED": "This incident is closed and can no longer change.",
       "INCIDENT_NOT_ASSESSED": "Assess the risk first.",
       "INCIDENT_NO_NOTICE_DUE": "No notice is due: the risk of serious injury was not retained.",
-      "INCIDENT_NOTICES_MISSING": "Both notices must be recorded before closing."
+      "INCIDENT_NOTICES_MISSING": "Both notices must be recorded before closing.",
+      "REEL_ORDER": "The order changed in the meantime: reload the page."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -2111,6 +2115,17 @@
         "gallery": "Gallery",
         "route": "Route",
         "journal": "Journal"
+      },
+      "tvLabels": {
+        "play": "Play",
+        "pause": "Pause",
+        "next": "Next video",
+        "previous": "Previous video",
+        "soundOff": "Sound off: turn on",
+        "soundOn": "Sound on: turn off",
+        "captions": "Captions",
+        "seek": "Position",
+        "nowPlaying": "Now playing"
       }
     },
     "book": {
@@ -3239,8 +3254,8 @@
         "max": "500 characters in each language."
       },
       "reels": {
-        "title": "Your latest video",
-        "lead": "The newest video plays on your page in an old television. A link to TikTok, YouTube or Instagram shows a picture and a button: nothing is loaded from the platform until the visitor presses it.",
+        "title": "Your short videos",
+        "lead": "Your videos play one after the other on your page, in a large old television, in the order below, then start again. A link to TikTok, YouTube or Instagram shows a picture and a button: nothing is loaded from the platform until the visitor presses it.",
         "linkLabel": "Link to a TikTok, a YouTube Short or an Instagram reel",
         "linkHint": "Paste the address of the video.",
         "titleFr": "Title in French (optional)",
@@ -3249,11 +3264,11 @@
         "upload": "Upload a video",
         "uploadTitle": "Choose a video",
         "uploadHint": "MP4 or WebM, vertical, {seconds} seconds and {megabytes} MB at most.",
-        "poster": "A picture for the video (optional)",
+        "poster": "A picture for the video (optional, taken from the video if you pick none)",
         "posterTitle": "Choose a picture",
         "remove": "Take down",
         "none": "No video yet.",
-        "shown": "Shown on your page",
+        "shown": "Plays first",
         "kinds": {
           "upload": "Uploaded video",
           "external": "Link"
@@ -3274,7 +3289,21 @@
         },
         "socialHint": "Leave empty to remove a link.",
         "saveLinks": "Save the links",
-        "linksSaved": "The links are saved."
+        "linksSaved": "The links are saved.",
+        "playlist": "Playlist, in playing order",
+        "orderHint": "Drag a video, or use the arrows, to change the order. The page follows at once.",
+        "up": "Move {title} up",
+        "down": "Move {title} down",
+        "upShort": "Up",
+        "downShort": "Down",
+        "moved": "{title} is now number {place}.",
+        "transition": "How one video gives way to the next",
+        "transitionHint": "A visitor who asks for less motion always gets a simple cut.",
+        "transitions": {
+          "channel": "Channel switch",
+          "crossfade": "Crossfade",
+          "slide": "Slide"
+        }
       },
       "reviews": {
         "title": "Reviews",

@@ -81,7 +81,7 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     ids.webhook = (await call(hook as Handler, "POST", "/api/walker/webhooks", { ...asA, json: { url: "https://hooks.example.com/a", events: ["booking.created"] } })).body.endpoint.id;
     ids.invitation = (await call(invite as Handler, "POST", "/api/walker/team/invitations", { ...asA, json: { email: `invitee-${stamp}@example.com`, role: "staff" } })).body.invitation?.id ?? randomUUID();
     [ids.staff] = (await query<{ id: string }>("SELECT id FROM staff WHERE shop_id = $1 LIMIT 1", [ids.shopA])).map((r) => r.id);
-    ids.reel = (await query<{ id: string }>("INSERT INTO shop_reels (shop_id, kind, platform, external_url, embed_url) VALUES ($1, 'external', 'instagram', 'https://www.instagram.com/reel/Cabc123xyz/', 'https://www.instagram.com/reel/Cabc123xyz/embed') RETURNING id", [ids.shopA]))[0]!.id;
+    ids.reel = (await query<{ id: string }>("INSERT INTO shop_reels (shop_id, position, kind, platform, external_url, embed_url) VALUES ($1, 0, 'external', 'instagram', 'https://www.instagram.com/reel/Cabc123xyz/', 'https://www.instagram.com/reel/Cabc123xyz/embed') RETURNING id", [ids.shopA]))[0]!.id;
     ids.flyer = (await query<{ id: string }>("INSERT INTO shop_announcements (shop_id, text_fr) VALUES ($1, 'Portes ouvertes') RETURNING id", [ids.shopA]))[0]!.id;
     ids.review = (await query<{ id: string }>("INSERT INTO shop_reviews (shop_id, first_name, rating, verified) VALUES ($1, 'Camille', 5, true) RETURNING id", [ids.shopA]))[0]!.id;
     ids.calendar = (await query<{ id: string }>("INSERT INTO calendar_connections (shop_id, kind, label, secret_enc, consent_text_version, consented_at) VALUES ($1, 'ics', 'Agenda A', 'sealed-not-read', 'v1', now()) RETURNING id", [ids.shopA]))[0]!.id;
@@ -190,7 +190,9 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     expect(foreign.status, "a foreign id must answer like an unknown one").toBe(absent.status);
     expect(foreign.body?.code).toEqual(absent.body?.code);
     // ... which is a 404, except the two idempotent deletes (hours, zones), a no-op that leaves the data alone.
-    if (r.idempotent) expect(foreign.status).toBe(200);
+    if (r.idempotent) {
+      expect(foreign.status).toBe(200);
+    }
     else expect(foreign.status, JSON.stringify(foreign.body)).toBe(r.refused ?? 404);
     await r.intact?.();
   });

@@ -1,4 +1,4 @@
-import { currentAnnouncements, reviewScore, type ScoreRules, WALL_KIND, type WallTexture } from "@akinaza/core";
+import { currentAnnouncements, type ReelTransition, reviewScore, type ScoreRules, WALL_KIND, type WallTexture } from "@akinaza/core";
 import type { CommunityView } from "@akinaza/db";
 
 import { type Locale, translator } from "@/lib/i18n";
@@ -70,8 +70,12 @@ export interface ReviewsView {
 
 export interface CommunityPublicView {
   wall: { texture: WallTexture; pieces: WallPiece[] } | null;
-  /** The latest video, in the television. */
+  /** The first video of the owner's playlist. */
   tv: VideoView | null;
+  /** The television's programmes, in the owner's order (their own videos, and links behind a facade). */
+  playlist: VideoView[];
+  /** How the television passes from one programme to the next. */
+  transition: ReelTransition;
   /** Where the television stands: beside the wall, or in the videos section when the wall is off. */
   tvPlace: "wall" | "reels" | null;
   /** The other videos of other channels, each behind its facade. */
@@ -98,7 +102,9 @@ const plural = <T extends string>(count: number, one: T, other: T): T => (count 
 function reviewsView({ community, locale, rules }: Readonly<{ community: CommunityView; locale: Locale; rules: ScoreRules }>): ReviewsView | null {
   const t = translator(locale);
   const result = reviewScore(community.reviews, rules);
-  if (!result.shown || result.score === null) return null;
+  if (!result.shown || result.score === null) {
+    return null;
+  }
   const shownScore = numberOf(result.score, locale);
   const d = result.distribution;
   return {
@@ -144,8 +150,8 @@ export function buildCommunity(input: { community: CommunityView; locale: Locale
 
   const video = (r: CommunityView["reels"][number]): VideoView => ({ id: r.id, title: say(r.titleFr, r.titleEn), mp4: r.mp4Url, webm: r.webmUrl, poster: r.posterUrl, platform: r.platform, externalUrl: r.externalUrl });
   const reels = enabled.reels ? community.reels.map(video) : [];
-  const latest = reels[0] ?? null;
-  const tv = latest && (latest.mp4 || latest.webm || latest.externalUrl) ? latest : null;
+  const playlist = reels.filter((r) => r.mp4 || r.webm || r.externalUrl);
+  const tv = playlist[0] ?? null;
   const elsewhere = reels.filter((r) => r.platform && r.id !== tv?.id).slice(0, SHOWN.elsewhere);
 
   const links = enabled.reels
@@ -160,5 +166,5 @@ export function buildCommunity(input: { community: CommunityView; locale: Locale
 
   const wall = enabled.wall && pieces.length > 0 ? { texture: community.wall.texture, pieces } : null;
   const tvPlace = tv ? tvPlaceOf(enabled.wall) : null;
-  return { wall, tv, tvPlace, elsewhere, links, flyers, reviews, has: { wall: wall !== null || tvPlace === "wall", reels: tvPlace === "reels" || elsewhere.length > 0 || links.length > 0, announcements: flyers.length > 0, reviews: reviews !== null } };
+  return { wall, tv, playlist, transition: community.reelTransition, tvPlace, elsewhere, links, flyers, reviews, has: { wall: wall !== null || tvPlace === "wall", reels: tvPlace === "reels" || elsewhere.length > 0 || links.length > 0, announcements: flyers.length > 0, reviews: reviews !== null } };
 }
