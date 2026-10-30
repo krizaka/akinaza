@@ -11,6 +11,7 @@ import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { organizeData, tagsOfRows } from "@/lib/organize-data";
 import { titleOf } from "@/lib/page-title";
+import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export default async function Clients({ params: routeParams, searchParams }: Rea
   const { shop, session, role } = await memberShop(shopId, "clients");
   const params = await searchParams;
   // The tags, the dates and the saved views narrow the rows in SQL (`filterSql`); the search stays the list's own, without accents.
-  const [all, organized] = await Promise.all([clientOverview(db(), shop.id, new Date()), organizeData(shop.id, "client", session.account, role, params, ["q"])]);
+  const [all, organized] = await Promise.all([clientOverview(db(), shop.id, requestNow()), organizeData(shop.id, "client", session.account, role, params, ["q"])]);
   const clients = organized.ids ? all.filter((c) => organized.ids!.has(c.id)) : all;
   const tags = await tagsOfRows(shop.id, "client", clients.map((c) => c.id));
   return (

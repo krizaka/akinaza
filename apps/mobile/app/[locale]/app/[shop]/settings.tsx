@@ -13,7 +13,7 @@ import { useLocale } from "@/use-locale";
 import { useShop } from "@/use-shop";
 
 /**
- * Boutique (`/fr/app/<shop>/boutique`): what the phone needs of the shop — its name, its tax status, its terms and the services an
+ * Boutique (`/fr/app/<shop>/settings`): what the phone needs of the shop — its name, its tax status, its terms and the services an
  * invoice can name. The page, the team and the hours are edited on the web's Boutique (one link): a form that long is a desk's.
  */
 export default function Boutique() {

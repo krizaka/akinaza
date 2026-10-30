@@ -1,4 +1,4 @@
-import { addLocalDays, businessTypeSchema, type MemberDay, timeOffDays, type TimeOffRange, timeOffRanges, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
+import { addLocalDays, businessTypeSchema, holdSlug, type ProtectedTerm, type MemberDay, timeOffDays, type TimeOffRange, timeOffRanges, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
 import { addDays, compareAsc } from "date-fns";
 import { and, asc, between, desc, eq, gte, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -10,7 +10,7 @@ import { ShopError } from "./errors";
 import { type CommunityView, communityOf } from "./shop-community";
 import { shopPageConfigOf, type ShopPageConfig } from "./shop-page";
 import { type ShopLanguages, shopLanguagesOf, type StoredTranslation, translationsOf } from "./shop-translations";
-import { appointments, bookings, memberships, clients, dependants, daysOff, MediaRole, schedules, services, shopFormerSlugs, shopMedia, shopRules, shops, shopZones, staff } from "./schema";
+import { appointments, bookings, isPublicShop, memberships, clients, dependants, daysOff, MediaRole, schedules, services, shopFormerSlugs, shopMedia, shopSlugChanges, shopRules, shops, shopZones, staff } from "./schema";
 import { recordConsent } from "./shop-ops";
 
 /**
@@ -139,7 +139,15 @@ export async function setDefaultShop(db: Db, ownerId: string, shopId: string): P
 }
 
 /** Creates the owner's shop page (with its first staff member and default rules) or updates it: the default shop, or `shopId`; `additional` adds another shop. A first shop becomes the default. Publishing needs an active service. */
-export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, which: { shopId?: string; additional?: false } | { additional: true; /** The most shops the owner may run (the administrator's `limits.shopsPerOwner`): checked here, under a lock, so no route can skip it and two requests cannot both pass. */ maxShops: number } = {}): Promise<{ shopId: string; created: boolean }> {
+/** What a save knows about addresses: the protected terms (the setting, parsed). Without any, nothing is held (seeds, tests of other features). */
+export interface SlugPolicy {
+  terms?: readonly ProtectedTerm[];
+  /** At most `max` address changes per shop in the last `days` days (the administrator's setting): a phisher cannot walk through addresses. */
+  slugChanges?: { max: number; days: number };
+}
+
+/** Saves the shop's page. A slug that wears a protected term is HELD (the shop is saved, not public until the administrator clears it); the verdict is taken when the slug changes, so a cleared shop is not held again by saving its other fields. */
+export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, which: { shopId?: string; additional?: false } | { additional: true; /** The most shops the owner may run (the administrator's `limits.shopsPerOwner`): checked here, under a lock, so no route can skip it and two requests cannot both pass. */ maxShops: number } = {}, policy: SlugPolicy = {}): Promise<{ shopId: string; created: boolean; held: boolean }> {
   const input = shopPageSchema.parse(raw);
   try {
     return await db.transaction(async (tx) => {
@@ -157,11 +165,25 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, 
         const count = existing ? (await tx.select({ n: sql<number>`count(*)::int` }).from(services).where(and(eq(services.shopId, existing.id), eq(services.active, true))))[0]!.n : 0;
         if (count === 0) refuse("AK_NOT_PUBLISHABLE");
       }
+      const slugChanged = !existing || existing.slug !== input.slug;
+      const renames = existing?.slug != null && existing.slug !== input.slug ? policy.slugChanges : undefined;
+      if (existing && renames) {
+        // The shop row is locked (FOR UPDATE above): the count and the new row are one decision.
+        const [recent] = await tx.select({ n: sql<number>`count(*)::int` }).from(shopSlugChanges).where(and(eq(shopSlugChanges.shopId, existing.id), sql`${shopSlugChanges.at} > now() - make_interval(days => ${renames.days})`));
+        if (recent!.n >= renames.max) refuse("AK_SLUG_RATE_LIMIT");
+      }
+      const verdict = slugChanged && policy.terms ? holdSlug(input.slug, policy.terms) : undefined;
+      const hold = verdict
+        ? verdict.held
+          ? { slugHeld: true, slugHeldTerm: verdict.matched, slugHeldAt: sql`now()` }
+          : { slugHeld: false, slugHeldTerm: null, slugHeldAt: null }
+        : {};
       const values = {
         name: input.name,
         legalName: input.legalName,
         address: input.address,
         slug: input.slug,
+        ...hold,
         taglineFr: input.taglineFr || null,
         taglineEn: input.taglineEn || null,
         published: input.published,
@@ -177,19 +199,32 @@ export async function saveShopPage(db: Db, ownerId: string, raw: ShopPageInput, 
       };
       if (existing) {
         await tx.update(shops).set(values).where(eq(shops.id, existing.id));
+        if (renames) await tx.insert(shopSlugChanges).values({ shopId: existing.id });
         const owner = await ownStaff(tx, existing.id);
         await tx.update(staff).set({ name: input.ownerName }).where(eq(staff.id, owner.id));
-        return { shopId: existing.id, created: false };
+        return { shopId: existing.id, created: false, held: verdict ? verdict.held : existing.slugHeld };
       }
       const [shop] = await tx.insert(shops).values({ ...values, ownerId, kind: "services", registrant: false, timezone: "America/Toronto" }).returning({ id: shops.id });
       await tx.insert(staff).values({ shopId: shop!.id, name: input.ownerName });
       await tx.insert(shopRules).values({ shopId: shop!.id });
-      return { shopId: shop!.id, created: true };
+      return { shopId: shop!.id, created: true, held: verdict?.held ?? false };
     });
   } catch (error) {
     if (isUniqueViolation(error, "shops_slug")) throw new ShopError("AK_SLUG_TAKEN");
     throw error;
   }
+}
+
+/** The shops whose address is held for review, oldest first: what the administrator's queue lists. */
+export async function heldShops(db: Db): Promise<{ shopId: string; name: string; slug: string; term: string | null; heldAt: Date | null; ownerId: string | null }[]> {
+  const rows = await db.select({ shopId: shops.id, name: shops.name, slug: shops.slug, term: shops.slugHeldTerm, heldAt: shops.slugHeldAt, ownerId: shops.ownerId }).from(shops).where(eq(shops.slugHeld, true)).orderBy(asc(shops.slugHeldAt), asc(shops.id));
+  return rows.map((row) => ({ ...row, slug: row.slug! }));
+}
+
+/** The administrator clears a held address: the shop is public again (when published). False when the shop was not held. */
+export async function clearSlugHold(db: Db, shopId: string): Promise<boolean> {
+  const cleared = await db.update(shops).set({ slugHeld: false, slugHeldTerm: null, slugHeldAt: null }).where(and(eq(shops.id, shopId), eq(shops.slugHeld, true))).returning({ id: shops.id });
+  return cleared.length > 0;
 }
 
 /** An area of the map: where it is centred (WGS 84). */
@@ -426,12 +461,12 @@ export interface PublicShop {
 /** The public page of a published shop, by its address; null when there is none (or it is not published). Projected here, once: a caller cannot leak a column. */
 /** Where a former address of a published shop now leads: its current slug, or null (unknown, or the shop is not public). */
 export async function currentSlugOf(db: Db, formerSlug: string): Promise<string | null> {
-  const [row] = await db.select({ slug: shops.slug }).from(shopFormerSlugs).innerJoin(shops, eq(shops.id, shopFormerSlugs.shopId)).where(and(eq(shopFormerSlugs.slug, formerSlug), eq(shops.published, true)));
+  const [row] = await db.select({ slug: shops.slug }).from(shopFormerSlugs).innerJoin(shops, eq(shops.id, shopFormerSlugs.shopId)).where(and(eq(shopFormerSlugs.slug, formerSlug), isPublicShop()));
   return row?.slug ?? null;
 }
 
 export async function publicShop(db: Db, slug: string): Promise<PublicShop | null> {
-  const [row] = await db.select().from(shops).where(and(eq(shops.slug, slug), eq(shops.published, true)));
+  const [row] = await db.select().from(shops).where(and(eq(shops.slug, slug), isPublicShop()));
   return row ? publicShopOf(db, row) : null;
 }
 
@@ -629,7 +664,7 @@ export const joinInputSchema = z.object({
 /** A signed-in person opens their file at a shop (once): their name, a phone, the consents they chose. */
 export async function joinShop(db: Db, accountId: string, accountEmail: string, shopId: string, raw: z.input<typeof joinInputSchema>): Promise<{ clientId: string; created: boolean }> {
   const input = joinInputSchema.parse(raw);
-  const [shop] = await db.select({ id: shops.id }).from(shops).where(and(eq(shops.id, shopId), eq(shops.published, true)));
+  const [shop] = await db.select({ id: shops.id }).from(shops).where(and(eq(shops.id, shopId), isPublicShop()));
   if (!shop) return refuse("AK_SHOP_UNKNOWN");
   const [existing] = await db.select({ id: clients.id, erasedAt: clients.erasedAt }).from(clients).where(and(eq(clients.shopId, shopId), eq(clients.accountId, accountId)));
   if (existing) return { clientId: existing.id, created: false };
@@ -704,7 +739,7 @@ export async function bookVisit(db: Db, input: BookInput): Promise<{ appointment
     return await db.transaction(async (tx) => {
       const [client] = await tx.select().from(clients).where(and(eq(clients.id, input.clientId), isNull(clients.erasedAt)));
       if (!client) return refuse("AK_CLIENT_UNKNOWN");
-      const [shop] = await tx.select().from(shops).where(and(eq(shops.id, client.shopId), eq(shops.published, true)));
+      const [shop] = await tx.select().from(shops).where(and(eq(shops.id, client.shopId), isPublicShop()));
       if (!shop) return refuse("AK_SHOP_UNKNOWN");
       const [service] = await tx.select().from(services).where(and(eq(services.id, input.serviceId), eq(services.shopId, shop.id), eq(services.active, true)));
       if (!service) return refuse("AK_SERVICE_UNKNOWN");

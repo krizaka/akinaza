@@ -71,7 +71,6 @@ export function Bulletin({
         return (
           <li key={f.id}>
             <Stuck
-              as="aside"
               hold={look.hold}
               tilt={look.tilt}
               className="block"

@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 /** The owner's screens that stream their data: each draws its loading state in the page's own boxes (D6, § 2.5 of the direction). */
-const LOADING = ["aujourdhui", "clients", "clients/[id]", "invoices", "invoices/[id]", "books"];
+const LOADING = ["today", "clients", "clients/[id]", "invoices", "invoices/[id]", "books"];
 const SHOP_SPACE = fileURLToPath(new URL("../app/[locale]/(app)/app/[shop]/", import.meta.url));
 
 describe("every owner list and file has its loading state (D6)", () => {

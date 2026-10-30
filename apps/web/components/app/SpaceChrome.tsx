@@ -1,6 +1,7 @@
 import { frameCounts, shopDay, type ShopRole } from "@akinaza/db";
 
 import { accounts } from "@/app/accounts";
+import { requestNow } from "@/app/request-now";
 import { ShopFrame } from "@/components/app/ShopFrame";
 import { agendaScope } from "@/lib/access";
 import { CLIENT_PLACES, placeHrefFor, placesFor } from "@/lib/app-nav";
@@ -31,7 +32,7 @@ export async function SpaceChrome({ locale, account, member, children }: Readonl
   const membership = { shopId: member.shop.id, role: member.role };
   const mayInvoice = may(member.role, "invoices");
   // The rail's counts: the day's appointments (a staff member's own), the invoices to collect for who may see them.
-  const counts = await frameCounts(db(), member.shop.id, { day: await shopDay(db(), member.shop.id, new Date()), ...agendaScope(member.role, account.id) });
+  const counts = await frameCounts(db(), member.shop.id, { day: await shopDay(db(), member.shop.id, requestNow()), ...agendaScope(member.role, account.id) });
   return (
     <ShopFrame
       {...common}

@@ -9,7 +9,7 @@ browser tab cannot:
 
 - the menu bar in the Mac's language (`src-tauri/menu/fr.json`, `en.json`; French unless the Mac speaks English), the web rail's
   order and words: ⌘1 Aujourd'hui · ⌘2 Clients · ⌘3 Factures · ⌘4 Livres · ⌘5 Boutique (Today · Clients · Invoices · Books · Shop)
-  — the web's own paths, in the shop and the language of the page on screen (`/en/app/<shop>/boutique`), else the web's short
+  — the web's own paths, in the shop and the language of the page on screen (`/en/app/<shop>/settings`), else the web's short
   address that opens the shop last worked in (`apps/web/lib/app-addresses.test.ts` checks each is a live page of the web); ⌘R
   reloads the page;
 - `akinaza://app/…` and `https://www.akinaza.com/app/…` links that open the same page in the window;

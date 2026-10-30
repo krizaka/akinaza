@@ -71,7 +71,7 @@ try {
   await page.getByRole("button", { name: W.signIn }).click();
   await page.waitForURL(/\/app\/[0-9a-f-]{36}/);
   const shopId = page.url().match(/\/app\/([0-9a-f-]{36})/)[1];
-  const composerUrl = `${BASE}/${LOCALE}/app/${shopId}/boutique/page?tab=composer`;
+  const composerUrl = `${BASE}/${LOCALE}/app/${shopId}/settings/page?tab=composer`;
   const slug = SLUG;
 
   // Start clean: nothing pending, so the draft is the page.

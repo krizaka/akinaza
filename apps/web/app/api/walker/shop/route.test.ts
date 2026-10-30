@@ -10,6 +10,8 @@ vi.mock("@/lib/access", () => ({ requireSession: vi.fn() }));
 vi.mock("@/lib/audit", () => ({ audit: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
+const policy = { terms: [{ source: "login" }] };
+vi.mock("@/lib/slug-policy", () => ({ slugPolicy: vi.fn(async () => policy) }));
 vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), saveShopPage: vi.fn() }));
 
 const page = { name: "Atelier", legalName: "Atelier inc.", address: "1 rue X", slug: "atelier-b", ownerName: "Éric", published: true };
@@ -19,14 +21,21 @@ describe("adding a shop (#265)", () => {
   beforeEach(() => {
     vi.mocked(requireSession).mockResolvedValue({ id: "s", account: { id: "owner", email: "o@example.com", role: "USER", locale: "en" } });
     vi.mocked(appSettings).mockReturnValue({ get: vi.fn(async () => 2) } as never);
-    vi.mocked(saveShopPage).mockResolvedValue({ shopId: "new", created: true });
+    vi.mocked(saveShopPage).mockResolvedValue({ shopId: "new", created: true, held: false });
   });
   afterEach(() => vi.clearAllMocks());
 
   it("creates one more shop, unpublished, for the signed-in account only, under the administrator's bound", async () => {
     const res = await post("?additional=1");
     expect(res.status).toBe(201);
-    expect(vi.mocked(saveShopPage).mock.calls[0]).toMatchObject([expect.anything(), "owner", { published: false, slug: "atelier-b" }, { additional: true, maxShops: 2 }]);
+    expect(vi.mocked(saveShopPage).mock.calls[0]).toMatchObject([expect.anything(), "owner", { published: false, slug: "atelier-b" }, { additional: true, maxShops: 2 }, policy]);
+  });
+
+  it("hands the administrator's protected terms to every save, so an address wearing one is held (#537)", async () => {
+    await post("?additional=1");
+    expect(vi.mocked(saveShopPage).mock.calls[0]![4]).toBe(policy);
+    await post();
+    expect(vi.mocked(saveShopPage).mock.calls[1]![4]).toBe(policy);
   });
 
   it("answers the service's refusal at the limit as a plain 409 SHOP_LIMIT", async () => {
@@ -41,7 +50,7 @@ describe("adding a shop (#265)", () => {
   });
 
   it("without `additional` it is still the update of the default shop", async () => {
-    vi.mocked(saveShopPage).mockResolvedValue({ shopId: "a", created: false });
+    vi.mocked(saveShopPage).mockResolvedValue({ shopId: "a", created: false, held: false });
     await post();
     expect(vi.mocked(saveShopPage).mock.calls[0]![3]).toEqual({});
   });
