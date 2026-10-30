@@ -28,7 +28,7 @@ export const REGION_CHOICES: readonly RegionChoice[] = S3_PRESETS.flatMap((p) =>
 export const CANADIAN_CHOICES = REGION_CHOICES.filter((c) => c.residency.country === "CA");
 export const OTHER_CHOICES = REGION_CHOICES.filter((c) => c.residency.country !== "CA");
 
-const hostOf = (endpoint: string) => endpoint.replace(/^https:\/\//, "");
+const hostOf = (endpoint: string) => (endpoint.startsWith("https://") ? endpoint.slice("https://".length) : endpoint);
 
 /** The choice a saved configuration corresponds to, or null (another provider, a custom endpoint). */
 export function choiceOf(settings: { provider: string; endpoint: string; region: string }): RegionChoice | null {
