@@ -75,6 +75,8 @@ export interface StorefrontView {
   /** The photos are the trade's proposed pictures, not the shop's own (#267): the page says so, never « Photos de {shop} ». */
   galleryIllustrative: boolean;
   logoUrl: string | null;
+  /** The logo for the dark theme, when the brand has two files (#597). */
+  logoDarkUrl: string | null;
   sections: { id: "services" | "team" | "hours" | "zones" | "trust" | "gallery" | "wall" | "reels" | "announcements" | "reviews" | "follow"; visible: boolean }[];
   /** The template the shop applied (#261), or null: a shop with none renders exactly as before. Its order is already in `sections`; the variants and the hue are drawn here. */
   template: { id: string; version: number; layout: string; hue: string; variants: Record<string, string> } | null;
@@ -219,7 +221,7 @@ export function buildStorefront(input: { page: PublicShop; /** The shop as a pla
     price: isOnQuote(s) ? t("console.shopPage.onQuote") : money(s.priceCents, locale),
     priceFrom: s.priceVaries && !isOnQuote(s) ? t("console.shopPage.from") : null,
     tag: s.id === page.popularServiceId ? t("console.shopPage.popular") : null,
-    href: pageHref(s.id),
+    href: s.linkUrl ?? pageHref(s.id),
     image: image(index),
   }));
 
@@ -276,6 +278,7 @@ export function buildStorefront(input: { page: PublicShop; /** The shop as a pla
       : (proposed?.gallery ?? []).map((d) => ({ id: d.id, src: d.src, alt: describe(d.altKey), shape: "portrait" as const })),
     galleryIllustrative: page.media.gallery.length === 0 && (proposed?.gallery.length ?? 0) > 0,
     logoUrl: page.pageConfig?.logoUrl ?? null,
+    logoDarkUrl: page.pageConfig?.logoDarkUrl ?? null,
     sections: sectionsView(pageSections, preparedSections, input.community),
     template: appliedTemplate && { id: appliedTemplate.id, version: appliedTemplate.version, layout: appliedTemplate.layout, hue: appliedTemplate.hue, variants: Object.fromEntries(appliedTemplate.sections.map((x) => [x.id, x.variant])) },
     preparedSections,
