@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { A11Y, A11Y_WIDTHS, CHECKS, FRAME_LOCALES, FRAME_PAGES, OPTIONS, PAGES, SETTLE_MS, STATE_OWNERS, THEMES, WIDTHS } from "./check-overflow.mjs";
+import { A11Y, A11Y_WIDTHS, CHECKS, FRAME_LOCALES, FRAME_PAGES, OPTIONS, PAGES, SETTLE_MS, STATE_OWNERS, THEMES, TILE_PATH, WIDTHS, launchWithStubbedTiles, stubTiles } from "./check-overflow.mjs";
 
 describe("the dev-preview crawl (ui.themes-devices)", () => {
   it("covers both languages of the public pages and the sign-in, in both themes, from a phone to a desktop", () => {
@@ -56,5 +56,19 @@ describe("the dev-preview crawl (ui.themes-devices)", () => {
     expect(ci).toContain("scripts/seed-owner-states.mjs");
     for (const o of STATE_OWNERS) expect(ci).toContain(`${o.emailVariable}=`);
     expect(readFileSync(new URL("../apps/web/scripts/seed-cast.mjs", import.meta.url), "utf8")).toContain("ensureOwnerStates(");
+  });
+
+  it("never asks the media CDN for the basemap: tile and glyph requests are answered by the audit itself (akinaza#625)", async () => {
+    expect(OPTIONS.launch).toBe(launchWithStubbedTiles);
+    expect(TILE_PATH.test("/maps/v1/glyphs/Noto/0-255.pbf")).toBe(true);
+    expect(TILE_PATH.test("/fr/s/pattes-saint-henri")).toBe(false);
+    let matcher;
+    let handler;
+    await stubTiles({ route: async (m, h) => ((matcher = m), (handler = h)) });
+    expect(matcher(new URL("http://localhost:3000/maps/v1/basemap.pmtiles"))).toBe(true);
+    expect(matcher(new URL("http://localhost:3000/fr/s/pattes-saint-henri"))).toBe(false);
+    let answer;
+    await handler({ fulfill: async (a) => (answer = a) });
+    expect(answer).toMatchObject({ status: 200, body: "" });
   });
 });

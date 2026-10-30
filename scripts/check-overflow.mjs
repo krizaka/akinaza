@@ -8,6 +8,7 @@
 import { fileURLToPath } from "node:url";
 
 import { auditRoutes } from "@krizaka/page-audit";
+import { chromium } from "playwright-core";
 
 /** After `load`, the time fonts and images take to lay the page out. */
 export const SETTLE_MS = 600;
@@ -23,6 +24,26 @@ export const FRAME_PAGES = ["/today", "/clients", "/invoices", "/books", "/shop"
 export const FRAME_LOCALES = ["fr", "en"];
 export const PAGES = ["/en", "/fr", "/en/explore", "/fr/explore", "/en/privacy", "/fr/privacy", "/en/changelog", "/fr/changelog", "/en/sign-in", "/fr/sign-in", ...SHOP_PAGES];
 
+/** The basemap's tiles and glyphs: `/maps/v1`, which next.config rewrites to the media CDN. A layout audit measures boxes, not tiles (akinaza#625). */
+export const TILE_PATH = /\/maps\/v1\//;
+
+/** A fixture answer for a tile request: 200 and nothing, served by the audit itself, so the run never reaches the CDN (a 500 from it failed #558's merge queue). */
+export async function stubTiles(context) {
+  await context.route(
+    (url) => TILE_PATH.test(url.pathname),
+    (route) => route.fulfill({ status: 200, contentType: "application/octet-stream", body: "" }),
+  );
+  return context;
+}
+
+/** The audit's browser, whose every context answers tile requests with the fixture. */
+export async function launchWithStubbedTiles() {
+  const browser = await chromium.launch();
+  const newContext = browser.newContext.bind(browser);
+  browser.newContext = async (options) => stubTiles(await newContext(options));
+  return browser;
+}
+
 const arg = (name, fallback) => {
   const i = process.argv.indexOf(`--${name}`);
   return i >= 0 ? process.argv[i + 1] : fallback;
@@ -34,7 +55,7 @@ const arg = (name, fallback) => {
  * edge and the site bar over the development notice (akinaza#440, `[data-top-chrome]`) are measured by the audit itself.
  */
 export const CHECKS = { status: true, emptyMain: true, frame: true, minAction: 36 };
-export const OPTIONS = { widths: WIDTHS, themes: THEMES, themeKey: "kz-theme", height: 900, settleMs: SETTLE_MS, ignoreConsole: [], checks: CHECKS };
+export const OPTIONS = { launch: launchWithStubbedTiles, widths: WIDTHS, themes: THEMES, themeKey: "kz-theme", height: 900, settleMs: SETTLE_MS, ignoreConsole: [], checks: CHECKS };
 export const A11Y = { app: "akinaza", baseline: A11Y_BASELINE, widths: A11Y_WIDTHS };
 
 /** The owner's session: sign in through the API, then the pages of the frame under the shop `/app` leads to, in both languages. */
