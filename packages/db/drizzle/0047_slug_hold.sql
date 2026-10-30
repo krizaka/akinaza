@@ -10,8 +10,8 @@ CREATE OR REPLACE FUNCTION refresh_shop_search(p_shop uuid) RETURNS void LANGUAG
 BEGIN
   DELETE FROM shop_search WHERE shop_id = p_shop
     AND NOT EXISTS (SELECT 1 FROM shops WHERE id = p_shop AND published AND NOT slug_held AND slug IS NOT NULL);
-  INSERT INTO shop_search (shop_id, slug, name, name_norm, kind, area, tagline_fr, tagline_en, timezone, quartiers, lat, lng, search)
-  SELECT s.id, s.slug, s.name, f_unaccent(lower(s.name)), s.kind, s.area, s.tagline_fr, s.tagline_en, s.timezone,
+  INSERT INTO shop_search (shop_id, kind, timezone, slug, name, name_norm, area, tagline_en, tagline_fr, quartiers, lat, lng, search)
+  SELECT s.id, s.kind, s.timezone, s.slug, s.name, f_unaccent(lower(s.name)), s.area, s.tagline_en, s.tagline_fr,
          COALESCE(z.names, '{}'), z.lat, z.lng,
          to_tsvector('simple', f_unaccent(concat_ws(' ', s.name, s.area, s.tagline_fr, s.tagline_en, array_to_string(z.names, ' '), v.names)))
   FROM shops s
@@ -22,9 +22,9 @@ BEGIN
     FROM shop_zones WHERE shop_id = s.id AND active) z ON true
   LEFT JOIN LATERAL (SELECT string_agg(name_fr || ' ' || name_en, ' ') AS names FROM services WHERE shop_id = s.id AND active) v ON true
   WHERE s.id = p_shop AND s.published AND NOT s.slug_held AND s.slug IS NOT NULL
-  ON CONFLICT (shop_id) DO UPDATE SET slug = EXCLUDED.slug, name = EXCLUDED.name, name_norm = EXCLUDED.name_norm, kind = EXCLUDED.kind,
-    area = EXCLUDED.area, tagline_fr = EXCLUDED.tagline_fr, tagline_en = EXCLUDED.tagline_en, timezone = EXCLUDED.timezone,
-    quartiers = EXCLUDED.quartiers, lat = EXCLUDED.lat, lng = EXCLUDED.lng, search = EXCLUDED.search;
+  ON CONFLICT (shop_id) DO UPDATE SET kind = EXCLUDED.kind, timezone = EXCLUDED.timezone, slug = EXCLUDED.slug, name = EXCLUDED.name,
+    name_norm = EXCLUDED.name_norm, area = EXCLUDED.area, tagline_en = EXCLUDED.tagline_en, tagline_fr = EXCLUDED.tagline_fr,
+    search = EXCLUDED.search, quartiers = EXCLUDED.quartiers, lat = EXCLUDED.lat, lng = EXCLUDED.lng;
 END $$;
 
 -- A held slug leaves the Explorer read model at once and comes back when cleared (the read model lists public shops only).
