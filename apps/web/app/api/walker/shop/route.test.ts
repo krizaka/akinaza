@@ -57,7 +57,7 @@ describe("adding a shop (#265)", () => {
   });
 
   it("forgets what the shop hosts' memory knows, so a published, unpublished or renamed shop answers from the database at once (#549)", async () => {
-    vi.mocked(saveShopPage).mockResolvedValue({ shopId: "a", created: false });
+    vi.mocked(saveShopPage).mockResolvedValue({ shopId: "a", created: false, held: false });
     let verdict: ShopVerdict = { kind: "shop" };
     const lookup = vi.fn(async () => verdict);
     const proxySide = createShopDirectory(lookup);
