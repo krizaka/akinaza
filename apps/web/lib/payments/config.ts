@@ -1,4 +1,4 @@
-import { type CheckoutRequest, type PaymentsPort, stripeAdapter } from "@krizaka/payments";
+import { type PaymentsPort, stripeAdapter } from "@krizaka/payments";
 
 import { ASSOCIATION, FOUNDER, PROCESSOR_PLANS, SCALE, STARTER } from "../pricing";
 
@@ -36,15 +36,3 @@ export function paymentsFrom(e: PaymentsSettings): PaymentsPort | null {
     },
   });
 }
-
-/**
- * A checkout that may start with free days. `trialDays` is carried by `CheckoutRequest` from @krizaka/payments 0.6 (krizaka-ts, noted in
- * lanes/platform.md); until Akinaza installs it the adapter would ignore the field and CHARGE at once, so the checkout route refuses
- * to open a trial on an adapter that does not declare it (`supportsTrial`) rather than say « free » and charge.
- */
-export type TrialCheckoutRequest = CheckoutRequest & { trialDays?: number };
-
-/** Whether the installed adapter carries `trialDays`: the port exposes `capabilities.trial` from 0.6. */
-export const supportsTrial = (port: PaymentsPort): boolean => (port as PaymentsPort & { capabilities?: { trial?: boolean } }).capabilities?.trial === true;
-
-export const checkoutWithTrial = (port: PaymentsPort, request: TrialCheckoutRequest) => port.checkout(request);

@@ -1176,8 +1176,7 @@
       "ASSOCIATION_REFERENCE": "This number does not look right: a NEQ has 10 digits, a charity number looks like 123456789RR0001.",
       "ASSOCIATION_NOT_APPROVED": "The Association plan opens once your proof is approved.",
       "PLAN_NOT_ON_SALE": "This plan is not on sale.",
-      "TRIAL_TEST_MODE_ONLY": "The free period is not available yet.",
-      "TRIAL_NOT_READY": "The free period is being set up. Try again later."
+      "TRIAL_TEST_MODE_ONLY": "The free period is not available yet."
     },
     "today": {
       "noShopTitle": "No shop yet",

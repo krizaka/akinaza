@@ -9,7 +9,7 @@ import { db, query } from "@/lib/db";
 import { env } from "@/lib/env";
 import { founderCap, onSale } from "@/lib/founder-offer";
 import { handle, HttpError, refuse } from "@/lib/http";
-import { checkoutWithTrial, isLiveMode, paymentsFrom, supportsTrial } from "@/lib/payments/config";
+import { isLiveMode, paymentsFrom } from "@/lib/payments/config";
 import { isPlanId, PLAN_KEY, type PlanId, planRefusal, trialDaysFor,TrialRefused } from "@/lib/plans";
 import { appPrices } from "@/lib/price-catalogue";
 import { PROCESSOR_PLANS } from "@/lib/pricing";
@@ -34,8 +34,8 @@ async function guardPlan(plan: PlanId, entry: Entry, accountId: string): Promise
   if (refusal) throw refuse(409, refusal, "This plan is not on sale");
 }
 
-/** The free days of this checkout (once per account, never on a live key); an adapter that cannot carry them sells nothing rather than say « free » and charge. */
-async function trialFor(entry: Entry, accountId: string, options: { liveMode: boolean; carriesTrial: boolean }): Promise<number> {
+/** The free days of this checkout (once per account, never on a live key); @krizaka/payments 0.7 carries them on every adapter. */
+async function trialFor(entry: Entry, accountId: string, options: { liveMode: boolean }): Promise<number> {
   let days: number;
   try {
     days = trialDaysFor(entry, { eligible: await trialEligible(query, accountId), liveMode: options.liveMode });
@@ -43,7 +43,6 @@ async function trialFor(entry: Entry, accountId: string, options: { liveMode: bo
     if (error instanceof TrialRefused) throw refuse(503, error.code, "The free trial is only available in test mode");
     throw error;
   }
-  if (days > 0 && !options.carriesTrial) throw refuse(503, "TRIAL_NOT_READY", "The free trial is being set up");
   return days;
 }
 
@@ -72,7 +71,7 @@ export function POST(req: Request) {
     limit("billing", req, account.id, [20, 3600]);
     const entry = await appPrices().entry(PLAN_KEY[plan], systemClock.now());
     await guardPlan(plan, entry, account.id);
-    const trialDays = await trialFor(entry, account.id, { liveMode: isLiveMode(e), carriesTrial: supportsTrial(port) });
+    const trialDays = await trialFor(entry, account.id, { liveMode: isLiveMode(e) });
     const kind = PROCESSOR_PLANS[PLAN_KEY[plan]].kind;
     try {
       // The price shown is the price charged: a processor still on another amount (a change not yet set up there) sells nothing.
@@ -83,7 +82,7 @@ export function POST(req: Request) {
       await audit({ action: "billing.terms_accepted", actorId: account.id, actorLabel: account.email, targetId: account.id, detail: { termsVersion: TERMS_VERSION, priceVersion: entry.versionId, plan, trialDays }, headers: req.headers });
       const customerId = await customerOf(query, account.id, () => port.createCustomer(account.email, account.id));
       const base = `${e.APP_PUBLIC_URL.replace(/\/$/, "")}/${account.locale}`;
-      const session = await checkoutWithTrial(port, { kind, trialDays: trialDays || undefined, customerId, accountId: account.id, successUrl: `${base}/app?billing=success`, cancelUrl: `${base}?billing=cancelled`, locale: account.locale });
+      const session = await port.checkout({ kind, trialDays: trialDays || undefined, customerId, accountId: account.id, successUrl: `${base}/app?billing=success`, cancelUrl: `${base}?billing=cancelled`, locale: account.locale });
       return redirect ? new Response(null, { status: 303, headers: { Location: session.url } }) : Response.json({ url: session.url });
     } catch (error) {
       if (error instanceof PaymentsError) throw refuse(502, "PAYMENTS_UNAVAILABLE", "The payment page could not be opened");

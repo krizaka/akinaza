@@ -87,8 +87,7 @@ Rules:
 - **The free period is the subscription's trial at the processor** (`trialing`), no promo machinery of our own: `lib/plans.ts` decides the days (the entry's
   `trialDays`, once per account: never for an account that already had a subscription), the checkout passes `trialDays` to the port, and the webhook's
   `trialing` status with its period end is « free until ». A trial on a live processor key is REFUSED (503 `TRIAL_TEST_MODE_ONLY`, `isLiveMode`): it is a test-mode
-  feature until proven. The port's `trialDays` field and `capabilities.trial` come from `@krizaka/payments` 0.6 (krizaka-ts); until Akinaza installs it the
-  checkout answers 503 `TRIAL_NOT_READY` rather than say « free » and charge.
+  feature until proven. The port's `trialDays` field and `capabilities.trial` come from `@krizaka/payments` (installed at 0.7.0), so the former 503 `TRIAL_NOT_READY` path is gone.
 - **Association proof** (`association_proofs`, one pending per account): the shop sends its NEQ (10 digits), its registered charity number (`123456789RR0001`)
   or the reference of its incorporation document; an administrator checks it at `/console/associations` and approves or refuses (reason shown to the shop), each
   decision audited (`billing.association_approved|rejected`). Until approved, the Association checkout answers 403 `ASSOCIATION_NOT_APPROVED` and the account is on

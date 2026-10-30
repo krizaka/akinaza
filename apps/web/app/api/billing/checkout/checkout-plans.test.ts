@@ -5,7 +5,6 @@ const state = vi.hoisted(() => ({
   approved: false,
   eligible: true,
   secret: "sk_test_x",
-  trial: true,
   amounts: { starter: 2900, scale: 6900, association: 100, founder: 3900 } as Record<string, number>,
   requests: [] as Record<string, unknown>[],
   recorded: [] as string[],
@@ -32,7 +31,7 @@ vi.mock("@/lib/price-catalogue", async () => {
 vi.mock("@/lib/payments/config", async (original) => ({
   ...(await original<typeof import("@/lib/payments/config")>()),
   paymentsFrom: () => ({
-    capabilities: { trial: state.trial },
+    capabilities: { trial: true },
     price: async (kind: string) => ({ amount: state.amounts[kind] ?? 0, currency: "cad", interval: "month" }),
     createCustomer: async () => ({ id: "cus_1" }),
     checkout: async (request: Record<string, unknown>) => (state.requests.push(request), { url: "https://pay.test/s", checkoutRef: "cs_1", expiresAt: null }),
@@ -43,7 +42,7 @@ import { POST } from "./route";
 
 const call = (plan: string) => POST(new Request(`http://x/api/billing/checkout?plan=${plan}&locale=en`, { method: "POST" }));
 const body = async (r: Response) => (await r.json()) as { code?: string; url?: string };
-const reset = () => Object.assign(state, { approved: false, eligible: true, secret: "sk_test_x", trial: true, requests: [], recorded: [] });
+const reset = () => Object.assign(state, { approved: false, eligible: true, secret: "sk_test_x", requests: [], recorded: [] });
 
 describe("the checkout sells a plan of the catalogue, with its free months (ADR-003 addendum 2026-10-30)", () => {
   it("Starter starts with the entry's 90 free days, and the version offered is the new 29 $ one", async () => {
@@ -68,13 +67,10 @@ describe("the checkout sells a plan of the catalogue, with its free months (ADR-
     expect(state.requests[0]!.trialDays).toBeUndefined();
   });
 
-  it("refuses a trial on a live processor key, and never says free and charges when the adapter cannot carry the free days", async () => {
+  it("refuses a trial on a live processor key", async () => {
     reset();
     state.secret = "sk_live_x";
     expect(await body(await call("starter"))).toMatchObject({ code: "TRIAL_TEST_MODE_ONLY" });
-    reset();
-    state.trial = false;
-    expect(await body(await call("starter"))).toMatchObject({ code: "TRIAL_NOT_READY" });
     expect(state.requests).toEqual([]);
   });
 
