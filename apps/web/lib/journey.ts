@@ -3,6 +3,7 @@ import type { BookingDetail, PublicShop, StaffSlot } from "@akinaza/db";
 
 import { type Locale, translator } from "@/lib/i18n";
 import { type Choice, confirmHref, journeyBase, serviceHref, timesHref } from "@/lib/journey-paths";
+import { isOnQuote } from "@/lib/service-price";
 import { groupByPart, hourIn } from "@/lib/slot-weeks";
 import { clockLabel } from "@/lib/storefront";
 
@@ -56,10 +57,12 @@ export function serviceStep(input: { page: PublicShop; locale: Locale; serviceId
   if (!service) return null;
   const t = translator(locale);
   const { staffId, zoneId } = resolveChoice(page, { staff: input.staffId, zone: input.zoneId });
-  const free = service.priceCents === 0;
+  const onQuote = isOnQuote(service);
+  const free = service.priceCents === 0 && !onQuote;
   const totals = invoiceTotals([{ description: service.nameEn, quantity: 1, unitPriceCents: service.priceCents, category: "standard" }], { registrant: page.shop.registrant });
   const listed = service.priceVaries ? t("console.journey.fromPrice", { price: money(service.priceCents, locale) }) : money(service.priceCents, locale);
-  const price = free ? t("console.journey.freeService") : listed;
+  const unlisted = free ? t("console.journey.freeService") : listed;
+  const price = onQuote ? t("console.journey.onQuote") : unlisted;
   const pick = (fr: string | null, en: string | null) => (locale === "fr" ? fr : en) || null;
   return {
     name: locale === "fr" ? service.nameFr : service.nameEn,
@@ -68,7 +71,7 @@ export function serviceStep(input: { page: PublicShop; locale: Locale; serviceId
     duration: t("console.shopPage.minutes", { minutes: service.durationMinutes }),
     price,
     free,
-    taxLine: page.shop.registrant && !free ? t("console.journey.taxLine", { price: money(totals.subtotalCents, locale), gst: money(totals.gstCents, locale), qst: money(totals.qstCents, locale), total: money(totals.totalCents, locale) }) : null,
+    taxLine: page.shop.registrant && !free && !onQuote ? t("console.journey.taxLine", { price: money(totals.subtotalCents, locale), gst: money(totals.gstCents, locale), qst: money(totals.qstCents, locale), total: money(totals.totalCents, locale) }) : null,
     cancelRule: t("console.journey.cancelRule", { hours: page.rules.cancellationHours }),
     team:
       page.team.length > 1

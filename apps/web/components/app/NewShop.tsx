@@ -13,7 +13,7 @@ import { useRef, useState } from "react";
 import { rememberShop } from "@/app/actions/remember-shop";
 import { IdentityFields, identityForm } from "@/components/app/ShopPageSections";
 import { PLAIN_PAGE, TemplateChoiceGrid } from "@/components/app/TemplateChoiceGrid";
-import { errorKey } from "@/lib/client";
+import { errorFields, errorKey } from "@/lib/client";
 import { useSay } from "@/lib/i18n-client";
 import { setUpNewShop } from "@/lib/new-shop-setup";
 import { type RouteLocale, shopRoutes } from "@/lib/routes";
@@ -58,7 +58,7 @@ export function NewShop({ locale, backHref, first = false, offers = null }: Read
         router.push(shopRoutes(locale, shopId).setup);
         router.refresh();
       } catch (error) {
-        setProblem(say(`errors.${errorKey(error)}`));
+        setProblem(errorFields(error).includes("slug") ? say("shopSetup.addShop.slugInvalid") : say(`errors.${errorKey(error)}`));
       }
     },
   });
