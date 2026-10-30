@@ -27,6 +27,12 @@ describe("the home is short and concrete", () => {
     expect(SCREENS.map((s) => s.id)).toEqual(["book", "invoice", "books"]);
   });
 
+  it("names the screens' section with a heading, so the features' h3 follow an h2 (axe heading-order, #448)", () => {
+    expect(home).toContain("featuresHeading={{ title: d.screensTitle }}");
+    expect(en.landing.screensTitle).toBeTruthy();
+    expect(fr.landing.screensTitle).toBeTruthy();
+  });
+
   it("carries no filler: no eyebrow, figures band, mascot, comparison, FAQ, changelog or closing panel", () => {
     for (const needle of ["eyebrow=", "proofs={", "MascotQuote", "NumberTicker", "ComparisonSection", "FaqSection", "JourneyTour", "closing={{"]) expect(home, needle).not.toContain(needle);
   });
