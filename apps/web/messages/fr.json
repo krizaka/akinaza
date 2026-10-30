@@ -3346,6 +3346,8 @@
       "inspector": "Section",
       "noSelection": "Choisissez une section pour changer sa présentation.",
       "backToSections": "Retour aux sections",
+      "hidePanel": "Masquer : {name}",
+      "showPanel": "Afficher : {name}",
       "variant": "Présentation",
       "settings": "Réglages",
       "words": "Vos mots",

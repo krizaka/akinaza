@@ -3346,6 +3346,8 @@
       "inspector": "Section",
       "noSelection": "Choose a section to change how it is drawn.",
       "backToSections": "Back to sections",
+      "hidePanel": "Hide {name}",
+      "showPanel": "Show {name}",
       "variant": "How it is drawn",
       "settings": "Settings",
       "words": "Your words",
