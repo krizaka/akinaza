@@ -46,5 +46,8 @@ describe("the visual regression", () => {
     expect(start).toContain("APP_ENVIRONMENT=dev");
     expect(start).toContain("seed-cast.mjs");
     expect(start).toContain(".visual-now");
+    // the browser's clock is the fixed instant, never the day of the run (baselines drifted at midnight)
+    expect(start).toMatch(/printf '%s\\n' "\$APP_FIXED_NOW" > \.visual-now/);
+    expect(start).not.toMatch(/date -u .*> \.visual-now/);
   });
 });

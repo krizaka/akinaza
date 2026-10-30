@@ -20,7 +20,7 @@ const LOCALE_COOKIE = cookieName("NEXT_LOCALE");
 
 /** ADR-005 slice 1 (akinaza#534): a write to the API that carries the web session comes from this origin, else 403 (a shop host is same-site: SameSite=Lax does not stop it). */
 function crossSiteWrite(request: NextRequest): NextResponse | null {
-  if (!request.nextUrl.pathname.startsWith("/api/")) return null;
+  if (!request.nextUrl.pathname.startsWith("/api/")) {return null;}
   const refused = refusesCrossSiteWrite({ method: request.method, headers: request.headers, origin: process.env.APP_PUBLIC_URL ?? SITE_URL, sessionCookie: SESSION_COOKIE });
   return refused ? NextResponse.json({ error: { code: "CROSS_SITE_WRITE", message: "This request does not come from the app" } }, { status: 403 }) : null;
 }
@@ -37,7 +37,7 @@ function policy(nonce?: string, appOrigin?: string): string {
  */
 function stampPolicy(forwarded: Headers, route: HostRoute, pathname: string, appOrigin?: string): string {
   const path = route.kind === "rewrite" ? route.path : pathname;
-  if (!isShopPath(path)) return policy();
+  if (!isShopPath(path)) {return policy();}
   const nonce = newNonce();
   const csp = policy(nonce, appOrigin);
   forwarded.set("content-security-policy", csp);
@@ -55,17 +55,17 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   const closed = !indexableOn(host);
   const pathname = request.nextUrl.pathname;
   // ADR-005 slice 4 (#536): a host this deployment does not serve is answered 421 before anything is routed or built from it (the platform's health check names its own).
-  if (!HOST_FREE_PATHS.includes(pathname) && !isAllowedHost(host, process.env)) return new NextResponse("Misdirected Request", { status: 421, headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });
+  if (!HOST_FREE_PATHS.includes(pathname) && !isAllowedHost(host, process.env)) {return new NextResponse("Misdirected Request", { status: 421, headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });}
   // The dev host serves the API too: the check comes first.
   const refused = crossSiteWrite(request);
-  if (refused) return refused;
+  if (refused) {return refused;}
   // dev.<product>.com (APP_DEV_HOST): robots.txt closes everything; a page goes to www (308); the API, .well-known and
   // healthz keep serving - all noindex. Nothing below runs for it.
   if (isDevHost(host)) {
     const headers = { "x-robots-tag": NOINDEX };
-    if (pathname === "/robots.txt") return new NextResponse(closedRobots(), { headers: { ...headers, "content-type": "text/plain" } });
+    if (pathname === "/robots.txt") {return new NextResponse(closedRobots(), { headers: { ...headers, "content-type": "text/plain" } });}
     const to = devRedirect(request.method, pathname, request.nextUrl.search, process.env.APP_PUBLIC_URL ?? SITE_URL);
-    if (to) return NextResponse.redirect(to, { status: 308, headers });
+    if (to) {return NextResponse.redirect(to, { status: 308, headers });}
     const response = NextResponse.next();
     response.headers.set("x-robots-tag", NOINDEX);
     response.headers.set("Content-Security-Policy", policy());
@@ -74,7 +74,7 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   // The API and /.well-known pass untouched; on a host closed to search engines they say noindex.
   if (pathname.startsWith("/api/") || pathname.startsWith("/.well-known/")) {
     const response = NextResponse.next();
-    if (closed) response.headers.set("x-robots-tag", NOINDEX);
+    if (closed) {response.headers.set("x-robots-tag", NOINDEX);}
     response.headers.set("Content-Security-Policy", policy());
     return response;
   }
@@ -82,8 +82,8 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
   const shop = shopHostOf(host, process.env);
   if (shop) {
     return shopVerdict(shop.slug).then((verdict) => {
-      if (verdict.kind === Verdict.None) return new NextResponse("Not found", { status: 404, headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX, "cache-control": "private, no-store" } });
-      if (verdict.kind === Verdict.Moved) return NextResponse.redirect(`${shopOriginOf(verdict.slug, process.env)}${pathname}${request.nextUrl.search}`, { status: 308, headers: { "x-robots-tag": NOINDEX } });
+      if (verdict.kind === Verdict.None) {return new NextResponse("Not found", { status: 404, headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX, "cache-control": "private, no-store" } });}
+      if (verdict.kind === Verdict.Moved) {return NextResponse.redirect(`${shopOriginOf(verdict.slug, process.env)}${pathname}${request.nextUrl.search}`, { status: 308, headers: { "x-robots-tag": NOINDEX } });}
       return serve(request, closed, shop.own);
     });
   }
@@ -109,15 +109,15 @@ function serve(request: NextRequest, closed: boolean, ownShopHost: boolean): Nex
   const shopHost = shop !== null;
   // A shop's own page is nobody's landing: the app's session never goes there (ADR-005), so no hint can send a visitor away from it.
   const home = admin || shop ? null : landingRedirect(request, { cookie: SESSION_COOKIE, landing: LANDING, home: () => `/${pageLocaleOf(pathname, chosen)}/app`, origin: site });
-  if (home) return NextResponse.redirect(home.headers.get("location") ?? "/", { status: home.status, headers: home.headers });
+  if (home) {return NextResponse.redirect(home.headers.get("location") ?? "/", { status: home.status, headers: home.headers });}
   // A deployment closed to search engines (APP_SEARCH_INDEXING=off): robots.txt disallows everything (the sitemap is still served, noindexed).
-  if (closed && request.nextUrl.pathname === "/robots.txt") return new NextResponse(CLOSED_ROBOTS, { headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });
+  if (closed && request.nextUrl.pathname === "/robots.txt") {return new NextResponse(CLOSED_ROBOTS, { headers: { "content-type": "text/plain", "x-robots-tag": NOINDEX } });}
   // The language of the address, handed to the pages (the 404 has no params): set on the request, never trusted from the client.
   const forwarded = new Headers(request.headers);
   forwarded.set(LOCALE_HEADER, pageLocaleOf(pathname, chosen));
   forwarded.set(PATH_HEADER, pathname + request.nextUrl.search);
   // No session ever reaches a shop's page (it renders for a stranger): the app's cookie is dropped from what the page reads, whatever the browser sent.
-  if (shopHost) forwarded.set("cookie", dropCookie(request.headers.get("cookie"), SESSION_COOKIE));
+  if (shopHost) {forwarded.set("cookie", dropCookie(request.headers.get("cookie"), SESSION_COOKIE));}
   const csp = stampPolicy(forwarded, route, pathname, ownShopHost ? appOriginOf(process.env) : undefined);
   let response: NextResponse;
   switch (route.kind) {
@@ -146,7 +146,7 @@ function redirectOf(request: NextRequest, route: Extract<HostRoute, { kind: "red
   const proto = request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol.replace(":", "");
   const target = new URL(route.path, host ? `${proto}://${host}` : request.url);
   // A move of the shop domain keeps the query and answers 308 (the booking hop and the old addresses); the others keep their 307.
-  if (route.permanent) target.search = request.nextUrl.search;
+  if (route.permanent) {target.search = request.nextUrl.search;}
   return NextResponse.redirect(target, route.permanent ? { status: 308, headers: { "x-robots-tag": NOINDEX } } : undefined);
 }
 
@@ -156,12 +156,12 @@ function dressed(response: NextResponse, request: NextRequest, { csp, noindex, n
   if ((segment === "en" || segment === "fr") && request.cookies.get(LOCALE_COOKIE)?.value !== segment) {
     response.cookies.set(ownCookie(LOCALE_COOKIE, segment, { httpOnly: false, maxAge: 60 * 60 * 24 * 365 }));
   }
-  if (noindex) response.headers.set("x-robots-tag", NOINDEX);
+  if (noindex) {response.headers.set("x-robots-tag", NOINDEX);}
   // The page of a shop is for one request: never shared from a cache whose key could lose the host (ADR-005 §3).
-  if (noStore) response.headers.set("cache-control", "private, no-store");
+  if (noStore) {response.headers.set("cache-control", "private, no-store");}
   response.headers.set("Content-Security-Policy", csp);
   // The readable hint is the app's own: a shop's host never carries it (no session reaches a shop page).
-  if (!hint) return response;
+  if (!hint) {return response;}
   return sessionHint(response, request, { cookie: SESSION_COOKIE, secure: process.env.NODE_ENV === "production" });
 }
 

@@ -40,7 +40,7 @@ describe("the shop directory", () => {
   it("holds at most a thousand addresses: a flood of random labels costs misses, not memory", async () => {
     const lookup = vi.fn(async (): Promise<ShopVerdict> => ({ kind: "none" }));
     const verdictOf = createShopDirectory(lookup, () => 0);
-    for (let i = 0; i < 1100; i++) await verdictOf(`label-${i}`);
+    for (let i = 0; i < 1100; i++) {await verdictOf(`label-${i}`);}
     lookup.mockClear();
     await verdictOf("label-1099");
     expect(lookup).not.toHaveBeenCalled();

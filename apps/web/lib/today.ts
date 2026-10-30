@@ -1,4 +1,4 @@
-import type { TaxCategory } from "@akinaza/core";
+import { localDay, type TaxCategory } from "@akinaza/core";
 import { agendaConflicts, schema } from "@akinaza/db";
 import { and, eq, ne, sql } from "drizzle-orm";
 
@@ -41,9 +41,9 @@ export interface TodayView {
  * shop's time zone. `staffAccountId` narrows it to the appointments of that person (a staff member sees their own agenda).
  * The client of an appointment is read from the appointment or, for a booked visit, from its first booking.
  */
-export async function todayView(shop: { id: string; name: string; registrant: boolean; timezone: string }, options: { day?: string; staffAccountId?: string } = {}): Promise<TodayView> {
+export async function todayView(shop: { id: string; name: string; registrant: boolean; timezone: string }, options: { day?: string; staffAccountId?: string; /** The instant of the request (`requestNow()`): the shop's today follows it, never the database clock. */ now: Date }): Promise<TodayView> {
   const requested = options.day;
-  const [{ today } = { today: "" }] = (await db().execute(sql`SELECT to_char(now() AT TIME ZONE ${shop.timezone}, 'YYYY-MM-DD') AS today`)).rows as { today: string }[];
+  const today = localDay(options.now, shop.timezone);
   const day = isIsoDay(requested) ? requested : today;
   const rows = await db()
     .select({ a: appointments, staff: staff.name, nameFr: services.nameFr, nameEn: services.nameEn, price: services.priceCents, category: services.taxCategory, clientId: clients.id, client: clients.fullName, start: sql<string>`lower(${appointments.during})`, end: sql<string>`upper(${appointments.during})` })

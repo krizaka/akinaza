@@ -1,5 +1,39 @@
 {
   "product": "akinaza",
   "cdn": "https://krizaka-assets.b-cdn.net",
-  "videos": []
+  "videos": [
+    {
+      "platform": "android",
+      "flow": "today-books",
+      "seconds": 9.9,
+      "capturedAt": "2026-10-30T06:26:04.287Z",
+      "files": {
+        "webm": "sites/akinaza/download/android-today-books.8ad6575b9e.webm",
+        "mp4": "sites/akinaza/download/android-today-books.9c53957010.mp4",
+        "poster": "sites/akinaza/download/android-today-books.6b09491873.jpg"
+      }
+    },
+    {
+      "platform": "web",
+      "flow": "composer",
+      "seconds": 10.6,
+      "capturedAt": "2026-10-30T06:25:47.631Z",
+      "files": {
+        "webm": "sites/akinaza/download/web-composer.a3dede0a8e.webm",
+        "mp4": "sites/akinaza/download/web-composer.8e8adc4331.mp4",
+        "poster": "sites/akinaza/download/web-composer.25c342ec7b.jpg"
+      }
+    },
+    {
+      "platform": "web",
+      "flow": "storefront",
+      "seconds": 15.8,
+      "capturedAt": "2026-10-30T06:25:56.002Z",
+      "files": {
+        "webm": "sites/akinaza/download/web-storefront.7dd74062ac.webm",
+        "mp4": "sites/akinaza/download/web-storefront.c0178e20d3.mp4",
+        "poster": "sites/akinaza/download/web-storefront.73a99ee8a9.jpg"
+      }
+    }
+  ]
 }
