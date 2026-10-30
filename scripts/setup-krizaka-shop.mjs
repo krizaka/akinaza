@@ -87,13 +87,14 @@ await save("contact");
 
 await tab("offer");
 for (const o of OFFERS) {
-  if (await page.getByText(o.nameEn, { exact: true }).count()) {
+  const row = page.locator("li p.font-semibold").filter({ hasText: new RegExp(`^${o.nameEn}$`) });
+  if (await row.count()) {
     log(`offer already there: ${o.nameEn}`);
     continue;
   }
   await page.getByLabel("Name, in French").fill(o.nameFr);
   await page.getByLabel("Name, in English").fill(o.nameEn);
-  await page.getByLabel("Minutes").fill(String(o.durationMinutes));
+  await page.getByLabel("Minutes", { exact: true }).fill(String(o.durationMinutes));
   await page.getByLabel("Price (before taxes)").fill("0");
   await page.getByLabel("Sentence (French)").fill(o.descriptionFr);
   await page.getByLabel("Sentence (English)").fill(o.descriptionEn);
@@ -102,7 +103,7 @@ for (const o of OFFERS) {
   const varies = page.getByLabel(/^The price varies/);
   if ((await varies.isChecked()) !== o.priceVaries) await varies.click();
   await page.getByRole("button", { name: "Add the service" }).click();
-  await page.getByText(o.nameEn, { exact: true }).first().waitFor({ timeout: 15_000 });
+  await row.first().waitFor({ timeout: 15_000 });
   log(`offer: ${o.nameEn}`);
 }
 
@@ -124,7 +125,7 @@ for (const p of gallery) {
   await page.waitForTimeout(3000);
 }
 // The gallery is one line per picture: `address | alt (fr) | alt (en) | caption (fr) | caption (en)`; the uploads gave the addresses, the alt texts are completed here.
-const box = page.getByLabel("Gallery");
+const box = page.locator('textarea[name="gallery"]');
 const lines = (await box.inputValue()).split("\n").filter(Boolean);
 await box.fill(lines.map((line, i) => [line.split("|")[0].trim(), gallery[i]?.altFr ?? "", gallery[i]?.altEn ?? "", gallery[i]?.captionFr ?? "", gallery[i]?.captionEn ?? ""].join(" | ").replace(/( \| )+$/, "")).join("\n"));
 await save("photos");
