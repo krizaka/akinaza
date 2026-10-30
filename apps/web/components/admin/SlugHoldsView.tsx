@@ -95,7 +95,7 @@ function HoldQueue() {
   const [selected, setSelected] = useState<string | null>(null);
   const data = useQuery({ queryKey: HOLDS, queryFn: () => krizakaFetch("/api/admin/slug-holds", { schema: holdsAnswer }) });
   const columns = useMemo(() => holdColumns(say, locale, setSelected), [say, locale]);
-  if (!data.data) return null;
+  if (!data.data) {return null;}
   const rows = data.data.held;
   const current = rows.find((r) => r.shopId === selected) ?? null;
   return (
@@ -188,7 +188,7 @@ function ProtectedTerms() {
     onError: (error) => setProblem(say(`errors.${errorKey(error)}`)),
   });
   const stored = data.data ? storedTerms(data.data.values[TERMS_KEY]) : null;
-  if (stored === null) return null;
+  if (stored === null) {return null;}
   const change = (next: string) => {
     setProblem(null);
     return save.mutateAsync(next).then(() => true, () => false);
@@ -277,7 +277,7 @@ export function TermItem({ row, busy, onEdit, onRemove }: Readonly<{ row: Return
 }
 
 function reportLine(say: Say, report: Report): string {
-  if (report.apply) return say("admin.slugHolds.rejudge.applied", { count: report.shops.length, notified: report.notified });
+  if (report.apply) {return say("admin.slugHolds.rejudge.applied", { count: report.shops.length, notified: report.notified });}
   return say(report.shops.length === 0 ? "admin.slugHolds.rejudge.foundNone" : "admin.slugHolds.rejudge.found", { count: report.shops.length });
 }
 
@@ -290,7 +290,7 @@ function Rejudge() {
     mutationFn: (apply: boolean) => krizakaFetch("/api/admin/slug-holds/rejudge", { method: "POST", json: { apply }, schema: reportAnswer }),
     onSuccess: async (answer) => {
       setReport(answer);
-      if (answer.apply) await client.invalidateQueries({ queryKey: HOLDS });
+      if (answer.apply) {await client.invalidateQueries({ queryKey: HOLDS });}
     },
     onError: (error) => setProblem(say(`errors.${errorKey(error)}`)),
   });

@@ -37,7 +37,7 @@ describe("the one-off re-judging of the shops that predate the hold (ADR-005, #5
     expect(found.mails.map((m) => [m.to, m.locale])).toEqual([["a@x.test", "fr"], ["b@x.test", "en"]]);
     expect(found.mails[0]!.subject).toContain("Salon Laurier");
     expect(found.mails[0]!.text).toContain("login-laurier");
-    expect(found.mails[0]!.text).toContain("https://www.akinaza.com/fr/app/s1/boutique/page");
+    expect(found.mails[0]!.text).toContain("https://www.akinaza.com/fr/app/s1/settings/page");
     expect(found.mails[1]!.text).toContain("stays private until we have checked it");
   });
 });
