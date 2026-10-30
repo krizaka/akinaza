@@ -61,12 +61,12 @@ describe("the cast is the only source of the personas", () => {
   });
 
   it("compares a local database exactly, and the lived-in dev one by « everything recorded is there » (accounts still exact)", () => {
-    const recorded = "accounts=8;appointments=2;clients=5;invoices=12;services=4;shops=1";
-    const counts = { accounts: 8, appointments: 2, clients: 5, invoices: 12, services: 4, shops: 1 };
+    const recorded = "accounts=9;appointments=2;clients=5;invoices=12;services=4;shops=1";
+    const counts = { accounts: 9, appointments: 2, clients: 5, invoices: 12, services: 4, shops: 1 };
     expect(matchesRecorded(counts, recorded, true)).toBe(true);
     expect(matchesRecorded({ ...counts, appointments: 36, clients: 6 }, recorded, true)).toBe(false);
     expect(matchesRecorded({ ...counts, appointments: 36, clients: 6 }, recorded, false)).toBe(true);
     expect(matchesRecorded({ ...counts, invoices: 11 }, recorded, false)).toBe(false);
-    expect(matchesRecorded({ ...counts, accounts: 9 }, recorded, false)).toBe(false);
+    expect(matchesRecorded({ ...counts, accounts: 10 }, recorded, false)).toBe(false);
   });
 });
