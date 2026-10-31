@@ -1,3 +1,5 @@
+import { isPastDue } from "./payment-terms";
+
 /**
  * Where an invoice stands for the list (akinaza#218): a credit note; an invoice cancelled by a credit note or replaced by a
  * correction (#207); paid in full; partly paid; overdue (its due date passed with money still owed); or due. Integer cents,
@@ -20,7 +22,7 @@ export function invoiceState(invoice: InvoiceStanding, today: string): InvoiceSt
   if (invoice.isCredit) return INVOICE_STATE.credit;
   if (invoice.superseded) return INVOICE_STATE.cancelled;
   if (invoice.paidCents >= invoice.totalCents) return INVOICE_STATE.paid;
-  if (invoice.dueOn && invoice.dueOn < today) return INVOICE_STATE.overdue;
+  if (isPastDue(invoice.dueOn, today)) return INVOICE_STATE.overdue;
   return invoice.paidCents > 0 ? INVOICE_STATE.partial : INVOICE_STATE.due;
 }
 

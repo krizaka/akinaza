@@ -15,12 +15,15 @@ import { formatLongDay, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
 import { type DraftLine, draftPreview, draftRequestLines, type DraftService, emptyLine } from "@/lib/invoice-draft";
 import { QUANTITY_FIELD } from "@/lib/quantity";
+import { dueOn, termsChoices } from "@akinaza/core";
 
 export interface InvoiceFormData {
   /** The shop's today: the date of the invoice. */
   today: string;
   /** The shop charges the GST and the QST (a small supplier charges none). */
   registrant: boolean;
+  /** The shop's payment terms in days: what an invoice is issued under unless the person picks others. */
+  termsDays: number;
   clients: { id: string; fullName: string; language: "fr" | "en" }[];
   services: DraftService[];
 }
@@ -41,12 +44,13 @@ export const STICKY_CLEARS_TAB_BAR = "bottom-[calc(3.5rem+env(safe-area-inset-bo
 const invoiceForm = createKrizakaForm({
   schema: z.object({
     clientId: z.string(),
+    termsDays: z.string(),
     lines: z
       .array(z.object({ key: z.string(), serviceId: z.string(), description: z.string().trim().max(200), quantity: QUANTITY_FIELD, unitPriceCents: z.number().int().min(0) }))
       .min(1)
       .max(40),
   }),
-  defaultValues: { clientId: "", lines: [emptyLine("l0")] },
+  defaultValues: { clientId: "", termsDays: "30", lines: [emptyLine("l0")] },
 });
 
 type Field = `lines[${number}].${"serviceId" | "description" | "quantity" | "unitPriceCents"}`;
@@ -61,6 +65,17 @@ function Step({ n, title, children }: Readonly<{ n: string; title: string; child
       {children}
     </section>
   );
+}
+
+/** The day the invoice falls due under the terms picked, said under the picker. */
+function DueLine({ today }: Readonly<{ today: string }>) {
+  const { say, locale } = useSay();
+  const picked = useFormValue<string>("termsDays");
+  const days = Number(picked);
+  if (!Number.isInteger(days)) {
+    return null;
+  }
+  return <p className="text-sm text-fg-secondary">{say("invoices.new.termsDue", { date: formatLongDay(dueOn(today, days), locale) })}</p>;
 }
 
 /** The total of the lines being typed, as the server will compute it. */
@@ -103,18 +118,25 @@ export function InvoiceForm({ data, locale: base, start }: Readonly<InvoiceFormP
   const keys = useRef(start.lines.length);
   const form = invoiceForm.useForm({
     i18n: { t: (key, vars) => say(key, vars as Record<string, string | number> | undefined), locale },
-    defaultValues: { clientId: start.clientId, lines: start.lines },
+    defaultValues: { clientId: start.clientId, termsDays: String(data.termsDays), lines: start.lines },
     onSubmit: async (values) => {
       const lines = draftRequestLines(values.lines);
       setNeedLine(lines.length === 0);
       if (lines.length === 0) return;
       // The invoice is in the client's language (the shop's page language without a client), dated today, under the shop's terms.
       const language = data.clients.find((c) => c.id === values.clientId)?.language ?? base;
-      const done = await call.run<{ id: string }>("/api/walker/invoices", { json: { clientId: values.clientId || null, appointmentId: start.appointmentId ?? null, language, issuedOn: data.today, lines } }, { refresh: false });
+      const done = await call.run<{ id: string }>("/api/walker/invoices", { json: { clientId: values.clientId || null, appointmentId: start.appointmentId ?? null, language, issuedOn: data.today, termsDays: Number(values.termsDays), lines } }, { refresh: false });
       if (done !== null) router.push(`${routes.invoice(done.id)}?issued=1`);
     },
   });
   const name = (s: { nameFr: string; nameEn: string }) => ({ fr: s.nameFr, en: s.nameEn })[locale];
+  const termsLabel = (days: number) => {
+    if (days === 0) {
+      return say("invoiceDoc.termsOnReceipt");
+    }
+    return days === 1 ? say("invoiceDoc.termsNetOne") : say("invoiceDoc.termsNet", { days });
+  };
+  const termsOptions = termsChoices(data.termsDays).map((days) => ({ value: String(days), label: termsLabel(days) }));
   const serviceOptions = [...data.services.map((s) => ({ value: s.id, label: `${name(s)} · ${formatMoney(s.priceCents, locale)}` })), { value: "", label: say("invoices.new.freeLine") }];
   const submit = (
     <form.Submit size="lg" variant="primary" className="w-full font-bold" data-primary>
@@ -160,6 +182,8 @@ export function InvoiceForm({ data, locale: base, start }: Readonly<InvoiceFormP
         </Step>
         <Step n="03" title={say("invoices.new.steps.when")}>
           <p className="max-w-prose text-fg-secondary">{say("invoices.new.when", { date: formatLongDay(data.today, locale) })}</p>
+          <form.Select name="termsDays" label={say("invoices.new.terms")} options={termsOptions} />
+          <DueLine today={data.today} />
         </Step>
         {needLine ? <Alert tone="danger">{say("invoices.new.needLine")}</Alert> : null}
         {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
