@@ -665,6 +665,7 @@
       "prices": "Prix",
       "incidents": "Incidents",
       "addresses": "Adresses des boutiques",
+      "storage": "Stockage",
       "associations": "Associations"
     },
     "admin": {
@@ -1037,6 +1038,36 @@
         "retain": "Conservé au registre jusqu'au {date}.",
         "close": "Fermer l'incident",
         "closedNote": "Cette entrée est fermée. Elle reste au registre et n'est plus jamais modifiée."
+      },
+      "storage": {
+        "title": "Où sont gardés les fichiers",
+        "lead": "Les photos, vidéos et fichiers des commerces et de leurs clients. Le fournisseur et la région sont le choix de l'administrateur, enregistré dans la base et journalisé ; les clés d'accès restent dans l'environnement, jamais sur cet écran.",
+        "canada": "Au Canada",
+        "elsewhere": "Ailleurs",
+        "provider": {
+          "digitalocean-spaces": "DigitalOcean Spaces",
+          "aws-s3": "Amazon S3",
+          "ovhcloud": "OVHcloud"
+        },
+        "regionLabel": "{provider} · {region}",
+        "current": "Enregistré maintenant",
+        "none": "Rien d'enregistré ici : l'environnement du déploiement décide (et les envois sont refusés sans stockage).",
+        "bucket": "Bucket",
+        "bucketHint": "Le bucket créé chez le fournisseur, dans cette région.",
+        "save": "Enregistrer",
+        "saved": "Enregistré. Les nouveaux fichiers vont dans cette région ; les fichiers existants sont déplacés en arrière-plan, vérifiés par leur SHA-256.",
+        "pick": "Région",
+        "preview": "Si vous enregistrez ceci :",
+        "residency": {
+          "canada-qc": "Les fichiers sont gardés au Canada, au Québec.",
+          "canada-on": "Les fichiers sont gardés au Canada, en Ontario (Toronto).",
+          "canada-ab": "Les fichiers sont gardés au Canada, en Alberta.",
+          "canada": "Les fichiers sont gardés au Canada (la province n'est pas précisée).",
+          "elsewhere": "Les fichiers ne sont pas gardés au Canada : ils sont stockés hors du pays.",
+          "unknown": "On ne sait pas où les fichiers sont gardés : aucune phrase ne dit « Canada ».",
+          "user-cloud": "Les fichiers restent dans le nuage que la personne a connecté elle-même.",
+          "device": "Les fichiers restent sur le disque du serveur (développement seulement)."
+        }
       },
       "associations": {
         "title": "Preuves d’association",
