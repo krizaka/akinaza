@@ -16,7 +16,7 @@ vi.mock("next/link", () => ({
 }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }), usePathname: () => "/en" }));
 
-const wordsOf = (c: typeof en): BarWords => ({ signIn: c.chrome.signIn, tryIt: c.chrome.tryIt, openApp: c.chrome.openApp, account: c.chrome.account, settings: c.chrome.settings, language: c.chrome.languageLabel, theme: c.chrome.themeToggle, signOut: c.chrome.signOut });
+const wordsOf = (c: typeof en): BarWords => ({ signIn: c.chrome.signIn, tryIt: c.chrome.tryIt, openApp: c.chrome.openApp, account: c.chrome.account, settings: c.chrome.settings, subscription: c.chrome.subscription, language: c.chrome.languageLabel, theme: c.chrome.themeToggle, signOut: c.chrome.signOut });
 const render = (me: Parameters<typeof BarActionsView>[0]["me"], locale: "en" | "fr" = "en", placement: "bar" | "panel" = "bar") =>
   renderToStaticMarkup(<BarActionsView me={me} locale={locale} words={wordsOf(locale === "en" ? en : (fr as typeof en))} placement={placement} onSignOut={() => undefined} />);
 const text = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");

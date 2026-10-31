@@ -7,7 +7,7 @@ import en from "../messages/en.json";
 import fr from "../messages/fr.json";
 import { format } from "./i18n";
 import { ASSOCIATION, FOUNDER, PRICES, SCALE, STARTER } from "./pricing";
-import { pricingPlans } from "./pricing-view";
+import { pricingPlans, subscriptionPlans } from "./pricing-view";
 import { pricesInForce } from "./test-prices";
 
 const read = (p: string) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
@@ -165,5 +165,23 @@ describe("the free months and the Association plan, in words (founder request 20
     }
     expect(en.pricing.soon).toBe("Soon");
     expect(fr.pricing.soon).toBe("Bientôt");
+  });
+});
+
+describe("the Subscription page and /pricing sell the same plans (krizaka-internal#1913)", () => {
+  it.each(["en", "fr"] as const)("every plan of the Subscription page is a plan of /pricing, with its price and free months (%s)", async (locale) => {
+    const pricing = await view(undefined, locale, true);
+    const sold = subscriptionPlans(pricing);
+    expect(sold.map((p) => p.id)).toEqual(["starter", "scale", "association"]);
+    for (const plan of sold) {
+      const shown = pricing.find((p) => p.id === plan.id)!;
+      expect({ price: plan.price, trial: plan.trial }).toEqual({ price: shown.price, trial: shown.trial });
+    }
+    expect(sold.find((p) => p.id === "starter")).toMatchObject({ trial: { months: 3, days: 90 } });
+  });
+
+  it("a plan in preparation is not sold, and the founder flag does not hide the plans on the Subscription page", () => {
+    expect(subscriptionPlans([{ id: "scale", price: null, limit: null, trial: null, features: [] }])).toEqual([]);
+    expect(read("app/[locale]/(app)/app/(account)/profile/subscription/page.tsx")).not.toMatch(/canStart = e\.APP_FOUNDER_OFFER_ENABLED/);
   });
 });

@@ -52,7 +52,7 @@ export function BarActionsView({ me, locale, words, placement, onSignOut }: Read
             <Link href={`/${locale}/app`} prefetch={false}>{words.openApp}</Link>
           </Button>
         ) : (
-          <AkinazaAccountMenu locale={locale} accountId={me.account.id} name={me.account.name} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} words={words} onSignOut={onSignOut} />
+          <AkinazaAccountMenu locale={locale} accountId={me.account.id} name={me.account.name} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} subscriptionHref={`/${locale}/app/profile/subscription`} words={words} onSignOut={onSignOut} />
         )}
       </>
     );
