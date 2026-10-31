@@ -154,6 +154,16 @@ function BillVisits({ board, billHref, invoicesHref }: Readonly<{ board: TodayBo
   );
 }
 
+/** The day's one primary: bill the visits when there are some, else open the next appointment, else a new invoice. */
+function TodayPrimary({ board, routes, ...next }: Readonly<{ board: TodayBoard | null; routes: ShopRoutes } & Parameters<typeof DayPrimary>[0]>) {
+  const unbilled = board?.toBill[0] ?? null;
+  if (board && unbilled) {
+    const billHref = routes.newInvoiceFor({ client: unbilled.clientId ?? undefined, service: unbilled.serviceId, quantity: "1", appointment: unbilled.appointmentId });
+    return <BillVisits board={board} billHref={billHref} invoicesHref={routes.invoices} />;
+  }
+  return <DayPrimary {...next} />;
+}
+
 /** The activity of the period: one discreet row of three figures, never stacked full width (B2), and the period's chips. */
 function ActivityWidget({ board, totals, period, address }: Readonly<{ board: TodayBoard; totals: { invoiced: number; collected: number; appointments: number }; period: BoardPeriod; address: (next: DayAddressChange) => string }>) {
   const { say, locale } = useSay();
@@ -406,9 +416,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
   const billing = open ? billAppointmentHref(open.appointment, routes, newInvoiceHref !== null) : null;
   // The day's one primary (D1b): open the next appointment; when nobody comes next, a new invoice. The frame's header yields here.
   const next = summary.next;
-  const unbilled = board?.toBill[0] ?? null;
-  const billHref = unbilled ? routes.newInvoiceFor({ client: unbilled.clientId ?? undefined, service: unbilled.serviceId, quantity: "1", appointment: unbilled.appointmentId }) : null;
-  const primary = board && billHref ? <BillVisits board={board} billHref={billHref} invoicesHref={routes.invoices} /> : <DayPrimary next={next} nextHref={next ? address({ appointment: next.id }) : null} newInvoiceHref={newInvoiceHref} time={time} />;
+  const primary = <TodayPrimary board={board} routes={routes} next={next} nextHref={next ? address({ appointment: next.id }) : null} newInvoiceHref={newInvoiceHref} time={time} />;
 
   const headline = headlineMessage(dayHeadline(appointments, now, isToday), { dependants });
   const words = headlineWords(headline.vars, time, locale);
