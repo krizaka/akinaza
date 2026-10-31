@@ -51,6 +51,11 @@ async function reachGuestStep(page, base, locale) {
   await expect(page.locator("[data-guest-summary]")).toBeVisible();
 }
 
+/** Cloudflare's test widget solves itself in a moment: the form can be sent once it has handed its token over. */
+async function captchaSolved(page) {
+  await expect.poll(() => page.locator('input[name="cf-turnstile-response"]').inputValue().catch(() => ""), { timeout: 30_000, message: "the security check hands its token over" }).not.toBe("");
+}
+
 async function fillDetails(page, locale, email) {
   const w = W[locale];
   await page.getByLabel(w.name, { exact: true }).fill("Camille Roy");
@@ -70,6 +75,7 @@ for (const locale of ["en", "fr"]) {
     await expect(page.locator("[data-guest-cancel-rule]")).toHaveCount(1);
     await expect(page.getByRole("checkbox", { name: w.consent })).not.toBeChecked();
     await fillDetails(page, locale, email);
+    await captchaSolved(page);
     await page.getByRole("button", { name: w.send }).click();
     const code = await codeFor(email);
     expect(code, "the code arrives by e-mail").not.toBeNull();
@@ -86,6 +92,7 @@ test("guest booking, security check refused: nothing is mailed, no code step", a
   const email = `e2e-guest-refused-${Date.now()}@akinaza.test`;
   await reachGuestStep(page, FAIL_BASE, "en");
   await fillDetails(page, "en", email);
+  await captchaSolved(page);
   const answer = page.waitForResponse((r) => r.url().includes("/guest/code") && r.request().method() === "POST");
   await page.getByRole("button", { name: W.en.send }).click();
   expect((await answer).status()).toBe(400);
