@@ -6,11 +6,15 @@
 // never printed (a database on this machine gets local defaults).
 //
 //   DATABASE_URL=… [DATABASE_CA_CERT=…] [APP_DATA_ENCRYPTION_KEY=…] [QA_WALKER_PASSWORD=… QA_CLIENTS_PASSWORD=… QA_ADMIN_EMAIL=… QA_ADMIN_PASSWORD=… QA_KRIZAKA_PASSWORD=…] \
-//     pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs [--check]
+//     pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs [--clean] [--check]
+//
+// `--clean` removes what a journey left on the demo shop (a dog, a booking, a client file the cast does not name); `--check` fails
+// when anything of the kind is still there, besides comparing the fingerprint (akinaza #1915).
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { createDb, migrate, pg, poolConfig } from "@akinaza/db";
+import { cleanDemoLeftovers, demoLeftovers } from "@akinaza/db/demo-clean";
 import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri } from "@akinaza/db/seed-walker";
 import { castOf, persona, seedFingerprint } from "@krizaka/org";
 
@@ -93,10 +97,27 @@ export function matchesRecorded(counts, expected, exact) {
   return Object.entries(recorded).every(([table, n]) => (exact || table === "accounts" ? counts[table] === n : counts[table] >= n));
 }
 
+/** What the demo shop holds, and nothing more: the clients of the seed with their dogs. A journey that adds to it must remove what it added. */
+export const DEMO_CAST = {
+  shopSlug: SAINT_HENRI.shop.slug,
+  clients: SAINT_HENRI.clients.map((c) => ({ email: c.email, dogs: c.dogs.map((d) => d.name) })),
+};
+
 /** The seed works on dev and local only. */
 export function assertNotProduction(env) {
   const environment = env.APP_ENVIRONMENT ?? "dev";
   if (environment !== "dev") {throw new Error(`seed-cast works only on dev and local, and APP_ENVIRONMENT is "${environment}" — refused`);}
+}
+
+/** `--clean` removes what a journey left on the demo shop; `--check` fails while anything of the kind is still there. */
+async function cleanAndCheckLeftovers(db, argv) {
+  if (argv.includes("--clean")) {
+    const cleaned = await cleanDemoLeftovers(db, DEMO_CAST);
+    console.log(`demo-clean: ${cleaned.clients} client file(s), ${cleaned.dogs} dog(s), ${cleaned.bookings} booking(s), ${cleaned.visits} visit(s), ${cleaned.accounts} sign-in(s) removed`);
+  }
+  if (!argv.includes("--check")) {return;}
+  const left = await demoLeftovers(db, DEMO_CAST);
+  if (left.clients.length + left.dogs.length > 0) {throw new Error(`the demo shop holds data the cast does not name: ${left.clients.length} client file(s), ${left.dogs.length} dog(s) — run with --clean`);}
 }
 
 async function main() {
@@ -131,6 +152,7 @@ async function main() {
     await ensureOwnerStates(pool, accounts[0].secret);
     const { fingerprint, counts } = await fingerprintOf((sql, values) => pool.query(sql, values), ids, ids[0]);
     console.log(`fingerprint: ${fingerprint}`);
+    await cleanAndCheckLeftovers(createDb(pool), process.argv);
     if (process.argv.includes("--check")) {
       const expected = JSON.parse(readFileSync(new URL("./cast-fingerprint.json", import.meta.url), "utf8")).fingerprint;
       const exact = isLocalHost(url);

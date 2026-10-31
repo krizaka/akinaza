@@ -11,6 +11,7 @@
     "./plaintext-leak": "./src/plaintext-leak.ts",
     "./seed": "./src/seed.ts",
     "./seed-walker": "./src/seed-walker.ts",
+    "./demo-clean": "./src/demo-clean.ts",
     "./qa-reset-walker": "./src/qa-reset-walker.ts",
     "./seed-krizaka": "./src/seed-krizaka.ts",
     "./seed-owner-states": "./src/seed-owner-states.ts"

@@ -70,3 +70,15 @@ describe("the cast is the only source of the personas", () => {
     expect(matchesRecorded({ ...counts, accounts: 10 }, recorded, false)).toBe(false);
   });
 });
+
+describe("the demo shop is the cast and nothing more (akinaza #1915)", () => {
+  it("names the seed's five clients with their dogs, so a leftover is anything else", async () => {
+    const { DEMO_CAST } = await import("../scripts/seed-cast.mjs");
+    expect(DEMO_CAST.shopSlug).toBe("pattes-saint-henri");
+    expect(DEMO_CAST.clients).toHaveLength(5);
+    expect(DEMO_CAST.clients.flatMap((c: { dogs: string[] }) => c.dogs)).toEqual(["Rex", "Luna", "Biscuit", "Pixel", "Érable", "Tofu"]);
+  });
+  it("lets the walker journey clean up after itself", () => {
+    expect(readFileSync(`${root}/package.json`, "utf8")).toMatch(/"e2e:walker": "[^"]*demo:clean/);
+  });
+});
