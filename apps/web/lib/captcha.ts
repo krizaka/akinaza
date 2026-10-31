@@ -45,10 +45,12 @@ export async function verifyCaptcha(token: unknown, ip: string, env: Env, now: (
   const key = env.ABUSE_CAPTCHA_SECRET_KEY!.trim();
   const options = { secret: key, hostnames: hostnamesOf(env), now };
   // A test key's widget hands out the same dummy token every time: no replay memory for it (production refuses such a key).
-  let verify = fetchImpl ? createTurnstileVerifier({ ...options, fetch: fetchImpl }) : isTurnstileTestKey(key) ? undefined : verifiers.get(key);
+  const remembered = !isTurnstileTestKey(key);
+  let verify = fetchImpl ? createTurnstileVerifier({ ...options, fetch: fetchImpl }) : undefined;
+  if (!fetchImpl && remembered) verify = verifiers.get(key);
   if (!verify) {
     verify = createTurnstileVerifier(options);
-    if (!isTurnstileTestKey(key)) verifiers.set(key, verify);
+    if (remembered) verifiers.set(key, verify);
   }
   return (await verify({ token, remoteIp: ip })).ok;
 }
