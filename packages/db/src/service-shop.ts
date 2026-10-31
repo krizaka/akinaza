@@ -835,7 +835,7 @@ export interface BookingDetail {
   startsAt: Date;
   endsAt: Date;
   timezone: string;
-  shop: { name: string; slug: string; address: string; publicPhone: string | null };
+  shop: { name: string; slug: string; address: string; publicPhone: string | null; registrant: boolean };
   service: { id: string; nameFr: string; nameEn: string; durationMinutes: number; priceCents: number };
   /** The first name of the person who takes the visit. */
   staffName: string;
@@ -847,7 +847,7 @@ export interface BookingDetail {
 export async function bookingDetail(db: Db, accountId: string, bookingId: string, now: Date): Promise<BookingDetail | null> {
   const found = await db.execute(sql`
     SELECT b.id, (b.status = 'cancelled') AS cancelled, lower(a.during) AS starts_at, upper(a.during) AS ends_at, a.checked_in_at,
-           s.name AS shop_name, s.slug, s.address, s.public_phone, s.timezone,
+           s.name AS shop_name, s.slug, s.address, s.public_phone, s.registrant, s.timezone,
            v.id AS service_id, v.name_fr, v.name_en, v.duration_minutes, v.price_cents, m.name AS staff_name, r.cancellation_hours
       FROM bookings b
       JOIN clients c ON c.id = b.client_id AND c.account_id = ${accountId} AND c.erased_at IS NULL
@@ -858,7 +858,7 @@ export async function bookingDetail(db: Db, accountId: string, bookingId: string
       JOIN shop_rules r ON r.shop_id = s.id
      WHERE b.id = ${bookingId}`);
   const r = found.rows[0] as
-    | { id: string; cancelled: boolean; starts_at: string; ends_at: string; checked_in_at: string | null; shop_name: string; slug: string; address: string; public_phone: string | null; timezone: string; service_id: string; name_fr: string; name_en: string; duration_minutes: number; price_cents: number; staff_name: string; cancellation_hours: number }
+    | { id: string; cancelled: boolean; starts_at: string; ends_at: string; checked_in_at: string | null; shop_name: string; slug: string; address: string; public_phone: string | null; registrant: boolean; timezone: string; service_id: string; name_fr: string; name_en: string; duration_minutes: number; price_cents: number; staff_name: string; cancellation_hours: number }
     | undefined;
   if (!r) return null;
   const startsAt = new Date(r.starts_at);
@@ -868,7 +868,7 @@ export async function bookingDetail(db: Db, accountId: string, bookingId: string
     startsAt,
     endsAt: new Date(r.ends_at),
     timezone: r.timezone,
-    shop: { name: r.shop_name, slug: r.slug, address: r.address, publicPhone: r.public_phone },
+    shop: { name: r.shop_name, slug: r.slug, address: r.address, publicPhone: r.public_phone, registrant: r.registrant },
     service: { id: r.service_id, nameFr: r.name_fr, nameEn: r.name_en, durationMinutes: r.duration_minutes, priceCents: r.price_cents },
     staffName: r.staff_name,
     cancellationHours: r.cancellation_hours,

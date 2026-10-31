@@ -4,9 +4,11 @@ import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
+import { requestNow } from "@/app/request-now";
 import { BookingFlow } from "@/components/app/BookingFlow";
 import { SpaceChrome } from "@/components/app/SpaceChrome";
 import { ConsoleProviders } from "@/components/console/ConsoleProviders";
+import { BookingSummary } from "@/components/journey/BookingSummary";
 import { GuestBooking } from "@/components/journey/GuestBooking";
 import { JourneyFrame } from "@/components/journey/JourneyFrame";
 import { pageSession } from "@/lib/access";
@@ -41,12 +43,17 @@ export default async function ConfirmPage({ params, searchParams }: Readonly<{ p
   const file = (await clientFilesOf(db(), session.account.id)).find((f) => f.shopId === page.shop.id) ?? null;
   const dogs = file ? await dependantsOf(db(), file.id) : [];
   const t = consoleFor(locale, page.shop.businessType).book;
+  const tr = translator(locale);
+  const choice = resolveChoice(page, { staff: searchValue(query.staff), zone: searchValue(query.zone) });
+  const chosen = bookingPreselect({ service: id, zone: choice.zoneId, start: searchValue(query.start) }, page.services, page.zones);
+  const summary = chosen.startsAt ? guestStep({ page, locale, serviceId: id, startsAt: new Date(chosen.startsAt), now: requestNow(), staffId: choice.staffId, zoneId: choice.zoneId }) : null;
   return (
     <ConsoleProviders locale={locale} messages={{ console: getDictionary(locale).console }}>
     <SpaceChrome locale={locale} account={session.account} member={null}>
       <div className="flex flex-col gap-4">
         <PageHeader title={format(t.title, { shop: page.shop.name })} />
         <VocabularyProvider type={page.shop.businessType}>
+        {summary ? <BookingSummary step={summary} words={{ when: tr("console.journey.when"), who: tr("console.journey.who"), price: tr("console.journey.price") }} /> : null}
         <BookingFlow
           data={{
             shop: { id: page.shop.id, name: page.shop.name, slug },
@@ -78,7 +85,7 @@ function guestView({ locale, slug, id, page, query, here }: Readonly<{ locale: R
   if (!preselect.startsAt) {
     redirect(timesHref(locale, slug, id, choice));
   }
-  const step = guestStep({ page, locale, serviceId: id, startsAt: new Date(preselect.startsAt), staffId: choice.staffId, zoneId: choice.zoneId });
+  const step = guestStep({ page, locale, serviceId: id, startsAt: new Date(preselect.startsAt), now: requestNow(), staffId: choice.staffId, zoneId: choice.zoneId });
   if (!step) {
     notFound();
   }
@@ -86,19 +93,7 @@ function guestView({ locale, slug, id, page, query, here }: Readonly<{ locale: R
     <ConsoleProviders locale={locale} messages={{ console: getDictionary(locale).console }}>
       <JourneyFrame locale={locale} head={{ shop: page.shop.name, step: t("console.journey.stepOf", { step: 3, total: 4, label: t("console.journey.stepConfirm") }), edit: { href: step.changeHref, label: t("console.journey.edit") } }} path={`/${locale}/s/${slug}/service/${id}/confirm`} back={{ href: step.changeHref, label: step.service }} title={step.service}>
         <VocabularyProvider type={page.shop.businessType}>
-          <dl data-guest-summary="" className="m-0 grid max-w-2xl gap-x-6 gap-y-1 text-fg sm:grid-cols-[max-content_1fr]">
-            <dt className="text-fg-secondary">{t("console.journey.when")}</dt>
-            <dd className="m-0">{step.when}</dd>
-            {step.who ? (
-              <>
-                <dt className="text-fg-secondary">{t("console.journey.who")}</dt>
-                <dd className="m-0">{step.who}</dd>
-              </>
-            ) : null}
-            <dt className="text-fg-secondary">{t("console.journey.price")}</dt>
-            <dd className="m-0">{step.taxLine ?? step.price}</dd>
-          </dl>
-          <p data-guest-cancel-rule="" className="m-0 max-w-2xl text-fg-secondary">{step.cancelRule}</p>
+          <BookingSummary step={step} words={{ when: t("console.journey.when"), who: t("console.journey.who"), price: t("console.journey.price") }} />
           <GuestBooking data={{ shop: { name: page.shop.name, slug }, serviceId: id, zoneId: choice.zoneId, staffId: choice.staffId, startsAt: preselect.startsAt, signInHref: `/${locale}/sign-in?next=${encodeURIComponent(here)}` }} />
         </VocabularyProvider>
       </JourneyFrame>

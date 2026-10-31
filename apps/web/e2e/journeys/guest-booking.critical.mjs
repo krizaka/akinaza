@@ -2,8 +2,9 @@
 // receives the 6-digit code by e-mail, types it and lands on the receipt. Behind a CAPTCHA: the server runs with Cloudflare's always-pass
 // TEST key (public, documented, refused when APP_ENVIRONMENT=prod: lib/captcha.ts); a second server with the always-fail test key proves
 // the refusal (nothing is mailed, nothing is booked). Demo data only, under @akinaza.test addresses.
-import { createServer } from "node:http";
 import { expect, test } from "@playwright/test";
+
+import { testMailbox } from "./test-mailbox.mjs";
 
 const SLUG = "pattes-saint-henri";
 const MAIL_PORT = Number(process.env.E2E_MAIL_PORT ?? 3299);
@@ -13,31 +14,10 @@ const W = {
   fr: { name: "Votre nom", email: "Courriel", phone: "Téléphone", consent: /^J'accepte que/, send: "M'envoyer le code", code: "Code", confirm: "Confirmer ma réservation", booked: "C'est réservé", dog: "Nom" },
 };
 
-// The test mailbox: the provider's « send a message » call, kept in memory (never logged: it holds a code).
-const mails = [];
-let mailbox;
-test.beforeAll(async () => {
-  mailbox = createServer((req, res) => {
-    let body = "";
-    req.on("data", (chunk) => (body += chunk));
-    req.on("end", () => {
-      const form = new URLSearchParams(body);
-      mails.push({ to: form.get("to") ?? "", text: form.get("text") ?? "" });
-      res.writeHead(200, { "content-type": "application/json" }).end("{}");
-    });
-  });
-  await new Promise((resolve) => mailbox.listen(MAIL_PORT, "127.0.0.1", resolve));
-});
-test.afterAll(() => mailbox?.close());
-
-const codeFor = async (to) => {
-  for (let i = 0; i < 60; i += 1) {
-    const code = /\b(\d{6})\b/.exec(mails.filter((m) => m.to === to).at(-1)?.text ?? "")?.[1];
-    if (code) return code;
-    await new Promise((resolve) => setTimeout(resolve, 250));
-  }
-  return null;
-};
+const mailbox = testMailbox(MAIL_PORT);
+const { mails, codeFor } = mailbox;
+test.beforeAll(() => mailbox.start());
+test.afterAll(() => mailbox.stop());
 
 /** Shop → service → time → the guest step; returns once the details form is shown. */
 async function reachGuestStep(page, base, locale) {

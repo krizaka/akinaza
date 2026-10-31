@@ -1,4 +1,4 @@
-import { addLocalDays, groupSlotsByDay, invoiceTotals, localDay } from "@akinaza/core";
+import { addLocalDays, canCancel, groupSlotsByDay, invoiceTotals, localDay } from "@akinaza/core";
 import type { BookingDetail, PublicShop, StaffSlot } from "@akinaza/db";
 
 import { type Locale, translator } from "@/lib/i18n";
@@ -59,7 +59,6 @@ export function serviceStep(input: { page: PublicShop; locale: Locale; serviceId
   const { staffId, zoneId } = resolveChoice(page, { staff: input.staffId, zone: input.zoneId });
   const onQuote = isOnQuote(service);
   const free = service.priceCents === 0 && !onQuote;
-  const totals = invoiceTotals([{ description: service.nameEn, quantity: 1, unitPriceCents: service.priceCents, category: "standard" }], { registrant: page.shop.registrant });
   const listed = service.priceVaries ? t("console.journey.fromPrice", { price: money(service.priceCents, locale) }) : money(service.priceCents, locale);
   const unlisted = free ? t("console.journey.freeService") : listed;
   const price = onQuote ? t("console.journey.onQuote") : unlisted;
@@ -71,7 +70,7 @@ export function serviceStep(input: { page: PublicShop; locale: Locale; serviceId
     duration: t("console.shopPage.minutes", { minutes: service.durationMinutes }),
     price,
     free,
-    taxLine: page.shop.registrant && !free && !onQuote ? t("console.journey.taxLine", { price: money(totals.subtotalCents, locale), gst: money(totals.gstCents, locale), qst: money(totals.qstCents, locale), total: money(totals.totalCents, locale) }) : null,
+    taxLine: taxLineOf({ registrant: page.shop.registrant, priceCents: service.priceCents, free, onQuote, locale }),
     cancelRule: t("console.journey.cancelRule", { hours: page.rules.cancellationHours }),
     team:
       page.team.length > 1
@@ -86,7 +85,7 @@ export function serviceStep(input: { page: PublicShop; locale: Locale; serviceId
 export interface TimesStep {
   title: string;
   who: string | null;
-  days: { id: string; label: string; sub: string; slots: { id: string; label: string; href: string }[]; groups: { id: string; label: string; slots: { id: string; label: string; href: string }[] }[] }[];
+  days: { id: string; label: string; sub: string; slots: { id: string; label: string; note?: string; href: string }[]; groups: { id: string; label: string; slots: { id: string; label: string; note?: string; href: string }[] }[] }[];
   /** The shop's clock, said under the times. */
   footer: string;
   changeHref: string | null;
@@ -110,9 +109,11 @@ export function timesStep(input: { page: PublicShop; locale: Locale; now: Date; 
     footer: t("console.journey.timesFooter", { zone: timezone }),
     days: groupSlotsByDay(input.slots, timezone, { maxDays: 14, maxPerDay: 12 }).map((d) => {
       const named: Record<string, string> = { [today]: t("console.shopPage.today"), [tomorrow]: t("console.shopPage.tomorrow") };
+      // A time already inside the cancellation window says so in the list, before the click (the same `canCancel` that words the summary).
       const slot = (s: { startsAt: Date }) => ({
         id: s.startsAt.toISOString(),
         label: clock(s.startsAt, timezone, locale),
+        ...(canCancel(s.startsAt, now, page.rules.cancellationHours) ? {} : { note: t("console.journey.slotInsideWindow") }),
         href: confirmHref(locale, slugOf(page), service.id, { staffId: person?.id, zoneId }, s.startsAt.toISOString()),
       });
       return {
@@ -142,6 +143,25 @@ export interface ConfirmationStep {
   phoneHref: string | null;
 }
 
+/**
+ * The cancellation rule said for THIS visit: the free window while it is open, the plain « it has passed » once the visit is inside it. The one place that
+ * words it, so the summary before the button, the receipt and the receipt e-mail cannot disagree. The window is decided by `canCancel` (core), the same
+ * function that lets the client cancel: exactly `hours` before the start is still free; an instant later is not (instants, so no time zone changes it).
+ */
+export function cancellationRule(input: { open: boolean; hours: number; locale: Locale }): string {
+  const t = translator(input.locale);
+  return input.open ? t("console.journey.cancelRule", { hours: input.hours }) : t("console.journey.cancelTooLate");
+}
+
+/** The exact price down to the total for a shop registered for the taxes (taxes included), the same line on the summary and on the receipt. */
+function taxLineOf(input: { registrant: boolean; priceCents: number; free: boolean; onQuote: boolean; locale: Locale }): string | null {
+  if (!input.registrant || input.free || input.onQuote) {
+    return null;
+  }
+  const totals = invoiceTotals([{ description: "service", quantity: 1, unitPriceCents: input.priceCents, category: "standard" }], { registrant: true });
+  return translator(input.locale)("console.journey.taxLine", { price: money(totals.subtotalCents, input.locale), gst: money(totals.gstCents, input.locale), qst: money(totals.qstCents, input.locale), total: money(totals.totalCents, input.locale) });
+}
+
 /** The confirmation: when, with whom, where, what it costs, the cancellation rule, add to calendar. */
 export function confirmationStep(input: { detail: BookingDetail; locale: Locale }): ConfirmationStep {
   const { detail, locale } = input;
@@ -155,10 +175,10 @@ export function confirmationStep(input: { detail: BookingDetail; locale: Locale 
     when: `${dayLabel(day, locale, "long")} · ${clock(detail.startsAt, detail.timezone, locale)}`,
     who: detail.staffName,
     where: `${detail.shop.name} — ${detail.shop.address}`,
-    price: detail.service.priceCents === 0 ? t("console.journey.freeService") : money(detail.service.priceCents, locale),
+    price: detail.service.priceCents === 0 ? t("console.journey.freeService") : (taxLineOf({ registrant: detail.shop.registrant, priceCents: detail.service.priceCents, free: false, onQuote: false, locale }) ?? money(detail.service.priceCents, locale)),
     cancelled: detail.cancelled,
     cancellable: detail.cancellable,
-    cancelRule: t("console.journey.cancelRule", { hours: detail.cancellationHours }),
+    cancelRule: cancellationRule({ open: detail.cancellable, hours: detail.cancellationHours, locale }),
     calendarHref: `/api/me/bookings/${detail.id}/calendar`,
     phone: phone ?? null,
     phoneHref: digits.length >= 7 ? `tel:${dialled}` : null,
@@ -177,7 +197,7 @@ export interface GuestStep {
 }
 
 /** What a visitor sees above the details they give: the service, the time they chose, the price with its taxes, the cancellation rule. Nothing is asked before they see it. */
-export function guestStep(input: { page: PublicShop; locale: Locale; serviceId: string; startsAt: Date; staffId: string | null; zoneId: string | null }): GuestStep | null {
+export function guestStep(input: { page: PublicShop; locale: Locale; serviceId: string; startsAt: Date; now: Date; staffId: string | null; zoneId: string | null }): GuestStep | null {
   const { page, locale, startsAt } = input;
   const service = serviceStep({ page, locale, serviceId: input.serviceId, staffId: input.staffId, zoneId: input.zoneId });
   if (!service) {
@@ -192,7 +212,7 @@ export function guestStep(input: { page: PublicShop; locale: Locale; serviceId: 
     who: person ? translator(locale)("console.journey.with", { name: person.name }) : null,
     price: service.price,
     taxLine: service.taxLine,
-    cancelRule: service.cancelRule,
+    cancelRule: cancellationRule({ open: canCancel(startsAt, input.now, page.rules.cancellationHours), hours: page.rules.cancellationHours, locale }),
     changeHref: timesHref(locale, slugOf(page), input.serviceId, { staffId, zoneId }),
   };
 }

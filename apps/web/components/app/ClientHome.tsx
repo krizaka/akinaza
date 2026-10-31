@@ -83,7 +83,9 @@ function FileSection({ file, primary }: Readonly<{ file: ClientFileView; /** Whe
   const { dependants } = useVocabulary();
   const when = (iso: string) => formatDate(iso, { locale: INTL_LOCALE[locale], style: "long", timeStyle: "short", timeZone: file.timeZone });
   const upcoming = file.bookings.filter((b) => b.status === "booked" && b.visitStatus === "booked" && b.startsAt >= file.now).sort((a, b) => a.startsAt.localeCompare(b.startsAt));
-  const past = file.bookings.filter((b) => !upcoming.includes(b));
+  // Three groups, never mixed: what is coming, what was cancelled, what happened.
+  const cancelled = file.bookings.filter((b) => b.status === "cancelled" || b.visitStatus === "cancelled").sort((a, b) => b.startsAt.localeCompare(a.startsAt));
+  const past = file.bookings.filter((b) => !upcoming.includes(b) && !cancelled.includes(b)).sort((a, b) => b.startsAt.localeCompare(a.startsAt));
   return (
     <section className="flex flex-col gap-4" aria-label={file.client.shopName}>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -95,6 +97,7 @@ function FileSection({ file, primary }: Readonly<{ file: ClientFileView; /** Whe
         ) : null}
       </div>
       <BookingList title={say("client.upcoming")} items={upcoming} file={file} when={when} cancellable />
+      <BookingList title={say("client.cancelledTitle")} items={cancelled} file={file} when={when} />
       <BookingList title={say("client.past")} items={past} file={file} when={when} />
       {file.invoices.length ? <InvoiceRows file={file} /> : null}
       {dependants && file.dogs.length ? (

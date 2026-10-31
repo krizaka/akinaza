@@ -7,9 +7,10 @@ import { audit } from "@/lib/audit";
 import { bookAndAnnounce } from "@/lib/book-visit";
 import { clientIp } from "@/lib/client-ip";
 import { db } from "@/lib/db";
-import { sessionSecret } from "@/lib/env";
+import { mailSettings, sessionSecret } from "@/lib/env";
 import { codeRefusal, guestConfirm, type GuestHold,guestVerification } from "@/lib/guest-booking";
 import { handle, readJson, refuse } from "@/lib/http";
+import { asLocale } from "@/lib/i18n";
 import { limit } from "@/lib/rate-limit";
 import { createSession, sessionCookie } from "@/lib/session";
 
@@ -50,7 +51,7 @@ export function POST(req: Request, { params }: { params: Promise<{ slug: string 
       const known = (await dependantsOf(db(), clientId)).find((d) => d.name.toLowerCase() === wanted);
       dependantIds.push(known?.id ?? (await addDependant(db(), clientId, { kind: "dog", name: hold.dependantName, profile: {} })));
     }
-    const booked = await bookAndAnnounce({ clientId, shopId: page.shop.id, serviceId: hold.serviceId, zoneId: hold.zoneId, dependantIds, startsAt: hold.startsAt, staffId: hold.staffId });
+    const booked = await bookAndAnnounce({ clientId, shopId: page.shop.id, serviceId: hold.serviceId, zoneId: hold.zoneId, dependantIds, startsAt: hold.startsAt, staffId: hold.staffId, receiptTo: { accountId: account.id, email: account.email, locale: asLocale(hold.language), settings: mailSettings() } });
     const { token, expires } = await createSession(account.id, { ip: clientIp(req.headers), userAgent: req.headers.get("user-agent") });
     (await cookies()).set(sessionCookie(token, expires));
     await audit({ action: "booking.guest_confirmed", actorId: account.id, actorLabel: account.email, targetId: booked.bookingIds[0] ?? clientId, detail: { shopId: page.shop.id }, headers: req.headers });
