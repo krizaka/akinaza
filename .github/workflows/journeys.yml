@@ -1,0 +1,24 @@
+name: journeys
+
+# The critical journeys (krizaka-internal#1934/#1938): the org's required check `journeys / gate` (krizaka/.github#465). The journeys are the
+# Playwright project `critical` of apps/web/e2e/journeys, run as the seeded demo cast on the production build; the CAPTCHA runs on Cloudflare's
+# published test keys (always pass / always fail), never on a real key.
+on:
+  pull_request:
+    branches: [main]
+  merge_group:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  journeys:
+    uses: krizaka/.github/.github/workflows/journeys.yml@be08be836bcce567d84a679d3f40aefab79ca4cc # main
+    permissions:
+      contents: read
+    with:
+      setup-command: "bash scripts/ci-journeys-start.sh"
+      personas: "camille.tremblay@demo"
+      command: "pnpm exec playwright test -c apps/web/e2e/journeys/playwright.config.mjs --project=critical"

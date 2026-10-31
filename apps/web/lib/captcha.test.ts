@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { captchaConfigured, captchaMissing, verifyCaptcha } from "./captcha";
+import { captchaConfigured, captchaMissing, isTurnstileTestKey, verifyCaptcha } from "./captcha";
 
 const now = () => new Date("2026-10-30T12:00:00Z");
 const answer = (success: boolean) => async () => ({ ok: true, json: async () => ({ success }) });
@@ -18,5 +18,17 @@ describe("the CAPTCHA of the public forms", () => {
     expect(await verifyCaptcha(undefined, "1.2.3.4", configured, now, answer(true))).toBe(false);
     expect(await verifyCaptcha("t", "1.2.3.4", configured, now, answer(false))).toBe(false);
     expect(await verifyCaptcha("t", "1.2.3.4", configured, now, answer(true))).toBe(true);
+  });
+
+  it("refuses Cloudflare's test keys in production, accepts them elsewhere (the CI journeys)", async () => {
+    const test = { ABUSE_CAPTCHA_PROVIDER: "turnstile", ABUSE_CAPTCHA_SECRET_KEY: "1x0000000000000000000000000000000AA" };
+    const prod = { ...test, NODE_ENV: "production", APP_ENVIRONMENT: "prod" };
+    expect(isTurnstileTestKey(test.ABUSE_CAPTCHA_SECRET_KEY)).toBe(true);
+    expect(isTurnstileTestKey("0x4AAAAAAAreal")).toBe(false);
+    expect(captchaConfigured({ ...test, NODE_ENV: "production", APP_ENVIRONMENT: "dev" })).toBe(true);
+    expect(captchaConfigured(prod)).toBe(false);
+    expect(captchaMissing(prod)).toBe(true);
+    expect(await verifyCaptcha("t", "1.2.3.4", prod, now, answer(true))).toBe(false);
+    expect(captchaConfigured({ ...prod, ABUSE_CAPTCHA_SECRET_KEY: "0x4AAAAAAAreal" })).toBe(true);
   });
 });

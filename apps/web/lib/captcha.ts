@@ -8,10 +8,21 @@ import { createTurnstileVerifier, type TurnstileFetch } from "@krizaka/rate-limi
 
 type Env = Record<string, string | undefined>;
 
-export const captchaConfigured = (env: Env = process.env): boolean => env.ABUSE_CAPTCHA_PROVIDER?.trim().toLowerCase() === "turnstile" && Boolean(env.ABUSE_CAPTCHA_SECRET_KEY?.trim());
+const isProduction = (env: Env): boolean => env.APP_ENVIRONMENT === "prod";
 
-/** Production without the check configured: the form refuses (503) rather than let every bot through. */
-export const captchaMissing = (env: Env = process.env): boolean => env.NODE_ENV === "production" && !captchaConfigured(env);
+/**
+ * Cloudflare's published TEST keys (1x = always passes, 2x = always fails, 3x = forced challenge): public, documented, used by the CI journeys
+ * (krizaka-internal#1934). They verify nothing, so a deployment that declares itself production (`APP_ENVIRONMENT=prod`) refuses them.
+ */
+export const isTurnstileTestKey = (key: string | undefined): boolean => /^[123]x0{10,}/.test(key?.trim() ?? "");
+
+export const captchaConfigured = (env: Env = process.env): boolean => {
+  const key = env.ABUSE_CAPTCHA_SECRET_KEY?.trim();
+  return env.ABUSE_CAPTCHA_PROVIDER?.trim().toLowerCase() === "turnstile" && Boolean(key) && !(isProduction(env) && isTurnstileTestKey(key));
+};
+
+/** Production without the check configured (or with a test key): the form refuses (503) rather than let every bot through. */
+export const captchaMissing = (env: Env = process.env): boolean => (env.NODE_ENV === "production" || isProduction(env)) && !captchaConfigured(env);
 
 // One verifier per key and process: it remembers the tokens it saw, so a replayed token is refused.
 const verifiers = new Map<string, ReturnType<typeof createTurnstileVerifier>>();
@@ -19,7 +30,8 @@ const verifiers = new Map<string, ReturnType<typeof createTurnstileVerifier>>();
 /** The hostnames a token may have been solved on: the app's own, from its public address. */
 const hostnamesOf = (env: Env): string[] => {
   try {
-    return env.NODE_ENV === "production" && env.APP_PUBLIC_URL ? [new URL(env.APP_PUBLIC_URL).hostname] : [];
+    // A test key's answers name example.com whatever the page: no hostname to check (production refuses such a key above).
+    return env.NODE_ENV === "production" && env.APP_PUBLIC_URL && !isTurnstileTestKey(env.ABUSE_CAPTCHA_SECRET_KEY) ? [new URL(env.APP_PUBLIC_URL).hostname] : [];
   } catch {
     return [];
   }
@@ -32,10 +44,11 @@ export async function verifyCaptcha(token: unknown, ip: string, env: Env, now: (
   }
   const key = env.ABUSE_CAPTCHA_SECRET_KEY!.trim();
   const options = { secret: key, hostnames: hostnamesOf(env), now };
-  let verify = fetchImpl ? createTurnstileVerifier({ ...options, fetch: fetchImpl }) : verifiers.get(key);
+  // A test key's widget hands out the same dummy token every time: no replay memory for it (production refuses such a key).
+  let verify = fetchImpl ? createTurnstileVerifier({ ...options, fetch: fetchImpl }) : isTurnstileTestKey(key) ? undefined : verifiers.get(key);
   if (!verify) {
     verify = createTurnstileVerifier(options);
-    verifiers.set(key, verify);
+    if (!isTurnstileTestKey(key)) verifiers.set(key, verify);
   }
   return (await verify({ token, remoteIp: ip })).ok;
 }
