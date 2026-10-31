@@ -22,6 +22,11 @@ describe("the subscription page offers the catalogue's plans with their free mon
     expect(html).toContain("Start the free period");
   });
 
+  it("never says no plan is on sale while plans are sold, even without the founder offer", () => {
+    expect(render("en", { plans })).not.toContain("No plan is on sale yet.");
+    expect(render("en", {})).toContain("No plan is on sale yet.");
+  });
+
   it("says « 3 mois offerts » in French", () => {
     expect(render("fr", { plans }).replace(/\u202f|\u00a0/g, " ")).toContain("3 mois offerts, puis $29 par mois, taxes en sus.");
   });

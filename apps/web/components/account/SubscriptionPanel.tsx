@@ -106,7 +106,7 @@ function NotSubscribed({ subscription, pending, onChoose, onProblem }: Readonly<
         </SettingsRow>
       ) : null}
       {subscription.offerFull ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.offerFull")}</p> : null}
-      {!subscription.offer && !subscription.offerFull && !subscription.hasCustomer ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.unavailable")}</p> : null}
+      {!plans.length && !subscription.offer && !subscription.offerFull && !subscription.hasCustomer ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.unavailable")}</p> : null}
       {subscription.offer ? <TermsNote /> : null}
     </>
   );
