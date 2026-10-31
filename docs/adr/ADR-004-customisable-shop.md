@@ -1,6 +1,7 @@
 # ADR-004 — The customisable shop: the page as a document, Krizaka UI variants, look presets, the owner's composer
 
-Status: accepted (2026-10-27). Issue: krizaka/akinaza#398. Product half of krizaka-ui
+Status: accepted (2026-10-27); §2 « Options weighed » (the rejection of Puck) and §3's hand-made editor superseded by
+[ADR-010](ADR-010-shop-editor-on-puck.md) (2026-10-31). Issue: krizaka/akinaza#398. Product half of krizaka-ui
 [ADR-007](https://github.com/krizaka/krizaka-ui/blob/main/docs/adr/ADR-007-shop-composer.md) (the library half: schema,
 13 section types, presets, `@krizaka/ui/shop-composer`, krizaka-ui#742–#746). Prices stay data (ADR-009, krizaka/.github#253).
 
