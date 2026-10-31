@@ -50,7 +50,9 @@ export async function verifyCaptcha(token: unknown, ip: string, env: Env, now: (
   if (!fetchImpl && remembered) verify = verifiers.get(key);
   if (!verify) {
     verify = createTurnstileVerifier(options);
-    if (remembered) verifiers.set(key, verify);
+    if (remembered) {
+      verifiers.set(key, verify);
+    }
   }
   return (await verify({ token, remoteIp: ip })).ok;
 }
