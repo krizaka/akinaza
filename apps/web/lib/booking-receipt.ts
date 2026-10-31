@@ -7,6 +7,10 @@ import type { Locale } from "@/lib/i18n";
 import { confirmationStep } from "@/lib/journey";
 import { deliver } from "@/lib/mail";
 import type { MailSettings } from "@/lib/mail-settings";
+import { SITE_URL } from "@/lib/site";
+
+/** The link in the mail is https (the template refuses anything else): the deployment's own address, else the public site's (a local run is http). */
+const manageBase = (appUrl: string | undefined): string => (appUrl?.startsWith("https://") ? appUrl : SITE_URL).replace(/\/$/, "");
 
 export interface ReceiptRecipient {
   accountId: string;
@@ -29,7 +33,7 @@ export async function sendBookingReceipt(recipient: ReceiptRecipient, bookingId:
     return;
   }
   const step = confirmationStep({ detail, locale: recipient.locale });
-  const manageUrl = `${(settings.appUrl ?? "").replace(/\/$/, "")}/${recipient.locale}/s/${detail.shop.slug}/service/${detail.service.id}/confirmation?booking=${detail.id}`;
+  const manageUrl = `${manageBase(settings.appUrl)}/${recipient.locale}/s/${detail.shop.slug}/service/${detail.service.id}/confirmation?booking=${detail.id}`;
   const mail = await renderEmail(
     "bookingReceipt",
     { brand: "akinaza", businessName: detail.shop.name, serviceName: step.title, when: step.when, who: step.who, where: step.where, priceLine: step.price, cancelRule: step.cancelRule, manageUrl },
