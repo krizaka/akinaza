@@ -59,7 +59,7 @@ const nextConfig = {
   // The SQL migrations travel with the standalone server (lib/db.ts reads them at start).
   outputFileTracingIncludes: { "/*": ["../../packages/db/drizzle/**"] },
   // The pool stays a Node module, required at run time.
-  serverExternalPackages: ["pg", "opendal"],
+  serverExternalPackages: ["pg", "opendal", "@krizaka/email"],
   // The basemap of the shop pages: Protomaps tiles on the media CDN, read through this origin (the CDN sends no CORS headers).
   async rewrites() {
     return [{ source: "/maps/v1/:path*", destination: "https://krizaka-assets.b-cdn.net/org/v1/maps/:path*" }];
