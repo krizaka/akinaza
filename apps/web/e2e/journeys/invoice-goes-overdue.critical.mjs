@@ -9,6 +9,8 @@ const OVERDUE_LINK = /to collect · (\d+) overdue/;
 
 const overdueOnHome = async (page, home) => {
   await page.goto(home);
+  // The home streams: read it only once its loading shape is gone, or a missing link is just a page not drawn yet.
+  await expect(page.getByLabel("Loading…"), "the home has finished drawing").toHaveCount(0, { timeout: 30_000 });
   const link = page.getByRole("link", { name: OVERDUE_LINK });
   if ((await link.count()) === 0) return { link, count: 0 };
   return { link, count: Number(OVERDUE_LINK.exec((await link.first().innerText()).replace(/\s+/g, " "))[1]) };
