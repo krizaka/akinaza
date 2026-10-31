@@ -3,15 +3,17 @@ import { renderEmail } from "@krizaka/email";
 
 import { systemClock } from "@/app/system-clock";
 import { db } from "@/lib/db";
-import { mailSettings } from "@/lib/env";
 import type { Locale } from "@/lib/i18n";
 import { confirmationStep } from "@/lib/journey";
 import { deliver } from "@/lib/mail";
+import type { MailSettings } from "@/lib/mail-settings";
 
 export interface ReceiptRecipient {
   accountId: string;
   email: string;
   locale: Locale;
+  /** The mail settings, read by the route (the domain never reads the environment). */
+  settings: MailSettings;
 }
 
 /**
@@ -21,7 +23,7 @@ export interface ReceiptRecipient {
  */
 export async function sendBookingReceipt(recipient: ReceiptRecipient, bookingId: string): Promise<void> {
   const now = systemClock.now();
-  const settings = mailSettings();
+  const { settings } = recipient;
   const detail = await bookingDetail(db(), recipient.accountId, bookingId, now);
   if (!detail) {
     return;
