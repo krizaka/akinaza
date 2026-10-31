@@ -17,3 +17,14 @@ export const PAYMENT_TERMS_CHOICES = [0, 15, 30, 45, 60] as const;
 export function dueOn(issuedOn: string, termsDays: number): string {
   return addLocalDays(issuedOn, termsDaysSchema.parse(termsDays));
 }
+
+/** The terms a picker offers: the usual ones and the shop's own, if it is another, in ascending order. */
+export function termsChoices(shopDefault: number): number[] {
+  return [...new Set([...PAYMENT_TERMS_CHOICES, termsDaysSchema.parse(shopDefault)])].sort((a, b) => a - b);
+}
+
+/**
+ * Whether an invoice is overdue on the shop's calendar day `today` (`YYYY-MM-DD`, read in the shop's time zone): its due day is
+ * strictly before today. Due on receipt is overdue the day after it is issued, never the day itself.
+ */
+export const isPastDue = (dueOnDay: string | null, today: string): boolean => dueOnDay !== null && dueOnDay < today;

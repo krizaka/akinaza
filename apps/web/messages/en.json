@@ -2456,6 +2456,8 @@
         "when": "Dated today, {date}. The due date follows your payment terms, and the number is given at issue.",
         "totals": "Invoice total",
         "totalPending": "Add a line to see the total.",
+        "paymentTerms": "Payment terms",
+        "paymentTermsDue": "Due {date}",
         "submit": "Issue the invoice",
         "needLine": "Choose a service, or write a line with its price."
       },
