@@ -75,7 +75,7 @@ function DueLine({ today }: Readonly<{ today: string }>) {
   if (!Number.isInteger(days)) {
     return null;
   }
-  return <p className="text-sm text-fg-secondary">{say("invoices.new.termsDue", { date: formatLongDay(dueOn(today, days), locale) })}</p>;
+  return <p className="text-sm text-fg-secondary">{say("invoices.new.paymentTermsDue", { date: formatLongDay(dueOn(today, days), locale) })}</p>;
 }
 
 /** The total of the lines being typed, as the server will compute it. */
@@ -182,7 +182,7 @@ export function InvoiceForm({ data, locale: base, start }: Readonly<InvoiceFormP
         </Step>
         <Step n="03" title={say("invoices.new.steps.when")}>
           <p className="max-w-prose text-fg-secondary">{say("invoices.new.when", { date: formatLongDay(data.today, locale) })}</p>
-          <form.Select name="termsDays" label={say("invoices.new.terms")} options={termsOptions} />
+          <form.Select name="termsDays" label={say("invoices.new.paymentTerms")} options={termsOptions} />
           <DueLine today={data.today} />
         </Step>
         {needLine ? <Alert tone="danger">{say("invoices.new.needLine")}</Alert> : null}

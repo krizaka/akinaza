@@ -2456,8 +2456,8 @@
         "when": "Datée d’aujourd’hui, le {date}. L’échéance suit vos conditions de paiement, et le numéro est donné à l’émission.",
         "totals": "Total de la facture",
         "totalPending": "Ajoutez une ligne pour voir le total.",
-        "terms": "Conditions de paiement",
-        "termsDue": "Échéance le {date}",
+        "paymentTerms": "Conditions de paiement",
+        "paymentTermsDue": "Échéance le {date}",
         "submit": "Émettre la facture",
         "needLine": "Choisissez un service, ou écrivez une ligne avec son prix."
       },
