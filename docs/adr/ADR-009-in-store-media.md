@@ -1,6 +1,6 @@
 # ADR-009 — In-store media: live events behind a streaming port, the short-videos TV first, « what we play » without third-party APIs
 
-Status: **accepted** (CTO, 2026-10-30), **amended 2026-10-30** after the founder's cost call: live is an Entreprise-only offer, first adapter is a self-hosted Canadian origin, Cloudflare stays switchable. Figures are in the private issue (no prices in this repository). Issue: krizaka/krizaka-internal#1339 (ADR). Orientation: the written marketing × UX
+Status: **accepted** (CTO, 2026-10-30), **amended 2026-10-30** after the founder's cost call and principle (« less responsibility on our side, more flexibility for the users »): the default is **bring your own** (the shop streams with its own account and is controller and payer; we host nothing); our self-hosted Canadian origin is an optional **managed service, Entreprise only**. Figures are in the private issue (no prices in this repository). Issue: krizaka/krizaka-internal#1339 (ADR). Orientation: the written marketing × UX
 meeting of krizaka/krizaka-internal#1340. Idea: krizaka/krizaka-internal#216.
 Legal: best good-faith reading of the law, cited below; **one lawyer review before public opening** (marked ⚖).
 ADR-008 is reserved for the owner services / entitlements ADR (krizaka/krizaka-internal#46); this one takes 009.
@@ -81,9 +81,9 @@ ADR-008 is reserved for the owner services / entitlements ADR (krizaka/krizaka-i
 | A. Amazon CloudFront only | already a CDN | no ingest, no transcode, no player | refused (does not fit) |
 | B. Amazon IVS | managed, low latency, web broadcast SDK, real-time stages | no Canadian region; input billed per hour on top of delivery; AWS account and IAM to run | adapter later if needed |
 | C. MediaLive + MediaPackage + CloudFront in ca-central-1 | Canadian processing and origin | assembled pipeline, per-channel hourly cost, operations we don't want | adapter when a client requires it |
-| D. Cloudflare Stream Live | ingest + encoding free, recording off by default, retention by API, signed URLs, RTMPS/SRT | delivery cost scales with viewer-minutes and is too high for a small shop's margin (founder call); US company, no public region choice | **kept as a switchable adapter, not the default** |
-| E. **Self-hosted origin: MediaMTX on a small droplet in Toronto + Bunny CDN for HLS** | Canadian origin; fixed small compute plus the cheapest per-GB delivery; MIT, trusted OSS behind our port; recording and retention are ours | we run one small server (health, restarts, updates); transcoding to a ladder is our job (start with a single rung or passthrough); no managed SLA | **chosen: first adapter** |
-| F. The shop streams on its own YouTube / Instagram / TikTok live; the page embeds it after one click | zero cost to us; the shop is controller of its channel; same consent-gated pattern as the short-videos TV | the platform's terms and ads apply; no Law 25 control of the stream; TikTok / Instagram embed of a live to be verified | **zero-cost fallback** |
+| D. Cloudflare Stream Live (our account) | ingest + encoding free, recording off by default, retention by API, signed URLs, RTMPS/SRT | delivery cost scales with viewer-minutes and is too high for a small shop's margin (founder call); US company, no public region choice | **not the default**; the shop may connect **its own** Cloudflare account (BYO), our account stays a switchable managed adapter |
+| E. Self-hosted origin: MediaMTX on a small droplet in Toronto + Bunny CDN for HLS | Canadian origin; fixed small compute plus the cheapest per-GB delivery; MIT, trusted OSS behind our port; recording and retention are ours | we run one small server (health, restarts, updates); transcoding to a ladder is our job (start with a single rung or passthrough); no managed SLA | **optional managed service (« we run it for you »), Entreprise only**; not the default |
+| F. **Bring your own**: the shop streams on its own YouTube / Facebook / Twitch / Instagram / TikTok live (embed after one click) or with its own Cloudflare Stream / Mux / other account (its keys) | zero cost to us; the shop is controller of its channel; same consent-gated pattern as the short-videos TV | the platform's terms and ads apply; no Law 25 control of the stream; TikTok / Instagram embed of a live to be verified | **chosen: the default**; we store no video, host no stream, keep no recording |
 | G. Mux | best-documented latency modes | live input billed per minute; no public region choice | adapter later if needed |
 | H. Bunny Stream Live | — | founder: Bunny has no live product for us | **dropped** (Bunny is the CDN only) |
 | I. Spotify Web API « now playing » | ambiance on the page | forbidden for in-store business use (finding 4) | **refused** |
@@ -104,7 +104,7 @@ interface LiveVideo {
 }
 ```
 
-Adapters: `selfHostedOrigin` (first: MediaMTX in Toronto, HLS delivered by Bunny CDN), `cloudflareStream` (switchable), `externalEmbed` (option F: no ingest, it only stores the shop's channel link and renders the click-to-load player), `memoryLive()` for tests; IVS, MediaLive (Canada) and Mux only when a need is proven.
+**Default = bring your own**: ONE connector pattern, `externalEmbed` — the shop gives the link of its live, we store only that link and render a click-to-load player from a per-platform table (see « BYO platforms » below) — and the provider adapters driven by the **shop's own keys** (`cloudflareStream`, later Mux or others): the shop is the controller and the payer, nothing runs on our account. **Optional managed service (Entreprise only)**: `selfHostedOrigin` (MediaMTX in Toronto, HLS delivered by Bunny CDN) and our own `cloudflareStream` account. Also `memoryLive()` for tests; IVS, MediaLive (Canada) and Mux only when a need is proven.
 The admin console configures the provider and its keys (settings in the database, the source of truth); on the Entreprise
 offer a shop may bring its own provider account. Stream keys are secrets: stored encrypted, shown once, rotatable.
 
@@ -117,6 +117,18 @@ Entreprise the shop owner can also connect **its own provider account** in its s
 the same port. Events are provider-neutral rows, so **switching adapters keeps scheduled events working**: a scheduled event
 resolves its adapter when it starts; an event in progress finishes on the adapter it began with.
 
+#### BYO platforms (one connector pattern, terms read 2026-10-30)
+
+| Platform | Embed | Conditions | Status |
+| :-- | :-- | :-- | :-- |
+| YouTube Live | `youtube-nocookie.com` iframe of the live's video id | public stream; Developer Policies of finding 5; no live chat in the player | first |
+| Twitch | `player.twitch.tv/?channel=<name>&parent=<our domain>` — the `parent` parameter is **required** and names every domain that embeds ([Twitch embed docs](https://dev.twitch.tv/docs/embed/video-and-clips/)) | min. 400×300 px; autoplay defaults on (we start only after the click, `muted` off by choice); `parent` = the shop's domains, from our configuration; add `player.twitch.tv` to `EMBED_FRAME_HOSTS` | first |
+| Facebook Live | Facebook plugin: the player accepts any **public** live video post by a Page or person, via its JavaScript SDK `fb-video` + `data-href` ([Embedded Video Player](https://developers.facebook.com/docs/plugins/embedded-video-player/)); the `embed_html` iframe is deprecated | public post only; the SDK is a third-party script, so it loads **only after the click**, never on page load; add `facebook.com` frames and `connect.facebook.net` to the CSP | after review |
+| Instagram Live / TikTok LIVE | existing `externalReel` hosts | embed of a *live* not verified — shown as a link out until tested | later |
+
+Every platform is one row of one table (`id`, URL pattern → embed URL, CSP hosts, `needsParent`, `loadsScript`); adding one
+is data plus a test, not a new component. Each stays behind the click, with our poster before consent.
+
 ### 2. Live is an **event**, never an always-on camera
 
 - A live is a `live_event` row: shop, title, starts_at, status (`scheduled · live · ended · cancelled`), recording on/off,
@@ -127,6 +139,11 @@ resolves its adapter when it starts; an event in progress finishes on the adapte
   provider's iframe — so the page loads no provider script or cookie.
 
 ### 3. Law 25 by design ⚖ (Act respecting the protection of personal information in the private sector, CQLR c. P-39.1)
+
+**Roles.** For **bring your own** the shop is the controller of its stream and its recordings and the platform or provider it
+chose is its processor; Krizaka only **renders an embed after a click** (and, for provider keys, stores them encrypted) — we
+see, store and record no video, so the consent checklist and the notice are the shop's, offered as tools. For the **managed
+service** Krizaka is the shop's **processor** and the table below applies to us in full.
 
 | Obligation | Where it lands |
 | :-- | :-- |
@@ -156,10 +173,10 @@ our player, no per-hour cost. External clips (YouTube, TikTok, Instagram) stay b
 ### 6. Offers are data
 
 Entitlement keys, mapped to plans by the admin (no plan logic in code; the mapping and its numbers are in the internal ADR
-issue): `media.shortVideos`, `media.ambiance` (every plan); **`media.live` is mapped to Entreprise only** (with
-`media.live.events` and a monthly allowance of viewer-minutes, `media.live.replay`, `media.live.ownProvider`). Starter and
-the other plans get **nothing live**. Whether they may get option F (embedding the shop's own YouTube live) is **not in
-this ADR** — a later CTO decision. The allowance is enforced at « Go live » and shown to the owner before the event;
+issue): `media.shortVideos`, `media.ambiance` (every plan); `media.live.byo` (the shop's own channel or provider account;
+it costs us nothing, **which plans get it is decided in krizaka/krizaka-internal#1525, not in this ADR**); and
+**`media.live.managed` — Entreprise only** (our origin, with `media.live.events` and a monthly allowance of viewer-minutes,
+`media.live.replay`). Plans below Entreprise get **nothing managed**. The allowance is enforced at « Go live » and shown to the owner before the event;
 reaching it ends nothing in progress; caps against abuse (concurrent viewers, event length, events per month) are admin
 settings.
 
@@ -167,27 +184,27 @@ settings.
 
 | # | Slice | Surfaces | Depends on |
 | :-- | :-- | :-- | :-- |
-| 0 | EFVP for the first provider + privacy-notice and terms lines (processor) ⚖ | docs, legal pages | — |
+| 0 | (managed service only) EFVP for the first provider + privacy-notice and terms lines (processor) ⚖ | docs, legal pages | — |
 | 1 | Short-videos TV redesign in krizaka-ui, then at the top of the shop page (krizaka/krizaka-internal#1338) | web (page), mobile web | — |
-| 2 | `LiveVideo` port + `selfHostedOrigin` (MediaMTX Toronto + Bunny CDN) + `cloudflareStream` + `memoryLive` in krizaka-ts; admin provider settings | admin, lib, infra | 0 |
-| 2b | « Live provider » admin screen: choose adapter, encrypted keys, connection test, switch without redeploy; owner's own account on Entreprise. Tests: switching adapters keeps scheduled events working; keys never returned by the API | admin, owner console | 2 |
-| 3 | `live_event` model + scheduled event with countdown on the shop page | web, owner console | 2 |
+| 2 | `LiveVideo` port + **BYO connectors** (`externalEmbed`: YouTube and Twitch first, Facebook once its SDK path is accepted, TikTok / Instagram once tested; `cloudflareStream` with the shop's own keys) + `memoryLive` in krizaka-ts | lib | — |
+| 2b | **« Live provider » admin screen first**: choose adapter, encrypted keys, connection test, switch without redeploy; the shop owner connects its own account or channel in its settings. Tests: switching adapters keeps scheduled events working; keys never returned by the API | admin, owner console | 2 |
+| 3 | `live_event` model + scheduled event with countdown on the shop page (BYO player after a click) | web, owner console | 2b |
 | 4 | « Go live » in three taps on a phone (owner console: browser WebRTC where supported, RTMPS/SRT details for OBS), consent checklist, in-shop sign | owner web, mobile app (opens the console), admin | 3 |
 | 5 | Replay: recording on/off, retention, deletion, signed URLs | web, owner console | 4 |
 | 6 | Ambiance card + the licence line | web, owner console | — |
-| 7 | Entitlements: `media.*` keys enforced, `media.live` Entreprise only (after ADR-008) | admin, owner console | ADR-008 |
+| 6b | **Managed service** (Entreprise): `selfHostedOrigin` (MediaMTX Toronto + Bunny CDN), go-live, recording and retention, deletion job, EFVP | admin, owner console, infra | 0, 5 |
+| 7 | Entitlements: `media.*` keys enforced, `media.live.managed` Entreprise only (after ADR-008) | admin, owner console | ADR-008 |
 
 Mac: n/a (the owner console in the window). Each slice ships its journey (e2e), both themes, EN/FR.
 
 ## Consequences
 
-- No third-party audio or video API sits between a shop and its visitors; the only external clips are user-started.
-- Live is an **Entreprise-only** offer: no plan below it carries a live cost, so there is no surprise invoice from the free tiers.
-- The first adapter costs a small fixed compute plus delivery per GB (figures privately, krizaka/krizaka-internal#1339); it
-  keeps the origin and recordings in Canada. Delivery by Bunny CDN still reaches viewers through edge nodes, so the notice
-  says viewers' connections are served by a CDN; recordings stay on our origin.
-- We operate one small server: monitoring, restarts, updates and a recording-deletion job are part of slice 2.
-- Cloudflare Stream stays one setting away if a client wants a managed service; it is not the default.
-- Law 25 is unchanged: consent checklist, recording off by default, EFVP for the first provider (lighter when the origin is
-  Canadian), retention, no viewer profiling.
+- No third-party audio or video API sits between a shop and its visitors unless the shop chose it and the visitor clicked.
+- **Less responsibility for us, more flexibility for the shops**: by default the shop streams with its own account (YouTube, Facebook, Twitch, Instagram, TikTok, or its own provider keys), is the controller and the payer; we host no stream, store no video and keep no recording. Our cost for the default is about nothing.
+- The **managed service** (our Canadian origin, Bunny CDN delivery) is an Entreprise-only « we run it for you » offer; its
+  figures are in krizaka/krizaka-internal#1339 and the price is set in #1525. We then operate one small server (monitoring,
+  restarts, updates, a recording-deletion job) and become the shop's processor; recordings stay in Canada, viewers are served
+  through CDN edge nodes and the notice says so.
+- Providers can be changed in the admin console without a redeploy; scheduled events survive a switch.
+- Law 25 for the managed service is as in section 3; for BYO the shop's own consent and notice apply and we ship the tools.
 - Refused for good: Spotify « now playing », YouTube as background audio, re-streaming TV, always-on cameras.
