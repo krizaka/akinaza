@@ -90,10 +90,10 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
           <>
             {brief ? <BriefBanner count={brief.items.length} href={routes.brief} /> : null}
             {figures?.ok ? <WhatToDoNow actions={figures.value.actions} locale={locale} routes={routes} /> : null}
-            {figures?.ok ? <TodayFigures figures={figures.value.figures} locale={locale} routes={routes} timeZone={shop.timezone} now={requestNow().toISOString()} /> : null}
           </>
         ) : null
       }
+      figures={figures?.ok ? <TodayFigures figures={figures.value.figures} locale={locale} routes={routes} timeZone={shop.timezone} now={requestNow().toISOString()} /> : undefined}
       newInvoiceHref={board ? routes.newInvoice : null}
     />
   );

@@ -131,6 +131,29 @@ function DayPrimary({ next, nextHref, newInvoiceHref, time }: Readonly<{ next: {
   );
 }
 
+/**
+ * The day's one primary when visits are done and not billed (krizaka-internal#1908): « Bill the visits », with what is to collect
+ * and what is late under it, a link to the invoices. The next appointment's button takes the place when there is nothing to bill.
+ */
+function BillVisits({ board, billHref, invoicesHref }: Readonly<{ board: TodayBoard; billHref: string; invoicesHref: string }>) {
+  const { say, locale } = useSay();
+  const owed = formatMoney(board.balance.owedCents, locale);
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+      <Button asChild variant="primary" size="md" className="font-bold">
+        <Link href={billHref} data-primary>
+          {say("today.billVisits", { count: board.toBill.length })}
+        </Link>
+      </Button>
+      {board.balance.count > 0 ? (
+        <Link href={invoicesHref} className="text-sm font-semibold tabular-nums text-fg underline-offset-4 hover:underline">
+          {board.balance.overdueCount > 0 ? say("today.toCollectOverdue", { amount: owed, count: board.balance.overdueCount }) : say("today.toCollect", { amount: owed })}
+        </Link>
+      ) : null}
+    </div>
+  );
+}
+
 /** The activity of the period: one discreet row of three figures, never stacked full width (B2), and the period's chips. */
 function ActivityWidget({ board, totals, period, address }: Readonly<{ board: TodayBoard; totals: { invoiced: number; collected: number; appointments: number }; period: BoardPeriod; address: (next: DayAddressChange) => string }>) {
   const { say, locale } = useSay();
@@ -203,8 +226,8 @@ function appointmentRow(a: TodayAppointment, visit: DayVisitView | null, ctx: { 
     id: a.id,
     start: a.startsAt,
     end: a.endsAt,
-    title: visit ? a.service[locale] : (a.client ?? say("today.walkIn")),
-    description: visit ? `${dogs(visit.bookings.length)} · ${a.staff}` : `${a.service[locale]} · ${a.staff}`,
+    title: visit ? ([...new Set(visit.bookings.map((b) => b.clientName))].join(", ") || say("today.walkIn")) : (a.client ?? say("today.walkIn")),
+    description: visit ? [visit.bookings.map((b) => b.dependant.name).join(", ") || dogs(visit.bookings.length), a.service[locale], a.staff].join(" · ") : `${a.service[locale]} · ${a.staff}`,
     tone: STATUS_TONE[statusWord(a)],
     leading: <Avatar alt="" size="sm" {...avatarOf({ id: a.staff })} fallback={a.staff.charAt(0)} />,
     status: (
@@ -343,6 +366,8 @@ export interface TodayDayProps {
   visits?: Record<string, DayVisitView>;
   /** Announced under the heading: « Le point du lundi » when it has something to say. */
   banner?: React.ReactNode;
+  /** The figures and how they are computed: after the day, never before it (krizaka-internal#1908). */
+  figures?: React.ReactNode;
   /** The trade reads its appointments by their service (a dog walker's walks): the headline too. */
   dependants: boolean;
   /** The binder, the activity and « À encaisser » (`todayBoard`), or null for who may not see the shop's money. */
@@ -363,7 +388,7 @@ export interface TodayDayProps {
  * the dogs, the owners, the access notes, the start and the end, the report. The day (`?day=`) and the open appointment
  * (`?appointment=`) are in the address.
  */
-export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, allow, title, description, visits, banner, dependants, board, boardFailed = false, period, publicPageHref = null, newInvoiceHref = null }: Readonly<TodayDayProps>) {
+export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, allow, title, description, visits, banner, figures, dependants, board, boardFailed = false, period, publicPageHref = null, newInvoiceHref = null }: Readonly<TodayDayProps>) {
   const { say, locale } = useSay();
   const router = useRouter();
   const routes = useShopRoutes();
@@ -381,7 +406,9 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
   const billing = open ? billAppointmentHref(open.appointment, routes, newInvoiceHref !== null) : null;
   // The day's one primary (D1b): open the next appointment; when nobody comes next, a new invoice. The frame's header yields here.
   const next = summary.next;
-  const primary = <DayPrimary next={next} nextHref={next ? address({ appointment: next.id }) : null} newInvoiceHref={newInvoiceHref} time={time} />;
+  const unbilled = board?.toBill[0] ?? null;
+  const billHref = unbilled ? routes.newInvoiceFor({ client: unbilled.clientId ?? undefined, service: unbilled.serviceId, quantity: "1", appointment: unbilled.appointmentId }) : null;
+  const primary = board && billHref ? <BillVisits board={board} billHref={billHref} invoicesHref={routes.invoices} /> : <DayPrimary next={next} nextHref={next ? address({ appointment: next.id }) : null} newInvoiceHref={newInvoiceHref} time={time} />;
 
   const headline = headlineMessage(dayHeadline(appointments, now, isToday), { dependants });
   const words = headlineWords(headline.vars, time, locale);
@@ -424,6 +451,7 @@ export function TodayDay({ appointments, shop, day, today, nowIso, selectedId, a
           />
         </Widget>
         <SideColumn board={board} boardFailed={boardFailed} totals={totals} quiet={allZero} quick={quick} period={period} address={address} />
+        {figures ? <div className="col-span-full">{figures}</div> : null}
       </DashboardLayout>
 
       <Dialog.Root open={open !== null} onOpenChange={(next) => (next ? undefined : router.replace(address({ appointment: null }), { scroll: false }))}>

@@ -640,7 +640,7 @@
       "bookings": "Mes réservations",
       "clients": "Clients",
       "shop": "Boutique",
-      "books": "Livres",
+      "books": "Taxes",
       "team": "Équipe",
       "shopSwitcher": "Changer de boutique",
       "newInvoice": "Nouvelle facture",
@@ -1260,6 +1260,9 @@
         "see": "Voir le point ({count})",
         "dismiss": "Mettre le point de côté"
       },
+      "billVisits": "Facturer les visites ({count})",
+      "toCollect": "{amount} à encaisser",
+      "toCollectOverdue": "{amount} à encaisser · {count} en retard",
       "nextPrimary": "Prochain : {client} à {time}",
       "headline": {
         "empty": "Rien de prévu aujourd’hui.",
