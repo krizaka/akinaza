@@ -1,6 +1,6 @@
 # ADR-009 — In-store media: live events behind a streaming port, the short-videos TV first, « what we play » without third-party APIs
 
-Status: **proposed** (2026-10-30). Issue: krizaka/krizaka-internal#1339 (ADR). Orientation: the written marketing × UX
+Status: **accepted** (CTO, 2026-10-30). Issue: krizaka/krizaka-internal#1339 (ADR). Orientation: the written marketing × UX
 meeting of krizaka/krizaka-internal#1340. Idea: krizaka/krizaka-internal#216.
 Legal: best good-faith reading of the law, cited below; **one lawyer review before public opening** (marked ⚖).
 ADR-008 is reserved for the owner services / entitlements ADR (krizaka/krizaka-internal#46); this one takes 009.
