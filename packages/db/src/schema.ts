@@ -710,7 +710,7 @@ export const invoices = pgTable(
     replaces: uuid("replaces"),
     language: text("language", { enum: ["fr", "en"] }).notNull().default("fr"),
     issuedOn: date("issued_on").notNull(),
-    /** The payment terms the invoice was issued under and the day they make it due; null on a credit note and on an invoice issued before the terms existed. */
+    /** The payment terms the invoice was issued under and the day they make it due; null on a credit note only (0055 gave every older invoice its terms). */
     termsDays: integer("terms_days"),
     dueOn: date("due_on"),
     subtotalCents: integer("subtotal_cents").notNull(),
@@ -719,7 +719,9 @@ export const invoices = pgTable(
     totalCents: integer("total_cents").notNull(),
     createdAt: created(),
   },
-  (t) => [uniqueIndex("invoices_number").on(t.shopId, t.number), check("invoices_total", sql`${t.totalCents} = ${t.subtotalCents} + ${t.gstCents} + ${t.qstCents}`), check("invoices_language", sql`${t.language} IN ('fr','en')`), check("invoices_terms", sql`(${t.termsDays} IS NULL AND ${t.dueOn} IS NULL) OR (${t.termsDays} IS NOT NULL AND ${t.dueOn} IS NOT NULL AND ${t.termsDays} BETWEEN 0 AND 365 AND ${t.dueOn} = ${t.issuedOn} + ${t.termsDays})`)],
+  (t) => [uniqueIndex("invoices_number").on(t.shopId, t.number), check("invoices_total", sql`${t.totalCents} = ${t.subtotalCents} + ${t.gstCents} + ${t.qstCents}`), check("invoices_language", sql`${t.language} IN ('fr','en')`), check("invoices_terms", sql`(${t.termsDays} IS NULL AND ${t.dueOn} IS NULL) OR (${t.termsDays} IS NOT NULL AND ${t.dueOn} IS NOT NULL AND ${t.termsDays} BETWEEN 0 AND 365 AND ${t.dueOn} = ${t.issuedOn} + ${t.termsDays})`),
+    check("invoices_due_set", sql`${t.creditOf} IS NOT NULL OR (${t.termsDays} IS NOT NULL AND ${t.dueOn} IS NOT NULL)`),
+  ],
 );
 
 /** A private, per-send invoice link. Only the token hash is retained; erasure revokes it. */

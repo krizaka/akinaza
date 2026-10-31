@@ -37,7 +37,7 @@ export default async function NewInvoice({ params, searchParams }: Readonly<{ pa
         ← {t.back}
       </Link>
       <PageHeader title={t.new.title} />
-      <InvoiceForm locale={locale} data={{ today, registrant: shop.registrant, ...choices }} start={{ clientId: start.clientId, lines: start.lines, appointmentId: start.appointmentId }} />
+      <InvoiceForm locale={locale} data={{ today, registrant: shop.registrant, termsDays: shop.paymentTermsDays, ...choices }} start={{ clientId: start.clientId, lines: start.lines, appointmentId: start.appointmentId }} />
     </div>
   );
 }
