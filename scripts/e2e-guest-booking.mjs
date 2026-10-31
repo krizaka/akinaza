@@ -15,6 +15,7 @@ import { mkdirSync, renameSync, readdirSync } from "node:fs";
 import { createServer } from "node:http";
 import { createRequire } from "node:module";
 import path from "node:path";
+import { makeShoot } from "./e2e-shoot.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright-core");
 const BASE = (process.env.E2E_BASE ?? "http://localhost:3210").replace(/\/$/, "");
@@ -67,16 +68,7 @@ const context = await browser.newContext({
   ...(OUT ? { recordVideo: { dir: path.join(OUT, "video"), size: { width: 390, height: 844 } } } : {}),
 });
 const page = await context.newPage();
-const shoot = async (name) => {
-  if (!OUT) return;
-  for (const theme of ["dark", "light"]) {
-    await page.evaluate((t) => {
-      localStorage.setItem("kz-theme", t);
-      document.documentElement.classList.toggle("light", t === "light");
-    }, theme);
-    await page.screenshot({ path: path.join(OUT, `${name}-${theme}-${LOCALE}.png`) });
-  }
-};
+const shoot = makeShoot(page, OUT, LOCALE);
 const beat = (ms = 1200) => page.waitForTimeout(ms); // each step readable for a second in the film
 
 try {
