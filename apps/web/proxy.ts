@@ -193,5 +193,5 @@ function dressed(response: NextResponse, request: NextRequest, { csp, noindex, n
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|og.png|favicon.ico|icon.svg|maplibre/|.*\\.(?:js|mjs|css|map|png|jpe?g|webp|avif|gif|svg|ico|woff2?|ttf|otf|webm|mp4|vtt|json|pbf|pmtiles|webmanifest|txt|xml|pdf|zip)$).*)", "/robots.txt", "/sitemap.xml", "/llms.txt", "/api/:path*", "/.well-known/:path*"],
+  matcher: ["/((?!api|_next/static|_next/image|og.png|favicon.ico|icon.svg|maplibre/|google[0-9a-f]+\\.html$|.*\\.(?:js|mjs|css|map|png|jpe?g|webp|avif|gif|svg|ico|woff2?|ttf|otf|webm|mp4|vtt|json|pbf|pmtiles|webmanifest|txt|xml|pdf|zip)$).*)", "/robots.txt", "/sitemap.xml", "/llms.txt", "/api/:path*", "/.well-known/:path*"],
 };

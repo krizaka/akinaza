@@ -28,7 +28,7 @@ export async function FounderOffer({ locale }: Readonly<{ locale: Locale }>) {
     return (
       <Section id="offer" title={t.full.title} lead={format(t.full.lead, { limit: seats.limit })} reveal divider>
         <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
-          <a href={contactHref("dev-akinaza-offer")}>{t.talk}</a>
+          <a href={contactHref("dev-akinaza-offer", locale)}>{t.talk}</a>
         </Button>
       </Section>
     );
@@ -53,7 +53,7 @@ export async function FounderOffer({ locale }: Readonly<{ locale: Locale }>) {
           </Button>
         </form>
         <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
-          <a href={contactHref("dev-akinaza-offer")}>{t.talk}</a>
+          <a href={contactHref("dev-akinaza-offer", locale)}>{t.talk}</a>
         </Button>
       </div>
       <p className="mt-3 max-w-2xl text-sm text-fg-secondary">{t.note}</p>

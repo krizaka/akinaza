@@ -60,7 +60,7 @@ export function SiteFooter({ locale }: Readonly<{ locale: Locale }>) {
       </SiteFooterColumn>
       <SiteFooterColumn title="Krizaka">
         <SiteFooterLink href={REPO_URL}>{t("chrome.sourceCode")}</SiteFooterLink>
-        <SiteFooterLink href={contactHref("dev-akinaza-footer")}>{t("chrome.contact")}</SiteFooterLink>
+        <SiteFooterLink href={contactHref("dev-akinaza-footer", locale)}>{t("chrome.contact")}</SiteFooterLink>
       </SiteFooterColumn>
     </FamilyFooter>
   );
