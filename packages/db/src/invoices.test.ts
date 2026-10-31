@@ -38,7 +38,7 @@ describe("invoices and the GST/QST ledger (real PostgreSQL 16)", () => {
   it("refuses, at commit, an invoice whose ledger does not hold its taxes", async () => {
     const s = await salon(t.db);
     const attempt = t.db.transaction(async (tx) => {
-      const [inv] = await tx.insert(invoices).values({ shopId: s.shop.id, number: "X-1", language: "fr", issuedOn: "2026-10-15", subtotalCents: 4_500, gstCents: 225, qstCents: 449, totalCents: 5_174 }).returning();
+      const [inv] = await tx.insert(invoices).values({ shopId: s.shop.id, number: "X-1", language: "fr", issuedOn: "2026-10-15", termsDays: 30, dueOn: "2026-11-14", subtotalCents: 4_500, gstCents: 225, qstCents: 449, totalCents: 5_174 }).returning();
       await tx.insert(invoiceLines).values({ invoiceId: inv!.id, position: 1, description: "Coupe", quantityHundredths: 100, unitPriceCents: 4_500, taxCategory: "standard", amountCents: 4_500 });
       await tx.insert(taxLedger).values({ shopId: s.shop.id, period: "2026-10-01", tax: "gst", direction: "collected", amountCents: 225, sourceKind: "invoice", sourceId: inv!.id, sourceLabel: "X-1" });
       // The QST entry is "forgotten".
@@ -52,14 +52,14 @@ describe("invoices and the GST/QST ledger (real PostgreSQL 16)", () => {
     expect(
       await refusal(
         t.db.transaction(async (tx) => {
-          await tx.insert(invoices).values({ shopId: s.shop.id, number: "X-2", language: "fr", issuedOn: "2026-10-15", subtotalCents: 0, gstCents: 0, qstCents: 0, totalCents: 1 });
+          await tx.insert(invoices).values({ shopId: s.shop.id, number: "X-2", language: "fr", issuedOn: "2026-10-15", termsDays: 30, dueOn: "2026-11-14", subtotalCents: 0, gstCents: 0, qstCents: 0, totalCents: 1 });
         }),
       ),
     ).toMatch(/invoices_total/);
     expect(
       await refusal(
         t.db.transaction(async (tx) => {
-          await tx.insert(invoices).values({ shopId: s.shop.id, number: "X-3", language: "fr", issuedOn: "2026-10-15", subtotalCents: 100, gstCents: 0, qstCents: 0, totalCents: 100 });
+          await tx.insert(invoices).values({ shopId: s.shop.id, number: "X-3", language: "fr", issuedOn: "2026-10-15", termsDays: 30, dueOn: "2026-11-14", subtotalCents: 100, gstCents: 0, qstCents: 0, totalCents: 100 });
         }),
       ),
     ).toMatch(/AK_INVOICE_LINES/);

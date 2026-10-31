@@ -19,6 +19,7 @@ const base: InvoiceFormProps = {
   data: {
     today: "2026-10-23",
     registrant: true,
+    termsDays: 30,
     clients: [{ id: "c-1", fullName: "Studio Lumen inc. (démo)", language: "fr" }],
     services: [{ id: "s-hour", nameFr: "Développement (à l'heure)", nameEn: "Development (hourly)", priceCents: 15_000, taxCategory: "standard" }],
   },
