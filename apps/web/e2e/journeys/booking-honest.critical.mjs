@@ -22,7 +22,13 @@ test("an honest booking: choices carried, taxes included, the cancellation windo
   await page.locator('a[href*="/slots"]').first().click();
   await page.waitForURL(/\/slots/);
   // Deterministic: the run's clock is fixed, so a time that does not carry the « no free cancellation » label is more than the free window away.
-  await page.locator('a[href*="/confirm?"]:not(:has-text("No free cancellation"))').first().click();
+  // The first week can hold only times inside the window (the clock is fixed near its start): go forward until one is outside it.
+  const outside = page.locator('a[href*="/confirm?"]:not(:has-text("No free cancellation"))').first();
+  await expect(page.locator('a[href*="/confirm?"]').first()).toBeVisible();
+  for (let week = 0; week < 2 && (await outside.count()) === 0; week += 1) {
+    await page.getByRole("button", { name: "Next week" }).or(page.getByRole("link", { name: "Next week" })).first().click();
+  }
+  await outside.click();
   await page.waitForURL(/\/confirm\?/);
   await expect(page.locator("[data-booking-summary]")).toBeVisible();
   // The service chosen is the one on the summary's page; the time is carried in the address.
