@@ -117,6 +117,9 @@ describe("the matcher lets a page with a dot in its address through, so its 404 
     expect(pageMatcher.test("/_next/image?url=x")).toBe(false);
     expect(pageMatcher.test("/favicon.ico")).toBe(false);
     expect(pageMatcher.test("/og.png")).toBe(false);
+    // Google Search Console's HTML-file verification is a static file at the root: no locale redirect, no 404 (public/google<token>.html).
+    expect(pageMatcher.test("/googleb4781139d062ddce.html")).toBe(false);
+    expect(pageMatcher.test("/fr/googleb4781139d062ddce.html")).toBe(true);
     expect(pageMatcher.test("/fonts/inter.woff2")).toBe(false);
     // The maplibre worker is a dotted file that the map loads from its own route (MapSetup): it must bypass the proxy as before.
     expect(pageMatcher.test("/maplibre/maplibre-gl-worker.mjs")).toBe(false);
@@ -385,5 +388,21 @@ describe("a merchant's own domain (ADR-005 §3, akinaza#539)", () => {
     const res = await as("salon-laurier.akinaza.shop", "/fr?utm=1");
     expect(res.status).toBe(308);
     expect(res.headers.get("location")).toBe(`https://${host}/fr?utm=1`);
+  });
+});
+
+describe("Google Search Console's verification file (a public token, not a secret)", () => {
+  it("is served as is at the site's root, with exactly the content Google gave", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { fileURLToPath } = await import("node:url");
+    const file = fileURLToPath(new URL("../public/googleb4781139d062ddce.html", import.meta.url));
+    expect(readFileSync(file, "utf8")).toBe("google-site-verification: googleb4781139d062ddce.html");
+  });
+
+  it("reaches the image: the Dockerfile copies public/ next to the standalone server", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { fileURLToPath } = await import("node:url");
+    const dockerfile = readFileSync(fileURLToPath(new URL("../../../deploy/docker/Dockerfile", import.meta.url)), "utf8");
+    expect(dockerfile).toMatch(/\/app\/apps\/web\/public \.\/apps\/web\/public/);
   });
 });

@@ -42,7 +42,7 @@ export default async function SignInPage({ params, searchParams }: Readonly<{ pa
         <>
           <strong className="block font-semibold text-fg">{t.closedTitle}</strong>
           <span className="block">{t.closed}</span>{" "}
-          <a className="font-semibold text-fg-accent" href={contactHref("akinaza-sign-in")}>
+          <a className="font-semibold text-fg-accent" href={contactHref("akinaza-sign-in", locale)}>
             {t.contact}
           </a>
         </>

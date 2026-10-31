@@ -48,7 +48,7 @@ export default async function SignUpPage({ params }: Readonly<{ params: Promise<
           <>
             <strong className="block font-semibold text-fg">{t.account.signUp.closedTitle}</strong>
             <span className="block">{t.account.signUp.closed}</span>{" "}
-            <a className="font-semibold text-fg-accent" href={contactHref("akinaza-sign-up")}>
+            <a className="font-semibold text-fg-accent" href={contactHref("akinaza-sign-up", locale)}>
               {t.account.signUp.contact}
             </a>
           </>
