@@ -45,7 +45,7 @@ data model.
 ## Where the connectors live: Akinaza now, Orazaka later
 
 The family rule is that external integrations go through Orazaka's connector layer. Decision: **Akinaza owns a thin
-adapter module now** and moves it behind Orazaka's connector later, exactly as Kachizaka did, because:
+adapter module now** and moves it behind Orazaka's connector later, exactly as a former product did, because:
 
 - the interface above is the seam: an Orazaka connector replaces the adapter without touching the screens, the proposal
   model or the log (the connector would own OAuth and token custody; Akinaza would keep the mapping and decisions);
