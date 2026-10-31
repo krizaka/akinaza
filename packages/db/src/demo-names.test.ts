@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { DEMO_SHOPS } from "./demo-shops";
+import { ALL_DEMO_SHOPS } from "./demo-shops";
 import { KRIZAKA, KRIZAKA_SECOND } from "./seed-krizaka";
 import { OWNER_STATES } from "./seed-owner-states";
 import { SAINT_HENRI } from "./seed-walker";
@@ -19,7 +19,7 @@ const demoNames: [string, string][] = [
   ["seed-walker shop", SAINT_HENRI.shop.name],
   ["seed-walker shop", SAINT_HENRI.shop.legalName],
   ...SAINT_HENRI.clients.map((c): [string, string] => ["seed-walker client", c.name]),
-  ...DEMO_SHOPS.flatMap((d): [string, string][] => [["demo-shops shop", d.shop.name], ["demo-shops shop", d.shop.legalName]]),
+  ...ALL_DEMO_SHOPS.flatMap((d): [string, string][] => [["demo-shops shop", d.shop.name], ["demo-shops shop", d.shop.legalName]]),
 ];
 
 describe("the demo data names no café, restaurant, bar or bakery (service businesses only)", () => {

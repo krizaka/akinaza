@@ -2,7 +2,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { CAHIER_VERSION, framePaperOf, TEMPLATES_V2 } from "@akinaza/core";
 
-import { demoCounts, DEMO_SHOPS, seedDemoShops } from "./demo-shops";
+import { demoCounts, DEMO_SHOPS, seedDemoShops, ST_HENRI_DEMO_SHOPS } from "./demo-shops";
+import { shopZones } from "./schema";
 import { shopPageConfigOf } from "./shop-page";
 import { shopPaperOf } from "./shop-page-versions";
 import { listSlots, publicShop } from "./service-shop";
@@ -146,6 +147,21 @@ describe("a dev database seeded by an older version", () => {
       expect(demo!.shop.slug).toBe("cedre-ciseaux");
     } finally {
       await other.drop();
+    }
+  });
+});
+
+describe("the Saint-Henri demo set on the Explorer map (krizaka-internal#1660)", () => {
+  it("is seeded once, each shop holds its point, and a second run changes nothing", async () => {
+    const first = await seedDemoShops(t.db, ST_HENRI_DEMO_SHOPS);
+    expect(first).toHaveLength(ST_HENRI_DEMO_SHOPS.length);
+    expect(first.every((s) => s.created)).toBe(true);
+    const second = await seedDemoShops(t.db, ST_HENRI_DEMO_SHOPS);
+    expect(second.every((s) => !s.created)).toBe(true);
+    const zones = await t.db.select().from(shopZones);
+    for (const d of ST_HENRI_DEMO_SHOPS) {
+      const shopId = first.find((s) => s.slug === d.shop.slug)!.shopId;
+      expect(zones.filter((z) => z.shopId === shopId).map((z) => [z.lat, z.lng]), d.shop.slug).toEqual([[d.zone!.lat, d.zone!.lng]]);
     }
   });
 });

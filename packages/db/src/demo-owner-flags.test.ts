@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { DEMO_OWNER_FLAGS, DEMO_SHOPS, demoOwnerFlagArgs } from "./demo-shops";
+import { ALL_DEMO_SHOPS, DEMO_OWNER_FLAGS, demoOwnerFlagArgs } from "./demo-shops";
 
 describe("the demo owners' switches (local = deployed)", () => {
   it("every demo shop's owner gets the notebook storefront, once, through set-setting --user", () => {
-    const owners = [...new Set(DEMO_SHOPS.map((d) => d.ownerEmail))];
+    const owners = [...new Set(ALL_DEMO_SHOPS.map((d) => d.ownerEmail))];
     expect(owners.length).toBeGreaterThanOrEqual(3);
     const args = demoOwnerFlagArgs();
     expect(args).toHaveLength(owners.length * Object.keys(DEMO_OWNER_FLAGS).length);
