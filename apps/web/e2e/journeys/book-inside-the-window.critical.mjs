@@ -15,7 +15,7 @@ test("book inside the window: the time is labelled in the list, the summary says
   await inside.click();
   await page.waitForURL(/\/confirm\?/);
   const rule = page.locator("[data-booking-cancel-rule]");
-  await expect(rule).toContainText(/has passed/i);
+  await expect(rule, "the exact wording of a time inside the window").toHaveText("The free cancellation window has passed. Call the shop to change it.");
   const ruleY = (await rule.boundingBox()).y;
   const sendY = (await page.getByRole("button", { name: "Send me the code" }).boundingBox()).y;
   expect(ruleY, "the rule is above the button that books").toBeLessThan(sendY);

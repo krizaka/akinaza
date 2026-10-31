@@ -21,7 +21,8 @@ test("an honest booking: choices carried, taxes included, the cancellation windo
   const serviceName = (await page.locator("h1").first().innerText()).trim();
   await page.locator('a[href*="/slots"]').first().click();
   await page.waitForURL(/\/slots/);
-  await page.locator('a[href*="/confirm?"]').first().click();
+  // Deterministic: the run's clock is fixed, so a time that does not carry the « no free cancellation » label is more than the free window away.
+  await page.locator('a[href*="/confirm?"]:not(:has-text("No free cancellation"))').first().click();
   await page.waitForURL(/\/confirm\?/);
   await expect(page.locator("[data-booking-summary]")).toBeVisible();
   // The service chosen is the one on the summary's page; the time is carried in the address.
@@ -34,8 +35,7 @@ test("an honest booking: choices carried, taxes included, the cancellation windo
   }
   // The cancellation window is said before the person confirms.
   const rule = page.locator("[data-booking-cancel-rule]");
-  // Either the free window (N h) or, for a time already inside it, that it has passed: the rule is always said.
-  await expect(rule).toContainText(/\d+ ?h|has passed/i);
+  await expect(rule, "a time outside the window says until when the cancellation is free").toHaveText(/^Free cancellation until \d+ h before\.$/);
   const ruleY = (await rule.boundingBox()).y;
   const sendY = (await page.getByRole("button", { name: "Send me the code" }).boundingBox()).y;
   expect(ruleY, "the rule is above the button that books").toBeLessThan(sendY);
@@ -64,10 +64,11 @@ test("an honest booking: choices carried, taxes included, the cancellation windo
   expect(receipt, "the receipt repeats the price with its taxes").toContain(priceLine);
   // One source of truth: whatever the summary said about the cancellation (free window, or already passed for this time), the receipt says it too.
   expect(receipt, "the receipt repeats the summary's cancellation rule").toContain(ruleText);
-});
 
-// The receipt by e-mail waits for @krizaka/email's bookingReceipt template (krizaka-ui#924, release pending): this marker turns the build red the day it is sent.
-test.fail("the receipt is e-mailed after the booking (krizaka-internal#1910)", async () => {
+  // The receipt by e-mail (the mail that carries no code): the same price line with its taxes and the same rule as the screen.
   const sent = await mailbox.receiptFor(email);
   expect(sent, "a receipt mail, not the code mail").toBeTruthy();
+  const mailText = sent.text.replace(/\s+/g, " ");
+  expect(mailText, "the mail repeats the price with its taxes").toContain(priceLine);
+  expect(mailText, "the mail repeats the cancellation rule").toContain(ruleText);
 });

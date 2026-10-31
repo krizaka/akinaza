@@ -23,8 +23,8 @@ pnpm --filter @akinaza/web build
 export NODE_ENV=production
 pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs --check
 trap 'tail -100 web-journeys.log web-journeys-fail.log || true' ERR
-(cd apps/web && ABUSE_CAPTCHA_SECRET_KEY=1x0000000000000000000000000000000AA PORT=3000 APP_PUBLIC_URL=http://localhost:3000 nohup npx next start -p 3000 > ../../web-journeys.log 2>&1 &)
-(cd apps/web && ABUSE_CAPTCHA_SECRET_KEY=2x0000000000000000000000000000000AA PORT=3001 APP_PUBLIC_URL=http://localhost:3001 nohup npx next start -p 3001 > ../../web-journeys-fail.log 2>&1 &)
+(cd apps/web && ABUSE_CAPTCHA_SECRET_KEY=1x0000000000000000000000000000000AA PORT=3000 APP_PUBLIC_URL=https://journeys.akinaza.test nohup npx next start -p 3000 > ../../web-journeys.log 2>&1 &)
+(cd apps/web && ABUSE_CAPTCHA_SECRET_KEY=2x0000000000000000000000000000000AA PORT=3001 APP_PUBLIC_URL=https://journeys.akinaza.test nohup npx next start -p 3001 > ../../web-journeys-fail.log 2>&1 &)
 for port in 3000 3001; do
   for _ in $(seq 1 90); do curl -sf "http://localhost:${port}/api/healthz" > /dev/null && break; sleep 1; done
   curl -sf "http://localhost:${port}/api/healthz" > /dev/null
