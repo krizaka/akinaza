@@ -121,7 +121,13 @@ are the code itself, and the generic fixes still go upstream.
      (`parseDocument` returns the paths of every error), **nested blocks** through typed slots (allowed types and depth
      per slot), **content per locale** (`LocalizedText = Record<Locale, string>`, the missing locale falls back to
      `defaultLocale` and is listed in the editor), **variables and bindings** (`{ var: "style.accent" }`,
-     `{ bind: "shop.name" }`, resolved at render by the host). Puck's `{ root, content, zones }` is read once by a
+     `{ bind: "shop.name" }`, resolved at render by the host).
+     **Field types are typed, closed and schema-described**: text and `LocalizedText`, `enum` (a closed list of
+     presets, labels from the catalogues), `number` (`min`, `max`, `step`, unit; drawn as a slider with live preview),
+     `boolean`, `asset` (a reference `{ asset: id }` to a file in the **host's storage** — never a URL or inline data —
+     with an allow-list of kinds and MIME types, e.g. `image/*` or `model/gltf-binary` for owner-uploaded `.glb`, and an
+     optional poster asset), `slot`. They are enough for a later 3D block (krizaka-internal#1906: lazy, poster
+     fallback, owner `.glb` only) without a schema change; no 3D work is in this ADR. Puck's `{ root, content, zones }` is read once by a
      `fromPuckData` migration, never written.
   2. **The words** (C2): every editor string from catalogues (`en`, `fr`) through `@krizaka/i18n`; a test fails on an
      English string left in the French editor. The i18n hook (a `labels` prop) is proposed upstream.
