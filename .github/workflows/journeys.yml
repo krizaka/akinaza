@@ -21,4 +21,4 @@ jobs:
     with:
       setup-command: "bash scripts/ci-journeys-start.sh"
       personas: "camille.tremblay@demo"
-      command: "pnpm exec playwright test -c apps/web/e2e/journeys/playwright.config.mjs --project=critical"
+      command: "PLAYWRIGHT_JSON_OUTPUT_NAME=$PWD/journeys-report.json pnpm exec playwright test -c apps/web/e2e/journeys/playwright.config.mjs --project=critical"

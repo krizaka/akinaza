@@ -1,7 +1,8 @@
 import type { BookingDetail, PublicShop, StaffSlot } from "@akinaza/db";
 import { describe, expect, it } from "vitest";
 
-import { confirmationStep, serviceStep, timesHref, timesStep } from "./journey";
+import { canCancel } from "@akinaza/core";
+import { cancellationRule, confirmationStep, guestStep, serviceStep, timesHref, timesStep } from "./journey";
 
 const TZ = "America/Toronto";
 const NOW = new Date("2026-10-19T12:00:00Z");
@@ -84,6 +85,10 @@ describe("a times step", () => {
     expect(timesStep({ page, locale: "fr", now: NOW, serviceId: "cut", staffId: "m", slots: [slot("2026-10-20T13:00:00Z")] })!.days[0]!.groups[0]!.label).toBe("Matin");
   });
   it("for anyone, no person is named in the link; a lone worker is not named at all", () => {
+    const labelled = timesStep({ page, locale: "en", now: NOW, serviceId: "cut", staffId: "m", slots: [slot("2026-10-20T11:59:59Z"), slot("2026-10-20T12:00:00Z"), slot("2026-10-20T12:00:01Z")] })!;
+    const notes = labelled.days[0]!.slots.map((x) => x.note ?? null);
+    expect(notes, "an instant inside 24 h is labelled; exactly 24 h before is still free").toEqual(["No free cancellation", null, null]);
+    expect(timesStep({ page, locale: "fr", now: NOW, serviceId: "cut", staffId: "m", slots: [slot("2026-10-19T18:00:00Z")] })!.days[0]!.slots[0]!.note).toBe("Sans annulation gratuite");
     const any = timesStep({ page, locale: "en", now: NOW, serviceId: "cut", staffId: null, slots: [slot("2026-10-20T13:00:00Z")] })!;
     expect(any.days[0]!.slots[0]!.href).not.toContain("staff=");
     expect(any.who).toBe("Anyone free");
@@ -101,7 +106,7 @@ describe("a times step", () => {
 describe("the confirmation", () => {
   const detail: BookingDetail = {
     id: "b1", cancelled: false, startsAt: new Date("2026-10-27T17:00:00Z"), endsAt: new Date("2026-10-27T18:00:00Z"), timezone: TZ,
-    shop: { name: "Salon Cèdre & Ciseaux", slug: "cedre-ciseaux", address: "4100 rue Notre-Dame O., Montréal QC", publicPhone: "514-555-0110" },
+    shop: { name: "Salon Cèdre & Ciseaux", slug: "cedre-ciseaux", address: "4100 rue Notre-Dame O., Montréal QC", publicPhone: "514-555-0110", registrant: false },
     service: { id: "cut", nameFr: "Coupe", nameEn: "Cut", durationMinutes: 60, priceCents: 7_500 },
     staffName: "Karim", cancellationHours: 24, cancellable: true,
   };
@@ -116,7 +121,54 @@ describe("the confirmation", () => {
     expect(c.phoneHref).toBe("tel:+15145550110");
     expect(c.cancellable).toBe(true);
   });
+  it("the receipt says the price the summary said: taxes included for a registered shop, the same line", () => {
+    const registered = confirmationStep({ detail: { ...detail, shop: { ...detail.shop, registrant: true } }, locale: "en" });
+    const summary = guestStep({ page, locale: "en", serviceId: "cut", startsAt: detail.startsAt, now: NOW, staffId: null, zoneId: null });
+    expect(registered.price).toBe(summary!.taxLine);
+    expect(registered.price).toContain("86.23");
+  });
   it("a cancelled or past-window booking cannot be cancelled again", () => {
     expect(confirmationStep({ detail: { ...detail, cancelled: true, cancellable: false }, locale: "fr" }).cancelled).toBe(true);
+  });
+});
+
+describe("the cancellation rule, said for the visit", () => {
+  const start = new Date("2026-10-27T17:00:00Z");
+  const at = (offsetMinutes: number) => new Date(start.getTime() - 24 * 60 * 60_000 + offsetMinutes * 60_000);
+  const detailAt = (now: Date, startsAt = start, timezone = TZ): BookingDetail => ({
+    id: "b1", cancelled: false, startsAt, endsAt: new Date(startsAt.getTime() + 3_600_000), timezone,
+    shop: { name: "Salon", slug: "cedre-ciseaux", address: "x", publicPhone: null, registrant: true },
+    service: { id: "cut", nameFr: "Coupe", nameEn: "Cut", durationMinutes: 60, priceCents: 7_500 },
+    staffName: "Karim", cancellationHours: 24, cancellable: canCancel(startsAt, now, 24),
+  });
+  const both = (now: Date, locale: "en" | "fr" = "en", startsAt = start, timezone = TZ) => ({
+    summary: guestStep({ page, locale, serviceId: "cut", startsAt, now, staffId: null, zoneId: null })!.cancelRule,
+    receipt: confirmationStep({ detail: detailAt(now, startsAt, timezone), locale }).cancelRule,
+  });
+  it("outside the window: free until 24 h before, and the summary and the receipt agree", () => {
+    const { summary, receipt } = both(at(-1));
+    expect(summary).toBe("Free cancellation until 24 h before.");
+    expect(receipt).toBe(summary);
+  });
+  it("exactly 24 h before the visit is still free", () => {
+    const { summary, receipt } = both(at(0));
+    expect(summary).toBe(cancellationRule({ open: true, hours: 24, locale: "en" }));
+    expect(receipt).toBe(summary);
+  });
+  it("inside the window (one minute past): the summary says it has passed, like the receipt", () => {
+    const { summary, receipt } = both(at(1));
+    expect(summary).toContain("has passed");
+    expect(receipt).toBe(summary);
+  });
+  it("is said the same in French", () => {
+    const { summary, receipt } = both(at(1), "fr");
+    expect(summary).toContain("est passé");
+    expect(receipt).toBe(summary);
+  });
+  it("does not depend on the shop's time zone: the same instant gives the same answer in Vancouver and Toronto", () => {
+    for (const timezone of ["America/Toronto", "America/Vancouver", "UTC"]) {
+      expect(both(at(-1), "en", start, timezone).receipt).toContain("until 24 h");
+      expect(both(at(1), "en", start, timezone).receipt).toContain("has passed");
+    }
   });
 });
