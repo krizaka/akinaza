@@ -1,7 +1,8 @@
 "use client";
 
-import { type ExploreFilters, type ExploreShop, filterShops, NO_FILTERS, quartiersOf, rankByDistance, type RankedShop } from "@akinaza/core";
-import { krizakaFetch, KrizakaQueryProvider, useQuery } from "@krizaka/query";
+import { clearExplore, exploreRequest, hasExploreFilters, quartiersOf, type RankedShop } from "@akinaza/core";
+import { keepPreviousData, krizakaFetch, KrizakaQueryProvider, useQuery } from "@krizaka/query";
+import { NuqsAdapter } from "@krizaka/query/url/next";
 import { Alert } from "@krizaka/ui/alert";
 import { Button } from "@krizaka/ui/button";
 import { Input } from "@krizaka/ui/field";
@@ -12,12 +13,15 @@ import { ButtonLink } from "@/components/ButtonLink";
 import { canLocate, distanceLabel, mapCenter, type Origin } from "@/lib/explore";
 import type { GeoAttribution, GeoPlace } from "@/lib/geocoding";
 
+import { ExploreFilterBar, type ExploreFilterWords } from "./ExploreFilterBar";
+import { useExploreUrl } from "./use-explore-url";
+
 const ExploreMap = dynamic(() => import("./ExploreMap"), { ssr: false, loading: () => <div className="h-full min-h-80 w-full animate-pulse rounded-2xl bg-surface" aria-hidden /> });
 
 /** Every word of the page, said on the server from the catalogues (`explore`): this component holds none. */
 export interface ExploreWords {
   search: { label: string; placeholder: string; submit: string; nearMe: string; nearMeBusy: string; clear: string; centredOn: string; centredOnYou: string; nearMeNote: string; denied: string; unavailable: string; off: string; none: string; pick: string; attribution: string };
-  filters: { label: string; kind: string; all: string; salon: string; boutique: string; services: string; other: string; openNow: string; freeToday: string };
+  filters: ExploreFilterWords;
   list: { label: string; count: string; countOne: string; visit: string; open: string; free: string; away: string; notOnMap: string; quartiers: string };
   view: { list: string; map: string };
   map: { label: string; you: string };
@@ -26,7 +30,6 @@ export interface ExploreWords {
   loading: string;
 }
 
-const KINDS = ["salon", "boutique", "services", "other"] as const;
 const WIDE = "(min-width: 1024px)";
 const subscribeWide = (cb: () => void) => {
   const m = window.matchMedia(WIDE);
@@ -48,21 +51,6 @@ type Locating = "idle" | "busy" | "denied";
 function geoNotice(off: boolean, failed: boolean, words: ExploreWords): { tone: "info" | "danger"; text: string } | null {
   if (off) return { tone: "info", text: words.search.off };
   return failed ? { tone: "danger", text: words.search.unavailable } : null;
-}
-
-function Filters({ filters, kinds, words, onChange }: Readonly<{ filters: ExploreFilters; kinds: readonly (typeof KINDS)[number][]; words: ExploreWords; onChange: (next: ExploreFilters) => void }>) {
-  const pressed = (on: boolean) => ({ variant: on ? ("primary" as const) : ("ghost" as const), "aria-pressed": on, size: "sm" as const, type: "button" as const });
-  return (
-    <div role="group" aria-label={words.filters.label} className="flex flex-wrap items-center gap-2">
-      <span className="text-sm text-fg-secondary">{words.filters.kind}</span>
-      <Button {...pressed(filters.kind === null)} onClick={() => onChange({ ...filters, kind: null })}>{words.filters.all}</Button>
-      {kinds.map((k) => (
-        <Button key={k} {...pressed(filters.kind === k)} onClick={() => onChange({ ...filters, kind: k })}>{words.filters[k]}</Button>
-      ))}
-      <Button {...pressed(filters.openNow)} onClick={() => onChange({ ...filters, openNow: !filters.openNow })}>{words.filters.openNow}</Button>
-      <Button {...pressed(filters.freeToday)} onClick={() => onChange({ ...filters, freeToday: !filters.freeToday })}>{words.filters.freeToday}</Button>
-    </div>
-  );
 }
 
 function ShopCard({ shop, locale, words, selected, onShowOnMap }: Readonly<{ shop: RankedShop; locale: string; words: ExploreWords; selected: boolean; onShowOnMap: () => void }>) {
@@ -125,10 +113,9 @@ function PlacePicker({ answer, query, origin, words, onPick }: Readonly<{ answer
   );
 }
 
-function ShopList({ shown, ready, filtersOn, onReset, count, locale, words, selected, onShowOnMap }: Readonly<{ shown: RankedShop[]; ready: boolean; filtersOn: boolean; onReset: () => void; count: string; locale: string; words: ExploreWords; selected: string | null; onShowOnMap: (slug: string) => void }>) {
+function ShopList({ shown, ready, busy, filtersOn, onReset, locale, words, selected, onShowOnMap }: Readonly<{ shown: RankedShop[]; ready: boolean; busy: boolean; filtersOn: boolean; onReset: () => void; locale: string; words: ExploreWords; selected: string | null; onShowOnMap: (slug: string) => void }>) {
   return (
-    <section aria-label={words.list.label} className="flex min-w-0 flex-col gap-3" data-testid="explore-list">
-      <p role="status" className="m-0 text-sm text-fg-secondary">{ready ? count : words.loading}</p>
+    <section aria-label={words.list.label} aria-busy={busy} className="flex min-w-0 flex-col gap-3 aria-busy:opacity-70" data-testid="explore-list">
       {ready && shown.length === 0 ? (
         <div className="flex flex-col items-start gap-2 rounded-2xl border border-border p-4" data-testid="explore-empty">
           <h2 className="m-0 text-base font-semibold text-fg">{words.empty.title}</h2>
@@ -163,20 +150,39 @@ function useLocate(onFound: (o: Origin) => void) {
   return { locating, locate };
 }
 
+/** « 3 shops · Saint-Henri, Verdun »: the count, then the quartiers the shops are found in. */
+function countLine(shown: readonly RankedShop[], words: ExploreWords): string {
+  const quartiers = quartiersOf(shown);
+  const base = (shown.length === 1 ? words.list.countOne : words.list.count).replace("{count}", String(shown.length));
+  return quartiers.length ? `${base} · ${quartiers.join(", ")}` : base;
+}
+
 function Explorer({ locale, words }: Readonly<{ locale: string; words: ExploreWords }>) {
-  const [filters, setFilters] = useState<ExploreFilters>(NO_FILTERS);
+  const { state, apply, camera, setCamera } = useExploreUrl();
+  const [placeLabel, setPlaceLabel] = useState<string | null>(null);
   const [typed, setTyped] = useState("");
   const [submitted, setSubmitted] = useState("");
-  const [origin, setOrigin] = useState<Origin | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [view, setView] = useState<"list" | "map">("list");
   const wide = useSyncExternalStore(subscribeWide, () => window.matchMedia(WIDE).matches, () => false);
+  const origin: Origin | null = state.near ? { point: [state.near[0], state.near[1]], label: placeLabel } : null;
   const { locating, locate } = useLocate((o) => {
-    setOrigin(o);
+    setPlaceLabel(null);
+    apply({ ...state, near: o.point });
     setSubmitted("");
   });
 
-  const shops = useQuery({ queryKey: ["explore-shops"], queryFn: ({ signal }) => krizakaFetch("/api/explore/shops", { signal }) as Promise<{ shops: ExploreShop[] }>, staleTime: 30_000, retry: false, meta: { list: true } });
+  // The request is the address's filters, nothing else: the same state is the same key, a superseded request is cancelled (the signal), and the previous list stays on screen while the next one loads.
+  const request = exploreRequest(state);
+  const path = request ? "/api/explore/shops?" + request : "/api/explore/shops";
+  const shops = useQuery({
+    queryKey: ["explore-shops", request],
+    queryFn: ({ signal }) => krizakaFetch(path, { signal }) as Promise<{ shops: RankedShop[] }>,
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
+    retry: false,
+    meta: { list: true },
+  });
   const geo = useQuery({
     queryKey: ["explore-geocode", locale, submitted],
     enabled: submitted.length > 0,
@@ -187,13 +193,12 @@ function Explorer({ locale, words }: Readonly<{ locale: string; words: ExploreWo
     queryFn: ({ signal }) => krizakaFetch(`/api/explore/geocode?q=${encodeURIComponent(submitted)}&locale=${locale}`, { signal }) as Promise<GeocodeAnswer>,
   });
 
-  const all = shops.data?.shops ?? [];
-  const shown = rankByDistance(filterShops(all, filters), origin?.point ?? null);
-  const quartiers = quartiersOf(shown);
-  const count = (shown.length === 1 ? words.list.countOne : words.list.count).replace("{count}", String(shown.length)) + (quartiers.length ? ` · ${quartiers.join(", ")}` : "");
+  const shown = shops.data?.shops ?? [];
+  const count = countLine(shown, words);
   const notice = geoNotice(Boolean(geo.error) && /503/.test(String(geo.error)), geo.isError, words);
   const clearOrigin = () => {
-    setOrigin(null);
+    apply({ ...state, near: null, within: null });
+    setPlaceLabel(null);
     setSubmitted("");
     setTyped("");
   };
@@ -201,18 +206,19 @@ function Explorer({ locale, words }: Readonly<{ locale: string; words: ExploreWo
     setSelected(slug);
     setView("map");
   };
+  const center = camera?.center ?? mapCenter(shown, origin);
 
   return (
     <div className="flex flex-col gap-4" data-testid="explorer">
       <SearchBar words={words} typed={typed} onType={setTyped} onSubmit={() => setSubmitted(typed.trim())} locating={locating} onLocate={locate} notice={notice} denied={locating === "denied"} />
-      {geo.data && submitted ? <PlacePicker answer={geo.data} query={submitted} origin={origin} words={words} onPick={(p) => { setOrigin({ point: [p.lng, p.lat], label: p.label }); setSelected(null); }} /> : null}
+      {geo.data && submitted ? <PlacePicker answer={geo.data} query={submitted} origin={origin} words={words} onPick={(p) => { setPlaceLabel(p.label); apply({ ...state, near: [p.lng, p.lat] }); setSelected(null); }} /> : null}
       {origin ? (
         <div className="flex flex-wrap items-center gap-2" role="status">
           <span className="text-sm text-fg">{origin.label ? words.search.centredOn.replace("{place}", origin.label) : words.search.centredOnYou}</span>
           <Button type="button" variant="ghost" size="sm" onClick={clearOrigin}>{words.search.clear}</Button>
         </div>
       ) : null}
-      <Filters filters={filters} kinds={KINDS.filter((k) => all.some((s) => s.kind === k))} words={words} onChange={setFilters} />
+      <ExploreFilterBar state={state} words={words.filters} count={shops.isSuccess ? count : words.loading} busy={shops.isPlaceholderData} onChange={apply} onClear={() => apply(clearExplore())} />
       <div role="group" aria-label={`${words.view.list} / ${words.view.map}`} className="flex gap-2 lg:hidden">
         <Button type="button" size="sm" variant={view === "list" ? "primary" : "secondary"} aria-pressed={view === "list"} onClick={() => setView("list")}>{words.view.list}</Button>
         <Button type="button" size="sm" variant={view === "map" ? "primary" : "secondary"} aria-pressed={view === "map"} onClick={() => setView("map")}>{words.view.map}</Button>
@@ -224,10 +230,10 @@ function Explorer({ locale, words }: Readonly<{ locale: string; words: ExploreWo
         </Alert>
       ) : null}
       <div className="grid gap-4 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)]">
-        {wide || view === "list" ? <ShopList shown={shown} ready={shops.isSuccess} filtersOn={filters.kind !== null || filters.openNow || filters.freeToday} onReset={() => setFilters(NO_FILTERS)} count={count} locale={locale} words={words} selected={selected} onShowOnMap={showOnMap} /> : null}
+        {wide || view === "list" ? <ShopList shown={shown} ready={shops.isSuccess} filtersOn={hasExploreFilters(state)} onReset={() => apply(clearExplore())} locale={locale} words={words} selected={selected} onShowOnMap={showOnMap} busy={shops.isPlaceholderData} /> : null}
         {wide || view === "map" ? (
           <div className="h-[28rem] min-w-0 overflow-hidden rounded-2xl border border-border lg:sticky lg:top-24 lg:h-[36rem]" data-testid="explore-map">
-            <ExploreMap shops={shown} selected={selected} onSelect={setSelected} origin={origin} center={mapCenter(shown, origin)} locale={locale} label={words.map.label} youLabel={words.map.you} />
+            <ExploreMap shops={shown} selected={selected} onSelect={setSelected} origin={origin} center={center} zoom={camera?.zoom ?? null} onMoveEnd={setCamera} locale={locale} label={words.map.label} youLabel={words.map.you} />
           </div>
         ) : null}
       </div>
@@ -235,11 +241,13 @@ function Explorer({ locale, words }: Readonly<{ locale: string; words: ExploreWo
   );
 }
 
-/** Explorer: shops by quartier on a map and in a list, searched by address or postal code, ranked by distance (data through @krizaka/query, never an effect). */
+/** Explorer: shops by quartier on a map and in a list, searched by address or postal code, ranked by distance (data through @krizaka/query, the filters and the camera in the address through @krizaka/query/url, never an effect). */
 export function ExploreView(props: Readonly<{ locale: string; words: ExploreWords }>) {
   return (
-    <KrizakaQueryProvider>
-      <Explorer {...props} />
-    </KrizakaQueryProvider>
+    <NuqsAdapter>
+      <KrizakaQueryProvider>
+        <Explorer {...props} />
+      </KrizakaQueryProvider>
+    </NuqsAdapter>
   );
 }

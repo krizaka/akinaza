@@ -358,6 +358,27 @@
       "when": 1795000020000,
       "tag": "0050_reel_playlist",
       "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "7",
+      "when": 1795000021000,
+      "tag": "0051_shop_domains",
+      "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1795000022000,
+      "tag": "0052_offer_order_link",
+      "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1795000030000,
+      "tag": "0053_prices_association",
+      "breakpoints": true
     }
   ]
 }

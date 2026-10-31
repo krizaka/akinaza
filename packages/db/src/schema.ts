@@ -50,6 +50,30 @@ export const paymentEvents = pgTable("payment_events", {
   receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+/** The proof an association submits for the Association plan (prices_association migration): one pending at a time, decided once by an administrator. */
+export const associationProofs = pgTable(
+  "association_proofs",
+  {
+    id: id(),
+    accountId: uuid("account_id").notNull().references(() => accounts.id, { onDelete: "cascade" }),
+    kind: text("kind", { enum: ["neq", "charity", "incorporation"] }).notNull(),
+    reference: text("reference").notNull(),
+    note: text("note"),
+    status: text("status", { enum: ["pending", "approved", "rejected"] }).notNull().default("pending"),
+    submittedAt: timestamp("submitted_at", { withTimezone: true }).notNull().defaultNow(),
+    decidedAt: timestamp("decided_at", { withTimezone: true }),
+    decidedBy: uuid("decided_by").references(() => accounts.id, { onDelete: "set null" }),
+    decisionNote: text("decision_note"),
+  },
+  (t) => [
+    index("association_proofs_account").on(t.accountId, t.submittedAt),
+    uniqueIndex("association_proofs_one_pending").on(t.accountId).where(sql`${t.status} = 'pending'`),
+    check("association_proofs_kind", sql`${t.kind} IN ('neq','charity','incorporation')`),
+    check("association_proofs_status", sql`${t.status} IN ('pending','approved','rejected')`),
+    check("association_proofs_decided", sql`(${t.status} = 'pending') = (${t.decidedAt} IS NULL)`),
+  ],
+);
+
 export const sessions = pgTable(
   "sessions",
   {
@@ -132,6 +156,10 @@ export const shops = pgTable(
     slugHoldNote: text("slug_hold_note"),
     slugHoldReviewedAt: timestamp("slug_hold_reviewed_at", { withTimezone: true }),
     slugClearedFor: text("slug_cleared_for"),
+    /** The paid option « your own domain », enabled per shop by an administrator (0051, akinaza#539); the catalogue version it was sold at. */
+    customDomainEnabled: boolean("custom_domain_enabled").notNull().default(false),
+    customDomainPriceVersion: text("custom_domain_price_version"),
+    customDomainEnabledAt: timestamp("custom_domain_enabled_at", { withTimezone: true }),
     taglineFr: text("tagline_fr"),
     taglineEn: text("tagline_en"),
     /** The locality shown on the public page (« Saint-Henri, Montréal »): never the street address. */
@@ -190,6 +218,26 @@ export const shopSlugChanges = pgTable("shop_slug_changes", {
   shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
   at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [index("shop_slug_changes_shop_at").on(t.shopId, t.at)]);
+
+/** A merchant's own domain (0051, akinaza#539): the TXT proof, the edge service's hostname, the state a check moves (packages/core custom-domain.ts). */
+export const shopDomains = pgTable(
+  "shop_domains",
+  {
+    id: id(),
+    shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
+    hostname: text("hostname").notNull(),
+    state: text("state", { enum: ["pending-txt", "pending-tls", "active", "failed", "suspended", "removed"] }).notNull().default("pending-txt"),
+    token: text("token").notNull(),
+    providerId: text("provider_id"),
+    attempts: integer("attempts").notNull().default(0),
+    lastError: text("last_error"),
+    lastCheckedAt: timestamp("last_checked_at", { withTimezone: true }),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }),
+    createdAt: created(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [uniqueIndex("shop_domains_claim").on(t.hostname).where(sql`state IN ('pending-tls','active')`), index("shop_domains_shop").on(t.shopId)],
+);
 
 /** What the owner did with a recommendation of the Monday brief: once per recommendation, its result kept (0022). */
 export const briefActions = pgTable("brief_actions", {
@@ -257,6 +305,8 @@ export const shopPage = pgTable(
     shopId: uuid("shop_id").primaryKey().references(() => shops.id, { onDelete: "cascade" }),
     sections: jsonb("sections").$type<{ id: string; visible: boolean }[]>().notNull().default(sql`'[{"id":"services","visible":true},{"id":"team","visible":true},{"id":"hours","visible":true},{"id":"zones","visible":true},{"id":"gallery","visible":true},{"id":"wall","visible":true},{"id":"reels","visible":true},{"id":"announcements","visible":true},{"id":"reviews","visible":true},{"id":"follow","visible":true}]'::jsonb`),
     logoUrl: text("logo_url"),
+    /** The logo drawn on the dark theme, when the brand has two files (akinaza#597); null = the same logo. */
+    logoDarkUrl: text("logo_dark_url"),
     /** The trade the owner chose (picks the default images); null = from the business type. */
     shopType: text("shop_type", { enum: ["salon", "coaching", "workshop", "cleaning", "pets", "consulting"] }),
     /** Whether the page shows the proposed images where the owner has none. */
@@ -274,7 +324,7 @@ export const shopPage = pgTable(
     paper: text("paper", { enum: ["plain", "seyes", "kraft", "washi"] }),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
-  (t) => [check("shop_page_paper", sql`${t.paper} IS NULL OR ${t.paper} IN ('plain','seyes','kraft','washi')`), check("shop_page_accent", sql`${t.accent} IS NULL OR ${t.accent} ~ '^[a-z0-9:-]{1,40}$'`), check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`)],
+  (t) => [check("shop_page_paper", sql`${t.paper} IS NULL OR ${t.paper} IN ('plain','seyes','kraft','washi')`), check("shop_page_accent", sql`${t.accent} IS NULL OR ${t.accent} ~ '^[a-z0-9:-]{1,40}$'`), check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`), check("shop_page_logo_dark_https", sql`${t.logoDarkUrl} IS NULL OR (${t.logoDarkUrl} LIKE 'https://%' AND length(${t.logoDarkUrl}) <= 500)`)],
 );
 
 /** The shop page as a document (akinaza#400): one draft, one published, the rest archived (the last 20 kept). The published one IS the page. */
@@ -578,8 +628,12 @@ export const services = pgTable(
     includedEn: text("included_en").array().notNull().default(sql`'{}'::text[]`),
     /** « From » on the card: the price varies with the dog, the size, the zone. */
     priceVaries: boolean("price_varies").notNull().default(false),
+    /** The owner's order of the offers on the page (akinaza#597): 0 first. */
+    position: integer("position").notNull().default(0),
+    /** Where the card leads when the offer lives elsewhere (a product's own site): https only. Null = the offer's own page. */
+    linkUrl: text("link_url"),
   },
-  (t) => [index("services_shop").on(t.shopId), check("services_capacity", sql`${t.capacity} BETWEEN 1 AND 50`), check("services_duration", sql`${t.durationMinutes} BETWEEN 5 AND 600`), check("services_price", sql`${t.priceCents} >= 0`), check("services_tax_category", sql`${t.taxCategory} IN ('standard','zeroRated','exempt')`)],
+  (t) => [index("services_shop").on(t.shopId), check("services_link_https", sql`${t.linkUrl} IS NULL OR (${t.linkUrl} LIKE 'https://%' AND length(${t.linkUrl}) <= 500)`), check("services_capacity", sql`${t.capacity} BETWEEN 1 AND 50`), check("services_duration", sql`${t.durationMinutes} BETWEEN 5 AND 600`), check("services_price", sql`${t.priceCents} >= 0`), check("services_tax_category", sql`${t.taxCategory} IN ('standard','zeroRated','exempt')`)],
 );
 
 /** A staff member's weekly hours (0 = Sunday … 6 = Saturday), in the shop's time zone. */

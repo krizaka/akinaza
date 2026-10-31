@@ -376,7 +376,8 @@
     "plans": {
       "founder": "Fondatrice",
       "starter": "Starter",
-      "scale": "Pro"
+      "scale": "Pro",
+      "association": "Association"
     },
     "features": {
       "inherits": "Tout ce qu’inclut {plan}, plus les fonctions ci-dessous à mesure qu’elles arrivent",
@@ -405,8 +406,23 @@
       {
         "q": "Et si le prix change ?",
         "a": "Votre abonnement garde le prix auquel il a été vendu, et les conditions d'utilisation disent comment un changement est annoncé."
+      },
+      {
+        "q": "Comment fonctionne la période offerte ?",
+        "a": "Un premier abonnement à Starter commence par des mois offerts. Vous saisissez votre carte, rien n’est facturé avant leur fin, et vous pouvez résilier avant depuis la page de paiement. Une seule fois par entreprise."
+      },
+      {
+        "q": "Qui est une association ?",
+        "a": "Un OBNL ou un organisme de bienfaisance enregistré. Envoyez votre NEQ ou votre numéro d’organisme depuis votre page de facturation ; un administrateur le vérifie, et le plan Association commence une fois approuvé. D’ici là, vous êtes sur Starter."
       }
-    ]
+    ],
+    "trialMonths": "{months} mois offerts",
+    "trialDays": "{days} jours offerts",
+    "trialLine": "{trial}, puis {price} par mois, taxes en sus. Vous saisissez votre carte pour commencer : rien n’est facturé pendant la période offerte, et vous pouvez résilier avant sa fin.",
+    "associationLine": "Associations : {months} mois gratuits, puis {price} par mois, taxes en sus. Pour les OBNL et les organismes de bienfaisance enregistrés.",
+    "associationLineDays": "Associations : {days} jours gratuits, puis {price} par mois, taxes en sus. Pour les OBNL et les organismes de bienfaisance enregistrés.",
+    "associationHow": "Envoyez votre NEQ, votre numéro d’organisme de bienfaisance enregistré ou la référence de votre acte constitutif depuis votre page de facturation. Nous le vérifions ; tant qu’il n’est pas approuvé, vous êtes sur Starter.",
+    "associationCta": "Demander le plan Association"
   },
   "download": {
     "title": "Les applications",
@@ -649,7 +665,8 @@
       "prices": "Prix",
       "incidents": "Incidents",
       "addresses": "Adresses des boutiques",
-      "storage": "Stockage"
+      "storage": "Stockage",
+      "associations": "Associations"
     },
     "admin": {
       "health": "Santé",
@@ -844,7 +861,8 @@
         "plans": {
           "founder": "Offre fondateur",
           "starter": "Starter",
-          "scale": "Scale B2B"
+          "scale": "Pro",
+          "association": "Association"
         },
         "entryHint": "{key} · version {version}",
         "amount": "Prix",
@@ -871,7 +889,8 @@
           "founderCap": "Offre fondateur : entreprises",
           "cardFeeBps": "Frais sur les cartes (points de base)",
           "directDebitBps": "Frais d’orchestration du débit préautorisé (points de base)",
-          "directDebitCapCents": "Plafond du débit préautorisé par commande (cents)"
+          "directDebitCapCents": "Plafond du débit préautorisé par commande (cents)",
+          "trialDays": "Période offerte (jours)"
         },
         "upcoming": "Prévu à partir du {date}",
         "change": "Changer {plan}",
@@ -1049,6 +1068,19 @@
           "user-cloud": "Les fichiers restent dans le nuage que la personne a connecté elle-même.",
           "device": "Les fichiers restent sur le disque du serveur (développement seulement)."
         }
+      },
+      "associations": {
+        "title": "Preuves d’association",
+        "lead": "Les OBNL et organismes de bienfaisance enregistrés envoient une preuve (un NEQ, un numéro d’organisme, une référence d’acte constitutif). Vérifiez-la au registre public, puis approuvez ou refusez. Tant qu’elle n’est pas approuvée, la boutique est sur Starter. Chaque décision est journalisée.",
+        "empty": "Rien à vérifier.",
+        "account": "Compte",
+        "kind": "Preuve",
+        "reference": "Numéro ou référence",
+        "submitted": "Envoyée",
+        "note": "Motif (montré à la boutique en cas de refus)",
+        "approve": "Approuver",
+        "reject": "Refuser",
+        "done": "Décidé."
       }
     },
     "errors": {
@@ -1168,7 +1200,14 @@
       "INCIDENT_NOT_ASSESSED": "Évaluez d'abord le risque.",
       "INCIDENT_NO_NOTICE_DUE": "Aucun avis n'est requis : le risque de préjudice sérieux n'a pas été retenu.",
       "INCIDENT_NOTICES_MISSING": "Les deux avis doivent être consignés avant la fermeture.",
-      "REEL_ORDER": "L'ordre a changé entre-temps : rechargez la page."
+      "REEL_ORDER": "L'ordre a changé entre-temps : rechargez la page.",
+      "SERVICE_ORDER": "Les offres ont changé entre-temps : rechargez la page.",
+      "ASSOCIATION_PENDING": "Une preuve est déjà en attente de vérification.",
+      "ASSOCIATION_APPROVED": "Votre association est déjà approuvée.",
+      "ASSOCIATION_REFERENCE": "Ce numéro ne semble pas correct : un NEQ compte 10 chiffres, un numéro d’organisme ressemble à 123456789RR0001.",
+      "ASSOCIATION_NOT_APPROVED": "Le plan Association s’ouvre une fois votre preuve approuvée.",
+      "PLAN_NOT_ON_SALE": "Ce plan n’est pas en vente.",
+      "TRIAL_TEST_MODE_ONLY": "La période offerte n’est pas encore disponible."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -1432,7 +1471,34 @@
         "yourPriceHint": "Le prix auquel votre abonnement a été vendu : vous le gardez tant que vous restez.",
         "priceLine": "{price} par mois plus taxes",
         "acceptPrefix": "En choisissant cette offre, vous acceptez les ",
-        "acceptLink": "conditions d'utilisation"
+        "acceptLink": "conditions d'utilisation",
+        "planStarter": "Starter",
+        "planScale": "Pro",
+        "planAssociation": "Association",
+        "planHint": "{price} par mois, taxes en sus.",
+        "planHintTrial": "{trial}, puis {price} par mois, taxes en sus.",
+        "trialMonths": "{months} mois offerts",
+        "trialDays": "{days} jours offerts",
+        "startTrial": "Commencer la période offerte",
+        "choosePlan": "Choisir",
+        "trialing": "Période offerte",
+        "trialEnds": "Offert jusqu’au",
+        "trialEndsHint": "Votre carte est débitée pour la première fois à cette date, sauf si vous résiliez avant.",
+        "associationTitle": "Plan Association",
+        "associationHint": "Pour les OBNL et les organismes de bienfaisance enregistrés : {trial}, puis {price} par mois, taxes en sus, une fois votre preuve approuvée par un administrateur. D’ici là, vous êtes sur Starter.",
+        "assoKind": "Preuve",
+        "assoKinds": {
+          "neq": "NEQ (numéro d’entreprise du Québec)",
+          "charity": "Numéro d’organisme de bienfaisance enregistré",
+          "incorporation": "Acte constitutif (référence)"
+        },
+        "assoReference": "Numéro ou référence",
+        "assoNote": "Un mot pour la personne qui vérifie (facultatif)",
+        "assoSubmit": "Envoyer la preuve",
+        "assoPending": "En attente de vérification.",
+        "assoApproved": "Approuvé : le plan Association est disponible.",
+        "assoRejected": "Non approuvé : {note} Vous pouvez envoyer une autre preuve.",
+        "assoRejectedPlain": "Non approuvé. Vous pouvez envoyer une autre preuve."
       },
       "data": {
         "title": "Vos données",
@@ -1606,6 +1672,9 @@
         "preparing": "en préparation",
         "logo": "Logo de la boutique",
         "uploadLogo": "Téléverser le logo",
+        "logoDark": "Logo de la boutique pour le thème sombre (facultatif)",
+        "logoDarkHint": "Affiché à la place du logo sur le thème sombre.",
+        "uploadLogoDark": "Téléverser le logo sombre",
         "moveUp": "Monter {section}",
         "moveDown": "Descendre {section}",
         "sections": {
@@ -1687,6 +1756,10 @@
         "includedHint": "Un par ligne, six au plus.",
         "priceVaries": "Le prix varie (affiche « À partir de »; sans prix indiqué il affiche « Sur devis »)",
         "onQuote": "sur devis",
+        "link": "Page où mène l'offre (facultatif)",
+        "linkHint": "https:// seulement. Un produit sur son propre site : la carte mène là plutôt qu'à la réservation.",
+        "moveUp": "Monter {name}",
+        "moveDown": "Descendre {name}",
         "edit": "Modifier {name}",
         "editing": "Modification d'un service",
         "save": "Enregistrer le service",
@@ -3589,7 +3662,20 @@
       "services": "Services",
       "other": "Autres",
       "openNow": "Ouvert maintenant",
-      "freeToday": "Une place aujourd’hui"
+      "freeToday": "Une place aujourd’hui",
+      "text": "Nom ou service",
+      "textPlaceholder": "Un nom, un service, un quartier",
+      "opening": "Ouverture",
+      "week": "Ouvert cette semaine",
+      "distance": "Distance",
+      "km": "{km} km",
+      "distanceNeeds": "La distance se mesure depuis « Près de moi » ou une adresse.",
+      "clearAll": "Tout effacer",
+      "remove": "Retirer : {filter}",
+      "active": "Filtres actifs",
+      "here": "Autour de vous",
+      "updating": "Mise à jour de la liste…",
+      "textChip": "« {text} »"
     },
     "list": {
       "label": "Commerces",

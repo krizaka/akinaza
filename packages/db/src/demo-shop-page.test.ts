@@ -25,6 +25,10 @@ describe("the demo shops' page (akinaza#403, #404)", () => {
     }
   });
 
+  it("gives the mosaic to one demo only: the salon, the dog walker keeps its starter's gallery", () => {
+    expect(DEMO_PAGES.filter((d) => d.galleryVariant === "mosaic").map((d) => d.slug)).toEqual(["cedre-ciseaux"]);
+  });
+
   it("starts the salon compact and the dog walker on the route: the first look of the switch is the page's own", () => {
     for (const demo of DEMO_PAGES) expect(demoLooksOf(demo.slug)[0]!.starter).toBe(demo.starter);
   });
@@ -38,6 +42,9 @@ describe("the demo shops' page (akinaza#403, #404)", () => {
     expect(shop.media.cover?.url).toContain("salon-cover");
     expect(shop.media.gallery).toHaveLength(9);
     expect((await publishedShopPage(t.db, shop.shop.id)).page.preset.id).toBe("salon-vitrine");
+    // The salon shows the mosaic (akinaza#481), so the dev seed and the deployed demo draw it; the page is otherwise its starter.
+    const gallery = (await publishedShopPage(t.db, shop.shop.id)).page.sections.filter((section) => section.type === "gallery");
+    expect(gallery.map((section) => section.variant)).toEqual(["mosaic"]);
     const second = await seedDemoPages(t.db);
     expect(second[0]!.published).toBe(false);
     expect(await shopPageVersionsOf(t.db, shop.shop.id)).toHaveLength(1);

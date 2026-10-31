@@ -5,6 +5,7 @@ import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { handle } from "@/lib/http";
 import { announcePage } from "@/lib/realtime";
+import { forgetShops } from "@/lib/shop-directory";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,7 @@ export function POST(req: Request) {
     const { session, shop } = await requireShop(req, "catalogue");
     const { version } = await publishShopPageDraft(db(), shop.id, session.account.id);
     await audit({ action: "shop.page_published", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { version }, headers: req.headers });
+    forgetShops();
     await announcePage(shop.id);
     return Response.json({ version });
   });

@@ -41,3 +41,6 @@ export * from "./calendar-connections";
 export * from "./shop-page-versions";
 export * from "./exports";
 export * from "./explore";
+export * from "./shop-domains";
+export * from "./association";
+export * from "./price-schedule";

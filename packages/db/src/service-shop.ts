@@ -69,6 +69,8 @@ export const serviceInputSchema = z.object({
   includedFr: z.array(text(80)).max(6).optional(),
   includedEn: z.array(text(80)).max(6).optional(),
   priceVaries: z.boolean().optional(),
+  /** Where the card leads when the offer lives on another site (https only); null removes it. Omitted = left as it is. */
+  linkUrl: z.string().trim().url().max(500).refine((url) => url.startsWith("https://"), { message: "https only" }).nullable().optional(),
 });
 export type ServiceInput = z.input<typeof serviceInputSchema>;
 
@@ -249,13 +251,26 @@ export async function saveService(db: Db, shopId: string, raw: ServiceInput): Pr
     ...(input.includedFr === undefined ? {} : { includedFr: input.includedFr }),
     ...(input.includedEn === undefined ? {} : { includedEn: input.includedEn }),
     ...(input.priceVaries === undefined ? {} : { priceVaries: input.priceVaries }),
+    ...(input.linkUrl === undefined ? {} : { linkUrl: input.linkUrl }),
   };
   if (input.id) {
     const [row] = await db.update(services).set(values).where(and(eq(services.id, input.id), eq(services.shopId, shopId))).returning({ id: services.id });
     return row?.id ?? refuse("AK_SERVICE_UNKNOWN");
   }
-  const [row] = await db.insert(services).values({ shopId, ...values }).returning({ id: services.id });
+  // A new offer comes last in the owner's order.
+  const [row] = await db.insert(services).values({ shopId, ...values, position: sql`(SELECT coalesce(max(position) + 1, 0) FROM services WHERE shop_id = ${shopId})` }).returning({ id: services.id });
   return row!.id;
+}
+
+/** The owner's order of the offers: every active offer of the shop, once, in the order wanted; false (nothing changed) when the list omits, repeats or invents one. */
+export async function reorderServices(db: Db, shopId: string, ids: readonly string[]): Promise<boolean> {
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`SELECT id FROM shops WHERE id = ${shopId} FOR UPDATE`);
+    const current = await tx.select({ id: services.id }).from(services).where(and(eq(services.shopId, shopId), eq(services.active, true)));
+    if (new Set(ids).size !== ids.length || ids.length !== current.length || !current.every((r) => ids.includes(r.id))) return false;
+    for (const [position, id] of ids.entries()) await tx.update(services).set({ position }).where(and(eq(services.shopId, shopId), eq(services.id, id)));
+    return true;
+  });
 }
 
 async function ownStaff(tx: Db | Tx, shopId: string) {
@@ -387,7 +402,7 @@ export async function loadShop(db: Db, shop: typeof shops.$inferSelect): Promise
   const member = await ownStaff(db, shop.id);
   const [zones, svc, windows, off, rules] = await Promise.all([
     db.select().from(shopZones).where(and(eq(shopZones.shopId, shop.id), eq(shopZones.active, true))).orderBy(asc(shopZones.position)),
-    db.select().from(services).where(and(eq(services.shopId, shop.id), eq(services.active, true))).orderBy(asc(services.durationMinutes), asc(services.nameEn)),
+    db.select().from(services).where(and(eq(services.shopId, shop.id), eq(services.active, true))).orderBy(asc(services.position), asc(services.durationMinutes), asc(services.nameEn)),
     db.select().from(schedules).where(eq(schedules.staffId, member.id)).orderBy(asc(schedules.weekday), asc(schedules.startsAt)),
     db.select({ id: daysOff.id, onDate: daysOff.onDate, reason: daysOff.reason }).from(daysOff).where(eq(daysOff.staffId, member.id)).orderBy(asc(daysOff.onDate)),
     db.select().from(shopRules).where(eq(shopRules.shopId, shop.id)),
@@ -427,7 +442,7 @@ export interface PublicShop {
     ownerName: string;
   };
   zones: Pick<typeof shopZones.$inferSelect, "id" | "name" | "lat" | "lng">[];
-  services: Pick<typeof services.$inferSelect, "id" | "nameFr" | "nameEn" | "durationMinutes" | "priceCents" | "capacity" | "descriptionFr" | "descriptionEn" | "includedFr" | "includedEn" | "priceVaries">[];
+  services: (Pick<typeof services.$inferSelect, "id" | "nameFr" | "nameEn" | "durationMinutes" | "priceCents" | "capacity" | "descriptionFr" | "descriptionEn" | "includedFr" | "includedEn" | "priceVaries"> & { linkUrl?: string | null })[];
   /** The shop's opening hours: everyone's weekly windows, merged. */
   windows: Pick<typeof schedules.$inferSelect, "weekday" | "startsAt" | "endsAt">[];
   /** Who works here (first names), to choose from; one person = no choice to offer. */
@@ -485,7 +500,7 @@ async function publicShopOf(db: Db, row: typeof shops.$inferSelect): Promise<Pub
   return {
     shop: { id: row.id, name: row.name, slug: row.slug, registrant: row.registrant, timezone: row.timezone, taglineFr: row.taglineFr, taglineEn: row.taglineEn, area: row.area, bioFr: row.bioFr, bioEn: row.bioEn, publicPhone: row.publicPhone, publicEmail: row.publicEmail, seatUnitFr: row.seatUnitFr, seatUnitEn: row.seatUnitEn, businessType: row.businessType, ownerName: full.staff.name },
     zones: full.zones.map((z) => ({ id: z.id, name: z.name, lat: z.lat, lng: z.lng })),
-    services: full.services.map((s) => ({ id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, descriptionFr: s.descriptionFr, descriptionEn: s.descriptionEn, includedFr: s.includedFr, includedEn: s.includedEn, priceVaries: s.priceVaries })),
+    services: full.services.map((s) => ({ id: s.id, nameFr: s.nameFr, nameEn: s.nameEn, durationMinutes: s.durationMinutes, priceCents: s.priceCents, capacity: s.capacity, descriptionFr: s.descriptionFr, descriptionEn: s.descriptionEn, includedFr: s.includedFr, includedEn: s.includedEn, priceVaries: s.priceVaries, linkUrl: s.linkUrl })),
     windows: mergeWindows(everyone),
     team: team.map((m) => ({ id: m.id, name: m.name })),
     daysOff: full.daysOff.map((d) => d.onDate),

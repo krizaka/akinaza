@@ -37,7 +37,9 @@ export function choiceOf(settings: { provider: string; endpoint: string; region:
 
 /** The residency of whatever is saved (any provider), in the keys the messages speak: `console.admin.storage.residency.<key>`. */
 export function residencyOfSaved(settings: { provider: string; endpoint: string; region: string }): ResidencyLabel["key"] {
-  if (settings.provider === "local") return "device";
+  if (settings.provider === "local") {
+    return "device";
+  }
   return residencyLabel({ provider: settings.provider === "s3" ? "s3" : "http", endpoint: settings.endpoint, region: settings.region }).key;
 }
 

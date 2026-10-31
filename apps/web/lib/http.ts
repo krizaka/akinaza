@@ -27,7 +27,8 @@ const SHOP_STATUS: Record<string, number> = {
   AK_TIME_OFF_DATE: 400, AK_TIME_OFF_ORDER: 400, AK_TIME_OFF_TOO_LONG: 400,
   AK_SHOP_LIMIT: 409, AK_TEMPLATE_UNKNOWN: 404, AK_SECTIONS_CUSTOM: 409, AK_LANGUAGE_NOT_ALLOWED: 400, AK_LANGUAGE_NOT_ENABLED: 409, AK_TRANSLATION_LIMIT: 429, AK_TRANSLATION_UNKNOWN: 404,
   AK_NOT_FOUND: 404, AK_SHOP_PAGE_NO_DRAFT: 409,
-  AK_CALENDAR_LIMIT: 409, AK_REEL_LINK: 400, AK_REEL_LIMIT: 409, AK_REEL_UNKNOWN: 404, AK_SOCIAL_LINK: 400, AK_ANNOUNCEMENT_LIMIT: 409, AK_ANNOUNCEMENT_UNKNOWN: 404, AK_REVIEW_REMOVED: 409, AK_REVIEW_UNKNOWN: 404, AK_REEL_TOO_LONG: 413, AK_REEL_NOT_VIDEO: 400,
+  AK_DOMAIN_OPTION_OFF: 403, AK_DOMAIN_INVALID: 400, AK_DOMAIN_LIMIT: 409, AK_DOMAIN_EXISTS: 409, AK_DOMAIN_TAKEN: 409, AK_DOMAIN_NOT_FOUND: 404, AK_DOMAIN_TOO_SOON: 429,
+  AK_CALENDAR_LIMIT: 409, AK_REEL_LINK: 400, AK_REEL_LIMIT: 409, AK_REEL_UNKNOWN: 404, AK_SOCIAL_LINK: 400, AK_ANNOUNCEMENT_LIMIT: 409, AK_ANNOUNCEMENT_UNKNOWN: 404, AK_REVIEW_REMOVED: 409, AK_REVIEW_UNKNOWN: 404, AK_ASSOCIATION_PENDING: 409, AK_ASSOCIATION_APPROVED: 409, AK_ASSOCIATION_REFERENCE: 400, AK_REEL_TOO_LONG: 413, AK_REEL_NOT_VIDEO: 400,
 };
 
 /** Runs a route handler: an HttpError becomes its JSON answer; anything else is a 500 that leaks nothing. */
@@ -79,7 +80,7 @@ export async function readJson<T>(req: Request, schema: { safeParse: (v: unknown
     throw refuse(400, "BAD_REQUEST", "The body is not JSON");
   }
   const parsed = schema.safeParse(raw);
-  if (!parsed.success) throw refuse(400, "BAD_REQUEST", "Invalid body", { fields: parsed.error.issues.map((i) => i.path.join(".")) });
+  if (!parsed.success) {throw refuse(400, "BAD_REQUEST", "Invalid body", { fields: parsed.error.issues.map((i) => i.path.join(".")) });}
   return parsed.data;
 }
 

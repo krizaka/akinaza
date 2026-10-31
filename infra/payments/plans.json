@@ -1,0 +1,33 @@
+{
+  "product": "akinaza",
+  "plans": [
+    {
+      "priceKey": "akinaza.founder",
+      "lookupKey": "akinaza_founder_monthly_cad",
+      "name": "Akinaza — Founder offer (monthly, setup included)",
+      "taxCode": "txcd_10103001"
+    },
+    {
+      "priceKey": "akinaza.starter",
+      "lookupKey": "akinaza_starter_monthly_cad",
+      "name": "Akinaza — Starter (monthly)",
+      "taxCode": "txcd_10103001"
+    },
+    {
+      "priceKey": "akinaza.scale",
+      "lookupKey": "akinaza_scale_monthly_cad",
+      "name": "Akinaza — Pro (monthly)",
+      "taxCode": "txcd_10103001"
+    },
+    {
+      "priceKey": "akinaza.association",
+      "lookupKey": "akinaza_association_monthly_cad",
+      "name": "Akinaza — Association (monthly)",
+      "taxCode": "txcd_10103001"
+    }
+  ],
+  "portal": {
+    "headline": "Akinaza — manage your subscription",
+    "cancel": "at_period_end"
+  }
+}

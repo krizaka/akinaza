@@ -31,11 +31,15 @@ export function StorageRegion({ saved }: Readonly<{ saved: SavedStorage }>) {
   const label = (c: RegionChoice) => say("admin.storage.regionLabel", { provider: say(`admin.storage.provider.${c.preset}`), region: c.region });
   const shown = choice ? choice.residency.key : residencyOfSaved(saved);
   const save = async () => {
-    if (!choice) return;
+    if (!choice) {
+      return;
+    }
     setDone(false);
     const entries = Object.entries({ ...settingsOf(choice), "storage.bucket": bucket.trim() });
     for (const [key, value] of entries) {
-      if ((await call.run(`/api/admin/settings/${key}`, { method: "PUT", json: { scope: "global", value } }, { refresh: false })) === null) return;
+      if ((await call.run(`/api/admin/settings/${key}`, { method: "PUT", json: { scope: "global", value } }, { refresh: false })) === null) {
+        return;
+      }
     }
     setDone(true);
   };

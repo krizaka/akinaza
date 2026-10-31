@@ -17,7 +17,9 @@ describe("where the administrator keeps the files (akinaza#397)", () => {
   });
 
   it("never claims Canada for a region outside it, nor for a contradicting endpoint, nor for a Bunny-shaped zone", () => {
-    for (const c of OTHER_CHOICES) expect(c.residency.key, c.id).toBe("elsewhere");
+    for (const c of OTHER_CHOICES) {
+      expect(c.residency.key, c.id).toBe("elsewhere");
+    }
     expect(residencyOfSaved({ provider: "s3", endpoint: "nyc3.digitaloceanspaces.com", region: "tor1" })).toBe("elsewhere");
     expect(residencyOfSaved({ provider: "http", endpoint: "storage.bunnycdn.com", region: "" })).toBe("elsewhere");
     expect(residencyOfSaved({ provider: "local", endpoint: "", region: "" })).toBe("device");
@@ -29,6 +31,8 @@ describe("where the administrator keeps the files (akinaza#397)", () => {
   });
 
   it("says every residency in both languages", () => {
-    for (const messages of [en, fr]) for (const key of KEYS) expect((messages.console.admin.storage.residency as Record<string, string>)[key], key).toBeTruthy();
+    for (const messages of [en, fr]) {
+      for (const key of KEYS) expect((messages.console.admin.storage.residency as Record<string, string>)[key], key).toBeTruthy();
+    }
   });
 });

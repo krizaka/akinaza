@@ -1,0 +1,12 @@
+id: no-hand-rolled-upload
+language: Tsx
+severity: error
+message: "No hand-rolled upload handling in an app: `req.formData()` + `form.get(\"file\")` + size constants + magic numbers is `@krizaka/storage` (`readUpload(req, { field, maxBytes })` refuses an oversize body and a missing file, `storage.upload({ prefix, name, bytes, allow, declaredType })` checks the size, the magic number and the declared type, and content-hashes the name). A missing helper goes into krizaka-ts first (founder, 2026-10-30: « on a des libs pour ça »)."
+rule:
+  pattern: $REQ.formData()
+files:
+  - apps/web/app/api/**/route.ts
+ignores:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/*.test.ts"

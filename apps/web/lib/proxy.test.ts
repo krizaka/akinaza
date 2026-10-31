@@ -3,10 +3,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { config, proxy } from "../proxy";
 import { LOCALE_HEADER, PATH_HEADER } from "./locale-negotiation";
-import { type ShopVerdict, shopVerdict } from "./shop-directory";
+import { customHostVerdict, type ShopVerdict, shopVerdict } from "./shop-directory";
 
 // The shop directory asks the running server: these tests answer for it.
-vi.mock("./shop-directory", async (original) => ({ ...(await original<typeof import("./shop-directory")>()), shopVerdict: vi.fn(async () => ({ kind: "shop" })) }));
+vi.mock("./shop-directory", async (original) => ({ ...(await original<typeof import("./shop-directory")>()), shopVerdict: vi.fn(async () => ({ kind: "shop" })), customHostVerdict: vi.fn(async () => ({ kind: "none" })) }));
 
 const get = (path: string) => proxy(new NextRequest(`https://dev.akinaza.com${path}`, { headers: { host: "dev.akinaza.com" } }));
 
@@ -325,5 +325,65 @@ describe("the proxy on the shops' own domain", () => {
     setup();
     expect((await on("127.0.0.1:3000", "/api/internal/shop-exists?slug=salon")).status).toBe(200);
     expect((await on("127.0.0.1:3000", "/api/internal/shop-sitemap?slug=salon")).status).toBe(421);
+  });
+});
+
+describe("a merchant's own domain (ADR-005 §3, akinaza#539)", () => {
+  const host = "reservation.monsalon.ca";
+  const serving = (verdict: ShopVerdict) => vi.mocked(customHostVerdict).mockResolvedValueOnce(verdict);
+  const setup = () => {
+    vi.stubEnv("APP_PUBLIC_URL", "https://www.akinaza.com");
+    vi.stubEnv("APP_SHOP_DOMAIN", "akinaza.shop");
+  };
+
+  it("answers 421 (no store) for a host the database does not know, unverified or unpaid", async () => {
+    setup();
+    const res = await as(host, "/en");
+    expect(res.status).toBe(421);
+    expect(res.headers.get("cache-control")).toBe("private, no-store");
+    expect(res.headers.get("x-robots-tag")).toBe("noindex, nofollow");
+  });
+
+  it("never asks the database for a name that cannot be a merchant's hostname", async () => {
+    setup();
+    vi.mocked(customHostVerdict).mockClear();
+    for (const bad of ["localhost.", "10.0.0.1", "x.y_z.ca"]) expect((await as(bad, "/")).status).toBe(421);
+    expect(customHostVerdict).not.toHaveBeenCalled();
+  });
+
+  it("serves the shop at the root of its verified domain: rewritten, no store, noindex until opened, no app session", async () => {
+    setup();
+    serving({ kind: "shop", slug: "salon-laurier" });
+    const res = await proxy(new NextRequest(`https://${host}/fr`, { headers: { host, cookie: "__Host-akinaza_session=secret; theme=dark" } }));
+    expect(res.status).toBe(200);
+    expect(res.headers.get("x-middleware-rewrite")).toContain("/fr/s/salon-laurier");
+    expect(res.headers.get("cache-control")).toBe("private, no-store");
+    expect(res.headers.get("x-robots-tag")).toBe("noindex, nofollow");
+    expect(res.headers.get("content-security-policy")).toMatch(/script-src[^;]*'nonce-/);
+    // The app's cookies never reach a shop page, and none is set for the app's names there.
+    expect(res.headers.get("x-middleware-request-cookie") ?? "").not.toContain("session");
+    expect(res.headers.get("set-cookie") ?? "").not.toContain("__Host-akinaza_session");
+  });
+
+  it("sends the booking hop and every non-shop page to the app (top-level), never serves the app there", async () => {
+    setup();
+    serving({ kind: "shop", slug: "salon-laurier" });
+    const res = await as(host, "/en/app");
+    expect(res.status).toBe(308);
+    expect(res.headers.get("location")).toBe("https://www.akinaza.com/en/app");
+  });
+
+  it("robots.txt of a custom host names its own sitemap and closes it", async () => {
+    setup();
+    serving({ kind: "shop", slug: "salon-laurier" });
+    expect(await (await as(host, "/robots.txt")).text()).toBe(`User-agent: *\nDisallow: /\nSitemap: https://${host}/sitemap.xml\n`);
+  });
+
+  it("the shop's other address leads to its verified domain (308, path and query kept)", async () => {
+    setup();
+    vi.mocked(shopVerdict).mockResolvedValueOnce({ kind: "shop", domain: host });
+    const res = await as("salon-laurier.akinaza.shop", "/fr?utm=1");
+    expect(res.status).toBe(308);
+    expect(res.headers.get("location")).toBe(`https://${host}/fr?utm=1`);
   });
 });

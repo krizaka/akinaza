@@ -108,6 +108,14 @@ describe("buildStorefront — a dog walker", () => {
     expect(lunch.status).toEqual({ open: false, label: "Closed", detail: "opens at 1 pm" });
   });
 
+  it("leads an offer that lives on another site to that site, and draws a logo for each theme (#597)", () => {
+    const linked = { ...walker, services: walker.services.map((s, i) => (i === 0 ? { ...s, linkUrl: "https://dev.yomizaka.com" } : { ...s, linkUrl: null })), pageConfig: { sections: [], logoUrl: "https://cdn.example/l.png", logoDarkUrl: "https://cdn.example/d.png" } };
+    const result = buildStorefront({ page: linked as never, locale: "en", now: MONDAY_1030 });
+    expect(result.services[0]!.href).toBe("https://dev.yomizaka.com");
+    expect(result.services[1]!.href).toContain("/service/");
+    expect(result.logoDarkUrl).toBe("https://cdn.example/d.png");
+  });
+
   it("makes a card of each service: duration, capacity in the shop's unit, formatted price, « from », inclusions, Popular from real data", () => {
     const [solo, group] = view().services;
     expect(solo).toMatchObject({ id: "s-solo", name: "Promenade solo 30 min", duration: "30 min", capacity: null, price: nb("22,00 $"), priceFrom: null, tag: null, included: ["Eau fraîche"], description: "Un chien, une marcheuse." });

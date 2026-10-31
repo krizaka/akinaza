@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import type { MailSettings } from "./mail-settings";
-import { FOUNDER, PROCESSOR_PLANS, SCALE, STARTER } from "./pricing";
+import { ASSOCIATION, FOUNDER, PROCESSOR_PLANS, SCALE, STARTER } from "./pricing";
 
 /**
  * Every environment variable of the app, declared once (named by bounded context — APP_, DATABASE_, AUTH_, ABUSE_ —
@@ -27,6 +27,13 @@ export const envSchema = z.object({
   APP_SHOP_DOMAIN: z.string().optional(),
   /** Hosts this deployment also answers to, comma separated, exact names (a preview with an address of its own). Every other host is a 421 (lib/allowed-hosts.ts). */
   APP_ALLOWED_HOSTS: list,
+  /** The edge service that issues a certificate per merchant domain (ADR-005 §3, akinaza#539): its name is a value (`cloudflare`; `memory` for development and tests only). Unset: the option cannot be used. */
+  APP_EDGE_PROVIDER: z.enum(["cloudflare", "memory"]).optional(),
+  /** The edge service's API token and zone of the shop domain (keys by name, never printed). */
+  APP_EDGE_API_TOKEN: z.string().optional(),
+  APP_EDGE_ZONE_ID: z.string().optional(),
+  /** The name merchants point their CNAME at (default `edge.akinaza.shop`). */
+  APP_EDGE_CNAME_TARGET: z.string().optional(),
   /** Explorer's address search: a geocoding service that speaks the Nominatim protocol, and the attribution its terms ask for. Unset = the search is off (the map and the list still work). */
   APP_GEOCODER_URL: z.string().url().optional(),
   APP_GEOCODER_ATTRIBUTION_TEXT: z.string().optional(),
@@ -80,6 +87,7 @@ export const envSchema = z.object({
   PAYMENTS_PRICE_KEY_FOUNDER: z.string().default(PROCESSOR_PLANS[FOUNDER].lookupKey),
   PAYMENTS_PRICE_KEY_STARTER: z.string().default(PROCESSOR_PLANS[STARTER].lookupKey),
   PAYMENTS_PRICE_KEY_SCALE: z.string().default(PROCESSOR_PLANS[SCALE].lookupKey),
+  PAYMENTS_PRICE_KEY_ASSOCIATION: z.string().default(PROCESSOR_PLANS[ASSOCIATION].lookupKey),
   /** Akinaza's OAuth clients for the owner's calendars (ADR-004), created by the administrator at Google and at Microsoft; a provider without both halves is not offered. Each provider's flag in the administration is off by default. */
   AUTH_CALENDAR_GOOGLE_CLIENT_ID: z.string().optional(),
   AUTH_CALENDAR_GOOGLE_CLIENT_SECRET: z.string().optional(),
@@ -99,19 +107,19 @@ export function readEnv(source: Record<string, string | undefined> = process.env
 
 /** What a production server cannot run without — named, never shown. */
 export function productionProblems(env: Env): string[] {
-  if (env.NODE_ENV !== "production") return [];
+  if (env.NODE_ENV !== "production") {return [];}
   const problems: string[] = [];
-  if (!env.DATABASE_URL) problems.push("DATABASE_URL is not set");
-  if (!env.AUTH_SESSION_SECRET || env.AUTH_SESSION_SECRET.length < 32) problems.push("AUTH_SESSION_SECRET must be at least 32 characters");
-  if (!validDataKey(env.APP_DATA_ENCRYPTION_KEY)) problems.push("APP_DATA_ENCRYPTION_KEY must be 32 random bytes, base64-encoded");
-  if (env.MAIL_PROVIDER === "mailgun" && !(env.MAIL_API_KEY && env.MAIL_DOMAIN)) problems.push("MAIL_PROVIDER=mailgun needs MAIL_API_KEY and MAIL_DOMAIN");
-  if (env.DATABASE_URL && /sslmode=(require|verify)/.test(env.DATABASE_URL) && !env.DATABASE_CA_CERT) problems.push("DATABASE_CA_CERT is required for a TLS database");
+  if (!env.DATABASE_URL) {problems.push("DATABASE_URL is not set");}
+  if (!env.AUTH_SESSION_SECRET || env.AUTH_SESSION_SECRET.length < 32) {problems.push("AUTH_SESSION_SECRET must be at least 32 characters");}
+  if (!validDataKey(env.APP_DATA_ENCRYPTION_KEY)) {problems.push("APP_DATA_ENCRYPTION_KEY must be 32 random bytes, base64-encoded");}
+  if (env.MAIL_PROVIDER === "mailgun" && !(env.MAIL_API_KEY && env.MAIL_DOMAIN)) {problems.push("MAIL_PROVIDER=mailgun needs MAIL_API_KEY and MAIL_DOMAIN");}
+  if (env.DATABASE_URL && /sslmode=(require|verify)/.test(env.DATABASE_URL) && !env.DATABASE_CA_CERT) {problems.push("DATABASE_CA_CERT is required for a TLS database");}
   return problems;
 }
 
 export function assertProductionEnv(source: Record<string, string | undefined> = process.env): void {
   const problems = productionProblems(readEnv(source));
-  if (problems.length) throw new Error(`Akinaza refuses to start: ${problems.join("; ")}`);
+  if (problems.length) {throw new Error(`Akinaza refuses to start: ${problems.join("; ")}`);}
 }
 
 export const env = () => readEnv();
@@ -120,15 +128,15 @@ export const signupEnabled = () => env().AUTH_SIGNUP_ENABLED;
 /** The administration's allow-list; `null` = no restriction (development only). */
 export function consoleAllowedIps(source: Record<string, string | undefined> = process.env): string[] | null {
   const e = readEnv(source);
-  if (e.AUTH_ALLOWED_IPS.length) return e.AUTH_ALLOWED_IPS;
+  if (e.AUTH_ALLOWED_IPS.length) {return e.AUTH_ALLOWED_IPS;}
   return e.NODE_ENV === "production" ? [] : null;
 }
 
 const DEV_SECRET = "development-only-session-secret-not-for-production";
 export function sessionSecret(): string {
   const e = env();
-  if (e.AUTH_SESSION_SECRET) return e.AUTH_SESSION_SECRET;
-  if (e.NODE_ENV === "production") throw new Error("AUTH_SESSION_SECRET is not set");
+  if (e.AUTH_SESSION_SECRET) {return e.AUTH_SESSION_SECRET;}
+  if (e.NODE_ENV === "production") {throw new Error("AUTH_SESSION_SECRET is not set");}
   return DEV_SECRET;
 }
 
@@ -143,10 +151,10 @@ const DEV_DATA_KEY = Buffer.alloc(32, "akinaza-development-only-data-key").toStr
 export function dataKey(source: Record<string, string | undefined> = process.env): Buffer {
   const e = readEnv(source);
   if (e.APP_DATA_ENCRYPTION_KEY) {
-    if (!validDataKey(e.APP_DATA_ENCRYPTION_KEY)) throw new Error("APP_DATA_ENCRYPTION_KEY must be 32 random bytes, base64-encoded");
+    if (!validDataKey(e.APP_DATA_ENCRYPTION_KEY)) {throw new Error("APP_DATA_ENCRYPTION_KEY must be 32 random bytes, base64-encoded");}
     return Buffer.from(e.APP_DATA_ENCRYPTION_KEY, "base64");
   }
-  if (e.NODE_ENV === "production") throw new Error("APP_DATA_ENCRYPTION_KEY is not set");
+  if (e.NODE_ENV === "production") {throw new Error("APP_DATA_ENCRYPTION_KEY is not set");}
   return Buffer.from(DEV_DATA_KEY, "base64");
 }
 

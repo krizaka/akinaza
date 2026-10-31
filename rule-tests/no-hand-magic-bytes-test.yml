@@ -1,0 +1,13 @@
+id: no-hand-magic-bytes
+valid:
+  - |
+    const type = sniffType(bytes);
+  - |
+    const offsets = [0, 4, 8];
+  - |
+    const colour = [0x10];
+invalid:
+  - |
+    const isJpeg = (b: Uint8Array) => b[0] === 0xff && startsWith(b, [0xff, 0xd8, 0xff]);
+  - |
+    const PNG = [0x89, 0x50, 0x4e, 0x47];

@@ -1,7 +1,8 @@
 import { AVAILABILITY, type PublicPrice } from "@krizaka/settings";
 
+import { trialDaysOf, trialMonthsOf } from "./plans";
 import { centsText, priceText, rateText } from "./price-text";
-import { FOUNDER, SCALE, STARTER } from "./pricing";
+import { ASSOCIATION, FOUNDER, SCALE, STARTER } from "./pricing";
 
 /**
  * The public pricing page's plans, built from the catalogue's public view (akinaza#380): every price, rate and cap is read from the
@@ -22,15 +23,17 @@ export interface PlanFeature {
   vars: Record<string, string>;
 }
 export interface PlanView {
-  id: "founder" | "starter" | "scale";
+  id: "founder" | "starter" | "scale" | "association";
   /** The amount, or null while the entry is in preparation (no figure is guessed). */
   price: string | null;
   /** The founder plan: the first businesses, limited by the catalogue's `founderCap`. */
   limit: number | null;
+  /** The free time at the start (the entry's `trialDays`): whole months when it is, for « 3 months free »; null when the plan has none. */
+  trial: { days: number; months: number | null } | null;
   features: PlanFeature[];
 }
 
-const KEYS = { founder: FOUNDER, starter: STARTER, scale: SCALE } as const;
+const KEYS = { founder: FOUNDER, starter: STARTER, scale: SCALE, association: ASSOCIATION } as const;
 
 const built = (id: FeatureId): PlanFeature => ({ id, soon: false, vars: {} });
 const soon = (id: FeatureId): PlanFeature => ({ id, soon: true, vars: {} });
@@ -41,21 +44,22 @@ function featuresOf(plan: PlanView["id"], entry: PublicPrice, locale: "en" | "fr
     limits.cardFeeBps !== undefined && limits.directDebitBps !== undefined && limits.directDebitCapCents !== undefined
       ? [{ id: "fees", soon: true, vars: { cardRate: rateText(limits.cardFeeBps, locale), debitRate: rateText(limits.directDebitBps, locale), debitCap: centsText(limits.directDebitCapCents, locale) } }]
       : [];
-  const running = plan === "scale" && inheritsStarter ? [built("inherits")] : [built("booking"), built("invoices"), built("books")];
+  const running = (plan === "scale" || plan === "association") && inheritsStarter ? [built("inherits")] : [built("booking"), built("invoices"), built("books")];
   return [...running, soon("payments"), ...fees, ...(plan === "scale" ? [soon("contract"), soon("transfers")] : [])];
 }
 
-/** The plans to show, in order: the founder offer first while it is on sale, then Starter and Scale B2B when the catalogue shows them. */
+/** The plans to show, in order: the founder offer first while it is on sale, then Starter, Pro (the scale entry) and Association when the catalogue shows them. */
 export function pricingPlans(entries: readonly PublicPrice[], locale: "en" | "fr", options: { founderOnSale: boolean }): PlanView[] {
   const plans: PlanView[] = [];
-  for (const id of ["founder", "starter", "scale"] as const) {
-    if (id === "founder" && !options.founderOnSale) continue;
+  for (const id of ["founder", "starter", "scale", "association"] as const) {
+    if (id === "founder" && !options.founderOnSale) {continue;}
     const entry = entries.find((e) => e.key === KEYS[id]);
-    if (!entry) continue;
+    if (!entry) {continue;}
     plans.push({
       id,
       price: entry.availability === AVAILABILITY.preparing ? null : priceText(entry, locale),
       limit: id === "founder" ? (entry.limits.founderCap ?? null) : null,
+      trial: entry.availability === AVAILABILITY.preparing || trialDaysOf(entry) === 0 ? null : { days: trialDaysOf(entry), months: trialMonthsOf(entry) },
       features: featuresOf(id, entry, locale, entries.some((e) => e.key === KEYS.starter)),
     });
   }

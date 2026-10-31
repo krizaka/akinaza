@@ -11,6 +11,8 @@ const CALENDAR_TICK_MS = 60_000;
 
 // @fixed: how often Explorer's stored availability (next free time, open this week) is settled, in milliseconds: the stale window the list can show
 const EXPLORE_TICK_MS = 60_000;
+// @fixed: how often the merchants' domains are looked at (the TXT proof, the certificate, the lapse check), in milliseconds
+const DOMAIN_TICK_MS = 5 * 60_000;
 
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
@@ -39,4 +41,11 @@ export async function register() {
   const { settleAvailability } = await import("@akinaza/db");
   const { db } = await import("./lib/db");
   setInterval(() => void settleAvailability(db(), systemClock.now()).catch((error) => console.error("[akinaza] explore availability tick failed", error)), EXPLORE_TICK_MS).unref();
+  // Merchants' own domains (ADR-005 §3, #539): proof of ownership, certificate, re-check of the live ones; nothing runs without an edge service configured.
+  const { domainPorts } = await import("./lib/domains/ports");
+  const { checkDueDomains } = await import("@akinaza/db");
+  setInterval(() => {
+    const ports = domainPorts(process.env, systemClock.now());
+    if (ports) void checkDueDomains(db(), ports, { everyMs: DOMAIN_TICK_MS - 1000, batch: 50 }).catch((error) => console.error("[akinaza] domains tick failed", error));
+  }, DOMAIN_TICK_MS).unref();
 }
