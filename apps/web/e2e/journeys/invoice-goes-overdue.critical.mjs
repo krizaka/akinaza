@@ -37,7 +37,8 @@ test("an invoice past its terms is overdue on the home and in the list, and leav
   const number = ((await row.innerText()).match(/[A-Z]+-\d{5}/) ?? [])[0];
   expect(number, "the row names its invoice").toBeTruthy();
   const pay = page.getByRole("button", { name: /\((cash|card|transfer)\)$/ }).first();
-  if (!(await pay.isVisible())) await row.click();
+  // The payment lines live in the row's details: open them with the row's own button.
+  if (!(await pay.isVisible())) await page.getByRole("button", { name: `Show the details of ${number}` }).click();
   await expect(pay).toBeVisible();
   await pay.click();
 
