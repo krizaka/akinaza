@@ -9,7 +9,6 @@
 // Needs a Chromium for playwright-core (PLAYWRIGHT_BROWSERS_PATH or the default cache).
 import { mkdirSync } from "node:fs";
 import { createRequire } from "node:module";
-import path from "node:path";
 import { makeShoot } from "./e2e-shoot.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright-core");
