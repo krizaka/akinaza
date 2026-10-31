@@ -2,10 +2,11 @@ import { CAHIER_VERSION, type ShopRules, type ShopType, TEMPLATES, TEMPLATES_V2 
 import { and, eq } from "drizzle-orm";
 
 import type { Db } from "./client";
-import { accounts, services as servicesTable, shops, staff as staffTable } from "./schema";
+import { accounts, services as servicesTable, shops, shopZones, staff as staffTable } from "./schema";
+import stHenri from "./demo-st-henri.json";
 import { seedDemoCommunity } from "./demo-community";
 import { applyTemplate, saveShopPageConfig, shopPageConfigOf } from "./shop-page";
-import { addStaff, addWindow, saveRules, type ServiceInput, saveService, saveShopMedia, saveShopPage, shopOfOwner } from "./service-shop";
+import { addStaff, addWindow, addZone, saveRules, type ServiceInput, saveService, saveShopMedia, saveShopPage, shopOfOwner } from "./service-shop";
 
 /**
  * The fictional demo shops (krizaka/akinaza#144), each as DATA: a hair salon in Saint-Henri, a tattoo and photo studio in the
@@ -29,6 +30,8 @@ export interface DemoShop {
   /** The template of its trade the page wears (#261, step 6): applied once, through `applyTemplate`, never touched again. */
   template: string;
   cover?: { url: string; altFr: string; altEn: string };
+  /** Where the shop is on the Explorer map (a point of its neighbourhood, invented: never a real address). */
+  zone?: { name: string; lat: number; lng: number };
 }
 
 const days = (weekdays: number[], startsAt: string, endsAt: string) => weekdays.map((weekday) => ({ weekday, startsAt, endsAt }));
@@ -135,6 +138,33 @@ async function keepTemplate(db: Db, shopId: string, template: string): Promise<v
   if (!config.templateId || (config.templateVersion ?? 0) < CAHIER_VERSION) await applyTemplate(db, shopId, { templateId: template, templateVersion: CAHIER_VERSION, keepOrder: false }, [...TEMPLATES, ...TEMPLATES_V2]);
 }
 
+/** The Saint-Henri demo set (krizaka-internal#1660): shop types, hours, services and price patterns of a field survey, with invented names and positions shifted 150-400 m (`demo-st-henri.json`, generated outside the repository, tested against hashes of the survey's names). Images are the trade's defaults: no photo, no logo. */
+interface StHenriShop { slug: string; name: string; legalName: string; address: string; zone: { name: string; lat: number; lng: number }; shopType: ShopType; template: string; phone: string; taglineFr: string; taglineEn: string; bioFr: string; bioEn: string; hours: { weekday: number; startsAt: string; endsAt: string }[]; services: DemoShop["services"]; rules: Partial<ShopRules> }
+
+export const ST_HENRI_DEMO_SHOPS: DemoShop[] = (stHenri as StHenriShop[]).map((d) => ({
+  ownerEmail: `${d.slug}@akinaza.test`,
+  shop: { name: d.name, legalName: d.legalName, address: d.address, slug: d.slug, ownerName: "Équipe" },
+  taglineFr: d.taglineFr,
+  taglineEn: d.taglineEn,
+  profile: { area: "Saint-Henri, Montréal", bioFr: d.bioFr, bioEn: d.bioEn, publicPhone: d.phone, publicEmail: `bonjour@${d.slug}.example` },
+  team: [{ name: "Équipe", hours: d.hours }],
+  services: d.services,
+  rules: d.rules,
+  shopType: d.shopType,
+  template: d.template,
+  zone: d.zone,
+}));
+
+/** Every demo shop of the seed, the three handmade ones first. */
+export const ALL_DEMO_SHOPS: DemoShop[] = [...DEMO_SHOPS, ...ST_HENRI_DEMO_SHOPS];
+
+/** A shop on the map holds its point once: added the first time, never moved after. */
+async function keepZone(db: Db, shopId: string, zone: DemoShop["zone"]): Promise<void> {
+  if (!zone) return;
+  const [held] = await db.select({ id: shopZones.id }).from(shopZones).where(eq(shopZones.shopId, shopId));
+  if (!held) await addZone(db, shopId, zone.name, { lat: zone.lat, lng: zone.lng });
+}
+
 async function shopOfSlug(db: Db, slug: string): Promise<{ id: string } | null> {
   const [found] = await db.select({ id: shops.id }).from(shops).where(eq(shops.slug, slug));
   return found ?? null;
@@ -149,6 +179,7 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
   if (existing) {
     await keepType(db, existing.id, demo.shopType);
     await keepTemplate(db, existing.id, demo.template);
+    await keepZone(db, existing.id, demo.zone);
     await seedDemoCommunity(db, existing.id, demo.shop.slug);
     return { shopId: existing.id, created: false };
   }
@@ -168,6 +199,7 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
   await saveShopPage(db, ownerId, { ...page, published: true });
   await keepType(db, shopId, demo.shopType);
   await keepTemplate(db, shopId, demo.template);
+  await keepZone(db, shopId, demo.zone);
   await seedDemoCommunity(db, shopId, demo.shop.slug);
   return { shopId, created: true };
 }
@@ -179,15 +211,15 @@ export async function seedDemo(db: Db, demo: DemoShop): Promise<{ shopId: string
 export const DEMO_OWNER_FLAGS: Readonly<Record<string, boolean>> = { "features.cahierStorefront": true };
 
 /** One `set-setting.mjs` argument list per owner and flag: the demo owners are the seed's own `.test` addresses. */
-export function demoOwnerFlagArgs(shops: readonly DemoShop[] = DEMO_SHOPS): string[][] {
+export function demoOwnerFlagArgs(shops: readonly DemoShop[] = ALL_DEMO_SHOPS): string[][] {
   return [...new Set(shops.map((d) => d.ownerEmail))].flatMap((email) =>
     Object.entries(DEMO_OWNER_FLAGS).map(([key, value]) => [key, JSON.stringify(value), "--user", email, "--actor", "seed-demo-flags"]),
   );
 }
 
-export async function seedDemoShops(db: Db): Promise<{ slug: string; shopId: string; created: boolean }[]> {
+export async function seedDemoShops(db: Db, shops: readonly DemoShop[] = DEMO_SHOPS): Promise<{ slug: string; shopId: string; created: boolean }[]> {
   const out = [];
-  for (const demo of DEMO_SHOPS) out.push({ slug: demo.shop.slug, ...(await seedDemo(db, demo)) });
+  for (const demo of shops) out.push({ slug: demo.shop.slug, ...(await seedDemo(db, demo)) });
   return out;
 }
 
