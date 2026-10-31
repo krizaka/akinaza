@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { CAPTCHA_HOST, contentSecurityPolicy, isGuestStepPath, isShopPath, jsonLdHtml, newNonce, upgradesInsecure } from "./csp";
+import { CAPTCHA_HOST, contentSecurityPolicy, allowsCaptcha, isShopPath, jsonLdHtml, newNonce, upgradesInsecure } from "./csp";
 
 const directive = (csp: string, name: string) => csp.split("; ").find((d) => d.startsWith(`${name} `))?.split(" ").slice(1) ?? [];
 const opts = { production: true, upgradeInsecure: true };
@@ -130,10 +130,11 @@ describe("the guest booking step's bot check", () => {
     expect(contentSecurityPolicy({ ...opts, nonce: "bm9uY2U=" })).not.toContain(CAPTCHA_HOST);
   });
 
-  it("is the confirm step of a service, in any language, and no other path", () => {
-    expect(isGuestStepPath("/fr/s/pattes/service/abc/confirm")).toBe(true);
-    expect(isGuestStepPath("/en/s/pattes/service/abc/confirm/")).toBe(true);
-    expect(isGuestStepPath("/en/s/pattes/service/abc/confirmation")).toBe(false);
-    expect(isGuestStepPath("/en/s/pattes")).toBe(false);
+  it("is allowed on every shop page when a site key is set (the step is reached by soft navigation), and nowhere else", () => {
+    expect(allowsCaptcha("/fr/s/pattes/service/abc/confirm", "key")).toBe(true);
+    expect(allowsCaptcha("/en/s/pattes", "key")).toBe(true);
+    expect(allowsCaptcha("/en/s/pattes", undefined)).toBe(false);
+    expect(allowsCaptcha("/en/s/pattes", "")).toBe(false);
+    expect(allowsCaptcha("/en/sign-in", "key")).toBe(false);
   });
 });

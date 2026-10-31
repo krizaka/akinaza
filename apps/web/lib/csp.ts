@@ -29,12 +29,15 @@ export type CspOptions = {
   captcha?: boolean;
 };
 
-/** The only third party a page may load for a bot check; named on the one page that asks for it (`isGuestStepPath`). */
+/** The only third party a page may load for a bot check; named on the shop pages when a site key is configured (`allowsCaptcha`). */
 export const CAPTCHA_HOST = "https://challenges.cloudflare.com";
 
-/** The last step of the booking journey, where a visitor without an account gives their details: `/<locale>/s/<slug>/service/<id>/confirm`. */
-export function isGuestStepPath(pathname: string): boolean {
-  return /^\/(?:en|fr|es)\/s\/[^/]+\/service\/[^/]+\/confirm\/?$/.test(pathname);
+/**
+ * Not only the guest step (`/confirm`): a visitor reaches it by client-side navigation from the shop page, and a document keeps the policy of the
+ * response that loaded it (a soft navigation never fetches a new header), so the page that loads must already allow the check's frame (#1934).
+ */
+export function allowsCaptcha(pathname: string, siteKey: string | undefined): boolean {
+  return isShopPath(pathname) && Boolean(siteKey);
 }
 
 /** A fresh, unguessable nonce for one response (base64 of a random UUID, as Next's guide does). */
