@@ -6,13 +6,14 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
 import { ButtonLink } from "@/components/ButtonLink";
+import { ConsoleProviders } from "@/components/console/ConsoleProviders";
 import { CancelBooking } from "@/components/journey/CancelBooking";
 import { JourneyFrame } from "@/components/journey/JourneyFrame";
 import { requestNow } from "@/app/request-now";
 import { pageSession } from "@/lib/access";
 import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";
-import { asLocale, translator } from "@/lib/i18n";
+import { asLocale, getDictionary, translator } from "@/lib/i18n";
 import { confirmationStep, journeyBase } from "@/lib/journey";
 import { backToHere } from "@/lib/next-url";
 import { accountRoutes } from "@/lib/routes";
@@ -57,7 +58,12 @@ export default async function ConfirmationPage({ params, searchParams }: Readonl
           <ButtonLink href={step.calendarHref} variant="primary" size="md">
             {t("console.journey.addToCalendar")}
           </ButtonLink>
-          {step.cancellable && file ? <CancelBooking bookingId={detail.id} clientId={file.id} words={{ cancel: t("console.journey.cancelBooking"), confirm: t("console.journey.cancelBooking"), cancelling: t("console.journey.cancelling") }} /> : null}
+          {step.cancellable && file ? (
+            // The cancel control speaks through the console's client roots (language, query): this page sits outside the console layouts.
+            <ConsoleProviders locale={locale} messages={{ console: getDictionary(locale).console }}>
+              <CancelBooking bookingId={detail.id} clientId={file.id} words={{ cancel: t("console.journey.cancelBooking"), confirm: t("console.journey.cancelBooking"), cancelling: t("console.journey.cancelling") }} />
+            </ConsoleProviders>
+          ) : null}
           {step.phone && step.phoneHref ? (
             <ButtonLink href={step.phoneHref} variant="ghost" size="md">
               {t("console.journey.callShop", { phone: step.phone })}
