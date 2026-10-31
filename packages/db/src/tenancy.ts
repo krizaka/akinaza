@@ -94,6 +94,7 @@ export const TABLE_OWNERSHIP: Readonly<Record<string, TableOwnership>> = {
   association_proofs: account("accounts", "account_id"), // the proof an association submits for its plan; decided by an administrator (prices_association migration)
   webhook_received: platform,
   mail_outbox: platform,
+  booking_codes: platform, // a visitor's request waiting for its e-mailed code: no shop owns it until the code comes back; gone within the code's 15 minutes
   // The shared modules' own: which version of each is applied (@krizaka/db), and the privacy schema's tables live outside `public`.
   krizaka_module_versions: platform,
 };

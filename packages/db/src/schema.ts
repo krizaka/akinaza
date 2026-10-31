@@ -986,3 +986,17 @@ export const clientRequestFiles = pgTable(
   },
   (t) => [index("client_request_files_request").on(t.requestId)],
 );
+
+/** The booking a visitor asked for, held until the code mailed to them comes back (0054, `@krizaka/email-verification`'s store): a salted proof, never the code. */
+export const bookingCodes = pgTable(
+  "booking_codes",
+  {
+    id: text("id").primaryKey(),
+    proof: text("proof").notNull(),
+    attempts: integer("attempts").notNull().default(0),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    payload: text("payload").notNull(),
+    createdAt: created(),
+  },
+  (t) => [index("booking_codes_expires").on(t.expiresAt)],
+);

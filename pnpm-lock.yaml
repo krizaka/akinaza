@@ -175,6 +175,9 @@ importers:
       '@krizaka/charts':
         specifier: ^0.6.1
         version: 0.6.1(@krizaka/ui@3.76.1)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)
+      '@krizaka/email-verification':
+        specifier: ^0.1.1
+        version: 0.1.1(vitest@4.1.12)
       '@krizaka/fonts':
         specifier: 0.5.0
         version: 0.5.0
@@ -202,6 +205,9 @@ importers:
       '@krizaka/query':
         specifier: ^0.3.0
         version: 0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1)
+      '@krizaka/rate-limit':
+        specifier: ^0.2.1
+        version: 0.2.1(vitest@4.1.12)(zod@4.6.7)
       '@krizaka/realtime':
         specifier: ^0.2.1
         version: 0.2.1(pg@8.23.1)
@@ -385,6 +391,9 @@ importers:
       '@krizaka/db':
         specifier: 0.3.0
         version: 0.3.0
+      '@krizaka/email-verification':
+        specifier: ^0.1.1
+        version: 0.1.1(vitest@4.1.12)
       '@krizaka/intl':
         specifier: 0.3.0
         version: 0.3.0
@@ -2115,6 +2124,15 @@ packages:
       react:
         optional: true
 
+  '@krizaka/email-verification@0.1.1':
+    resolution: {integrity: sha512-mCHjeKtc53Vgo+CkEuN1qbqjUNqFHu23kH2grt1ntIa/aiv61+vPqsAtY24Y/FBVifB26pdseveCSIPW3X1qhw==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      vitest: '>=4'
+    peerDependenciesMeta:
+      vitest:
+        optional: true
+
   '@krizaka/fonts@0.5.0':
     resolution: {integrity: sha512-romnY4PqqOLvW/7ZYNzmUq1rTIM8ylmlUeZgB2YukNCp/PxlbSM4kc5ldm1SB6KHbt/rBOlkbQdkW9prhyVvqg==}
     engines: {node: '>=22'}
@@ -2226,6 +2244,18 @@ packages:
       react: '>=18'
     peerDependenciesMeta:
       next:
+        optional: true
+
+  '@krizaka/rate-limit@0.2.1':
+    resolution: {integrity: sha512-tKxINc7FEDhasqJwR2csYbrATw4LV7LofchycT/BWtJvtUkPvpqXcjkvE9cVwLnpJeGvTux5sv5A5nTPXKQ83A==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      vitest: '>=4'
+      zod: '>=3.23'
+    peerDependenciesMeta:
+      vitest:
+        optional: true
+      zod:
         optional: true
 
   '@krizaka/realtime@0.2.1':
@@ -10667,6 +10697,12 @@ snapshots:
     optionalDependencies:
       react: 19.3.1
 
+  '@krizaka/email-verification@0.1.1(vitest@4.1.12)':
+    dependencies:
+      '@krizaka/time': 0.2.0
+    optionalDependencies:
+      vitest: 4.1.12(@types/node@24.19.2)(@vitest/coverage-v8@4.1.12)(jsdom@26.1.0)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+
   '@krizaka/fonts@0.5.0': {}
 
   '@krizaka/i18n@0.2.1(react@19.3.1)(typescript@5.9.3)':
@@ -10771,6 +10807,15 @@ snapshots:
       - react-router
       - react-router-dom
 
+  '@krizaka/rate-limit@0.2.1(vitest@4.1.12)(zod@4.6.7)':
+    dependencies:
+      '@krizaka/db': 0.3.1
+      '@krizaka/settings': 0.5.2(zod@4.6.7)
+      '@krizaka/time': 0.2.0
+    optionalDependencies:
+      vitest: 4.1.12(@types/node@24.19.2)(@vitest/coverage-v8@4.1.12)(jsdom@26.1.0)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      zod: 4.6.7
+
   '@krizaka/realtime@0.2.1(pg@8.23.1)':
     optionalDependencies:
       pg: 8.23.1
@@ -10802,7 +10847,7 @@ snapshots:
   '@krizaka/tailwind@3.76.1(@krizaka/tokens@3.76.1)(@krizaka/ui@3.76.1)(tailwindcss@4.3.3)':
     dependencies:
       '@krizaka/tokens': 3.76.1
-      '@krizaka/ui': 3.76.1(@krizaka/query@0.2.2(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
+      '@krizaka/ui': 3.76.1(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
       tailwindcss: 4.3.3
 
   '@krizaka/time@0.1.0':
@@ -12921,7 +12966,7 @@ snapshots:
       obug: 2.2.1
       std-env: 4.3.0
       tinyrainbow: 3.2.0
-      vitest: 4.1.12(@types/node@26.6.6)(@vitest/coverage-v8@4.1.12)(jsdom@26.1.0)(vite@8.3.4(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      vitest: 4.1.12(@types/node@24.19.2)(@vitest/coverage-v8@4.1.12)(jsdom@26.1.0)(vite@8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
 
   '@vitest/expect@4.1.11':
     dependencies:

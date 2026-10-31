@@ -379,6 +379,13 @@
       "when": 1795000030000,
       "tag": "0053_prices_association",
       "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1795000040000,
+      "tag": "0054_guest_booking_codes",
+      "breakpoints": true
     }
   ]
 }

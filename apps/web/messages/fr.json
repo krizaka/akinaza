@@ -945,7 +945,11 @@
           "remove": "Retirer",
           "empty": "Aucun terme : aucune adresse n'est retenue.",
           "hint": "Un mot (login) ou un motif entre barres obliques (/^pay.?pal$/).",
-          "kinds": { "word": "Mot", "pattern": "Motif", "comment": "Commentaire" },
+          "kinds": {
+            "word": "Mot",
+            "pattern": "Motif",
+            "comment": "Commentaire"
+          },
           "issues": {
             "word": "Un mot ne peut contenir que des lettres, des chiffres et des traits d'union.",
             "invalid": "Ce n'est pas une expression régulière valide.",
@@ -1207,7 +1211,15 @@
       "ASSOCIATION_REFERENCE": "Ce numéro ne semble pas correct : un NEQ compte 10 chiffres, un numéro d’organisme ressemble à 123456789RR0001.",
       "ASSOCIATION_NOT_APPROVED": "Le plan Association s’ouvre une fois votre preuve approuvée.",
       "PLAN_NOT_ON_SALE": "Ce plan n’est pas en vente.",
-      "TRIAL_TEST_MODE_ONLY": "La période offerte n’est pas encore disponible."
+      "TRIAL_TEST_MODE_ONLY": "La période offerte n’est pas encore disponible.",
+      "CODE_INVALID": "Ce code n'est pas le bon. Vérifiez le courriel et réessayez.",
+      "CODE_EXPIRED": "Ce code a expiré. Demandez-en un nouveau.",
+      "CODE_LOCKED": "Trop de codes erronés. Demandez-en un nouveau.",
+      "CAPTCHA_FAILED": "La vérification de sécurité n'a pas réussi. Réessayez.",
+      "CAPTCHA_UNAVAILABLE": "La réservation sans compte n'est pas disponible pour le moment.",
+      "MAIL_UNAVAILABLE": "Nous ne pouvons pas envoyer le code pour le moment. Réessayez plus tard.",
+      "MAIL_FAILED": "Le code n'a pas pu être envoyé à cette adresse. Vérifiez-la et réessayez.",
+      "SIGN_IN_REQUIRED": "Cette adresse a déjà un compte. Connectez-vous pour réserver."
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
@@ -2698,7 +2710,8 @@
       "stepTime": "L’heure",
       "stepBooked": "Réservé",
       "edit": "Modifier",
-      "bookedStamp": "réservé"
+      "bookedStamp": "réservé",
+      "stepConfirm": "Vos coordonnées"
     },
     "team": {
       "title": "Votre équipe",
@@ -3628,6 +3641,28 @@
       "problems": "La page ne peut pas être enregistrée : {issues}",
       "loading": "Chargement de l'historique…",
       "openPreview": "Ouvrir l'aperçu dans un nouvel onglet"
+    },
+    "guest": {
+      "stepDetails": "Vos coordonnées",
+      "title": "Réserver sans compte",
+      "lead": "Aucun mot de passe à créer. Nous envoyons un code à 6 chiffres à votre courriel pour confirmer qu'il est bien le vôtre, puis votre réservation est faite.",
+      "summary": "Votre réservation",
+      "email": "Courriel",
+      "emailHint": "Le code et votre confirmation y sont envoyés.",
+      "consentService": "J'accepte que {shop} conserve mon nom, mon courriel et mon téléphone pour gérer cette réservation et mes rendez-vous.",
+      "privacy": "Pourquoi nous le demandons : confirmer votre réservation et vous joindre à ce sujet. {shop} garde votre dossier tant que vous êtes son client ou sa cliente, et vous pouvez l'exporter ou l'effacer à tout moment. Le code et les renseignements qui l'attendent sont effacés après {minutes} minutes.",
+      "send": "M'envoyer le code",
+      "sending": "Envoi…",
+      "codeTitle": "Entrez votre code",
+      "codeLead": "Nous avons envoyé un code à 6 chiffres à {email}. Il est valide {minutes} minutes.",
+      "code": "Code",
+      "confirm": "Confirmer ma réservation",
+      "confirming": "Confirmation…",
+      "useOther": "Utiliser une autre adresse",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "signIn": "Se connecter",
+      "pickTime": "Choisissez d'abord une heure",
+      "totalIncluded": "Taxes incluses : {price}"
     }
   },
   "notFound": {

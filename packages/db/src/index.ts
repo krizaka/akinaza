@@ -29,6 +29,8 @@ export * from "./translation-port";
 export * from "./shop-search";
 export * from "./today-board";
 export * from "./client-notes";
+export * from "./booking-codes";
+export * from "./guest-account";
 export * from "./transaction";
 export * from "./workspace";
 export * from "./workspace-defaults";

@@ -61,6 +61,10 @@ export const envSchema = z.object({
   /** A header the edge sets with the client's address (`do-connecting-ip` on App Platform). */
   ABUSE_CLIENT_IP_HEADER: z.string().optional(),
   ABUSE_TRUSTED_PROXY_HOPS: z.coerce.number().int().min(1).max(10).default(1),
+  /** The bot check of the public forms (the guest booking step): the service is a value (`turnstile`); unset, the check is off outside production and a refusal in production. The browser reads the public site half. */
+  ABUSE_CAPTCHA_PROVIDER: z.enum(["turnstile"]).optional(),
+  ABUSE_CAPTCHA_SECRET_KEY: z.string().optional(),
+  NEXT_PUBLIC_ABUSE_CAPTCHA_SITE_KEY: z.string().optional(),
   /** The stage of the deployment: `dev` shows the « Development version » notice on every page (`StageNotice`); `prod` hides it. Read at build too: the pages are static. */
   APP_ENVIRONMENT: z.enum(["dev", "prod"]).default("dev"),
   /** A fixed instant (ISO 8601) for the pages' clock, honoured only when `APP_ENVIRONMENT` is `dev` (visual and e2e runs: `app/request-now.ts`). Ignored in `prod`. */

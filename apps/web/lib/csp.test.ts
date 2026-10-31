@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { contentSecurityPolicy, isShopPath, jsonLdHtml, newNonce, upgradesInsecure } from "./csp";
+import { CAPTCHA_HOST, contentSecurityPolicy, allowsCaptcha, isShopPath, jsonLdHtml, newNonce, upgradesInsecure } from "./csp";
 
 const directive = (csp: string, name: string) => csp.split("; ").find((d) => d.startsWith(`${name} `))?.split(" ").slice(1) ?? [];
 const opts = { production: true, upgradeInsecure: true };
@@ -57,7 +57,9 @@ describe("the nonce", () => {
   it("is fresh for every response and unguessable (a base64 UUID)", () => {
     const seen = new Set(Array.from({ length: 50 }, newNonce));
     expect(seen.size).toBe(50);
-    for (const nonce of seen) expect(nonce).toMatch(/^[A-Za-z0-9+/]{40,}=*$/);
+    for (const nonce of seen) {
+      expect(nonce).toMatch(/^[A-Za-z0-9+/]{40,}=*$/);
+    }
   });
 });
 
@@ -77,7 +79,9 @@ describe("which pages are strict", () => {
     expect(isShopPath("/fr/s/pattes-saint-henri")).toBe(true);
     expect(isShopPath("/en/s/pattes/service/abc/slots")).toBe(true);
     expect(isShopPath("/es/s/pattes")).toBe(true);
-    for (const path of ["/fr", "/fr/app", "/fr/explore", "/fr/shop", "/en/sx", "/api/s/x", "/s/x"]) expect(isShopPath(path), path).toBe(false);
+    for (const path of ["/fr", "/fr/app", "/fr/explore", "/fr/shop", "/en/sx", "/api/s/x", "/s/x"]) {
+      expect(isShopPath(path), path).toBe(false);
+    }
   });
 });
 
@@ -97,7 +101,9 @@ describe("JSON-LD", () => {
   });
   it("is what every page uses: no raw JSON.stringify into dangerouslySetInnerHTML", () => {
     const pages = ["docs/[page]", "docs", "download", "explore", "", "pricing", "privacy", "terms"].map((p) => `../app/[locale]/${p ? `${p}/` : ""}page.tsx`);
-    for (const page of pages) expect(readFileSync(new URL(page, import.meta.url), "utf8"), page).not.toContain("__html: JSON.stringify");
+    for (const page of pages) {
+      expect(readFileSync(new URL(page, import.meta.url), "utf8"), page).not.toContain("__html: JSON.stringify");
+    }
   });
 });
 
@@ -111,5 +117,24 @@ describe("a shop on its own domain (ADR-005 §6, akinaza#538)", () => {
     expect(directive(csp, "script-src")).not.toContain("'unsafe-inline'");
     expect(directive(csp, "script-src")).toContain("'nonce-bm9uY2U='");
     expect(directive(csp, "default-src")).toEqual(["'none'"]);
+  });
+});
+
+describe("the guest booking step's bot check", () => {
+  it("names Cloudflare for its script, frame and call on that one page, and nowhere else", () => {
+    const csp = contentSecurityPolicy({ ...opts, nonce: "bm9uY2U=", captcha: true });
+    for (const name of ["script-src", "frame-src", "connect-src"]) {
+      expect(directive(csp, name), name).toContain(CAPTCHA_HOST);
+    }
+    expect(directive(csp, "font-src")).not.toContain(CAPTCHA_HOST);
+    expect(contentSecurityPolicy({ ...opts, nonce: "bm9uY2U=" })).not.toContain(CAPTCHA_HOST);
+  });
+
+  it("is allowed on every shop page when a site key is set (the step is reached by soft navigation), and nowhere else", () => {
+    expect(allowsCaptcha("/fr/s/pattes/service/abc/confirm", "key")).toBe(true);
+    expect(allowsCaptcha("/en/s/pattes", "key")).toBe(true);
+    expect(allowsCaptcha("/en/s/pattes", undefined)).toBe(false);
+    expect(allowsCaptcha("/en/s/pattes", "")).toBe(false);
+    expect(allowsCaptcha("/en/sign-in", "key")).toBe(false);
   });
 });

@@ -945,7 +945,11 @@
           "remove": "Remove",
           "empty": "No term: no address is held.",
           "hint": "A word (login) or a pattern between slashes (/^pay.?pal$/).",
-          "kinds": { "word": "Word", "pattern": "Pattern", "comment": "Comment" },
+          "kinds": {
+            "word": "Word",
+            "pattern": "Pattern",
+            "comment": "Comment"
+          },
           "issues": {
             "word": "A word can only hold letters, digits and hyphens.",
             "invalid": "This is not a valid regular expression.",
@@ -1207,7 +1211,15 @@
       "ASSOCIATION_REFERENCE": "This number does not look right: a NEQ has 10 digits, a charity number looks like 123456789RR0001.",
       "ASSOCIATION_NOT_APPROVED": "The Association plan opens once your proof is approved.",
       "PLAN_NOT_ON_SALE": "This plan is not on sale.",
-      "TRIAL_TEST_MODE_ONLY": "The free period is not available yet."
+      "TRIAL_TEST_MODE_ONLY": "The free period is not available yet.",
+      "CODE_INVALID": "This code is not right. Check the e-mail and try again.",
+      "CODE_EXPIRED": "This code has expired. Ask for a new one.",
+      "CODE_LOCKED": "Too many wrong codes. Ask for a new one.",
+      "CAPTCHA_FAILED": "The security check did not pass. Try again.",
+      "CAPTCHA_UNAVAILABLE": "Booking without an account is not available right now.",
+      "MAIL_UNAVAILABLE": "We cannot send the code right now. Try again later.",
+      "MAIL_FAILED": "The code could not be sent to this address. Check it and try again.",
+      "SIGN_IN_REQUIRED": "This address already has an account. Sign in to book."
     },
     "today": {
       "noShopTitle": "No shop yet",
@@ -2698,7 +2710,8 @@
       "stepTime": "The time",
       "stepBooked": "Booked",
       "edit": "Edit",
-      "bookedStamp": "booked"
+      "bookedStamp": "booked",
+      "stepConfirm": "Your details"
     },
     "team": {
       "title": "Your team",
@@ -3628,6 +3641,28 @@
       "problems": "The page cannot be saved: {issues}",
       "loading": "Loading the history…",
       "openPreview": "Open the preview in a new tab"
+    },
+    "guest": {
+      "stepDetails": "Your details",
+      "title": "Book without an account",
+      "lead": "No password to create. We send a 6-digit code to your e-mail to confirm it is yours, then your booking is made.",
+      "summary": "Your booking",
+      "email": "E-mail",
+      "emailHint": "The code and your confirmation go here.",
+      "consentService": "I agree that {shop} keeps my name, e-mail and phone to manage this booking and my appointments there.",
+      "privacy": "Why we ask: to confirm your booking and reach you about it. {shop} keeps your file while you are its client, and you can export or erase it at any time. The code and the details waiting for it are erased after {minutes} minutes.",
+      "send": "Send me the code",
+      "sending": "Sending…",
+      "codeTitle": "Enter your code",
+      "codeLead": "We sent a 6-digit code to {email}. It is valid for {minutes} minutes.",
+      "code": "Code",
+      "confirm": "Confirm my booking",
+      "confirming": "Confirming…",
+      "useOther": "Use another address",
+      "haveAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "pickTime": "Pick a time first",
+      "totalIncluded": "Taxes included: {price}"
     }
   },
   "notFound": {

@@ -9,7 +9,7 @@
 // Needs a Chromium for playwright-core (PLAYWRIGHT_BROWSERS_PATH or the default cache).
 import { mkdirSync } from "node:fs";
 import { createRequire } from "node:module";
-import path from "node:path";
+import { makeShoot } from "./e2e-shoot.mjs";
 
 const { chromium } = createRequire(import.meta.url)("playwright-core");
 const BASE = (process.env.E2E_BASE ?? "http://localhost:3210").replace(/\/$/, "");
@@ -38,16 +38,7 @@ await page.addInitScript(() => {
 });
 const search = () => new URL(page.url()).searchParams;
 const chips = (p) => p.getByRole("button", { name: W.remove }).count();
-const shoot = async (name) => {
-  if (!OUT) return;
-  for (const theme of ["dark", "light"]) {
-    await page.evaluate((t) => {
-      localStorage.setItem("kz-theme", t);
-      document.documentElement.classList.toggle("light", t === "light");
-    }, theme);
-    await page.screenshot({ path: path.join(OUT, `${name}-${theme}-${LOCALE}.png`) });
-  }
-};
+const shoot = makeShoot(page, OUT, LOCALE);
 
 await page.goto(`${BASE}/${LOCALE}/explore`, { waitUntil: "networkidle" });
 await shoot("1-open");

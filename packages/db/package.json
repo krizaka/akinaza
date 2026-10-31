@@ -30,6 +30,7 @@
     "@krizaka/api-keys": "0.1.0",
     "@krizaka/auth": "^0.12.0",
     "@krizaka/db": "0.3.0",
+    "@krizaka/email-verification": "^0.1.1",
     "@krizaka/intl": "0.3.0",
     "@krizaka/org": "^0.3.1",
     "@krizaka/organize": "0.4.0",

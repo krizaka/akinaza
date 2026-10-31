@@ -395,6 +395,11 @@ export async function enqueueMail(db: Db, mail: OutgoingMail): Promise<string> {
   return row!.id;
 }
 
+/** A mail that carried a secret (a sign-in code) keeps no body once its one attempt is made: sent, or failed for good (no retry would reach anyone in time). */
+export async function scrubMail(db: Db, id: string): Promise<void> {
+  await db.update(mailOutbox).set({ html: "", bodyText: "", status: sql`CASE WHEN ${mailOutbox.status} = 'sent' THEN 'sent' ELSE 'failed' END` }).where(eq(mailOutbox.id, id));
+}
+
 /** The oldest pending mails; `scope.ids` keeps only those (a test flushes what it queued, never another file's: akinaza#341). */
 export async function pendingMail(db: Db, limit = 20, scope: { ids?: readonly string[] } = {}) {
   const pending = eq(mailOutbox.status, "pending");
