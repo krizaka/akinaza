@@ -25,7 +25,17 @@ export type CspOptions = {
    * (the studio's preview). Unset: the page's own origin, as before.
    */
   appOrigin?: string;
+  /** The guest booking step carries a Cloudflare Turnstile check (`@krizaka/ui/captcha`): its script, frame and verification call, on that one page. */
+  captcha?: boolean;
 };
+
+/** The only third party a page may load for a bot check; named on the one page that asks for it (`isGuestStepPath`). */
+export const CAPTCHA_HOST = "https://challenges.cloudflare.com";
+
+/** The last step of the booking journey, where a visitor without an account gives their details: `/<locale>/s/<slug>/service/<id>/confirm`. */
+export function isGuestStepPath(pathname: string): boolean {
+  return /^\/(?:en|fr|es)\/s\/[^/]+\/service\/[^/]+\/confirm\/?$/.test(pathname);
+}
 
 /** A fresh, unguessable nonce for one response (base64 of a random UUID, as Next's guide does). */
 export function newNonce(): string {
@@ -46,10 +56,11 @@ export function isShopPath(pathname: string): boolean {
   return /^\/(?:en|fr|es)\/s\//.test(pathname);
 }
 
-export function contentSecurityPolicy({ nonce, production, upgradeInsecure, appOrigin }: CspOptions): string {
+export function contentSecurityPolicy({ nonce, production, upgradeInsecure, appOrigin, captcha }: CspOptions): string {
+  const check = captcha ? ` ${CAPTCHA_HOST}` : "";
   const strict = nonce !== undefined;
   const dev = production ? "" : " 'unsafe-eval'";
-  const script = strict ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev}` : `script-src 'self' 'unsafe-inline'${dev}`;
+  const script = strict ? `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${check}${dev}` : `script-src 'self' 'unsafe-inline'${check}${dev}`;
   return [
     strict ? "default-src 'none'" : "default-src 'self'",
     script,
@@ -60,9 +71,9 @@ export function contentSecurityPolicy({ nonce, production, upgradeInsecure, appO
     "font-src 'self' data:",
     // The map's engine (MapLibre) runs its worker from a blob; its tiles and glyphs come through this origin (/maps/v1).
     "worker-src 'self' blob:",
-    `connect-src 'self'${production ? "" : DEV_CONNECT}`,
+    `connect-src 'self'${check}${production ? "" : DEV_CONNECT}`,
     // The studio previews the page in a frame of its own origin; the three video platforms may fill a frame only after a visitor pressed a facade's button (nothing is framed before the click).
-    `frame-src 'self' ${EMBED_FRAME_HOSTS.join(" ")}`,
+    `frame-src 'self'${check} ${EMBED_FRAME_HOSTS.join(" ")}`,
     ...(strict ? ["manifest-src 'self'"] : []),
     "object-src 'none'",
     strict ? "base-uri 'none'" : "base-uri 'self'",

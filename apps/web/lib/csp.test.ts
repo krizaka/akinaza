@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { contentSecurityPolicy, isShopPath, jsonLdHtml, newNonce, upgradesInsecure } from "./csp";
+import { CAPTCHA_HOST, contentSecurityPolicy, isGuestStepPath, isShopPath, jsonLdHtml, newNonce, upgradesInsecure } from "./csp";
 
 const directive = (csp: string, name: string) => csp.split("; ").find((d) => d.startsWith(`${name} `))?.split(" ").slice(1) ?? [];
 const opts = { production: true, upgradeInsecure: true };
@@ -111,5 +111,21 @@ describe("a shop on its own domain (ADR-005 §6, akinaza#538)", () => {
     expect(directive(csp, "script-src")).not.toContain("'unsafe-inline'");
     expect(directive(csp, "script-src")).toContain("'nonce-bm9uY2U='");
     expect(directive(csp, "default-src")).toEqual(["'none'"]);
+  });
+});
+
+describe("the guest booking step's bot check", () => {
+  it("names Cloudflare for its script, frame and call on that one page, and nowhere else", () => {
+    const csp = contentSecurityPolicy({ ...opts, nonce: "bm9uY2U=", captcha: true });
+    for (const name of ["script-src", "frame-src", "connect-src"]) expect(directive(csp, name), name).toContain(CAPTCHA_HOST);
+    expect(directive(csp, "font-src")).not.toContain(CAPTCHA_HOST);
+    expect(contentSecurityPolicy({ ...opts, nonce: "bm9uY2U=" })).not.toContain(CAPTCHA_HOST);
+  });
+
+  it("is the confirm step of a service, in any language, and no other path", () => {
+    expect(isGuestStepPath("/fr/s/pattes/service/abc/confirm")).toBe(true);
+    expect(isGuestStepPath("/en/s/pattes/service/abc/confirm/")).toBe(true);
+    expect(isGuestStepPath("/en/s/pattes/service/abc/confirmation")).toBe(false);
+    expect(isGuestStepPath("/en/s/pattes")).toBe(false);
   });
 });

@@ -164,3 +164,33 @@ export function confirmationStep(input: { detail: BookingDetail; locale: Locale 
     phoneHref: digits.length >= 7 ? `tel:${dialled}` : null,
   };
 }
+
+export interface GuestStep {
+  service: string;
+  when: string;
+  who: string | null;
+  /** The price, and — for a shop registered for the taxes — the exact line down to the total (taxes included). */
+  price: string;
+  taxLine: string | null;
+  cancelRule: string;
+  changeHref: string;
+}
+
+/** What a visitor sees above the details they give: the service, the time they chose, the price with its taxes, the cancellation rule. Nothing is asked before they see it. */
+export function guestStep(input: { page: PublicShop; locale: Locale; serviceId: string; startsAt: Date; staffId: string | null; zoneId: string | null }): GuestStep | null {
+  const { page, locale, startsAt } = input;
+  const service = serviceStep({ page, locale, serviceId: input.serviceId, staffId: input.staffId, zoneId: input.zoneId });
+  if (!service) return null;
+  const { staffId, zoneId } = resolveChoice(page, { staff: input.staffId, zone: input.zoneId });
+  const timezone = page.shop.timezone;
+  const person = page.team.find((m) => m.id === staffId) ?? null;
+  return {
+    service: service.name,
+    when: `${dayLabel(localDay(startsAt, timezone), locale, "long")} · ${clock(startsAt, timezone, locale)}`,
+    who: person ? translator(locale)("console.journey.with", { name: person.name }) : null,
+    price: service.price,
+    taxLine: service.taxLine,
+    cancelRule: service.cancelRule,
+    changeHref: timesHref(locale, slugOf(page), input.serviceId, { staffId, zoneId }),
+  };
+}

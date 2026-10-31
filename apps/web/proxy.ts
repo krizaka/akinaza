@@ -4,7 +4,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 import { HOST_FREE_PATHS, isAllowedHost } from "./lib/allowed-hosts";
 import { cookieName, dropCookie, ownCookie } from "./lib/cookie";
-import { contentSecurityPolicy, isShopPath, newNonce, upgradesInsecure } from "./lib/csp";
+import { contentSecurityPolicy, isGuestStepPath, isShopPath, newNonce, upgradesInsecure } from "./lib/csp";
 import { refusesCrossSiteWrite } from "./lib/csrf";
 import { type HostRoute, isAdminHost, ownShopRoute, routeFor, type ShopHosting } from "./lib/host";
 import { CLOSED_ROBOTS, closedRobots, devRedirect, indexableOn, isDevHost, NOINDEX } from "./lib/indexing";
@@ -27,9 +27,9 @@ function crossSiteWrite(request: NextRequest): NextResponse | null {
 }
 
 /** The policy of a response (lib/csp.ts), read per request: the nonce of a shop page is this response's own, the declared origin is the runtime's. */
-function policy(nonce?: string, appOrigin?: string): string {
+function policy(nonce?: string, appOrigin?: string, captcha = false): string {
   const production = process.env.NODE_ENV === "production";
-  return contentSecurityPolicy({ nonce, production, upgradeInsecure: upgradesInsecure(production, process.env.APP_PUBLIC_URL), appOrigin });
+  return contentSecurityPolicy({ nonce, production, upgradeInsecure: upgradesInsecure(production, process.env.APP_PUBLIC_URL), appOrigin, captcha });
 }
 
 /**
@@ -40,7 +40,7 @@ function stampPolicy(forwarded: Headers, route: HostRoute, pathname: string, app
   const path = route.kind === "rewrite" ? route.path : pathname;
   if (!isShopPath(path)) {return policy();}
   const nonce = newNonce();
-  const csp = policy(nonce, appOrigin);
+  const csp = policy(nonce, appOrigin, isGuestStepPath(path) && Boolean(process.env.NEXT_PUBLIC_ABUSE_CAPTCHA_SITE_KEY));
   forwarded.set("content-security-policy", csp);
   forwarded.set("x-nonce", nonce);
   return csp;

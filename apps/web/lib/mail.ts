@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 
-import { type Db, enqueueInvoiceDelivery, enqueueMail, invoiceDetail, invoiceMailSettings, invoiceTokenHash, issueReportLink, mailById, markMailAttempt, markMailSent, pendingMail } from "@akinaza/db";
+import { type Db, enqueueInvoiceDelivery, enqueueMail, invoiceDetail, invoiceMailSettings, invoiceTokenHash, issueReportLink, mailById, markMailAttempt, markMailSent, pendingMail, scrubMail } from "@akinaza/db";
 import { addDays } from "date-fns";
 
 import type { MailSettings } from "./mail-settings";
@@ -137,4 +137,16 @@ export async function sendInvoiceMail(db: Db, shopId: string, invoiceId: string,
   const queued = await mailById(db, mailId);
   const status = queued ? await deliver(db, queued, now, settings, send) : "pending";
   return { deliveryId, status };
+}
+
+/**
+ * The mail that carries a sign-in code: one attempt, then the outbox keeps no body (the code is a secret that lives 15 minutes; a retry would
+ * reach nobody in time). True only when the provider accepted it.
+ */
+export async function sendCodeMail(db: Db, to: string, mail: { subject: string; text: string; html: string }, locale: MailLocale, now: Date, settings: MailSettings, send: typeof fetch = fetch): Promise<boolean> {
+  const id = await enqueueMail(db, { to, locale, template: "verification-code", subject: mail.subject, html: mail.html, text: mail.text });
+  const queued = await mailById(db, id);
+  const status = queued ? await deliver(db, queued, now, settings, send) : "pending";
+  await scrubMail(db, id);
+  return status === "sent";
 }
