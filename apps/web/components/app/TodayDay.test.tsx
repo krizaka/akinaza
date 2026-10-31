@@ -190,3 +190,31 @@ describe("a failing section of the day (D6): an alert in place, the rest renders
     expect(text(render({}))).not.toContain("today.conflict");
   });
 });
+
+describe("the home is the owner's day (krizaka-internal#1908)", () => {
+  it("names the client and the dog of a walk, not the service", () => {
+    const html = text(render({}));
+    expect(html).toContain("Sofia Rossi, Jordan Lee");
+    expect(html).toContain("Rex, Miso");
+  });
+
+  it("holds one primary: « Bill the visits » with what is to collect and late, linking the first visit to bill", () => {
+    const html = render({ board, newInvoiceHref: "/fr/app/s-1/invoices/new" });
+    expect(html.match(/data-primary/g)).toHaveLength(1);
+    expect(text(html)).toContain("today.billVisits 1");
+    expect(text(html)).toContain("today.toCollectOverdue");
+    expect(html).toContain("appointment=a-9");
+  });
+
+  it("falls back to the next appointment when nothing is left to bill", () => {
+    const html = render({ board: { ...board, toBill: [] }, newInvoiceHref: "/fr/app/s-1/invoices/new" });
+    expect(text(html)).not.toContain("today.billVisits");
+    expect(html.match(/data-primary/g)).toHaveLength(1);
+  });
+
+  it("puts the figures after the day, never before it", () => {
+    const html = render({ figures: <p data-testid="figures-block">figures</p>, banner: <p>banner</p> });
+    expect(html.indexOf("figures-block")).toBeGreaterThan(html.indexOf("today.agendaLabel"));
+    expect(html.indexOf("banner")).toBeLessThan(html.indexOf("figures-block"));
+  });
+});

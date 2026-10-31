@@ -640,7 +640,7 @@
       "bookings": "My bookings",
       "clients": "Clients",
       "shop": "Shop",
-      "books": "Books",
+      "books": "Taxes",
       "team": "Team",
       "shopSwitcher": "Switch shop",
       "newInvoice": "New invoice",
@@ -1260,6 +1260,9 @@
         "see": "See the point ({count})",
         "dismiss": "Put the point aside"
       },
+      "billVisits": "Bill the visits ({count})",
+      "toCollect": "{amount} to collect",
+      "toCollectOverdue": "{amount} to collect · {count} overdue",
       "nextPrimary": "Next: {client} at {time}",
       "headline": {
         "empty": "Nothing booked today.",
