@@ -10,7 +10,8 @@
 //
 // It needs a Chromium for playwright-core (PLAYWRIGHT_BROWSERS_PATH or the default cache). Nothing but the checks is printed;
 // passwords stay in the environment. It adds one dog and one booking on the client's file: run it on a throw-away or demo
-// database, never on someone's real data.
+// database, never on someone's real data. `pnpm run e2e:walker` removes them when it ends (`demo:clean`, when the database address is
+// in the environment); `seed-cast --check` fails while they are still there (akinaza #1915).
 import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
