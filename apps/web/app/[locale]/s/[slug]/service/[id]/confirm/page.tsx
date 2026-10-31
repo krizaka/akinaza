@@ -35,7 +35,9 @@ export default async function ConfirmPage({ params, searchParams }: Readonly<{ p
   const parsed = slugSchema.safeParse(slug);
   const page = parsed.success ? await publicShop(db(), parsed.data) : null;
   if (!page || !page.services.some((service) => service.id === id)) notFound();
-  if (!session) return guestView({ locale, slug, id, page, query, here });
+  if (!session) {
+    return guestView({ locale, slug, id, page, query, here });
+  }
   const file = (await clientFilesOf(db(), session.account.id)).find((f) => f.shopId === page.shop.id) ?? null;
   const dogs = file ? await dependantsOf(db(), file.id) : [];
   const t = consoleFor(locale, page.shop.businessType).book;
@@ -73,9 +75,13 @@ function guestView({ locale, slug, id, page, query, here }: Readonly<{ locale: R
   const t = translator(locale);
   const choice = resolveChoice(page, { staff: searchValue(query.staff), zone: searchValue(query.zone) });
   const preselect = bookingPreselect({ service: id, zone: choice.zoneId, start: searchValue(query.start) }, page.services, page.zones);
-  if (!preselect.startsAt) redirect(timesHref(locale, slug, id, choice));
+  if (!preselect.startsAt) {
+    redirect(timesHref(locale, slug, id, choice));
+  }
   const step = guestStep({ page, locale, serviceId: id, startsAt: new Date(preselect.startsAt), staffId: choice.staffId, zoneId: choice.zoneId });
-  if (!step) notFound();
+  if (!step) {
+    notFound();
+  }
   return (
     <ConsoleProviders locale={locale} messages={{ console: getDictionary(locale).console }}>
       <JourneyFrame locale={locale} head={{ shop: page.shop.name, step: t("console.journey.stepOf", { step: 3, total: 4, label: t("console.journey.stepConfirm") }), edit: { href: step.changeHref, label: t("console.journey.edit") } }} path={`/${locale}/s/${slug}/service/${id}/confirm`} back={{ href: step.changeHref, label: step.service }} title={step.service}>

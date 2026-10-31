@@ -32,11 +32,17 @@ export function POST(req: Request, { params }: { params: Promise<{ slug: string 
       throw refuse(refusal.status, refusal.code, "The code was refused", refusal.attemptsLeft === undefined ? {} : { attemptsLeft: refusal.attemptsLeft });
     }
     const hold = checked.payload;
-    if (hold.shopSlug !== slug) throw refuse(404, "NOT_FOUND", "Not found");
+    if (hold.shopSlug !== slug) {
+      throw refuse(404, "NOT_FOUND", "Not found");
+    }
     const page = await publicShop(db(), slug);
-    if (!page) throw refuse(404, "NOT_FOUND", "Not found");
+    if (!page) {
+      throw refuse(404, "NOT_FOUND", "Not found");
+    }
     const account = await guestAccountFor(db(), { email: hold.email, locale: hold.language, name: hold.fullName }, now());
-    if (!account.ok) throw refuse(409, "SIGN_IN_REQUIRED", "This address has an account: sign in to book");
+    if (!account.ok) {
+      throw refuse(409, "SIGN_IN_REQUIRED", "This address has an account: sign in to book");
+    }
     const { clientId } = await joinShop(db(), account.id, account.email, page.shop.id, { fullName: hold.fullName, phone: hold.phone, language: hold.language, consentService: true, consentReminders: hold.consentReminders });
     const dependantIds: string[] = [];
     if (hold.dependantName) {

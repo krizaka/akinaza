@@ -49,7 +49,9 @@ export async function deliver(db: Db, mail: Pending, now: Date, settings: MailSe
 /** Tries every pending mail once (the walker's « send again », or a scheduled flush). */
 export async function flushOutbox(db: Db, now: Date, settings: MailSettings, send: typeof fetch = fetch, scope: { ids?: readonly string[] } = {}) {
   const counts = { sent: 0, pending: 0, failed: 0 };
-  for (const mail of await pendingMail(db, 50, scope)) counts[await deliver(db, mail, now, settings, send)] += 1;
+  for (const mail of await pendingMail(db, 50, scope)) {
+    counts[await deliver(db, mail, now, settings, send)] += 1;
+  }
   return counts;
 }
 

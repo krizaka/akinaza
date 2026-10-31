@@ -23,19 +23,29 @@ export function POST(req: Request, { params }: { params: Promise<{ slug: string 
     const { captchaToken, ...input } = await readJson(req, guestStart);
     limit("guest-code", req, input.email, [10, 900], [3, 900]);
     const now = () => systemClock.now();
-    if (captchaMissing()) throw refuse(503, "CAPTCHA_UNAVAILABLE", "The security check is not configured");
-    if (!(await verifyCaptcha(captchaToken, clientIp(req.headers) ?? "unknown", process.env, now))) throw refuse(400, "CAPTCHA_FAILED", "The security check failed");
+    if (captchaMissing()) {
+      throw refuse(503, "CAPTCHA_UNAVAILABLE", "The security check is not configured");
+    }
+    if (!(await verifyCaptcha(captchaToken, clientIp(req.headers) ?? "unknown", process.env, now))) {
+      throw refuse(400, "CAPTCHA_FAILED", "The security check failed");
+    }
     const settings = mailSettings();
-    if (!mailConfigured(settings)) throw refuse(503, "MAIL_UNAVAILABLE", "The code cannot be mailed right now");
+    if (!mailConfigured(settings)) {
+      throw refuse(503, "MAIL_UNAVAILABLE", "The code cannot be mailed right now");
+    }
     const slug = slugSchema.parse((await params).slug);
     const page = await publicShop(db(), slug);
-    if (!page || !page.services.some((s) => s.id === input.serviceId)) throw refuse(404, "NOT_FOUND", "Not found");
+    if (!page || !page.services.some((s) => s.id === input.serviceId)) {
+      throw refuse(404, "NOT_FOUND", "Not found");
+    }
     const hold: GuestHold = { ...input, shopSlug: slug };
     const verification = guestVerification(db(), now, sessionSecret());
     await verification.purge();
     const issued = await verification.issue({ address: input.email, payload: hold });
     const sent = await sendCodeMail(db(), input.email, verificationMail({ locale: input.language, code: issued.code, ttlMinutes: issued.ttlMinutes }), input.language, now(), settings);
-    if (!sent) throw refuse(502, "MAIL_FAILED", "The code could not be mailed");
+    if (!sent) {
+      throw refuse(502, "MAIL_FAILED", "The code could not be mailed");
+    }
     return Response.json({ challengeId: issued.challengeId, ttlMinutes: issued.ttlMinutes }, { status: 201, headers: { "Cache-Control": "no-store" } });
   });
 }

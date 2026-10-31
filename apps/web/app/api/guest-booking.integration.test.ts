@@ -90,7 +90,9 @@ describe.runIf(enabled)("booking as a guest", () => {
     const sent = await apiCall(code, "POST", `/api/shops/${slug}/guest/code`, { params: { slug }, json: start(email) });
     const secret = codeIn(email);
     const bad = secret === "000000" ? "111111" : "000000";
-    for (let i = 0; i < 5; i += 1) await apiCall(confirm, "POST", `/api/shops/${slug}/guest/confirm`, { params: { slug }, json: { challengeId: sent.body.challengeId, email, code: bad } });
+    for (let i = 0; i < 5; i += 1) {
+      await apiCall(confirm, "POST", `/api/shops/${slug}/guest/confirm`, { params: { slug }, json: { challengeId: sent.body.challengeId, email, code: bad } });
+    }
     const late = await apiCall(confirm, "POST", `/api/shops/${slug}/guest/confirm`, { params: { slug }, json: { challengeId: sent.body.challengeId, email, code: secret } });
     expect(late.status).toBeGreaterThanOrEqual(410);
     expect(await query("SELECT 1 FROM clients WHERE email = $1", [email])).toEqual([]);
@@ -99,7 +101,9 @@ describe.runIf(enabled)("booking as a guest", () => {
   it("limits the codes mailed to one address, so a mailbox cannot be flooded", async () => {
     const email = `flood-${stamp}@akinaza.test`;
     const statuses: number[] = [];
-    for (let i = 0; i < 4; i += 1) statuses.push((await apiCall(code, "POST", `/api/shops/${slug}/guest/code`, { params: { slug }, json: start(email) })).status);
+    for (let i = 0; i < 4; i += 1) {
+      statuses.push((await apiCall(code, "POST", `/api/shops/${slug}/guest/code`, { params: { slug }, json: start(email) })).status);
+    }
     expect(statuses).toEqual([201, 201, 201, 429]);
     expect(mails.filter((m) => m.to === email)).toHaveLength(3);
   });

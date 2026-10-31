@@ -54,7 +54,9 @@ function DetailsCard({ data, onSent }: Readonly<{ data: GuestBookingData; onSent
     onSubmit: async (v) => {
       setNeedConsent(!v.consentService);
       setNeedCheck(!!CAPTCHA_SITE && !token);
-      if (!v.consentService || (CAPTCHA_SITE && !token)) return;
+      if (!v.consentService || (CAPTCHA_SITE && !token)) {
+        return;
+      }
       const json = { serviceId: data.serviceId, zoneId: data.zoneId, staffId: data.staffId, startsAt: data.startsAt, fullName: v.fullName, email: v.email, phone: v.phone, language: locale, ...(dependants && v.dependantName ? { dependantName: v.dependantName } : {}), consentService: true, consentReminders: v.consentReminders, ...(token ? { captchaToken: token } : {}) };
       const done = await call.run<{ challengeId: string; ttlMinutes: number }>(`/api/shops/${data.shop.slug}/guest/code`, { json }, { refresh: false });
       if (done) onSent({ challengeId: done.challengeId, email: v.email.trim().toLowerCase(), ttlMinutes: done.ttlMinutes });

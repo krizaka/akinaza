@@ -17,7 +17,9 @@ describe("a guest booking's two bodies", () => {
   it("takes exactly six digits for the code", () => {
     const base = { challengeId: "abcdefgh12345678", email: "a@example.test" };
     expect(guestConfirm.safeParse({ ...base, code: "123456" }).success).toBe(true);
-    for (const code of ["12345", "1234567", "12345a", ""]) expect(guestConfirm.safeParse({ ...base, code }).success).toBe(false);
+    for (const code of ["12345", "1234567", "12345a", ""]) {
+      expect(guestConfirm.safeParse({ ...base, code }).success).toBe(false);
+    }
   });
 
   it("says why a code was refused, with the tries left", () => {

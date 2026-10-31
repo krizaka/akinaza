@@ -180,7 +180,9 @@ export interface GuestStep {
 export function guestStep(input: { page: PublicShop; locale: Locale; serviceId: string; startsAt: Date; staffId: string | null; zoneId: string | null }): GuestStep | null {
   const { page, locale, startsAt } = input;
   const service = serviceStep({ page, locale, serviceId: input.serviceId, staffId: input.staffId, zoneId: input.zoneId });
-  if (!service) return null;
+  if (!service) {
+    return null;
+  }
   const { staffId, zoneId } = resolveChoice(page, { staff: input.staffId, zone: input.zoneId });
   const timezone = page.shop.timezone;
   const person = page.team.find((m) => m.id === staffId) ?? null;

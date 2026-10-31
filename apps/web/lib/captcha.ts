@@ -27,7 +27,9 @@ const hostnamesOf = (env: Env): string[] => {
 
 /** True when the check is off (not production, not configured) or the token is valid. `ip` is the visitor's address ("unknown" is not sent). */
 export async function verifyCaptcha(token: unknown, ip: string, env: Env, now: () => Date, fetchImpl?: TurnstileFetch): Promise<boolean> {
-  if (!captchaConfigured(env)) return !captchaMissing(env);
+  if (!captchaConfigured(env)) {
+    return !captchaMissing(env);
+  }
   const key = env.ABUSE_CAPTCHA_SECRET_KEY!.trim();
   const options = { secret: key, hostnames: hostnamesOf(env), now };
   let verify = fetchImpl ? createTurnstileVerifier({ ...options, fetch: fetchImpl }) : verifiers.get(key);
