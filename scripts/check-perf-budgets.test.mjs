@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { judge, lowered, median, ratchet, screensOf, summarise } from "./check-perf-budgets.mjs";
+import { blocksRun, judge, lowered, median, ratchet, screensOf, summarise } from "./check-perf-budgets.mjs";
 
 const ok = { lcpMs: 1800, cls: 0, screens: 4.2, heroLcp: true, jsBytes: 100 };
 
@@ -41,5 +41,13 @@ describe("perf budgets", () => {
 
   it("lowered never raises an entry and records new routes", () => {
     expect(lowered({ a: 100, b: 50 }, { a: 120, b: 40, c: 7 })).toEqual({ a: 100, b: 40, c: 7 });
+  });
+
+  it("a layout shift always fails the run (it is deterministic, spread 0), while LCP and the screens stay reported when the run is non-blocking (akinaza#460)", () => {
+    const problems = ["/en/s/a: CLS 0.2 > 0", "/en/s/a: LCP 3000 ms > 2500 ms", "/en/s/a: 6 phone screens > 5"];
+    expect(blocksRun(problems, "0")).toBe(true); // the CLS one
+    expect(blocksRun(problems.slice(1), "0")).toBe(false);
+    expect(blocksRun(problems.slice(1), undefined)).toBe(true);
+    expect(blocksRun([], undefined)).toBe(false);
   });
 });

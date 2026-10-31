@@ -60,12 +60,26 @@ const NOT_RESIDENCY: Record<string, string> = {
   "terms.sections.2.p": "names the Canada Revenue Agency, a tax authority, not a storage place",
   "terms.sections.11.p": "the federal laws of Canada that govern the terms, not a storage place",
   "docs.pages.books.sections.2.p.0": "names the Canada Revenue Agency, a tax authority, not a storage place",
+  // The console's Storage screen (akinaza#397): the administrator's own screen, each sentence says what ONE chosen region means (from the package's region table; storage-regions.test.ts holds it), never what is deployed.
+  "console.admin.storage.canada": "the group title of the Canadian regions on the administrator's screen",
+  "console.admin.storage.residency.canada": "what the chosen region means, from the region table",
+  "console.admin.storage.residency.canada-ab": "what the chosen region means, from the region table",
+  "console.admin.storage.residency.canada-on": "what the chosen region means, from the region table",
+  "console.admin.storage.residency.canada-qc": "what the chosen region means, from the region table",
+  "console.admin.storage.residency.elsewhere": "what the chosen region means, from the region table",
+  "console.admin.storage.residency.unknown": "what an unmapped region means: nothing claims Canada",
 };
 
 function leaves(node: unknown, path: string[] = []): Array<[string, string]> {
-  if (typeof node === "string") return [[path.join("."), node]];
-  if (Array.isArray(node)) return node.flatMap((v, i) => leaves(v, [...path, String(i)]));
-  if (node && typeof node === "object") return Object.entries(node).flatMap(([k, v]) => leaves(v, [...path, k]));
+  if (typeof node === "string") {
+    return [[path.join("."), node]];
+  }
+  if (Array.isArray(node)) {
+    return node.flatMap((v, i) => leaves(v, [...path, String(i)]));
+  }
+  if (node && typeof node === "object") {
+    return Object.entries(node).flatMap(([k, v]) => leaves(v, [...path, k]));
+  }
   return [];
 }
 
@@ -95,7 +109,9 @@ describe("a public place claim follows the configured region (akinaza#362)", () 
   });
 
   it("holds every database claim: the database cluster is in Canada", () => {
-    for (const path of Object.keys(RESIDENCY_CLAIMS)) expect(holds(RESIDENCY_CLAIMS[path]!, DEV), path).toBe(true);
+    for (const path of Object.keys(RESIDENCY_CLAIMS)) {
+      expect(holds(RESIDENCY_CLAIMS[path]!, DEV), path).toBe(true);
+    }
   });
 
   it("claims nothing about the media store: it is in New York, so « photos kept in Canada » would be false", () => {
@@ -112,7 +128,9 @@ describe("a public place claim follows the configured region (akinaza#362)", () 
 
 describe("the notice describes only the flows the code has (akinaza#364)", () => {
   it("does not say the tax ledger is sent to another service: the figures are computed inside Akinaza", () => {
-    for (const m of [en, fr]) expect(m.privacy.body).not.toMatch(/orazaka|envoy|sent to/i);
+    for (const m of [en, fr]) {
+      expect(m.privacy.body).not.toMatch(/orazaka|envoy|sent to/i);
+    }
   });
 
   it("does not say « shared » when providers receive data, and does not say « sold » of anything but the negation", () => {
@@ -139,7 +157,9 @@ describe("no public text promises conformity to a law (akinaza#362)", () => {
       "og.png": readFileSync(new URL("../app/og.png/route.tsx", import.meta.url), "utf8"),
       README: readFileSync(new URL("../../../README.md", import.meta.url), "utf8"),
     };
-    for (const [name, text] of Object.entries(surfaces)) expect(text, name).not.toMatch(LEGAL_PROMISE);
+    for (const [name, text] of Object.entries(surfaces)) {
+      expect(text, name).not.toMatch(LEGAL_PROMISE);
+    }
   });
 
   it("refuses a place claim outside the declared ones in llms.txt, the social card and the README", () => {
@@ -149,7 +169,11 @@ describe("no public text promises conformity to a law (akinaza#362)", () => {
   });
 
   it("matches what it must catch (the rule itself)", () => {
-    for (const bad of ["Loi 25 by design", "Conçu pour la Loi 25", "Données conformes", "Law 25 compliant", "Loi 25 dès la conception"]) expect(LEGAL_PROMISE.test(bad), bad).toBe(true);
-    for (const good of ["Consent is noted by purpose", "Le consentement est noté par finalité", "Taxes prepared, return filed by you"]) expect(LEGAL_PROMISE.test(good), good).toBe(false);
+    for (const bad of ["Loi 25 by design", "Conçu pour la Loi 25", "Données conformes", "Law 25 compliant", "Loi 25 dès la conception"]) {
+      expect(LEGAL_PROMISE.test(bad), bad).toBe(true);
+    }
+    for (const good of ["Consent is noted by purpose", "Le consentement est noté par finalité", "Taxes prepared, return filed by you"]) {
+      expect(LEGAL_PROMISE.test(good), good).toBe(false);
+    }
   });
 });

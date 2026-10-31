@@ -65,6 +65,14 @@ export function judge(route, s, limits = LIMITS) {
   return out;
 }
 
+/**
+ * Whether the problems fail the run. A layout shift is deterministic (spread 0 over the runs, akinaza#460): it always fails. LCP and the screens vary with
+ * the runner and fail only unless the run is declared non-blocking.
+ */
+export function blocksRun(problems, perfBlocking = process.env.PERF_BLOCKING) {
+  return problems.some((p) => / CLS /.test(p)) || (perfBlocking !== "0" && problems.length > 0);
+}
+
 /** The new ratchet entries: existing ones only go down, new routes are recorded at what was measured. */
 export function lowered(recorded, measured) {
   const next = { ...recorded };
@@ -166,8 +174,7 @@ async function main() {
   const blockingProblems = problems.filter((p) => !NON_BLOCKING_ROUTES.some((r) => p.startsWith(`${r}:`)));
   const jsProblems = js.increased.map((i) => `${i.route}: client JS ${i.to} B > ${i.from} B recorded`);
   for (const p of [...problems, ...jsProblems]) console.error(`${blockingProblems.includes(p) || jsProblems.includes(p) ? "FAIL" : "WARN"} ${p}`);
-  const blocking = process.env.PERF_BLOCKING !== "0";
-  if (jsProblems.length || (blocking && blockingProblems.length)) process.exit(1);
+  if (jsProblems.length || blocksRun(blockingProblems)) process.exit(1);
   if (problems.length) console.log("Absolute budgets missed, reported without failing (PERF_BLOCKING=0).");
 }
 
