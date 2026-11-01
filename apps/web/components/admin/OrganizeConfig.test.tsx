@@ -2,10 +2,14 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import { I18nProvider } from "@/lib/i18n-client";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { OrganizeConfig, type StoredKind } from "./OrganizeConfig";
+import { bindProduct } from "@/lib/brand";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined }) }));
 
@@ -38,7 +42,7 @@ describe("the administrator's tags and statuses (krizaka-ui#690 editors)", () =>
   it("shows the status set of a kind that has one, read-only because it is derived (the ledger moves it, nobody does)", () => {
     const html = render(invoice);
     expect(html).not.toContain("Ajouter un état");
-    expect(html).toContain("Dérivé : Akinaza calcule cet état");
+    expect(html).toContain("Dérivé : Folioviv calcule cet état");
     expect(html).toContain("À payer");
   });
 

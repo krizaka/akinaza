@@ -3,8 +3,12 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
+import { bindProduct } from "@/lib/brand";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 /** The family rule (krizaka-ui#505, 2026-10-23): the app first, never « Talk to us » — contact lives in the footer (krizaka/akinaza#285). */
 const SALES_CALL = /talk to us|parlez-nous/i;

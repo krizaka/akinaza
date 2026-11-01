@@ -1,6 +1,6 @@
 import { accountDataWith, accountsAt } from "@/lib/account-access";
-import { dataKey, readEnv } from "@/lib/env";
 import { productName } from "@/lib/brand-name";
+import { dataKey, readEnv } from "@/lib/env";
 import { appSettings } from "@/lib/settings";
 
 /** The account service and the member's data, wired to this deployment's public address and data key (the edge reads the environment; `lib/` never does). */

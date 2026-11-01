@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 
 import { ConsoleProviders } from "@/components/console/ConsoleProviders";
-import { asLocale, getDictionary } from "@/lib/i18n";
 import { PRODUCT_NAME } from "@/lib/brand";
+import { asLocale, getDictionary } from "@/lib/i18n";
 
 // admin.akinaza.com: never indexed, never cached.
 export const dynamic = "force-dynamic";

@@ -1,11 +1,12 @@
 import { findCodeNames } from "@krizaka/org";
 import { describe, expect, it } from "vitest";
 
+import en from "@/messages/en.json";
+import fr from "@/messages/fr.json";
+
 import { bindProduct, CODE_NAME, PRODUCT_NAME } from "./brand";
 import { getDictionary } from "./i18n";
 import { renderMailTemplate } from "./mail-templates";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
 
 const BRIEF = { shop: "Salon Laurier", line1: "a", line2: "", has2: false, line3: "", has3: false, url: "https://x.test", stop: "https://x.test/stop" };
 

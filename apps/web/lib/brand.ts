@@ -1,4 +1,4 @@
-import { displayName } from "@krizaka/org";
+import { brandOf, displayName } from "@krizaka/org";
 
 /**
  * The commercial name (krizaka-internal#2039, #2103): the code name stays in the repository, the packages and the addresses;
@@ -13,8 +13,17 @@ export const PRODUCT_NAME = displayName(CODE_NAME);
 
 /** A message tree with `{product}` filled in. Pure: the catalogues keep the placeholder, the bound copy is what a page reads. */
 export function bindProduct<T>(tree: T, name: string = PRODUCT_NAME): T {
-  if (typeof tree === "string") return tree.replaceAll("{product}", name) as T;
-  if (Array.isArray(tree)) return tree.map((item) => bindProduct(item, name)) as T;
-  if (tree && typeof tree === "object") return Object.fromEntries(Object.entries(tree).map(([key, value]) => [key, bindProduct(value, name)])) as T;
+  if (typeof tree === "string") {
+    return tree.replaceAll("{product}", name) as T;
+  }
+  if (Array.isArray(tree)) {
+    return tree.map((item) => bindProduct(item, name)) as T;
+  }
+  if (tree && typeof tree === "object") {
+    return Object.fromEntries(Object.entries(tree).map(([key, value]) => [key, bindProduct(value, name)])) as T;
+  }
   return tree;
 }
+
+/** « by Krizaka » / « par Krizaka »: the endorsement under the name, for `ProductLockup`. */
+export const endorsementIn = (locale: "en" | "fr"): string => brandOf(CODE_NAME).endorsement[locale];

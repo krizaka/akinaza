@@ -4,9 +4,12 @@ import type { Root } from "react-dom/client";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
-import en from "@/messages/en.json";
+import enRaw from "@/messages/en.json";
 
 import type { ExploreWords } from "./ExploreView";
+import { bindProduct } from "@/lib/brand";
+
+const en = bindProduct(enRaw);
 
 vi.mock("next/dynamic", () => ({ default: () => () => <div data-testid="map-stub" /> }));
 // The address is the browser's: the adapter of @krizaka/query/url reads and writes it through the history, as in the app.

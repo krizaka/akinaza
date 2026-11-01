@@ -1,12 +1,16 @@
 import { DEFAULT_MEDIA, defaultMediaPaths, SHOP_TYPES } from "@akinaza/core";
 import { describe, expect, it } from "vitest";
 
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { defaultFileUrl, defaultImage, resolveDefaults } from "./default-media";
 import manifest from "./default-media.manifest.json";
 import { SETTINGS } from "./settings";
+import { bindProduct } from "@/lib/brand";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 describe("the default media are on the CDN and described (#267)", () => {
   it("every path the data names is in the manifest, with a 10-hex hash, and nothing else is", () => {

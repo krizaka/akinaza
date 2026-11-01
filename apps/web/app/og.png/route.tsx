@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+
 import { PRODUCT_NAME } from "@/lib/brand";
 
 export const dynamic = "force-static";

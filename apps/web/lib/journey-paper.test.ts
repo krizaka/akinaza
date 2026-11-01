@@ -5,8 +5,12 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { JourneySkeleton } from "@/components/journey/JourneyFrame";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
+import { bindProduct } from "@/lib/brand";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 const read = (path: string) => readFileSync(join(__dirname, "..", path), "utf8");
 

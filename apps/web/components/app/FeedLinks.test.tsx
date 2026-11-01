@@ -2,10 +2,14 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import type { FeedOverview } from "@/lib/feed-overview";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { FeedLinks } from "./FeedLinks";
+import { bindProduct } from "@/lib/brand";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 const say = (key: string, vars?: Record<string, string | number>) => {
   const value = key.split(".").reduce<unknown>((o, k) => (o as Record<string, unknown>)[k], en.console) as string;

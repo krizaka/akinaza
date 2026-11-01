@@ -2,10 +2,14 @@ import { QueryClient, QueryClientProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { BarActionsView, type BarWords, Island, ME_KEY, settleSignOut } from "./BarSession";
+import { bindProduct } from "@/lib/brand";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 vi.mock("next/link", () => ({
   default: ({ href, prefetch, children, ...rest }: { href: string; prefetch?: boolean; children: React.ReactNode }) => (
@@ -36,9 +40,9 @@ describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
     expect(html).toContain('href="/en/sign-in"');
   });
 
-  it("signed out, sign-up open: « Try Akinaza » leads to sign-up", () => {
+  it("signed out, sign-up open: « Try Folioviv » leads to sign-up", () => {
     const html = render({ signedIn: false, signupOpen: true });
-    expect(text(html)).toContain("Try Akinaza");
+    expect(text(html)).toContain("Try Folioviv");
     expect(html).toContain('href="/en/sign-up"');
   });
 

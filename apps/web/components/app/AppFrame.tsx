@@ -8,8 +8,8 @@ import Link from "next/link";
 
 import { FrameSlot } from "@/components/app/FrameSlot";
 import { useFrameAccount } from "@/components/app/use-frame-account";
-import { useSay } from "@/lib/i18n-client";
 import { PRODUCT_NAME } from "@/lib/brand";
+import { useSay } from "@/lib/i18n-client";
 
 const ICONS = { overview: <HomeIcon />, users: <UserIcon />, shops: <UsersIcon />, invoices: <BillingIcon />, ledger: <ShieldIcon />, operations: <ServerIcon />, audit: <ClockIcon />, organize: <ShieldIcon />, incidents: <ShieldIcon />, addresses: <ShieldIcon />, prices: <BillingIcon />, storage: <ServerIcon />, associations: <ShieldIcon /> } as const;
 export type AdminPlace = keyof typeof ICONS;

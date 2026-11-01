@@ -1,5 +1,6 @@
 import { feedByTokenHash, feedEntriesAround, feedTitle } from "@akinaza/db";
 
+import { requestNow } from "@/app/request-now";
 import { productName } from "@/lib/brand-name";
 import { db } from "@/lib/db";
 import { sessionSecret } from "@/lib/env";
@@ -8,7 +9,6 @@ import { handle, refuse } from "@/lib/http";
 import { buildFeedIcs } from "@/lib/ics";
 import { limit } from "@/lib/rate-limit";
 import { appSettings } from "@/lib/settings";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

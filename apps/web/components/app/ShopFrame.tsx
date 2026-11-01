@@ -14,9 +14,9 @@ import { type ChipShop, ShopChip } from "@/components/app/ShopChip";
 import { ShopSearch } from "@/components/app/ShopSearch";
 import { useFrameAccount } from "@/components/app/use-frame-account";
 import { type AppPlace, screenPrimary } from "@/lib/app-nav";
+import { PRODUCT_NAME } from "@/lib/brand";
 import { useSay } from "@/lib/i18n-client";
 import type { PaletteItem } from "@/lib/palette";
-import { PRODUCT_NAME } from "@/lib/brand";
 
 const VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "";
 const ICONS: Record<AppPlace, React.ReactNode> = { today: <ClockIcon />, clients: <UsersIcon />, invoices: <BillingIcon />, books: <BookmarkIcon />, shop: <HomeIcon />, bookings: <CalendarIcon /> };

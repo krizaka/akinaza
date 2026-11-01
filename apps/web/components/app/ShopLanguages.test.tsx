@@ -1,9 +1,12 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import en from "@/messages/en.json";
+import enRaw from "@/messages/en.json";
 
 import { type LanguagesData, ShopLanguages } from "./ShopLanguages";
+import { bindProduct } from "@/lib/brand";
+
+const en = bindProduct(enRaw);
 
 const say = (key: string, vars?: Record<string, string | number>) => {
   const value = key.split(".").reduce<unknown>((o, k) => (o as Record<string, unknown>)[k], en.console) as string;

@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { CANADIAN_CHOICES, choiceOf, OTHER_CHOICES, REGION_CHOICES, residencyOfSaved, settingsOf } from "./storage-regions";
+import { bindProduct } from "@/lib/brand";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 const KEYS = ["canada-qc", "canada-on", "canada-ab", "canada", "elsewhere", "unknown", "user-cloud", "device"] as const;
 

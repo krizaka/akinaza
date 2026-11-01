@@ -1,10 +1,14 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { ProfileFrame } from "./ProfileFrame";
+import { bindProduct } from "@/lib/brand";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 type Props = Parameters<typeof ProfileFrame>[0];
 const html = (props: Partial<Props> = {}) => renderToStaticMarkup(<ProfileFrame locale="fr" current="profile" account={{ name: null }} {...props}>contenu</ProfileFrame>);

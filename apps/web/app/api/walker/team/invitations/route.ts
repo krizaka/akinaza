@@ -2,9 +2,9 @@ import { enqueueMail } from "@akinaza/db";
 import { z } from "zod";
 
 import { systemClock } from "@/app/system-clock";
-import { productName } from "@/lib/brand-name";
 import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";
+import { productName } from "@/lib/brand-name";
 import { db } from "@/lib/db";
 import { handle, readJson } from "@/lib/http";
 import { limit } from "@/lib/rate-limit";

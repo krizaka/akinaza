@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+
 import { systemClock } from "@/app/system-clock";
 
 import { PRODUCT_NAME } from "./brand";
@@ -117,7 +118,7 @@ export function renderMailTemplate<Id extends MailTemplateId>(id: Id, vars: Mail
   const wanted = (MAIL_LOCALES as readonly string[]).includes(options.locale ?? "") ? (options.locale as MailLocale) : DEFAULT_MAIL_LOCALE;
   // The name of the product is a layout variable every template may use: `{product}`, never a typed name.
   const product = options.product ?? PRODUCT_NAME;
-  const values = { ...(vars as unknown as Values), product };
+  const values: Values = { ...(vars as unknown as Values), product };
   const allowed = [...Object.keys(MAIL_TEMPLATES[id]), "product"];
   for (const name of allowed.filter((n) => n !== "product")) {
     if (values[name] === undefined || values[name] === null) throw new MailTemplateError(`${id}: missing variable {${name}}`);
