@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { renderIn } from "@/lib/test-i18n";
 
-import { type SetupData, ShopSetupView } from "./ShopSetup";
+import { RulesCard, type SetupData, ShopSetupView } from "./ShopSetup";
 
 vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app/s1/shop", useSearchParams: () => new URLSearchParams() }));
@@ -81,5 +81,23 @@ describe("« Look » holds the page template (#261, step 4)", () => {
     expect(t).toContain("Page template");
     expect(t.indexOf("Page template")).toBeLessThan(t.indexOf("Page sections"));
     expect(text(render(data(), "look"))).not.toContain("Page template");
+  });
+});
+
+describe("payment terms live in Invoices, not in Booking rules (krizaka-internal#1911)", () => {
+  const rules = { cancellationHours: 24, bookingHorizonDays: 30, slotStepMinutes: 30, minNoticeMinutes: 0, reportLinkDays: 30, paymentTermsDays: 45 };
+  const card = (part?: "rules" | "terms") => renderIn("en", "professional", <RulesCard rules={rules} part={part} />);
+
+  it("Booking rules no longer hold the payment terms", () => {
+    const html = card();
+    expect(html).toContain('name="cancellationHours"');
+    expect(html).not.toContain('name="paymentTermsDays"');
+  });
+
+  it("Invoices holds only the payment terms, under their own title", () => {
+    const html = card("terms");
+    expect(html).toContain('name="paymentTermsDays"');
+    expect(html).not.toContain('name="cancellationHours"');
+    expect(text(html)).toContain("Payment terms");
   });
 });

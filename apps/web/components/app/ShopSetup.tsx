@@ -501,7 +501,8 @@ const rulesForm = createKrizakaForm({
   defaultValues: { cancellationHours: "24", bookingHorizonDays: "60", slotStepMinutes: "30", minNoticeMinutes: "120", reportLinkDays: "30", paymentTermsDays: "30" },
 });
 
-export function RulesCard({ rules }: Readonly<{ rules: NonNullable<SetupData["rules"]> }>) {
+/** The shop's rules form. `part="terms"` shows only the payment terms (Invoices); the other values travel unchanged because one endpoint saves the six. */
+export function RulesCard({ rules, part = "rules" }: Readonly<{ rules: NonNullable<SetupData["rules"]>; part?: "rules" | "terms" }>) {
   const { say, locale } = useSay();
   const { visitReports } = useVocabulary();
   const call = useCall();
@@ -517,14 +518,19 @@ export function RulesCard({ rules }: Readonly<{ rules: NonNullable<SetupData["ru
   });
   return (
     <Card.Root className="p-4 lg:col-span-2">
-      <h2 className="mb-3 font-display text-base font-bold text-fg">{say("shopSetup.rules.title")}</h2>
-      <form.Form aria-label={say("shopSetup.rules.title")} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <form.TextField name="cancellationHours" label={say("shopSetup.rules.cancellationHours")} inputMode="numeric" />
-        <form.TextField name="bookingHorizonDays" label={say("shopSetup.rules.bookingHorizonDays")} inputMode="numeric" />
-        <form.TextField name="slotStepMinutes" label={say("shopSetup.rules.slotStepMinutes")} inputMode="numeric" />
-        <form.TextField name="minNoticeMinutes" label={say("shopSetup.rules.minNoticeMinutes")} inputMode="numeric" />
-        {visitReports ? <form.TextField name="reportLinkDays" label={say("shopSetup.rules.reportLinkDays")} inputMode="numeric" /> : null}
-        <form.TextField name="paymentTermsDays" label={say("shopSetup.rules.paymentTermsDays")} inputMode="numeric" />
+      <h2 className="mb-3 font-display text-base font-bold text-fg">{say(part === "terms" ? "shopSetup.rules.termsTitle" : "shopSetup.rules.title")}</h2>
+      <form.Form aria-label={say(part === "terms" ? "shopSetup.rules.termsTitle" : "shopSetup.rules.title")} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {part === "rules" ? (
+          <>
+            <form.TextField name="cancellationHours" label={say("shopSetup.rules.cancellationHours")} inputMode="numeric" />
+            <form.TextField name="bookingHorizonDays" label={say("shopSetup.rules.bookingHorizonDays")} inputMode="numeric" />
+            <form.TextField name="slotStepMinutes" label={say("shopSetup.rules.slotStepMinutes")} inputMode="numeric" />
+            <form.TextField name="minNoticeMinutes" label={say("shopSetup.rules.minNoticeMinutes")} inputMode="numeric" />
+            {visitReports ? <form.TextField name="reportLinkDays" label={say("shopSetup.rules.reportLinkDays")} inputMode="numeric" /> : null}
+          </>
+        ) : (
+          <form.TextField name="paymentTermsDays" label={say("shopSetup.rules.paymentTermsDays")} inputMode="numeric" />
+        )}
         <div className="flex flex-col gap-3 sm:col-span-2 lg:col-span-3">
           {call.problem ? <Alert tone="danger">{call.problem}</Alert> : null}
           {saved ? <Alert tone="success">{say("shopSetup.rules.saved")}</Alert> : null}
