@@ -100,6 +100,7 @@
 
 - PostgreSQL 16, schema in `packages/db/src/schema.ts` (Drizzle). `pnpm --filter @akinaza/db db:generate` writes the
   next migration; rules the schema cannot say are custom SQL migrations. A merged migration is never edited.
+  **One baseline** (`0000_baseline`, krizaka-internal#2044: no production yet, no history kept); the price grid is data from code (`price-schedule.ts`, run by `migrate`). `pnpm db:rebuild` (`--yes` for a non-local host, `--cast` for the demo cast, `--write-expected` after a schema change) drops every schema, migrates from zero, seeds the configuration and checks the schema against `packages/db/src/schema-expected.json`; CI builds a database from zero and runs the same check (`db-rebuild.test.ts`). Dev is rebuilt with it, never patched by hand.
 - One database per worktree/session; never a shared or `*_demo` database from a session. Tests create a database per file
   on CI's PostgreSQL service or on a Testcontainers one.
 - **Tenant isolation (#247).** A shop's data is reachable only by that shop's members, and nothing tells anyone else it exists.

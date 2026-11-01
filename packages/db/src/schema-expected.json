@@ -1,0 +1,809 @@
+{
+  "tables": {
+    "organize.client_status": [
+      "changed_at",
+      "changed_by",
+      "entity_id",
+      "state"
+    ],
+    "organize.client_tag": [
+      "entity_id",
+      "kind",
+      "tag_id"
+    ],
+    "organize.invoice_status": [
+      "changed_at",
+      "changed_by",
+      "entity_id",
+      "state"
+    ],
+    "organize.invoice_tag": [
+      "entity_id",
+      "kind",
+      "tag_id"
+    ],
+    "organize.kind_config": [
+      "config",
+      "kind",
+      "updated_at",
+      "updated_by",
+      "version"
+    ],
+    "organize.tag": [
+      "created_at",
+      "id",
+      "kind",
+      "marker",
+      "name",
+      "origin",
+      "scope_id"
+    ],
+    "organize.view": [
+      "author_id",
+      "created_at",
+      "filters",
+      "id",
+      "kind",
+      "name",
+      "scope_id",
+      "shared"
+    ],
+    "privacy.consent": [
+      "at",
+      "granted",
+      "id",
+      "means",
+      "purpose",
+      "seq",
+      "subject_id",
+      "subject_kind",
+      "version"
+    ],
+    "privacy.incident": [
+      "assessment",
+      "aware_at",
+      "cai_notice",
+      "closed_at",
+      "description",
+      "drill",
+      "id",
+      "information",
+      "kind",
+      "measures",
+      "occurred_at",
+      "opened_at",
+      "opened_by",
+      "persons_concerned",
+      "persons_notice",
+      "retain_until",
+      "scope",
+      "status"
+    ],
+    "privacy.request": [
+      "completed_at",
+      "failure",
+      "id",
+      "kind",
+      "requested_at",
+      "status",
+      "subject_id",
+      "subject_kind"
+    ],
+    "public.accounts": [
+      "avatar_seed",
+      "created_at",
+      "current_period_end",
+      "email",
+      "email_verified_at",
+      "id",
+      "last_seen_at",
+      "locale",
+      "name",
+      "password_hash",
+      "payment_customer_id",
+      "payment_subscription_id",
+      "role",
+      "status",
+      "subscription_price_version",
+      "subscription_status",
+      "theme"
+    ],
+    "public.api_keys": [
+      "created_at",
+      "expires_at",
+      "id",
+      "last_used_at",
+      "name",
+      "owner_id",
+      "public_id",
+      "revoked_at",
+      "rotated_from_id",
+      "scopes",
+      "secret_hash",
+      "superseded_at"
+    ],
+    "public.app_settings": [
+      "key",
+      "scope",
+      "scope_id",
+      "updated_at",
+      "updated_by",
+      "value"
+    ],
+    "public.appointments": [
+      "checked_in_at",
+      "checked_out_at",
+      "client_id",
+      "created_at",
+      "during",
+      "id",
+      "service_id",
+      "shop_id",
+      "staff_id",
+      "status",
+      "zone_id"
+    ],
+    "public.association_proofs": [
+      "account_id",
+      "decided_at",
+      "decided_by",
+      "decision_note",
+      "id",
+      "kind",
+      "note",
+      "reference",
+      "status",
+      "submitted_at"
+    ],
+    "public.audit_log": [
+      "action",
+      "actor_id",
+      "actor_label",
+      "at",
+      "detail",
+      "id",
+      "ip",
+      "target_id"
+    ],
+    "public.booking_codes": [
+      "attempts",
+      "created_at",
+      "expires_at",
+      "id",
+      "payload",
+      "proof"
+    ],
+    "public.bookings": [
+      "appointment_id",
+      "cancelled_at",
+      "client_id",
+      "created_at",
+      "dependant_id",
+      "id",
+      "status"
+    ],
+    "public.brief_actions": [
+      "done_at",
+      "kind",
+      "recommendation_id",
+      "result",
+      "shop_id"
+    ],
+    "public.brief_deliveries": [
+      "items",
+      "sent_at",
+      "shop_id",
+      "unsubscribe_sha256",
+      "week"
+    ],
+    "public.busy_intervals": [
+      "connection_id",
+      "during",
+      "id",
+      "shop_id",
+      "staff_id"
+    ],
+    "public.calendar_connections": [
+      "consent_text_version",
+      "consented_at",
+      "created_at",
+      "etag",
+      "failures",
+      "id",
+      "kind",
+      "label",
+      "last_attempt_at",
+      "last_error",
+      "last_modified",
+      "last_success_at",
+      "next_sync_at",
+      "secret_enc",
+      "shop_id",
+      "staff_id",
+      "state"
+    ],
+    "public.client_notes": [
+      "author_account_id",
+      "author_name",
+      "body",
+      "client_id",
+      "created_at",
+      "id",
+      "shop_id"
+    ],
+    "public.client_request_files": [
+      "bytes",
+      "created_at",
+      "id",
+      "kind",
+      "request_id",
+      "url"
+    ],
+    "public.client_requests": [
+      "client_id",
+      "created_at",
+      "id",
+      "note",
+      "service_id",
+      "staff_id",
+      "title",
+      "zone_id"
+    ],
+    "public.clients": [
+      "access_notes_enc",
+      "account_id",
+      "created_at",
+      "email",
+      "erased_at",
+      "full_name",
+      "id",
+      "language",
+      "notes",
+      "phone",
+      "shop_id"
+    ],
+    "public.collections": [
+      "avatar",
+      "created_at",
+      "description",
+      "id",
+      "is_default",
+      "name",
+      "owner_id"
+    ],
+    "public.collections_tags": [
+      "collection_id",
+      "tag_id"
+    ],
+    "public.days_off": [
+      "id",
+      "on_date",
+      "reason",
+      "staff_id"
+    ],
+    "public.dependants": [
+      "client_id",
+      "created_at",
+      "erased_at",
+      "id",
+      "kind",
+      "name",
+      "profile",
+      "shop_id"
+    ],
+    "public.email_changes": [
+      "account_id",
+      "created_at",
+      "expires_at",
+      "id",
+      "new_email",
+      "token_hash",
+      "used_at"
+    ],
+    "public.expenses": [
+      "business_share_pct",
+      "created_at",
+      "gst_cents",
+      "id",
+      "paid_on",
+      "qst_cents",
+      "receipt_ref",
+      "shop_id",
+      "subtotal_cents",
+      "supplier"
+    ],
+    "public.feed_tokens": [
+      "created_at",
+      "id",
+      "revoked_at",
+      "rotated_at",
+      "shop_id",
+      "staff_id",
+      "token_hash"
+    ],
+    "public.invitations": [
+      "created_at",
+      "email",
+      "expires_at",
+      "id",
+      "invited_by",
+      "role",
+      "scope_id",
+      "token_hash",
+      "used_at"
+    ],
+    "public.invoice_deliveries": [
+      "created_at",
+      "expires_at",
+      "id",
+      "invoice_id",
+      "opened_at",
+      "revoked_at",
+      "to_email",
+      "view_token_hash"
+    ],
+    "public.invoice_lines": [
+      "amount_cents",
+      "description",
+      "discount_cents",
+      "id",
+      "invoice_id",
+      "position",
+      "quantity_hundredths",
+      "tax_category",
+      "unit_price_cents"
+    ],
+    "public.invoices": [
+      "appointment_id",
+      "client_id",
+      "created_at",
+      "credit_of",
+      "due_on",
+      "gst_cents",
+      "id",
+      "issued_on",
+      "language",
+      "number",
+      "qst_cents",
+      "replaces",
+      "shop_id",
+      "subtotal_cents",
+      "terms_days",
+      "total_cents"
+    ],
+    "public.krizaka_module_versions": [
+      "applied_at",
+      "checksum",
+      "module",
+      "version"
+    ],
+    "public.mail_outbox": [
+      "attempts",
+      "body_text",
+      "cc_email",
+      "created_at",
+      "from_name",
+      "html",
+      "id",
+      "last_error",
+      "locale",
+      "related_id",
+      "related_kind",
+      "sent_at",
+      "status",
+      "subject",
+      "template",
+      "to_email"
+    ],
+    "public.memberships": [
+      "account_id",
+      "created_at",
+      "invited_by",
+      "role",
+      "scope_id"
+    ],
+    "public.password_resets": [
+      "account_id",
+      "created_at",
+      "expires_at",
+      "id",
+      "token_hash",
+      "used_at"
+    ],
+    "public.payment_events": [
+      "id",
+      "received_at",
+      "type"
+    ],
+    "public.payments": [
+      "amount_cents",
+      "id",
+      "invoice_id",
+      "method",
+      "received_at"
+    ],
+    "public.price_versions": [
+      "actor_id",
+      "actor_label",
+      "before",
+      "created_at",
+      "effective_from",
+      "id",
+      "key",
+      "price"
+    ],
+    "public.schedules": [
+      "ends_at",
+      "id",
+      "staff_id",
+      "starts_at",
+      "weekday"
+    ],
+    "public.services": [
+      "active",
+      "capacity",
+      "description_en",
+      "description_fr",
+      "duration_minutes",
+      "id",
+      "included_en",
+      "included_fr",
+      "link_url",
+      "name_en",
+      "name_fr",
+      "position",
+      "price_cents",
+      "price_varies",
+      "shop_id",
+      "tax_category"
+    ],
+    "public.sessions": [
+      "account_id",
+      "created_at",
+      "expires_at",
+      "id",
+      "ip",
+      "token_hash",
+      "user_agent"
+    ],
+    "public.settings_audit": [
+      "actor_id",
+      "actor_label",
+      "after",
+      "at",
+      "before",
+      "id",
+      "key",
+      "scope",
+      "scope_id"
+    ],
+    "public.shop_announcements": [
+      "created_at",
+      "ends_on",
+      "id",
+      "photo_alt",
+      "photo_url",
+      "shop_id",
+      "text_en",
+      "text_fr"
+    ],
+    "public.shop_domains": [
+      "attempts",
+      "created_at",
+      "hostname",
+      "id",
+      "last_checked_at",
+      "last_error",
+      "provider_id",
+      "shop_id",
+      "state",
+      "token",
+      "updated_at",
+      "verified_at"
+    ],
+    "public.shop_figure_rules": [
+      "overrides",
+      "shop_id",
+      "updated_at"
+    ],
+    "public.shop_former_slugs": [
+      "retired_at",
+      "shop_id",
+      "slug"
+    ],
+    "public.shop_languages": [
+      "enabled",
+      "shop_id",
+      "source_locale",
+      "updated_at"
+    ],
+    "public.shop_media": [
+      "alt_en",
+      "alt_fr",
+      "caption_en",
+      "caption_fr",
+      "id",
+      "mp4_url",
+      "position",
+      "role",
+      "shop_id",
+      "url",
+      "webm_url",
+      "wide"
+    ],
+    "public.shop_page": [
+      "accent",
+      "logo_dark_url",
+      "logo_url",
+      "paper",
+      "sections",
+      "sections_custom",
+      "shop_id",
+      "shop_type",
+      "style",
+      "template_id",
+      "template_version",
+      "updated_at",
+      "use_defaults"
+    ],
+    "public.shop_page_versions": [
+      "author_id",
+      "created_at",
+      "doc",
+      "id",
+      "published_at",
+      "schema",
+      "shop_id",
+      "status",
+      "version"
+    ],
+    "public.shop_reels": [
+      "created_at",
+      "embed_url",
+      "external_url",
+      "id",
+      "kind",
+      "mp4_url",
+      "platform",
+      "position",
+      "poster_url",
+      "seconds",
+      "shop_id",
+      "title_en",
+      "title_fr",
+      "webm_url"
+    ],
+    "public.shop_reviews": [
+      "body",
+      "client_id",
+      "created_at",
+      "first_name",
+      "id",
+      "last_initial",
+      "rating",
+      "reply",
+      "service_name",
+      "shop_id",
+      "state",
+      "verified"
+    ],
+    "public.shop_rules": [
+      "booking_horizon_days",
+      "cancellation_hours",
+      "min_notice_minutes",
+      "report_link_days",
+      "shop_id",
+      "slot_step_minutes"
+    ],
+    "public.shop_search": [
+      "area",
+      "avail_at",
+      "avail_day",
+      "avail_stale",
+      "kind",
+      "lat",
+      "lng",
+      "name",
+      "name_norm",
+      "next_free_at",
+      "open_week",
+      "pt",
+      "quartiers",
+      "search",
+      "shop_id",
+      "slug",
+      "tagline_en",
+      "tagline_fr",
+      "timezone"
+    ],
+    "public.shop_slug_changes": [
+      "at",
+      "id",
+      "shop_id"
+    ],
+    "public.shop_social_links": [
+      "platform",
+      "shop_id",
+      "url"
+    ],
+    "public.shop_tags": [
+      "shop_id",
+      "tag_id"
+    ],
+    "public.shop_translation_runs": [
+      "day",
+      "runs",
+      "shop_id"
+    ],
+    "public.shop_translations": [
+      "created_at",
+      "field",
+      "id",
+      "kind",
+      "locale",
+      "ref_id",
+      "run_id",
+      "shop_id",
+      "source_hash",
+      "status",
+      "text",
+      "updated_at"
+    ],
+    "public.shop_wall": [
+      "shop_id",
+      "texture",
+      "updated_at"
+    ],
+    "public.shop_wall_items": [
+      "alt_en",
+      "alt_fr",
+      "attachment",
+      "caption_en",
+      "caption_fr",
+      "id",
+      "image_url",
+      "kind",
+      "rotation",
+      "shop_id",
+      "signature",
+      "text_en",
+      "text_fr",
+      "variant",
+      "x",
+      "y",
+      "z"
+    ],
+    "public.shop_zones": [
+      "active",
+      "id",
+      "lat",
+      "lng",
+      "name",
+      "position",
+      "shop_id"
+    ],
+    "public.shops": [
+      "address",
+      "area",
+      "avatar",
+      "bio_en",
+      "bio_fr",
+      "brief_email",
+      "business_type",
+      "collection_id",
+      "created_at",
+      "custom_domain_enabled",
+      "custom_domain_enabled_at",
+      "custom_domain_price_version",
+      "description",
+      "gst_number",
+      "id",
+      "invoice_link_days",
+      "invoice_mail_copy",
+      "invoice_mail_from_name",
+      "invoice_mail_message",
+      "invoice_prefix",
+      "is_default",
+      "kind",
+      "legal_name",
+      "name",
+      "next_invoice_number",
+      "organized_at",
+      "owner_id",
+      "payment_terms_days",
+      "public_email",
+      "public_phone",
+      "public_website",
+      "published",
+      "qst_number",
+      "reel_transition",
+      "registrant",
+      "seat_unit_en",
+      "seat_unit_fr",
+      "slug",
+      "slug_cleared_for",
+      "slug_held",
+      "slug_held_at",
+      "slug_held_term",
+      "slug_hold_note",
+      "slug_hold_reviewed_at",
+      "tagline_en",
+      "tagline_fr",
+      "timezone"
+    ],
+    "public.staff": [
+      "account_id",
+      "active",
+      "created_at",
+      "id",
+      "name",
+      "shop_id"
+    ],
+    "public.tags": [
+      "color",
+      "id",
+      "name",
+      "owner_id"
+    ],
+    "public.tax_ledger": [
+      "amount_cents",
+      "direction",
+      "id",
+      "period",
+      "posted_at",
+      "shop_id",
+      "source_id",
+      "source_kind",
+      "source_label",
+      "tax"
+    ],
+    "public.visit_reports": [
+      "booking_id",
+      "created_at",
+      "duration_minutes",
+      "id",
+      "note",
+      "photo",
+      "photo_type",
+      "sent_at",
+      "token_expires_at",
+      "view_token_hash"
+    ],
+    "public.webhook_deliveries": [
+      "attempts",
+      "created_at",
+      "delivered_at",
+      "endpoint_id",
+      "event_id",
+      "event_type",
+      "id",
+      "last_error",
+      "last_status",
+      "next_attempt_at",
+      "payload",
+      "status"
+    ],
+    "public.webhook_endpoints": [
+      "active",
+      "created_at",
+      "disabled_why",
+      "events",
+      "id",
+      "owner_id",
+      "secret_sealed",
+      "url"
+    ],
+    "public.webhook_received": [
+      "event_id",
+      "received_at",
+      "source"
+    ]
+  },
+  "config": {
+    "public.price_versions": [
+      "akinaza.founder",
+      "akinaza.scale",
+      "akinaza.starter"
+    ]
+  }
+}

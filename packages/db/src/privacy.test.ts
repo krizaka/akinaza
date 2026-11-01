@@ -23,42 +23,6 @@ beforeAll(async () => {
 });
 afterAll(async () => t.drop());
 
-it("the privacy migration file is exactly what the shared module generates (akinaza#370)", () => {
-  expect(readFileSync(fileURLToPath(new URL("../drizzle/0037_privacy.sql", import.meta.url)), "utf8")).toBe(PRIVACY_MIGRATION_SQL);
-});
-
-it("moves the consents already given into the privacy module, in order, and drops the old table", async () => {
-  const full = fileURLToPath(new URL("../drizzle", import.meta.url));
-  const before = mkdtempSync(join(tmpdir(), "ak-priv-"));
-  try {
-    cpSync(full, before, { recursive: true });
-    const journal = JSON.parse(readFileSync(join(before, "meta/_journal.json"), "utf8")) as { entries: { tag: string }[] };
-    journal.entries = journal.entries.filter((e) => Number(e.tag.slice(0, 4)) < 37);
-    writeFileSync(join(before, "meta/_journal.json"), JSON.stringify(journal));
-    const old = await freshEmptyDatabase();
-    try {
-      await migrate(old.pool, before);
-      const shop = (await old.pool.query(`INSERT INTO shops (name, legal_name, kind, address, registrant) VALUES ('S', 'S inc.', 'services', '1 rue Test', false) RETURNING id`)).rows[0].id as string;
-      const client = (await old.pool.query(`INSERT INTO clients (shop_id, full_name) VALUES ($1, 'Camille') RETURNING id`, [shop])).rows[0].id as string;
-      for (const [purpose, granted, version] of [["service", true, "2026-10-01"], ["marketing", true, "2026-10-01"], ["marketing", false, "2026-10-17"]] as const) {
-        await old.pool.query(`INSERT INTO client_consents (client_id, purpose, granted, text_version) VALUES ($1, $2, $3, $4)`, [client, purpose, granted, version]);
-      }
-      await migrate(old.pool, full);
-      const moved = (await old.pool.query(`SELECT purpose, granted, version, means FROM privacy.consent WHERE subject_kind = 'client' AND subject_id = $1 ORDER BY seq`, [client])).rows;
-      expect(moved).toEqual([
-        { purpose: "service", granted: true, version: "2026-10-01", means: "migrated" },
-        { purpose: "marketing", granted: true, version: "2026-10-01", means: "migrated" },
-        { purpose: "marketing", granted: false, version: "2026-10-17", means: "migrated" },
-      ]);
-      expect((await old.pool.query(`SELECT to_regclass('public.client_consents') AS t`)).rows[0].t).toBeNull();
-    } finally {
-      await old.drop();
-    }
-  } finally {
-    rmSync(before, { recursive: true, force: true });
-  }
-});
-
 it("every table a retention rule names exists, and the rules agree with what the erasure does", async () => {
   for (const table of RETENTION_RULES.flatMap((r) => r.tables)) {
     const found = (await t.pool.query("SELECT to_regclass($1) AS t", [table])).rows[0].t as string | null;

@@ -22,43 +22,6 @@ afterAll(async () => t.drop());
 
 const SALON = TEMPLATES.find((x) => x.id === "salon-carte")!;
 
-describe("the migration of pages saved before templates (#261)", () => {
-  it("marks a page the owner customised, leaves a default page alone, and starts everyone with no template", async () => {
-    const full = fileURLToPath(new URL("../drizzle", import.meta.url));
-    const before = mkdtempSync(join(tmpdir(), "ak-mig-tpl-"));
-    try {
-      cpSync(full, before, { recursive: true });
-      const journal = JSON.parse(readFileSync(join(before, "meta/_journal.json"), "utf8")) as { entries: { tag: string }[] };
-      journal.entries = journal.entries.filter((e) => Number(e.tag.slice(0, 4)) < 31);
-      writeFileSync(join(before, "meta/_journal.json"), JSON.stringify(journal));
-      const old = await freshEmptyDatabase();
-      try {
-        await migrate(old.pool, before);
-        const shop = async (n: number) => {
-          const owner = (await old.pool.query("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [`o${n}@example.test`])).rows[0].id as string;
-          return (await old.pool.query("INSERT INTO shops (owner_id, name, legal_name, kind, address, registrant) VALUES ($1, 'S', 'S inc.', 'services', '1 rue Test', false) RETURNING id", [owner])).rows[0].id as string;
-        };
-        const [plain, reordered, hidden] = [await shop(1), await shop(2), await shop(3)];
-        await old.pool.query("INSERT INTO shop_page (shop_id) VALUES ($1)", [plain]); // the default sections
-        const sections = DEFAULT_SHOP_PAGE_SECTIONS.map((s) => ({ ...s }));
-        await old.pool.query("INSERT INTO shop_page (shop_id, sections) VALUES ($1, $2)", [reordered, JSON.stringify([...sections].reverse())]);
-        await old.pool.query("INSERT INTO shop_page (shop_id, sections) VALUES ($1, $2)", [hidden, JSON.stringify(sections.map((s) => (s.id === "gallery" ? { ...s, visible: false } : s)))]);
-        await migrate(old.pool, full);
-        const rows = (await old.pool.query("SELECT shop_id, sections_custom, template_id, template_version, style FROM shop_page")).rows as { shop_id: string; sections_custom: boolean; template_id: string | null; template_version: number | null; style: unknown }[];
-        const by = (id: string) => rows.find((r) => r.shop_id === id)!;
-        expect(by(plain).sections_custom).toBe(false);
-        expect(by(reordered).sections_custom).toBe(true);
-        expect(by(hidden).sections_custom).toBe(true);
-        for (const r of rows) expect([r.template_id, r.template_version, r.style]).toEqual([null, null, {}]);
-      } finally {
-        await old.drop();
-      }
-    } finally {
-      rmSync(before, { recursive: true, force: true });
-    }
-  });
-});
-
 describe("saving the sections by hand", () => {
   it("marks the page customised only when the owner changes the order or the visibility", async () => {
     const shop = await walkerShop(t.db, "tpl-save");
@@ -191,7 +154,6 @@ describe("`trust` is an orderable section (#261, step 3)", () => {
     for (const template of TEMPLATES) for (const section of template.sections) expect(SHOP_PAGE_SECTIONS as readonly string[], `${template.id}/${section.id}`).toContain(section.id);
   });
 });
-
 
 describe("the update to the notebook's version (akinaza#316)", () => {
   it("moves a shop from @1 to @2 and keeps its content: its trade, logo and image defaults", async () => {

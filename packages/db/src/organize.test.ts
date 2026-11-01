@@ -21,10 +21,6 @@ const org = () => organizeOver(async (sql, params) => (await t.pool.query(sql, p
 const RULES = { allowedSeeds: SHOP_AVATAR_SEEDS };
 
 describe("a shop is an item of « organize »", () => {
-  it("the migration file is exactly what the declaration generates", () => {
-    const file = readFileSync(fileURLToPath(new URL("../drizzle/0014_organize_shops.sql", import.meta.url)), "utf8");
-    expect(file).toBe(`${ORGANIZE_MIGRATION_HEADER}${organizeMigration(ORGANIZE_SCHEMA)}\n`);
-  });
 
   it("an owner has a default collection (in their language) and a new shop falls into it", async () => {
     const owner = await account(t.db, "orga@example.test");

@@ -144,54 +144,6 @@ describe("the accent within the look (akinaza#402)", () => {
   });
 });
 
-describe("migration 0038: today's pages become documents", () => {
-  it("turns every existing shop page into a published v1 with today's content: order, visibility, trade", async () => {
-    const dir = fileURLToPath(new URL("../drizzle", import.meta.url));
-    const before = mkdtempSync(join(tmpdir(), "ak-mig-"));
-    const old = await freshEmptyDatabase();
-    try {
-      cpSync(dir, before, { recursive: true });
-      const journal = JSON.parse(readFileSync(join(before, "meta/_journal.json"), "utf8")) as { entries: { tag: string }[] };
-      journal.entries = journal.entries.filter((e) => Number(e.tag.slice(0, 4)) < 38);
-      writeFileSync(join(before, "meta/_journal.json"), JSON.stringify(journal));
-      await migrate(old.pool, before);
-      const owner = (await old.pool.query(`INSERT INTO accounts (email, locale, password_hash) VALUES ('mig@example.test', 'fr', 'x') RETURNING id`)).rows[0].id as string;
-      const shop = async (business: "professional" | "pets", sections: unknown, shopType: string | null) => {
-        const id = (await old.pool.query(`INSERT INTO shops (owner_id, name, legal_name, kind, address, registrant, business_type) VALUES ($1, 'S', 'S inc.', 'services', '1 rue Test', false, $2) RETURNING id`, [owner, business])).rows[0].id as string;
-        await old.pool.query(`INSERT INTO shop_page (shop_id, sections, shop_type) VALUES ($1, $2::jsonb, $3)`, [id, JSON.stringify(sections), shopType]);
-        return id;
-      };
-      const reordered = [...full(["wall", "follow"])].reverse();
-      const cases = [
-        { id: await shop("professional", full(), null), sections: full(), trade: shopTypeOf("professional") },
-        { id: await shop("pets", reordered, null), sections: reordered, trade: shopTypeOf("pets") },
-        { id: await shop("professional", full(["reviews", "zones"]), "salon"), sections: full(["reviews", "zones"]), trade: "salon" as const },
-        { id: await shop("professional", full().filter((s) => s.id !== "trust"), "coaching"), sections: full().filter((s) => s.id !== "trust"), trade: "coaching" as const },
-      ];
-      await migrate(old.pool, dir);
-      for (const c of cases) {
-        const rows = (await old.pool.query(`SELECT version, status, schema, doc FROM shop_page_versions WHERE shop_id = $1`, [c.id])).rows;
-        expect(rows).toHaveLength(1);
-        expect(rows[0]).toMatchObject({ version: 1, status: "published", schema: 1 });
-        expect(parseShopPage(rows[0].doc).ok).toBe(true);
-        // The SQL and the pure function agree on every page, so today's content survives exactly.
-        expect(rows[0].doc).toEqual(JSON.parse(JSON.stringify(documentFromLegacy({ sections: c.sections, trade: c.trade, booking: MIGRATION_0038_BOOKING_SECTIONS }))));
-      }
-      // Visible sections stay enabled, the hidden ones are disabled, the order is the owner's.
-      const hidden = (await old.pool.query(`SELECT doc FROM shop_page_versions WHERE shop_id = $1`, [cases[2]!.id])).rows[0].doc.sections as { key: string; disabled?: boolean }[];
-      expect(hidden.filter((s) => s.disabled).map((s) => s.key)).toEqual(["s_zones", "s_reviews"]);
-    } finally {
-      await old.drop();
-      rmSync(before, { recursive: true, force: true });
-    }
-  });
-});
-
-it("0038_shop_page_document.sql is the generator's output (never edited by hand)", () => {
-  const file = readFileSync(fileURLToPath(new URL("../drizzle/0038_shop_page_document.sql", import.meta.url)), "utf8");
-  expect(file).toBe(SHOP_PAGE_DOCUMENT_MIGRATION_SQL);
-});
-
 describe("the page is parsed at read time (akinaza#401)", () => {
   it("refuses to draw a stored document that no longer parses, naming the path, instead of drawing half a page", async () => {
     const shop = await walkerShop(t.db, "doc-read");
