@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   journeys:
-    uses: krizaka/.github/.github/workflows/journeys.yml@d33efdf19c2a0a7712bdc11e868d643f4e7c437a # main
+    uses: krizaka/.github/.github/workflows/journeys.yml@43aa90918aba0446c0a455194f668846512d3860 # main
     permissions:
       contents: read
     with:
