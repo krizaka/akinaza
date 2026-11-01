@@ -125,7 +125,22 @@
     "registrant": "Registered for GST/QST",
     "smallSupplier": "Small supplier: no taxes",
     "terms": "Payment in {days} days",
-    "edit": "Edit the shop on the web"
+    "edit": "Edit the shop on the web",
+    "groups": {
+      "page": "Your page",
+      "business": "Your business"
+    },
+    "sections": {
+      "page": "Page",
+      "languages": "Languages",
+      "hours": "Hours and days off",
+      "rules": "Booking rules",
+      "team": "Team and time off",
+      "invoices": "Invoices and payment terms",
+      "agenda": "Calendar",
+      "figures": "Figure thresholds",
+      "data": "Your data"
+    }
   },
   "profile": {
     "title": "Profile"

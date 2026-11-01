@@ -125,7 +125,22 @@
     "registrant": "Inscrite aux taxes (TPS/TVQ)",
     "smallSupplier": "Petit fournisseur : pas de taxes",
     "terms": "Paiement à {days} jours",
-    "edit": "Modifier la boutique sur le Web"
+    "edit": "Modifier la boutique sur le Web",
+    "groups": {
+      "page": "Votre page",
+      "business": "Votre activité"
+    },
+    "sections": {
+      "page": "Page",
+      "languages": "Langues",
+      "hours": "Horaires et congés",
+      "rules": "Règles de réservation",
+      "team": "Équipe et congés",
+      "invoices": "Factures et délai de paiement",
+      "agenda": "Agenda",
+      "figures": "Seuils des chiffres",
+      "data": "Vos données"
+    }
   },
   "profile": {
     "title": "Profil"

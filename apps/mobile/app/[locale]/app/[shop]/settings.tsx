@@ -4,7 +4,7 @@ import * as Linking from "expo-linking";
 import * as React from "react";
 
 import { queries, webUrl } from "@/config";
-import { routes } from "@/domain/links";
+import { BOUTIQUE_GROUPS, routes } from "@/domain/links";
 import { dollars } from "@/domain/money";
 import { useI18n } from "@/i18n";
 import { AppHeader } from "@/ui/AppHeader";
@@ -42,6 +42,14 @@ export default function Boutique() {
                   <Txt tone="secondary">{dollars(service.priceCents, locale)}</Txt>
                 </Card.Body>
               </Card.Root>
+            ))}
+            {BOUTIQUE_GROUPS.map((group) => (
+              <React.Fragment key={group.id}>
+                <Txt variant="label">{t(`boutique.groups.${group.id}`)}</Txt>
+                {group.sections.map((section) => (
+                  <Button key={section} variant="secondary" label={t(`boutique.sections.${section}`)} onPress={() => void Linking.openURL(webUrl(routes.boutiqueSection(locale, shop, section)))} />
+                ))}
+              </React.Fragment>
             ))}
             <Button variant="secondary" label={t("boutique.edit")} onPress={() => void Linking.openURL(webUrl(routes.boutique(locale, shop)))} />
           </>

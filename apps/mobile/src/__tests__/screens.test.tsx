@@ -209,4 +209,14 @@ describe("the phone app's five tabs, each with its three states (D8)", () => {
     expect(screen.getByText("Paiement à 30 jours")).toBeTruthy();
     expect(api.shop).toHaveBeenCalledWith(SHOP);
   });
+
+  it("Boutique: the same two groups as the web, each row opening its section there (krizaka-internal#1911)", async () => {
+    api.shop!.mockResolvedValue({ shop: { id: SHOP, name: "Studio Lumen inc. (démo)", registrant: true, timezone: "America/Toronto", paymentTermsDays: 30 }, services: [] });
+    await show(<Boutique />);
+    expect(await screen.findByText("Votre page")).toBeTruthy();
+    expect(screen.getByText("Votre activité")).toBeTruthy();
+    for (const row of ["Horaires et congés", "Règles de réservation", "Factures et délai de paiement"]) {
+      expect(screen.getByText(row)).toBeTruthy();
+    }
+  });
 });
