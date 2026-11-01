@@ -7,7 +7,7 @@ import en from "../messages/en.json";
 import fr from "../messages/fr.json";
 import { format } from "./i18n";
 import { ASSOCIATION, FOUNDER, PRICES, SCALE, STARTER } from "./pricing";
-import { planAction, pricingPlans, subscriptionPlans } from "./pricing-view";
+import { faqFor, planAction, pricingPlans, salesOpen, subscriptionPlans } from "./pricing-view";
 import { pricesInForce } from "./test-prices";
 
 const read = (p: string) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
@@ -193,5 +193,40 @@ describe("a signed-in owner is sent to Subscription, not to « Open my shop » (
 
   it("words the owner's action in both languages", () => {
     expect([en.pricing.manageCta, fr.pricing.manageCta]).toEqual(["Manage my plan", "Gérer mon forfait"]);
+  });
+});
+
+describe("no card is asked while nothing is on sale (krizaka-internal#1913, audit decision)", () => {
+  const wired = { signupEnabled: true, paymentsProvider: "stripe", paymentsSecretKey: "sk_test_x", paymentsWebhookSecret: "whsec_x" };
+
+  it("sells only when sign-up is open and the payment provider is wired", () => {
+    expect(salesOpen(wired)).toBe(true);
+    expect(salesOpen({ ...wired, signupEnabled: false })).toBe(false);
+    expect(salesOpen({ ...wired, paymentsProvider: undefined })).toBe(false);
+    expect(salesOpen({ ...wired, paymentsSecretKey: undefined })).toBe(false);
+    expect(salesOpen({ ...wired, paymentsWebhookSecret: "" })).toBe(false);
+  });
+
+  it("swaps the free-period answer for the planned one, in both languages, only while not selling", () => {
+    for (const t of [en, fr]) {
+      const planned = t.pricing.faqFreePeriodPlanned;
+      expect(t.pricing.faq.some((f) => f.q === planned.q), "the planned answer replaces an existing question").toBe(true);
+      expect(faqFor(t.pricing.faq, planned, true)).toEqual(t.pricing.faq);
+      const closed = faqFor(t.pricing.faq, planned, false);
+      expect(closed.some((f) => /card|carte/i.test(f.a) && !/no card|aucune carte/i.test(f.a))).toBe(false);
+    }
+  });
+
+  it("says the prices are planned, and no card, in the public page and in Subscription", () => {
+    expect(en.pricing.plannedLine).toContain("no card");
+    expect(fr.pricing.plannedLine).toContain("aucune carte");
+    expect(fr.pricing.plannedPerMonth).toContain("prévu");
+    expect([en.console.account.subscription.changePlan, fr.console.account.subscription.changePlan]).toEqual(["Change plan", "Changer de forfait"]);
+  });
+
+  it("keeps a signed-in owner out of the public page: /pricing sends her to Subscription, in the app shell", () => {
+    const page = read("app/[locale]/pricing/page.tsx");
+    expect(page).toMatch(/redirect\(accountRoutes\(locale\)\.section\("subscription"\)\)/);
+    expect(page).toContain("salesOpen(salesSettings())");
   });
 });

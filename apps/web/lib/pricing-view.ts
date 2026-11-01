@@ -86,3 +86,16 @@ export function pricingPlans(entries: readonly PublicPrice[], locale: "en" | "fr
 export function planAction(signedIn: boolean, association: boolean): "visit" | "subscription" {
   return signedIn || association ? "subscription" : "visit";
 }
+
+/**
+ * Whether plans are really on sale: sign-up is open AND a payment provider is wired. While either is missing no card is asked
+ * anywhere (the audit decision, krizaka-internal#1913): the prices are shown as planned and nothing leads to a card form.
+ */
+export function salesOpen(settings: { signupEnabled: boolean; paymentsProvider: string | undefined; paymentsSecretKey: string | undefined; paymentsWebhookSecret: string | undefined }): boolean {
+  return settings.signupEnabled && settings.paymentsProvider === "stripe" && Boolean(settings.paymentsSecretKey) && Boolean(settings.paymentsWebhookSecret);
+}
+
+/** The FAQ as shown: the free-period answer says « planned, no card » while nothing is on sale (matched by its question). */
+export function faqFor(faq: readonly { q: string; a: string }[], planned: { q: string; a: string }, selling: boolean): { q: string; a: string }[] {
+  return faq.map((item) => (!selling && item.q === planned.q ? planned : item));
+}
