@@ -10,7 +10,8 @@ test("owner opens the hours: Boutique lists Hours and days off, and the section 
   await page.locator("input[type=email]").first().fill(EMAIL);
   await page.locator("input[type=password]").first().fill(CAST_WORD);
   await page.locator("form button[type=submit]").first().click();
-  await page.waitForURL(/\/app(\/|\?|$)/, { timeout: 60_000 });
+  // `/app` alone redirects to the shop's own address: wait for that one.
+  await page.waitForURL(/\/fr\/app\/[^/?]+/, { timeout: 60_000 });
   const shopBase = new URL(page.url()).pathname.match(/^\/fr\/app\/[^/]+/)?.[0];
   expect(shopBase, "the app lives under the shop's address").toBeTruthy();
   await page.goto(`${shopBase}/settings/hours`);
