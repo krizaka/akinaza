@@ -10,6 +10,7 @@
     "lint:workspace": "npx --yes -p @krizaka/config@latest krizaka-workspace-guard",
     "lint": "pnpm run lint:workspace && turbo run lint && pnpm run check:i18n && ast-grep test --skip-snapshot-tests && krizaka-sg-ratchet && node scripts/deps.mjs",
     "lint:deps": "node scripts/deps.mjs",
+    "check:names": "krizaka-code-names apps/web/.next/server/app apps/web/messages apps/web/mail-templates apps/mobile/src/i18n apps/desktop/src-tauri/menu",
     "check:i18n": "krizaka-i18n check apps/web/messages",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test && vitest run",
@@ -41,6 +42,7 @@
     "db:rebuild": "pnpm --filter @akinaza/db db:rebuild"
   },
   "devDependencies": {
+    "@krizaka/org": "^0.7.0",
     "@ast-grep/cli": "0.51.0",
     "@krizaka/a11y-audit": "0.2.0",
     "@krizaka/config": "^0.17.0",

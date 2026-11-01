@@ -9,6 +9,7 @@ import Link from "next/link";
 import { FrameSlot } from "@/components/app/FrameSlot";
 import { useFrameAccount } from "@/components/app/use-frame-account";
 import { useSay } from "@/lib/i18n-client";
+import { PRODUCT_NAME } from "@/lib/brand";
 
 const ICONS = { overview: <HomeIcon />, users: <UserIcon />, shops: <UsersIcon />, invoices: <BillingIcon />, ledger: <ShieldIcon />, operations: <ServerIcon />, audit: <ClockIcon />, organize: <ShieldIcon />, incidents: <ShieldIcon />, addresses: <ShieldIcon />, prices: <BillingIcon />, storage: <ServerIcon />, associations: <ShieldIcon /> } as const;
 export type AdminPlace = keyof typeof ICONS;
@@ -29,7 +30,7 @@ export function AppFrame({ locale, email, name, avatarSeed, base, items, childre
       <SkipLink>{say("shell.skip")}</SkipLink>
       <FrameSlot>
       <KrizakaAppFrame
-        name="Akinaza"
+        name={PRODUCT_NAME}
         label={say("shell.admin")}
         mark={<AkinazaLogo size={28} animated={false} />}
         headerMark={<AkinazaLogo size={22} animated={false} />}

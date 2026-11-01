@@ -82,21 +82,21 @@ export function llmsText(): string {
   return `# ${en.meta.siteName}
 
 > ${en.meta.description}
-> A product of Krizaka (Montréal), in development: sign-up is closed. For studios, salons and the self-employed in Québec: appointment booking, bilingual GST/QST invoices exact to the cent, a balanced ledger, and a tax report prepared for Revenu Québec, which the merchant reviews and files (Akinaza never files). Not for restaurants, cafés, bars or bakeries with on-site consumption.
+> A product of Krizaka (Montréal), in development: sign-up is closed. For studios, salons and the self-employed in Québec: appointment booking, bilingual GST/QST invoices exact to the cent, a balanced ledger, and a tax report prepared for Revenu Québec, which the merchant reviews and files (${en.meta.siteName} never files). Not for restaurants, cafés, bars or bakeries with on-site consumption.
 
 ## Key pages
 
-- [${en.meta.siteName}](${SITE_URL}/en) · [Akinaza (fr)](${SITE_URL}/fr): what it does and how
+- [${en.meta.siteName}](${SITE_URL}/en) · [${en.meta.siteName} (fr)](${SITE_URL}/fr): what it does and how
 - [${en.privacy.title}](${SITE_URL}/en/privacy) · [${getDictionary("fr").privacy.title} (fr)](${SITE_URL}/fr/privacy)
 - [${en.terms.title}](${SITE_URL}/en/terms) · [${getDictionary("fr").terms.title} (fr)](${SITE_URL}/fr/terms)
 - [${en.pricing.title}](${SITE_URL}/en/pricing) · [${getDictionary("fr").pricing.title} (fr)](${SITE_URL}/fr/pricing): the plans, read from the price catalogue
 - [${en.docs.title}](${SITE_URL}/en/docs) · [${getDictionary("fr").docs.title} (fr)](${SITE_URL}/fr/docs): the owner's guide, five pages
 ${DOC_IDS.map((id) => `  - [${en.docs.pages[id].title}](${SITE_URL}/en/docs/${id})`).join("\n")}
-- [Contact Akinaza](${KRIZAKA_URL}/en/contact?topic=akinaza): the one way to reach the team
+- [Contact ${en.meta.siteName}](${KRIZAKA_URL}/en/contact?topic=akinaza): the one way to reach the team
 
 ## Source
 
-- [Akinaza repository](${REPO_URL}): the app, its BFF and its schema (Apache-2.0)
+- [${en.meta.siteName} repository](${REPO_URL}): the app, its BFF and its schema (Apache-2.0)
 
 ## Publisher
 

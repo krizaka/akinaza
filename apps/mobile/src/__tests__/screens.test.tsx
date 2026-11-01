@@ -155,7 +155,7 @@ describe("the phone app's five tabs, each with its three states (D8)", () => {
     api.day!.mockRejectedValue(new Error("offline"));
     await show(<Today />);
     const retry = await screen.findByRole("button", { name: "Réessayer" });
-    expect(screen.getByText("Akinaza ne répond pas. Vérifiez votre connexion.")).toBeTruthy();
+    expect(screen.getByText("Folioviv ne répond pas. Vérifiez votre connexion.")).toBeTruthy();
     api.day!.mockResolvedValue(day([visit]));
     await fireEvent.press(retry);
     expect(await screen.findByText(/Coupe/)).toBeTruthy();

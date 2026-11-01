@@ -10,6 +10,7 @@ import type { ReactNode } from "react";
 
 import type { Locale } from "@/lib/i18n";
 import { type PageId, pagePath, REPO_URL } from "@/lib/site";
+import { PRODUCT_NAME } from "@/lib/brand";
 
 export interface SiteBarLabels {
   nav: string;
@@ -46,7 +47,7 @@ export function SiteBar({ locale, current, path, languages: offered, contentLoca
         <NavBar.Brand asChild>
           <Link href={home} aria-label={t("brandHome")}>
             <AkinazaLogo size={26} />
-            Akinaza
+            {PRODUCT_NAME}
           </Link>
         </NavBar.Brand>
         <NavBar.Items>

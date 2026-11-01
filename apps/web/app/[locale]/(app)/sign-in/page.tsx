@@ -10,6 +10,7 @@ import { pageSession } from "@/lib/access";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { safeNext } from "@/lib/next-url";
 import { contactHref, pagePath } from "@/lib/site";
+import { PRODUCT_NAME } from "@/lib/brand";
 
 export const dynamic = "force-dynamic";
 
@@ -30,7 +31,7 @@ export default async function SignInPage({ params, searchParams }: Readonly<{ pa
     <AuthLayout
       brand={
         <Link href={`/${locale}`} className="inline-flex items-center gap-2">
-          <AkinazaLogo size={28} /> Akinaza
+          <AkinazaLogo size={28} /> {PRODUCT_NAME}
         </Link>
       }
       promise={t.promise}

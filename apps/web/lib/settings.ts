@@ -1,9 +1,10 @@
 import { type FramePaper, protectedTermsIssues, type ShopType, TEMPLATES } from "@akinaza/core";
 import { PASSWORD_RESET_MAX_MINUTES, PASSWORD_RESET_MIN_MINUTES, PASSWORD_RESET_TTL_MINUTES } from "@krizaka/auth";
-import { bilingual, choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, SCOPE, type SettingsService, subset, text, WORKSPACE_SCOPES } from "@krizaka/settings";
+import { bilingual, choice, DISPLAY_NAME_KEY, displayNameSetting, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, SCOPE, type SettingsService, subset, text, WORKSPACE_SCOPES } from "@krizaka/settings";
 import { storageSettings } from "@krizaka/storage/settings";
 import { z } from "zod";
 
+import { PRODUCT_NAME } from "./brand";
 import { query } from "./db";
 import { refuse } from "./http";
 
@@ -21,8 +22,10 @@ function withTermsCheck<T extends { schema: z.ZodType<string> }>(def: T): T {
 }
 
 export const SETTINGS = {
+  // The name shown to people (krizaka-internal#2035): the administrator sets it, the default is the commercial name of @krizaka/org.
+  [DISPLAY_NAME_KEY]: displayNameSetting("akinaza"),
   "app.maintenance": flag("general", false),
-  "app.maintenanceMessage": bilingual("general", { fr: "Akinaza est en maintenance. Revenez dans quelques minutes.", en: "Akinaza is down for maintenance. Please come back in a few minutes." }),
+  "app.maintenanceMessage": bilingual("general", { fr: `${PRODUCT_NAME} est en maintenance. Revenez dans quelques minutes.`, en: `${PRODUCT_NAME} is down for maintenance. Please come back in a few minutes.` }),
   // API keys (#178): the global switch, what a plan holds, the pace of one key.
   "features.apiKeys": flag("features", true, WORKSPACE_SCOPES),
   "features.webhooks": flag("features", true, WORKSPACE_SCOPES),

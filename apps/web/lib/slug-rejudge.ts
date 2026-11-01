@@ -1,5 +1,6 @@
 import { type Db, enqueueMail, mailById, rejudgeShops } from "@akinaza/db";
 
+import { productName } from "./brand-name";
 import { deliver } from "./mail";
 import type { MailSettings } from "./mail-settings";
 import { renderMailTemplate } from "./mail-templates";
@@ -23,7 +24,7 @@ async function notifyOwner(db: Db, shop: Rejudged, options: { now: Date; setting
   const mail = renderMailTemplate(
     "slug-held",
     { shop: shop.name, address: shop.slug, url: `${options.settings.appUrl}${shopRoutes(locale, shop.shopId).setup}` },
-    { locale, appUrl: options.settings.appUrl, now: options.now },
+    { locale, appUrl: options.settings.appUrl, now: options.now, product: await productName() },
   );
   const id = await enqueueMail(db, { to: shop.ownerEmail, locale: mail.locale, template: "slug-held", subject: mail.subject, html: mail.html, text: mail.text, relatedKind: "slug_hold", relatedId: shop.shopId });
   const queued = await mailById(db, id);

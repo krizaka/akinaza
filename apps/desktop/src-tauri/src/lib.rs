@@ -1,7 +1,7 @@
-//! Akinaza for the Mac: the owner's back office (today, invoices, books, clients, the shop) in a native window. The window
+//! Folioviv for the Mac: the owner's back office (today, invoices, books, clients, the shop) in a native window. The window
 //! shows the hosted web app, which stays the one place where the screens are written; `tauri-plugin-krizaka` adds what a
 //! browser tab cannot: the menu bar with ⌘1–⌘5 to the sections (in the Mac's language), `akinaza://` links that open the
-//! same page, and the navigation guard (the window stays on Akinaza's address, other links open in the browser). The
+//! same page, and the navigation guard (the window stays on Folioviv's address, other links open in the browser). The
 //! hosted page has no capability at all: it cannot call the app, and nothing on the Mac is readable from it.
 
 mod sections;
@@ -38,7 +38,7 @@ pub fn run() {
             tauri_plugin_krizaka::set_menu(app.handle(), &words::menu(locale))?;
             let start = sections::section_url(&origin, None, locale, "section.today").ok_or("the app's address is not valid")?;
             WebviewWindowBuilder::new(app, WINDOW, WebviewUrl::External(start))
-                .title("Akinaza")
+                .title("Folioviv")
                 .inner_size(1180.0, 780.0)
                 .min_inner_size(960.0, 600.0)
                 .center()
@@ -59,5 +59,5 @@ pub fn run() {
             }
         })
         .run(tauri::generate_context!())
-        .expect("error while running Akinaza");
+        .expect("error while running Folioviv");
 }

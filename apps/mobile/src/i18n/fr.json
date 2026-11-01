@@ -1,11 +1,11 @@
 {
-  "disclaimer": "Akinaza prépare vos chiffres et ne produit jamais votre déclaration.",
+  "disclaimer": "Folioviv prépare vos chiffres et ne produit jamais votre déclaration.",
   "stage": {
     "title": "Version de développement",
     "message": "Les données peuvent être réinitialisées à tout moment. Ce n’est pas encore une offre commerciale."
   },
   "app": {
-    "name": "Akinaza",
+    "name": "Folioviv",
     "tagline": "Votre commerce, pour moins cher. Prépare votre déclaration, ne la produit jamais."
   },
   "tabs": {
@@ -18,7 +18,7 @@
   },
   "common": {
     "retry": "Réessayer",
-    "offline": "Akinaza ne répond pas. Vérifiez votre connexion.",
+    "offline": "Folioviv ne répond pas. Vérifiez votre connexion.",
     "back": "Retour",
     "loading": "Chargement…"
   },
@@ -115,7 +115,7 @@
     "remit": "À remettre",
     "claim": "À réclamer",
     "zero": "Rien à remettre",
-    "lead": "Akinaza prépare les chiffres de votre déclaration de TPS/TVQ; vous la vérifiez et la produisez vous-même.",
+    "lead": "Folioviv prépare les chiffres de votre déclaration de TPS/TVQ; vous la vérifiez et la produisez vous-même.",
     "web": "Voir le détail des lignes sur le Web"
   },
   "boutique": {
@@ -146,7 +146,7 @@
     "periodLabel": "Période : du {start} au {end}",
     "lead": "Chaque chiffre dit ce qu'il signifie, comment il est calculé à partir de vos factures et d'où il vient.",
     "title": "Vos chiffres",
-    "never": "Akinaza prépare ces chiffres. Vous les vérifiez et vous produisez vos déclarations vous-même.",
+    "never": "Folioviv prépare ces chiffres. Vous les vérifiez et vous produisez vos déclarations vous-même.",
     "nextTitle": "Que faire maintenant",
     "nothingToDo": "Rien ne vous attend pour l'instant.",
     "urgency": {
@@ -163,8 +163,8 @@
       },
       "taxes": {
         "title": "Préparer votre déclaration TPS/TVQ",
-        "why": "Votre période se termine dans {days} jours ({start} au {end}). Akinaza prépare les chiffres ; vous produisez la déclaration vous-même.",
-        "whyPast": "Votre période s'est terminée le {end}. Akinaza prépare les chiffres ; vous produisez la déclaration vous-même.",
+        "why": "Votre période se termine dans {days} jours ({start} au {end}). Folioviv prépare les chiffres ; vous produisez la déclaration vous-même.",
+        "whyPast": "Votre période s'est terminée le {end}. Folioviv prépare les chiffres ; vous produisez la déclaration vous-même.",
         "cta": "Préparer la déclaration"
       },
       "slot": {
@@ -226,12 +226,12 @@
     },
     "gstToRemit": {
       "name": "TPS à remettre",
-      "meaning": "Ce que vous paieriez au gouvernement pour la TPS si la période se terminait aujourd'hui. Akinaza le prépare ; vous produisez la déclaration.",
+      "meaning": "Ce que vous paieriez au gouvernement pour la TPS si la période se terminait aujourd'hui. Folioviv le prépare ; vous produisez la déclaration.",
       "formula": "TPS perçue sur vos factures, moins la TPS que vous pouvez récupérer sur vos dépenses."
     },
     "qstToRemit": {
       "name": "TVQ à remettre",
-      "meaning": "Ce que vous paieriez à Revenu Québec pour la TVQ si la période se terminait aujourd'hui. Akinaza le prépare ; vous produisez la déclaration.",
+      "meaning": "Ce que vous paieriez à Revenu Québec pour la TVQ si la période se terminait aujourd'hui. Folioviv le prépare ; vous produisez la déclaration.",
       "formula": "TVQ perçue sur vos factures, moins la TVQ que vous pouvez récupérer sur vos dépenses."
     },
     "margin": {
@@ -277,7 +277,7 @@
       },
       "declarationPeriod": {
         "term": "Période de déclaration",
-        "definition": "La durée (un mois, un trimestre ou une année, selon votre fréquence de production) couverte par une déclaration de TPS/TVQ. Akinaza en prépare les chiffres ; vous la vérifiez et la produisez vous-même."
+        "definition": "La durée (un mois, un trimestre ou une année, selon votre fréquence de production) couverte par une déclaration de TPS/TVQ. Folioviv en prépare les chiffres ; vous la vérifiez et la produisez vous-même."
       },
       "noShow": {
         "term": "Absence (no-show)",

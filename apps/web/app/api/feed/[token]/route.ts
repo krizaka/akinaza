@@ -1,5 +1,6 @@
 import { feedByTokenHash, feedEntriesAround, feedTitle } from "@akinaza/db";
 
+import { productName } from "@/lib/brand-name";
 import { db } from "@/lib/db";
 import { sessionSecret } from "@/lib/env";
 import { feedTokenHash, tokenOfSegment } from "@/lib/feed-token";
@@ -31,7 +32,7 @@ export function GET(req: Request, ctx: { params: Promise<{ token: string }> }) {
     const now = requestNow();
     const entries = await feedEntriesAround(db(), feed, now, BEHIND_DAYS, AHEAD_DAYS);
     const body = buildFeedIcs({
-      name: await feedTitle(db(), feed),
+      name: await feedTitle(db(), feed, await productName()),
       entries: entries.map((e) => ({ appointmentId: e.appointmentId, start: e.startsAt, end: e.endsAt, service: e.service.fr, firstNames: e.firstNames })),
       now,
     });

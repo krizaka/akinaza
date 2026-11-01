@@ -16,6 +16,7 @@ import { useFrameAccount } from "@/components/app/use-frame-account";
 import { type AppPlace, screenPrimary } from "@/lib/app-nav";
 import { useSay } from "@/lib/i18n-client";
 import type { PaletteItem } from "@/lib/palette";
+import { PRODUCT_NAME } from "@/lib/brand";
 
 const VERSION = process.env.NEXT_PUBLIC_APP_VERSION ?? "";
 const ICONS: Record<AppPlace, React.ReactNode> = { today: <ClockIcon />, clients: <UsersIcon />, invoices: <BillingIcon />, books: <BookmarkIcon />, shop: <HomeIcon />, bookings: <CalendarIcon /> };
@@ -74,7 +75,7 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
       <SkipLink>{say("shell.skip")}</SkipLink>
       <FrameSlot>
       <AppFrame
-        name="Akinaza"
+        name={PRODUCT_NAME}
         mark={<AkinazaLogo size={28} animated={false} />}
         headerMark={<AkinazaLogo size={22} animated={false} />}
         homeHref={home}
