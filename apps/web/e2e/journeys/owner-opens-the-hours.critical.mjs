@@ -18,8 +18,11 @@ test("owner opens the hours: Boutique lists Hours and days off, and the section 
   await page.waitForLoadState("load");
   await expect(page.getByRole("heading", { name: "Horaires et jours de congé" }).first()).toBeVisible();
   // On a phone the sections sit in one menu (a closed <details>): open it before reading the links.
-  await page.locator("[data-settings-menu] summary").click();
+  const menu = page.locator("[data-settings-menu] summary");
+  await menu.click();
   await expect(page.getByRole("link", { name: "Règles de réservation" }).first()).toBeVisible();
+  // The open menu pushes the form down on a phone: Léa closes it again, as she would, before reading the week.
+  await menu.click();
   // The week is on the first screen: no scroll to reach the form.
   await expect(page.getByText("mardi", { exact: false }).first()).toBeInViewport();
 });
