@@ -16,7 +16,7 @@ import { founderCap, founderEntry, onSale } from "@/lib/founder-offer";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { heroActions } from "@/lib/landing";
 import { appPrices, publicPrices } from "@/lib/price-catalogue";
-import { pricingPlans } from "@/lib/pricing-view";
+import { planAction, pricingPlans } from "@/lib/pricing-view";
 import { accountRoutes } from "@/lib/routes";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 
@@ -40,7 +40,8 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
   const entry = await founderEntry(catalogue, now);
   const founderOnSale = env().APP_FOUNDER_OFFER_ENABLED && onSale(entry) && (await founderSeats(query, founderCap(entry))).open;
   const plans = pricingPlans(await publicPrices(catalogue, now), locale, { founderOnSale });
-  const hero = heroActions(locale, Boolean(await pageSession().catch(() => null)));
+  const signedIn = Boolean(await pageSession().catch(() => null));
+  const hero = heroActions(locale, signedIn);
   // One primary action on the page: the featured plan's. The others are secondary.
   const action = (founder: boolean, featured: boolean, association = false) =>
     founder ? (
@@ -50,10 +51,14 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
         </Button>
       </form>
     ) : (
-      <ButtonLink href={association ? accountRoutes(locale).section("subscription") : hero.primary.href} variant={featured ? "primary" : "secondary"} size="md" shape="cut" className="w-full">
-        {association ? d.associationCta : t.landing.actions[hero.primary.message]}
+      <ButtonLink href={planAction(signedIn, association) === "subscription" ? accountRoutes(locale).section("subscription") : hero.primary.href} variant={featured ? "primary" : "secondary"} size="md" shape="cut" className="w-full">
+        {label(association)}
       </ButtonLink>
     );
+  const label = (association: boolean) => {
+    if (association) {return d.associationCta;}
+    return signedIn ? d.manageCta : t.landing.actions[hero.primary.message];
+  };
   const badgeOf = (plan: (typeof plans)[number]) => {
     if (plan.id !== "founder") {return undefined;}
     return plan.limit ? format(d.badgeFounderLimit, { limit: plan.limit }) : d.badgeFounder;

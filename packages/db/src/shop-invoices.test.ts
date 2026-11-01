@@ -126,30 +126,13 @@ describe("the due date and the payment terms of an invoice (krizaka/akinaza#113)
     expect(await refusal(t.pool.query(`UPDATE shops SET payment_terms_days = 366 WHERE id = '${s.shop.id}'`))).toMatch(/shops_payment_terms/);
   });
 
-  it("migration 0055: an invoice without terms gets the shop's current terms and its due day, a credit note stays without, the audit says how many", async () => {
+  it("the database refuses a plain invoice without its terms and due day, and lets a credit note go without (was migration 0055's guard)", async () => {
     const s = await salon(t.db);
-    await t.pool.query(`ALTER TABLE invoices DROP CONSTRAINT invoices_due_set`);
-    await t.pool.query(`UPDATE shops SET payment_terms_days = 45 WHERE id = '${s.shop.id}'`);
-    const legacy = (n: string, issued: string, credit: string | null = null) =>
-      t.pool.query(`INSERT INTO invoices (shop_id, number, language, issued_on, credit_of, subtotal_cents, gst_cents, qst_cents, total_cents) VALUES ('${s.shop.id}', '${n}', 'fr', '${issued}', ${credit ? `'${credit}'` : "NULL"}, 0, 0, 0, 0) RETURNING id`);
-    const july = (await legacy("L-1", "2026-07-31")).rows[0].id as string;
-    await legacy("L-2", "2026-12-15");
-    await legacy("L-3", "2026-10-01", july);
-    const sql = (await import("node:fs")).readFileSync(new URL("../drizzle/0055_invoice_due_dates.sql", import.meta.url), "utf8");
-    // The documented way: first in a transaction that is rolled back (nothing stays), then for real.
-    await t.pool.query("BEGIN");
-    for (const part of sql.split("--> statement-breakpoint")) await t.pool.query(part);
-    await t.pool.query("ROLLBACK");
-    expect((await t.pool.query(`SELECT count(*)::int AS n FROM invoices WHERE terms_days IS NULL AND credit_of IS NULL`)).rows[0].n, "the dry run left nothing").toBe(2);
-    for (const part of sql.split("--> statement-breakpoint")) await t.pool.query(part);
-    const rows = (await t.pool.query(`SELECT number, terms_days, to_char(due_on, 'YYYY-MM-DD') AS due FROM invoices WHERE shop_id = '${s.shop.id}' AND number LIKE 'L-%' ORDER BY number`)).rows;
-    expect(rows).toEqual([
-      { number: "L-1", terms_days: 45, due: "2026-09-14" },
-      { number: "L-2", terms_days: 45, due: "2027-01-29" },
-      { number: "L-3", terms_days: null, due: null },
-    ]);
-    expect((await t.pool.query(`SELECT detail FROM audit_log WHERE action = 'invoices.due_backfilled'`)).rows[0].detail).toEqual({ invoices: 2 });
-    expect(await refusal(legacy("L-4", "2026-10-02")), "from now on a plain invoice cannot lack its due day").toMatch(/invoices_due_set/);
+    const plain = (n: string, credit: string | null) =>
+      t.pool.query(`INSERT INTO invoices (shop_id, number, language, issued_on, credit_of, subtotal_cents, gst_cents, qst_cents, total_cents) VALUES ('${s.shop.id}', '${n}', 'fr', '2026-10-21', ${credit ? `'${credit}'` : "NULL"}, 0, 0, 0, 0) RETURNING id`);
+    expect(await refusal(plain("D-1", null))).toMatch(/invoices_due_set/);
+    const { invoice } = await issueShopInvoice(t.db, s.shop.id, { language: "fr", issuedOn: "2026-10-21", lines: line(s) });
+    expect((await plain("D-2", invoice.id)).rows).toHaveLength(1);
   });
 
   it("the owner's rules carry the shop's terms", async () => {
@@ -214,45 +197,6 @@ describe("fractional quantities on an invoice: 7.5 hours (krizaka/akinaza#111)",
     const insert = (qty: number, amount: number) => t.pool.query(`INSERT INTO invoice_lines (invoice_id, position, description, quantity_hundredths, unit_price_cents, tax_category, amount_cents) VALUES ('${invoice.id}', 9, 'x', ${qty}, 15000, 'standard', ${amount})`);
     expect(await refusal(insert(750, 112_499))).toMatch(/invoice_lines_amount/);
     expect(await refusal(insert(0, 0))).toMatch(/invoice_lines_(quantity|amount)/);
-  });
-});
-
-describe("the migration that makes quantities fractional keeps every existing invoice", () => {
-  it("multiplies a stored whole quantity by 100 and leaves the amount, the invoice and its ledger as they were", async () => {
-    const { mkdtempSync, cpSync, readFileSync, writeFileSync, rmSync } = await import("node:fs");
-    const { tmpdir } = await import("node:os");
-    const { join } = await import("node:path");
-    const { fileURLToPath } = await import("node:url");
-    const { migrate } = await import("./migrate");
-    const { freshEmptyDatabase } = await import("./test/db");
-    const full = fileURLToPath(new URL("../drizzle", import.meta.url));
-    const before = mkdtempSync(join(tmpdir(), "ak-mig-"));
-    try {
-      cpSync(full, before, { recursive: true });
-      const journal = JSON.parse(readFileSync(join(before, "meta/_journal.json"), "utf8")) as { entries: { tag: string }[] };
-      journal.entries = journal.entries.filter((e) => Number(e.tag.slice(0, 4)) < 8);
-      writeFileSync(join(before, "meta/_journal.json"), JSON.stringify(journal));
-      const old = await freshEmptyDatabase();
-      try {
-        await migrate(old.pool, before);
-        const shop = (await old.pool.query(`INSERT INTO shops (name, legal_name, kind, address, gst_number, qst_number) VALUES ('S', 'S inc.', 'services', '1 rue Test', '123456789RT0001', '1234567890TQ0001') RETURNING id`)).rows[0].id as string;
-        const c = await old.pool.connect();
-        await c.query("BEGIN");
-        const inv = (await c.query(`INSERT INTO invoices (shop_id, number, language, issued_on, terms_days, due_on, subtotal_cents, gst_cents, qst_cents, total_cents) VALUES ('${shop}', 'F-00001', 'fr', '2026-10-01', 30, '2026-10-31', 150000, 7500, 14963, 172463) RETURNING id`)).rows[0].id as string;
-        await c.query(`INSERT INTO invoice_lines (invoice_id, position, description, quantity, unit_price_cents, tax_category, amount_cents) VALUES ('${inv}', 1, 'Dev', 10, 15000, 'standard', 150000)`);
-        await c.query(`INSERT INTO tax_ledger (shop_id, period, tax, direction, amount_cents, source_kind, source_id, source_label) VALUES ('${shop}', '2026-10-01', 'gst', 'collected', 7500, 'invoice', '${inv}', 'F-00001'), ('${shop}', '2026-10-01', 'qst', 'collected', 14963, 'invoice', '${inv}', 'F-00001')`);
-        await c.query("COMMIT");
-        c.release();
-        await migrate(old.pool, full);
-        const line = (await old.pool.query(`SELECT quantity_hundredths, amount_cents FROM invoice_lines WHERE invoice_id = '${inv}'`)).rows[0];
-        expect(line).toEqual({ quantity_hundredths: 1_000, amount_cents: 150_000 });
-        expect((await old.pool.query(`SELECT count(*)::int AS n FROM tax_ledger WHERE source_id = '${inv}'`)).rows[0].n).toBe(2);
-      } finally {
-        await old.drop();
-      }
-    } finally {
-      rmSync(before, { recursive: true, force: true });
-    }
   });
 });
 

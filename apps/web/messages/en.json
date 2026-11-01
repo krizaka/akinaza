@@ -423,7 +423,8 @@
     "associationLine": "Associations: {months} months free, then {price} a month plus taxes. For registered non-profits (OBNL) and charities.",
     "associationLineDays": "Associations: {days} days free, then {price} a month plus taxes. For registered non-profits (OBNL) and charities.",
     "associationHow": "Send your NEQ, your registered charity number or your incorporation document’s reference from your billing page. We check it; until it is approved you are on Starter.",
-    "associationCta": "Ask for the Association plan"
+    "associationCta": "Ask for the Association plan",
+    "manageCta": "Manage my plan"
   },
   "download": {
     "title": "The apps",
@@ -457,7 +458,7 @@
     "officer": {
       "title": "Privacy officer",
       "role": "Privacy Officer (« Responsable de la protection des renseignements personnels »)",
-      "text": "The person in charge of the protection of personal information is published here. Role: {role}, Technologies Krizaka Inc., Montréal, Québec, Canada. Contact: contact@krizaka.com, to access, correct or erase your information, withdraw a consent or file a complaint; we answer within 30 days."
+      "text": "The person in charge of the protection of personal information is published here. Role: {role}, {publisher}, {city}, {region}, Canada. Contact: contact@krizaka.com, to access, correct or erase your information, withdraw a consent or file a complaint; we answer within 30 days."
     },
     "processors": {
       "title": "Who processes information for us",
@@ -507,7 +508,7 @@
     "sections": [
       {
         "h": "1. Who we are, who these terms are for",
-        "p": "Akinaza is a product of Technologies Krizaka Inc. (Montréal, Québec), the publisher. These terms govern the subscription to Akinaza by service businesses in Québec: salons, workshops, coaches, cleaning businesses, pet services, consultants. Restaurants, cafés, bars and bakeries are excluded, because the law requires them to use a certified sales recording module, which Akinaza's point of sale is not. This is a contract of adhesion (art. 1379 of the Civil Code of Québec, C.C.Q.): we show it to you before any payment, and an illegible, incomprehensible or abusive clause has no effect against you (art. 1435 to 1437 C.C.Q.)."
+        "p": "Akinaza is a product of {publisher} ({city}, {region}), the publisher. These terms govern the subscription to Akinaza by service businesses in Québec: salons, workshops, coaches, cleaning businesses, pet services, consultants. Restaurants, cafés, bars and bakeries are excluded, because the law requires them to use a certified sales recording module, which Akinaza's point of sale is not. This is a contract of adhesion (art. 1379 of the Civil Code of Québec, C.C.Q.): we show it to you before any payment, and an illegible, incomprehensible or abusive clause has no effect against you (art. 1435 to 1437 C.C.Q.)."
       },
       {
         "h": "2. What Akinaza does",
@@ -555,7 +556,7 @@
       },
       {
         "h": "13. Intellectual property and your right to use the service",
-        "p": "Akinaza, its software, its document templates, the design of the shop pages, its names, its birds and its marks belong to Technologies Krizaka Inc. or its licensors; these terms assign you none of those rights (Copyright Act, R.S.C. 1985, c. C-42). For the length of your subscription only, you receive a personal, non-exclusive, non-transferable, non-sublicensable right to use the hosted service for the needs of your business; that right ends with the subscription. Your shop's content and your clients' information stay yours (section 7): you only authorise us to host and process them to provide the service. Akinaza's source code is published under its own licence, stated in its repository: these terms govern the hosted service, that licence governs the code, and nothing here removes what the licence allows you."
+        "p": "Akinaza, its software, its document templates, the design of the shop pages, its names, its birds and its marks belong to {publisher} or its licensors; these terms assign you none of those rights (Copyright Act, R.S.C. 1985, c. C-42). For the length of your subscription only, you receive a personal, non-exclusive, non-transferable, non-sublicensable right to use the hosted service for the needs of your business; that right ends with the subscription. Your shop's content and your clients' information stay yours (section 7): you only authorise us to host and process them to provide the service. Akinaza's source code is published under its own licence, stated in its repository: these terms govern the hosted service, that licence governs the code, and nothing here removes what the licence allows you."
       },
       {
         "h": "14. Prohibited uses",
@@ -563,7 +564,7 @@
       },
       {
         "h": "15. Names and marks",
-        "p": "The names and logos of Akinaza and Krizaka, and their birds, are marks of Technologies Krizaka Inc. (Trademarks Act, R.S.C. 1985, c. T-13). These terms, like the code licence, grant no right to those marks; their use is governed by the policy published at https://github.com/krizaka/.github/blob/main/TRADEMARKS.md."
+        "p": "The names and logos of Akinaza and Krizaka, and their birds, are marks of {publisher} (Trademarks Act, R.S.C. 1985, c. T-13). These terms, like the code licence, grant no right to those marks; their use is governed by the policy published at https://github.com/krizaka/.github/blob/main/TRADEMARKS.md."
       },
       {
         "h": "16. Contact",
