@@ -1,0 +1,5 @@
+{
+  "clippy:clippy::expect_used": 4,
+  "clippy:clippy::semicolon_if_nothing_returned": 1,
+  "clippy:clippy::unwrap_used": 13
+}

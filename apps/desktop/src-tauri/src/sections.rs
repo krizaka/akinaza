@@ -17,12 +17,18 @@ pub const SECTIONS: [(&str, &str, &str); 5] = [
 
 fn is_shop_id(segment: &str) -> bool {
     let parts: Vec<&str> = segment.split('-').collect();
-    parts.iter().map(|p| p.len()).eq([8, 4, 4, 4, 12]) && parts.iter().all(|p| p.chars().all(|c| c.is_ascii_hexdigit()))
+    parts.iter().map(|p| p.len()).eq([8, 4, 4, 4, 12])
+        && parts
+            .iter()
+            .all(|p| p.chars().all(|c| c.is_ascii_hexdigit()))
 }
 
 /// The language of the page on screen (`/en/app/…`), else the one given.
 pub fn locale_of<'a>(current: Option<&Url>, fallback: &'a str) -> &'a str {
-    match current.and_then(|u| u.path_segments()?.next().map(str::to_string)).as_deref() {
+    match current
+        .and_then(|u| u.path_segments()?.next().map(str::to_string))
+        .as_deref()
+    {
         Some("en") => "en",
         Some("fr") => "fr",
         _ => fallback,
@@ -34,8 +40,14 @@ pub fn section_url(base: &str, current: Option<&Url>, locale: &str, section: &st
     let (_, in_shop, short) = SECTIONS.iter().find(|(id, _, _)| *id == section)?;
     let mut url = Url::parse(base).ok()?;
     let current = current.filter(|c| c.origin() == url.origin());
-    let locale = if locale_of(current, locale) == "en" { "en" } else { "fr" };
-    let segments: Vec<String> = current.and_then(|c| c.path_segments().map(|s| s.map(str::to_string).collect())).unwrap_or_default();
+    let locale = if locale_of(current, locale) == "en" {
+        "en"
+    } else {
+        "fr"
+    };
+    let segments: Vec<String> = current
+        .and_then(|c| c.path_segments().map(|s| s.map(str::to_string).collect()))
+        .unwrap_or_default();
     let shop = match segments.as_slice() {
         [_, app, shop, ..] if app == "app" && is_shop_id(shop) => Some(shop.clone()),
         _ => None,
@@ -58,24 +70,59 @@ mod tests {
 
     #[test]
     fn without_a_shop_page_the_short_address_opens_the_shop_last_worked_in() {
-        assert_eq!(section_url(BASE, None, "fr", "section.today").unwrap().as_str(), "https://www.akinaza.com/fr/app");
-        assert_eq!(section_url(BASE, None, "en", "section.invoices").unwrap().as_str(), "https://www.akinaza.com/en/app/invoices");
-        assert_eq!(section_url(BASE, None, "de", "section.books").unwrap().as_str(), "https://www.akinaza.com/fr/app/books");
+        assert_eq!(
+            section_url(BASE, None, "fr", "section.today")
+                .unwrap()
+                .as_str(),
+            "https://www.akinaza.com/fr/app"
+        );
+        assert_eq!(
+            section_url(BASE, None, "en", "section.invoices")
+                .unwrap()
+                .as_str(),
+            "https://www.akinaza.com/en/app/invoices"
+        );
+        assert_eq!(
+            section_url(BASE, None, "de", "section.books")
+                .unwrap()
+                .as_str(),
+            "https://www.akinaza.com/fr/app/books"
+        );
     }
 
     #[test]
     fn in_a_shop_page_a_section_stays_in_that_shop_and_its_language() {
         let here = Url::parse(&format!("{BASE}/en/app/{SHOP}/clients/42")).unwrap();
-        assert_eq!(section_url(BASE, Some(&here), "fr", "section.today").unwrap().as_str(), format!("{BASE}/en/app/{SHOP}/today"));
-        assert_eq!(section_url(BASE, Some(&here), "fr", "section.books").unwrap().as_str(), format!("{BASE}/en/app/{SHOP}/books"));
+        assert_eq!(
+            section_url(BASE, Some(&here), "fr", "section.today")
+                .unwrap()
+                .as_str(),
+            format!("{BASE}/en/app/{SHOP}/today")
+        );
+        assert_eq!(
+            section_url(BASE, Some(&here), "fr", "section.books")
+                .unwrap()
+                .as_str(),
+            format!("{BASE}/en/app/{SHOP}/books")
+        );
     }
 
     #[test]
     fn a_page_elsewhere_or_a_segment_that_is_not_a_shop_names_no_shop() {
         let other = Url::parse(&format!("https://evil.example/fr/app/{SHOP}/books")).unwrap();
-        assert_eq!(section_url(BASE, Some(&other), "fr", "section.books").unwrap().as_str(), format!("{BASE}/fr/app/books"));
+        assert_eq!(
+            section_url(BASE, Some(&other), "fr", "section.books")
+                .unwrap()
+                .as_str(),
+            format!("{BASE}/fr/app/books")
+        );
         let profile = Url::parse(&format!("{BASE}/fr/app/profile")).unwrap();
-        assert_eq!(section_url(BASE, Some(&profile), "en", "section.clients").unwrap().as_str(), format!("{BASE}/fr/app/clients"));
+        assert_eq!(
+            section_url(BASE, Some(&profile), "en", "section.clients")
+                .unwrap()
+                .as_str(),
+            format!("{BASE}/fr/app/clients")
+        );
     }
 
     #[test]
@@ -88,16 +135,42 @@ mod tests {
     fn each_section_opens_the_rail_s_address_in_both_languages() {
         for locale in ["fr", "en"] {
             let here = Url::parse(&format!("{BASE}/{locale}/app/{SHOP}/clients")).unwrap();
-            let at = |section: &str| section_url(BASE, Some(&here), "fr", section).unwrap().path().to_string();
+            let at = |section: &str| {
+                section_url(BASE, Some(&here), "fr", section)
+                    .unwrap()
+                    .path()
+                    .to_string()
+            };
             assert_eq!(
-                ["section.today", "section.clients", "section.invoices", "section.books", "section.shop"].map(at),
-                ["today", "clients", "invoices", "books", "settings"].map(|s| format!("/{locale}/app/{SHOP}/{s}")),
+                [
+                    "section.today",
+                    "section.clients",
+                    "section.invoices",
+                    "section.books",
+                    "section.shop"
+                ]
+                .map(at),
+                ["today", "clients", "invoices", "books", "settings"]
+                    .map(|s| format!("/{locale}/app/{SHOP}/{s}")),
                 "{locale}: in a shop, the web's shopRoutes"
             );
-            let short = |section: &str| section_url(BASE, None, locale, section).unwrap().path().to_string();
+            let short = |section: &str| {
+                section_url(BASE, None, locale, section)
+                    .unwrap()
+                    .path()
+                    .to_string()
+            };
             assert_eq!(
-                ["section.today", "section.clients", "section.invoices", "section.books", "section.shop"].map(short),
-                ["", "/clients", "/invoices", "/books", "/shop"].map(|s| format!("/{locale}/app{s}")),
+                [
+                    "section.today",
+                    "section.clients",
+                    "section.invoices",
+                    "section.books",
+                    "section.shop"
+                ]
+                .map(short),
+                ["", "/clients", "/invoices", "/books", "/shop"]
+                    .map(|s| format!("/{locale}/app{s}")),
                 "{locale}: without a shop, the web's short addresses"
             );
         }

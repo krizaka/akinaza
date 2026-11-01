@@ -36,7 +36,8 @@ pub fn run() {
         .setup(move |app| {
             let locale = words::system_locale();
             tauri_plugin_krizaka::set_menu(app.handle(), &words::menu(locale))?;
-            let start = sections::section_url(&origin, None, locale, "section.today").ok_or("the app's address is not valid")?;
+            let start = sections::section_url(&origin, None, locale, "section.today")
+                .ok_or("the app's address is not valid")?;
             WebviewWindowBuilder::new(app, WINDOW, WebviewUrl::External(start))
                 .title("Akinaza")
                 .inner_size(1180.0, 780.0)
@@ -48,13 +49,20 @@ pub fn run() {
             Ok(())
         })
         .on_menu_event(|app, event| {
-            let Some(window) = app.get_webview_window(WINDOW) else { return };
+            let Some(window) = app.get_webview_window(WINDOW) else {
+                return;
+            };
             if event.id().as_ref() == RELOAD {
                 let _ = window.reload();
                 return;
             }
             let current = window.url().ok();
-            if let Some(url) = sections::section_url(&app_origin(), current.as_ref(), words::system_locale(), event.id().as_ref()) {
+            if let Some(url) = sections::section_url(
+                &app_origin(),
+                current.as_ref(),
+                words::system_locale(),
+                event.id().as_ref(),
+            ) {
                 let _ = window.navigate(url);
             }
         })
