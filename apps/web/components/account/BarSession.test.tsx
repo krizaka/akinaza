@@ -2,11 +2,11 @@ import { QueryClient, QueryClientProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import enRaw from "@/messages/en.json";
 import frRaw from "@/messages/fr.json";
 
 import { BarActionsView, type BarWords, Island, ME_KEY, settleSignOut } from "./BarSession";
-import { bindProduct } from "@/lib/brand";
 
 const en = bindProduct(enRaw);
 const fr = bindProduct(frRaw);

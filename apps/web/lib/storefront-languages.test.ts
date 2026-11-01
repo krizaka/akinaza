@@ -1,10 +1,10 @@
 import type { PublicShop } from "@akinaza/db";
 import { describe, expect, it } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import frRaw from "@/messages/fr.json";
 
 import { buildStorefront } from "./storefront";
-import { bindProduct } from "@/lib/brand";
 
 const fr = bindProduct(frRaw);
 

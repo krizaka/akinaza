@@ -1,12 +1,12 @@
 import { computeFigures, DEFAULT_FIGURE_THRESHOLDS, FIGURE_ID, FIGURE_STATE, type FigureState, LEXICON, nextActions } from "@akinaza/core";
 import { describe, expect, it } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import enRaw from "@/messages/en.json";
 import frRaw from "@/messages/fr.json";
 
 import { actionView, kpiThresholds, kpiView, periodId } from "./figures-view";
 import { shopRoutes } from "./routes";
-import { bindProduct } from "@/lib/brand";
 
 const en = bindProduct(enRaw);
 const fr = bindProduct(frRaw);

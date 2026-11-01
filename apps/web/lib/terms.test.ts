@@ -3,6 +3,7 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import enRaw from "@/messages/en.json";
 import frRaw from "@/messages/fr.json";
 
@@ -10,7 +11,6 @@ import { format } from "./i18n";
 import { publisherVars } from "./publisher";
 import { llmsText } from "./seo";
 import { pagePath, PAGES, TERMS_VERSION } from "./site";
-import { bindProduct } from "@/lib/brand";
 
 const en = bindProduct(enRaw);
 const fr = bindProduct(frRaw);

@@ -1,9 +1,9 @@
 import { SHOP_TYPES, TEMPLATES } from "@akinaza/core";
 import { describe, expect, it } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import enRaw from "@/messages/en.json";
 import frRaw from "@/messages/fr.json";
-import { bindProduct } from "@/lib/brand";
 
 const en = bindProduct(enRaw);
 const fr = bindProduct(frRaw);

@@ -2,6 +2,7 @@ import { KrizakaQueryProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import { I18nProvider } from "@/lib/i18n-client";
 import { emptyLine } from "@/lib/invoice-draft";
 import enRaw from "@/messages/en.json";
@@ -9,7 +10,6 @@ import frRaw from "@/messages/fr.json";
 
 import { InvoiceForm, type InvoiceFormProps, STICKY_CLEARS_TAB_BAR } from "./InvoiceForm";
 import { ShopSession } from "./ShopSession";
-import { bindProduct } from "@/lib/brand";
 
 const en = bindProduct(enRaw);
 const fr = bindProduct(frRaw);

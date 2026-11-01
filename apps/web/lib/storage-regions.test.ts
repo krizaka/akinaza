@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import enRaw from "@/messages/en.json";
 import frRaw from "@/messages/fr.json";
 
 import { CANADIAN_CHOICES, choiceOf, OTHER_CHOICES, REGION_CHOICES, residencyOfSaved, settingsOf } from "./storage-regions";
-import { bindProduct } from "@/lib/brand";
 
 const en = bindProduct(enRaw);
 const fr = bindProduct(frRaw);

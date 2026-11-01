@@ -5,12 +5,12 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { avatarOptions } from "@/lib/avatar";
+import { bindProduct } from "@/lib/brand";
 import { I18nProvider } from "@/lib/i18n-client";
 import enRaw from "@/messages/en.json";
 import frRaw from "@/messages/fr.json";
 
 import { ProfileSettings, type ProfileView } from "./ProfileSettings";
-import { bindProduct } from "@/lib/brand";
 
 const en = bindProduct(enRaw);
 const fr = bindProduct(frRaw);

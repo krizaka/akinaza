@@ -4,13 +4,13 @@ import { join } from "node:path";
 import { TEMPLATES, templatesFor } from "@akinaza/core";
 import { describe, expect, it, vi } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import type { TemplateChoices } from "@/lib/template-choices";
 import { renderIn } from "@/lib/test-i18n";
 import enRaw from "@/messages/en.json";
 
 import { TemplatePicker } from "./TemplatePicker";
 import { TemplatePreview } from "./TemplatePreview";
-import { bindProduct } from "@/lib/brand";
 
 const en = bindProduct(enRaw);
 

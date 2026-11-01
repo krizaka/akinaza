@@ -3,6 +3,7 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import enRaw from "@/messages/en.json";
 import frRaw from "@/messages/fr.json";
 
@@ -10,7 +11,6 @@ import { contentSecurityPolicy } from "./csp";
 import { DEMO_SHOP, heroActions, HOME_SECTIONS, productStatus, SCREENS } from "./landing";
 import { llmsText } from "./seo";
 import { heroTake, MEDIA_CDN, screenStill } from "./tour";
-import { bindProduct } from "@/lib/brand";
 
 const en = bindProduct(enRaw);
 const fr = bindProduct(frRaw);
