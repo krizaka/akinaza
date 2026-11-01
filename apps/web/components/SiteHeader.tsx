@@ -2,6 +2,7 @@ import type { BarWords } from "@/components/account/BarSession";
 import { LazyBarSession } from "@/components/account/LazyBarSession";
 import { SignedOutActions } from "@/components/account/SignedOutActions";
 import { SiteBar } from "@/components/SiteChrome";
+import { endorsementIn, PRODUCT_NAME } from "@/lib/brand";
 import { type Locale, translator } from "@/lib/i18n";
 import type { PageId } from "@/lib/site";
 
@@ -13,7 +14,7 @@ import type { PageId } from "@/lib/site";
 export function SiteHeader({ locale, current, path, languages, contentLocale, anonymous = false }: Readonly<{ locale: Locale; current: PageId; path?: string; /** The languages the page is offered in (a shop page: the owner's list); default: the product's own. */ languages?: readonly string[]; /** The language of the page's content when it is not the product's (Spanish). */ contentLocale?: string; /** The page saw no session cookie. */ anonymous?: boolean }>) {
   const t = translator(locale);
   const words: BarWords = { signIn: t("chrome.signIn"), tryIt: t("chrome.tryIt"), openApp: t("chrome.openApp"), account: t("chrome.account"), settings: t("chrome.settings"), subscription: t("chrome.subscription"), language: t("chrome.languageLabel"), theme: t("chrome.themeToggle"), signOut: t("chrome.signOut") };
-  const labels = { nav: t("chrome.navLabel"), brandHome: t("chrome.brandHome"), sourceCode: t("chrome.sourceCode"), theme: t("chrome.themeToggle"), language: t("chrome.languageLabel"), explore: t("chrome.explore"), menu: t("chrome.menu.label"), preferences: t("chrome.preferences") };
+  const labels = { nav: t("chrome.navLabel"), brandHome: t("chrome.brandHome"), productName: PRODUCT_NAME, endorsement: endorsementIn(locale), sourceCode: t("chrome.sourceCode"), theme: t("chrome.themeToggle"), language: t("chrome.languageLabel"), explore: t("chrome.explore"), menu: t("chrome.menu.label"), preferences: t("chrome.preferences") };
   const session = (placement: "bar" | "panel") =>
     anonymous ? <SignedOutActions locale={locale} placement={placement} signupOpen={false} signIn={words.signIn} tryIt={words.tryIt} /> : <LazyBarSession locale={locale} words={words} placement={placement} />;
   return <SiteBar locale={locale} current={current} {...(path ? { path } : {})} {...(languages ? { languages } : {})} {...(contentLocale ? { contentLocale } : {})} labels={labels} sessionBar={session("bar")} sessionPanel={session("panel")} />;

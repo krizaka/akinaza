@@ -8,13 +8,15 @@ import { ThemeToggle } from "@krizaka/ui/theme";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { endorsementIn, PRODUCT_NAME } from "@/lib/brand";
 import type { Locale } from "@/lib/i18n";
 import { type PageId, pagePath, REPO_URL } from "@/lib/site";
 
 export interface SiteBarLabels {
   nav: string;
   brandHome: string;
+  /** The commercial name and its endorsement, said by the server (`@krizaka/org` stays out of the browser bundle). */
+  productName: string;
+  endorsement: string;
   sourceCode: string;
   theme: string;
   language: string;
@@ -46,7 +48,7 @@ export function SiteBar({ locale, current, path, languages: offered, contentLoca
       <NavBar.Root label={t("nav")} className="pointer-events-auto mx-auto max-w-(--kz-page-max,72rem)">
         <NavBar.Brand asChild>
           <Link href={home} aria-label={t("brandHome")}>
-            <ProductLockup id="akinaza" name={PRODUCT_NAME} endorsement={endorsementIn(locale)} size={26} layout="inline" />
+            <ProductLockup id="akinaza" name={t("productName")} endorsement={t("endorsement")} size={26} layout="inline" />
           </Link>
         </NavBar.Brand>
         <NavBar.Items>
