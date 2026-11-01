@@ -1,6 +1,7 @@
 import { Button } from "@krizaka/ui/button";
 import { PricingPage, type PricingPlan } from "@krizaka/ui/pricing-page";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 import { systemClock } from "@/app/system-clock";
 import { ButtonLink } from "@/components/ButtonLink";
@@ -11,12 +12,12 @@ import { pageSession } from "@/lib/access";
 import { founderSeats } from "@/lib/billing";
 import { jsonLdHtml } from "@/lib/csp";
 import { query } from "@/lib/db";
-import { env } from "@/lib/env";
+import { env, salesSettings } from "@/lib/env";
 import { founderCap, founderEntry, onSale } from "@/lib/founder-offer";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { heroActions } from "@/lib/landing";
 import { appPrices, publicPrices } from "@/lib/price-catalogue";
-import { planAction, pricingPlans } from "@/lib/pricing-view";
+import { faqFor, planAction, pricingPlans, salesOpen } from "@/lib/pricing-view";
 import { accountRoutes } from "@/lib/routes";
 import { pageMetadata, siteJsonLd } from "@/lib/seo";
 
@@ -40,24 +41,26 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
   const entry = await founderEntry(catalogue, now);
   const founderOnSale = env().APP_FOUNDER_OFFER_ENABLED && onSale(entry) && (await founderSeats(query, founderCap(entry))).open;
   const plans = pricingPlans(await publicPrices(catalogue, now), locale, { founderOnSale });
-  const signedIn = Boolean(await pageSession().catch(() => null));
-  const hero = heroActions(locale, signedIn);
+  // A signed-in owner reads the plans inside the app (Subscription: the same catalogue, « Current plan » on hers), not outside its shell.
+  if (await pageSession().catch(() => null)) {redirect(accountRoutes(locale).section("subscription"));}
+  const selling = salesOpen(salesSettings());
+  const hero = heroActions(locale, false);
   // One primary action on the page: the featured plan's. The others are secondary.
   const action = (founder: boolean, featured: boolean, association = false) =>
-    founder ? (
+    founder && selling ? (
       <form method="post" action={`/api/billing/checkout?redirect=1&locale=${locale}`}>
         <Button type="submit" variant="primary" size="md" shape="cut" className="w-full">
           {t.landing.founder.cta}
         </Button>
       </form>
     ) : (
-      <ButtonLink href={planAction(signedIn, association) === "subscription" ? accountRoutes(locale).section("subscription") : hero.primary.href} variant={featured ? "primary" : "secondary"} size="md" shape="cut" className="w-full">
+      <ButtonLink href={planAction(false, association) === "subscription" ? accountRoutes(locale).section("subscription") : hero.primary.href} variant={featured ? "primary" : "secondary"} size="md" shape="cut" className="w-full">
         {label(association)}
       </ButtonLink>
     );
   const label = (association: boolean) => {
     if (association) {return d.associationCta;}
-    return signedIn ? d.manageCta : t.landing.actions[hero.primary.message];
+    return t.landing.actions[hero.primary.message];
   };
   const badgeOf = (plan: (typeof plans)[number]) => {
     if (plan.id !== "founder") {return undefined;}
@@ -70,16 +73,19 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
   };
   const trialFeatures = (plan: (typeof plans)[number]): string[] => {
     const words = trialWords(plan);
+    // Nothing on sale: no free period promised and no card mentioned, the price said as planned.
+    if (!selling) {return plan.price ? [format(d.plannedLine, { price: plan.price })] : [];}
     if (!plan.trial || !words || !plan.price) {return [];}
     if (plan.id !== "association") {return [format(d.trialLine, { trial: words, price: plan.price })];}
     return [plan.trial.months ? format(d.associationLine, { months: plan.trial.months, price: plan.price }) : format(d.associationLineDays, { days: plan.trial.days, price: plan.price }), d.associationHow];
   };
   const wording = (f: (typeof plans)[number]["features"][number]) => format(f.id === "inherits" ? d.features.inherits : d.features[f.id], f.id === "inherits" ? { plan: d.plans.starter } : f.vars);
+  const unitOf = selling ? d.perMonth : d.plannedPerMonth;
   const cards: PricingPlan[] = plans.map((plan, i) => ({
     id: plan.id,
     name: d.plans[plan.id],
     price: plan.price ?? d.preparing,
-    unit: plan.price === null ? undefined : d.perMonth,
+    unit: plan.price === null ? undefined : unitOf,
     featured: i === 0,
     badge: badgeOf(plan),
     // The tick means « runs today »; what is planned is apart, under « Soon », with no tick.
@@ -96,7 +102,7 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="pricing" />
       <main id="content" className="pt-20">
-        <PricingPage brand="akinaza" title={d.title} lead={d.lead} plansLabel={d.plansLabel} plans={cards} faq={{ title: d.faqTitle, items: d.faq.map((f) => ({ question: f.q, answer: f.a })) }} />
+        <PricingPage brand="akinaza" title={d.title} lead={d.lead} plansLabel={d.plansLabel} plans={cards} faq={{ title: d.faqTitle, items: faqFor(d.faq, d.faqFreePeriodPlanned, selling).map((f) => ({ question: f.q, answer: f.a })) }} />
       </main>
       <SiteFooter locale={locale} />
     </>

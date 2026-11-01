@@ -129,6 +129,12 @@ export function assertProductionEnv(source: Record<string, string | undefined> =
 export const env = () => readEnv();
 export const appEnvironment = () => readEnv().APP_ENVIRONMENT;
 export const signupEnabled = () => env().AUTH_SIGNUP_ENABLED;
+
+/** The settings `salesOpen` reads: whether plans are really on sale (sign-up open and a payment provider wired). */
+export const salesSettings = () => {
+  const e = env();
+  return { signupEnabled: e.AUTH_SIGNUP_ENABLED, paymentsProvider: e.PAYMENTS_PROVIDER, paymentsSecretKey: e.PAYMENTS_STRIPE_SECRET_KEY, paymentsWebhookSecret: e.PAYMENTS_STRIPE_WEBHOOK_SECRET };
+};
 /** The administration's allow-list; `null` = no restriction (development only). */
 export function consoleAllowedIps(source: Record<string, string | undefined> = process.env): string[] | null {
   const e = readEnv(source);

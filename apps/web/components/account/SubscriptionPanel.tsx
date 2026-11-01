@@ -29,6 +29,10 @@ export interface SubscriptionView {
   /** In the free period: the date the first charge happens. */
   trialEndsAt?: string | null;
   /** The plans on sale to an account without a subscription, from the catalogue (price already formatted, free period in whole months or days). */
+  /** Whether plans are really on sale (sign-up open, payments wired): otherwise the prices are planned and no card is asked. */
+  selling?: boolean;
+  /** Every plan of the catalogue (the ones /pricing sells), for an active account: « Current plan » on hers, « Change plan » on the others. */
+  planList?: { id: "starter" | "scale" | "association"; price: string }[];
   plans?: { id: "starter" | "scale" | "association"; price: string; trial: { months: number | null; days: number } | null }[];
   /** The Association plan: the proof state of this account, and whether an administrator approved it. */
   association?: { status: "pending" | "approved" | "rejected" | null; note: string | null };
@@ -76,9 +80,25 @@ export function SubscriptionPanel({ subscription }: Readonly<{ subscription: Sub
           </Button>
         </SettingsRow>
       ) : null}
-      {subscription.active ? null : <NotSubscribed subscription={subscription} pending={open.isPending} onChoose={(plan) => open.mutate(plan)} onProblem={setProblem} />}
+      {subscription.active ? <ActivePlans subscription={subscription} pending={open.isPending} onChange={() => open.mutate("portal")} /> : <NotSubscribed subscription={subscription} pending={open.isPending} onChoose={(plan) => open.mutate(plan)} onProblem={setProblem} />}
       {problem ? <Alert tone="danger">{problem}</Alert> : null}
     </SettingsSection>
+  );
+}
+
+/** The catalogue seen by a subscriber: the plan she is on says « Current plan », the others lead to the hosted page where a plan is changed. */
+function ActivePlans({ subscription, pending, onChange }: Readonly<{ subscription: SubscriptionView; pending: boolean; onChange: () => void }>) {
+  const { say } = useSay();
+  const name = { starter: "account.subscription.planStarter", scale: "account.subscription.planScale", association: "account.subscription.planAssociation" } as const;
+  return (
+    <>
+      {(subscription.planList ?? []).map((plan) => (
+        <SettingsRow key={plan.id} label={say(name[plan.id])} description={say("account.subscription.planHint", { price: plan.price })}>
+          {plan.id === subscription.currentPlan ? <Badge tone="success">{say("account.subscription.currentPlan")}</Badge> : null}
+          {plan.id !== subscription.currentPlan && subscription.hasCustomer ? <Button size="sm" variant="secondary" loading={pending} onClick={onChange}>{say("account.subscription.changePlan")}</Button> : null}
+        </SettingsRow>
+      ))}
+    </>
   );
 }
 
@@ -89,16 +109,19 @@ function NotSubscribed({ subscription, pending, onChoose, onProblem }: Readonly<
   const name = { starter: "account.subscription.planStarter", scale: "account.subscription.planScale", association: "account.subscription.planAssociation" } as const;
   return (
     <>
+      {subscription.selling === false && plans.length ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.plannedNote")}</p> : null}
       {plans.filter((plan) => plan.id !== "association").map((plan) => (
-        <SettingsRow key={plan.id} label={say(name[plan.id])} description={plan.trial ? say("account.subscription.planHintTrial", { trial: trialText(say, plan.trial), price: plan.price }) : say("account.subscription.planHint", { price: plan.price })}>
-          <Button size="sm" variant={plan.id === "starter" ? "primary" : "secondary"} loading={pending} onClick={() => onChoose(plan.id)}>
-            {say(plan.trial ? "account.subscription.startTrial" : "account.subscription.choosePlan")}
-          </Button>
+        <SettingsRow key={plan.id} label={say(name[plan.id])} description={say(plan.trial && subscription.selling !== false ? "account.subscription.planHintTrial" : "account.subscription.planHint", { price: plan.price, trial: plan.trial ? trialText(say, plan.trial) : "" })}>
+          {subscription.selling === false ? null : (
+            <Button size="sm" variant={plan.id === "starter" ? "primary" : "secondary"} loading={pending} onClick={() => onChoose(plan.id)}>
+              {say(plan.trial ? "account.subscription.startTrial" : "account.subscription.choosePlan")}
+            </Button>
+          )}
         </SettingsRow>
       ))}
-      {plans.some((plan) => plan.id === "association") ? <AssociationRow subscription={subscription} pending={pending} onChoose={() => onChoose("association")} onProblem={onProblem} /> : null}
-      {plans.length ? <TermsNote /> : null}
-      {subscription.offer ? (
+      {subscription.selling !== false && plans.some((plan) => plan.id === "association") ? <AssociationRow subscription={subscription} pending={pending} onChoose={() => onChoose("association")} onProblem={onProblem} /> : null}
+      {plans.length && subscription.selling !== false ? <TermsNote /> : null}
+      {subscription.offer && subscription.selling !== false ? (
         <SettingsRow label={say("account.subscription.founder")} description={say("account.subscription.founderHint", { price: subscription.offer.price, cardRate: subscription.offer.cardRate })}>
           <Button size="sm" variant="primary" loading={pending} onClick={() => onChoose("founder")}>
             {say("account.subscription.choose")}
