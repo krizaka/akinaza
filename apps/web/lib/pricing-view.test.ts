@@ -7,7 +7,7 @@ import en from "../messages/en.json";
 import fr from "../messages/fr.json";
 import { format } from "./i18n";
 import { ASSOCIATION, FOUNDER, PRICES, SCALE, STARTER } from "./pricing";
-import { pricingPlans, subscriptionPlans } from "./pricing-view";
+import { planAction, pricingPlans, subscriptionPlans } from "./pricing-view";
 import { pricesInForce } from "./test-prices";
 
 const read = (p: string) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
@@ -183,5 +183,15 @@ describe("the Subscription page and /pricing sell the same plans (krizaka-intern
   it("a plan in preparation is not sold, and the founder flag does not hide the plans on the Subscription page", () => {
     expect(subscriptionPlans([{ id: "scale", price: null, limit: null, trial: null, features: [] }])).toEqual([]);
     expect(read("app/[locale]/(app)/app/(account)/profile/subscription/page.tsx")).not.toMatch(/canStart = e\.APP_FOUNDER_OFFER_ENABLED/);
+  });
+});
+
+describe("a signed-in owner is sent to Subscription, not to « Open my shop » (krizaka-internal#1913)", () => {
+  it("leads an owner and the Association plan to Subscription, a visitor to the demo", () => {
+    expect([planAction(true, false), planAction(false, true), planAction(false, false)]).toEqual(["subscription", "subscription", "visit"]);
+  });
+
+  it("words the owner's action in both languages", () => {
+    expect([en.pricing.manageCta, fr.pricing.manageCta]).toEqual(["Manage my plan", "Gérer mon forfait"]);
   });
 });
