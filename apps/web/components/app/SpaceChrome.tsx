@@ -5,6 +5,7 @@ import { requestNow } from "@/app/request-now";
 import { ShopFrame } from "@/components/app/ShopFrame";
 import { agendaScope } from "@/lib/access";
 import { CLIENT_PLACES, placeHrefFor, placesFor } from "@/lib/app-nav";
+import { productName } from "@/lib/brand-name";
 import { db } from "@/lib/db";
 import { VocabularyProvider } from "@/lib/i18n-client";
 import { indexable } from "@/lib/indexing";
@@ -22,7 +23,7 @@ type Membership = { shop: { id: string; name: string; businessType: Parameters<t
 export async function SpaceChrome({ locale, account, member, children }: Readonly<{ locale: RouteLocale; account: { id: string; email: string }; member: Membership; children: React.ReactNode }>) {
   const profile = await accounts().profile(account.id);
   const routes = accountRoutes(locale);
-  const common = { locale, account: { id: account.id, email: account.email, name: profile.name, avatarSeed: profile.avatarSeed }, dev: !indexable(), home: routes.home, profileHref: routes.profile };
+  const common = { locale, account: { id: account.id, email: account.email, name: profile.name, avatarSeed: profile.avatarSeed }, productName: await productName(), dev: !indexable(), home: routes.home, profileHref: routes.profile };
   if (!member) {
     const places = [...CLIENT_PLACES].map((place) => ({ key: place, href: placeHrefFor(locale, null, place), also: undefined }));
     return <ShopFrame {...common} places={places} shop={undefined} newInvoiceHref={null} search={false} counts={undefined}>{children}</ShopFrame>;

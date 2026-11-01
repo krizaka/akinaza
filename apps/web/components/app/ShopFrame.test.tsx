@@ -12,6 +12,7 @@ vi.mock("@/lib/i18n-client", () => ({ useSay: () => ({ say: (key: string, vars?:
 const shop = "/fr/app/s-1";
 const OWNER: ShopFrameProps = {
   locale: "fr",
+  productName: "Folioviv",
   account: { email: "lea@example.test", name: "Léa" },
   places: [
     { key: "today", href: `${shop}/today` },
