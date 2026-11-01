@@ -11,6 +11,7 @@ import { migrate } from "./migrate";
 import { diffSnapshot, readSnapshot, type SchemaSnapshot } from "./schema-check";
 
 const MIGRATIONS_DIR = fileURLToPath(new URL("../drizzle", import.meta.url));
+const WEB_DIR = fileURLToPath(new URL("../../../apps/web", import.meta.url));
 const EXPECTED = new URL("./schema-expected.json", import.meta.url);
 const flag = (name: string) => process.argv.includes(`--${name}`);
 const LOCAL = new Set(["localhost", "127.0.0.1", "::1", "[::1]", "postgres", "db"]);
@@ -26,7 +27,7 @@ async function main() {
   console.log(`db:rebuild (${LOCAL.has(url.hostname) ? "local" : "remote, --yes"} database)`);
   const pool = new pg.Pool(poolConfig(url.toString(), process.env.DATABASE_CA_CERT, 2));
   const { rows: schemas } = await pool.query<{ nspname: string }>(
-    `SELECT nspname FROM pg_namespace WHERE nspname NOT IN ('pg_catalog', 'information_schema', 'public') AND nspname NOT LIKE 'pg\\_%'`,
+    String.raw`SELECT nspname FROM pg_namespace WHERE nspname NOT IN ('pg_catalog', 'information_schema', 'public') AND nspname NOT LIKE 'pg\_%'`,
   );
   for (const { nspname } of schemas) {
     await pool.query(`DROP SCHEMA "${nspname}" CASCADE`);
@@ -48,7 +49,9 @@ async function main() {
   console.log(`schema check: ${Object.keys(actual.tables).length} tables, configuration present`);
   await pool.end();
   if (flag("cast")) {
-    const run = spawnSync("pnpm", ["--filter", "@akinaza/web", "exec", "tsx", "scripts/seed-cast.mjs", "--check"], {
+    // The running node binary, not a name looked up on PATH.
+    const run = spawnSync(process.execPath, ["--import", "tsx", "scripts/seed-cast.mjs", "--check"], {
+      cwd: WEB_DIR,
       stdio: "inherit",
       env: process.env,
     });
@@ -58,11 +61,18 @@ async function main() {
   }
 }
 
-main().then(
-  () => process.exit(0),
-  (error) => {
-    const cause = error instanceof Error ? error.cause : undefined;
-    console.error(String(cause instanceof Error ? cause.message : error instanceof Error ? error.message : error).slice(0, 600));
-    process.exit(1);
-  },
-);
+/** The first line a person needs: the cause of a wrapped error, else its message. */
+function reason(error: unknown): string {
+  if (error instanceof Error) {
+    return error.cause instanceof Error ? error.cause.message : error.message;
+  }
+  return String(error);
+}
+
+try {
+  await main();
+  process.exit(0);
+} catch (error) {
+  console.error(reason(error).slice(0, 600));
+  process.exit(1);
+}
