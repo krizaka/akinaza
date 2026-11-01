@@ -105,17 +105,17 @@
       "book": {
         "title": "Clients book on their own",
         "text": "A taken time disappears at once: nobody is booked twice.",
-        "alt": "The shop's public page: its services with their prices, each with a button to choose it and book."
+        "alt": "A client picks {day} at {time}; the time is booked and no longer offered to anyone else."
       },
       "invoice": {
         "title": "The invoice, taxes included",
         "text": "GST 5 % and QST 9.975 % to the cent, in French or in English.",
-        "alt": "An invoice: subtotal, GST, QST and total."
+        "alt": "{line}, {subtotal}, becomes an invoice with GST {gst}, QST {qst} and a total of {total}."
       },
       "books": {
         "title": "Your tax report, ready",
         "text": "Every figure with its invoices. You file the return yourself.",
-        "alt": "Your books: the quarter's GST and QST, line by line, with the documents behind."
+        "alt": "The quarter's invoices and expenses give the three figures of the return: sales {sales}, net GST {gst}, net QST {qst}."
       }
     },
     "trust": {
@@ -136,9 +136,24 @@
     },
     "preview": {
       "demo": "Demo data",
-      "slotsLabel": "Free times",
-      "slotsEmpty": "No free time this week",
-      "invoiceLine": "Group walks, October"
+      "invoiceLine": "Group walks, October",
+      "book": {
+        "action": "A client picks a time on {day}",
+        "result": "Booked, and never twice",
+        "others": "Everyone else now sees: {times}"
+      },
+      "invoice": {
+        "action": "You bill a line",
+        "result": "The invoice works out the taxes",
+        "gst": "GST 5 %",
+        "qst": "QST 9.975 %",
+        "total": "Total"
+      },
+      "books": {
+        "action": "Your quarter",
+        "input": "Your invoices and your expenses, as they come",
+        "result": "The three figures for your return"
+      }
     }
   },
   "docs": {

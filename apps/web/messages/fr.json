@@ -105,17 +105,17 @@
       "book": {
         "title": "Vos clients réservent seuls",
         "text": "Une heure prise disparaît aussitôt : personne n'est réservé deux fois.",
-        "alt": "La page publique du commerce : ses services avec leurs prix, chacun avec un bouton pour le choisir et réserver."
+        "alt": "Une cliente choisit {day} à {time} ; l'heure est réservée et n'est plus offerte à personne d'autre."
       },
       "invoice": {
         "title": "La facture, taxes comprises",
         "text": "TPS 5 % et TVQ 9,975 % au cent près, en français ou en anglais.",
-        "alt": "Une facture : sous-total, TPS, TVQ et total."
+        "alt": "{line}, {subtotal}, devient une facture avec TPS {gst}, TVQ {qst} et un total de {total}."
       },
       "books": {
         "title": "Votre rapport de taxes, prêt",
         "text": "Chaque montant avec ses factures. C'est vous qui produisez la déclaration.",
-        "alt": "Vos livres : la TPS et la TVQ du trimestre, ligne par ligne, avec les documents derrière."
+        "alt": "Les factures et dépenses du trimestre donnent les trois montants de la déclaration : ventes {sales}, TPS nette {gst}, TVQ nette {qst}."
       }
     },
     "trust": {
@@ -136,9 +136,24 @@
     },
     "preview": {
       "demo": "Données de démonstration",
-      "slotsLabel": "Heures libres",
-      "slotsEmpty": "Aucune heure libre cette semaine",
-      "invoiceLine": "Promenades de groupe, octobre"
+      "invoiceLine": "Promenades de groupe, octobre",
+      "book": {
+        "action": "Une cliente choisit une heure le {day}",
+        "result": "Réservé, et jamais deux fois",
+        "others": "Les autres voient maintenant : {times}"
+      },
+      "invoice": {
+        "action": "Vous facturez une ligne",
+        "result": "La facture calcule les taxes",
+        "gst": "TPS 5 %",
+        "qst": "TVQ 9,975 %",
+        "total": "Total"
+      },
+      "books": {
+        "action": "Votre trimestre",
+        "input": "Vos factures et vos dépenses, au fil de l'eau",
+        "result": "Les trois montants de votre déclaration"
+      }
     }
   },
   "docs": {
