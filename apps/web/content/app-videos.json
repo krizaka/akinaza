@@ -5,34 +5,34 @@
     {
       "platform": "android",
       "flow": "today-books",
-      "seconds": 13.1,
-      "capturedAt": "2026-10-31T11:11:28.927Z",
+      "seconds": 11.9,
+      "capturedAt": "2026-11-01T12:08:22.555Z",
       "files": {
-        "webm": "sites/akinaza/download/android-today-books.e56862d8df.webm",
-        "mp4": "sites/akinaza/download/android-today-books.04509d1a6a.mp4",
-        "poster": "sites/akinaza/download/android-today-books.785d0069d6.jpg"
+        "webm": "sites/akinaza/download/android-today-books.364c07f16a.webm",
+        "mp4": "sites/akinaza/download/android-today-books.50cae05a1e.mp4",
+        "poster": "sites/akinaza/download/android-today-books.480b0ee737.jpg"
       }
     },
     {
       "platform": "web",
       "flow": "composer",
-      "seconds": 10.4,
-      "capturedAt": "2026-10-31T11:11:10.738Z",
+      "seconds": 10.7,
+      "capturedAt": "2026-11-01T12:07:52.653Z",
       "files": {
-        "webm": "sites/akinaza/download/web-composer.02e807802b.webm",
-        "mp4": "sites/akinaza/download/web-composer.5b15c5921f.mp4",
-        "poster": "sites/akinaza/download/web-composer.1b3766ddb5.jpg"
+        "webm": "sites/akinaza/download/web-composer.b83d9b010b.webm",
+        "mp4": "sites/akinaza/download/web-composer.cb4601d448.mp4",
+        "poster": "sites/akinaza/download/web-composer.87170b55c6.jpg"
       }
     },
     {
       "platform": "web",
       "flow": "storefront",
-      "seconds": 15.7,
-      "capturedAt": "2026-10-31T11:11:19.009Z",
+      "seconds": 15.8,
+      "capturedAt": "2026-11-01T12:08:07.596Z",
       "files": {
-        "webm": "sites/akinaza/download/web-storefront.10ef759e64.webm",
-        "mp4": "sites/akinaza/download/web-storefront.e3c760e7cf.mp4",
-        "poster": "sites/akinaza/download/web-storefront.0b3c28017f.jpg"
+        "webm": "sites/akinaza/download/web-storefront.ecf18d576d.webm",
+        "mp4": "sites/akinaza/download/web-storefront.6114e4820b.mp4",
+        "poster": "sites/akinaza/download/web-storefront.35cfebd75b.jpg"
       }
     }
   ]
