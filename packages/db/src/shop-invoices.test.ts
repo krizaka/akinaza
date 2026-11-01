@@ -126,6 +126,15 @@ describe("the due date and the payment terms of an invoice (krizaka/akinaza#113)
     expect(await refusal(t.pool.query(`UPDATE shops SET payment_terms_days = 366 WHERE id = '${s.shop.id}'`))).toMatch(/shops_payment_terms/);
   });
 
+  it("the database refuses a plain invoice without its terms and due day, and lets a credit note go without (was migration 0055's guard)", async () => {
+    const s = await salon(t.db);
+    const plain = (n: string, credit: string | null) =>
+      t.pool.query(`INSERT INTO invoices (shop_id, number, language, issued_on, credit_of, subtotal_cents, gst_cents, qst_cents, total_cents) VALUES ('${s.shop.id}', '${n}', 'fr', '2026-10-21', ${credit ? `'${credit}'` : "NULL"}, 0, 0, 0, 0) RETURNING id`);
+    expect(await refusal(plain("D-1", null))).toMatch(/invoices_due_set/);
+    const { invoice } = await issueShopInvoice(t.db, s.shop.id, { language: "fr", issuedOn: "2026-10-21", lines: line(s) });
+    expect((await plain("D-2", invoice.id)).rows).toHaveLength(1);
+  });
+
   it("the owner's rules carry the shop's terms", async () => {
     const s = await salon(t.db);
     await t.db.insert(shopRules).values({ shopId: s.shop.id });
