@@ -21,9 +21,9 @@ async function main() {
     throw new Error("db:rebuild never runs against production");
   }
   if (!LOCAL.has(url.hostname) && !flag("yes")) {
-    throw new Error(`${url.hostname}/${url.pathname.slice(1)} is not local: pass --yes to rebuild it`);
+    throw new Error("DATABASE_URL is not a local database: pass --yes to rebuild it");
   }
-  console.log(`db:rebuild ${url.hostname}/${url.pathname.slice(1)}`);
+  console.log(`db:rebuild (${LOCAL.has(url.hostname) ? "local" : "remote, --yes"} database)`);
   const pool = new pg.Pool(poolConfig(url.toString(), process.env.DATABASE_CA_CERT, 2));
   const { rows: schemas } = await pool.query<{ nspname: string }>(
     `SELECT nspname FROM pg_namespace WHERE nspname NOT IN ('pg_catalog', 'information_schema', 'public') AND nspname NOT LIKE 'pg\\_%'`,
