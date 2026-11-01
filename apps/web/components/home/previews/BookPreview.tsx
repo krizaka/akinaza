@@ -1,21 +1,41 @@
-import { SlotPicker } from "@krizaka/ui/slot-picker";
+import { Badge } from "@krizaka/ui/badge";
 
 import { PreviewFrame } from "@/components/home/previews/PreviewFrame";
-import { getDictionary, type Locale } from "@/lib/i18n";
+import { format, getDictionary, type Locale } from "@/lib/i18n";
 import { DEMO_DAYS, DEMO_PICKED } from "@/lib/landing-demo";
 
-/** « Clients book on their own »: the storefront's own time picker (`SlotPicker`) on a demo week, one time chosen. */
+/** « Clients book on their own »: a client picks a free time; it is booked and no longer offered to anyone else. */
 export function BookPreview({ locale }: Readonly<{ locale: Locale }>) {
-  const d = getDictionary(locale).landing;
-  const name = new Intl.DateTimeFormat(locale, { timeZone: "UTC", weekday: "short" });
-  const sub = new Intl.DateTimeFormat(locale, { timeZone: "UTC", day: "numeric", month: "short" });
-  const days = DEMO_DAYS.map(({ id, times }) => {
-    const at = new Date(`${id}T12:00:00Z`);
-    return { id, label: name.format(at), sub: sub.format(at), slots: times.map((t) => ({ id: `${id}T${t}`, label: t })) };
-  });
+  const t = getDictionary(locale).landing;
+  const [dayId, picked] = DEMO_PICKED.split("T") as [string, string];
+  const times = DEMO_DAYS.find((d) => d.id === dayId)?.times ?? [];
+  const day = new Intl.DateTimeFormat(locale, { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" }).format(new Date(`${dayId}T12:00:00Z`));
+  const left = times.filter((time) => time !== picked);
   return (
-    <PreviewFrame alt={d.screens.book.alt} demo={d.preview.demo}>
-      <SlotPicker days={days} label={d.preview.slotsLabel} emptyLabel={d.preview.slotsEmpty} value={DEMO_PICKED} defaultDay="2026-11-04" />
-    </PreviewFrame>
+    <PreviewFrame
+      alt={format(t.screens.book.alt, { day, time: picked })}
+      demo={t.preview.demo}
+      action={{
+        label: format(t.preview.book.action, { day }),
+        body: (
+          <span className="flex flex-wrap gap-1.5">
+            {times.map((time) => (
+              <Badge key={time} size="md" tone={time === picked ? "accent" : "neutral"}>
+                {time}
+              </Badge>
+            ))}
+          </span>
+        ),
+      }}
+      result={{
+        label: t.preview.book.result,
+        body: (
+          <>
+            <span className="block text-base font-semibold tabular-nums">{`${day} · ${picked}`}</span>
+            <span className="block text-fg-secondary">{format(t.preview.book.others, { times: left.join(" · ") })}</span>
+          </>
+        ),
+      }}
+    />
   );
 }

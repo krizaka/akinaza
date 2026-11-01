@@ -1,27 +1,32 @@
-import { PreviewFrame } from "@/components/home/previews/PreviewFrame";
+import { AmountRow, PreviewFrame } from "@/components/home/previews/PreviewFrame";
 import { formatMoney } from "@/lib/format";
-import { getDictionary, type Locale } from "@/lib/i18n";
+import { format, getDictionary, type Locale } from "@/lib/i18n";
 import { DEMO_RETURN } from "@/lib/landing-demo";
 
-type LineId = (typeof DEMO_RETURN)[number]["line"];
+/** The three figures a merchant carries to the return: sales, net GST, net QST. */
+const KEY_LINES = ["101", "109", "209"] as const;
 
-/** « Your tax report, ready »: the lines of the return (FPZ-500) with the labels of the books screen, on the demo invoice. Prepared for the merchant to file; never filed by Akinaza. */
+/** « Your tax report, ready »: the quarter's invoices and expenses become the three figures of the return. Prepared for the merchant to file; never filed by Akinaza. */
 export function BooksPreview({ locale }: Readonly<{ locale: Locale }>) {
   const d = getDictionary(locale);
-  const books = d.console.books;
-  const label = (line: LineId) => books.lines[line].label;
+  const t = d.landing;
+  const amount = (line: (typeof KEY_LINES)[number]) => formatMoney(DEMO_RETURN.find((r) => r.line === line)?.cents ?? 0, locale);
+  const label = (line: (typeof KEY_LINES)[number]) => d.console.books.lines[line].label;
   return (
-    <PreviewFrame alt={d.landing.screens.books.alt} demo={d.landing.preview.demo}>
-      <p className="m-0 mb-2 text-sm font-semibold text-fg">{books.table.caption}</p>
-      <dl className="m-0 grid grid-cols-[auto_1fr_auto] gap-x-3 text-sm">
-        {DEMO_RETURN.map((r) => (
-          <div key={r.line} className="col-span-3 grid grid-cols-subgrid border-t border-border-default py-1.5">
-            <dt className="font-mono text-fg-muted">{r.line}</dt>
-            <dd className="m-0 text-fg">{label(r.line)}</dd>
-            <dd className="m-0 text-right tabular-nums text-fg">{formatMoney(r.cents, locale)}</dd>
+    <PreviewFrame
+      alt={format(t.screens.books.alt, { sales: amount("101"), gst: amount("109"), qst: amount("209") })}
+      demo={t.preview.demo}
+      action={{ label: t.preview.books.action, body: t.preview.books.input }}
+      result={{
+        label: t.preview.books.result,
+        body: (
+          <div className="flex flex-col gap-1">
+            {KEY_LINES.map((line) => (
+              <AmountRow key={line} label={label(line)} amount={amount(line)} />
+            ))}
           </div>
-        ))}
-      </dl>
-    </PreviewFrame>
+        ),
+      }}
+    />
   );
 }
