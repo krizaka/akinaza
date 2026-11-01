@@ -78,3 +78,11 @@ export function pricingPlans(entries: readonly PublicPrice[], locale: "en" | "fr
   }
   return plans;
 }
+
+/**
+ * Where a plan's action leads (krizaka-internal#1913). A visitor goes to the demo shop (or the sign-in); an owner already signed in
+ * goes to Subscription, which sells the same plans, so « Open my shop » never stands under a price. The founder plan keeps its checkout form.
+ */
+export function planAction(signedIn: boolean, association: boolean): "visit" | "subscription" {
+  return signedIn || association ? "subscription" : "visit";
+}

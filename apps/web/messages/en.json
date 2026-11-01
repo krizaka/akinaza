@@ -423,7 +423,8 @@
     "associationLine": "Associations: {months} months free, then {price} a month plus taxes. For registered non-profits (OBNL) and charities.",
     "associationLineDays": "Associations: {days} days free, then {price} a month plus taxes. For registered non-profits (OBNL) and charities.",
     "associationHow": "Send your NEQ, your registered charity number or your incorporation document’s reference from your billing page. We check it; until it is approved you are on Starter.",
-    "associationCta": "Ask for the Association plan"
+    "associationCta": "Ask for the Association plan",
+    "manageCta": "Manage my plan"
   },
   "download": {
     "title": "The apps",
