@@ -24,6 +24,8 @@ export interface SubscriptionView {
   offerFull?: boolean;
   /** The price this subscription was sold at (the catalogue's version kept with it): a founder keeps it. */
   soldPrice?: string | null;
+  /** The plan this subscription is on (the catalogue entry it was sold at). */
+  currentPlan?: "founder" | "starter" | "scale" | "association" | null;
   /** In the free period: the date the first charge happens. */
   trialEndsAt?: string | null;
   /** The plans on sale to an account without a subscription, from the catalogue (price already formatted, free period in whole months or days). */
@@ -65,6 +67,7 @@ export function SubscriptionPanel({ subscription }: Readonly<{ subscription: Sub
       </SettingsRow>
       {subscription.active && subscription.periodEnd ? <SettingsRow label={say("account.subscription.renews")}>{formatDate(subscription.periodEnd, locale, "UTC")}</SettingsRow> : null}
       {subscription.trialEndsAt ? <SettingsRow label={say("account.subscription.trialEnds")} description={say("account.subscription.trialEndsHint")}>{formatDate(subscription.trialEndsAt, locale, "UTC")}</SettingsRow> : null}
+      {subscription.active && subscription.currentPlan ? <SettingsRow label={say("account.subscription.currentPlan")}>{say(`account.subscription.plan.${subscription.currentPlan}`)}</SettingsRow> : null}
       {subscription.active && subscription.soldPrice ? <SettingsRow label={say("account.subscription.yourPrice")} description={say("account.subscription.yourPriceHint")}>{say("account.subscription.priceLine", { price: subscription.soldPrice })}</SettingsRow> : null}
       {subscription.hasCustomer ? (
         <SettingsRow label={say("account.subscription.manage")} description={say("account.subscription.manageHint")}>
@@ -103,7 +106,7 @@ function NotSubscribed({ subscription, pending, onChoose, onProblem }: Readonly<
         </SettingsRow>
       ) : null}
       {subscription.offerFull ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.offerFull")}</p> : null}
-      {!subscription.offer && !subscription.offerFull && !subscription.hasCustomer ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.unavailable")}</p> : null}
+      {!plans.length && !subscription.offer && !subscription.offerFull && !subscription.hasCustomer ? <p className="py-4 text-sm text-fg-secondary">{say("account.subscription.unavailable")}</p> : null}
       {subscription.offer ? <TermsNote /> : null}
     </>
   );

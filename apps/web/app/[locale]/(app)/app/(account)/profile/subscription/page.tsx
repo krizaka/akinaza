@@ -12,9 +12,10 @@ import { env } from "@/lib/env";
 import { founderCap, founderEntry,founderOfferCopy } from "@/lib/founder-offer";
 import { asLocale } from "@/lib/i18n";
 import { titleOf } from "@/lib/page-title";
-import { PLAN_KEY, trialDaysOf, trialMonthsOf } from "@/lib/plans";
-import { appPrices } from "@/lib/price-catalogue";
+import { PLAN_IDS,PLAN_KEY } from "@/lib/plans";
+import { appPrices, publicPrices } from "@/lib/price-catalogue";
 import { priceText } from "@/lib/price-text";
+import { pricingPlans, subscriptionPlans } from "@/lib/pricing-view";
 import { accountRoutes } from "@/lib/routes";
 
 export const dynamic = "force-dynamic";
@@ -39,24 +40,13 @@ export default async function Subscription({ params }: Readonly<{ params: Promis
   const [subscription, soldId] = await Promise.all([subscriptionOf(query, session.account.id, now), soldVersionOf(query, session.account.id)]);
   const sold = soldId ? await catalogue.version(soldId) : null;
   // The plans on sale to an account without a subscription, read from the catalogue (a trial only for an account that never subscribed).
-  const canStart = e.APP_FOUNDER_OFFER_ENABLED && !subscription.active && !subscription.customerId;
-  const plans = canStart
-    ? (
-        await Promise.all(
-          (["starter", "scale", "association"] as const).map(async (id) => {
-            const planEntry = await catalogue.entry(PLAN_KEY[id], now);
-            const price = priceText(planEntry, locale);
-            if (price === null || planEntry.availability !== "public") {return null;}
-            const days = trialDaysOf(planEntry);
-            return { id, price, trial: days > 0 ? { months: trialMonthsOf(planEntry), days } : null };
-          }),
-        )
-      ).filter((plan) => plan !== null)
-    : [];
+  // The plans on sale to an account without a subscription: the ones /pricing shows, from the same catalogue (the founder flag gates only the founder row).
+  const canStart = !subscription.active && !subscription.customerId;
+  const plans = canStart ? subscriptionPlans(pricingPlans(await publicPrices(catalogue, now), locale, { founderOnSale: false })) : [];
   const proof = await associationProofOf(db(), session.account.id);
   return (
     <ProfileFrame locale={locale} current="subscription" account={profile} sections={sections}>
-      <SubscriptionPanel subscription={{ active: subscription.active, periodEnd: subscription.periodEnd, hasCustomer: subscription.customerId !== null, offer: offer ? { price: offer.price, cardRate: offer.cardRate } : null, offerFull: full, soldPrice: sold ? priceText(sold, locale) : null, trialEndsAt: subscription.trialEndsAt, plans, association: { status: proof?.status ?? null, note: proof?.decisionNote ?? null } }} />
+      <SubscriptionPanel subscription={{ active: subscription.active, periodEnd: subscription.periodEnd, hasCustomer: subscription.customerId !== null, offer: offer ? { price: offer.price, cardRate: offer.cardRate } : null, offerFull: full, soldPrice: sold ? priceText(sold, locale) : null, currentPlan: sold ? (PLAN_IDS.find((id) => PLAN_KEY[id] === sold.key) ?? null) : null, trialEndsAt: subscription.trialEndsAt, plans, association: { status: proof?.status ?? null, note: proof?.decisionNote ?? null } }} />
     </ProfileFrame>
   );
 }

@@ -48,6 +48,19 @@ function featuresOf(plan: PlanView["id"], entry: PublicPrice, locale: "en" | "fr
   return [...running, soon("payments"), ...fees, ...(plan === "scale" ? [soon("contract"), soon("transfers")] : [])];
 }
 
+/**
+ * What the Subscription page sells: the very plans /pricing shows (the same `pricingPlans`, so the two never disagree), minus the
+ * founder offer (it has its own row and its own seats) and minus a plan still in preparation (no figure, nothing to buy).
+ */
+export function subscriptionPlans(plans: readonly PlanView[]): { id: "starter" | "scale" | "association"; price: string; trial: { months: number | null; days: number } | null }[] {
+  const sold: { id: "starter" | "scale" | "association"; price: string; trial: { months: number | null; days: number } | null }[] = [];
+  for (const plan of plans) {
+    if (plan.id === "founder" || plan.price === null) {continue;}
+    sold.push({ id: plan.id, price: plan.price, trial: plan.trial });
+  }
+  return sold;
+}
+
 /** The plans to show, in order: the founder offer first while it is on sale, then Starter, Pro (the scale entry) and Association when the catalogue shows them. */
 export function pricingPlans(entries: readonly PublicPrice[], locale: "en" | "fr", options: { founderOnSale: boolean }): PlanView[] {
   const plans: PlanView[] = [];
