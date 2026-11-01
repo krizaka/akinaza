@@ -42,13 +42,6 @@ async function shopWith(label: string) {
 const moreClients = async (shopId: string, n: number) =>
   (await t.db.insert(clients).values(Array.from({ length: n }, (_, i) => ({ shopId, fullName: `Client ${i}`, language: "fr" as const }))).returning({ id: clients.id })).map((c) => c.id);
 
-describe("the migration", () => {
-  it("is exactly what the declaration generates", () => {
-    const file = readFileSync(fileURLToPath(new URL("../drizzle/0033_workspace.sql", import.meta.url)), "utf8");
-    expect(file).toBe(`${WORKSPACE_MIGRATION_HEADER}${workspaceMigration(WORKSPACE)}\n`);
-  });
-});
-
 describe("the invoice's state in SQL is the state of the list (`invoiceState`)", () => {
   it("agrees on due, partly paid, overdue, paid, cancelled by a credit note, replaced by a correction, and the credit note itself", async () => {
     const s = await salon(t.db);

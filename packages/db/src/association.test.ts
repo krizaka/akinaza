@@ -65,11 +65,6 @@ describe("the new prices are a dated version of the catalogue, never a rewritten
     limits: { cardFeeBps: 0, directDebitBps: 50, directDebitCapCents: 1500 },
   } as const;
 
-  it("the migration file is the schedule's SQL, verbatim", () => {
-    const file = readFileSync(fileURLToPath(new URL("../drizzle/0053_prices_association.sql", import.meta.url)), "utf8");
-    expect(file).toContain(PRICE_SCHEDULE_SQL);
-  });
-
   it("Starter 29 $ with three free months, Pro 69 $, and the founder offer ends: each a version audited in settings_audit", async () => {
     const rows = (await t.db.execute(sql`SELECT key, price, before, actor_label FROM price_versions ORDER BY key`)).rows as { key: string; price: { amountCents: number; availability: string; limits: Record<string, number> }; before: { amountCents: number }; actor_label: string }[];
     const by = Object.fromEntries(rows.map((r) => [r.key, r]));

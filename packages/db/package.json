@@ -22,7 +22,8 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "seed": "tsx src/seed-cli.ts",
-    "seed:demos": "tsx src/seed-demos-cli.ts"
+    "seed:demos": "tsx src/seed-demos-cli.ts",
+    "db:rebuild": "tsx src/rebuild-cli.ts"
   },
   "dependencies": {
     "@akinaza/core": "workspace:*",

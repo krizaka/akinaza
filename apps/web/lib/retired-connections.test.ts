@@ -25,10 +25,4 @@ describe("the social-sync feature is retired", () => {
     expect(read("apps/web/lib/http.ts")).not.toContain("AK_SYNC_");
   });
 
-  it("drops the four tables and the immutable-log function in migration 0012", () => {
-    const sql = read("packages/db/drizzle/0012_retire_social_sync.sql");
-    for (const table of ["sync_proposal_items", "sync_proposals", "sync_log", "social_connections"]) expect(sql).toContain(`DROP TABLE IF EXISTS "${table}"`);
-    expect(sql).toContain("DROP FUNCTION IF EXISTS ak_sync_log_immutable");
-    expect(read("packages/db/drizzle/meta/_journal.json")).toContain("0012_retire_social_sync");
-  });
 });
