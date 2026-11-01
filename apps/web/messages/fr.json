@@ -458,7 +458,7 @@
     "officer": {
       "title": "Responsable de la protection des renseignements personnels",
       "role": "Responsable de la protection des renseignements personnels",
-      "text": "La personne responsable de la protection des renseignements personnels est publiée ici. Titre : {role}, Technologies Krizaka Inc., Montréal (Québec), Canada. Contact : contact@krizaka.com, pour accéder à vos renseignements, les corriger ou les effacer, retirer un consentement ou déposer une plainte ; nous répondons dans un délai de 30 jours."
+      "text": "La personne responsable de la protection des renseignements personnels est publiée ici. Titre : {role}, {publisher}, {city} ({region}), Canada. Contact : contact@krizaka.com, pour accéder à vos renseignements, les corriger ou les effacer, retirer un consentement ou déposer une plainte ; nous répondons dans un délai de 30 jours."
     },
     "processors": {
       "title": "Qui traite des renseignements pour nous",
@@ -508,7 +508,7 @@
     "sections": [
       {
         "h": "1. Qui nous sommes, à qui elles s'adressent",
-        "p": "Akinaza est un produit de Technologies Krizaka Inc. (Montréal, Québec), l'éditeur. Ces conditions encadrent l'abonnement à Akinaza par les entreprises de services du Québec : salons, ateliers, coachs, entreprises de nettoyage, services aux animaux, consultants. Les restaurants, cafés, bars et boulangeries en sont exclus, parce que la loi y exige un module d'enregistrement des ventes certifié que le point de vente d'Akinaza n'est pas. C'est un contrat d'adhésion (art. 1379 du Code civil du Québec, C.c.Q.) : nous vous le montrons avant tout paiement, et une clause illisible, incompréhensible ou abusive n'a pas d'effet contre vous (art. 1435 à 1437 C.c.Q.)."
+        "p": "Akinaza est un produit de {publisher} ({city}, {region}), l'éditeur. Ces conditions encadrent l'abonnement à Akinaza par les entreprises de services du Québec : salons, ateliers, coachs, entreprises de nettoyage, services aux animaux, consultants. Les restaurants, cafés, bars et boulangeries en sont exclus, parce que la loi y exige un module d'enregistrement des ventes certifié que le point de vente d'Akinaza n'est pas. C'est un contrat d'adhésion (art. 1379 du Code civil du Québec, C.c.Q.) : nous vous le montrons avant tout paiement, et une clause illisible, incompréhensible ou abusive n'a pas d'effet contre vous (art. 1435 à 1437 C.c.Q.)."
       },
       {
         "h": "2. Ce qu'Akinaza fait",
@@ -556,7 +556,7 @@
       },
       {
         "h": "13. La propriété intellectuelle et votre droit d'utiliser le service",
-        "p": "Akinaza, ses logiciels, ses modèles de documents, la conception des pages de boutique, ses noms, ses oiseaux et ses marques appartiennent à Technologies Krizaka Inc. ou à ses concédants ; ces conditions ne vous cèdent aucun de ces droits (Loi sur le droit d'auteur, L.R.C. (1985), c. C-42). Pour la durée de votre abonnement seulement, vous recevez un droit personnel, non exclusif, non cessible et non sous-licenciable d'utiliser le service hébergé pour les besoins de votre entreprise ; ce droit prend fin avec l'abonnement. Le contenu de votre boutique et les renseignements de vos clients restent les vôtres (section 7) : vous nous autorisez seulement à les héberger et à les traiter pour fournir le service. Le code source d'Akinaza est publié sous sa propre licence, indiquée dans son dépôt : ces conditions régissent le service hébergé, cette licence régit le code, et rien ici ne retire ce que la licence vous permet."
+        "p": "Akinaza, ses logiciels, ses modèles de documents, la conception des pages de boutique, ses noms, ses oiseaux et ses marques appartiennent à {publisher} ou à ses concédants ; ces conditions ne vous cèdent aucun de ces droits (Loi sur le droit d'auteur, L.R.C. (1985), c. C-42). Pour la durée de votre abonnement seulement, vous recevez un droit personnel, non exclusif, non cessible et non sous-licenciable d'utiliser le service hébergé pour les besoins de votre entreprise ; ce droit prend fin avec l'abonnement. Le contenu de votre boutique et les renseignements de vos clients restent les vôtres (section 7) : vous nous autorisez seulement à les héberger et à les traiter pour fournir le service. Le code source d'Akinaza est publié sous sa propre licence, indiquée dans son dépôt : ces conditions régissent le service hébergé, cette licence régit le code, et rien ici ne retire ce que la licence vous permet."
       },
       {
         "h": "14. Les usages interdits",
@@ -564,7 +564,7 @@
       },
       {
         "h": "15. Les noms et les marques",
-        "p": "Les noms et les logos d'Akinaza et de Krizaka, et leurs oiseaux, sont des marques de Technologies Krizaka Inc. (Loi sur les marques de commerce, L.R.C. (1985), c. T-13). Ces conditions, comme la licence du code, n'accordent aucun droit sur ces marques ; leur usage est encadré par la politique publiée à https://github.com/krizaka/.github/blob/main/TRADEMARKS.md."
+        "p": "Les noms et les logos d'Akinaza et de Krizaka, et leurs oiseaux, sont des marques de {publisher} (Loi sur les marques de commerce, L.R.C. (1985), c. T-13). Ces conditions, comme la licence du code, n'accordent aucun droit sur ces marques ; leur usage est encadré par la politique publiée à https://github.com/krizaka/.github/blob/main/TRADEMARKS.md."
       },
       {
         "h": "16. Nous joindre",
