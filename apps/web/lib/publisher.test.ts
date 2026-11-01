@@ -24,7 +24,7 @@ describe("publisher (akinaza#375): the legal facts come from @krizaka/org", () =
 
   it("the rendered legal text names the publisher and the city", () => {
     const text = format(frMessages.terms.sections[0]!.p, publisherVars());
-    expect(text).toContain(`${org.company.legalName} (${org.company.city}, ${org.company.region})`.replace(", ", ", "));
+    expect(text).toContain(`${org.company.legalName} (${org.company.city}, ${org.company.region})`);
     expect(text).not.toContain("{");
   });
 });
