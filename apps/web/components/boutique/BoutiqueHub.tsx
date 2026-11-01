@@ -39,6 +39,8 @@ export function BoutiqueHub({ locale, shopId, allowed, tabs, preview, current, s
       groups: { page: say("boutique.groups.page"), business: say("boutique.groups.business") },
       tabs: Object.fromEntries(PAGE_TABS.map((tab) => [tab, say(`shopSetup.sections.tabs.${tab}`)])) as Record<PageTab, string>,
       languages: say("boutique.sections.languages"),
+      hours: say("boutique.sections.hours"),
+      rules: say("boutique.sections.rules"),
       team: say("boutique.sections.team"),
       invoices: say("boutique.sections.invoices"),
       agenda: say("boutique.sections.agenda"),

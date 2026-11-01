@@ -18,7 +18,7 @@ import { InvoiceMailSettings } from "@/components/app/InvoiceMailSettings";
 import { ReelsEditor } from "@/components/app/ReelsEditor";
 import { ReviewsPanel } from "@/components/app/ReviewsPanel";
 import { type LanguagesData, ShopLanguages } from "@/components/app/ShopLanguages";
-import { type SetupData, ShopSetupView } from "@/components/app/ShopSetup";
+import { HoursCard, RulesCard, type SetupData, ShopSetupView } from "@/components/app/ShopSetup";
 import { TeamPanel } from "@/components/app/TeamPanel";
 import { TimeOffCard } from "@/components/app/TimeOffCard";
 import { WallEditor } from "@/components/app/WallEditor";
@@ -129,6 +129,30 @@ async function LanguagesSection({ locale, shopId }: Readonly<{ locale: RouteLoca
   return <ShopLanguages data={data} />;
 }
 
+/** Boutique › Hours and days off (krizaka-internal#1911): the weekly windows and the days off, the daily controls, one click from the home. */
+async function HoursSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
+  const { shop } = await memberShop(shopId, "settings");
+  const setup = await loadShop(db(), shop);
+  return (
+    <div className="flex flex-col gap-5">
+      <PageHeader as="h2" title={getDictionary(locale).console.boutique.sections.hours} />
+      <HoursCard windows={setup.windows.map((x) => ({ id: x.id, weekday: x.weekday, startsAt: x.startsAt, endsAt: x.endsAt }))} daysOff={setup.daysOff} />
+    </div>
+  );
+}
+
+/** Boutique › Booking rules: cancellation, horizon, step, notice, report link and payment terms. */
+async function RulesSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
+  const { shop } = await memberShop(shopId, "settings");
+  const { rules } = await loadShop(db(), shop);
+  return (
+    <div className="flex flex-col gap-5">
+      <PageHeader as="h2" title={getDictionary(locale).console.boutique.sections.rules} />
+      <RulesCard rules={{ cancellationHours: rules.cancellationHours, bookingHorizonDays: rules.bookingHorizonDays, slotStepMinutes: rules.slotStepMinutes, minNoticeMinutes: rules.minNoticeMinutes, reportLinkDays: rules.reportLinkDays, paymentTermsDays: shop.paymentTermsDays }} />
+    </div>
+  );
+}
+
 /** Boutique › Équipe: the members and the invitations, and the team's time off (a date range). */
 async function TeamSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   const { session, shop, role } = await memberShop(shopId, "team");
@@ -236,6 +260,8 @@ function boutiqueBody({ section, tab, community, locale, shopId }: Readonly<{ se
   if (section === "page" && tab === "composer") {return <ComposerTab locale={locale} shopId={shopId} />;}
   if (section === "page") {return community ? <CommunityTab shopId={shopId} tab={tab as "wall" | "reels" | "board" | "reviews"} /> : <PageSection locale={locale} shopId={shopId} tab={tab} />;}
   if (section === "languages") {return <LanguagesSection locale={locale} shopId={shopId} />;}
+  if (section === "hours") {return <HoursSection locale={locale} shopId={shopId} />;}
+  if (section === "rules") {return <RulesSection locale={locale} shopId={shopId} />;}
   if (section === "team") {return <TeamSection locale={locale} shopId={shopId} />;}
   if (section === "invoices") {return <InvoicesSection locale={locale} shopId={shopId} />;}
   if (section === "agenda") {return <AgendaSection locale={locale} shopId={shopId} />;}

@@ -115,11 +115,11 @@ export interface ActionView {
   href: string;
 }
 
-/** The address an action leads to: its invoice, the list, the books of its period, or the team. */
+/** The address an action leads to: its invoice, the list, the books of its period, or the shop's hours. */
 function actionHref(target: NextAction["target"], routes: ShopRoutes): string {
   if (target.route === "invoice") return routes.invoice(target.invoiceId);
   if (target.route === "invoices") return routes.invoices;
-  return target.route === "books" ? routes.books(periodId(target.period.start)) : routes.team;
+  return target.route === "books" ? routes.books(periodId(target.period.start)) : routes.hours;
 }
 
 /** What goes before a term of a formula: nothing for the first, its operator, or a dot. */

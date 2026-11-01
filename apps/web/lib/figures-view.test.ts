@@ -123,7 +123,7 @@ describe("« que faire maintenant » is built from data and leads somewhere (#26
     const slot = actionView(actions.find((a) => a.kind === "slot")!, "fr", routes);
     expect(slot.title).toBe("Ouvrir le mardi 09:00 aux réservations");
     expect(slot.why).toBe("Seulement 1 de ces 8 plages ont été réservées récemment.");
-    expect(slot.href).toBe(routes.team);
+    expect(slot.href).toBe(routes.hours);
   });
 
   it("builds nothing for a shop with no rows", () => {

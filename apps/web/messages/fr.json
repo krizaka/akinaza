@@ -2006,6 +2006,8 @@
       },
       "sections": {
         "languages": "Langues",
+        "hours": "Horaires et jours de congé",
+        "rules": "Règles de réservation",
         "team": "Équipe",
         "invoices": "Courriels de facture",
         "shops": "Vos boutiques",

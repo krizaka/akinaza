@@ -58,8 +58,6 @@ export function ShopSetupView({ data, tab = "identity" }: Readonly<{ data: Setup
       <div className="grid gap-4 lg:grid-cols-2">
         <ZonesCard zones={data.zones} />
         <ServicesCard services={data.services} />
-        <HoursCard windows={data.windows} daysOff={data.daysOff} />
-        {data.rules ? <RulesCard rules={data.rules} /> : null}
       </div>
     ),
     media: (
@@ -421,7 +419,7 @@ const clock = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/);
 const hoursForm = createKrizakaForm({ schema: z.object({ weekday: z.string().regex(/^[0-6]$/), startsAt: clock, endsAt: clock }), defaultValues: { weekday: "1", startsAt: "09:00", endsAt: "17:00" } });
 const dayOffForm = createKrizakaForm({ schema: z.object({ day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), reason: z.string().trim().max(120) }), defaultValues: { day: "", reason: "" } });
 
-function HoursCard({ windows, daysOff }: Readonly<{ windows: SetupData["windows"]; daysOff: SetupData["daysOff"] }>) {
+export function HoursCard({ windows, daysOff }: Readonly<{ windows: SetupData["windows"]; daysOff: SetupData["daysOff"] }>) {
   const { say, locale } = useSay();
   const call = useCall();
   const i18n = { t: (key: string, vars?: Readonly<Record<string, string | number | boolean | Date | null | undefined>>) => say(key, vars as Record<string, string | number> | undefined), locale };
@@ -503,7 +501,7 @@ const rulesForm = createKrizakaForm({
   defaultValues: { cancellationHours: "24", bookingHorizonDays: "60", slotStepMinutes: "30", minNoticeMinutes: "120", reportLinkDays: "30", paymentTermsDays: "30" },
 });
 
-function RulesCard({ rules }: Readonly<{ rules: NonNullable<SetupData["rules"]> }>) {
+export function RulesCard({ rules }: Readonly<{ rules: NonNullable<SetupData["rules"]> }>) {
   const { say, locale } = useSay();
   const { visitReports } = useVocabulary();
   const call = useCall();
