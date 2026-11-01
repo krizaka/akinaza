@@ -17,14 +17,14 @@ export const PAGE_TAB_NEEDS: Record<PageTab, ShopPermission> = { identity: "sett
 /** The tabs a role may open, in the hub's order. */
 export const pageTabsAllowed = (allows: (permission: ShopPermission) => boolean): PageTab[] => PAGE_TABS.filter((tab) => allows(PAGE_TAB_NEEDS[tab]));
 
-export const BOUTIQUE_SECTIONS = ["page", "languages", "team", "invoices", "agenda", "figures", "data", "shops"] as const;
+export const BOUTIQUE_SECTIONS = ["page", "languages", "hours", "rules", "team", "invoices", "agenda", "figures", "data", "shops"] as const;
 export type BoutiqueSection = (typeof BOUTIQUE_SECTIONS)[number];
 
 export const isBoutiqueSection = (value: string): value is BoutiqueSection => (BOUTIQUE_SECTIONS as readonly string[]).includes(value);
 export const isPageTab = (value: string | undefined): value is PageTab => (PAGE_TABS as readonly string[]).includes(value ?? "");
 
 /** The permission each section takes (the role table decides who holds it). The team is the manager's; the shop's settings are the owner's. */
-export const BOUTIQUE_NEEDS: Record<BoutiqueSection, ShopPermission> = { page: "catalogue", languages: "settings", team: "team", invoices: "settings", agenda: "bookings", figures: "settings", data: "privacy", shops: "settings" };
+export const BOUTIQUE_NEEDS: Record<BoutiqueSection, ShopPermission> = { page: "catalogue", languages: "settings", hours: "settings", rules: "settings", team: "team", invoices: "settings", agenda: "bookings", figures: "settings", data: "privacy", shops: "settings" };
 
 /** The sections a role may open, in the hub's order. A staff member opens none: the rail does not offer Boutique to them. */
 export function boutiqueSectionsAllowed(allows: (permission: ShopPermission) => boolean): BoutiqueSection[] {
@@ -38,6 +38,8 @@ export interface BoutiqueNavWords {
   groups: { page: string; business: string };
   tabs: Record<PageTab, string>;
   languages: string;
+  hours: string;
+  rules: string;
   team: string;
   invoices: string;
   agenda: string;
@@ -57,6 +59,8 @@ export function boutiqueGroups({ allowed, tabs = PAGE_TABS, href, current, words
     ...(has("languages") ? [{ id: "languages", label: words.languages, href: href("languages"), current: current.section === "languages" }] : []),
   ];
   const business = [
+    ...(has("hours") ? [{ id: "hours", label: words.hours, href: href("hours"), current: current.section === "hours" }] : []),
+    ...(has("rules") ? [{ id: "rules", label: words.rules, href: href("rules"), current: current.section === "rules" }] : []),
     ...(has("team") ? [{ id: "team", label: words.team, href: href("team"), current: current.section === "team" }] : []),
     ...(has("invoices") ? [{ id: "invoices", label: words.invoices, href: href("invoices"), current: current.section === "invoices" }] : []),
     ...(has("agenda") ? [{ id: "agenda", label: words.agenda, href: href("agenda"), current: current.section === "agenda" }] : []),

@@ -35,6 +35,8 @@ export function shopRoutes(locale: RouteLocale, shopId: string) {
     boutique: (section?: string, tab?: string) => `${[root, "settings", section].filter(Boolean).join("/")}${query({ tab })}`,
     /** Boutique › Équipe. */
     team: `${root}/settings/team`,
+    /** Boutique › Hours and days off: where « Open the hours » leads (krizaka-internal#1911). */
+    hours: `${root}/settings/hours`,
     /** Boutique › Page, the first section of the hub (« Ma page boutique »). */
     setup: `${root}/settings/page`,
     /** Boutique › Shops: « Add a shop » (one more shop under the same account). */

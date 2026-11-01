@@ -2000,6 +2000,8 @@
       },
       "sections": {
         "languages": "Languages",
+        "hours": "Hours and days off",
+        "rules": "Booking rules",
         "team": "Team",
         "invoices": "Invoice e-mails",
         "shops": "Your shops",
