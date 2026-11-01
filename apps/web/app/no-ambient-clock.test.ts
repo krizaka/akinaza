@@ -28,9 +28,9 @@ describe("app pages and routes", () => {
 /** The pages of the visual journeys (walker-today…) are drawn at the run's fixed instant (APP_FIXED_NOW): nothing they render reads the server's clock. */
 describe("the server code behind a visual-journey page", () => {
   const WEB = join(__dirname, "..");
-  const FILES = ["lib/today.ts", "lib/day.ts", "lib/figures.ts", "lib/brief.ts", "components/app/SpaceChrome.tsx", "components/app/TodayDay.tsx", "components/app/WalkerDay.tsx", "components/app/TodayFigures.tsx"];
-  it("reads no wall clock (new Date(), Date.now(), SQL now()) — the instant arrives from requestNow()", () => {
-    const offenders = FILES.filter((file) => /new Date\(\)|Date\.now\(\)|\bnow\(\)\s+AT\s+TIME|[^.\w]now\(\)(?!\))/i.test(readFileSync(join(WEB, file), "utf8").replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "")));
+  const FILES = ["lib/today.ts", "lib/day.ts", "lib/figures.ts", "lib/brief.ts", "components/app/SpaceChrome.tsx", "components/app/TodayDay.tsx", "components/app/WalkerDay.tsx", "components/app/TodayFigures.tsx", "lib/booking-receipt.ts"];
+  it("reads no wall clock (new Date(), Date.now(), systemClock.now(), SQL now()) — the instant arrives from requestNow()", () => {
+    const offenders = FILES.filter((file) => /new Date\(\)|Date\.now\(\)|systemClock\.now\(\)|\bnow\(\)\s+AT\s+TIME|[^.\w]now\(\)(?!\))/i.test(readFileSync(join(WEB, file), "utf8").replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, "")));
     expect(offenders).toEqual([]);
   });
 });
