@@ -5,34 +5,34 @@
     {
       "platform": "android",
       "flow": "today-books",
-      "seconds": 11.9,
-      "capturedAt": "2026-11-01T12:08:22.555Z",
+      "seconds": 8,
+      "capturedAt": "2026-11-02T13:44:15.683Z",
       "files": {
-        "webm": "sites/akinaza/download/android-today-books.364c07f16a.webm",
-        "mp4": "sites/akinaza/download/android-today-books.50cae05a1e.mp4",
-        "poster": "sites/akinaza/download/android-today-books.480b0ee737.jpg"
+        "webm": "sites/akinaza/download/android-today-books.35e8972464.webm",
+        "mp4": "sites/akinaza/download/android-today-books.6dfa01d22d.mp4",
+        "poster": "sites/akinaza/download/android-today-books.bc982d40b8.jpg"
       }
     },
     {
       "platform": "web",
       "flow": "composer",
-      "seconds": 10.7,
-      "capturedAt": "2026-11-01T12:07:52.653Z",
+      "seconds": 10.1,
+      "capturedAt": "2026-11-02T13:43:59.846Z",
       "files": {
-        "webm": "sites/akinaza/download/web-composer.b83d9b010b.webm",
-        "mp4": "sites/akinaza/download/web-composer.cb4601d448.mp4",
-        "poster": "sites/akinaza/download/web-composer.87170b55c6.jpg"
+        "webm": "sites/akinaza/download/web-composer.a691335864.webm",
+        "mp4": "sites/akinaza/download/web-composer.e5f3a6dc89.mp4",
+        "poster": "sites/akinaza/download/web-composer.08b9f3edd8.jpg"
       }
     },
     {
       "platform": "web",
       "flow": "storefront",
-      "seconds": 15.8,
-      "capturedAt": "2026-11-01T12:08:07.596Z",
+      "seconds": 14.9,
+      "capturedAt": "2026-11-02T13:44:08.164Z",
       "files": {
-        "webm": "sites/akinaza/download/web-storefront.ecf18d576d.webm",
-        "mp4": "sites/akinaza/download/web-storefront.6114e4820b.mp4",
-        "poster": "sites/akinaza/download/web-storefront.35cfebd75b.jpg"
+        "webm": "sites/akinaza/download/web-storefront.2c319d58d7.webm",
+        "mp4": "sites/akinaza/download/web-storefront.c053ab5b36.mp4",
+        "poster": "sites/akinaza/download/web-storefront.5bd6697458.jpg"
       }
     }
   ]
