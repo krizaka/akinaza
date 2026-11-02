@@ -125,7 +125,7 @@
     "visualLabel": "www.akinaza.com",
     "feed": {
       "title": "Posted in your neighbourhood",
-      "lead": "The flyers shops pin on their own page: an open day, a new service, a place left. Nothing here is advertising we sell.",
+      "lead": "The flyers shops pin on their own page: an open day, a new service, a place left. Here, those of the demo shops.",
       "filterLabel": "Choose a neighbourhood",
       "all": "All neighbourhoods",
       "boardLabel": "Flyers pinned by the shops of the neighbourhood",
@@ -1324,7 +1324,7 @@
       "quick": {
         "title": "Quick access",
         "bill": "Bill {client}",
-        "chase": "Chase invoice {number}",
+        "chase": "Remind about invoice {number}",
         "page": "My public page"
       },
       "activity": {
@@ -2152,7 +2152,7 @@
       "capacityUnit": "Up to {count} {unit}",
       "capacitySeats": "Up to {count} spots",
       "bookTitle": "Next available times",
-      "bookLead": "Tap a time to book it — the service and the time are kept.",
+      "bookLead": "Tap a time to book it. The service and the time are kept.",
       "serviceLabel": "Service",
       "zoneLabel": "Area",
       "timesLabel": "Available times",
@@ -2256,8 +2256,8 @@
       },
       "faqTitle": "Questions",
       "looks": {
-        "label": "See it another way",
-        "note": "This is a demo shop: the same shop, drawn with another composition of Krizaka UI.",
+        "label": "Layout",
+        "note": "Demo shop. Change the layout to see other styles.",
         "compact": "Compact",
         "editorial": "Editorial",
         "gallery": "Gallery",
@@ -2971,7 +2971,7 @@
       "nothingToDo": "Nothing needs you right now.",
       "actions": {
         "chase": {
-          "title": "Chase invoice {number}",
+          "title": "Remind about invoice {number}",
           "why": "It is {days} days overdue and {amount} is still owed.",
           "more": "{others} other invoices are overdue too, {total} in all.",
           "cta": "Open the invoice"
@@ -2984,7 +2984,7 @@
         },
         "slot": {
           "title": "Open {weekday} {time} to bookings",
-          "why": "Only {booked} of {offered} of these slots were booked lately.",
+          "why": "Few bookings lately: {booked} of {offered} slots booked.",
           "cta": "Open the hours"
         }
       },

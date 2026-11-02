@@ -33,8 +33,8 @@ mkdirSync(outDir, { recursive: true });
 const VIEWPORT = { width: 1280, height: 800 };
 const W =
   locale === "fr"
-    ? { email: "Courriel", field: "Mot de passe", signIn: "Se connecter", sections: "Sections", style: "Allure", looks: "Voir autrement" }
-    : { email: "E-mail", field: "Password", signIn: "Sign in", sections: "Sections", style: "Style", looks: "See it another way" };
+    ? { email: "Courriel", field: "Mot de passe", signIn: "Se connecter", sections: "Sections", style: "Allure", looks: "Mise en page" }
+    : { email: "E-mail", field: "Password", signIn: "Sign in", sections: "Sections", style: "Style", looks: "Layout" };
 const browser = await chromium.launch();
 
 /** Hides any element that shows an e-mail address: nothing personal on screen. */

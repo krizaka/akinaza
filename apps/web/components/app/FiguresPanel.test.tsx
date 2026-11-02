@@ -61,7 +61,7 @@ describe("what to do now (#260)", () => {
   });
 
   it("shows one action as a card and none as nothing", () => {
-    expect(renderToStaticMarkup(<WhatToDoNow actions={actions.slice(0, 1)} locale="en" routes={routes} />)).toContain("Chase invoice F-0001");
+    expect(renderToStaticMarkup(<WhatToDoNow actions={actions.slice(0, 1)} locale="en" routes={routes} />)).toContain("Remind about invoice F-0001");
     expect(renderToStaticMarkup(<WhatToDoNow actions={[]} locale="en" routes={routes} />)).toBe("");
   });
 });

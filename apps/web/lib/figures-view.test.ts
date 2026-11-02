@@ -108,7 +108,7 @@ describe("« que faire maintenant » is built from data and leads somewhere (#26
 
   it("chases the overdue invoice with its number, days and amount, and opens it", () => {
     const chase = actionView(actions.find((a) => a.kind === "chase")!, "en", routes);
-    expect(chase.title).toBe("Chase invoice F-0001");
+    expect(chase.title).toBe("Remind about invoice F-0001");
     expect(chase.why).toBe("It is 13 days overdue and $64.98 is still owed.");
     expect(chase.href).toBe(routes.invoice("inv-a"));
     expect(chase.urgency).toBe("high");
@@ -126,7 +126,7 @@ describe("« que faire maintenant » is built from data and leads somewhere (#26
   it("names the weekday of an often-empty slot in the owner's language", () => {
     const slot = actionView(actions.find((a) => a.kind === "slot")!, "fr", routes);
     expect(slot.title).toBe("Ouvrir le mardi 09:00 aux réservations");
-    expect(slot.why).toBe("Seulement 1 de ces 8 plages ont été réservées récemment.");
+    expect(slot.why).toBe("Peu demandée ces dernières semaines : 1 plage(s) réservée(s) sur 8.");
     expect(slot.href).toBe(routes.hours);
   });
 
