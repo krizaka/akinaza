@@ -1,17 +1,17 @@
 {
   "meta": {
-    "siteName": "Akinaza",
-    "titleTemplate": "{title} · Akinaza",
-    "description": "Your appointments, invoices and taxes, sorted. Akinaza is for salons, studios and the self-employed in Québec: clients book, you invoice, your GST/QST figures are ready. In French and in English."
+    "siteName": "{product}",
+    "titleTemplate": "{title} · {product}",
+    "description": "Your appointments, invoices and taxes, sorted. {product} is for salons, studios and the self-employed in Québec: clients book, you invoice, your GST/QST figures are ready. In French and in English."
   },
   "chrome": {
-    "brandHome": "Akinaza, home",
-    "navLabel": "Akinaza",
+    "brandHome": "{product}, home",
+    "navLabel": "{product}",
     "nav": {
       "product": "Product"
     },
     "signIn": "Sign in",
-    "tryIt": "Try Akinaza",
+    "tryIt": "Try {product}",
     "openApp": "Open the app",
     "account": "Account",
     "settings": "Settings",
@@ -32,7 +32,7 @@
       "label": "Menu",
       "home": {
         "title": "Overview",
-        "text": "What Akinaza does for a service shop."
+        "text": "What {product} does for a service shop."
       },
       "shop": {
         "title": "The demo shop",
@@ -40,7 +40,7 @@
       },
       "pricing": {
         "title": "Pricing",
-        "text": "What Akinaza costs, plan by plan."
+        "text": "What {product} costs, plan by plan."
       },
       "docs": {
         "title": "Guide",
@@ -74,10 +74,10 @@
     },
     "founder": {
       "title": "Founder offer: {price} a month plus taxes, setup included",
-      "lead": "A limited offer for the first businesses. Akinaza is an early product: we build it with you, and we set your shop up with you at no extra cost.",
+      "lead": "A limited offer for the first businesses. {product} is an early product: we build it with you, and we set your shop up with you at no extra cost.",
       "points": [
         "{price} per month plus taxes, as long as you stay",
-        "{cardRate} on cards: no Akinaza fee on what your clients pay by card",
+        "{cardRate} on cards: no {product} fee on what your clients pay by card",
         "Pre-authorised debit or B2B transfer: {debitRate} an order, capped at {debitCap}; the funds stay with the payment processor",
         "Setup included: your services, your hours, your first invoices",
         "Cancel any time from your billing page, in two clicks",
@@ -100,7 +100,7 @@
         "scaleSoon": "its B2B features are coming soon"
       }
     },
-    "screensTitle": "What Akinaza does",
+    "screensTitle": "What {product} does",
     "screens": {
       "book": {
         "title": "Clients book on their own",
@@ -158,7 +158,7 @@
   },
   "docs": {
     "title": "Owner's guide",
-    "lead": "Five short pages, one job each: your shop, a booking, an invoice, your books, your data. They say only what Akinaza does today.",
+    "lead": "Five short pages, one job each: your shop, a booking, an invoice, your books, your data. They say only what {product} does today.",
     "navLabel": "Owner's guide",
     "sidebarLabel": "Pages of the guide",
     "breadcrumbLabel": "Breadcrumb",
@@ -171,7 +171,7 @@
     "home": "Guide",
     "updated": "Written for the version in development; it changes with the product.",
     "collection": {
-      "title": "Akinaza",
+      "title": "{product}",
       "description": "For the owner of a service shop: appointments, invoices and the tax figures of your period."
     },
     "pages": {
@@ -292,7 +292,7 @@
             "id": "correct",
             "h": "Correct an invoice",
             "p": [
-              "An issued invoice never changes. Choose Correct: Akinaza issues the credit note of the invoice and the new invoice together, and links them. The client, the language and the terms stay the same."
+              "An issued invoice never changes. Choose Correct: {product} issues the credit note of the invoice and the new invoice together, and links them. The client, the language and the terms stay the same."
             ],
             "items": []
           },
@@ -309,7 +309,7 @@
       "books": {
         "nav": "Your books",
         "title": "Your books: the GST and QST of a period",
-        "lead": "Akinaza prepares the figures. You check them and you file.",
+        "lead": "{product} prepares the figures. You check them and you file.",
         "sections": [
           {
             "id": "period",
@@ -329,9 +329,9 @@
           },
           {
             "id": "file",
-            "h": "You file, Akinaza never does",
+            "h": "You file, {product} never does",
             "p": [
-              "Akinaza never files a return and never sends anything to Revenu Québec or the Canada Revenue Agency. Check each figure, then file the return yourself. These figures are not tax or accounting advice."
+              "{product} never files a return and never sends anything to Revenu Québec or the Canada Revenue Agency. Check each figure, then file the return yourself. These figures are not tax or accounting advice."
             ],
             "items": []
           }
@@ -340,7 +340,7 @@
       "data": {
         "nav": "Your data",
         "title": "Your data",
-        "lead": "What Akinaza keeps about you, and your right to it.",
+        "lead": "What {product} keeps about you, and your right to it.",
         "sections": [
           {
             "id": "export",
@@ -412,12 +412,12 @@
         "a": "No. Prices are before GST and QST, which the payment page adds."
       },
       {
-        "q": "Does Akinaza hold my clients' money?",
-        "a": "Never. Payments go through your own processor, straight to you; Akinaza only states its fee."
+        "q": "Does {product} hold my clients' money?",
+        "a": "Never. Payments go through your own processor, straight to you; {product} only states its fee."
       },
       {
-        "q": "Does Akinaza file my tax return?",
-        "a": "Not yet. Today Akinaza prepares the figures and you file them. Going further is on our roadmap: letting you run your shop yourself as far as possible, in Québec."
+        "q": "Does {product} file my tax return?",
+        "a": "Not yet. Today {product} prepares the figures and you file them. Going further is on our roadmap: letting you run your shop yourself as far as possible, in Québec."
       },
       {
         "q": "What if the price changes?",
@@ -437,7 +437,7 @@
     "trialLine": "{trial}, then {price} a month plus taxes. You enter your card to start: nothing is charged during the free period, and you can cancel before it ends.",
     "plannedLine": "Planned price: {price} a month plus taxes. Nothing is on sale yet and no card is asked.",
     "plannedPerMonth": "a month plus taxes, planned price",
-    "faqFreePeriodPlanned": { "q": "How does the free period work?", "a": "The free months come with the first subscription to Starter, once plans are on sale. Today nothing is on sale and Akinaza asks for no card: the prices shown are planned." },
+    "faqFreePeriodPlanned": { "q": "How does the free period work?", "a": "The free months come with the first subscription to Starter, once plans are on sale. Today nothing is on sale and {product} asks for no card: the prices shown are planned." },
     "associationLine": "Associations: {months} months free, then {price} a month plus taxes. For registered non-profits (OBNL) and charities.",
     "associationLineDays": "Associations: {days} days free, then {price} a month plus taxes. For registered non-profits (OBNL) and charities.",
     "associationHow": "Send your NEQ, your registered charity number or your incorporation document’s reference from your billing page. We check it; until it is approved you are on Starter.",
@@ -446,7 +446,7 @@
   },
   "download": {
     "title": "The apps",
-    "lead": "Akinaza in your pocket and on the web, recorded by our own tests on the demo shop. Nothing here is a store listing: no app is offered for download yet.",
+    "lead": "{product} in your pocket and on the web, recorded by our own tests on the demo shop. Nothing here is a store listing: no app is offered for download yet.",
     "videos": {
       "title": "See the apps at work",
       "lead": "Each video is recorded by the automated tests on the latest version, with demo data only.",
@@ -472,7 +472,7 @@
   "privacy": {
     "title": "Privacy",
     "updated": "Updated {date}",
-    "body": "Akinaza is in development: only the accounts our team creates can sign in. A shop's data — its clients, appointments, invoices and tax ledger — is kept in Akinaza's database in Canada, encrypted at rest, visible to that shop only. Client consent is recorded per purpose and can be withdrawn; a client's personal information can be erased, while the invoices tax law requires are kept. The tax figures Akinaza prepares are computed from the period's ledger inside Akinaza; nothing is produced for, filed with or transmitted to any government. Nothing is sold. To ask a question or have your data removed, use the contact form.",
+    "body": "{product} is in development: only the accounts our team creates can sign in. A shop's data — its clients, appointments, invoices and tax ledger — is kept in {product}'s database in Canada, encrypted at rest, visible to that shop only. Client consent is recorded per purpose and can be withdrawn; a client's personal information can be erased, while the invoices tax law requires are kept. The tax figures {product} prepares are computed from the period's ledger inside {product}; nothing is produced for, filed with or transmitted to any government. Nothing is sold. To ask a question or have your data removed, use the contact form.",
     "officer": {
       "title": "Privacy officer",
       "role": "Privacy Officer (« Responsable de la protection des renseignements personnels »)",
@@ -480,7 +480,7 @@
     },
     "processors": {
       "title": "Who processes information for us",
-      "lead": "Akinaza uses service providers under written contracts, only to run the service. Where a provider stores data is stated here only once we have confirmed it.",
+      "lead": "{product} uses service providers under written contracts, only to run the service. Where a provider stores data is stated here only once we have confirmed it.",
       "items": [
         {
           "h": "Hosting",
@@ -496,11 +496,11 @@
         },
         {
           "h": "Payments",
-          "p": "A subscription is paid on the hosted page of a payment processor; Akinaza never sees or keeps a card number."
+          "p": "A subscription is paid on the hosted page of a payment processor; {product} never sees or keeps a card number."
         },
         {
           "h": "Translation",
-          "p": "If translating a shop page is turned on, the page's own texts are sent to Krizaka's engine, Orazaka. Nothing about a client is sent."
+          "p": "If translating a shop page is turned on, the page's own texts are sent to Krizaka's engine, Sovkora. Nothing about a client is sent."
         }
       ],
       "register": "The register of these transfers outside Québec, with the assessment we wrote before opening, is public:",
@@ -521,20 +521,20 @@
   "terms": {
     "title": "Terms of use",
     "version": "Version {version}",
-    "status": "A good-faith version written from the law, waiting for a lawyer's review before Akinaza opens to the public. If in doubt, the French version prevails.",
+    "status": "A good-faith version written from the law, waiting for a lawyer's review before {product} opens to the public. If in doubt, the French version prevails.",
     "privacyLink": "Read the privacy notice",
     "sections": [
       {
         "h": "1. Who we are, who these terms are for",
-        "p": "Akinaza is a product of {publisher} ({city}, {region}), the publisher. These terms govern the subscription to Akinaza by service businesses in Québec: salons, workshops, coaches, cleaning businesses, pet services, consultants. Restaurants, cafés, bars and bakeries are excluded, because the law requires them to use a certified sales recording module, which Akinaza's point of sale is not. This is a contract of adhesion (art. 1379 of the Civil Code of Québec, C.C.Q.): we show it to you before any payment, and an illegible, incomprehensible or abusive clause has no effect against you (art. 1435 to 1437 C.C.Q.)."
+        "p": "{product} is a product of {publisher} ({city}, {region}), the publisher. These terms govern the subscription to {product} by service businesses in Québec: salons, workshops, coaches, cleaning businesses, pet services, consultants. Restaurants, cafés, bars and bakeries are excluded, because the law requires them to use a certified sales recording module, which {product}'s point of sale is not. This is a contract of adhesion (art. 1379 of the Civil Code of Québec, C.C.Q.): we show it to you before any payment, and an illegible, incomprehensible or abusive clause has no effect against you (art. 1435 to 1437 C.C.Q.)."
       },
       {
-        "h": "2. What Akinaza does",
-        "p": "Akinaza gives you a shop page and bookings, bilingual invoices with GST and QST exact to the cent, an accounting ledger that never erases, and a tax report prepared from that ledger. The service is in development: a feature marked « soon » is not sold and is not part of your subscription. A booking is a contract between your client and you; Akinaza is not a party to it, it provides the tool."
+        "h": "2. What {product} does",
+        "p": "{product} gives you a shop page and bookings, bilingual invoices with GST and QST exact to the cent, an accounting ledger that never erases, and a tax report prepared from that ledger. The service is in development: a feature marked « soon » is not sold and is not part of your subscription. A booking is a contract between your client and you; {product} is not a party to it, it provides the tool."
       },
       {
-        "h": "3. What Akinaza never does",
-        "p": "Akinaza prepares, you file. It never produces, signs or transmits a return to Revenu Québec or the Canada Revenue Agency: it is for you to check the prepared figures and to file them, under the Act respecting the Québec sales tax (CQLR, c. T-0.1) and the Excise Tax Act (R.S.C. 1985, c. E-15). The prepared figures are neither tax advice nor accounting advice. Akinaza is not a cash register: it does not replace the sales recording module that a restaurant or a bar must use."
+        "h": "3. What {product} never does",
+        "p": "{product} prepares, you file. It never produces, signs or transmits a return to Revenu Québec or the Canada Revenue Agency: it is for you to check the prepared figures and to file them, under the Act respecting the Québec sales tax (CQLR, c. T-0.1) and the Excise Tax Act (R.S.C. 1985, c. E-15). The prepared figures are neither tax advice nor accounting advice. {product} is not a cash register: it does not replace the sales recording module that a restaurant or a bar must use."
       },
       {
         "h": "4. The subscription, the price and the renewal",
@@ -542,7 +542,7 @@
       },
       {
         "h": "5. Payments",
-        "p": "The subscription is paid on the hosted payment page of our payment processor: Akinaza never sees or keeps your card number. The payments of your own clients, when they are offered, go through your own account with your own processor: the money goes straight from the client to you. Akinaza never holds funds, does not keep anything for you or for your client, does not act as a trustee and keeps nothing back. The processor's fees are those of your contract with it; Akinaza's fees on these payments are shown on the pricing page (no percentage on cards, a capped amount for pre-authorised debit)."
+        "p": "The subscription is paid on the hosted payment page of our payment processor: {product} never sees or keeps your card number. The payments of your own clients, when they are offered, go through your own account with your own processor: the money goes straight from the client to you. {product} never holds funds, does not keep anything for you or for your client, does not act as a trustee and keeps nothing back. The processor's fees are those of your contract with it; {product}'s fees on these payments are shown on the pricing page (no percentage on cards, a capped amount for pre-authorised debit)."
       },
       {
         "h": "6. Cancellation and refunds",
@@ -550,7 +550,7 @@
       },
       {
         "h": "7. Your personal information",
-        "p": "The information about your clients that you enter stays yours: you are responsible for it and Akinaza processes it on your behalf, in a database in Canada, encrypted at rest, visible to your shop only; the photos and files you add are stored with a media provider, named in the privacy notice. Consent is asked per purpose, never pre-ticked, and can be withdrawn; erasure blanks the personal fields and keeps the invoices tax law requires us to keep (six years). All of this falls under the Act respecting the protection of personal information in the private sector (CQLR, c. P-39.1), as amended by the Act to modernize legislative provisions as regards the protection of personal information (S.Q. 2021, c. 25). The details, the person in charge of the protection of personal information and how to exercise your rights are in the privacy notice."
+        "p": "The information about your clients that you enter stays yours: you are responsible for it and {product} processes it on your behalf, in a database in Canada, encrypted at rest, visible to your shop only; the photos and files you add are stored with a media provider, named in the privacy notice. Consent is asked per purpose, never pre-ticked, and can be withdrawn; erasure blanks the personal fields and keeps the invoices tax law requires us to keep (six years). All of this falls under the Act respecting the protection of personal information in the private sector (CQLR, c. P-39.1), as amended by the Act to modernize legislative provisions as regards the protection of personal information (S.Q. 2021, c. 25). The details, the person in charge of the protection of personal information and how to exercise your rights are in the privacy notice."
       },
       {
         "h": "8. Our liability",
@@ -558,7 +558,7 @@
       },
       {
         "h": "9. If you act as a consumer",
-        "p": "Akinaza is for businesses. If you contract as an individual, for a use that is not your business, the Consumer Protection Act (CQLR, c. P-40.1) applies and nothing in these terms limits your rights: notably the rules for a contract made at a distance (art. 54.1 and following CPA, including the information before the contract, the copy of the contract and the cancellation provided by art. 54.8), the ban on an arbitration clause or one that takes away a class action (art. 11.1 CPA) and the ban on limiting our liability for our own acts (art. 10 CPA). You can also turn to the Office de la protection du consommateur."
+        "p": "{product} is for businesses. If you contract as an individual, for a use that is not your business, the Consumer Protection Act (CQLR, c. P-40.1) applies and nothing in these terms limits your rights: notably the rules for a contract made at a distance (art. 54.1 and following CPA, including the information before the contract, the copy of the contract and the cancellation provided by art. 54.8), the ban on an arbitration clause or one that takes away a class action (art. 11.1 CPA) and the ban on limiting our liability for our own acts (art. 10 CPA). You can also turn to the Office de la protection du consommateur."
       },
       {
         "h": "10. Changes to these terms",
@@ -574,7 +574,7 @@
       },
       {
         "h": "13. Intellectual property and your right to use the service",
-        "p": "Akinaza, its software, its document templates, the design of the shop pages, its names, its birds and its marks belong to {publisher} or its licensors; these terms assign you none of those rights (Copyright Act, R.S.C. 1985, c. C-42). For the length of your subscription only, you receive a personal, non-exclusive, non-transferable, non-sublicensable right to use the hosted service for the needs of your business; that right ends with the subscription. Your shop's content and your clients' information stay yours (section 7): you only authorise us to host and process them to provide the service. Akinaza's source code is published under its own licence, stated in its repository: these terms govern the hosted service, that licence governs the code, and nothing here removes what the licence allows you."
+        "p": "{product}, its software, its document templates, the design of the shop pages, its names, its birds and its marks belong to {publisher} or its licensors; these terms assign you none of those rights (Copyright Act, R.S.C. 1985, c. C-42). For the length of your subscription only, you receive a personal, non-exclusive, non-transferable, non-sublicensable right to use the hosted service for the needs of your business; that right ends with the subscription. Your shop's content and your clients' information stay yours (section 7): you only authorise us to host and process them to provide the service. {product}'s source code is published under its own licence, stated in its repository: these terms govern the hosted service, that licence governs the code, and nothing here removes what the licence allows you."
       },
       {
         "h": "14. Prohibited uses",
@@ -582,11 +582,11 @@
       },
       {
         "h": "15. Names and marks",
-        "p": "The names and logos of Akinaza and Krizaka, and their birds, are marks of {publisher} (Trademarks Act, R.S.C. 1985, c. T-13). These terms, like the code licence, grant no right to those marks; their use is governed by the policy published at https://github.com/krizaka/.github/blob/main/TRADEMARKS.md."
+        "p": "The names and logos of {product} and Krizaka, and their birds, are marks of {publisher} (Trademarks Act, R.S.C. 1985, c. T-13). These terms, like the code licence, grant no right to those marks; their use is governed by the policy published at https://github.com/krizaka/.github/blob/main/TRADEMARKS.md."
       },
       {
         "h": "16. Contact",
-        "p": "Through Krizaka's contact form (topic Akinaza), or at contact@krizaka.com for your personal information. We answer within 30 days."
+        "p": "Through Krizaka's contact form (topic {product}), or at contact@krizaka.com for your personal information. We answer within 30 days."
       }
     ]
   },
@@ -616,7 +616,7 @@
       "password": "Password",
       "submit": "Sign in",
       "closedTitle": "Sign-up is closed.",
-      "closed": "Akinaza is in development; accounts are created by our team.",
+      "closed": "{product} is in development; accounts are created by our team.",
       "contact": "Contact us",
       "legalPrefix": "By signing in you accept the ",
       "terms": "terms of use",
@@ -625,7 +625,7 @@
       "forgot": "Forgot your password?"
     },
     "adminSignIn": {
-      "promise": "The administration of Akinaza.",
+      "promise": "The administration of {product}.",
       "asideFooter": "A session, the administrator role and an allowed address.",
       "title": "Administration",
       "description": "Administrators only.",
@@ -871,7 +871,7 @@
           "addReason": "Add a reason",
           "reasonLabel": "Reason {position} in {language}",
           "removeReason": "Remove reason {position}",
-          "derived": "Derived: Akinaza computes this status, and nobody moves it.",
+          "derived": "Derived: {product} computes this status, and nobody moves it.",
           "problems": "To fix before saving"
         }
       },
@@ -990,7 +990,7 @@
       },
       "incidents": {
         "title": "Confidentiality incidents",
-        "lead": "The register required by the Act respecting the protection of personal information in the private sector (ss. 3.5 to 3.8): every incident, serious or not, kept five years. It holds facts and categories of information, never a person's data. Assess the risk of serious injury; if there is one, notify the Commission d'accès à l'information and the people concerned, then close. It covers Akinaza's data: shop customers' files, invoices and tax slips.",
+        "lead": "The register required by the Act respecting the protection of personal information in the private sector (ss. 3.5 to 3.8): every incident, serious or not, kept five years. It holds facts and categories of information, never a person's data. Assess the risk of serious injury; if there is one, notify the Commission d'accès à l'information and the people concerned, then close. It covers {product}'s data: shop customers' files, invoices and tax slips.",
         "exportCsv": "Export CSV",
         "exportJson": "Export JSON",
         "register": "Register",
@@ -1164,7 +1164,7 @@
       "NO_CONSENT": "The owner withdrew their consent: nothing can be sent.",
       "CLIENT_UNREACHABLE": "The owner has no e-mail on file.",
       "NO_REPORT": "Save the report first.",
-      "NO_SHOP": "You do not run a shop on Akinaza.",
+      "NO_SHOP": "You do not run a shop on {product}.",
       "CONSENT_REQUIRED": "Tick the first box to continue: without it we cannot keep your file.",
       "SYNC_NO_CONSENT": "Tick the box to allow the connection.",
       "SYNC_NOT_CONNECTED": "This account is not connected.",
@@ -1189,7 +1189,7 @@
       "REQUESTS_FULL": "You already keep 20 requests here: delete one first.",
       "REQUEST_FILES_FULL": "A request keeps at most 5 files.",
       "UPLOAD_NOT_ALLOWED": "Only photos (JPEG, PNG, WebP) and PDFs are accepted.",
-      "LANGUAGE_NOT_ALLOWED": "That language is not offered on Akinaza.",
+      "LANGUAGE_NOT_ALLOWED": "That language is not offered on {product}.",
       "LANGUAGE_NOT_ENABLED": "Turn that language on first.",
       "TRANSLATION_LIMIT": "You have used today's translations. Try again tomorrow.",
       "TRANSLATION_UNAVAILABLE": "Automatic translation is not available right now.",
@@ -1246,7 +1246,7 @@
     },
     "today": {
       "noShopTitle": "No shop yet",
-      "noShop": "Shops are set up by our team while Akinaza is in development.",
+      "noShop": "Shops are set up by our team while {product} is in development.",
       "invoices": {
         "title": "Latest invoices",
         "overdue": "Overdue invoices: {count}"
@@ -1367,12 +1367,12 @@
       },
       "signUp": {
         "title": "Create an account",
-        "description": "Accounts are opened by our team while Akinaza is in development.",
+        "description": "Accounts are opened by our team while {product} is in development.",
         "email": "E-mail",
         "password": "Password",
         "submit": "Create my account",
         "closedTitle": "Sign-up is closed.",
-        "closed": "Akinaza is in development; accounts are created by our team.",
+        "closed": "{product} is in development; accounts are created by our team.",
         "contact": "Contact us",
         "back": "Back to sign-in",
         "legalPrefix": "By creating an account you accept the "
@@ -1429,7 +1429,7 @@
       },
       "avatar": {
         "label": "Picture",
-        "hint": "One of Akinaza's pictures."
+        "hint": "One of {product}'s pictures."
       },
       "email": {
         "label": "E-mail",
@@ -1444,7 +1444,7 @@
         "pending": "A link was sent to {email}. The address changes when you open it."
       },
       "preferences": {
-        "description": "How Akinaza speaks and looks for you.",
+        "description": "How {product} speaks and looks for you.",
         "languageHint": "The language of the app and of the e-mails.",
         "themes": {
           "light": {
@@ -1544,7 +1544,7 @@
       },
       "data": {
         "title": "Your data",
-        "description": "What Akinaza keeps about you, and your right to it.",
+        "description": "What {product} keeps about you, and your right to it.",
         "export": "Export",
         "exportHint": "Everything held about this account, as one file.",
         "download": "Download",
@@ -1692,7 +1692,7 @@
       "noMatch": "No client matches.",
       "privacy": {
         "title": "Their privacy requests",
-        "lead": "When this person asks to see, take a copy of or erase what you hold about them, answer here, within 30 days. Akinaza holds the file for your shop.",
+        "lead": "When this person asks to see, take a copy of or erase what you hold about them, answer here, within 30 days. {product} holds the file for your shop.",
         "export": "Download their data",
         "erase": "Erase their file",
         "eraseConfirm": "Erase this client's file?",
@@ -2098,7 +2098,7 @@
         },
         "sources": {
           "title": "Your other calendars",
-          "lead": "Akinaza reads the times you are busy in the calendar you already use, and keeps them free of bookings. It reads only the times: never a title, a guest or a note, and it never changes your calendar.",
+          "lead": "{product} reads the times you are busy in the calendar you already use, and keeps them free of bookings. It reads only the times: never a title, a guest or a note, and it never changes your calendar.",
           "wholeShop": "The whole shop",
           "add": "Connect a calendar",
           "label": "Name",
@@ -2106,7 +2106,7 @@
           "whose": "Blocks the times of",
           "url": "Calendar address (ICS)",
           "urlHint": "Google Calendar: Settings, your calendar, Secret address in iCal format. Apple and Outlook give one too when you publish or share a calendar. Anyone with this address can read that calendar: it is kept sealed here and shown to nobody.",
-          "consent": "I agree that Akinaza reads the times I am busy in this calendar, to keep them free of bookings. I can disconnect at any time: those times are then deleted.",
+          "consent": "I agree that {product} reads the times I am busy in this calendar, to keep them free of bookings. I can disconnect at any time: those times are then deleted.",
           "needConsent": "Tick the box to connect the calendar.",
           "connect": "Connect",
           "none": "No calendar connected.",
@@ -2123,7 +2123,7 @@
           "off": "The administrator has switched calendar connections off.",
           "providers": {
             "title": "Connect Google or Outlook",
-            "lead": "You agree at Google's or Microsoft's own page, and Akinaza receives only the times you are busy: never a title, a guest or a note. You can take the permission back there too.",
+            "lead": "You agree at Google's or Microsoft's own page, and {product} receives only the times you are busy: never a title, a guest or a note. You can take the permission back there too.",
             "google": "Connect Google Calendar",
             "outlook": "Connect Outlook"
           },
@@ -2453,7 +2453,7 @@
           "label": "Net QST"
         }
       },
-      "footnote": "Akinaza prepares these figures from your invoices and expenses. You file the return with Revenu Québec yourself, after checking each figure.",
+      "footnote": "{product} prepares these figures from your invoices and expenses. You file the return with Revenu Québec yourself, after checking each figure.",
       "figuresTitle": "Your GST and QST figures",
       "remitHint": "Prepared from your invoices and expenses; you file it with Revenu Québec.",
       "periodHint": "The latest finished quarter is the one to file now; the current quarter is still open.",
@@ -2514,7 +2514,7 @@
       },
       "correct": {
         "title": "Correct invoice {number}",
-        "lead": "An issued invoice never changes: when you confirm, Akinaza issues the credit note of {number} and the new invoice, together. The client, the language and the terms stay the same.",
+        "lead": "An issued invoice never changes: when you confirm, {product} issues the credit note of {number} and the new invoice, together. The client, the language and the terms stay the same.",
         "back": "Back to {number}",
         "description": "Description",
         "unitPrice": "Unit price",
@@ -2605,7 +2605,7 @@
       "total": "Total (CAD)",
       "credit": "Credit note",
       "creditOf": "This credit note cancels an earlier invoice.",
-      "footer": "Prepared with Akinaza. The merchant files the GST/QST return; Akinaza never does.",
+      "footer": "Prepared with {product}. The merchant files the GST/QST return; {product} never does.",
       "terms": "Payment terms",
       "dueOn": "Due date",
       "termsNet": "Net {days} days",
@@ -2825,7 +2825,7 @@
         "atAverageRate": "Estimated at your average revenue per minute over the last 8 weeks.",
         "equalVolume": "At the same number of appointments.",
         "revenueNotMargin": "Revenue per hour, not a margin: your expenses are not split by service.",
-        "preparedNotFiled": "Akinaza prepares the figures, you file your return."
+        "preparedNotFiled": "{product} prepares the figures, you file your return."
       },
       "mail": {
         "gaps": "{slots} free slots in the next 7 days ({missed} of missed revenue): {invitees} regulars to invite.",
@@ -2927,12 +2927,12 @@
       },
       "gstToRemit": {
         "name": "GST to remit",
-        "meaning": "What you would pay to the government for the GST, if the period ended today. Akinaza prepares it; you file it.",
+        "meaning": "What you would pay to the government for the GST, if the period ended today. {product} prepares it; you file it.",
         "formula": "GST collected on your invoices, minus the GST you may claim back on your expenses."
       },
       "qstToRemit": {
         "name": "QST to remit",
-        "meaning": "What you would pay to Revenu Québec for the QST, if the period ended today. Akinaza prepares it; you file it.",
+        "meaning": "What you would pay to Revenu Québec for the QST, if the period ended today. {product} prepares it; you file it.",
         "formula": "QST collected on your invoices, minus the QST you may claim back on your expenses."
       },
       "margin": {
@@ -2978,8 +2978,8 @@
         },
         "taxes": {
           "title": "Prepare your GST/QST return",
-          "why": "Your period ends in {days} days ({start} to {end}). Akinaza prepares the figures; you file the return yourself.",
-          "whyPast": "Your period ended on {end}. Akinaza prepares the figures; you file the return yourself.",
+          "why": "Your period ends in {days} days ({start} to {end}). {product} prepares the figures; you file the return yourself.",
+          "whyPast": "Your period ended on {end}. {product} prepares the figures; you file the return yourself.",
           "cta": "Prepare the return"
         },
         "slot": {
@@ -3008,7 +3008,7 @@
       "forPeriod": "For the period {start} to {end}",
       "computed": "Computed {when}",
       "lexiconTerms": "Words used here",
-      "never": "Akinaza prepares these figures. You check them and you file your returns yourself.",
+      "never": "{product} prepares these figures. You check them and you file your returns yourself.",
       "formulaHere": "{formula} Here: {terms}.",
       "updatedLabel": "Updated",
       "rules": {
@@ -3026,7 +3026,7 @@
           "noShowAlertPct": "Missed appointments: needs action above (%)",
           "taxPeriodSoonDays": "Remind me to prepare the GST/QST return this many days before the period ends"
         },
-        "fixed": "These values are set by Akinaza and cannot be changed for now. Each figure still shows how it is judged.",
+        "fixed": "These values are set by {product} and cannot be changed for now. Each figure still shows how it is judged.",
         "save": "Save my thresholds",
         "reset": "Back to the usual values",
         "saved": "Saved. Your figures now use these thresholds.",
@@ -3056,7 +3056,7 @@
         },
         "declarationPeriod": {
           "term": "Return period",
-          "definition": "The stretch of time (a month, a quarter or a year, depending on how you file) covered by one GST/QST return. Akinaza prepares its figures; you review and file the return yourself."
+          "definition": "The stretch of time (a month, a quarter or a year, depending on how you file) covered by one GST/QST return. {product} prepares its figures; you review and file the return yourself."
         },
         "noShow": {
           "term": "No-show",
@@ -3701,7 +3701,7 @@
   "notFound": {
     "title": "Page not found",
     "text": "This page does not exist, or is not yours.",
-    "home": "Back to Akinaza"
+    "home": "Back to {product}"
   },
   "explore": {
     "title": "Explorer",

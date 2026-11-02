@@ -2,10 +2,14 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import { bindProduct } from "@/lib/brand";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { llmsText } from "./seo";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 /**
  * akinaza#362. A public text names a place (Canada, Toronto) only when the configured region of the store it describes

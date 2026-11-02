@@ -3,6 +3,7 @@ import { briefActionsOf, briefMailShops, briefSnapshot, claimBriefAction, claimB
 import { isBriefDue, weekOf } from "@krizaka/brief";
 import { eq } from "drizzle-orm";
 
+import { productName } from "./brand-name";
 import { db } from "./db";
 import { formatMoney } from "./format";
 import { format, getDictionary, type Locale } from "./i18n";
@@ -66,7 +67,7 @@ export async function inviteRegulars(shop: BriefShop, recommendationId: string, 
     const mail = renderMailTemplate(
       "brief-invite",
       { shop: shop.name, client: client.fullName.split(" ")[0] ?? client.fullName, days: daysInWords(payload.days, client.language), url: `${settings.appUrl}/${client.language}/s/${shop.slug}` },
-      { locale: client.language, appUrl: settings.appUrl, now },
+      { locale: client.language, appUrl: settings.appUrl, now, product: await productName() },
     );
     const id = await enqueueMail(db(), { to: client.email, locale: mail.locale, template: "brief-invite", subject: mail.subject, html: mail.html, text: mail.text, relatedKind: "brief", relatedId: client.id });
     const queued = await mailById(db(), id);
@@ -114,7 +115,7 @@ export async function sendDueBriefs(now: Date, settings: MailSettings, send: typ
     const mail = renderMailTemplate(
       "brief-weekly",
       { shop: shop.name, line1: lines[0]!, line2: lines[1] ?? "", has2: lines.length > 1, line3: lines[2] ?? "", has3: lines.length > 2, url: `${settings.appUrl}${shopRoutes(locale, shop.id).today()}`, stop: `${settings.appUrl}/${locale}/brief/stop/${token}` },
-      { locale, appUrl: settings.appUrl, now },
+      { locale, appUrl: settings.appUrl, now, product: await productName() },
     );
     const id = await enqueueMail(db(), { to: shop.ownerEmail, locale: mail.locale, template: "brief-weekly", subject: mail.subject, html: mail.html, text: mail.text, relatedKind: "brief", relatedId: shop.id });
     const queued = await mailById(db(), id);

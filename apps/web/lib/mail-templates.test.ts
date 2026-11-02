@@ -11,7 +11,7 @@ const preview = (id: string) => JSON.parse(fs.readFileSync(path.join(DIR, id, "p
 describe("the bilingual e-mail templates (krizaka-notifications format)", () => {
   it("render in English and French, with exactly their declared variables", () => {
     for (const id of Object.keys(MAIL_TEMPLATES) as MailTemplateId[]) {
-      const declared = Object.keys(MAIL_TEMPLATES[id]).sort();
+      const declared = [...Object.keys(MAIL_TEMPLATES[id]), "product"].sort();
       for (const locale of MAIL_LOCALES) {
         const rendered = renderMailTemplate(id, preview(id), { locale, appUrl: "https://dev.akinaza.com", dir: DIR });
         expect(rendered.locale).toBe(locale);

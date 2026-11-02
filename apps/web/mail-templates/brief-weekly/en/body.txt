@@ -6,7 +6,7 @@ Here is what matters this week for {shop}, worked out from your appointments and
 {#has2}- {line2}
 {/has2}{#has3}- {line3}
 {/has3}
-Open Akinaza: {url}
+Open {product}: {url}
 
 Every action is one tap in the app; nothing goes out without you.
 Stop this e-mail: {stop}

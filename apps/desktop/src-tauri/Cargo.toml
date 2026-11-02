@@ -1,7 +1,7 @@
 [package]
 name = "akinaza-desktop"
 version = "0.1.0"
-description = "Akinaza for the Mac: the owner's back office in a native window"
+description = "Folioviv for the Mac: the owner's back office in a native window"
 authors = ["Krizaka"]
 edition = "2021"
 license = "FSL-1.1-ALv2"

@@ -4,12 +4,15 @@ import { join } from "node:path";
 import { TEMPLATES, templatesFor } from "@akinaza/core";
 import { describe, expect, it, vi } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import type { TemplateChoices } from "@/lib/template-choices";
 import { renderIn } from "@/lib/test-i18n";
-import en from "@/messages/en.json";
+import enRaw from "@/messages/en.json";
 
 import { TemplatePicker } from "./TemplatePicker";
 import { TemplatePreview } from "./TemplatePreview";
+
+const en = bindProduct(enRaw);
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app/s1/shop", useSearchParams: () => new URLSearchParams() }));
 

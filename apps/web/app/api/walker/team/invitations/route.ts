@@ -4,6 +4,7 @@ import { z } from "zod";
 import { systemClock } from "@/app/system-clock";
 import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";
+import { productName } from "@/lib/brand-name";
 import { db } from "@/lib/db";
 import { handle, readJson } from "@/lib/http";
 import { limit } from "@/lib/rate-limit";
@@ -25,7 +26,8 @@ export const POST = (req: Request) =>
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.email.trim())) return Response.json({ error: "Not an e-mail address", code: "BAD_REQUEST" }, { status: 400 });
     const { token, invitation } = await teamAct(() => team().invite(shop.id, { id: session.account.id }, input, systemClock.now()));
     const link = `${new URL(req.url).origin}/fr/accept-invite?token=${encodeURIComponent(token)}`;
-    const text = `Bonjour,\n\nOn vous invite à rejoindre « ${shop.name} » sur Akinaza (rôle : ${invitation.role}). Ouvrez ce lien, connecté à ${invitation.email}, pour accepter :\n${link}\n\nHello — you are invited to join “${shop.name}” on Akinaza (role: ${invitation.role}). Open this link, signed in as ${invitation.email}:\n${link}\n`;
+    const product = await productName();
+    const text = `Bonjour,\n\nOn vous invite à rejoindre « ${shop.name} » sur ${product} (rôle : ${invitation.role}). Ouvrez ce lien, connecté à ${invitation.email}, pour accepter :\n${link}\n\nHello — you are invited to join “${shop.name}” on ${product} (role: ${invitation.role}). Open this link, signed in as ${invitation.email}:\n${link}\n`;
     await enqueueMail(db(), { to: invitation.email, locale: "fr", template: "team-invitation", subject: `Invitation — ${shop.name}`, text, html: `<p>${escapeHtml(text).replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>")}</p>` });
     await audit({ action: "team.invited", actorId: session.account.id, actorLabel: session.account.email, targetId: shop.id, detail: { email: invitation.email, role: invitation.role }, headers: req.headers });
     return Response.json({ invitation, link }, { status: 201, headers: { "Cache-Control": "private, no-store" } });

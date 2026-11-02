@@ -2,10 +2,14 @@ import { OWNER_BOUNDS } from "@akinaza/core";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import { bindProduct } from "@/lib/brand";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { FigureRules } from "./FigureRules";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 const say = (key: string, vars?: Record<string, string | number>) => {
   const value = key.split(".").reduce<unknown>((o, k) => (o as Record<string, unknown>)[k], en.console) as string;
@@ -25,7 +29,7 @@ describe("the owner's thresholds screen (#260)", () => {
 
   it("shows the values read only, with the reason, when the administrator switched tuning off", () => {
     const html = renderToStaticMarkup(<FigureRules tunable={false} usual={usual} overrides={{ overdueWatchPct: 5 }} bounds={OWNER_BOUNDS} />);
-    expect(text(html)).toContain("set by Akinaza");
+    expect(text(html)).toContain("set by Folioviv");
     expect(html).not.toContain("<input");
     expect(html).not.toContain("Save my thresholds");
   });

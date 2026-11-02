@@ -27,6 +27,8 @@ export HYDRATION_EMPTY_OWNER_EMAIL=ines.debut@akinaza.test HYDRATION_ONE_OWNER_E
 QA_OWNER_STATES_PASSWORD="$HYDRATION_STATES_PASSWORD" pnpm --filter @akinaza/web exec tsx scripts/seed-owner-states.mjs
 for _ in $(seq 1 60); do curl -sf http://localhost:3000/api/healthz && break; sleep 1; done
 pnpm run seo:check
+# The commercial names (krizaka-internal#2039, #2103): no code name in a built page, the catalogues, the mail templates, the store and menu texts.
+pnpm run check:names
 # Every cookie the app sets is host-only (no Domain, Path=/, __Host- on https): akinaza#534, ADR-005.
 node scripts/check-cookies.mjs --base http://localhost:3000 --email "$HYDRATION_CLIENT_EMAIL" --password "$HYDRATION_CLIENT_PASSWORD"
 # A shop through its own domain, end to end (ADR-005 slices 4-5, akinaza#538/#549): a second server on the same build and database declares the shop domain

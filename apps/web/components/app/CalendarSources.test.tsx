@@ -1,11 +1,15 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import type { CalendarOverview } from "@/lib/calendar/overview";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { CalendarSources } from "./CalendarSources";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 const say = (key: string, vars?: Record<string, string | number>) => {
   const value = key.split(".").reduce<unknown>((o, k) => (o as Record<string, unknown>)[k], en.console) as string;
@@ -27,7 +31,7 @@ const overview = (over: Partial<CalendarOverview> = {}): CalendarOverview => ({
 describe("the other calendars screen (#282, ADR-004)", () => {
   it("lists each calendar with its state, offers to read it again or disconnect, and asks for the consent to connect another", () => {
     const t = text(renderToStaticMarkup(<CalendarSources overview={overview()} />));
-    for (const word of ["Your other calendars", "Google", "Read", "Read again", "Disconnect", "Connect a calendar", "I agree that Akinaza reads the times I am busy", "never a title"]) expect(t).toContain(word);
+    for (const word of ["Your other calendars", "Google", "Read", "Read again", "Disconnect", "Connect a calendar", "I agree that Folioviv reads the times I am busy", "never a title"]) expect(t).toContain(word);
   });
 
   it("shows why a calendar cannot be read, in words", () => {

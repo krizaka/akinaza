@@ -1,10 +1,14 @@
 import { ACTION_KINDS, computeFigures, DEFAULT_FIGURE_THRESHOLDS, FIGURE_ID, LEXICON, nextActions } from "@akinaza/core";
 import { describe, expect, it } from "vitest";
 
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import { bindProduct } from "@/lib/brand";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { SETTINGS } from "./settings";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 const FIXTURE = {
   today: "2026-12-20",

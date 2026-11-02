@@ -1,10 +1,10 @@
-import { AkinazaLogo } from "@krizaka/ui";
 import { AuthLayout } from "@krizaka/ui/auth-layout";
 import { Mascot } from "@krizaka/ui/mascots";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { BrandLockup } from "@/components/BrandLockup";
 import { SignInForm } from "@/components/console/SignInForm";
 import { pageSession } from "@/lib/access";
 import { asLocale, getDictionary } from "@/lib/i18n";
@@ -30,7 +30,7 @@ export default async function SignInPage({ params, searchParams }: Readonly<{ pa
     <AuthLayout
       brand={
         <Link href={`/${locale}`} className="inline-flex items-center gap-2">
-          <AkinazaLogo size={28} /> Akinaza
+          <BrandLockup locale={locale} size={28} />
         </Link>
       }
       promise={t.promise}

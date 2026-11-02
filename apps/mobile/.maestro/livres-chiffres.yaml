@@ -29,7 +29,7 @@ tags:
     element:
       id: figure-toCollect
 - scrollUntilVisible:
-    element: "Akinaza prépare ces chiffres.*|Akinaza prepares these figures.*"
+    element: "Folioviv prépare ces chiffres.*|Folioviv prepares these figures.*"
 - takeScreenshot: chiffres
 - scrollUntilVisible:
     element:

@@ -1,11 +1,15 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import type { FeedView } from "@/lib/feed-view";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { NeighbourhoodFeed } from "./NeighbourhoodFeed";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 const view: FeedView = {
   flyers: [

@@ -1,6 +1,7 @@
 import type { BarWords } from "@/components/account/BarSession";
 import { LazyBarSession } from "@/components/account/LazyBarSession";
 import { SignedOutActions } from "@/components/account/SignedOutActions";
+import { BrandLockup } from "@/components/BrandLockup";
 import { SiteBar } from "@/components/SiteChrome";
 import { type Locale, translator } from "@/lib/i18n";
 import type { PageId } from "@/lib/site";
@@ -16,5 +17,5 @@ export function SiteHeader({ locale, current, path, languages, contentLocale, an
   const labels = { nav: t("chrome.navLabel"), brandHome: t("chrome.brandHome"), sourceCode: t("chrome.sourceCode"), theme: t("chrome.themeToggle"), language: t("chrome.languageLabel"), explore: t("chrome.explore"), menu: t("chrome.menu.label"), preferences: t("chrome.preferences") };
   const session = (placement: "bar" | "panel") =>
     anonymous ? <SignedOutActions locale={locale} placement={placement} signupOpen={false} signIn={words.signIn} tryIt={words.tryIt} /> : <LazyBarSession locale={locale} words={words} placement={placement} />;
-  return <SiteBar locale={locale} current={current} {...(path ? { path } : {})} {...(languages ? { languages } : {})} {...(contentLocale ? { contentLocale } : {})} labels={labels} sessionBar={session("bar")} sessionPanel={session("panel")} />;
+  return <SiteBar locale={locale} current={current} {...(path ? { path } : {})} {...(languages ? { languages } : {})} {...(contentLocale ? { contentLocale } : {})} labels={labels} brand={<BrandLockup locale={locale} />} sessionBar={session("bar")} sessionPanel={session("panel")} />;
 }

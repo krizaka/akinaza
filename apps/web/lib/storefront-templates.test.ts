@@ -1,8 +1,12 @@
 import { SHOP_TYPES, TEMPLATES } from "@akinaza/core";
 import { describe, expect, it } from "vitest";
 
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import { bindProduct } from "@/lib/brand";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 describe("the templates speak both languages (#261)", () => {
   it.each([["en", en], ["fr", fr]] as const)("%s: every template has a name and an intention, and no text lives in the template itself", (_l, m) => {

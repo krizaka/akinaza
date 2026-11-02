@@ -2,4 +2,4 @@
 
 —
 {footer}
-© {year} Akinaza · {appUrl}
+© {year} {product} · {appUrl}

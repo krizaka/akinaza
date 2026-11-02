@@ -1,8 +1,8 @@
-import { AkinazaLogo } from "@krizaka/ui";
 import { AuthLayout } from "@krizaka/ui/auth-layout";
 import { Mascot } from "@krizaka/ui/mascots";
 import Link from "next/link";
 
+import { BrandLockup } from "@/components/BrandLockup";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
 /** The account's signed-out pages (forgotten password, reset, sign-up) on @krizaka/ui's auth template: one brand, one promise, the beaver. */
@@ -12,7 +12,7 @@ export function AccountAuthPage({ locale, title, description, footer, legal, chi
     <AuthLayout
       brand={
         <Link href={`/${locale}`} className="inline-flex items-center gap-2">
-          <AkinazaLogo size={28} /> Akinaza
+          <BrandLockup locale={locale} size={28} />
         </Link>
       }
       promise={t.signIn.promise}

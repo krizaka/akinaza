@@ -2,7 +2,7 @@
   "name": "@akinaza/desktop",
   "private": true,
   "version": "0.1.0",
-  "description": "Akinaza for the Mac (Tauri 2): the owner's back office in a native window.",
+  "description": "Folioviv for the Mac (Tauri 2): the owner's back office in a native window.",
   "license": "FSL-1.1-ALv2",
   "scripts": {
     "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",

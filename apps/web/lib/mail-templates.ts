@@ -1,6 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+
 import { systemClock } from "@/app/system-clock";
+
+import { PRODUCT_NAME } from "./brand";
 
 /**
  * E-mail templates are data, not code (the krizaka-notifications convention, shared with the other products). A template is a folder `apps/web/mail-templates/<id>/`
@@ -37,7 +40,7 @@ export const MAIL_LOCALES = ["en", "fr"] as const;
 export type MailLocale = (typeof MAIL_LOCALES)[number];
 export const DEFAULT_MAIL_LOCALE: MailLocale = "en";
 
-const LAYOUT_VARS = ["content", "subject", "lang", "footer", "appUrl", "year"] as const;
+const LAYOUT_VARS = ["content", "subject", "lang", "footer", "appUrl", "year", "product"] as const;
 
 export class MailTemplateError extends Error {
   constructor(message: string) {
@@ -110,12 +113,14 @@ export interface RenderedMail {
 }
 
 /** Renders a template in a locale (English when the locale has no files), inside the layout. */
-export function renderMailTemplate<Id extends MailTemplateId>(id: Id, vars: MailVars<Id>, options: { locale?: string; appUrl: string; dir?: string; now?: Date }): RenderedMail {
+export function renderMailTemplate<Id extends MailTemplateId>(id: Id, vars: MailVars<Id>, options: { locale?: string; appUrl: string; dir?: string; now?: Date; product?: string }): RenderedMail {
   const dir = options.dir ?? templatesDir();
   const wanted = (MAIL_LOCALES as readonly string[]).includes(options.locale ?? "") ? (options.locale as MailLocale) : DEFAULT_MAIL_LOCALE;
-  const values = vars as unknown as Values;
-  const allowed = Object.keys(MAIL_TEMPLATES[id]);
-  for (const name of allowed) {
+  // The name of the product is a layout variable every template may use: `{product}`, never a typed name.
+  const product = options.product ?? PRODUCT_NAME;
+  const values: Values = { ...(vars as unknown as Values), product };
+  const allowed = [...Object.keys(MAIL_TEMPLATES[id]), "product"];
+  for (const name of allowed.filter((n) => n !== "product")) {
     if (values[name] === undefined || values[name] === null) throw new MailTemplateError(`${id}: missing variable {${name}}`);
   }
   for (const locale of wanted === DEFAULT_MAIL_LOCALE ? [wanted] : [wanted, DEFAULT_MAIL_LOCALE]) {
@@ -132,8 +137,8 @@ export function renderMailTemplate<Id extends MailTemplateId>(id: Id, vars: Mail
     const name = `${id}/${locale}`;
     const subject = fill(f.subject, values, { html: false, allowed, name: `${name}/subject.txt` }).replace(/\s+/g, " ").trim();
     if (!subject) throw new MailTemplateError(`${name}/subject.txt: empty subject`);
-    const layout: Values = { subject, lang: locale, appUrl: options.appUrl, year: (options.now ?? systemClock.now()).getUTCFullYear() };
-    const footer = fill(f.footer, layout, { html: false, allowed: ["appUrl", "year"], name: `_layout/${locale}/footer.txt` }).trim();
+    const layout: Values = { subject, lang: locale, appUrl: options.appUrl, product, year: (options.now ?? systemClock.now()).getUTCFullYear() };
+    const footer = fill(f.footer, layout, { html: false, allowed: ["appUrl", "year", "product"], name: `_layout/${locale}/footer.txt` }).trim();
     const htmlBody = fill(f.html, values, { html: true, allowed, name: `${name}/body.html` });
     const textBody = fill(f.text, values, { html: false, allowed, name: `${name}/body.txt` }).trim();
     return {

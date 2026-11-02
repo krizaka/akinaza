@@ -1,11 +1,11 @@
 {
-  "disclaimer": "Akinaza prepares your figures and never files your return.",
+  "disclaimer": "Folioviv prepares your figures and never files your return.",
   "stage": {
     "title": "Development version",
     "message": "Data can be reset at any time. This is not a commercial offer yet."
   },
   "app": {
-    "name": "Akinaza",
+    "name": "Folioviv",
     "tagline": "Your shop, for less. It prepares your return and never files it."
   },
   "tabs": {
@@ -18,7 +18,7 @@
   },
   "common": {
     "retry": "Try again",
-    "offline": "Akinaza is not answering. Check your connection.",
+    "offline": "Folioviv is not answering. Check your connection.",
     "back": "Back",
     "loading": "Loading…"
   },
@@ -115,7 +115,7 @@
     "remit": "To remit",
     "claim": "To claim",
     "zero": "Nothing to remit",
-    "lead": "Akinaza prepares the figures of your GST/QST return; you review it and file it yourself.",
+    "lead": "Folioviv prepares the figures of your GST/QST return; you review it and file it yourself.",
     "web": "See the lines on the web"
   },
   "boutique": {
@@ -146,7 +146,7 @@
     "periodLabel": "Period: {start} to {end}",
     "lead": "Each figure says what it means, how it is computed from your invoices and where it comes from.",
     "title": "Your figures",
-    "never": "Akinaza prepares these figures. You check them and you file your returns yourself.",
+    "never": "Folioviv prepares these figures. You check them and you file your returns yourself.",
     "nextTitle": "What to do now",
     "nothingToDo": "Nothing needs you right now.",
     "urgency": {
@@ -163,8 +163,8 @@
       },
       "taxes": {
         "title": "Prepare your GST/QST return",
-        "why": "Your period ends in {days} days ({start} to {end}). Akinaza prepares the figures; you file the return yourself.",
-        "whyPast": "Your period ended on {end}. Akinaza prepares the figures; you file the return yourself.",
+        "why": "Your period ends in {days} days ({start} to {end}). Folioviv prepares the figures; you file the return yourself.",
+        "whyPast": "Your period ended on {end}. Folioviv prepares the figures; you file the return yourself.",
         "cta": "Prepare the return"
       },
       "slot": {
@@ -226,12 +226,12 @@
     },
     "gstToRemit": {
       "name": "GST to remit",
-      "meaning": "What you would pay to the government for the GST, if the period ended today. Akinaza prepares it; you file it.",
+      "meaning": "What you would pay to the government for the GST, if the period ended today. Folioviv prepares it; you file it.",
       "formula": "GST collected on your invoices, minus the GST you may claim back on your expenses."
     },
     "qstToRemit": {
       "name": "QST to remit",
-      "meaning": "What you would pay to Revenu Québec for the QST, if the period ended today. Akinaza prepares it; you file it.",
+      "meaning": "What you would pay to Revenu Québec for the QST, if the period ended today. Folioviv prepares it; you file it.",
       "formula": "QST collected on your invoices, minus the QST you may claim back on your expenses."
     },
     "margin": {
@@ -277,7 +277,7 @@
       },
       "declarationPeriod": {
         "term": "Return period",
-        "definition": "The stretch of time (a month, a quarter or a year, depending on how you file) covered by one GST/QST return. Akinaza prepares its figures; you review and file the return yourself."
+        "definition": "The stretch of time (a month, a quarter or a year, depending on how you file) covered by one GST/QST return. Folioviv prepares its figures; you review and file the return yourself."
       },
       "noShow": {
         "term": "No-show",

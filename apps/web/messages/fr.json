@@ -1,17 +1,17 @@
 {
   "meta": {
-    "siteName": "Akinaza",
-    "titleTemplate": "{title} · Akinaza",
-    "description": "Vos rendez-vous, vos factures et vos taxes, réglés. Akinaza s'adresse aux salons, studios et travailleurs autonomes du Québec : vos clients réservent, vous facturez, vos montants de TPS/TVQ sont prêts. En français et en anglais."
+    "siteName": "{product}",
+    "titleTemplate": "{title} · {product}",
+    "description": "Vos rendez-vous, vos factures et vos taxes, réglés. {product} s'adresse aux salons, studios et travailleurs autonomes du Québec : vos clients réservent, vous facturez, vos montants de TPS/TVQ sont prêts. En français et en anglais."
   },
   "chrome": {
-    "brandHome": "Akinaza, accueil",
-    "navLabel": "Akinaza",
+    "brandHome": "{product}, accueil",
+    "navLabel": "{product}",
     "nav": {
       "product": "Produit"
     },
     "signIn": "Se connecter",
-    "tryIt": "Essayer Akinaza",
+    "tryIt": "Essayer {product}",
     "openApp": "Ouvrir l'app",
     "account": "Compte",
     "settings": "Réglages",
@@ -32,7 +32,7 @@
       "label": "Menu",
       "home": {
         "title": "Vue d'ensemble",
-        "text": "Ce qu'Akinaza fait pour un commerce de services."
+        "text": "Ce que {product} fait pour un commerce de services."
       },
       "shop": {
         "title": "La boutique de démonstration",
@@ -40,7 +40,7 @@
       },
       "pricing": {
         "title": "Tarifs",
-        "text": "Ce que coûte Akinaza, plan par plan."
+        "text": "Ce que coûte {product}, plan par plan."
       },
       "docs": {
         "title": "Guide",
@@ -74,10 +74,10 @@
     },
     "founder": {
       "title": "Offre fondateur : {price} par mois plus taxes, mise en route incluse",
-      "lead": "Une offre limitée pour les premières entreprises. Akinaza est un produit à ses débuts : nous le construisons avec vous et nous installons votre commerce avec vous, sans frais de plus.",
+      "lead": "Une offre limitée pour les premières entreprises. {product} est un produit à ses débuts : nous le construisons avec vous et nous installons votre commerce avec vous, sans frais de plus.",
       "points": [
         "{price} par mois plus taxes, tant que vous restez",
-        "{cardRate} sur les cartes : aucun frais Akinaza sur ce que vos clients paient par carte",
+        "{cardRate} sur les cartes : aucun frais {product} sur ce que vos clients paient par carte",
         "Débit préautorisé ou virement B2B : {debitRate} par commande, plafonné à {debitCap}; les fonds restent chez le processeur de paiement",
         "Mise en route incluse : vos services, vos heures, vos premières factures",
         "Annulez en tout temps depuis votre page de facturation, en deux clics",
@@ -100,7 +100,7 @@
         "scaleSoon": "ses fonctions B2B arrivent bientôt"
       }
     },
-    "screensTitle": "Ce que fait Akinaza",
+    "screensTitle": "Ce que fait {product}",
     "screens": {
       "book": {
         "title": "Vos clients réservent seuls",
@@ -158,7 +158,7 @@
   },
   "docs": {
     "title": "Guide du propriétaire",
-    "lead": "Cinq courtes pages, un travail chacune : votre boutique, une réservation, une facture, vos livres, vos données. Elles ne disent que ce qu'Akinaza fait aujourd'hui.",
+    "lead": "Cinq courtes pages, un travail chacune : votre boutique, une réservation, une facture, vos livres, vos données. Elles ne disent que ce que {product} fait aujourd'hui.",
     "navLabel": "Guide du propriétaire",
     "sidebarLabel": "Pages du guide",
     "breadcrumbLabel": "Fil d'Ariane",
@@ -171,7 +171,7 @@
     "home": "Guide",
     "updated": "Écrit pour la version en développement ; il suit le produit.",
     "collection": {
-      "title": "Akinaza",
+      "title": "{product}",
       "description": "Pour le propriétaire d'une boutique de services : rendez-vous, factures et chiffres de taxes de votre période."
     },
     "pages": {
@@ -292,7 +292,7 @@
             "id": "correct",
             "h": "Corriger une facture",
             "p": [
-              "Une facture émise ne change jamais. Choisissez Corriger : Akinaza émet la note de crédit de la facture et la nouvelle facture ensemble, et les relie. Le client, la langue et les conditions restent les mêmes."
+              "Une facture émise ne change jamais. Choisissez Corriger : {product} émet la note de crédit de la facture et la nouvelle facture ensemble, et les relie. Le client, la langue et les conditions restent les mêmes."
             ],
             "items": []
           },
@@ -309,7 +309,7 @@
       "books": {
         "nav": "Vos livres",
         "title": "Vos livres : la TPS et la TVQ d'une période",
-        "lead": "Akinaza prépare les chiffres. Vous les vérifiez et vous les déclarez.",
+        "lead": "{product} prépare les chiffres. Vous les vérifiez et vous les déclarez.",
         "sections": [
           {
             "id": "period",
@@ -329,9 +329,9 @@
           },
           {
             "id": "file",
-            "h": "Vous déclarez, Akinaza jamais",
+            "h": "Vous déclarez, {product} jamais",
             "p": [
-              "Akinaza ne produit jamais de déclaration et n'envoie rien à Revenu Québec ni à l'Agence du revenu du Canada. Vérifiez chaque chiffre, puis produisez vous-même la déclaration. Ces chiffres ne sont ni un avis fiscal ni un avis comptable."
+              "{product} ne produit jamais de déclaration et n'envoie rien à Revenu Québec ni à l'Agence du revenu du Canada. Vérifiez chaque chiffre, puis produisez vous-même la déclaration. Ces chiffres ne sont ni un avis fiscal ni un avis comptable."
             ],
             "items": []
           }
@@ -340,7 +340,7 @@
       "data": {
         "nav": "Vos données",
         "title": "Vos données",
-        "lead": "Ce qu'Akinaza garde sur vous, et votre droit d'y accéder.",
+        "lead": "Ce que {product} garde sur vous, et votre droit d'y accéder.",
         "sections": [
           {
             "id": "export",
@@ -412,12 +412,12 @@
         "a": "Non. Les prix sont avant la TPS et la TVQ, que la page de paiement ajoute."
       },
       {
-        "q": "Akinaza garde-t-elle l'argent de mes clients ?",
-        "a": "Jamais. Les paiements passent par votre propre processeur, directement à vous ; Akinaza ne fait qu'indiquer ses frais."
+        "q": "{product} garde-t-elle l'argent de mes clients ?",
+        "a": "Jamais. Les paiements passent par votre propre processeur, directement à vous ; {product} ne fait qu'indiquer ses frais."
       },
       {
-        "q": "Akinaza produit-elle ma déclaration ?",
-        "a": "Pas pour l'instant. Aujourd'hui, Akinaza prépare les chiffres et c'est vous qui les déclarez. Aller plus loin est sur notre feuille de route : vous permettre de gérer vous-même votre boutique le plus loin possible, au Québec."
+        "q": "{product} produit-elle ma déclaration ?",
+        "a": "Pas pour l'instant. Aujourd'hui, {product} prépare les chiffres et c'est vous qui les déclarez. Aller plus loin est sur notre feuille de route : vous permettre de gérer vous-même votre boutique le plus loin possible, au Québec."
       },
       {
         "q": "Et si le prix change ?",
@@ -437,7 +437,7 @@
     "trialLine": "{trial}, puis {price} par mois, taxes en sus. Vous saisissez votre carte pour commencer : rien n’est facturé pendant la période offerte, et vous pouvez résilier avant sa fin.",
     "plannedLine": "Prix prévu : {price} par mois, taxes en sus. Rien n’est encore en vente et aucune carte n’est demandée.",
     "plannedPerMonth": "par mois, taxes en sus, prix prévu",
-    "faqFreePeriodPlanned": { "q": "Comment fonctionne la période offerte ?", "a": "Les mois offerts accompagnent le premier abonnement à Starter, quand les forfaits seront en vente. Aujourd’hui rien n’est en vente et Akinaza ne demande aucune carte : les prix affichés sont prévus." },
+    "faqFreePeriodPlanned": { "q": "Comment fonctionne la période offerte ?", "a": "Les mois offerts accompagnent le premier abonnement à Starter, quand les forfaits seront en vente. Aujourd’hui rien n’est en vente et {product} ne demande aucune carte : les prix affichés sont prévus." },
     "associationLine": "Associations : {months} mois gratuits, puis {price} par mois, taxes en sus. Pour les OBNL et les organismes de bienfaisance enregistrés.",
     "associationLineDays": "Associations : {days} jours gratuits, puis {price} par mois, taxes en sus. Pour les OBNL et les organismes de bienfaisance enregistrés.",
     "associationHow": "Envoyez votre NEQ, votre numéro d’organisme de bienfaisance enregistré ou la référence de votre acte constitutif depuis votre page de facturation. Nous le vérifions ; tant qu’il n’est pas approuvé, vous êtes sur Starter.",
@@ -446,7 +446,7 @@
   },
   "download": {
     "title": "Les applications",
-    "lead": "Akinaza dans votre poche et sur le web, enregistré par nos propres tests sur la boutique de démonstration. Ce n'est pas une fiche de boutique d'applications : aucune application n'est encore proposée au téléchargement.",
+    "lead": "{product} dans votre poche et sur le web, enregistré par nos propres tests sur la boutique de démonstration. Ce n'est pas une fiche de boutique d'applications : aucune application n'est encore proposée au téléchargement.",
     "videos": {
       "title": "Les applications à l'œuvre",
       "lead": "Chaque vidéo est enregistrée par les tests automatisés sur la dernière version, avec des données de démonstration seulement.",
@@ -472,7 +472,7 @@
   "privacy": {
     "title": "Confidentialité",
     "updated": "Mis à jour le {date}",
-    "body": "Akinaza est en développement : seuls les comptes créés par notre équipe peuvent se connecter. Les données d'une boutique — ses clients, rendez-vous, factures et registre des taxes — sont gardées dans la base de données d'Akinaza au Canada, chiffrées au repos, visibles de cette boutique seulement. Le consentement des clients est noté par finalité et peut être retiré ; les renseignements personnels d'un client peuvent être effacés, les factures qu'exige la loi fiscale étant gardées. Les chiffres de taxes préparés par Akinaza sont calculés à partir du registre de la période, dans Akinaza ; rien n'est produit pour un gouvernement, ni déposé auprès de lui, ni transmis. Rien n'est vendu. Pour poser une question ou faire supprimer vos données, utilisez le formulaire de contact.",
+    "body": "{product} est en développement : seuls les comptes créés par notre équipe peuvent se connecter. Les données d'une boutique — ses clients, rendez-vous, factures et registre des taxes — sont gardées dans la base de données de {product} au Canada, chiffrées au repos, visibles de cette boutique seulement. Le consentement des clients est noté par finalité et peut être retiré ; les renseignements personnels d'un client peuvent être effacés, les factures qu'exige la loi fiscale étant gardées. Les chiffres de taxes préparés par {product} sont calculés à partir du registre de la période, dans {product} ; rien n'est produit pour un gouvernement, ni déposé auprès de lui, ni transmis. Rien n'est vendu. Pour poser une question ou faire supprimer vos données, utilisez le formulaire de contact.",
     "officer": {
       "title": "Responsable de la protection des renseignements personnels",
       "role": "Responsable de la protection des renseignements personnels",
@@ -480,7 +480,7 @@
     },
     "processors": {
       "title": "Qui traite des renseignements pour nous",
-      "lead": "Akinaza fait appel à des fournisseurs de services, par contrat écrit, seulement pour faire fonctionner le service. L'endroit où un fournisseur garde des données n'est indiqué ici qu'une fois confirmé.",
+      "lead": "{product} fait appel à des fournisseurs de services, par contrat écrit, seulement pour faire fonctionner le service. L'endroit où un fournisseur garde des données n'est indiqué ici qu'une fois confirmé.",
       "items": [
         {
           "h": "Hébergement",
@@ -496,11 +496,11 @@
         },
         {
           "h": "Paiements",
-          "p": "Un abonnement se paie sur la page hébergée d'un processeur de paiement ; Akinaza ne voit ni ne garde jamais un numéro de carte."
+          "p": "Un abonnement se paie sur la page hébergée d'un processeur de paiement ; {product} ne voit ni ne garde jamais un numéro de carte."
         },
         {
           "h": "Traduction",
-          "p": "Si la traduction d'une page de boutique est activée, les textes de la page sont envoyés au moteur de Krizaka, Orazaka. Rien sur un client n'est envoyé."
+          "p": "Si la traduction d'une page de boutique est activée, les textes de la page sont envoyés au moteur de Krizaka, Sovkora. Rien sur un client n'est envoyé."
         }
       ],
       "register": "Le registre de ces transferts hors Québec, avec l'évaluation rédigée avant l'ouverture, est public :",
@@ -521,20 +521,20 @@
   "terms": {
     "title": "Conditions d'utilisation",
     "version": "Version {version}",
-    "status": "Version rédigée de bonne foi à partir de la loi, en attente de la révision d'un avocat avant l'ouverture publique d'Akinaza. En cas de doute, le français fait foi.",
+    "status": "Version rédigée de bonne foi à partir de la loi, en attente de la révision d'un avocat avant l'ouverture publique de {product}. En cas de doute, le français fait foi.",
     "privacyLink": "Lire l'avis de confidentialité",
     "sections": [
       {
         "h": "1. Qui nous sommes, à qui elles s'adressent",
-        "p": "Akinaza est un produit de {publisher} ({city}, {region}), l'éditeur. Ces conditions encadrent l'abonnement à Akinaza par les entreprises de services du Québec : salons, ateliers, coachs, entreprises de nettoyage, services aux animaux, consultants. Les restaurants, cafés, bars et boulangeries en sont exclus, parce que la loi y exige un module d'enregistrement des ventes certifié que le point de vente d'Akinaza n'est pas. C'est un contrat d'adhésion (art. 1379 du Code civil du Québec, C.c.Q.) : nous vous le montrons avant tout paiement, et une clause illisible, incompréhensible ou abusive n'a pas d'effet contre vous (art. 1435 à 1437 C.c.Q.)."
+        "p": "{product} est un produit de {publisher} ({city}, {region}), l'éditeur. Ces conditions encadrent l'abonnement à {product} par les entreprises de services du Québec : salons, ateliers, coachs, entreprises de nettoyage, services aux animaux, consultants. Les restaurants, cafés, bars et boulangeries en sont exclus, parce que la loi y exige un module d'enregistrement des ventes certifié que le point de vente de {product} n'est pas. C'est un contrat d'adhésion (art. 1379 du Code civil du Québec, C.c.Q.) : nous vous le montrons avant tout paiement, et une clause illisible, incompréhensible ou abusive n'a pas d'effet contre vous (art. 1435 à 1437 C.c.Q.)."
       },
       {
-        "h": "2. Ce qu'Akinaza fait",
-        "p": "Akinaza vous donne une page de boutique et des réservations, des factures bilingues avec la TPS et la TVQ exactes au sou, un registre comptable qui ne s'efface pas, et un rapport de taxes préparé à partir de ce registre. Le service est en développement : une fonction annoncée « bientôt » n'est pas vendue et ne fait pas partie de votre abonnement. Une réservation est un contrat entre votre client et vous ; Akinaza n'en est pas partie, elle vous fournit l'outil."
+        "h": "2. Ce que {product} fait",
+        "p": "{product} vous donne une page de boutique et des réservations, des factures bilingues avec la TPS et la TVQ exactes au sou, un registre comptable qui ne s'efface pas, et un rapport de taxes préparé à partir de ce registre. Le service est en développement : une fonction annoncée « bientôt » n'est pas vendue et ne fait pas partie de votre abonnement. Une réservation est un contrat entre votre client et vous ; {product} n'en est pas partie, elle vous fournit l'outil."
       },
       {
-        "h": "3. Ce qu'Akinaza ne fait jamais",
-        "p": "Akinaza prépare, vous produisez. Elle ne produit, ne signe et ne transmet aucune déclaration à Revenu Québec ou à l'Agence du revenu du Canada : c'est à vous de vérifier les chiffres préparés et de les déclarer, selon la Loi sur la taxe de vente du Québec (RLRQ, c. T-0.1) et la Loi sur la taxe d'accise (L.R.C. 1985, c. E-15). Les chiffres préparés ne sont ni un avis fiscal ni un avis comptable. Akinaza n'est pas un caissier : elle ne remplace pas le module d'enregistrement des ventes qu'un restaurant ou un bar doit utiliser."
+        "h": "3. Ce que {product} ne fait jamais",
+        "p": "{product} prépare, vous produisez. Elle ne produit, ne signe et ne transmet aucune déclaration à Revenu Québec ou à l'Agence du revenu du Canada : c'est à vous de vérifier les chiffres préparés et de les déclarer, selon la Loi sur la taxe de vente du Québec (RLRQ, c. T-0.1) et la Loi sur la taxe d'accise (L.R.C. 1985, c. E-15). Les chiffres préparés ne sont ni un avis fiscal ni un avis comptable. {product} n'est pas un caissier : elle ne remplace pas le module d'enregistrement des ventes qu'un restaurant ou un bar doit utiliser."
       },
       {
         "h": "4. L'abonnement, le prix et le renouvellement",
@@ -542,7 +542,7 @@
       },
       {
         "h": "5. Les paiements",
-        "p": "L'abonnement est payé sur la page de paiement hébergée de notre processeur de paiement : Akinaza ne voit et ne conserve jamais votre numéro de carte. Les paiements de vos propres clients, lorsqu'ils seront offerts, passent par votre propre compte chez votre propre processeur : l'argent va directement du client à vous. Akinaza ne détient jamais de fonds, ne garde rien pour vous ni pour votre client, n'agit pas comme fiduciaire et ne retient rien. Les frais du processeur sont ceux de votre contrat avec lui ; ceux d'Akinaza sur ces paiements sont indiqués sur la page des tarifs (aucun pourcentage sur les cartes, un montant plafonné pour le débit préautorisé)."
+        "p": "L'abonnement est payé sur la page de paiement hébergée de notre processeur de paiement : {product} ne voit et ne conserve jamais votre numéro de carte. Les paiements de vos propres clients, lorsqu'ils seront offerts, passent par votre propre compte chez votre propre processeur : l'argent va directement du client à vous. {product} ne détient jamais de fonds, ne garde rien pour vous ni pour votre client, n'agit pas comme fiduciaire et ne retient rien. Les frais du processeur sont ceux de votre contrat avec lui ; ceux de {product} sur ces paiements sont indiqués sur la page des tarifs (aucun pourcentage sur les cartes, un montant plafonné pour le débit préautorisé)."
       },
       {
         "h": "6. La résiliation et les remboursements",
@@ -550,7 +550,7 @@
       },
       {
         "h": "7. Vos renseignements personnels",
-        "p": "Les renseignements de vos clients que vous saisissez restent les vôtres : vous en êtes responsable et Akinaza les traite pour votre compte, dans une base de données au Canada, chiffrés au repos, visibles de votre boutique seulement ; les photos et fichiers que vous ajoutez sont stockés chez un fournisseur de médias, nommé dans l'avis de confidentialité. Les consentements sont demandés par finalité, jamais pré-cochés, et peuvent être retirés ; l'effacement vide les champs personnels et garde les factures que la loi fiscale oblige à conserver (six ans). Le tout est encadré par la Loi sur la protection des renseignements personnels dans le secteur privé (RLRQ, c. P-39.1), telle que modifiée par la Loi modernisant des dispositions législatives en matière de protection des renseignements personnels (L.Q. 2021, c. 25). Le détail, le responsable de la protection des renseignements personnels et la façon d'exercer vos droits sont dans l'avis de confidentialité."
+        "p": "Les renseignements de vos clients que vous saisissez restent les vôtres : vous en êtes responsable et {product} les traite pour votre compte, dans une base de données au Canada, chiffrés au repos, visibles de votre boutique seulement ; les photos et fichiers que vous ajoutez sont stockés chez un fournisseur de médias, nommé dans l'avis de confidentialité. Les consentements sont demandés par finalité, jamais pré-cochés, et peuvent être retirés ; l'effacement vide les champs personnels et garde les factures que la loi fiscale oblige à conserver (six ans). Le tout est encadré par la Loi sur la protection des renseignements personnels dans le secteur privé (RLRQ, c. P-39.1), telle que modifiée par la Loi modernisant des dispositions législatives en matière de protection des renseignements personnels (L.Q. 2021, c. 25). Le détail, le responsable de la protection des renseignements personnels et la façon d'exercer vos droits sont dans l'avis de confidentialité."
       },
       {
         "h": "8. Notre responsabilité",
@@ -558,7 +558,7 @@
       },
       {
         "h": "9. Si vous agissez comme consommateur",
-        "p": "Akinaza s'adresse aux entreprises. Si vous contractez comme particulier, pour un usage qui n'est pas celui de votre commerce, la Loi sur la protection du consommateur (RLRQ, c. P-40.1) s'applique et rien dans ces conditions ne limite vos droits : notamment les règles du contrat conclu à distance (art. 54.1 et suivants LPC, dont l'information avant le contrat, la copie du contrat et la résolution prévue à l'art. 54.8), l'interdiction de la clause d'arbitrage ou qui vous prive d'une action collective (art. 11.1 LPC) et l'interdiction de limiter notre responsabilité pour nos propres actes (art. 10 LPC). Vous pouvez aussi vous adresser à l'Office de la protection du consommateur."
+        "p": "{product} s'adresse aux entreprises. Si vous contractez comme particulier, pour un usage qui n'est pas celui de votre commerce, la Loi sur la protection du consommateur (RLRQ, c. P-40.1) s'applique et rien dans ces conditions ne limite vos droits : notamment les règles du contrat conclu à distance (art. 54.1 et suivants LPC, dont l'information avant le contrat, la copie du contrat et la résolution prévue à l'art. 54.8), l'interdiction de la clause d'arbitrage ou qui vous prive d'une action collective (art. 11.1 LPC) et l'interdiction de limiter notre responsabilité pour nos propres actes (art. 10 LPC). Vous pouvez aussi vous adresser à l'Office de la protection du consommateur."
       },
       {
         "h": "10. Les changements de ces conditions",
@@ -574,7 +574,7 @@
       },
       {
         "h": "13. La propriété intellectuelle et votre droit d'utiliser le service",
-        "p": "Akinaza, ses logiciels, ses modèles de documents, la conception des pages de boutique, ses noms, ses oiseaux et ses marques appartiennent à {publisher} ou à ses concédants ; ces conditions ne vous cèdent aucun de ces droits (Loi sur le droit d'auteur, L.R.C. (1985), c. C-42). Pour la durée de votre abonnement seulement, vous recevez un droit personnel, non exclusif, non cessible et non sous-licenciable d'utiliser le service hébergé pour les besoins de votre entreprise ; ce droit prend fin avec l'abonnement. Le contenu de votre boutique et les renseignements de vos clients restent les vôtres (section 7) : vous nous autorisez seulement à les héberger et à les traiter pour fournir le service. Le code source d'Akinaza est publié sous sa propre licence, indiquée dans son dépôt : ces conditions régissent le service hébergé, cette licence régit le code, et rien ici ne retire ce que la licence vous permet."
+        "p": "{product}, ses logiciels, ses modèles de documents, la conception des pages de boutique, ses noms, ses oiseaux et ses marques appartiennent à {publisher} ou à ses concédants ; ces conditions ne vous cèdent aucun de ces droits (Loi sur le droit d'auteur, L.R.C. (1985), c. C-42). Pour la durée de votre abonnement seulement, vous recevez un droit personnel, non exclusif, non cessible et non sous-licenciable d'utiliser le service hébergé pour les besoins de votre entreprise ; ce droit prend fin avec l'abonnement. Le contenu de votre boutique et les renseignements de vos clients restent les vôtres (section 7) : vous nous autorisez seulement à les héberger et à les traiter pour fournir le service. Le code source de {product} est publié sous sa propre licence, indiquée dans son dépôt : ces conditions régissent le service hébergé, cette licence régit le code, et rien ici ne retire ce que la licence vous permet."
       },
       {
         "h": "14. Les usages interdits",
@@ -582,11 +582,11 @@
       },
       {
         "h": "15. Les noms et les marques",
-        "p": "Les noms et les logos d'Akinaza et de Krizaka, et leurs oiseaux, sont des marques de {publisher} (Loi sur les marques de commerce, L.R.C. (1985), c. T-13). Ces conditions, comme la licence du code, n'accordent aucun droit sur ces marques ; leur usage est encadré par la politique publiée à https://github.com/krizaka/.github/blob/main/TRADEMARKS.md."
+        "p": "Les noms et les logos de {product} et de Krizaka, et leurs oiseaux, sont des marques de {publisher} (Loi sur les marques de commerce, L.R.C. (1985), c. T-13). Ces conditions, comme la licence du code, n'accordent aucun droit sur ces marques ; leur usage est encadré par la politique publiée à https://github.com/krizaka/.github/blob/main/TRADEMARKS.md."
       },
       {
         "h": "16. Nous joindre",
-        "p": "Par le formulaire de contact de Krizaka (sujet Akinaza), ou à contact@krizaka.com pour vos renseignements personnels. Nous répondons dans les 30 jours."
+        "p": "Par le formulaire de contact de Krizaka (sujet {product}), ou à contact@krizaka.com pour vos renseignements personnels. Nous répondons dans les 30 jours."
       }
     ]
   },
@@ -616,7 +616,7 @@
       "password": "Mot de passe",
       "submit": "Se connecter",
       "closedTitle": "Les inscriptions sont fermées.",
-      "closed": "Akinaza est en développement ; les comptes sont créés par notre équipe.",
+      "closed": "{product} est en développement ; les comptes sont créés par notre équipe.",
       "contact": "Nous écrire",
       "legalPrefix": "En vous connectant, vous acceptez l'",
       "terms": "conditions d'utilisation",
@@ -625,7 +625,7 @@
       "forgot": "Mot de passe oublié ?"
     },
     "adminSignIn": {
-      "promise": "L'administration d'Akinaza.",
+      "promise": "L'administration de {product}.",
       "asideFooter": "Une session, le rôle d'administrateur et une adresse autorisée.",
       "title": "Administration",
       "description": "Réservé aux administrateurs.",
@@ -871,7 +871,7 @@
           "addReason": "Ajouter une raison",
           "reasonLabel": "Raison {position} ({language})",
           "removeReason": "Retirer la raison {position}",
-          "derived": "Dérivé : Akinaza calcule cet état, personne ne le change.",
+          "derived": "Dérivé : {product} calcule cet état, personne ne le change.",
           "problems": "À corriger avant d'enregistrer"
         }
       },
@@ -990,7 +990,7 @@
       },
       "incidents": {
         "title": "Incidents de confidentialité",
-        "lead": "Le registre exigé par la Loi sur la protection des renseignements personnels dans le secteur privé (art. 3.5 à 3.8) : tous les incidents, graves ou non, conservés cinq ans. Il contient des faits et des catégories de renseignements, jamais les données d'une personne. Évaluez le risque de préjudice sérieux ; s'il existe, avisez la Commission d'accès à l'information et les personnes concernées, puis fermez. Il couvre les données d'Akinaza : fiches de clients des boutiques, factures et relevés fiscaux.",
+        "lead": "Le registre exigé par la Loi sur la protection des renseignements personnels dans le secteur privé (art. 3.5 à 3.8) : tous les incidents, graves ou non, conservés cinq ans. Il contient des faits et des catégories de renseignements, jamais les données d'une personne. Évaluez le risque de préjudice sérieux ; s'il existe, avisez la Commission d'accès à l'information et les personnes concernées, puis fermez. Il couvre les données de {product} : fiches de clients des boutiques, factures et relevés fiscaux.",
         "exportCsv": "Exporter en CSV",
         "exportJson": "Exporter en JSON",
         "register": "Registre",
@@ -1164,7 +1164,7 @@
       "NO_CONSENT": "Le propriétaire a retiré son consentement : rien ne peut être envoyé.",
       "CLIENT_UNREACHABLE": "Le propriétaire n'a pas de courriel au dossier.",
       "NO_REPORT": "Enregistrez d'abord le rapport.",
-      "NO_SHOP": "Vous n'avez pas de boutique sur Akinaza.",
+      "NO_SHOP": "Vous n'avez pas de boutique sur {product}.",
       "CONSENT_REQUIRED": "Cochez la première case pour continuer : sans cela, nous ne pouvons pas tenir votre dossier.",
       "SYNC_NO_CONSENT": "Cochez la case pour autoriser la connexion.",
       "SYNC_NOT_CONNECTED": "Ce compte n'est pas connecté.",
@@ -1189,7 +1189,7 @@
       "REQUESTS_FULL": "Vous gardez déjà 20 demandes ici : supprimez-en une d'abord.",
       "REQUEST_FILES_FULL": "Une demande garde au plus 5 fichiers.",
       "UPLOAD_NOT_ALLOWED": "Seules les photos (JPEG, PNG, WebP) et les PDF sont acceptés.",
-      "LANGUAGE_NOT_ALLOWED": "Cette langue n'est pas offerte sur Akinaza.",
+      "LANGUAGE_NOT_ALLOWED": "Cette langue n'est pas offerte sur {product}.",
       "LANGUAGE_NOT_ENABLED": "Activez d'abord cette langue.",
       "TRANSLATION_LIMIT": "Vous avez utilisé les traductions du jour. Réessayez demain.",
       "TRANSLATION_UNAVAILABLE": "La traduction automatique n'est pas disponible pour le moment.",
@@ -1246,7 +1246,7 @@
     },
     "today": {
       "noShopTitle": "Pas encore de boutique",
-      "noShop": "Les boutiques sont configurées par notre équipe pendant le développement d'Akinaza.",
+      "noShop": "Les boutiques sont configurées par notre équipe pendant le développement de {product}.",
       "invoices": {
         "title": "Dernières factures",
         "overdue": "Factures en retard : {count}"
@@ -1367,12 +1367,12 @@
       },
       "signUp": {
         "title": "Créer un compte",
-        "description": "Les comptes sont ouverts par notre équipe pendant le développement d'Akinaza.",
+        "description": "Les comptes sont ouverts par notre équipe pendant le développement de {product}.",
         "email": "Courriel",
         "password": "Mot de passe",
         "submit": "Créer mon compte",
         "closedTitle": "L'inscription est fermée.",
-        "closed": "Akinaza est en développement ; les comptes sont créés par notre équipe.",
+        "closed": "{product} est en développement ; les comptes sont créés par notre équipe.",
         "contact": "Nous joindre",
         "back": "Retour à la connexion",
         "legalPrefix": "En créant un compte, vous acceptez les "
@@ -1429,7 +1429,7 @@
       },
       "avatar": {
         "label": "Image",
-        "hint": "Une des images d'Akinaza."
+        "hint": "Une des images de {product}."
       },
       "email": {
         "label": "Courriel",
@@ -1444,7 +1444,7 @@
         "pending": "Un lien a été envoyé à {email}. L'adresse change quand vous l'ouvrez."
       },
       "preferences": {
-        "description": "La façon dont Akinaza vous parle et s'affiche.",
+        "description": "La façon dont {product} vous parle et s'affiche.",
         "languageHint": "La langue de l'application et des courriels.",
         "themes": {
           "light": {
@@ -1544,7 +1544,7 @@
       },
       "data": {
         "title": "Vos données",
-        "description": "Ce qu'Akinaza conserve sur vous, et votre droit d'y accéder.",
+        "description": "Ce que {product} conserve sur vous, et votre droit d'y accéder.",
         "export": "Exporter",
         "exportHint": "Tout ce qui est conservé sur ce compte, en un seul fichier.",
         "download": "Télécharger",
@@ -1692,7 +1692,7 @@
       "noMatch": "Aucun client ne correspond.",
       "privacy": {
         "title": "Leurs demandes de confidentialité",
-        "lead": "Quand cette personne demande à voir, à obtenir une copie ou à effacer ce que vous détenez sur elle, répondez ici, dans un délai de 30 jours. Akinaza détient le dossier pour votre boutique.",
+        "lead": "Quand cette personne demande à voir, à obtenir une copie ou à effacer ce que vous détenez sur elle, répondez ici, dans un délai de 30 jours. {product} détient le dossier pour votre boutique.",
         "export": "Télécharger ses données",
         "erase": "Effacer son dossier",
         "eraseConfirm": "Effacer le dossier de ce client ?",
@@ -2098,7 +2098,7 @@
         },
         "sources": {
           "title": "Vos autres agendas",
-          "lead": "Akinaza lit les plages où vous êtes occupé dans l'agenda que vous utilisez déjà, et les garde libres de réservations. Il ne lit que les heures : jamais un titre, un invité ou une note, et il ne modifie jamais votre agenda.",
+          "lead": "{product} lit les plages où vous êtes occupé dans l'agenda que vous utilisez déjà, et les garde libres de réservations. Il ne lit que les heures : jamais un titre, un invité ou une note, et il ne modifie jamais votre agenda.",
           "wholeShop": "Toute la boutique",
           "add": "Connecter un agenda",
           "label": "Nom",
@@ -2106,7 +2106,7 @@
           "whose": "Bloque les heures de",
           "url": "Adresse de l'agenda (ICS)",
           "urlHint": "Google Agenda : Paramètres, votre agenda, Adresse secrète au format iCal. Apple et Outlook en donnent une aussi quand vous publiez ou partagez un agenda. Quiconque a cette adresse peut lire cet agenda : elle est gardée chiffrée ici et n'est montrée à personne.",
-          "consent": "J'accepte qu'Akinaza lise les plages où je suis occupé dans cet agenda, pour les garder libres de réservations. Je peux me déconnecter à tout moment : ces plages sont alors supprimées.",
+          "consent": "J'accepte que {product} lise les plages où je suis occupé dans cet agenda, pour les garder libres de réservations. Je peux me déconnecter à tout moment : ces plages sont alors supprimées.",
           "needConsent": "Cochez la case pour connecter l'agenda.",
           "connect": "Connecter",
           "none": "Aucun agenda connecté.",
@@ -2123,7 +2123,7 @@
           "off": "L'administrateur a désactivé la connexion d'agendas.",
           "providers": {
             "title": "Connecter Google ou Outlook",
-            "lead": "Vous donnez votre accord sur la page de Google ou de Microsoft, et Akinaza ne reçoit que les plages où vous êtes occupé : jamais un titre, un invité ou une note. Vous pouvez aussi y retirer l'autorisation.",
+            "lead": "Vous donnez votre accord sur la page de Google ou de Microsoft, et {product} ne reçoit que les plages où vous êtes occupé : jamais un titre, un invité ou une note. Vous pouvez aussi y retirer l'autorisation.",
             "google": "Connecter Google Agenda",
             "outlook": "Connecter Outlook"
           },
@@ -2453,7 +2453,7 @@
           "label": "TVQ nette"
         }
       },
-      "footnote": "Akinaza prépare ces chiffres à partir de vos factures et de vos dépenses. C'est vous qui produisez la déclaration auprès de Revenu Québec, après avoir vérifié chaque chiffre.",
+      "footnote": "{product} prépare ces chiffres à partir de vos factures et de vos dépenses. C'est vous qui produisez la déclaration auprès de Revenu Québec, après avoir vérifié chaque chiffre.",
       "figuresTitle": "Vos chiffres de TPS et de TVQ",
       "remitHint": "Préparé à partir de vos factures et dépenses ; vous le produisez vous-même auprès de Revenu Québec.",
       "periodHint": "Le dernier trimestre terminé est celui à produire maintenant ; le trimestre en cours est encore ouvert.",
@@ -2514,7 +2514,7 @@
       },
       "correct": {
         "title": "Modifier la facture {number}",
-        "lead": "Une facture émise ne change jamais : en confirmant, Akinaza émet la note de crédit de {number} et la nouvelle facture, ensemble. Le client, la langue et les conditions restent les mêmes.",
+        "lead": "Une facture émise ne change jamais : en confirmant, {product} émet la note de crédit de {number} et la nouvelle facture, ensemble. Le client, la langue et les conditions restent les mêmes.",
         "back": "Retour à {number}",
         "description": "Description",
         "unitPrice": "Prix unitaire",
@@ -2605,7 +2605,7 @@
       "total": "Total (CAD)",
       "credit": "Note de crédit",
       "creditOf": "Cette note de crédit annule une facture antérieure.",
-      "footer": "Préparée avec Akinaza. Le commerçant produit lui-même la déclaration de TPS/TVQ; Akinaza ne la produit jamais.",
+      "footer": "Préparée avec {product}. Le commerçant produit lui-même la déclaration de TPS/TVQ; {product} ne la produit jamais.",
       "terms": "Conditions de paiement",
       "dueOn": "Date d'échéance",
       "termsNet": "Net {days} jours",
@@ -2825,7 +2825,7 @@
         "atAverageRate": "Estimé à votre revenu moyen par minute des 8 dernières semaines.",
         "equalVolume": "À nombre de rendez-vous égal.",
         "revenueNotMargin": "Revenu à l'heure, pas une marge : vos dépenses ne sont pas réparties par service.",
-        "preparedNotFiled": "Akinaza prépare les chiffres, vous produisez votre déclaration."
+        "preparedNotFiled": "{product} prépare les chiffres, vous produisez votre déclaration."
       },
       "mail": {
         "gaps": "{slots} créneaux libres dans les 7 prochains jours ({missed} de manque à gagner) : {invitees} clients fidèles à inviter.",
@@ -2927,12 +2927,12 @@
       },
       "gstToRemit": {
         "name": "TPS à remettre",
-        "meaning": "Ce que vous paieriez au gouvernement pour la TPS si la période se terminait aujourd'hui. Akinaza le prépare ; vous produisez la déclaration.",
+        "meaning": "Ce que vous paieriez au gouvernement pour la TPS si la période se terminait aujourd'hui. {product} le prépare ; vous produisez la déclaration.",
         "formula": "TPS perçue sur vos factures, moins la TPS que vous pouvez récupérer sur vos dépenses."
       },
       "qstToRemit": {
         "name": "TVQ à remettre",
-        "meaning": "Ce que vous paieriez à Revenu Québec pour la TVQ si la période se terminait aujourd'hui. Akinaza le prépare ; vous produisez la déclaration.",
+        "meaning": "Ce que vous paieriez à Revenu Québec pour la TVQ si la période se terminait aujourd'hui. {product} le prépare ; vous produisez la déclaration.",
         "formula": "TVQ perçue sur vos factures, moins la TVQ que vous pouvez récupérer sur vos dépenses."
       },
       "margin": {
@@ -2978,8 +2978,8 @@
         },
         "taxes": {
           "title": "Préparer votre déclaration TPS/TVQ",
-          "why": "Votre période se termine dans {days} jours ({start} au {end}). Akinaza prépare les chiffres ; vous produisez la déclaration vous-même.",
-          "whyPast": "Votre période s'est terminée le {end}. Akinaza prépare les chiffres ; vous produisez la déclaration vous-même.",
+          "why": "Votre période se termine dans {days} jours ({start} au {end}). {product} prépare les chiffres ; vous produisez la déclaration vous-même.",
+          "whyPast": "Votre période s'est terminée le {end}. {product} prépare les chiffres ; vous produisez la déclaration vous-même.",
           "cta": "Préparer la déclaration"
         },
         "slot": {
@@ -3008,7 +3008,7 @@
       "forPeriod": "Pour la période du {start} au {end}",
       "computed": "Calculé {when}",
       "lexiconTerms": "Les mots employés ici",
-      "never": "Akinaza prépare ces chiffres. Vous les vérifiez et vous produisez vos déclarations vous-même.",
+      "never": "{product} prépare ces chiffres. Vous les vérifiez et vous produisez vos déclarations vous-même.",
       "formulaHere": "{formula} Ici : {terms}.",
       "updatedLabel": "Mis à jour",
       "rules": {
@@ -3026,7 +3026,7 @@
           "noShowAlertPct": "Rendez-vous manqués : à traiter au-dessus de (%)",
           "taxPeriodSoonDays": "Me rappeler de préparer la déclaration TPS/TVQ ce nombre de jours avant la fin de la période"
         },
-        "fixed": "Ces valeurs sont fixées par Akinaza et ne peuvent pas être changées pour l’instant. Chaque chiffre montre quand même comment il est jugé.",
+        "fixed": "Ces valeurs sont fixées par {product} et ne peuvent pas être changées pour l’instant. Chaque chiffre montre quand même comment il est jugé.",
         "save": "Enregistrer mes seuils",
         "reset": "Revenir aux valeurs habituelles",
         "saved": "Enregistré. Vos chiffres utilisent maintenant ces seuils.",
@@ -3056,7 +3056,7 @@
         },
         "declarationPeriod": {
           "term": "Période de déclaration",
-          "definition": "La durée (un mois, un trimestre ou une année, selon votre fréquence de production) couverte par une déclaration de TPS/TVQ. Akinaza en prépare les chiffres ; vous la vérifiez et la produisez vous-même."
+          "definition": "La durée (un mois, un trimestre ou une année, selon votre fréquence de production) couverte par une déclaration de TPS/TVQ. {product} en prépare les chiffres ; vous la vérifiez et la produisez vous-même."
         },
         "noShow": {
           "term": "Absence (no-show)",
@@ -3701,7 +3701,7 @@
   "notFound": {
     "title": "Page introuvable",
     "text": "Cette page n’existe pas, ou n’est pas à vous.",
-    "home": "Retour à Akinaza"
+    "home": "Retour à {product}"
   },
   "explore": {
     "title": "Explorer",

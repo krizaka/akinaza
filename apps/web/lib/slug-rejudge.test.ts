@@ -13,6 +13,7 @@ vi.mock("@akinaza/db", () => ({
   enqueueMail: async (_db: unknown, m: { to: string; locale: string; subject: string; text: string }) => (found.mails.push(m), `mail-${found.mails.length}`),
   mailById: async (_db: unknown, id: string) => ({ id }),
 }));
+vi.mock("./brand-name", () => ({ productName: async () => "Folioviv" }));
 vi.mock("./mail", () => ({ deliver: async () => (found.delivered++, "pending") }));
 vi.mock("./slug-policy", () => ({ slugPolicy: async () => ({ terms: [] }) }));
 

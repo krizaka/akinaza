@@ -10,7 +10,7 @@ vi.mock("@/lib/i18n-client", () => ({ useSay: () => ({ say: (key: string, vars?:
 const ITEMS = ["overview", "users", "shops", "invoices", "ledger", "operations", "audit"] as const;
 const html = renderToStaticMarkup(
   <KrizakaQueryProvider>
-    <AppFrame locale="en" email="camille@example.com" name="Camille" base="/en" items={[...ITEMS]}>
+    <AppFrame locale="en" productName="Folioviv" email="camille@example.com" name="Camille" base="/en" items={[...ITEMS]}>
       <p>page</p>
     </AppFrame>
   </KrizakaQueryProvider>,

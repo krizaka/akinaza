@@ -11,11 +11,11 @@ import { seedDemoCommunity } from "./demo-community";
 import { applyTemplate, shopPageConfigOf } from "./shop-page";
 import { checkIn, checkOut, saveReport } from "./visits";
 
-/** A person of the Akinaza cast (`@krizaka/org`): the names and languages of the demo come from there, never from this file. */
+/** A person of the Folioviv cast (`@krizaka/org`): the names and languages of the demo come from there, never from this file. */
 const cast = (id: string) => persona("akinaza", id);
 
 /**
- * The fictional Saint-Henri dog walker of the demos (Akinaza#52): an adult who is clearly not a real person, five
+ * The fictional Saint-Henri dog walker of the demos (Folioviv#52): an adult who is clearly not a real person, five
  * clients with their dogs, a published shop page, and a few walks around today. Everything goes through the same
  * operations the product uses — no row is written around the rules. Idempotent per walker account.
  */
@@ -28,8 +28,8 @@ export const SAINT_HENRI = {
   /** What the storefront shows beyond the tagline: the locality, the bio (it says the shop is a demo), how to reach the shop. */
   profile: {
     area: "Saint-Henri, Montréal",
-    bioFr: "Je m'appelle Léa et je promène les chiens de Saint-Henri, de Griffintown et de la Pointe-Saint-Charles. Après chaque sortie, vous recevez une photo et un mot. Commerce fictif pour la démonstration d'Akinaza — aucune personne réelle.",
-    bioEn: "I'm Léa and I walk dogs in Saint-Henri, Griffintown and Pointe-Saint-Charles. After every outing you get a photo and a note. A fictional shop that demonstrates Akinaza — no real person.",
+    bioFr: "Je m'appelle Léa et je promène les chiens de Saint-Henri, de Griffintown et de la Pointe-Saint-Charles. Après chaque sortie, vous recevez une photo et un mot. Commerce fictif pour la démonstration de Folioviv — aucune personne réelle.",
+    bioEn: "I'm Léa and I walk dogs in Saint-Henri, Griffintown and Pointe-Saint-Charles. After every outing you get a photo and a note. A fictional shop that demonstrates Folioviv — no real person.",
     publicPhone: "514-555-0100",
     publicEmail: "bonjour@pattes-saint-henri.example",
     seatUnitFr: "chiens",
@@ -71,7 +71,7 @@ export const SAINT_HENRI = {
       includedEn: ["A meet-and-greet before the first walk", "Pick-up at your door", "A photo and a note after"],
     },
   } as Record<string, { descriptionFr: string; descriptionEn: string; includedFr: string[]; includedEn: string[] }>,
-  /** The shop's photos: the cover (the Lachine canal at dawn, Akinaza's own demo image) and the gallery (the real recordings of the walker's journey on dev). */
+  /** The shop's photos: the cover (the Lachine canal at dawn, Folioviv's own demo image) and the gallery (the real recordings of the walker's journey on dev). */
   media: {
     cover: { url: "https://krizaka-assets.b-cdn.net/sites/akinaza/demo/pets-cover.18173bdfbf.webp", altFr: "Le canal Lachine au petit matin, le chemin de la promenade.", altEn: "The Lachine canal at dawn, the walk's path." },
     gallery: [

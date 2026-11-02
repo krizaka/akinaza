@@ -10,7 +10,7 @@ describe("the 404 of an unknown address is branded, in the language of the addre
     const html = renderToStaticMarkup(<NotFoundPage locale="fr" />);
     expect(text(html)).toContain("404");
     expect(text(html)).toContain("Page introuvable");
-    expect(text(html)).toContain("Retour à Akinaza");
+    expect(text(html)).toContain("Retour à Folioviv");
     expect(html).toContain('href="/fr"');
     expect(html).not.toContain("Page not found");
   });
@@ -18,7 +18,7 @@ describe("the 404 of an unknown address is branded, in the language of the addre
   it("/en/nope: the English words", () => {
     const html = renderToStaticMarkup(<NotFoundPage locale="en" />);
     expect(text(html)).toContain("Page not found");
-    expect(text(html)).toContain("Back to Akinaza");
+    expect(text(html)).toContain("Back to Folioviv");
     expect(html).toContain('href="/en"');
   });
 });

@@ -35,6 +35,8 @@ export interface ShopFrameProps {
   counts?: { today?: number; toCollect?: number };
   /** A deployment kept out of search engines says so in the header (from the `sm` breakpoint: a phone keeps the room for the shop). */
   dev?: boolean;
+  /** The commercial name (lib/brand-name.ts), read on the server so the org registry stays out of the browser bundle. */
+  productName: string;
   home: string;
   profileHref: string;
   children: React.ReactNode;
@@ -48,7 +50,7 @@ export interface ShopFrameProps {
  * where the page holds its own (`screenPrimary`); the page's `h1` is in the content (`PageHeader`), never here. The administration
  * is `AppFrame.tsx`.
  */
-export function ShopFrame({ locale, account, places, shop, newInvoiceHref, search = false, counts = {}, dev = false, home, profileHref, children }: Readonly<ShopFrameProps>) {
+export function ShopFrame({ locale, account, places, shop, newInvoiceHref, search = false, counts = {}, dev = false, productName, home, profileHref, children }: Readonly<ShopFrameProps>) {
   const { say } = useSay();
   const [searchOpen, setSearchOpen] = useState(false);
   const { path, account: who, language } = useFrameAccount({ locale, id: account.id, email: account.email, name: account.name, avatarSeed: account.avatarSeed, profileHref });
@@ -74,7 +76,7 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
       <SkipLink>{say("shell.skip")}</SkipLink>
       <FrameSlot>
       <AppFrame
-        name="Akinaza"
+        name={productName}
         mark={<AkinazaLogo size={28} animated={false} />}
         headerMark={<AkinazaLogo size={22} animated={false} />}
         homeHref={home}

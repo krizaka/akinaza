@@ -8,9 +8,10 @@ import { appSettings } from "@/lib/settings";
 
 import { GET } from "./route";
 
+vi.mock("@/lib/brand-name", () => ({ productName: async () => "Folioviv" }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), feedByTokenHash: vi.fn(), feedEntriesAround: vi.fn(), feedTitle: vi.fn(async () => "Akinaza · Salon Laurier") }));
+vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), feedByTokenHash: vi.fn(), feedEntriesAround: vi.fn(), feedTitle: vi.fn(async () => "Folioviv · Salon Laurier") }));
 
 const call = (segment: string) => GET(new Request(`http://localhost/api/feed/${segment}`), { params: Promise.resolve({ token: segment }) });
 
