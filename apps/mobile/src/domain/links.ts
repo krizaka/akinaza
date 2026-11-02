@@ -37,6 +37,7 @@ export const routes = {
   books: (locale: Locale, shop: string, period?: string) => `${app(locale, shop, "books")}${query({ period })}`,
   figures: (locale: Locale, shop: string) => app(locale, shop, "figures"),
   boutique: (locale: Locale, shop: string) => app(locale, shop, "settings"),
+  boutiqueSection: (locale: Locale, shop: string, section: string) => app(locale, shop, "settings", section),
   profile: (locale: Locale) => app(locale, "profile"),
 } as const;
 
@@ -64,3 +65,9 @@ export function legacyRoute(locale: Locale, from: Legacy, shop: string): string 
   };
   return to[from];
 }
+
+/** The groups of the web's Boutique (apps/web `lib/boutique.ts`), with the section each row opens there: the long forms are a desk's. */
+export const BOUTIQUE_GROUPS = [
+  { id: "page", sections: ["page", "languages"] },
+  { id: "business", sections: ["hours", "rules", "team", "invoices", "agenda", "figures", "data"] },
+] as const;

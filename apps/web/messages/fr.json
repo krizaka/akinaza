@@ -1830,7 +1830,8 @@
         "reportLinkDays": "Les liens de rapport durent (jours)",
         "submit": "Enregistrer les règles",
         "saved": "Règles enregistrées.",
-        "paymentTermsDays": "Conditions de paiement des nouvelles factures (jours, 0 = à la réception)"
+        "paymentTermsDays": "Conditions de paiement des nouvelles factures (jours, 0 = à la réception)",
+        "termsTitle": "Délai de paiement"
       },
       "weekdays": {
         "0": "Dimanche",

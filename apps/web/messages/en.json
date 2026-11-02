@@ -1830,7 +1830,8 @@
         "reportLinkDays": "Report links last (days)",
         "submit": "Save the rules",
         "saved": "Rules saved.",
-        "paymentTermsDays": "Payment terms of new invoices (days, 0 = on receipt)"
+        "paymentTermsDays": "Payment terms of new invoices (days, 0 = on receipt)",
+        "termsTitle": "Payment terms"
       },
       "weekdays": {
         "0": "Sunday",

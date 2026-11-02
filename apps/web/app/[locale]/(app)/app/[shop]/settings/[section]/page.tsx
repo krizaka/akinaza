@@ -141,7 +141,7 @@ async function HoursSection({ locale, shopId }: Readonly<{ locale: RouteLocale; 
   );
 }
 
-/** Boutique › Booking rules: cancellation, horizon, step, notice, report link and payment terms. */
+/** Boutique › Booking rules: cancellation, horizon, step, notice and report link (the payment terms live in Invoices). */
 async function RulesSection({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   const { shop } = await memberShop(shopId, "settings");
   const { rules } = await loadShop(db(), shop);
@@ -179,9 +179,11 @@ async function InvoicesSection({ locale, shopId }: Readonly<{ locale: RouteLocal
   const { shop } = await memberShop(shopId, "settings");
   const t = getDictionary(locale).console.boutique.invoices;
   const mail = await invoiceMailSettings(db(), shop.id);
+  const { rules } = await loadShop(db(), shop);
   return (
     <div className="flex flex-col gap-5">
       <PageHeader as="h2" title={t.title} description={t.lead} />
+      <RulesCard part="terms" rules={{ cancellationHours: rules.cancellationHours, bookingHorizonDays: rules.bookingHorizonDays, slotStepMinutes: rules.slotStepMinutes, minNoticeMinutes: rules.minNoticeMinutes, reportLinkDays: rules.reportLinkDays, paymentTermsDays: shop.paymentTermsDays }} />
       {mail ? <InvoiceMailSettings initial={mail.shop} /> : null}
     </div>
   );
