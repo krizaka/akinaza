@@ -32,7 +32,7 @@ export function demoInvoice(locale: Locale): InvoiceView {
     qstCents: DEMO_QST_CENTS,
     totalCents: DEMO_SUBTOTAL_CENTS + DEMO_GST_CENTS + DEMO_QST_CENTS,
     paidCents: 0,
-    client: { fullName: "Atelier Lumen (démo)", email: "demo@akinaza.test", phone: null },
+    client: { fullName: "Atelier Lumen (démo)", email: "demo@example.test", phone: null },
     shop: { name: "Pattes Saint-Henri", legalName: "Pattes Saint-Henri (démo)", address: "1 rue Exemple, Montréal QC", timezone: "America/Toronto", registrant: true, gstNumber: "123456789RT0001", qstNumber: "1234567890TQ0001", publicEmail: null },
     lines: [{ id: "l1", invoiceId: "demo", position: 1, description: getDictionary(locale).landing.preview.invoiceLine, quantityHundredths: 2_000, unitPriceCents: 26_500, discountCents: 0, taxCategory: "standard", amountCents: DEMO_SUBTOTAL_CENTS }],
   };

@@ -1,6 +1,5 @@
 "use client";
 
-import { ProductLockup } from "@krizaka/ui";
 import { publicBarLinks } from "@krizaka/ui/app-frame";
 import { languagesFor } from "@krizaka/ui/language-switch";
 import { NavBar } from "@krizaka/ui/nav-bar";
@@ -14,9 +13,6 @@ import { type PageId, pagePath, REPO_URL } from "@/lib/site";
 export interface SiteBarLabels {
   nav: string;
   brandHome: string;
-  /** The commercial name and its endorsement, said by the server (`@krizaka/org` stays out of the browser bundle). */
-  productName: string;
-  endorsement: string;
   sourceCode: string;
   theme: string;
   language: string;
@@ -33,7 +29,7 @@ export interface SiteBarLabels {
  * to another product.
  *
  * The bar itself is a client island: it receives its words already said (the server composes them, so the catalogues never travel to the browser) and the session's two places as nodes. */
-export function SiteBar({ locale, current, path, languages: offered, contentLocale, labels, sessionBar, sessionPanel }: Readonly<{ locale: Locale; current: PageId; path?: string; /** The languages the page is offered in (a shop page: the owner's list); default: the product's own. */ languages?: readonly string[]; /** The language of the page's content when it is not the product's (Spanish). */ contentLocale?: string; labels: SiteBarLabels; sessionBar: ReactNode; sessionPanel: ReactNode }>) {
+export function SiteBar({ locale, current, path, languages: offered, contentLocale, labels, brand, sessionBar, sessionPanel }: Readonly<{ locale: Locale; current: PageId; path?: string; /** The languages the page is offered in (a shop page: the owner's list); default: the product's own. */ languages?: readonly string[]; /** The language of the page's content when it is not the product's (Spanish). */ contentLocale?: string; labels: SiteBarLabels; /** The lockup (commercial name and endorsement), drawn by the server so it stays out of the browser bundle. */ brand: ReactNode; sessionBar: ReactNode; sessionPanel: ReactNode }>) {
   const t = (key: keyof SiteBarLabels) => labels[key];
   const languages = languagesFor(path ?? pagePath(locale, current), offered);
   const currentLanguage = contentLocale ?? locale;
@@ -48,7 +44,7 @@ export function SiteBar({ locale, current, path, languages: offered, contentLoca
       <NavBar.Root label={t("nav")} className="pointer-events-auto mx-auto max-w-(--kz-page-max,72rem)">
         <NavBar.Brand asChild>
           <Link href={home} aria-label={t("brandHome")}>
-            <ProductLockup id="akinaza" name={t("productName")} endorsement={t("endorsement")} size={26} layout="inline" />
+            {brand}
           </Link>
         </NavBar.Brand>
         <NavBar.Items>
