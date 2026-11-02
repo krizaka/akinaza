@@ -2,13 +2,17 @@ import { KrizakaQueryProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import { I18nProvider } from "@/lib/i18n-client";
 import { emptyLine } from "@/lib/invoice-draft";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { InvoiceForm, type InvoiceFormProps, STICKY_CLEARS_TAB_BAR } from "./InvoiceForm";
 import { ShopSession } from "./ShopSession";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.resolve() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/fr/app/s1/invoices/new" }));

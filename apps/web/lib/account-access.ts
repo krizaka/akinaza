@@ -2,6 +2,7 @@ import { enqueueMail, exportClient } from "@akinaza/db";
 import { AccountError, postgresAccounts } from "@krizaka/auth";
 
 import { requireSession } from "./access";
+import { PRODUCT_NAME } from "./brand";
 import { db, query, transaction } from "./db";
 import { handle, refuse } from "./http";
 import { hashPassword, verifyPassword } from "./password";
@@ -19,7 +20,7 @@ export const accountMailTemplate = (text: string): "password-reset" | "email-cha
  * queued in the outbox; they leave when a mail provider is configured. `passwordResetTtlMinutes` comes from the settings
  * (`auth.passwordResetTtlMinutes`), never from here.
  */
-export const accountsAt = (baseUrl: string, options: { passwordResetTtlMinutes?: number } = {}) =>
+export const accountsAt = (baseUrl: string, options: { passwordResetTtlMinutes?: number; product?: string } = {}) =>
   postgresAccounts({
     query: async (sql, params) => query(sql, params) as never,
     transaction: (work) => transaction((run) => work(run as never)),
@@ -27,7 +28,7 @@ export const accountsAt = (baseUrl: string, options: { passwordResetTtlMinutes?:
       await enqueueMail(db(), { to: mail.to, locale: mail.locale, template: accountMailTemplate(mail.text), subject: mail.subject, text: mail.text, html: `<p>${escapeHtml(mail.text).replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>")}</p>` });
     },
     baseUrl,
-    product: "Akinaza",
+    product: options.product ?? PRODUCT_NAME,
     tokenPrefix: "ae",
     passwords: { hash: hashPassword, verify: verifyPassword },
     tokenHash: (token) => tokenHash(token),

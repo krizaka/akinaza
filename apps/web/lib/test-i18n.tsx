@@ -2,11 +2,12 @@ import type { BusinessType } from "@akinaza/core";
 import { KrizakaQueryProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 
+import { bindProduct } from "@/lib/brand";
 import { I18nProvider, VocabularyProvider } from "@/lib/i18n-client";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
-const MESSAGES = { en: { console: en.console }, fr: { console: fr.console } } as const;
+const MESSAGES = { en: bindProduct({ console: en.console }), fr: bindProduct({ console: fr.console }) } as const;
 
 /** Renders a client component of the signed-in space to static markup, in a language and a business type (for component tests). */
 export const renderIn = (locale: "en" | "fr", type: BusinessType, node: React.ReactNode) =>

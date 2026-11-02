@@ -12,6 +12,7 @@ vi.mock("@/lib/i18n-client", () => ({ useSay: () => ({ say: (key: string, vars?:
 const shop = "/fr/app/s-1";
 const OWNER: ShopFrameProps = {
   locale: "fr",
+  productName: "Folioviv",
   account: { email: "lea@example.test", name: "Léa" },
   places: [
     { key: "today", href: `${shop}/today` },
@@ -47,7 +48,7 @@ describe("the owner's frame (docs/ux/2026-10-full-review.md § 4.1): where you w
   it("names the product and the shop in the header, with the DEV chip of a deployment kept out of search engines", () => {
     const chip = html.match(/<[^>]*data-testid="shop-chip"[^>]*>[\s\S]*?Pattes de Saint-Henri/);
     expect(chip).not.toBeNull();
-    expect(html).toContain(">Akinaza<");
+    expect(html).toContain(">Folioviv<");
     expect(html).toMatch(/data-testid="app-version"[^>]*>shell\.dev</);
   });
 

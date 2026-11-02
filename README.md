@@ -7,6 +7,11 @@
 
 # Akinaza
 
+> **Commercial name: Folioviv** (« Folioviv by Krizaka »). Akinaza is the code name: the repository, the packages, the addresses and the environment
+> keep it; every word a person reads (pages, e-mails, receipts, the apps' names) says Folioviv, read from `@krizaka/org`. The displayed name is the
+> administrator's setting `brand.displayName`; `pnpm run check:names` (`krizaka-code-names`, in CI after the build) fails on a code name in a built page,
+> the catalogues or the mail templates.
+
 **Run your shop, for less.** The all-in-one for independent Québec shops — hair and beauty salons, studios, consultants, freelancers:
 bookings, client files with consent noted by purpose, bilingual invoices with GST 5 % and QST 9.975 %, a tax ledger, and the
 GST/QST return **prepared** for the merchant to review and file.

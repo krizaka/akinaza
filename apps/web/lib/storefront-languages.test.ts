@@ -1,9 +1,12 @@
 import type { PublicShop } from "@akinaza/db";
 import { describe, expect, it } from "vitest";
 
-import fr from "@/messages/fr.json";
+import { bindProduct } from "@/lib/brand";
+import frRaw from "@/messages/fr.json";
 
 import { buildStorefront } from "./storefront";
+
+const fr = bindProduct(frRaw);
 
 const NOW = new Date("2026-10-19T14:30:00Z");
 const page = (over: Partial<PublicShop> = {}): PublicShop => ({

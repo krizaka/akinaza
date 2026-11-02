@@ -113,11 +113,11 @@ async function entriesBetween(db: Db, feed: FeedRef, from: SQL, to: SQL): Promis
   }));
 }
 
-/** The feed's title in a calendar app: « Akinaza · Salon Laurier » or « Akinaza · Salon Laurier · Julie ». */
-export async function feedTitle(db: Db, feed: FeedRef): Promise<string> {
+/** The feed's title in a calendar app: « <product> · Salon Laurier » or « <product> · Salon Laurier · Julie ». */
+export async function feedTitle(db: Db, feed: FeedRef, product: string): Promise<string> {
   const [shop] = await db.select({ name: shops.name }).from(shops).where(eq(shops.id, feed.shopId));
   const [person] = feed.staffId ? await db.select({ name: staff.name }).from(staff).where(and(eq(staff.id, feed.staffId), eq(staff.shopId, feed.shopId))) : [];
-  return ["Akinaza", shop?.name, person?.name].filter(Boolean).join(" · ");
+  return [product, shop?.name, person?.name].filter(Boolean).join(" · ");
 }
 
 /** The people a member may open a feed for: every active staff member for who runs the shop's bookings, only their own row otherwise. */

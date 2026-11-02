@@ -63,3 +63,10 @@ describe("the client boundary: a server file takes only components and types fro
     expect(boundaryViolations(SOURCES)).toEqual([]);
   });
 });
+
+describe("the org registry stays out of the browser bundle (client JS budget)", () => {
+  it("no « use client » module imports lib/brand: the server passes the commercial name down", () => {
+    const offenders = SOURCES.filter((f) => isClient(f) && /from\s+["'](@\/lib\/brand|\.\/brand)["']/.test(readFileSync(f, "utf8"))).map((f) => relative(WEB, f));
+    expect(offenders).toEqual([]);
+  });
+});

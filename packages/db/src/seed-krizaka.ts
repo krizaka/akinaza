@@ -9,7 +9,7 @@ import { addWindow, joinShop, saveService, saveShopPage, shopOfOwner, shopsOfOwn
 import { issueInvoice, recordExpense } from "./shop-ops";
 
 /**
- * Krizaka, a software studio in Montréal, as the first client of Akinaza (dogfooding, 2026-10-21): the business of a
+ * Krizaka, a software studio in Montréal, as the first client of Folioviv (dogfooding, 2026-10-21): the business of a
  * services company — hours of development, design and consulting, flat-fee workshops and support — with its business
  * clients, its bilingual invoices and its books. EVERYTHING here is demo data and says so: the legal name carries
  * « (démo) », the GST/QST numbers are the documented fake ones, the amounts are plausible and are never Krizaka's real
@@ -21,8 +21,8 @@ export const KRIZAKA = {
   taglineEn: "A software studio in Montréal: development, design and consulting, billed by the hour or by the project.",
   profile: {
     area: "Montréal",
-    bioFr: "Krizaka est un studio de logiciel de Montréal. Ceci est la démonstration d'Akinaza sur les livres d'un studio de services : données fictives, montants de démonstration, numéros de taxes factices.",
-    bioEn: "Krizaka is a software studio in Montréal. This is Akinaza's demonstration on the books of a services studio: fictional data, demo amounts, made-up tax numbers.",
+    bioFr: "Krizaka est un studio de logiciel de Montréal. Ceci est la démonstration de Folioviv sur les livres d'un studio de services : données fictives, montants de démonstration, numéros de taxes factices.",
+    bioEn: "Krizaka is a software studio in Montréal. This is Folioviv's demonstration on the books of a services studio: fictional data, demo amounts, made-up tax numbers.",
     publicEmail: "bonjour@krizaka-demo.example",
     seatUnitFr: "personnes",
     seatUnitEn: "people",
@@ -58,7 +58,7 @@ export const KRIZAKA_EMAILS = ["eric.krizaka@akinaza.test", ...KRIZAKA.clients.m
 
 /**
  * Demo clients renamed since a deployment was seeded: the same account, client file and invoices (their ids and numbers stay),
- * under the new name. « Café du Parc » became « Studio Lumen »: Akinaza serves no café, restaurant or bar (AGENTS § 2, #326).
+ * under the new name. « Café du Parc » became « Studio Lumen »: Folioviv serves no café, restaurant or bar (AGENTS § 2, #326).
  */
 export const KRIZAKA_RENAMED_CLIENTS = [
   { from: { email: "contact.cafedupark@akinaza.test", name: "Café du Parc inc. (démo)" }, to: KRIZAKA.clients[0]! },

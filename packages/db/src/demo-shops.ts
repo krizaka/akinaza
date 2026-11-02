@@ -12,7 +12,7 @@ import { addStaff, addWindow, addZone, saveRules, type ServiceInput, saveService
  * The fictional demo shops (krizaka/akinaza#144), each as DATA: a hair salon in Saint-Henri, a tattoo and photo studio in the
  * Mile End, an independent consultant. Names, people and addresses are invented — no real business, no real person — and each
  * says so in its bio. They are seeded through the product's own operations (no row is written around the rules) and show only
- * what Akinaza really runs: service durations and prices, several people with their own hours, the cancellation rule. No
+ * what Folioviv really runs: service durations and prices, several people with their own hours, the cancellation rule. No
  * deposit, portfolio of an artist, package or multi-session booking appears: they are not built.
  */
 export interface DemoShop {
@@ -44,8 +44,8 @@ export const DEMO_SHOPS: DemoShop[] = [
     taglineEn: "A neighbourhood salon in Saint-Henri: cuts, colour and beard care, with the person of your choice.",
     profile: {
       area: "Saint-Henri, Montréal",
-      bioFr: "Trois coiffeurs, un salon lumineux sur Notre-Dame Ouest. Vous choisissez la personne, ou « n'importe qui » pour la première heure libre. Commerce fictif pour la démonstration d'Akinaza — aucune personne réelle.",
-      bioEn: "Three stylists, one bright salon on Notre-Dame West. Choose the person, or « anyone » for the first free time. A fictional shop that demonstrates Akinaza — no real person.",
+      bioFr: "Trois coiffeurs, un salon lumineux sur Notre-Dame Ouest. Vous choisissez la personne, ou « n'importe qui » pour la première heure libre. Commerce fictif pour la démonstration de Folioviv — aucune personne réelle.",
+      bioEn: "Three stylists, one bright salon on Notre-Dame West. Choose the person, or « anyone » for the first free time. A fictional shop that demonstrates Folioviv — no real person.",
       publicPhone: "514-555-0110",
       publicEmail: "bonjour@cedre-ciseaux.example",
     },
@@ -72,8 +72,8 @@ export const DEMO_SHOPS: DemoShop[] = [
     taglineEn: "Tattoo and photo in the Mile End: we meet first, we draw after.",
     profile: {
       area: "Mile End, Montréal",
-      bioFr: "Deux tatoueurs et une photographe dans un studio du Mile End. Commencez par une consultation gratuite de 20 minutes. Commerce fictif pour la démonstration d'Akinaza — aucune personne réelle.",
-      bioEn: "Two tattoo artists and a photographer in a Mile End studio. Start with a free 20-minute consultation. A fictional shop that demonstrates Akinaza — no real person.",
+      bioFr: "Deux tatoueurs et une photographe dans un studio du Mile End. Commencez par une consultation gratuite de 20 minutes. Commerce fictif pour la démonstration de Folioviv — aucune personne réelle.",
+      bioEn: "Two tattoo artists and a photographer in a Mile End studio. Start with a free 20-minute consultation. A fictional shop that demonstrates Folioviv — no real person.",
       publicPhone: "514-555-0120",
       publicEmail: "bonjour@encre-vive.example",
     },
@@ -99,8 +99,8 @@ export const DEMO_SHOPS: DemoShop[] = [
     taglineEn: "Independent digital-strategy consulting: a call to get to know each other, then working sessions.",
     profile: {
       area: "Mile End, Montréal",
-      bioFr: "Une consultante qui travaille à son compte. Chaque séance est facturée au cent près, avec la TPS et la TVQ détaillées. Commerce fictif pour la démonstration d'Akinaza — aucune personne réelle.",
-      bioEn: "A self-employed consultant. Every session is invoiced to the cent, with the GST and QST itemised. A fictional shop that demonstrates Akinaza — no real person.",
+      bioFr: "Une consultante qui travaille à son compte. Chaque séance est facturée au cent près, avec la TPS et la TVQ détaillées. Commerce fictif pour la démonstration de Folioviv — aucune personne réelle.",
+      bioEn: "A self-employed consultant. Every session is invoiced to the cent, with the GST and QST itemised. A fictional shop that demonstrates Folioviv — no real person.",
       publicPhone: "514-555-0130",
       publicEmail: "bonjour@ferland-conseil.example",
     },

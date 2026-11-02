@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { type Db, enqueueInvoiceDelivery, enqueueMail, invoiceDetail, invoiceMailSettings, invoiceTokenHash, issueReportLink, mailById, markMailAttempt, markMailSent, pendingMail, scrubMail } from "@akinaza/db";
 import { addDays } from "date-fns";
 
+import { productName } from "./brand-name";
 import type { MailSettings } from "./mail-settings";
 import { type MailLocale, renderMailTemplate } from "./mail-templates";
 
@@ -24,7 +25,7 @@ export async function deliver(db: Db, mail: Pending, now: Date, settings: MailSe
     return markMailAttempt(db, mail.id, "MAIL_NOT_CONFIGURED", MAX_ATTEMPTS);
   }
   // https://documentation.mailgun.com — POST /v3/{domain}/messages, Basic auth `api:<key>`, form fields.
-  const configuredFrom = settings.from || `Akinaza <no-reply@${settings.domain}>`;
+  const configuredFrom = settings.from || `${await productName()} <no-reply@${settings.domain}>`;
   const address = /<([^<>]+)>/.exec(configuredFrom)?.[1] ?? configuredFrom;
   const from = mail.fromName ? `${mail.fromName.replace(/[\r\n<>]/g, "").slice(0, 120)} <${address}>` : configuredFrom;
   const form = new URLSearchParams({ from, to: mail.toEmail, subject: mail.subject, text: mail.bodyText, html: mail.html });
@@ -83,7 +84,7 @@ export async function sendWalkReport(db: Db, shopId: string, bookingId: string, 
       url: `${appUrl}/${ctx.language}/report/${ctx.token}`,
       photo: ctx.hasPhoto,
     },
-    { locale: ctx.language, appUrl, now },
+    { locale: ctx.language, appUrl, now, product: await productName() },
   );
   const id = await enqueueMail(db, { to: ctx.to, locale: mail.locale, template: "walk-report", subject: mail.subject, html: mail.html, text: mail.text, relatedKind: "visit_report", relatedId: ctx.reportId });
   const queued = await mailById(db, id);
@@ -121,7 +122,7 @@ export async function sendInvoiceMail(db: Db, shopId: string, invoiceId: string,
       hasMessage: !!optionalMessage,
       url: `${appUrl}/${locale}/invoice/${token}`,
     },
-    { locale, appUrl, now },
+    { locale, appUrl, now, product: await productName() },
   );
   const { deliveryId, mailId } = await enqueueInvoiceDelivery(db, shopId, invoiceId, {
     tokenHash: invoiceTokenHash(token),

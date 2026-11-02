@@ -5,11 +5,15 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { avatarOptions } from "@/lib/avatar";
+import { bindProduct } from "@/lib/brand";
 import { I18nProvider } from "@/lib/i18n-client";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { ProfileSettings, type ProfileView } from "./ProfileSettings";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app/profile" }));
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;

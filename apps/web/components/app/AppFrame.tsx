@@ -18,7 +18,7 @@ export type AdminPlace = keyof typeof ICONS;
  * rail, header and account menu as the shop's space (`ShopFrame`), with a chip saying where you are. The first five sections are the
  * tab bar on a phone; the others sit at the rail's foot.
  */
-export function AppFrame({ locale, email, name, avatarSeed, base, items, children }: Readonly<{ locale: "en" | "fr"; email: string; name?: string | null; avatarSeed?: string | null; base: string; items: AdminPlace[]; children: React.ReactNode }>) {
+export function AppFrame({ locale, email, name, avatarSeed, base, items, productName, children }: Readonly<{ locale: "en" | "fr"; productName: string; email: string; name?: string | null; avatarSeed?: string | null; base: string; items: AdminPlace[]; children: React.ReactNode }>) {
   const { say } = useSay();
   const { path, account, language } = useFrameAccount({ locale, email, name, avatarSeed, profileHref: `${base}/profile` });
   const hrefOf = (key: AdminPlace) => (key === "overview" ? base : `${base}/${key}`);
@@ -29,7 +29,7 @@ export function AppFrame({ locale, email, name, avatarSeed, base, items, childre
       <SkipLink>{say("shell.skip")}</SkipLink>
       <FrameSlot>
       <KrizakaAppFrame
-        name="Akinaza"
+        name={productName}
         label={say("shell.admin")}
         mark={<AkinazaLogo size={28} animated={false} />}
         headerMark={<AkinazaLogo size={22} animated={false} />}

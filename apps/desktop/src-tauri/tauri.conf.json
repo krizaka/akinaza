@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Akinaza",
+  "productName": "Folioviv",
   "version": "0.1.0",
   "identifier": "com.krizaka.akinaza.desktop",
   "build": { "frontendDist": "../static" },
@@ -14,7 +14,7 @@
     "targets": ["dmg"],
     "category": "Business",
     "shortDescription": "Your shop's back office on your Mac",
-    "longDescription": "Invoices, books and reports of your shop in a native window. Akinaza prepares your return and never files it.",
+    "longDescription": "Invoices, books and reports of your shop in a native window. Folioviv prepares your return and never files it.",
     "copyright": "Krizaka",
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.png"],
     "macOS": { "minimumSystemVersion": "14.0", "hardenedRuntime": true, "entitlements": "entitlements.plist", "infoPlist": "Info.plist", "signingIdentity": null, "dmg": { "windowSize": { "width": 560, "height": 360 } } }

@@ -2,13 +2,16 @@ import { KrizakaQueryProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import { I18nProvider } from "@/lib/i18n-client";
-import en from "@/messages/en.json";
+import enRaw from "@/messages/en.json";
 
 import { DataPanel } from "./DataPanel";
 import { ProfileSettings, type ProfileView } from "./ProfileSettings";
 import { SessionsPanel } from "./SessionsPanel";
 import { SubscriptionPanel } from "./SubscriptionPanel";
+
+const en = bindProduct(enRaw);
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/en/app/profile" }));
 

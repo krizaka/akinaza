@@ -1,10 +1,14 @@
 import { org } from "@krizaka/org";
 import { describe, expect, it } from "vitest";
 
-import enMessages from "../messages/en.json";
-import frMessages from "../messages/fr.json";
+import enRaw from "../messages/en.json";
+import frRaw from "../messages/fr.json";
+import { bindProduct } from "./brand";
 import { format } from "./i18n";
 import { publisherVars } from "./publisher";
+
+const enMessages = bindProduct(enRaw);
+const frMessages = bindProduct(frRaw);
 
 describe("publisher (akinaza#375): the legal facts come from @krizaka/org", () => {
   it("reads the legal name, the city and the region from the org JSON", () => {

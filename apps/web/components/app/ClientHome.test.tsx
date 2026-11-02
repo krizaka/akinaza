@@ -2,11 +2,15 @@ import { KrizakaQueryProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
+import { bindProduct } from "@/lib/brand";
 import { I18nProvider } from "@/lib/i18n-client";
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { type ClientFileView,ClientHome } from "./ClientHome";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }), usePathname: () => "/fr/app" }));
 

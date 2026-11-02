@@ -1,11 +1,15 @@
 import { computeFigures, DEFAULT_FIGURE_THRESHOLDS, FIGURE_ID, FIGURE_STATE, type FigureState, LEXICON, nextActions } from "@akinaza/core";
 import { describe, expect, it } from "vitest";
 
-import en from "@/messages/en.json";
-import fr from "@/messages/fr.json";
+import { bindProduct } from "@/lib/brand";
+import enRaw from "@/messages/en.json";
+import frRaw from "@/messages/fr.json";
 
 import { actionView, kpiThresholds, kpiView, periodId } from "./figures-view";
 import { shopRoutes } from "./routes";
+
+const en = bindProduct(enRaw);
+const fr = bindProduct(frRaw);
 
 const routes = shopRoutes("fr", "11111111-1111-4111-8111-111111111111");
 const INPUT = {

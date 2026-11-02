@@ -6,7 +6,7 @@ Voici ce qui compte cette semaine pour {shop}, calculé sur vos rendez-vous et v
 {#has2}- {line2}
 {/has2}{#has3}- {line3}
 {/has3}
-Ouvrir Akinaza : {url}
+Ouvrir {product} : {url}
 
 Chaque action se fait en un clic dans l'app ; rien ne part sans vous.
 Ne plus recevoir ce courriel : {stop}
