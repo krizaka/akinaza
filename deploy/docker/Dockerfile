@@ -2,7 +2,7 @@
 # Akinaza web — production image: the Next.js standalone server (apps/web). The SQL migrations travel inside it and are applied
 # at start on a direct connection (lib/db.ts, instrumentation.ts). Built by App Platform from deploy/digitalocean/app.yaml.
 # -------------------------------------------------------------
-FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 AS base
+FROM node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914 AS base
 RUN apk add --no-cache libc6-compat && corepack enable
 WORKDIR /app
 
@@ -27,7 +27,7 @@ ENV APP_COMMIT_SHA=$APP_COMMIT_SHA APP_SEARCH_INDEXING=$APP_SEARCH_INDEXING
 RUN pnpm --filter @akinaza/web build
 
 # 3. Run
-FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402 AS runner
+FROM node:22-alpine@sha256:fe4f6d74e20370acb04ad889077d14d0f64a9c8ea6a42bc60cddf1e844699914 AS runner
 WORKDIR /app
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
