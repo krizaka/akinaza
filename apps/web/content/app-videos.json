@@ -5,34 +5,34 @@
     {
       "platform": "android",
       "flow": "today-books",
-      "seconds": 8,
-      "capturedAt": "2026-11-02T13:44:15.683Z",
+      "seconds": 7.1,
+      "capturedAt": "2026-11-03T13:02:22.896Z",
       "files": {
-        "webm": "sites/akinaza/download/android-today-books.35e8972464.webm",
-        "mp4": "sites/akinaza/download/android-today-books.6dfa01d22d.mp4",
-        "poster": "sites/akinaza/download/android-today-books.bc982d40b8.jpg"
+        "webm": "sites/akinaza/download/android-today-books.7bafe7efe8.webm",
+        "mp4": "sites/akinaza/download/android-today-books.9feae85c22.mp4",
+        "poster": "sites/akinaza/download/android-today-books.ee352b0e15.jpg"
       }
     },
     {
       "platform": "web",
       "flow": "composer",
-      "seconds": 10.1,
-      "capturedAt": "2026-11-02T13:43:59.846Z",
+      "seconds": 10.5,
+      "capturedAt": "2026-11-03T13:01:58.660Z",
       "files": {
-        "webm": "sites/akinaza/download/web-composer.a691335864.webm",
-        "mp4": "sites/akinaza/download/web-composer.e5f3a6dc89.mp4",
-        "poster": "sites/akinaza/download/web-composer.08b9f3edd8.jpg"
+        "webm": "sites/akinaza/download/web-composer.8d25f1cc59.webm",
+        "mp4": "sites/akinaza/download/web-composer.20de33f346.mp4",
+        "poster": "sites/akinaza/download/web-composer.271424e196.jpg"
       }
     },
     {
       "platform": "web",
       "flow": "storefront",
-      "seconds": 14.9,
-      "capturedAt": "2026-11-02T13:44:08.164Z",
+      "seconds": 15.4,
+      "capturedAt": "2026-11-03T13:02:12.369Z",
       "files": {
-        "webm": "sites/akinaza/download/web-storefront.2c319d58d7.webm",
-        "mp4": "sites/akinaza/download/web-storefront.c053ab5b36.mp4",
-        "poster": "sites/akinaza/download/web-storefront.5bd6697458.jpg"
+        "webm": "sites/akinaza/download/web-storefront.ca0e1c5efd.webm",
+        "mp4": "sites/akinaza/download/web-storefront.2af8938152.mp4",
+        "poster": "sites/akinaza/download/web-storefront.841b683134.jpg"
       }
     }
   ]
