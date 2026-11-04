@@ -54,7 +54,8 @@
   },
   "stage": {
     "title": "Development version",
-    "message": "Data can be reset at any time. This is not a commercial offer yet."
+    "message": "Data can be reset at any time. This is not a commercial offer yet.",
+    "codeName": "code name: {code}"
   },
   "landing": {
     "title": "Your appointments, invoices and taxes, sorted.",

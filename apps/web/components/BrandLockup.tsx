@@ -1,6 +1,7 @@
 import { AkinazaLogo } from "@krizaka/ui";
 
 import { endorsementIn, PRODUCT_NAME } from "@/lib/brand";
+import { codeNameLine } from "@/lib/code-name";
 import type { Locale } from "@/lib/i18n";
 
 /**
@@ -10,12 +11,21 @@ import type { Locale } from "@/lib/i18n";
  * (krizaka-ui), this one keeps the shop pages inside their JavaScript budget.
  */
 export function BrandLockup({ locale, size = 26 }: Readonly<{ locale: Locale; size?: number }>) {
+  const codeName = codeNameLine(locale);
   return (
     <span className="inline-flex items-center gap-2.5" data-brand="akinaza">
       <AkinazaLogo size={size} />
-      <span className="flex items-baseline gap-1.5 leading-tight">
-        <span className="text-base font-semibold tracking-tight text-fg">{PRODUCT_NAME}</span>
-        <span className="text-xs text-fg-secondary">{endorsementIn(locale)}</span>
+      <span className="flex flex-col leading-tight">
+        <span className="flex items-baseline gap-1.5">
+          <span className="text-base font-semibold tracking-tight text-fg">{PRODUCT_NAME}</span>
+          <span className="text-xs text-fg-secondary">{endorsementIn(locale)}</span>
+        </span>
+        {/* Development only (lib/code-name.ts): the code name under the commercial name; the same line as `CodeNameLine` of @krizaka/ui. */}
+        {codeName ? (
+          <span className="font-mono text-xs text-fg-secondary" data-code-name="">
+            {codeName}
+          </span>
+        ) : null}
       </span>
     </span>
   );

@@ -54,7 +54,8 @@
   },
   "stage": {
     "title": "Version de développement",
-    "message": "Les données peuvent être réinitialisées à tout moment. Ce n’est pas encore une offre commerciale."
+    "message": "Les données peuvent être réinitialisées à tout moment. Ce n’est pas encore une offre commerciale.",
+    "codeName": "nom de code : {code}"
   },
   "landing": {
     "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
