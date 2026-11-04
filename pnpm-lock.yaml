@@ -25,8 +25,8 @@ importers:
         specifier: ^0.2.1
         version: 0.2.1(react@19.3.1)(typescript@6.0.3)
       '@krizaka/org':
-        specifier: ^0.7.0
-        version: 0.7.0
+        specifier: ^0.7.2
+        version: 0.7.2
       '@krizaka/page-audit':
         specifier: ^0.5.1
         version: 0.5.1(@krizaka/a11y-audit@0.2.0)(playwright-core@1.64.0)
@@ -85,8 +85,8 @@ importers:
         specifier: ^3.76.1
         version: 3.76.1
       '@krizaka/ui':
-        specifier: ^3.80.0
-        version: 3.80.0(@krizaka/query@0.2.2(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
+        specifier: ^3.87.0
+        version: 3.87.0(@krizaka/query@0.2.2(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
       '@shopify/flash-list':
         specifier: 2.3.2
         version: 2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)
@@ -177,7 +177,7 @@ importers:
         version: 0.1.0
       '@krizaka/charts':
         specifier: ^0.6.1
-        version: 0.6.1(@krizaka/ui@3.80.0)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)
+        version: 0.6.1(@krizaka/ui@3.87.0)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)
       '@krizaka/email':
         specifier: ^0.5.0
         version: 0.5.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@5.9.3)
@@ -197,8 +197,8 @@ importers:
         specifier: 0.3.0
         version: 0.3.0
       '@krizaka/org':
-        specifier: ^0.7.0
-        version: 0.7.0
+        specifier: ^0.7.2
+        version: 0.7.2
       '@krizaka/organize':
         specifier: 0.4.0
         version: 0.4.0(vitest@4.1.12)
@@ -225,13 +225,13 @@ importers:
         version: 0.8.1(opendal@0.49.13)(vitest@4.1.12)(zod@4.6.7)
       '@krizaka/tailwind':
         specifier: ^3.76.1
-        version: 3.76.1(@krizaka/tokens@3.76.1)(@krizaka/ui@3.80.0)(tailwindcss@4.3.3)
+        version: 3.76.1(@krizaka/tokens@3.76.1)(@krizaka/ui@3.87.0)(tailwindcss@4.3.3)
       '@krizaka/tokens':
         specifier: ^3.76.1
         version: 3.76.1
       '@krizaka/ui':
-        specifier: ^3.80.0
-        version: 3.80.0(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
+        specifier: ^3.87.0
+        version: 3.87.0(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
       '@krizaka/webhooks':
         specifier: 0.1.0
         version: 0.1.0
@@ -2201,8 +2201,8 @@ packages:
     resolution: {integrity: sha512-JGzjj5WUcda4aPCAJGB/UVIYh4A/Lq2kPNeur3zKgMSTavQCtQavJARN8VI52zznfHiYfLlz70lH07xF6kIeVw==}
     engines: {node: '>=22'}
 
-  '@krizaka/org@0.7.0':
-    resolution: {integrity: sha512-1CKhAVDRRnD4VjRhUlD6LBBEJnrZJeo6mVW0oaqPG9R13/cLJRhGAX+zNuDRgkoAWOR0gl6K1CaQDgsojwspgg==}
+  '@krizaka/org@0.7.2':
+    resolution: {integrity: sha512-it+Mj9XJID2vHkWXwLbbELdUNqqieSlbey/ltvjCWMWNMXefrt0lZ4S/BRP1TfB5GG/XsFLf1P19FuxiiU+o/w==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -2362,8 +2362,8 @@ packages:
     resolution: {integrity: sha512-sn3rGy4iSXtK7pHPlFq2TRMsQElc6umivOJy47UuXFJHB9TGwMnNFwb1FfZYb19fzOVdVPIPiJNXO1o9Q3+EzA==}
     engines: {node: '>=22'}
 
-  '@krizaka/tokens@3.80.0':
-    resolution: {integrity: sha512-I9hJWePMbGLDENIuKJ3eAOCSzi4cMykXypc56WOZ7NikAHPAFUa/de2STXU6+b/NohmqLkNlmc70PGtriaUoZg==}
+  '@krizaka/tokens@3.87.0':
+    resolution: {integrity: sha512-5aPtPTVgKfFlany3xX6Vw0ggrXTvKkKCz+YnjW0Tnq+ASFqI/X3h3FHMtRiFl6ItKBQnWPlcSE8UYbawJ9BJ/w==}
     engines: {node: '>=22'}
 
   '@krizaka/ui@3.76.1':
@@ -2415,12 +2415,12 @@ packages:
       tailwindcss:
         optional: true
 
-  '@krizaka/ui@3.80.0':
-    resolution: {integrity: sha512-l6rmEGdHKXWUp13dUi11y2ZLzNvIepu9TFz1FDTLAYXj3xFXmpGg97KAX3heDndAG60uKO2g6sB4UoZGhewNYQ==}
+  '@krizaka/ui@3.87.0':
+    resolution: {integrity: sha512-w6efLE/2Yr6bIAWAsvX/PMrmjVH32s4xMCX3F30VgsgtcEa+WzkxE+r6RyBXJGsaAs7wI/9obAhRdBxFu8C9BA==}
     engines: {node: '>=22'}
     peerDependencies:
       '@krizaka/query': '>=0.3.0'
-      '@krizaka/tailwind': '>=3.80.0'
+      '@krizaka/tailwind': '>=3.87.0'
       '@maplibre/maplibre-react-native': '>=11'
       '@shopify/flash-list': '>=2'
       expo-camera: '>=16'
@@ -10848,10 +10848,10 @@ snapshots:
     dependencies:
       date-fns: 4.4.0
 
-  '@krizaka/charts@0.6.1(@krizaka/ui@3.80.0)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)':
+  '@krizaka/charts@0.6.1(@krizaka/ui@3.87.0)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)':
     dependencies:
       '@krizaka/intl': 0.3.0
-      '@krizaka/ui': 3.80.0(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
+      '@krizaka/ui': 3.87.0(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
       d3-geo: 3.1.1
       echarts: 6.1.0
       react: 19.3.1
@@ -10994,7 +10994,7 @@ snapshots:
 
   '@krizaka/org@0.3.1': {}
 
-  '@krizaka/org@0.7.0': {}
+  '@krizaka/org@0.7.2': {}
 
   '@krizaka/organize@0.4.0(vitest@4.1.11)':
     optionalDependencies:
@@ -11101,7 +11101,7 @@ snapshots:
   '@krizaka/settings@0.6.0(zod@4.6.7)':
     dependencies:
       '@krizaka/db': 0.3.1
-      '@krizaka/org': 0.7.0
+      '@krizaka/org': 0.7.2
       zod: 4.6.7
 
   '@krizaka/storage@0.8.1(opendal@0.49.13)(vitest@4.1.12)(zod@4.6.7)':
@@ -11121,15 +11121,15 @@ snapshots:
       tailwindcss: 4.3.3
     optional: true
 
-  '@krizaka/tailwind@3.76.1(@krizaka/tokens@3.76.1)(@krizaka/ui@3.80.0)(tailwindcss@4.3.3)':
+  '@krizaka/tailwind@3.76.1(@krizaka/tokens@3.76.1)(@krizaka/ui@3.87.0)(tailwindcss@4.3.3)':
     dependencies:
       '@krizaka/tokens': 3.76.1
-      '@krizaka/ui': 3.80.0(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
+      '@krizaka/ui': 3.87.0(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
       tailwindcss: 4.3.3
 
-  '@krizaka/tailwind@3.76.1(@krizaka/tokens@3.80.0)(@krizaka/ui@3.76.1)(tailwindcss@4.3.3)':
+  '@krizaka/tailwind@3.76.1(@krizaka/tokens@3.87.0)(@krizaka/ui@3.76.1)(tailwindcss@4.3.3)':
     dependencies:
-      '@krizaka/tokens': 3.80.0
+      '@krizaka/tokens': 3.87.0
       '@krizaka/ui': 3.76.1(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)
       tailwindcss: 4.3.3
     optional: true
@@ -11144,7 +11144,7 @@ snapshots:
 
   '@krizaka/tokens@3.76.1': {}
 
-  '@krizaka/tokens@3.80.0': {}
+  '@krizaka/tokens@3.87.0': {}
 
   '@krizaka/ui@3.76.1(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.11)':
     dependencies:
@@ -11207,7 +11207,7 @@ snapshots:
       zod: 4.6.7
     optionalDependencies:
       '@krizaka/query': 0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1)
-      '@krizaka/tailwind': 3.76.1(@krizaka/tokens@3.80.0)(@krizaka/ui@3.76.1)(tailwindcss@4.3.3)
+      '@krizaka/tailwind': 3.76.1(@krizaka/tokens@3.87.0)(@krizaka/ui@3.76.1)(tailwindcss@4.3.3)
       '@shopify/flash-list': 2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)
       maplibre-gl: 6.11.2
       react-dom: 19.3.1(react@19.3.1)
@@ -11222,12 +11222,12 @@ snapshots:
       - tailwind-merge
       - vitest
 
-  '@krizaka/ui@3.80.0(@krizaka/query@0.2.2(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)':
+  '@krizaka/ui@3.87.0(@krizaka/query@0.2.2(@types/react@19.3.0)(csstype@3.2.3)(pg@8.23.1)(react@19.3.1))(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)':
     dependencies:
       '@krizaka/intl': 0.4.1
       '@krizaka/organize': 0.4.0(vitest@4.1.12)
       '@krizaka/pacer': 0.2.0(react@19.3.1)
-      '@krizaka/tokens': 3.80.0
+      '@krizaka/tokens': 3.87.0
       '@protomaps/basemaps': 5.7.2
       '@tanstack/highlight': 1.1.0
       '@tanstack/markdown': 1.0.0(react@19.3.1)
@@ -11259,12 +11259,12 @@ snapshots:
       - tailwind-merge
       - vitest
 
-  '@krizaka/ui@3.80.0(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)':
+  '@krizaka/ui@3.87.0(@krizaka/query@0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1))(@krizaka/tailwind@3.76.1)(@shopify/flash-list@2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(maplibre-gl@6.11.2)(react-dom@19.3.1(react@19.3.1))(react-native-svg@15.16.0(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1))(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)(vitest@4.1.12)':
     dependencies:
       '@krizaka/intl': 0.4.1
       '@krizaka/organize': 0.4.0(vitest@4.1.12)
       '@krizaka/pacer': 0.2.0(react@19.3.1)
-      '@krizaka/tokens': 3.80.0
+      '@krizaka/tokens': 3.87.0
       '@protomaps/basemaps': 5.7.2
       '@tanstack/highlight': 1.1.0
       '@tanstack/markdown': 1.0.0(react@19.3.1)
@@ -11282,7 +11282,7 @@ snapshots:
       zod: 4.6.7
     optionalDependencies:
       '@krizaka/query': 0.3.0(@types/react@19.3.0)(csstype@3.2.3)(next@16.4.1(@babel/core@7.29.7)(@playwright/test@1.64.0)(@types/node@24.19.2)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(pg@8.23.1)(react@19.3.1)
-      '@krizaka/tailwind': 3.76.1(@krizaka/tokens@3.76.1)(@krizaka/ui@3.80.0)(tailwindcss@4.3.3)
+      '@krizaka/tailwind': 3.76.1(@krizaka/tokens@3.76.1)(@krizaka/ui@3.87.0)(tailwindcss@4.3.3)
       '@shopify/flash-list': 2.3.2(@babel/runtime@7.29.10)(react-native@0.88.0(@babel/core@7.29.7)(@react-native/metro-config@0.88.0(@babel/core@7.29.7))(@types/react@19.3.0)(react@19.3.1))(react@19.3.1)
       maplibre-gl: 6.11.2
       react-dom: 19.3.1(react@19.3.1)

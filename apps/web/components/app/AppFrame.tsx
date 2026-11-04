@@ -1,12 +1,11 @@
 "use client";
 
 import { BillingIcon, ClockIcon, HomeIcon, ServerIcon, ShieldIcon, UserIcon, UsersIcon } from "@krizaka/icons";
-import { AkinazaLogo } from "@krizaka/ui";
+import { AkinazaLogo, CodeNameLine } from "@krizaka/ui";
 import { AppFrame as KrizakaAppFrame, type FrameSection } from "@krizaka/ui/app-frame";
 import { SkipLink } from "@krizaka/ui/skip-link";
 import Link from "next/link";
 
-import { CodeNameChip } from "@/components/CodeNameChip";
 import { FrameSlot } from "@/components/app/FrameSlot";
 import { useFrameAccount } from "@/components/app/use-frame-account";
 import { CODE_NAME } from "@/lib/brand";
@@ -44,7 +43,7 @@ export function AppFrame({ locale, email, name, avatarSeed, base, items, product
         language={language}
         locale={locale}
         linkAs={Link}
-        chips={dev ? <CodeNameChip className="hidden sm:inline">{say("stage.codeName", { code: CODE_NAME })}</CodeNameChip> : undefined}
+        chips={dev ? <CodeNameLine className="hidden sm:inline">{say("stage.codeName", { code: CODE_NAME })}</CodeNameLine> : undefined}
       >
         <main id="content" className="flex-1 p-4 md:p-6">
           {children}

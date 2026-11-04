@@ -1,6 +1,5 @@
-import { AkinazaLogo } from "@krizaka/ui";
+import { AkinazaLogo, CodeNameLine } from "@krizaka/ui";
 
-import { CodeNameChip } from "@/components/CodeNameChip";
 import { endorsementIn, PRODUCT_NAME } from "@/lib/brand";
 import { codeNameLine } from "@/lib/code-name";
 import type { Locale } from "@/lib/i18n";
@@ -22,7 +21,7 @@ export function BrandLockup({ locale, size = 26 }: Readonly<{ locale: Locale; si
           <span className="text-xs text-fg-secondary">{endorsementIn(locale)}</span>
         </span>
         {/* Development only (lib/code-name.ts): the code name under the commercial name. */}
-        {codeName ? <CodeNameChip>{codeName}</CodeNameChip> : null}
+        {codeName ? <CodeNameLine>{codeName}</CodeNameLine> : null}
       </span>
     </span>
   );

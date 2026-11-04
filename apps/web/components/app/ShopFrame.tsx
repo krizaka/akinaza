@@ -1,7 +1,7 @@
 "use client";
 
 import { BillingIcon, BookmarkIcon, CalendarIcon, ClockIcon, HomeIcon, PlusIcon, UsersIcon } from "@krizaka/icons";
-import { AkinazaLogo } from "@krizaka/ui";
+import { AkinazaLogo, CodeNameLine } from "@krizaka/ui";
 import { AppFrame, type FrameSection } from "@krizaka/ui/app-frame";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
@@ -9,7 +9,6 @@ import { SkipLink } from "@krizaka/ui/skip-link";
 import Link from "next/link";
 import { useState } from "react";
 
-import { CodeNameChip } from "@/components/CodeNameChip";
 import { FrameSlot } from "@/components/app/FrameSlot";
 import { type ChipShop, ShopChip } from "@/components/app/ShopChip";
 import { ShopSearch } from "@/components/app/ShopSearch";
@@ -92,7 +91,7 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
         chips={
           <>
             {shop ? <ShopChip locale={locale} current={shop.current} others={shop.others} addHref={shop.addHref} /> : null}
-            {dev ? <CodeNameChip className="hidden sm:inline">{say("stage.codeName", { code: CODE_NAME })}</CodeNameChip> : null}
+            {dev ? <CodeNameLine className="hidden sm:inline">{say("stage.codeName", { code: CODE_NAME })}</CodeNameLine> : null}
             {dev ? (
               <Badge tone="warning" className="hidden sm:inline-flex" data-testid="app-version" title={VERSION ? say("shell.devBuild", { version: VERSION }) : undefined}>
                 {say("shell.dev")}
