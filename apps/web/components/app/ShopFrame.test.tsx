@@ -146,6 +146,11 @@ describe("the same frame for other roles and for a client", () => {
     expect(html).toMatch(/data-testid="shop-chip"[^>]*>Pattes de Saint-Henri</);
   });
 
+  it("shows the code name beside the product's name on a dev deployment and never otherwise", () => {
+    expect(render(OWNER)).toMatch(/data-code-name=""[^>]*>stage\.codeName akinaza</);
+    expect(render({ ...OWNER, dev: false })).not.toContain("data-code-name");
+  });
+
   it("gives a client their bookings and the account menu, no shop chip, no invoice", () => {
     const html = render({ ...OWNER, places: [{ key: "bookings", href: "/fr/app" }], shop: undefined, newInvoiceHref: null, dev: false });
     expect(railItems(html).map((a) => a.match(/aria-label="([^"]+)"/)![1])).toEqual(["shell.bookings"]);

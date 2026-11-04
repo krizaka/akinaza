@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { AppFrame } from "@/components/app/AppFrame";
 import { pageAdmin, pageSession } from "@/lib/access";
 import { productName } from "@/lib/brand-name";
+import { appEnvironment } from "@/lib/env";
 import { asLocale } from "@/lib/i18n";
 
 /** Three locks: a session, the ADMIN role, an address of AUTH_ALLOWED_IPS. No session → sign-in; the rest → 404. */
@@ -12,7 +13,7 @@ export default async function SignedAdmin({ children, params }: Readonly<{ child
   if (!session) {redirect(`/${locale}/sign-in`);}
   if (!(await pageAdmin())) {notFound();}
   return (
-    <AppFrame locale={locale} productName={await productName()} email={session.account.email} base={`/${locale}`} items={["overview", "users", "shops", "invoices", "ledger", "operations", "organize", "prices", "storage", "associations", "incidents", "addresses", "audit"]}>
+    <AppFrame locale={locale} productName={await productName()} dev={appEnvironment() !== "prod"} email={session.account.email} base={`/${locale}`} items={["overview", "users", "shops", "invoices", "ledger", "operations", "organize", "prices", "storage", "associations", "incidents", "addresses", "audit"]}>
       {children}
     </AppFrame>
   );

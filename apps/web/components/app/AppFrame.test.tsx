@@ -15,7 +15,21 @@ const html = renderToStaticMarkup(
     </AppFrame>
   </KrizakaQueryProvider>,
 );
+const withDev = renderToStaticMarkup(
+  <KrizakaQueryProvider>
+    <AppFrame locale="en" productName="Folioviv" email="camille@example.com" name="Camille" base="/en" items={[...ITEMS]} dev>
+      <p>page</p>
+    </AppFrame>
+  </KrizakaQueryProvider>,
+);
 const header = html.slice(html.indexOf("<header"), html.indexOf("</header>"));
+
+describe("the code name of a dev deployment in the administration's frame", () => {
+  it("is a chip beside the name on dev, and absent otherwise", () => {
+    expect(withDev).toMatch(/data-code-name=""[^>]*>stage\.codeName akinaza</);
+    expect(html).not.toContain("data-code-name");
+  });
+});
 
 /** One decision for every Krizaka product (Oussama, 2026-10-23): the account menu is in the header at every width, never at the bottom of the rail. */
 describe("the account menu of the administration's frame (the shared AppFrame, variant admin)", () => {

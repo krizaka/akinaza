@@ -9,11 +9,13 @@ import { SkipLink } from "@krizaka/ui/skip-link";
 import Link from "next/link";
 import { useState } from "react";
 
+import { CodeNameChip } from "@/components/CodeNameChip";
 import { FrameSlot } from "@/components/app/FrameSlot";
 import { type ChipShop, ShopChip } from "@/components/app/ShopChip";
 import { ShopSearch } from "@/components/app/ShopSearch";
 import { useFrameAccount } from "@/components/app/use-frame-account";
 import { type AppPlace, screenPrimary } from "@/lib/app-nav";
+import { CODE_NAME } from "@/lib/brand";
 import { useSay } from "@/lib/i18n-client";
 import type { PaletteItem } from "@/lib/palette";
 
@@ -90,6 +92,7 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
         chips={
           <>
             {shop ? <ShopChip locale={locale} current={shop.current} others={shop.others} addHref={shop.addHref} /> : null}
+            {dev ? <CodeNameChip className="hidden sm:inline">{say("stage.codeName", { code: CODE_NAME })}</CodeNameChip> : null}
             {dev ? (
               <Badge tone="warning" className="hidden sm:inline-flex" data-testid="app-version" title={VERSION ? say("shell.devBuild", { version: VERSION }) : undefined}>
                 {say("shell.dev")}
