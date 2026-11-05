@@ -38,7 +38,7 @@ export function storesOfSpec(spec: string): Record<string, string> {
 
 export function contextsOfSpec(spec: string): string[] {
   const keys = [...spec.matchAll(/^\s*- key: ([A-Z0-9_]+)/gm)].map((m) => m[1]!);
-  return [...new Set(keys.filter((k) => k.includes("_")).map((k) => `${k.split("_")[0]}_`))].filter((c) => c !== "NODE_").sort();
+  return [...new Set(keys.filter((k) => k.includes("_")).map((k) => `${k.split("_")[0]}_`))].filter((c) => c !== "NODE_" && c !== "NEXT_") // NEXT_PUBLIC_*: a public build-time value, not a data context.sort();
 }
 
 /** What the register fails to cover for a given spec. */
