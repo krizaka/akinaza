@@ -112,6 +112,18 @@ services:
         scope: RUN_TIME
         type: SECRET
         value: __DATABASE_CA_CERT__
+      # The CAPTCHA of the public forms (Cloudflare Turnstile, widget `krizaka-forms`): the vendor is a value, the secret a SECRET filled at
+      # apply time; the site key is public by design (inlined in the page, so read at build too).
+      - key: ABUSE_CAPTCHA_PROVIDER
+        scope: RUN_TIME
+        value: turnstile
+      - key: ABUSE_CAPTCHA_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+        value: __ABUSE_CAPTCHA_SECRET_KEY__
+      - key: NEXT_PUBLIC_ABUSE_CAPTCHA_SITE_KEY
+        scope: RUN_AND_BUILD_TIME
+        value: 0x4AAAAAAFYdSDBwEHMCiX6z
       # Connection budget (krizaka/.github#60): the cluster's pool for this database is 2 server connections, so one
       # process holds at most 2; one instance, so the realtime bus lives in memory (no LISTEN connection).
       # (live: 1 — one process, one connection through the pool, until the cluster's budget grows.)
