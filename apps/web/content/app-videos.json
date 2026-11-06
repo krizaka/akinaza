@@ -5,34 +5,34 @@
     {
       "platform": "android",
       "flow": "today-books",
-      "seconds": 10.1,
-      "capturedAt": "2026-11-05T13:26:33.449Z",
+      "seconds": 7.9,
+      "capturedAt": "2026-11-06T13:10:45.569Z",
       "files": {
-        "webm": "sites/folioviv/download/android-today-books.0475a28e76.webm",
-        "mp4": "sites/folioviv/download/android-today-books.933a55c2c1.mp4",
-        "poster": "sites/folioviv/download/android-today-books.0128b6fb4a.jpg"
+        "webm": "sites/folioviv/download/android-today-books.de2a877a1a.webm",
+        "mp4": "sites/folioviv/download/android-today-books.b1cbf963dc.mp4",
+        "poster": "sites/folioviv/download/android-today-books.a9b2709dd1.jpg"
       }
     },
     {
       "platform": "web",
       "flow": "composer",
       "seconds": 10.4,
-      "capturedAt": "2026-11-05T13:26:06.074Z",
+      "capturedAt": "2026-11-06T13:10:20.057Z",
       "files": {
-        "webm": "sites/folioviv/download/web-composer.049b8262aa.webm",
-        "mp4": "sites/folioviv/download/web-composer.055d6726b6.mp4",
-        "poster": "sites/folioviv/download/web-composer.70e5b7cadb.jpg"
+        "webm": "sites/folioviv/download/web-composer.57a9bf9d0f.webm",
+        "mp4": "sites/folioviv/download/web-composer.77d1c53f60.mp4",
+        "poster": "sites/folioviv/download/web-composer.4b8d2001b5.jpg"
       }
     },
     {
       "platform": "web",
       "flow": "storefront",
-      "seconds": 15.4,
-      "capturedAt": "2026-11-05T13:26:18.869Z",
+      "seconds": 14.9,
+      "capturedAt": "2026-11-06T13:10:33.254Z",
       "files": {
-        "webm": "sites/folioviv/download/web-storefront.13d4be5316.webm",
-        "mp4": "sites/folioviv/download/web-storefront.ae24c1b525.mp4",
-        "poster": "sites/folioviv/download/web-storefront.58014a3b6f.jpg"
+        "webm": "sites/folioviv/download/web-storefront.b3df6ada51.webm",
+        "mp4": "sites/folioviv/download/web-storefront.0fb3017eab.mp4",
+        "poster": "sites/folioviv/download/web-storefront.877e266627.jpg"
       }
     }
   ]
