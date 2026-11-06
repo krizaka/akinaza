@@ -29,7 +29,7 @@ export const txtRecordName = (hostname: string): string => `${TXT_PREFIX}.${host
 export const txtRecordValue = (token: string): string => TXT_VALUE_PREFIX + token;
 
 /** Registrable names that are ours: never accepted as a merchant's domain. */
-const PLATFORM_DOMAINS = ["akinaza.com", "akinaza.shop", "krizaka.com", "krizaka.dev"];
+const PLATFORM_DOMAINS = ["folioviv.com", "folioviv.shop", "folioviv.app", "krizaka.com", "krizaka.dev"];
 const LABEL = /^(?!-)[a-z0-9-]{1,63}(?<!-)$/;
 const TLD = /^(?:[a-z]{2,}|xn--[a-z0-9-]+)$/;
 const IPV4 = /^\d{1,3}(?:\.\d{1,3}){3}$/;

@@ -29,14 +29,15 @@ describe("readHostname", () => {
     expect(readHostname("")).toEqual({ ok: false, reason: "empty" });
     expect(readHostname("192.168.0.1")).toEqual({ ok: false, reason: "ip" });
     expect(readHostname("[::1]")).toEqual({ ok: false, reason: "ip" });
-    expect(readHostname("login.akinaza.com")).toEqual({ ok: false, reason: "platform" });
-    expect(readHostname("a.b.akinaza.shop")).toEqual({ ok: false, reason: "platform" });
+    expect(readHostname("login.folioviv.com")).toEqual({ ok: false, reason: "platform" });
+    expect(readHostname("a.b.folioviv.shop")).toEqual({ ok: false, reason: "platform" });
+    expect(readHostname("book.salon.folioviv.app")).toEqual({ ok: false, reason: "platform" });
     expect(readHostname("-bad.monsalon.ca")).toEqual({ ok: false, reason: "invalid" });
     expect(readHostname("bad_name.monsalon.ca")).toEqual({ ok: false, reason: "invalid" });
     expect(readHostname("localhost")).toEqual({ ok: false, reason: "invalid" });
   });
   it("does not take a look-alike for a platform name", () => {
-    expect(readHostname("book.notakinaza.com")).toEqual({ ok: true, hostname: "book.notakinaza.com" });
+    expect(readHostname("book.notfolioviv.com")).toEqual({ ok: true, hostname: "book.notfolioviv.com" });
   });
 });
 
@@ -53,7 +54,7 @@ describe("ownership", () => {
     const bytes = (n: number) => crypto.getRandomValues(new Uint8Array(n));
     expect(newDomainToken(bytes)).toMatch(/^[0-9a-f]{48}$/);
     expect(newDomainToken(bytes)).not.toBe(newDomainToken(bytes));
-    expect(dnsInstructions("r.m.ca", "t", "edge.akinaza.shop")).toEqual({ txt: { name: "_akinaza-verify.r.m.ca", value: "akinaza-site-verification=t" }, cname: { name: "r.m.ca", value: "edge.akinaza.shop" } });
+    expect(dnsInstructions("r.m.ca", "t", "edge.folioviv.shop")).toEqual({ txt: { name: "_akinaza-verify.r.m.ca", value: "akinaza-site-verification=t" }, cname: { name: "r.m.ca", value: "edge.folioviv.shop" } });
   });
 });
 

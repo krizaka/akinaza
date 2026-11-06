@@ -61,7 +61,7 @@ describe("merchants' own domains (real PostgreSQL 16, #539)", () => {
     await expect(addShopDomain(t.db, id, "a.monsalon.ca", { max: 2, random })).rejects.toMatchObject({ code: DOMAIN_CODE.exists });
     await addShopDomain(t.db, id, "b.monsalon.ca", { max: 2, random });
     await expect(addShopDomain(t.db, id, "c.monsalon.ca", { max: 2, random })).rejects.toMatchObject({ code: DOMAIN_CODE.limit });
-    await expect(addShopDomain(t.db, id, "login.akinaza.com", { max: 9, random })).rejects.toBeInstanceOf(ShopError);
+    await expect(addShopDomain(t.db, id, "login.folioviv.com", { max: 9, random })).rejects.toBeInstanceOf(ShopError);
   });
 
   it("goes pending TXT -> pending TLS -> active, and is served only then", async () => {
