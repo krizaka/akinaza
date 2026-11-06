@@ -53,7 +53,7 @@ export function memoryEdge(): { hostnames: CustomHostnames; dns: TxtResolver; pr
   };
 }
 
-export const DEFAULT_EDGE_TARGET = "edge.akinaza.shop";
+export const DEFAULT_EDGE_TARGET = "edge.folioviv.shop";
 
 /** Where merchants point their CNAME. */
 export const edgeTarget = (vars: Vars): string => vars.APP_EDGE_CNAME_TARGET?.trim().toLowerCase() || DEFAULT_EDGE_TARGET;

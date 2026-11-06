@@ -42,7 +42,7 @@ describe("the edge service behind CustomHostnames (ADR-005 §3, akinaza#539)", (
   });
 
   it("tells merchants where to point their CNAME", () => {
-    expect(edgeTarget({})).toBe("edge.akinaza.shop");
+    expect(edgeTarget({})).toBe("edge.folioviv.shop");
     expect(edgeTarget({ APP_EDGE_CNAME_TARGET: " Edge.Example.Shop " })).toBe("edge.example.shop");
   });
 });

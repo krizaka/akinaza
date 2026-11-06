@@ -55,7 +55,7 @@ describe("the address preview marks the term that matched", () => {
     const html = renderToStaticMarkup(<AddressPreview slug="mon-login-page" term="login" />);
     expect(html).toContain("mon-");
     expect(html).toContain(">login</mark>");
-    expect(html).toContain(".akinaza.shop");
+    expect(html).toContain(".folioviv.shop");
   });
 
   it("shows the plain address when the term cannot be located (a pattern, or a look-alike)", () => {

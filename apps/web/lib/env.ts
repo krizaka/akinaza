@@ -23,7 +23,7 @@ export const envSchema = z.object({
   APP_PUBLIC_URL: z.string().url().default("https://www.akinaza.com"),
   /** The development address (`dev.akinaza.com`): every page goes to www (308); only the API, auth callbacks, webhooks, /.well-known and /healthz keep serving there, all noindex (lib/indexing.ts). Unset: no dev host. */
   APP_DEV_HOST: z.string().optional(),
-  /** The registrable domain the shops live on (`akinaza.shop`): `<slug>.<domain>` serves a shop and nothing of the app, no session reaches it, the old addresses answer 308 (ADR-005 slice 5, lib/shop-domain.ts). Unset: shops stay on `<slug>.akinaza.com`. */
+  /** The registrable domain the shops live on (`folioviv.shop`): `<slug>.<domain>` serves a shop and nothing of the app, no session reaches it, the old addresses answer 308 (ADR-005 slice 5, lib/shop-domain.ts). Unset: shops stay on `<slug>.<apex of the app>`. */
   APP_SHOP_DOMAIN: z.string().optional(),
   /** Hosts this deployment also answers to, comma separated, exact names (a preview with an address of its own). Every other host is a 421 (lib/allowed-hosts.ts). */
   APP_ALLOWED_HOSTS: list,
@@ -32,7 +32,7 @@ export const envSchema = z.object({
   /** The edge service's API token and zone of the shop domain (keys by name, never printed). */
   APP_EDGE_API_TOKEN: z.string().optional(),
   APP_EDGE_ZONE_ID: z.string().optional(),
-  /** The name merchants point their CNAME at (default `edge.akinaza.shop`). */
+  /** The name merchants point their CNAME at (default `edge.folioviv.shop`). */
   APP_EDGE_CNAME_TARGET: z.string().optional(),
   /** Explorer's address search: a geocoding service that speaks the Nominatim protocol, and the attribution its terms ask for. Unset = the search is off (the map and the list still work). */
   APP_GEOCODER_URL: z.string().url().optional(),

@@ -85,7 +85,7 @@ export function AddressPreview({ slug, term }: Readonly<{ slug: string; term: st
       ) : (
         slug
       )}
-      <span className="text-fg-secondary">.akinaza.shop</span>
+      <span className="text-fg-secondary">.folioviv.shop</span>
     </span>
   );
 }
