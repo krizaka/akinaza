@@ -111,10 +111,10 @@ describe("the page and its messages", () => {
     expect(JSON.stringify([en.pricing, fr.pricing])).not.toMatch(/\d+ ?\$|\$ ?\d/);
   });
 
-  it("is a public page: in the bar, the footer, the sitemap and llms.txt, and follows the home's founder switch and sign-up status", () => {
+  it("is a public page: in the bar, the footer, the sitemap and llms.txt, and says access is by invitation", () => {
     const page = read("app/[locale]/pricing/page.tsx");
-    expect(page).toContain("APP_FOUNDER_OFFER_ENABLED");
-    expect(page).toContain("heroActions(");
+    // The public page is an invitation (no catalogue, no plan: lib/wave1-public.test.ts).
+    expect(page).toContain("contactHref(");
     expect(read("lib/site.ts")).toContain('"pricing"');
     expect(read("components/SiteChrome.tsx")).toContain('pricing: pagePath(locale, "pricing")');
     expect(read("components/SiteFooter.tsx")).toContain('pagePath(locale, "pricing")');
@@ -227,6 +227,5 @@ describe("no card is asked while nothing is on sale (krizaka-internal#1913, audi
   it("keeps a signed-in owner out of the public page: /pricing sends her to Subscription, in the app shell", () => {
     const page = read("app/[locale]/pricing/page.tsx");
     expect(page).toMatch(/redirect\(accountRoutes\(locale\)\.section\("subscription"\)\)/);
-    expect(page).toContain("salesOpen(salesSettings())");
   });
 });

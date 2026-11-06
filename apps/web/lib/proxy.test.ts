@@ -25,8 +25,9 @@ describe("the proxy of a deployment closed to search engines (APP_SEARCH_INDEXIN
     expect(sitemap.headers.get("x-robots-tag")).toBe("noindex, nofollow");
   });
 
-  it("leaves an open deployment alone", async () => {
-    const open = (path: string) => proxy(new NextRequest(`https://www.akinaza.com${path}`, { headers: { host: "www.akinaza.com" } }));
+  it("leaves an open deployment alone (a host that is not a code name)", async () => {
+    vi.stubEnv("APP_ALLOWED_HOSTS", "dev.akinaza.com,www.folioviv.com");
+    const open = (path: string) => proxy(new NextRequest(`https://www.folioviv.com${path}`, { headers: { host: "www.folioviv.com" } }));
     expect((await open("/en")).headers.get("x-robots-tag")).toBeNull();
     expect((await open("/sitemap.xml")).status).toBe(200);
     // ... but a dev.* host is never open, even when the deployment says it is (#249).
@@ -43,10 +44,10 @@ describe("www.akinaza.com is public, dev.akinaza.com leaves search (epic krizaka
     vi.stubEnv("APP_DEV_HOST", "dev.akinaza.com");
   };
 
-  it("www is indexed even on a deployment that is closed elsewhere: no noindex, robots.txt and the sitemap are the app's", async () => {
+  it("www.akinaza.com is a code-name host: noindex on every answer, robots.txt closed, the sitemap still served (wave 1, krizaka-internal#2630)", async () => {
     setup();
-    expect((await as("www.akinaza.com", "/en")).headers.get("x-robots-tag")).toBeNull();
-    expect((await as("www.akinaza.com", "/robots.txt")).headers.get("content-type")).not.toBe("text/plain");
+    expect((await as("www.akinaza.com", "/en")).headers.get("x-robots-tag")).toBe("noindex, nofollow");
+    expect((await as("www.akinaza.com", "/robots.txt")).headers.get("content-type")).toBe("text/plain");
     expect((await as("www.akinaza.com", "/sitemap.xml")).status).toBe(200);
   });
 

@@ -11,6 +11,7 @@ import { notFound } from "next/navigation";
 
 import { RoutePageTransition } from "@/components/RoutePageTransition";
 import { StageNotice } from "@/components/StageNotice";
+import { indexableOn } from "@/lib/indexing";
 import { getDictionary, type Locale, LOCALES, PAGE_LOCALES, type PageLocale, uiLocaleOf } from "@/lib/i18n";
 import { shopDisplay, shopSans } from "@/lib/shop-fonts";
 import { SITE_URL } from "@/lib/site";
@@ -32,6 +33,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     description: t.meta.description,
     applicationName: t.meta.siteName,
     authors: [{ name: "Krizaka", url: "https://www.krizaka.com" }],
+    // A code-name host is closed to search engines (the header and robots.txt say it too, lib/indexing.ts).
+    ...(indexableOn(new URL(SITE_URL).host) ? {} : { robots: { index: false, follow: false, noarchive: true } }),
   };
 }
 

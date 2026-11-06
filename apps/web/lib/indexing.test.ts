@@ -21,10 +21,11 @@ describe("APP_SEARCH_INDEXING", () => {
 const ENV = { APP_SEARCH_INDEXING: "off", APP_PUBLIC_URL: "https://www.akinaza.com", APP_DEV_HOST: "dev.akinaza.com" };
 
 describe("the public host is indexed, the dev host never (epic krizaka/.github#119)", () => {
-  it("a closed deployment (off) stays closed everywhere but on the host of APP_PUBLIC_URL", () => {
+  it("a closed deployment (off) stays closed everywhere but on the host of APP_PUBLIC_URL, unless that host is a code name (wave 1, krizaka-internal#2630)", () => {
     expect(publicHost(ENV)).toBe("www.akinaza.com");
-    expect(indexableOn("www.akinaza.com", ENV)).toBe(true);
-    expect(indexableOn("WWW.akinaza.com:443", ENV)).toBe(true);
+    expect(indexableOn("www.akinaza.com", ENV)).toBe(false);
+    expect(indexableOn("WWW.akinaza.com:443", ENV)).toBe(false);
+    expect(indexableOn("www.folioviv.com", { ...ENV, APP_PUBLIC_URL: "https://www.folioviv.com" })).toBe(true);
     expect(indexableOn("dev.akinaza.com", ENV)).toBe(false);
     expect(indexableOn("admin.akinaza.com", ENV)).toBe(false);
     expect(indexableOn("anything.test", ENV)).toBe(false);
@@ -35,7 +36,7 @@ describe("the public host is indexed, the dev host never (epic krizaka/.github#1
       expect(indexableOn("dev.akinaza.com", config)).toBe(false);
       expect(indexableOn("DEV.akinaza.com:443", config)).toBe(false);
     }
-    expect(indexableOn("www.akinaza.com", { APP_SEARCH_INDEXING: "on" })).toBe(true);
+    expect(indexableOn("www.folioviv.com", { APP_SEARCH_INDEXING: "on" })).toBe(true);
   });
 
   it("the dev host is the one APP_DEV_HOST names", () => {

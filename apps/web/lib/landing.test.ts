@@ -27,7 +27,7 @@ describe("the home is short and concrete", () => {
     expect(home).toContain('from "@krizaka/ui/landing-page"');
     for (const prop of ["title=", "lead=", "visual={", "features={"]) expect(home).toContain(prop);
     expect(home).toContain("<HeroPhone");
-    expect(HOME_SECTIONS).toEqual(["hero", "screens", "offer", "trust"]);
+    expect(HOME_SECTIONS).toEqual(["hero", "screens", "trust"]);
     expect(SCREENS.map((s) => s.id)).toEqual(["book", "invoice", "books"]);
   });
 
@@ -58,10 +58,8 @@ describe("the home is short and concrete", () => {
 
   it("says its honest status, read from dev-preview.json", () => {
     const preview = JSON.parse(read("../../dev-preview.json")) as { criteria: Record<string, { evidence?: string | null; na?: string }> };
-    const gaps = Object.values(preview.criteria).some((c) => !c.evidence && !c.na);
-    expect(productStatus(preview)).toBe(gaps ? "development" : "preview");
-    expect(productStatus({ criteria: { a: { na: "no mobile app" }, b: { evidence: "https://x" } } })).toBe("preview");
-    expect(productStatus({ criteria: { a: { evidence: null }, b: { na: "x" } } })).toBe("development");
+    // Paused (wave 1, krizaka-internal#2630): the one public status is « En pause », whatever the checklist says (lib/wave1-public.test.ts).
+    expect(productStatus(preview)).toBe("paused");
   });
 
   it("keeps the trust line quiet: the database in Canada (public-claims.test.ts), consent by purpose, prepared never filed, and not for restaurants, cafés and bars", () => {
@@ -87,7 +85,7 @@ describe("the words are plain: no AI, no hype, no engine on the public pages", (
       expect(m.landing.lead.length).toBeLessThanOrEqual(120);
       expect(words(m.landing)).not.toContain("—");
     }
-    expect(fr.landing.title).toBe("Vos rendez-vous, vos factures et vos taxes, réglés.");
+    expect(fr.landing.title).toBe("Vos rendez-vous et vos factures réglés, vos taxes préparées.");
   });
   it("claims « designed for », never « compliant »", () => {
     const everything = JSON.stringify([en.meta, en.landing, fr.meta, fr.landing]) + llmsText();

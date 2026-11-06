@@ -6,7 +6,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { preconnect } from "react-dom";
 
-import { FounderOffer } from "@/components/home/FounderOffer";
 import { HeroPhone } from "@/components/home/HeroPhone";
 import { NeighbourhoodFeed } from "@/components/home/NeighbourhoodFeed";
 import { BookPreview } from "@/components/home/previews/BookPreview";
@@ -16,7 +15,6 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { pageSession } from "@/lib/access";
 import { jsonLdHtml } from "@/lib/csp";
-import { env } from "@/lib/env";
 import { homeFeed } from "@/lib/home-feed";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { DEMO_SHOP, heroActions, productStatus, SCREENS } from "@/lib/landing";
@@ -85,7 +83,6 @@ export default async function Home({ params }: Readonly<{ params: Promise<{ loca
             visual: previews[id],
           }))}
         >
-          {env().APP_FOUNDER_OFFER_ENABLED && <FounderOffer locale={locale} />}
           {feed.flyers.length > 0 && (
             <Section
               id="neighbourhood"

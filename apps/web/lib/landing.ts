@@ -2,10 +2,10 @@ import type { Locale } from "./i18n";
 
 /**
  * The landing's structure: ids and destinations, never words (the words are in messages/, keyed by the same ids).
- * One short story: the promise with the real app on a phone, the three jobs on real screens, the offer when it is live,
- * a quiet line of trust.
+ * One short story: the promise with the real app on a phone, the three jobs on real screens, a quiet line of trust.
+ * No offer and no price: access is by invitation while the product is paused (krizaka-internal#2630).
  */
-export const HOME_SECTIONS = ["hero", "screens", "offer", "trust"] as const;
+export const HOME_SECTIONS = ["hero", "screens", "trust"] as const;
 
 /** The demo shop of the first proof: a dog walker in Saint-Henri (fictional, seeded). Its public page is real. */
 export const DEMO_SHOP = "pattes-saint-henri";
@@ -34,7 +34,12 @@ export function heroActions(locale: Locale, signedIn: boolean): { primary: HeroA
   return { primary: { href: `/${locale}/s/${DEMO_SHOP}`, message: "tryDemo" }, secondary: { href: `/${locale}/sign-in`, message: "signIn" } };
 }
 
-/** The honest status, from dev-preview.json: « Dev preview » only once every criterion has its evidence. */
-export function productStatus(preview: DevPreview): "development" | "preview" {
+/**
+ * The one public status. Folioviv is paused (founder, 2026-11-05): « En pause » is the word everywhere, whatever the checklist of
+ * dev-preview.json says (it stays the proof for the day the product resumes: set PAUSED to false).
+ */
+const PAUSED = true;
+export function productStatus(preview: DevPreview): "paused" | "development" | "preview" {
+  if (PAUSED) {return "paused";}
   return Object.values(preview.criteria).every((c) => Boolean(c.evidence) || Boolean(c.na)) ? "preview" : "development";
 }

@@ -2,7 +2,7 @@
   "meta": {
     "siteName": "{product}",
     "titleTemplate": "{title} · {product}",
-    "description": "Vos rendez-vous, vos factures et vos taxes, réglés. {product} s'adresse aux salons, studios et travailleurs autonomes du Québec : vos clients réservent, vous facturez, vos montants de TPS/TVQ sont prêts. En français et en anglais."
+    "description": "Vos rendez-vous et vos factures réglés, vos taxes préparées. {product} s'adresse aux salons, studios et travailleurs autonomes du Québec : vos clients réservent, vous facturez, vos montants de TPS/TVQ sont prêts. En français et en anglais."
   },
   "chrome": {
     "brandHome": "{product}, accueil",
@@ -57,7 +57,7 @@
     "message": "Les données peuvent être réinitialisées à tout moment. Ce n’est pas encore une offre commerciale."
   },
   "landing": {
-    "title": "Vos rendez-vous, vos factures et vos taxes, réglés.",
+    "title": "Vos rendez-vous et vos factures réglés, vos taxes préparées.",
     "lead": "Vos clients réservent, vous facturez, vos montants de taxes sont prêts. En français et en anglais.",
     "actions": {
       "openShop": "Ouvrir ma boutique",
@@ -66,7 +66,8 @@
     },
     "status": {
       "development": "En développement : les inscriptions sont fermées pendant que nous le bâtissons avec les premiers commerces.",
-      "preview": "Aperçu de développement : inscriptions fermées, accès sur invitation."
+      "preview": "Aperçu de développement : inscriptions fermées, accès sur invitation.",
+      "paused": "En pause : accès sur invitation, écrivez-nous."
     },
     "hero": {
       "visualAlt": "La boutique de démonstration Pattes de Saint-Henri sur un téléphone : une réservation, la journée de la promeneuse, le rapport de visite et les livres.",
@@ -122,7 +123,7 @@
       "line": "Dossiers dans une base de données au Canada · Consentement noté par finalité · Taxes préparées, déclaration produite par vous",
       "scope": "Pour les studios, salons et travailleurs autonomes. Pas pour les restaurants, cafés, bars ou boulangeries avec consommation sur place."
     },
-    "visualLabel": "www.akinaza.com",
+    "visualLabel": "{product}",
     "feed": {
       "title": "Affiché dans votre quartier",
       "lead": "Les affichettes que les commerces épinglent sur leur propre page : une porte ouverte, un nouveau service, une place libérée. Rien ici n’est de la publicité que nous vendons.",
@@ -379,6 +380,11 @@
     }
   },
   "pricing": {
+    "access": {
+      "title": "Accès sur invitation",
+      "lead": "Accès sur invitation : écrivez-nous.",
+      "cta": "Nous écrire"
+    },
     "title": "Tarifs",
     "lead": "Des plans mensuels en CAD, taxes en sus. Vous résiliez quand vous voulez.",
     "plansLabel": "Plans",
@@ -537,11 +543,11 @@
       },
       {
         "h": "4. L'abonnement, le prix et le renouvellement",
-        "p": "L'abonnement est mensuel et se renouvelle de lui-même à la fin de chaque période, jusqu'à ce que vous le résiliiez. Le prix est celui du catalogue publié sur la page des tarifs au moment où vous souscrivez, plus les taxes applicables ; il est conservé avec votre abonnement, et un changement de prix ne s'applique pas à un abonnement déjà vendu sans que vous en soyez avisé par écrit au moins 30 jours à l'avance et que vous puissiez résilier avant son entrée en vigueur. Aucun frais n'est exigible s'il n'est pas indiqué dans le contrat (art. 12 de la Loi sur la protection du consommateur, LPC). Une fonction annoncée « bientôt » n'est pas facturée."
+        "p": "L'abonnement est mensuel et se renouvelle de lui-même à la fin de chaque période, jusqu'à ce que vous le résiliiez. Le prix est celui qui vous est communiqué avant que vous souscriviez, plus les taxes applicables ; il est conservé avec votre abonnement, et un changement de prix ne s'applique pas à un abonnement déjà vendu sans que vous en soyez avisé par écrit au moins 30 jours à l'avance et que vous puissiez résilier avant son entrée en vigueur. Aucun frais n'est exigible s'il n'est pas indiqué dans le contrat (art. 12 de la Loi sur la protection du consommateur, LPC). Une fonction annoncée « bientôt » n'est pas facturée."
       },
       {
         "h": "5. Les paiements",
-        "p": "L'abonnement est payé sur la page de paiement hébergée de notre processeur de paiement : {product} ne voit et ne conserve jamais votre numéro de carte. Les paiements de vos propres clients, lorsqu'ils seront offerts, passent par votre propre compte chez votre propre processeur : l'argent va directement du client à vous. {product} ne détient jamais de fonds, ne garde rien pour vous ni pour votre client, n'agit pas comme fiduciaire et ne retient rien. Les frais du processeur sont ceux de votre contrat avec lui ; ceux de {product} sur ces paiements sont indiqués sur la page des tarifs (aucun pourcentage sur les cartes, un montant plafonné pour le débit préautorisé)."
+        "p": "L'abonnement est payé sur la page de paiement hébergée de notre processeur de paiement : {product} ne voit et ne conserve jamais votre numéro de carte. Les paiements de vos propres clients, lorsqu'ils seront offerts, passent par votre propre compte chez votre propre processeur : l'argent va directement du client à vous. {product} ne détient jamais de fonds, ne garde rien pour vous ni pour votre client, n'agit pas comme fiduciaire et ne retient rien. Les frais du processeur sont ceux de votre contrat avec lui ; ceux de {product} sur ces paiements vous sont communiqués avant que vous les activiez."
       },
       {
         "h": "6. La résiliation et les remboursements",

@@ -27,7 +27,8 @@ describe("the founder offer on the public page", () => {
   it("is hidden until it is switched on", () => {
     expect(readEnv({}).APP_FOUNDER_OFFER_ENABLED).toBe(false);
     expect(readEnv({ APP_FOUNDER_OFFER_ENABLED: "true" }).APP_FOUNDER_OFFER_ENABLED).toBe(true);
-    expect(read("app/[locale]/page.tsx")).toMatch(/APP_FOUNDER_OFFER_ENABLED && <FounderOffer/);
+    // The product is paused (krizaka-internal#2630): the home mounts no offer and no price, whatever the switch says.
+    expect(read("app/[locale]/page.tsx")).not.toMatch(/FounderOffer/);
   });
   it("says what it is, in both languages: limited, setup included, 0 % on cards, and no amount typed in a message", () => {
     for (const t of [en.landing.founder, fr.landing.founder]) {

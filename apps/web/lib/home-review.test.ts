@@ -11,10 +11,10 @@ import { SCREENS } from "./landing";
 const home = readFileSync(new URL("../app/[locale]/page.tsx", import.meta.url), "utf8");
 
 describe("the home after the pages review (akinaza#440)", () => {
-  it("labels the hero's phone with the real address of the site, not the development host", () => {
+  it("labels the hero's phone with the product's name, not a host", () => {
     for (const t of [en, fr]) {
-      expect(t.landing.visualLabel).toBe("www.akinaza.com");
-      expect(t.landing.visualLabel).not.toMatch(/^dev\./);
+      // The label is the product's name, never a host (wave 1, krizaka-internal#2630: no code name on screen).
+      expect(t.landing.visualLabel).not.toMatch(/akinaza|www\.|\.com|^dev\./i);
     }
   });
 

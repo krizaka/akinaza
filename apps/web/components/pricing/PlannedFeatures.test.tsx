@@ -28,11 +28,9 @@ describe("what is planned on the pricing page (akinaza#440)", () => {
     expect([en.pricing.soon, fr.pricing.soon, en.pricing.plannedTitle, fr.pricing.plannedTitle]).toEqual(["Soon", "Bientôt", "Coming soon", "À venir"]);
   });
 
-  it("the page puts only running features in the tick list, planned ones in this block, and one primary button", () => {
+  it("the public pricing page lists no plan and no feature (an invitation, krizaka-internal#2630): the planned block waits for the day it resumes", () => {
     const page = readFileSync(new URL("../../app/[locale]/pricing/page.tsx", import.meta.url), "utf8");
-    expect(page).toContain("plan.features.filter((f) => !f.soon)");
-    expect(page).toContain("<PlannedFeatures");
-    expect(page).toContain('variant={featured ? "primary" : "secondary"}');
-    expect(page).not.toContain("(${d.soon})");
+    expect(page).not.toContain("<PlannedFeatures");
+    expect(page).toContain('variant="primary"');
   });
 });
