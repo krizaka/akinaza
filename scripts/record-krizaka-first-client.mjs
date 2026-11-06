@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// MANUAL TOOL (ADR-026), run by a person; owner: folioviv lane; listed in README.md « Manual tools »; the header below says how to run it.
 // « Krizaka, Folioviv's first client » — four narrated walkthroughs on the real dev site, as the persona Éric (the owner of
 // « Krizaka (démo) », a software studio in Montréal; never an administrator): onboarding (the business and its services),
 // the invoice (hours and a flat fee, GST/QST to the cent), the books (what the ledger holds) and the prepared return (GST/QST

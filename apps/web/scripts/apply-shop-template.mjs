@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// MANUAL TOOL (ADR-026), run by a person; owner: folioviv lane; listed in README.md « Manual tools »; the header below says how to run it.
 // Puts a storefront template (at the notebook's version) on a shop, by slug, through the product's own `applyTemplate`: the recorders'
 // way to give a seeded demo shop the look of a trade (the demo shops get theirs from `seed:demos`; Éric's studio is seeded without one).
 //

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// MANUAL TOOL (ADR-026), run by a person; owner: folioviv lane; listed in README.md « Manual tools »; the header below says how to run it.
 // Seeds « Krizaka (démo) » — a software studio in Montréal, the first client of Folioviv (dogfooding) — on the database of
 // ONE deployment: its owner Éric, three fictional business clients, services billed by the hour or by the project, bilingual
 // invoices and a quarter of books, through the product's own operations. Sign-up is closed there: these accounts are the only

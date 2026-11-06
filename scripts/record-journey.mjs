@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// MANUAL TOOL (ADR-026), run by a person; owner: folioviv lane; listed in README.md « Manual tools »; the header below says how to run it.
 // One continuous phone take of Folioviv's journey on a running deployment, as the fictional Saint-Henri persona, captured
 // with the Chrome DevTools screencast (every frame the compositor paints, with its timestamp) and encoded at a constant
 // 30 fps: the storefront → a service and a slot → booking confirmed → the walker's day with check-in/out → the report →

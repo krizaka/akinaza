@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// MANUAL TOOL (ADR-026), run by a person; owner: folioviv lane; listed in README.md « Manual tools »; the header below says how to run it.
 // Resets the fictional Saint-Henri walker's dev data before a recording: the future bookings are cancelled and each of the
 // five clients gets one open group walk at the next 14:00 slot (packages/db/src/qa-reset-walker.ts). Only the shop with the
 // persona's slug is touched; nothing is printed but the counts. Idempotent.

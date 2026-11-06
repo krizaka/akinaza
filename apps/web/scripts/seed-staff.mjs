@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// MANUAL TOOL (ADR-026), run by a person; owner: folioviv lane; listed in README.md « Manual tools »; the header below says how to run it.
 // A team member of a shop for the testers (#180): an account with a role in a shop — by default Camille, « staff » of the demo salon
 // Cèdre & Ciseaux. Sign-up is closed: this is how a tester gets in. The password comes from the environment and is never printed
 // (the maintainer keeps it with the other tester values). Idempotent: a re-run sets the password and the role again.
