@@ -12,8 +12,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const CDN = "https://krizaka-assets.b-cdn.net";
-// The CDN still files this product's icons under its former id (the brand export of krizaka-ui has not been re-run under the commercial id: no brand/folioviv/ in the manifest yet). Change this one line the day it is.
-export const BRAND = "akinaza";
+export const BRAND = "folioviv";
 /** CDN file (under brand/<brand>/) -> committed path, relative to the repository root. */
 export const ICONS = {
   "favicon.svg": "apps/web/app/icon.svg",
