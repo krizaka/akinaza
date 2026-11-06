@@ -24,16 +24,16 @@ const LAYOUT_SECTIONS: Record<Layout, Section[]> = {
 type Row = { id: string; shopType: Template["shopTypes"][number]; layout: Layout; hue: Template["hue"]; paper: Template["paper"]; title: TemplateTextStyle; body: TemplateTextStyle; price: TemplateTextStyle; slots: Template["slots"] };
 
 const rows: Row[] = [
-  { id: "salon-vitrine", shopType: "salon", layout: "vitrine", hue: "brand-akinaza", paper: "plain", title: style("display", "3xl", 700), body: style("body", "md", 400), price: style("body", "md", 600), slots: { cover: "default", gallery: "default", service: "default" } },
-  { id: "salon-carte", shopType: "salon", layout: "carte", hue: "brand-akinaza", paper: "ruled", title: style("display", "2xl", 600), body: style("body", "md", 400), price: style("body", "lg", 700), slots: { cover: "default", gallery: "none", service: "default" } },
+  { id: "salon-vitrine", shopType: "salon", layout: "vitrine", hue: "brand-folioviv", paper: "plain", title: style("display", "3xl", 700), body: style("body", "md", 400), price: style("body", "md", 600), slots: { cover: "default", gallery: "default", service: "default" } },
+  { id: "salon-carte", shopType: "salon", layout: "carte", hue: "brand-folioviv", paper: "ruled", title: style("display", "2xl", 600), body: style("body", "md", 400), price: style("body", "lg", 700), slots: { cover: "default", gallery: "none", service: "default" } },
   { id: "coaching-vitrine", shopType: "coaching", layout: "vitrine", hue: "cyan", paper: "dot-grid", title: style("display", "3xl", 700), body: style("body", "md", 400), price: style("body", "md", 600), slots: { cover: "default", gallery: "default", service: "none" } },
   { id: "coaching-histoire", shopType: "coaching", layout: "histoire", hue: "sky", paper: "kraft", title: style("display", "3xl", 600, true), body: style("body", "lg", 400), price: style("body", "md", 600), slots: { cover: "default", gallery: "default", service: "none" } },
   { id: "workshop-histoire", shopType: "workshop", layout: "histoire", hue: "steel", paper: "kraft", title: style("display", "3xl", 700), body: style("body", "md", 400), price: style("body", "md", 500), slots: { cover: "default", gallery: "default", service: "none" } },
   { id: "workshop-carte", shopType: "workshop", layout: "carte", hue: "steel", paper: "ruled", title: style("display", "2xl", 700), body: style("body", "md", 400), price: style("body", "lg", 700), slots: { cover: "default", gallery: "none", service: "default" } },
   { id: "cleaning-vitrine", shopType: "cleaning", layout: "vitrine", hue: "sky", paper: "plain", title: style("display", "3xl", 700), body: style("body", "md", 400), price: style("body", "lg", 700), slots: { cover: "default", gallery: "default", service: "default" } },
   { id: "cleaning-carte", shopType: "cleaning", layout: "carte", hue: "cyan", paper: "dot-grid", title: style("display", "2xl", 600), body: style("body", "md", 400), price: style("body", "lg", 700), slots: { cover: "default", gallery: "none", service: "default" } },
-  { id: "pets-histoire", shopType: "pets", layout: "histoire", hue: "brand-akinaza", paper: "kraft", title: style("display", "3xl", 700), body: style("body", "lg", 400), price: style("body", "md", 500), slots: { cover: "default", gallery: "default", service: "none" } },
-  { id: "pets-vitrine", shopType: "pets", layout: "vitrine", hue: "brand-akinaza", paper: "dot-grid", title: style("display", "3xl", 700), body: style("body", "md", 400), price: style("body", "md", 500), slots: { cover: "default", gallery: "default", service: "none" } },
+  { id: "pets-histoire", shopType: "pets", layout: "histoire", hue: "brand-folioviv", paper: "kraft", title: style("display", "3xl", 700), body: style("body", "lg", 400), price: style("body", "md", 500), slots: { cover: "default", gallery: "default", service: "none" } },
+  { id: "pets-vitrine", shopType: "pets", layout: "vitrine", hue: "brand-folioviv", paper: "dot-grid", title: style("display", "3xl", 700), body: style("body", "md", 400), price: style("body", "md", 500), slots: { cover: "default", gallery: "default", service: "none" } },
   { id: "consulting-carte", shopType: "consulting", layout: "carte", hue: "indigo", paper: "plain", title: style("display", "2xl", 600), body: style("body", "md", 400), price: style("body", "lg", 600), slots: { cover: "default", gallery: "none", service: "none" } },
   { id: "consulting-histoire", shopType: "consulting", layout: "histoire", hue: "ink", paper: "ruled", title: style("display", "3xl", 600), body: style("body", "lg", 400), price: style("body", "md", 500), slots: { cover: "default", gallery: "default", service: "none" } },
 ];
@@ -97,16 +97,16 @@ const cah = (sign: Cahier["sign"], heroTape: Cahier["heroTape"], heroTilt: numbe
 });
 
 const rowsV2: RowV2[] = [
-  { id: "salon-vitrine", paper: "plain", hue: "brand-akinaza", cahier: cah("painted", "corners", -1.2, "wave", "brick", [{ kind: "arrow", near: "book" }]), title: ["3xl"], body: ["md"], price: ["lg", 600] },
-  { id: "salon-carte", paper: "ruled", hue: "brand-akinaza", cahier: cah("painted", "top", 0, "stroke", "plaster"), title: ["2xl"], body: ["md"], price: ["lg", 700] },
+  { id: "salon-vitrine", paper: "plain", hue: "brand-folioviv", cahier: cah("painted", "corners", -1.2, "wave", "brick", [{ kind: "arrow", near: "book" }]), title: ["3xl"], body: ["md"], price: ["lg", 600] },
+  { id: "salon-carte", paper: "ruled", hue: "brand-folioviv", cahier: cah("painted", "top", 0, "stroke", "plaster"), title: ["2xl"], body: ["md"], price: ["lg", 700] },
   { id: "coaching-vitrine", paper: "dot-grid", hue: "cyan", cahier: cah("neon", "corners", -1.2, "dash", "ridge", [{ kind: "star", near: "services" }]), title: ["3xl"], body: ["md"], price: ["lg", 600] },
   { id: "coaching-histoire", paper: "kraft", hue: "sky", cahier: cah("enamel", "corners", -1.5, "wave", "ridge"), title: ["3xl", true], body: ["lg"], price: ["md", 600] },
   { id: "workshop-histoire", paper: "kraft", hue: "steel", cahier: cah("enamel", "corners", -1.5, "stroke", "brick", [{ kind: "circle", near: "wall" }]), title: ["3xl"], body: ["md"], price: ["md", 600] },
   { id: "workshop-carte", paper: "ruled", hue: "steel", cahier: cah("painted", "top", 0, "dash", "ridge"), title: ["2xl"], body: ["md"], price: ["lg", 700] },
   { id: "cleaning-vitrine", paper: "plain", hue: "sky", cahier: cah("painted", "corners", -1, "dash", "plaster"), title: ["3xl"], body: ["md"], price: ["lg", 700] },
   { id: "cleaning-carte", paper: "dot-grid", hue: "cyan", cahier: cah("none", "top", 0, "stroke", "plaster"), title: ["2xl"], body: ["md"], price: ["lg", 700] },
-  { id: "pets-histoire", paper: "kraft", hue: "brand-akinaza", cahier: cah("enamel", "corners", -1.5, "wave", "plaster", [{ kind: "arrow", near: "book" }]), title: ["3xl"], body: ["lg"], price: ["md", 600] },
-  { id: "pets-vitrine", paper: "dot-grid", hue: "brand-akinaza", cahier: cah("painted", "corners", -1.2, "wave", "brick"), title: ["3xl"], body: ["md"], price: ["md", 600] },
+  { id: "pets-histoire", paper: "kraft", hue: "brand-folioviv", cahier: cah("enamel", "corners", -1.5, "wave", "plaster", [{ kind: "arrow", near: "book" }]), title: ["3xl"], body: ["lg"], price: ["md", 600] },
+  { id: "pets-vitrine", paper: "dot-grid", hue: "brand-folioviv", cahier: cah("painted", "corners", -1.2, "wave", "brick"), title: ["3xl"], body: ["md"], price: ["md", 600] },
   { id: "consulting-carte", paper: "plain", hue: "indigo", cahier: cah("none", "top", 0, "stroke", "plaster"), title: ["2xl"], body: ["md"], price: ["lg", 600] },
   { id: "consulting-histoire", paper: "ruled", hue: "ink", cahier: cah("enamel", "top", -1, "stroke", "zellige"), title: ["3xl"], body: ["lg"], price: ["md", 600] },
 ];

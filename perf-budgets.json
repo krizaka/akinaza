@@ -1,8 +1,9 @@
 {
+  "reason": "2026-11-06: +530 B (941820 -> 942350) from @krizaka/ui 4.0.0, whose footer and family block grew (brand, versionLabel, linkAs props); no Folioviv code changed (krizaka-internal#2720).",
   "jsBytes": {
-    "/en/s/cedre-ciseaux": 941820,
-    "/fr/s/cedre-ciseaux": 941820,
-    "/en/s/pattes-saint-henri": 941820,
-    "/fr/s/pattes-saint-henri": 941820
+    "/en/s/cedre-ciseaux": 942350,
+    "/fr/s/cedre-ciseaux": 942350,
+    "/en/s/pattes-saint-henri": 942350,
+    "/fr/s/pattes-saint-henri": 942350
   }
 }

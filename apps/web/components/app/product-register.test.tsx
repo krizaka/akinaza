@@ -56,7 +56,7 @@ describe("the faces of the product register", () => {
     const mono = productSurfaceValue(blocks, "--kz-font-mono")!;
     expect(mono).toMatch(/^ui-monospace\b/);
     expect(mono).not.toMatch(CAHIER_FACES);
-    expect(read("@krizaka/tokens/brands/akinaza.css")).not.toMatch(CAHIER_FACES);
+    expect(read("@krizaka/tokens/brands/folioviv.css")).not.toMatch(CAHIER_FACES);
   });
 
   it("draws PageHeader's h1 in the display role, its weight from the register (no local h1 rule)", () => {

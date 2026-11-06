@@ -12,7 +12,7 @@ import { applyTemplate, shopPageConfigOf } from "./shop-page";
 import { checkIn, checkOut, saveReport } from "./visits";
 
 /** A person of the Folioviv cast (`@krizaka/org`): the names and languages of the demo come from there, never from this file. */
-const cast = (id: string) => persona("akinaza", id);
+const cast = (id: string) => persona("folioviv", id);
 
 /**
  * The fictional Saint-Henri dog walker of the demos (Folioviv#52): an adult who is clearly not a real person, five

@@ -355,14 +355,14 @@ features: the three real stills, cropped at a clean edge · trust line · footer
 
 ### 4.3 Visual direction
 
-- **Hue**: Folioviv's forest green with copper (`.brand-akinaza`), the beaver's. The owner app stays **pro plain
+- **Hue**: Folioviv's forest green with copper (`.brand-folioviv`), the beaver's. The owner app stays **pro plain
   Krizaka UI** (decision 2026-10-22); the Cahier is for the public shop pages only (#261). Status by tone + word:
   `success` (fait, payée), `warning` (en cours, en retard), `neutral` (réservé, à payer), `danger` (annulée, absent).
 - **Density**: comfortable in the owner app (rows 48 px on a desktop, 56 px targets on a phone; one column up to
   48 rem for forms, full width for lists); the agenda is the one dense surface (time column 64 px, rows 56 px).
 - **Typography roles**: display for the one `h1` of a page (2xl, 700); section `h2` lg; card titles base 600; body
   md; figures in tabular digits (`Stat`), mono only for invoice numbers and the API.
-- **Marks and icons**: `AkinazaLogo` once per width; `@krizaka/icons` for the five destinations (clock, people,
+- **Marks and icons**: `FoliovivLogo` once per width; `@krizaka/icons` for the five destinations (clock, people,
   receipt, book, shop) and the states; the shop's logo in the header chip when it has one.
 - **Illustration**: the beaver only, one per screen, in its moods — `welcome` (sign-in), `empty` (an empty day, no
   clients, no invoices), `thinking` (a search without result), `success` (the tax figures ready), the 404. Sizes 160 on

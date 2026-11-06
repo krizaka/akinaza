@@ -34,9 +34,9 @@ export async function seedDemoShop(db: Db, ownerEmail: string, now = new Date())
   const people = await db
     .insert(clients)
     .values([
-      { shopId: shop!.id, fullName: persona("akinaza", "camille").displayName, email: "camille@example.test", language: persona("akinaza", "camille").locale },
-      { shopId: shop!.id, fullName: persona("akinaza", "jordan").displayName, email: "jordan@example.test", language: persona("akinaza", "jordan").locale },
-      { shopId: shop!.id, fullName: persona("akinaza", "nadia").displayName, phone: "514-555-0142", language: persona("akinaza", "nadia").locale },
+      { shopId: shop!.id, fullName: persona("folioviv", "camille").displayName, email: "camille@example.test", language: persona("folioviv", "camille").locale },
+      { shopId: shop!.id, fullName: persona("folioviv", "jordan").displayName, email: "jordan@example.test", language: persona("folioviv", "jordan").locale },
+      { shopId: shop!.id, fullName: persona("folioviv", "nadia").displayName, phone: "514-555-0142", language: persona("folioviv", "nadia").locale },
     ])
     .returning();
   for (const c of people) {

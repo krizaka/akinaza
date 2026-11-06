@@ -1,7 +1,7 @@
 "use client";
 
 import { BillingIcon, BookmarkIcon, CalendarIcon, ClockIcon, HomeIcon, PlusIcon, UsersIcon } from "@krizaka/icons";
-import { AkinazaLogo } from "@krizaka/ui";
+import { FoliovivLogo } from "@krizaka/ui";
 import { AppFrame, type FrameSection } from "@krizaka/ui/app-frame";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
@@ -78,8 +78,8 @@ export function ShopFrame({ locale, account, places, shop, newInvoiceHref, searc
       <FrameSlot>
       <AppFrame
         name={productName}
-        mark={<AkinazaLogo size={28} animated={false} />}
-        headerMark={<AkinazaLogo size={22} animated={false} />}
+        mark={<FoliovivLogo size={28} animated={false} />}
+        headerMark={<FoliovivLogo size={22} animated={false} />}
         homeHref={home}
         accent={BRAND_ID}
         sections={sections}
