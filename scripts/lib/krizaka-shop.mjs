@@ -3,7 +3,7 @@
 export const SHOP = {
   name: "Krizaka",
   legalName: "Technologies Krizaka inc.",
-  ownerName: "Oussama",
+  ownerName: "Krizaka",
   address: "Montréal QC",
   slug: "krizaka",
   area: "Montréal",

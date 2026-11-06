@@ -54,7 +54,7 @@ export default async function Privacy({ params }: Readonly<{ params: Promise<{ l
           </section>
           <section id="officer" className="mt-8 max-w-3xl">
             <h2 className="m-0 text-xl font-semibold text-fg">{t.privacy.officer.title}</h2>
-            <p className="mt-2 text-base leading-relaxed text-fg-secondary">{format(t.privacy.officer.text, { role: t.privacy.officer.role, ...publisherVars() })}</p>
+            <p className="mt-2 text-base leading-relaxed text-fg-secondary">{format(t.privacy.officer.text, publisherVars())}</p>
           </section>
         </Page>
       </main>
