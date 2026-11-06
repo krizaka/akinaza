@@ -19,7 +19,8 @@ export const PAGES = ["home", "explore", "pricing", "download", "privacy", "term
 export type PageId = (typeof PAGES)[number];
 export const pagePath = (locale: "en" | "fr", page: PageId) => (page === "home" ? `/${locale}` : `/${locale}/${page}`);
 
-/** Krizaka's contact form (the final, localized address: no redirect hop for crawlers), Akinaza pre-selected. */
-export function contactHref(source: string, locale: "en" | "fr"): string {
-  return `${KRIZAKA_URL}/${locale}/contact?topic=akinaza&source=${encodeURIComponent(source)}`;
+/** Krizaka's contact form (the final, localized address: no redirect hop for crawlers), Folioviv pre-selected. */
+export function contactHref(locale: "en" | "fr"): string {
+  // The commercial names only: no code name in a public address (krizaka-internal#2630).
+  return `${KRIZAKA_URL}/${locale}/contact?topic=folioviv&source=folioviv-app`;
 }

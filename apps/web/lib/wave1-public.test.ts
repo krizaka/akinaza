@@ -14,6 +14,7 @@ import { proxy } from "../proxy";
 import { indexableOn, isCodeNameHost } from "./indexing";
 import { HOME_SECTIONS, productStatus } from "./landing";
 import { llmsText } from "./seo";
+import { contactHref } from "./site";
 
 /** Wave 1 of the public-pages meeting (2026-11-05, krizaka-internal#2630): the paused Folioviv site is closed to search engines, shows no price and says one status. */
 
@@ -107,6 +108,12 @@ describe("no price anywhere public: the pages that show a price are gone from th
 
   it("the terms point to no pricing page", () => {
     for (const m of [fr, en]) { expect(JSON.stringify(m.terms)).not.toMatch(/page des tarifs|pricing page/i); }
+  });
+});
+
+describe("no code name in a public address either", () => {
+  it("the contact link names the commercial product and site", () => {
+    for (const locale of ["fr", "en"] as const) { expect(contactHref(locale)).not.toMatch(/akinaza/i); }
   });
 });
 

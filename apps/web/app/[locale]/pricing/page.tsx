@@ -34,7 +34,7 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
       <SiteHeader locale={locale} current="pricing" />
       <main id="content" className="pt-20">
         <PageHero back={{ href: pagePath(locale, "home"), label: t.meta.siteName }} linkAs={Link} title={t.pricing.access.title} lead={t.pricing.access.lead}>
-          <ButtonLink href={contactHref("www-akinaza-pricing", locale)} variant="primary" size="lg">
+          <ButtonLink href={contactHref(locale)} variant="primary" size="lg">
             {t.pricing.access.cta}
           </ButtonLink>
         </PageHero>
