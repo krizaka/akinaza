@@ -1,13 +1,13 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/akinaza-dark.svg">
-    <img src=".github/assets/akinaza-light.svg" alt="Akinaza" width="96">
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/folioviv-dark.svg">
+    <img src=".github/assets/folioviv-light.svg" alt="Folioviv" width="96">
   </picture>
 </p>
 
-# Akinaza
+# Folioviv
 
-> **Commercial name: Folioviv** (« Folioviv by Krizaka »). Akinaza is the code name: the repository, the packages, the addresses and the environment
+> **Commercial name: Folioviv** (« Folioviv by Krizaka »). Folioviv is the code name: the repository, the packages, the addresses and the environment
 > keep it; every word a person reads (pages, e-mails, receipts, the apps' names) says Folioviv, read from `@krizaka/org`. The displayed name is the
 > administrator's setting `brand.displayName`; `pnpm run check:names` (`krizaka-code-names`, in CI after the build) fails on a code name in a built page,
 > the catalogues or the mail templates.
@@ -16,12 +16,12 @@
 bookings, client files with consent noted by purpose, bilingual invoices with GST 5 % and QST 9.975 %, a tax ledger, and the
 GST/QST return **prepared** for the merchant to review and file.
 
-[![CI](https://github.com/krizaka/akinaza/actions/workflows/ci.yml/badge.svg)](https://github.com/krizaka/akinaza/actions/workflows/ci.yml)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/krizaka/akinaza/badge)](https://scorecard.dev/viewer/?uri=github.com/krizaka/akinaza)
+[![CI](https://github.com/krizaka/folioviv/actions/workflows/ci.yml/badge.svg)](https://github.com/krizaka/folioviv/actions/workflows/ci.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/krizaka/folioviv/badge)](https://scorecard.dev/viewer/?uri=github.com/krizaka/folioviv)
 [![License: FSL-1.1-ALv2](https://img.shields.io/badge/license-FSL--1.1--ALv2-blue.svg)](LICENSE.md)
-[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=krizaka_akinaza&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=krizaka_akinaza) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=krizaka_akinaza&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=krizaka_akinaza) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=krizaka_akinaza&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=krizaka_akinaza) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=krizaka_akinaza&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=krizaka_akinaza) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=krizaka_akinaza&metric=coverage)](https://sonarcloud.io/summary/new_code?id=krizaka_akinaza)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=krizaka_folioviv&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=krizaka_folioviv) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=krizaka_folioviv&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=krizaka_folioviv) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=krizaka_folioviv&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=krizaka_folioviv) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=krizaka_folioviv&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=krizaka_folioviv) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=krizaka_folioviv&metric=coverage)](https://sonarcloud.io/summary/new_code?id=krizaka_folioviv)
 
-Akinaza (商い *akinai*, trade) is a Krizaka product **in development**: nothing is deployed, sign-up is closed. The
+Folioviv (商い *akinai*, trade) is a Krizaka product **in development**: nothing is deployed, sign-up is closed. The
 know-how it shows: **running a shop, for less** — one tool instead of five, bookings to taxes prepared.
 
 ## What is built
@@ -36,7 +36,7 @@ know-how it shows: **running a shop, for less** — one tool instead of five, bo
   audited database setting (`limits.invoiceEmailsPerShopPerDay`, 50; 1–10000), changed in the admin configuration; the
   sender address is the deployment's (`MAIL_*`), a shop only chooses the display name.
 - **"Prepare my tax return"** — the FPZ-500 figures (lines 101, 103/106/109, 203/206/209) from the ledger, with their
-  working papers; **Akinaza
+  working papers; **Folioviv
   prepares; the merchant files.** Nothing is transmitted to any government.
 - **Bookings** — services, staff, schedules; the database refuses a double booking (`EXCLUDE` on time ranges).
 - **Explorer** (`/explore`) — the published shops on a map (`@krizaka/ui/map`) and in a list, filtered by kind of service, open now and a free
@@ -44,11 +44,11 @@ know-how it shows: **running a shop, for less** — one tool instead of five, bo
   `GeocodingPort` whose service and attribution are the environment's (`APP_GEOCODER_*`); only what a shop's public page already shows travels.
 - **The shop page in other languages** — the owner writes in French or English and offers the page in the languages they choose, inside the
   administrator's list (`storefront.languages.allowed`; `/fr`, `/en` and `/es` under `/s/<slug>`, a language that is off shows the source language).
-  Each text is translated automatically through Orazaka (the `TranslationPort`, the Studio `text-translation`), stored with its status (`auto` or
+  Each text is translated automatically through Sovkora (the `TranslationPort`, the Studio `text-translation`), stored with its status (`auto` or
   `edited`), its run and the version of its source, and edited by the owner on « Langues de votre page »; an edited text is never overwritten, a changed
   source flags the translation « à revoir ». Admin: `features.storefrontTranslation` (off until the Studio is wired) and `limits.translationsPerShopPerDay`.
 - **Proposed images** — no section of a shop page is ever empty: each trade (salon, coaching, workshop, cleaning, pets, consulting) has neutral default
-  photos, a cover with its silent loop and service images on the media CDN (`apps/akinaza/defaults/`, named by `apps/web/lib/default-media.manifest.json`).
+  photos, a cover with its silent loop and service images on the media CDN (`apps/folioviv/defaults/`, named by `apps/web/lib/default-media.manifest.json`).
   The owner picks them in « Images proposées » or turns them off; a slot they filled is never replaced; the administrator chooses which trades are offered.
 - **Page templates** — two per trade, versioned data (order, variants, hue, paper, text styles), never a text or a photo: the owner picks one in « Apparence » with a
   preview, or at shop creation (the trade's default preselected); a page the owner reordered is asked « keep my order » before anything moves; a template that
@@ -71,7 +71,7 @@ Owners can reorder and show or hide the page's sections, and upload a logo. The 
 configuration; shops without a record keep the existing layout. Administrator feature switches always override owner
 choices for upcoming wall, reels, reviews, follow and announcements sections. Photos are checked by their bytes and
 stored by `@krizaka/storage` (`lib/media-storage.ts`: the administrator's provider in the `storage.*` settings over the environment's,
-content-hashed names `photo.<sha10>.<ext>`) under `user/akinaza/shops/<shop>/` (`brand/`, `gallery/`, and future media-purpose
+content-hashed names `photo.<sha10>.<ext>`) under `user/folioviv/shops/<shop>/` (`brand/`, `gallery/`, and future media-purpose
 directories); files published before the package keep their key and address. Uploads stay off until media storage is configured.
 
 ## Start
@@ -90,7 +90,7 @@ The database tests run on a real PostgreSQL 16: CI's service, or a Testcontainer
 
 | Path | |
 | :-- | :-- |
-| `apps/web` | Next.js 16: the public page, sign-in (`@krizaka/ui/auth-layout`), the shop's day (appointments, plus the latest invoices and overdue count for members with invoice access), the administration (admin.akinaza.com), the BFF, the e-mail templates |
+| `apps/web` | Next.js 16: the public page, sign-in (`@krizaka/ui/auth-layout`), the shop's day (appointments, plus the latest invoices and overdue count for members with invoice access), the administration (admin.folioviv.com), the BFF, the e-mail templates |
 | `apps/mobile` | the Expo skeleton (joins the workspace in the mobile phase) |
 | `packages/core` | the domain, pure: money, GST/QST, the ledger, the return and its reconciliation, consent, the POS gate |
 | `packages/db` | PostgreSQL schema (Drizzle), versioned SQL migrations with the rules the database enforces, the shop's operations |
@@ -111,7 +111,7 @@ One cast (`@krizaka/org`) and one idempotent seed serve local, CI, Maestro, the 
 
 The three demo shops come with `pnpm run dev:seed-demos` (shops, pages, then each owner's `features.cahierStorefront` through `set-setting.mjs --user`, `DEMO_OWNER_FLAGS`): the dev deployment runs the same command.
 
-**Reproduce a hot fix locally**: start a Postgres (`docker run -d -p 5432:5432 -e POSTGRES_USER=akinaza -e POSTGRES_PASSWORD=akinaza -e POSTGRES_DB=akinaza postgres:17-alpine`), `export DATABASE_URL=postgres://akinaza:akinaza@localhost:5432/akinaza`, `pnpm run dev:seed`, `pnpm dev`, and sign in as `lea.beaulieu@akinaza.test` (local password `local-cast-password-0123`). `dev:seed --check` compares the counts per table with `apps/web/scripts/cast-fingerprint.json`; the dev database refuses GitHub's runners (and is not opened to their ranges), so the dev seed runs **from a trusted machine** with the same `--check` (exact on a local database; on the lived-in dev one, « everything recorded is there »): the maintainers' `seed-dev.sh akinaza` reads the credentials at run time and prints none.
+**Reproduce a hot fix locally**: start a Postgres (`docker run -d -p 5432:5432 -e POSTGRES_USER=folioviv -e POSTGRES_PASSWORD=folioviv -e POSTGRES_DB=folioviv postgres:17-alpine`), `export DATABASE_URL=postgres://folioviv:folioviv@localhost:5432/folioviv`, `pnpm run dev:seed`, `pnpm dev`, and sign in as `lea.beaulieu@folioviv.test` (local password `local-cast-password-0123`). `dev:seed --check` compares the counts per table with `apps/web/scripts/cast-fingerprint.json`; the dev database refuses GitHub's runners (and is not opened to their ranges), so the dev seed runs **from a trusted machine** with the same `--check` (exact on a local database; on the lived-in dev one, « everything recorded is there »): the maintainers' `seed-dev.sh folioviv` reads the credentials at run time and prints none.
 
 
 ## Tests

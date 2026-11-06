@@ -1,11 +1,11 @@
 import path from "node:path";
 
-import { createDb, type Db, migrate as migrateSchema, pg, poolConfig as dbPoolConfig, transactionOn, type TransactionPool } from "@akinaza/db";
+import { createDb, type Db, migrate as migrateSchema, pg, poolConfig as dbPoolConfig, transactionOn, type TransactionPool } from "@folioviv/db";
 
 import { readEnv } from "./env";
 
 /**
- * One pool per process, on the shared rules of @akinaza/db (TLS verified against DATABASE_CA_CERT, never
+ * One pool per process, on the shared rules of @folioviv/db (TLS verified against DATABASE_CA_CERT, never
  * `rejectUnauthorized: false`). `query` for the account and session SQL, `db()` for the Drizzle schema.
  */
 export function poolConfig(source: Record<string, string | undefined> = process.env): pg.PoolConfig {
@@ -14,16 +14,16 @@ export function poolConfig(source: Record<string, string | undefined> = process.
   return dbPoolConfig(env.DATABASE_URL, env.DATABASE_CA_CERT, env.DATABASE_MAX_CONNECTIONS);
 }
 
-const holder = globalThis as unknown as { __akinazaPool?: pg.Pool; __akinazaDb?: Db };
+const holder = globalThis as unknown as { __foliovivPool?: pg.Pool; __foliovivDb?: Db };
 
 export function pool(): pg.Pool {
-  holder.__akinazaPool ??= new pg.Pool(poolConfig());
-  return holder.__akinazaPool;
+  holder.__foliovivPool ??= new pg.Pool(poolConfig());
+  return holder.__foliovivPool;
 }
 
 export function db(): Db {
-  holder.__akinazaDb ??= createDb(pool());
-  return holder.__akinazaDb;
+  holder.__foliovivDb ??= createDb(pool());
+  return holder.__foliovivDb;
 }
 
 export async function query<T extends pg.QueryResultRow = pg.QueryResultRow>(text: string, values: unknown[] = []): Promise<T[]> {
@@ -37,7 +37,7 @@ export const transaction = <T>(work: Parameters<typeof transactionOn<T>>[1]) => 
 export { transactionOn, type TransactionPool };
 
 /**
- * The versioned migrations of @akinaza/db (packages/db/drizzle), applied at start under an advisory lock. Resolved
+ * The versioned migrations of @folioviv/db (packages/db/drizzle), applied at start under an advisory lock. Resolved
  * from the app's directory — the same relative path in development and in the standalone server, which carries the
  * folder (next.config `outputFileTracingIncludes`).
  */

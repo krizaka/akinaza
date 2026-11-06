@@ -1,5 +1,5 @@
 {
-  "product": "akinaza",
+  "product": "folioviv",
   "cdn": "https://krizaka-assets.b-cdn.net",
   "videos": [
     {
@@ -8,9 +8,9 @@
       "seconds": 10.1,
       "capturedAt": "2026-11-05T13:26:33.449Z",
       "files": {
-        "webm": "sites/akinaza/download/android-today-books.0475a28e76.webm",
-        "mp4": "sites/akinaza/download/android-today-books.933a55c2c1.mp4",
-        "poster": "sites/akinaza/download/android-today-books.0128b6fb4a.jpg"
+        "webm": "sites/folioviv/download/android-today-books.0475a28e76.webm",
+        "mp4": "sites/folioviv/download/android-today-books.933a55c2c1.mp4",
+        "poster": "sites/folioviv/download/android-today-books.0128b6fb4a.jpg"
       }
     },
     {
@@ -19,9 +19,9 @@
       "seconds": 10.4,
       "capturedAt": "2026-11-05T13:26:06.074Z",
       "files": {
-        "webm": "sites/akinaza/download/web-composer.049b8262aa.webm",
-        "mp4": "sites/akinaza/download/web-composer.055d6726b6.mp4",
-        "poster": "sites/akinaza/download/web-composer.70e5b7cadb.jpg"
+        "webm": "sites/folioviv/download/web-composer.049b8262aa.webm",
+        "mp4": "sites/folioviv/download/web-composer.055d6726b6.mp4",
+        "poster": "sites/folioviv/download/web-composer.70e5b7cadb.jpg"
       }
     },
     {
@@ -30,9 +30,9 @@
       "seconds": 15.4,
       "capturedAt": "2026-11-05T13:26:18.869Z",
       "files": {
-        "webm": "sites/akinaza/download/web-storefront.13d4be5316.webm",
-        "mp4": "sites/akinaza/download/web-storefront.ae24c1b525.mp4",
-        "poster": "sites/akinaza/download/web-storefront.58014a3b6f.jpg"
+        "webm": "sites/folioviv/download/web-storefront.13d4be5316.webm",
+        "mp4": "sites/folioviv/download/web-storefront.ae24c1b525.mp4",
+        "poster": "sites/folioviv/download/web-storefront.58014a3b6f.jpg"
       }
     }
   ]

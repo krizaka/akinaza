@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { documentFromLegacy, LEGACY_SECTION_IDS, MIGRATION_0038_BOOKING_SECTIONS, shopTypeOf } from "@akinaza/core";
+import { documentFromLegacy, LEGACY_SECTION_IDS, MIGRATION_0038_BOOKING_SECTIONS, shopTypeOf } from "@folioviv/core";
 import { parseShopPage } from "@krizaka/ui/shop";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -90,7 +90,7 @@ describe("the shop page document", () => {
   });
 });
 
-describe("rollback and discard against the draft (akinaza#427)", () => {
+describe("rollback and discard against the draft (folioviv#427)", () => {
   const edited = (n: number) => ({ ...documentFromLegacy({ sections: full(), trade: "pets" }), sections: documentFromLegacy({ sections: full(), trade: "pets" }).sections.slice(0, n) });
   async function twoVersions(label: string) {
     const shop = await walkerShop(t.db, label);
@@ -129,12 +129,12 @@ describe("rollback and discard against the draft (akinaza#427)", () => {
   });
 });
 
-describe("the accent within the look (akinaza#402)", () => {
+describe("the accent within the look (folioviv#402)", () => {
   it("is null until chosen, stored without a page row, and cleared with null", async () => {
     const shop = await walkerShop(t.db, "doc-accent");
     expect(await shopAccentOf(t.db, shop.shopId)).toBeNull();
-    await setShopAccent(t.db, shop.shopId, "akinaza:accent-2");
-    expect(await shopAccentOf(t.db, shop.shopId)).toBe("akinaza:accent-2");
+    await setShopAccent(t.db, shop.shopId, "folioviv:accent-2");
+    expect(await shopAccentOf(t.db, shop.shopId)).toBe("folioviv:accent-2");
     await setShopAccent(t.db, shop.shopId, null);
     expect(await shopAccentOf(t.db, shop.shopId)).toBeNull();
   });
@@ -144,7 +144,7 @@ describe("the accent within the look (akinaza#402)", () => {
   });
 });
 
-describe("the page is parsed at read time (akinaza#401)", () => {
+describe("the page is parsed at read time (folioviv#401)", () => {
   it("refuses to draw a stored document that no longer parses, naming the path, instead of drawing half a page", async () => {
     const shop = await walkerShop(t.db, "doc-read");
     const doc = documentFromLegacy({ sections: full(), trade: "pets" });

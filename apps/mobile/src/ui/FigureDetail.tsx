@@ -1,4 +1,4 @@
-import { type FigureAnswer, isStale, LEXICON } from "@akinaza/core";
+import { type FigureAnswer, isStale, LEXICON } from "@folioviv/core";
 import { Badge, Button, Card, Txt } from "@krizaka/ui/native";
 import * as React from "react";
 import { ScrollView } from "react-native";

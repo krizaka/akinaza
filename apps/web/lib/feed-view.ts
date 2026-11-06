@@ -1,5 +1,5 @@
-import { areaMatches, FEED_LIMITS, quartierOf } from "@akinaza/core";
-import type { FeedFlyerRow } from "@akinaza/db";
+import { areaMatches, FEED_LIMITS, quartierOf } from "@folioviv/core";
+import type { FeedFlyerRow } from "@folioviv/db";
 
 import { dayOf, type FlyerView } from "@/lib/community-view";
 import { type Locale, translator } from "@/lib/i18n";

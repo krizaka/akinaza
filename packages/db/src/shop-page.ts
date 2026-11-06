@@ -1,4 +1,4 @@
-import { framePaperOf, SHOP_TYPES, TEMPLATES, type Template } from "@akinaza/core";
+import { framePaperOf, SHOP_TYPES, TEMPLATES, type Template } from "@folioviv/core";
 import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -35,7 +35,7 @@ const sectionsSchema = z.preprocess(legacyAware, z.array(z.object({ id: z.enum(S
 export const shopPageConfigSchema = z.object({
   sections: sectionsSchema,
   logoUrl: z.string().trim().url().max(500).refine((url) => url.startsWith("https://"), { message: "https only" }).nullable(),
-  /** The logo for the dark theme (akinaza#597); null = the same logo on both. */
+  /** The logo for the dark theme (folioviv#597); null = the same logo on both. */
   logoDarkUrl: z.string().trim().url().max(500).refine((url) => url.startsWith("https://"), { message: "https only" }).nullable().optional(),
   /** The trade the owner chose (picks the default images); null: from the business type. Omitted on a save = unchanged. */
   shopType: z.enum(SHOP_TYPES).nullable().optional(),

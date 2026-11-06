@@ -1,4 +1,4 @@
-import { pageTopic, REALTIME_CHANNEL, slotsTopic } from "@akinaza/core";
+import { pageTopic, REALTIME_CHANNEL, slotsTopic } from "@folioviv/core";
 import { createBus, type RealtimeBus } from "@krizaka/realtime";
 import { pgChannel } from "@krizaka/realtime/pg";
 
@@ -10,16 +10,16 @@ import { readEnv } from "./env";
  * for. LISTEN needs a session, so it uses DATABASE_DIRECT_URL (never a transaction pooler); NOTIFY goes through the pool.
  * Best-effort by contract: the bookings live in the database; an event only says "this slot changed".
  */
-const holder = globalThis as unknown as { __akinazaBus?: RealtimeBus };
+const holder = globalThis as unknown as { __foliovivBus?: RealtimeBus };
 
 export function realtimeBus(): RealtimeBus {
-  if (holder.__akinazaBus) return holder.__akinazaBus;
+  if (holder.__foliovivBus) return holder.__foliovivBus;
   const env = readEnv();
-  holder.__akinazaBus =
+  holder.__foliovivBus =
     env.REALTIME_BUS === "memory"
       ? createBus({ kind: "memory" })
       : createBus({ kind: "postgres", channel: REALTIME_CHANNEL, postgres: pgChannel({ listen: env.DATABASE_DIRECT_URL ?? env.DATABASE_URL ?? "", notify: pool() }) });
-  return holder.__akinazaBus;
+  return holder.__foliovivBus;
 }
 
 /** Tells the open storefronts that this shop's slots changed. The booking is already committed: a bus failure never turns it into an error. */

@@ -1,3 +1,4 @@
+import { requestNow } from "@/app/request-now";
 import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
@@ -5,7 +6,6 @@ import { mailSettings } from "@/lib/env";
 import { handle, idParam } from "@/lib/http";
 import { sendWalkReport } from "@/lib/mail";
 import { limit } from "@/lib/rate-limit";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

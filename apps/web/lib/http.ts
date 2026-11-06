@@ -1,4 +1,4 @@
-import { OrganizeError, ShopError, ShopPageInvalidError, TranslationUnavailable } from "@akinaza/db";
+import { OrganizeError, ShopError, ShopPageInvalidError, TranslationUnavailable } from "@folioviv/db";
 import { PriceError, SettingsError } from "@krizaka/settings";
 import { z, ZodError } from "zod";
 

@@ -1,4 +1,4 @@
-import { rollbackShopPage } from "@akinaza/db";
+import { rollbackShopPage } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";

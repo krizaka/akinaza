@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 
-import { FRAME_PAPERS, framePaperOf, PAPERS, TEMPLATES } from "@akinaza/core";
+import { FRAME_PAPERS, framePaperOf, PAPERS, TEMPLATES } from "@folioviv/core";
 import { describe, expect, it } from "vitest";
 
-/** Contrast of the ink on each paper of the shop frame, in both themes (akinaza#305). The tokens are the library's own, read as published. */
+/** Contrast of the ink on each paper of the shop frame, in both themes (folioviv#305). The tokens are the library's own, read as published. */
 const css = readFileSync(createRequire(import.meta.url).resolve("@krizaka/tokens/tokens.css"), "utf8");
 const block = (selector: string) => {
   const start = css.indexOf(`${selector} {`);
@@ -42,7 +42,7 @@ function paperOf(name: (typeof FRAME_PAPERS)[number], theme: string): { paper: R
   return { paper, inks: [c("text-primary"), c("text-secondary")] };
 }
 
-describe("the papers of a shop page (akinaza#305)", () => {
+describe("the papers of a shop page (folioviv#305)", () => {
   for (const [themeName, theme] of Object.entries(THEMES)) {
     for (const name of FRAME_PAPERS) {
       it(`${name} keeps its ink readable in the ${themeName} theme`, () => {

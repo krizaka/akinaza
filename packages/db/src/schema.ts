@@ -5,7 +5,7 @@ import { bigserial, boolean, check, customType, date, doublePrecision, index, in
 const bytea = customType<{ data: Buffer }>({ dataType: () => "bytea" });
 
 /**
- * Akinaza's schema. Money is `integer` cents — never `numeric` read as a float, never `real`. What the database itself
+ * Folioviv's schema. Money is `integer` cents — never `numeric` read as a float, never `real`. What the database itself
  * guarantees (drizzle/0001_rules.sql): no member of the staff is booked twice at once; an issued invoice never changes;
  * the ledger is append-only and every invoice's ledger entries equal its taxes at commit; a shop is never a restaurant or
  * a bar; a registered shop has well-formed GST and QST numbers.
@@ -125,11 +125,11 @@ export const shops = pgTable(
     name: text("name").notNull(),
     legalName: text("legal_name").notNull(),
     kind: text("kind", { enum: ["salon", "boutique", "services", "other"] }).notNull(),
-    /** The kind of business: it sets the words of the screens (« appointment » or « walk ») and whether a booking is made for a dog (krizaka/akinaza#117). */
+    /** The kind of business: it sets the words of the screens (« appointment » or « walk ») and whether a booking is made for a dog (krizaka/folioviv#117). */
     businessType: text("business_type", { enum: ["professional", "pets"] }).notNull().default("professional"),
-    /** The terms new invoices are issued under, in days (0 = due on receipt): a buyer needs them from $500 (krizaka/akinaza#113). */
+    /** The terms new invoices are issued under, in days (0 = due on receipt): a buyer needs them from $500 (krizaka/folioviv#113). */
     paymentTermsDays: integer("payment_terms_days").notNull().default(30),
-    /** How the page's television passes from one video to the next (akinaza#469): channel, crossfade or slide. */
+    /** How the page's television passes from one video to the next (folioviv#469): channel, crossfade or slide. */
     reelTransition: text("reel_transition", { enum: ["channel", "crossfade", "slide"] }).notNull().default("channel"),
     /** Registered for the GST and the QST (a small supplier under $30 000 is not). */
     registrant: boolean("registrant").notNull().default(true),
@@ -156,7 +156,7 @@ export const shops = pgTable(
     slugHoldNote: text("slug_hold_note"),
     slugHoldReviewedAt: timestamp("slug_hold_reviewed_at", { withTimezone: true }),
     slugClearedFor: text("slug_cleared_for"),
-    /** The paid option « your own domain », enabled per shop by an administrator (0051, akinaza#539); the catalogue version it was sold at. */
+    /** The paid option « your own domain », enabled per shop by an administrator (0051, folioviv#539); the catalogue version it was sold at. */
     customDomainEnabled: boolean("custom_domain_enabled").notNull().default(false),
     customDomainPriceVersion: text("custom_domain_price_version"),
     customDomainEnabledAt: timestamp("custom_domain_enabled_at", { withTimezone: true }),
@@ -180,7 +180,7 @@ export const shops = pgTable(
     description: text("description"),
     avatar: jsonb("avatar"),
     collectionId: uuid("collection_id"),
-    /** When the shop received its default tag set (migration 0034, akinaza#337): once, so a deleted tag is not brought back. */
+    /** When the shop received its default tag set (migration 0034, folioviv#337): once, so a deleted tag is not brought back. */
     organizedAt: timestamp("organized_at", { withTimezone: true }),
     createdAt: created(),
   },
@@ -219,7 +219,7 @@ export const shopSlugChanges = pgTable("shop_slug_changes", {
   at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [index("shop_slug_changes_shop_at").on(t.shopId, t.at)]);
 
-/** A merchant's own domain (0051, akinaza#539): the TXT proof, the edge service's hostname, the state a check moves (packages/core custom-domain.ts). */
+/** A merchant's own domain (0051, folioviv#539): the TXT proof, the edge service's hostname, the state a check moves (packages/core custom-domain.ts). */
 export const shopDomains = pgTable(
   "shop_domains",
   {
@@ -305,7 +305,7 @@ export const shopPage = pgTable(
     shopId: uuid("shop_id").primaryKey().references(() => shops.id, { onDelete: "cascade" }),
     sections: jsonb("sections").$type<{ id: string; visible: boolean }[]>().notNull().default(sql`'[{"id":"services","visible":true},{"id":"team","visible":true},{"id":"hours","visible":true},{"id":"zones","visible":true},{"id":"gallery","visible":true},{"id":"wall","visible":true},{"id":"reels","visible":true},{"id":"announcements","visible":true},{"id":"reviews","visible":true},{"id":"follow","visible":true}]'::jsonb`),
     logoUrl: text("logo_url"),
-    /** The logo drawn on the dark theme, when the brand has two files (akinaza#597); null = the same logo. */
+    /** The logo drawn on the dark theme, when the brand has two files (folioviv#597); null = the same logo. */
     logoDarkUrl: text("logo_dark_url"),
     /** The trade the owner chose (picks the default images); null = from the business type. */
     shopType: text("shop_type", { enum: ["salon", "coaching", "workshop", "cleaning", "pets", "consulting"] }),
@@ -318,16 +318,16 @@ export const shopPage = pgTable(
     sectionsCustom: boolean("sections_custom").notNull().default(false),
     /** The owner's text-style overrides per role (title, body, price). */
     style: jsonb("style").$type<Record<string, unknown>>().notNull().default(sql`'{}'::jsonb`),
-    /** The accent the owner chose within the look (one of the preset's tested accents, akinaza#402); null = the look's own. */
+    /** The accent the owner chose within the look (one of the preset's tested accents, folioviv#402); null = the look's own. */
     accent: text("accent"),
-    /** The paper under the public page (akinaza#305): set by the template the owner applied; null = the look's own. */
+    /** The paper under the public page (folioviv#305): set by the template the owner applied; null = the look's own. */
     paper: text("paper", { enum: ["plain", "seyes", "kraft", "washi"] }),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [check("shop_page_paper", sql`${t.paper} IS NULL OR ${t.paper} IN ('plain','seyes','kraft','washi')`), check("shop_page_accent", sql`${t.accent} IS NULL OR ${t.accent} ~ '^[a-z0-9:-]{1,40}$'`), check("shop_page_template_pair", sql`(${t.templateId} IS NULL) = (${t.templateVersion} IS NULL) AND (${t.templateVersion} IS NULL OR ${t.templateVersion} >= 1)`), check("shop_page_template_id", sql`${t.templateId} IS NULL OR ${t.templateId} ~ '^[a-z]+-[a-z]+$'`), check("shop_page_shop_type", sql`${t.shopType} IS NULL OR ${t.shopType} IN ('salon','coaching','workshop','cleaning','pets','consulting')`), check("shop_page_logo_https", sql`${t.logoUrl} IS NULL OR (${t.logoUrl} LIKE 'https://%' AND length(${t.logoUrl}) <= 500)`), check("shop_page_logo_dark_https", sql`${t.logoDarkUrl} IS NULL OR (${t.logoDarkUrl} LIKE 'https://%' AND length(${t.logoDarkUrl}) <= 500)`)],
 );
 
-/** The shop page as a document (akinaza#400): one draft, one published, the rest archived (the last 20 kept). The published one IS the page. */
+/** The shop page as a document (folioviv#400): one draft, one published, the rest archived (the last 20 kept). The published one IS the page. */
 export const shopPageVersions = pgTable(
   "shop_page_versions",
   {
@@ -476,7 +476,7 @@ export const shopReels = pgTable(
     id: id(),
     shopId: uuid("shop_id").notNull().references(() => shops.id, { onDelete: "cascade" }),
     kind: text("kind", { enum: ["upload", "external"] }).notNull(),
-    /** The place in the owner's playlist (0 = first); the page plays them in this order, then again (akinaza#469). */
+    /** The place in the owner's playlist (0 = first); the page plays them in this order, then again (folioviv#469). */
     position: integer("position").notNull(),
     mp4Url: text("mp4_url"),
     webmUrl: text("webm_url"),
@@ -570,7 +570,7 @@ export const shopLanguages = pgTable(
   (t) => [check("shop_languages_source", sql`${t.sourceLocale} IN ('fr','en')`), check("shop_languages_enabled", sql`${t.enabled} <@ ARRAY['fr','en','es'] AND ${t.sourceLocale} = ANY (${t.enabled})`)],
 );
 
-/** One translated text of the page: its place (kind, ref, field), language, status (`auto` or `edited`), the Orazaka run and the hash of the source text it was made from (a changed source makes it stale). */
+/** One translated text of the page: its place (kind, ref, field), language, status (`auto` or `edited`), the Sovkora run and the hash of the source text it was made from (a changed source makes it stale). */
 export const shopTranslations = pgTable(
   "shop_translations",
   {
@@ -628,7 +628,7 @@ export const services = pgTable(
     includedEn: text("included_en").array().notNull().default(sql`'{}'::text[]`),
     /** « From » on the card: the price varies with the dog, the size, the zone. */
     priceVaries: boolean("price_varies").notNull().default(false),
-    /** The owner's order of the offers on the page (akinaza#597): 0 first. */
+    /** The owner's order of the offers on the page (folioviv#597): 0 first. */
     position: integer("position").notNull().default(0),
     /** Where the card leads when the offer lives elsewhere (a product's own site): https only. Null = the offer's own page. */
     linkUrl: text("link_url"),
@@ -747,7 +747,7 @@ export const invoiceLines = pgTable(
     invoiceId: uuid("invoice_id").notNull().references(() => invoices.id),
     position: integer("position").notNull(),
     description: text("description").notNull(),
-    /** The quantity in whole hundredths (7.5 hours → 750): the amount is round(quantity × unit price), half away from zero (krizaka/akinaza#111). */
+    /** The quantity in whole hundredths (7.5 hours → 750): the amount is round(quantity × unit price), half away from zero (krizaka/folioviv#111). */
     quantityHundredths: integer("quantity_hundredths").notNull(),
     unitPriceCents: integer("unit_price_cents").notNull(),
     discountCents: integer("discount_cents").notNull().default(0),
@@ -825,7 +825,7 @@ export const daysOff = pgTable(
   (t) => [uniqueIndex("days_off_staff_day").on(t.staffId, t.onDate)],
 );
 
-/** The shop's own rules — data, not constants (version 1 = the defaults); bounds are CHECKs and repeated by @akinaza/core. */
+/** The shop's own rules — data, not constants (version 1 = the defaults); bounds are CHECKs and repeated by @folioviv/core. */
 export const shopRules = pgTable(
   "shop_rules",
   {
@@ -904,7 +904,7 @@ export const visitReports = pgTable(
   ],
 );
 
-/** What Akinaza said to whom, rendered; delivered when a mail provider is configured, otherwise it stays `pending`. */
+/** What Folioviv said to whom, rendered; delivered when a mail provider is configured, otherwise it stays `pending`. */
 export const mailOutbox = pgTable(
   "mail_outbox",
   {
@@ -941,7 +941,7 @@ export const memberships = pgTable(
   (t) => [index("memberships_account").on(t.accountId)],
 );
 
-/** A client's request kept at a shop, to renew in one tap (akinaza#210): the files are on the media storage. */
+/** A client's request kept at a shop, to renew in one tap (folioviv#210): the files are on the media storage. */
 export const clientRequests = pgTable(
   "client_requests",
   {

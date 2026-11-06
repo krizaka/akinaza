@@ -1,14 +1,14 @@
-import { localDay } from "@akinaza/core";
-import { invoiceForClientAccount } from "@akinaza/db";
+import { localDay } from "@folioviv/core";
+import { invoiceForClientAccount } from "@folioviv/db";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
+import { requestNow } from "@/app/request-now";
 import { InvoicePublicDocument } from "@/components/app/InvoicePublicDocument";
 import { PrintInvoiceButton } from "@/components/app/PrintInvoiceButton";
 import { pageSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { asLocale } from "@/lib/i18n";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

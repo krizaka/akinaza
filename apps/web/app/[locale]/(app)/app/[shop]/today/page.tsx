@@ -1,6 +1,6 @@
 // @template: app-dashboard
-import { BOARD_PERIODS, type BoardPeriod, localDay, visitMinutes, vocabularyOf } from "@akinaza/core";
-import { dayVisits, offOn, shopDay, type ShopRole, todayBoard } from "@akinaza/db";
+import { BOARD_PERIODS, type BoardPeriod, localDay, visitMinutes, vocabularyOf } from "@folioviv/core";
+import { dayVisits, offOn, shopDay, type ShopRole, todayBoard } from "@folioviv/db";
 import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 
@@ -59,7 +59,7 @@ async function OwnerDay({ locale, shop, role, staffAccountId, query, dependants,
   const t = getDictionary(locale).console;
   const routes = shopRoutes(locale, shop.id);
   const view = await todayView(shop, { day: query.day, staffAccountId, now: requestNow() });
-  // Who is off that day (akinaza#208): a name and the last day of their time off, never the reason.
+  // Who is off that day (folioviv#208): a name and the last day of their time off, never the reason.
   const [off, brief, visits, figures] = await Promise.all([
     offOn(db(), shop.id, view.day),
     may(role, "reports") ? loadShopBrief(shop, requestNow()) : null,

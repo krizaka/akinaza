@@ -1,8 +1,8 @@
 {
-  "name": "@akinaza/client",
+  "name": "@folioviv/client",
   "version": "0.1.0",
   "private": true,
-  "description": "What the Akinaza apps (iPhone, Android, Mac) share: the typed calls of the owner's API, parsed at the edge.",
+  "description": "What the Folioviv apps (iPhone, Android, Mac) share: the typed calls of the owner's API, parsed at the edge.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
@@ -13,7 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@akinaza/core": "workspace:*",
+    "@folioviv/core": "workspace:*",
     "@krizaka/app-client": "^0.1.0",
     "@krizaka/query": "^0.2.2",
     "zod": "^4.6.5"

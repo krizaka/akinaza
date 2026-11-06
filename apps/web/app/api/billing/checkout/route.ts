@@ -1,4 +1,4 @@
-import { associationApproved } from "@akinaza/db";
+import { associationApproved } from "@folioviv/db";
 import { PaymentsError } from "@krizaka/payments";
 
 import { systemClock } from "@/app/system-clock";
@@ -48,7 +48,7 @@ async function trialFor(entry: Entry, accountId: string, options: { liveMode: bo
 
 /**
  * A hosted payment page for the signed-in account, for the plan in `?plan=` (`founder` by default, `starter`, `scale`,
- * `association`). The amount is the catalogue's entry in force (akinaza#371) and the processor must sell exactly that amount, or
+ * `association`). The amount is the catalogue's entry in force (folioviv#371) and the processor must sell exactly that amount, or
  * nothing is sold; GST and QST are the processor's. A plan with free days in its entry (`trialDays`) starts with them, once per
  * account and in the processor's test mode only; the Association plan needs an approved proof (ADR-003 addendum 2026-10-30).
  */

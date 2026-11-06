@@ -1,4 +1,4 @@
-import { CalendarSourceError } from "@akinaza/core";
+import { CalendarSourceError } from "@folioviv/core";
 import { describe, expect, it, vi } from "vitest";
 
 import { icsUrlSource } from "./ics-url-source";

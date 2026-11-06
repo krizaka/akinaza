@@ -1,4 +1,4 @@
-import { heldShops } from "@akinaza/db";
+import { heldShops } from "@folioviv/db";
 
 import { requireAdmin } from "@/lib/access";
 import { db } from "@/lib/db";

@@ -1,8 +1,8 @@
 {
-  "name": "@akinaza/db",
+  "name": "@folioviv/db",
   "version": "0.1.0",
   "private": true,
-  "description": "Akinaza's PostgreSQL 16 schema (Drizzle, versioned SQL migrations): shops, staff, services, schedules, clients and their Loi 25 consents, appointments (no double booking, by the database), invoices and payments, expenses, the append-only GST/QST ledger that must balance every invoice — tested on a real PostgreSQL.",
+  "description": "Folioviv's PostgreSQL 16 schema (Drizzle, versioned SQL migrations): shops, staff, services, schedules, clients and their Loi 25 consents, appointments (no double booking, by the database), invoices and payments, expenses, the append-only GST/QST ledger that must balance every invoice — tested on a real PostgreSQL.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -26,7 +26,7 @@
     "db:rebuild": "tsx src/rebuild-cli.ts"
   },
   "dependencies": {
-    "@akinaza/core": "workspace:*",
+    "@folioviv/core": "workspace:*",
     "@date-fns/tz": "^1.5.0",
     "@krizaka/api-keys": "0.1.0",
     "@krizaka/auth": "^0.12.0",

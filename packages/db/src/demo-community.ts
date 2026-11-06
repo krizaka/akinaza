@@ -7,7 +7,7 @@ import { shops } from "./schema";
 
 /**
  * The demo shops as places (B45): a wall of photos, cards and the sign, the latest reel, a public Short behind its facade, the profile links, the bulletin
- * board and eight verified reviews. Media are on the CDN (`sites/akinaza/demo/<slug>/`, uploaded with krizaka-com's `cdn-assets`, never committed);
+ * board and eight verified reviews. Media are on the CDN (`sites/folioviv/demo/<slug>/`, uploaded with krizaka-com's `cdn-assets`, never committed);
  * the people in the words are invented, like the shops. Through the product's own operations; idempotent: whatever the owner already pinned is left alone.
  */
 type Demo = typeof media;
@@ -84,11 +84,11 @@ const COMMUNITY: Record<DemoSlug, {
   },
 };
 
-/** The second clip of every demo playlist: Akinaza's own recording of the report the client receives (7 s, phone), on the CDN. */
+/** The second clip of every demo playlist: Folioviv's own recording of the report the client receives (7 s, phone), on the CDN. */
 const REPORT_CLIP = {
-  webm: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/report.47b4fef558.webm",
-  mp4: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/report.b1f25d285f.mp4",
-  poster: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/phone-report.af3aa7b92b.jpg",
+  webm: "https://krizaka-assets.b-cdn.net/sites/folioviv/tour/report.47b4fef558.webm",
+  mp4: "https://krizaka-assets.b-cdn.net/sites/folioviv/tour/report.b1f25d285f.mp4",
+  poster: "https://krizaka-assets.b-cdn.net/sites/folioviv/tour/phone-report.af3aa7b92b.jpg",
   seconds: 7.3,
 };
 

@@ -4,7 +4,7 @@ import { invoiceState, remainingCents } from "./invoice-state";
 
 const base = { totalCents: 11_498, paidCents: 0, dueOn: "2026-10-30", isCredit: false, superseded: false };
 
-describe("where an invoice stands (akinaza#218)", () => {
+describe("where an invoice stands (folioviv#218)", () => {
   it("due, partly paid, paid, then overdue once its due date has passed with money owed", () => {
     expect(invoiceState(base, "2026-10-23")).toBe("due");
     expect(invoiceState({ ...base, paidCents: 5_000 }, "2026-10-23")).toBe("partial");

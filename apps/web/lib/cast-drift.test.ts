@@ -41,7 +41,7 @@ describe("the cast is the only source of the personas", () => {
     expect(() => castAccounts({ DATABASE_URL: "postgres://u@db.example.com/x" })).toThrow(/QA_WALKER_PASSWORD/);
     const remote = castAccounts({ DATABASE_URL: "postgres://u@db.example.com/x", QA_WALKER_PASSWORD: "w".repeat(14), QA_CLIENTS_PASSWORD: "c".repeat(14), QA_ADMIN_PASSWORD: "a".repeat(14), QA_KRIZAKA_PASSWORD: "k".repeat(14), QA_USER_PASSWORD: "u".repeat(14), QA_ADMIN_EMAIL: "Boss@x.test" });
     expect(remote.at(-1)).toMatchObject({ email: "boss@x.test", role: "ADMIN" });
-    expect(remote.find((a: { persona: { id: string } }) => a.persona.id === "krizaka")).toMatchObject({ email: "akinaza@krizaka.com", role: "USER" });
+    expect(remote.find((a: { persona: { id: string } }) => a.persona.id === "krizaka")).toMatchObject({ email: "folioviv@krizaka.com", role: "USER" });
     expect(() => castAccounts({ DATABASE_URL: "postgres://u@db.example.com/x", QA_WALKER_PASSWORD: "w".repeat(14), QA_CLIENTS_PASSWORD: "c".repeat(14), QA_ADMIN_PASSWORD: "a".repeat(14), QA_USER_PASSWORD: "u".repeat(14) })).toThrow(/QA_KRIZAKA_PASSWORD/);
   });
 
@@ -71,7 +71,7 @@ describe("the cast is the only source of the personas", () => {
   });
 });
 
-describe("the demo shop is the cast and nothing more (akinaza #1915)", () => {
+describe("the demo shop is the cast and nothing more (folioviv #1915)", () => {
   it("names the seed's five clients with their dogs, so a leftover is anything else", async () => {
     const { DEMO_CAST } = await import("../scripts/seed-cast.mjs");
     expect(DEMO_CAST.shopSlug).toBe("pattes-saint-henri");

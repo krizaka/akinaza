@@ -1,4 +1,4 @@
-import { CAHIER_VERSION, type ShopRules, type ShopType, TEMPLATES, TEMPLATES_V2 } from "@akinaza/core";
+import { CAHIER_VERSION, type ShopRules, type ShopType, TEMPLATES, TEMPLATES_V2 } from "@folioviv/core";
 import { and, eq } from "drizzle-orm";
 
 import type { Db } from "./client";
@@ -9,7 +9,7 @@ import { applyTemplate, saveShopPageConfig, shopPageConfigOf } from "./shop-page
 import { addStaff, addWindow, addZone, saveRules, type ServiceInput, saveService, saveShopMedia, saveShopPage, shopOfOwner } from "./service-shop";
 
 /**
- * The fictional demo shops (krizaka/akinaza#144), each as DATA: a hair salon in Saint-Henri, a tattoo and photo studio in the
+ * The fictional demo shops (krizaka/folioviv#144), each as DATA: a hair salon in Saint-Henri, a tattoo and photo studio in the
  * Mile End, an independent consultant. Names, people and addresses are invented — no real business, no real person — and each
  * says so in its bio. They are seeded through the product's own operations (no row is written around the rules) and show only
  * what Folioviv really runs: service durations and prices, several people with their own hours, the cancellation rule. No
@@ -38,7 +38,7 @@ const days = (weekdays: number[], startsAt: string, endsAt: string) => weekdays.
 
 export const DEMO_SHOPS: DemoShop[] = [
   {
-    ownerEmail: "maelle.cedre@akinaza.test",
+    ownerEmail: "maelle.cedre@folioviv.test",
     shop: { name: "Salon Cèdre & Ciseaux", legalName: "Salon Cèdre & Ciseaux (démo)", address: "4100 rue Notre-Dame O., Montréal QC H4C 1R8", slug: "cedre-ciseaux", ownerName: "Maëlle" },
     taglineFr: "Un salon de quartier à Saint-Henri : coupe, couleur et barbe, avec la personne de votre choix.",
     taglineEn: "A neighbourhood salon in Saint-Henri: cuts, colour and beard care, with the person of your choice.",
@@ -66,7 +66,7 @@ export const DEMO_SHOPS: DemoShop[] = [
     rules: { cancellationHours: 24, bookingHorizonDays: 60, slotStepMinutes: 30, minNoticeMinutes: 120 },
   },
   {
-    ownerEmail: "ines.encrevive@akinaza.test",
+    ownerEmail: "ines.encrevive@folioviv.test",
     shop: { name: "Encre Vive Studio", legalName: "Encre Vive Studio (démo)", address: "5300 boul. Saint-Laurent, Montréal QC H2T 1S1", slug: "encre-vive", ownerName: "Inès" },
     taglineFr: "Tatouage et photo dans le Mile End : on se rencontre d'abord, on dessine ensuite.",
     taglineEn: "Tattoo and photo in the Mile End: we meet first, we draw after.",
@@ -93,7 +93,7 @@ export const DEMO_SHOPS: DemoShop[] = [
     rules: { cancellationHours: 48, bookingHorizonDays: 90, slotStepMinutes: 30, minNoticeMinutes: 1_440 },
   },
   {
-    ownerEmail: "camille.ferland@akinaza.test",
+    ownerEmail: "camille.ferland@folioviv.test",
     shop: { name: "Ferland Conseil", legalName: "Ferland Conseil (démo)", address: "6800 rue Clark, Montréal QC H2S 3G7", slug: "ferland-conseil", ownerName: "Camille" },
     taglineFr: "Conseil indépendant en stratégie numérique : un appel pour se connaître, puis des séances de travail.",
     taglineEn: "Independent digital-strategy consulting: a call to get to know each other, then working sessions.",
@@ -125,14 +125,14 @@ async function ensureOwner(db: Db, email: string): Promise<string> {
 
 /**
  * The demo's trade, always: a demo shop is a fixture, so its trade is the fixture's. A shop without one would be given another trade's
- * images (« professional » without a trade reads as consulting: a shelf of books on a hair salon, akinaza#383).
+ * images (« professional » without a trade reads as consulting: a shelf of books on a hair salon, folioviv#383).
  */
 async function keepType(db: Db, shopId: string, shopType: ShopType): Promise<void> {
   const config = await shopPageConfigOf(db, shopId);
   if (config.shopType !== shopType) await saveShopPageConfig(db, shopId, { ...config, shopType });
 }
 
-/** The demo's template at the notebook's version (akinaza#316): applied once, and a demo still on `@1` is moved to `@2` (the owner's update, the same way). Through `applyTemplate`, the template's order. */
+/** The demo's template at the notebook's version (folioviv#316): applied once, and a demo still on `@1` is moved to `@2` (the owner's update, the same way). Through `applyTemplate`, the template's order. */
 async function keepTemplate(db: Db, shopId: string, template: string): Promise<void> {
   const config = await shopPageConfigOf(db, shopId);
   if (!config.templateId || (config.templateVersion ?? 0) < CAHIER_VERSION) await applyTemplate(db, shopId, { templateId: template, templateVersion: CAHIER_VERSION, keepOrder: false }, [...TEMPLATES, ...TEMPLATES_V2]);
@@ -142,7 +142,7 @@ async function keepTemplate(db: Db, shopId: string, template: string): Promise<v
 interface StHenriShop { slug: string; name: string; legalName: string; address: string; zone: { name: string; lat: number; lng: number }; shopType: ShopType; template: string; phone: string; taglineFr: string; taglineEn: string; bioFr: string; bioEn: string; hours: { weekday: number; startsAt: string; endsAt: string }[]; services: DemoShop["services"]; rules: Partial<ShopRules> }
 
 export const ST_HENRI_DEMO_SHOPS: DemoShop[] = (stHenri as StHenriShop[]).map((d) => ({
-  ownerEmail: `${d.slug}@akinaza.test`,
+  ownerEmail: `${d.slug}@folioviv.test`,
   shop: { name: d.name, legalName: d.legalName, address: d.address, slug: d.slug, ownerName: "Équipe" },
   taglineFr: d.taglineFr,
   taglineEn: d.taglineEn,

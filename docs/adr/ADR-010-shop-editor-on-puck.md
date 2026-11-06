@@ -1,17 +1,17 @@
-# ADR-010 — The shop editor on Krizaka Composer, our fork of Puck: example shops, variables, an Orazaka assistant
+# ADR-010 — The shop editor on Krizaka Composer, our fork of Puck: example shops, variables, an Sovkora assistant
 
 Status: accepted (2026-10-31, the founder's decision; design delegated). **Amended 2026-10-31 (founder): a Krizaka
 fork of Puck — `krizaka/krizaka-composer`, published as `@krizaka/composer` — replaces « Puck pinned behind a
 `@krizaka/ui/composer` facade »**; the evidence and the spike below still hold, the decision, §1, §2, §6 and the slices
 are rewritten. Supersedes **ADR-004 §2 « Options weighed »,
 third line** (« ✕ Puck, Craft.js or GrapesJS behind a facade ») and ADR-004 §3's hand-made editor. The rest of ADR-004
-holds: the page is a document stored in Akinaza's database, every section and variant comes from `@krizaka/ui`, looks
+holds: the page is a document stored in Folioviv's database, every section and variant comes from `@krizaka/ui`, looks
 are presets, budgets and accessibility (§4, §5) and the refusals (§6). The fork's own
 decisions are recorded in krizaka-composer `docs/adr/` (its ADR-001 restates §1 below).
 
 ## Context
 
-- The founder (2026-10-31): for Akinaza's editor, adopt a turnkey library to go faster, do not reinvent the wheel, and
+- The founder (2026-10-31): for Folioviv's editor, adopt a turnkey library to go faster, do not reinvent the wheel, and
   give owners real services. Goals: **secure, uses our components (`@krizaka/ui`), user-friendly, customisable,
   evolutive, we can contribute upstream, at worst we fork**. Candidates named: Easyblocks, Puck, Craft.js. The founder
   then chose Puck (2026-10-31) and asked for the evaluation as the decision's evidence.
@@ -56,7 +56,7 @@ directory; « 6 months » = since 2026-05-01.
 
 Vite + React 19, `@puckeditor/core` 0.24.0, `@krizaka/ui` 3.78.0. Three real shop sections (`HeroSection`,
 `ServicesSection`, `BookingSection`) with their variants as radio fields, the root as `ShopFrame` with the look and the
-density, the Akinaza brand. The editor chrome mapped onto `--kz-*` in one CSS file (45 variables), the header actions,
+density, the Folioviv brand. The editor chrome mapped onto `--kz-*` in one CSS file (45 variables), the header actions,
 the radio and the text fields drawn by `@krizaka/ui` (`Button`, `RadioGroup`, `Input`) through `overrides`.
 
 - **Save / load**: the stored JSON is **our `ShopPage`**, not Puck's data. Two pure functions, `toPuck(doc)` and
@@ -66,7 +66,7 @@ the radio and the text fields drawn by `@krizaka/ui` (`Button`, `RadioGroup`, `I
   (`sections.0.variant`, `sections.0.settings.focus`). Owner text is a string rendered as React text, never HTML.
 - **Both themes** follow the tokens with no Puck-specific dark mode; the phone layout is Puck's own (bottom tabs:
   Blocks · Outline · Fields). Captures:
-  `https://krizaka-assets.b-cdn.net/pr-assets/akinaza/adr-010-puck-spike/` `puck-desktop-dark.png`,
+  `https://krizaka-assets.b-cdn.net/pr-assets/folioviv/adr-010-puck-spike/` `puck-desktop-dark.png`,
   `puck-desktop-dark-selected.png`, `puck-desktop-light.png`, `puck-phone-light.png`.
 - **Found**: the preview `iframe` does not inherit `html.light` (the facade sets the theme class on the iframe's
   document through the `iframe` override); Puck's radii are not ours (2 px on controls, 0 on cards: mapped in the
@@ -92,8 +92,8 @@ The public page, the only page with a performance contract towards visitors, doe
 The fork is the facade — there is no second layer in krizaka-ui. We change it where Puck does not hold what we need:
 its data schema (versioned, validated with zod, nested blocks, content per locale, variables and bindings), its editor
 words (FR/EN), its ergonomics (our tokens, `@krizaka/ui` controls, keyboard, accessibility), and we drop what we do not
-use. Akinaza stores a composer document whose blocks are the `@krizaka/ui/shop` catalogue (`ShopPage` schema 2).
-Owners start from complete example shops, build with variables, and can ask an assistant powered by Orazaka that
+use. Folioviv stores a composer document whose blocks are the `@krizaka/ui/shop` catalogue (`ShopPage` schema 2).
+Owners start from complete example shops, build with variables, and can ask an assistant powered by Sovkora that
 proposes changes they confirm.**
 
 Why a fork rather than a facade (founder, 2026-10-31): the three things we need most — a validated, versioned,
@@ -109,7 +109,7 @@ are the code itself, and the generic fixes still go upstream.
 - ✓ **Licence**: MIT, kept. Puck's `LICENSE` (« Copyright (c) The Puck Contributors ») stays as is; a `NOTICE` names the
   fork, the upstream commit it started from and our changes; our files carry the same MIT licence.
 - ✓ **Package**: `packages/core` becomes `@krizaka/composer` (one package; the editor and the server render
-  `@krizaka/composer/rsc`). Exact pin in Akinaza, updated by Renovate one minor at a time with the composer journey
+  `@krizaka/composer/rsc`). Exact pin in Folioviv, updated by Renovate one minor at a time with the composer journey
   green. Not published before the schema slice (C1).
 - ✓ **Upstream is tracked, not followed**: remote `upstream` = `puckeditor/puck`; a weekly look at its releases;
   **security and bug fixes are cherry-picked** (one PR each, the upstream commit named); features only when we need
@@ -139,7 +139,7 @@ are the code itself, and the generic fixes still go upstream.
      the `richtext` field and TipTap (owner text is never markup), `external` fields and browser-side `resolveData`
      calls (references are resolved by the product, server-side), the upstream publish workflows.
 - ✓ **The config is derived from the catalogue**: each `defineSection` of `@krizaka/ui/shop` (type, variants, zod
-  settings, slots, limits) becomes a composer block through `defineBlock`; the mapping lives in Akinaza (the only shop
+  settings, slots, limits) becomes a composer block through `defineBlock`; the mapping lives in Folioviv (the only shop
   product) and moves to a package the day a second product needs it — never a hand-written editor config.
 - ✕ `@puckeditor/*` is imported nowhere (dependency-cruiser rule, every repository); `@krizaka/composer` only on the
   studio routes, never on a public page.
@@ -181,19 +181,19 @@ are the code itself, and the generic fixes still go upstream.
   page binds it.
 - ✕ A colour picker, a font upload, pixel values → AA cannot be proven (ADR-004 §6, unchanged).
 
-### 5. The assistant (« Help me build my page »), powered by Orazaka
+### 5. The assistant (« Help me build my page »), powered by Sovkora
 
 - ✓ **Docs RAG first**: the editor's usage documentation (`docs/editor/`, EN/FR: how to start, every section and its
-  variants, the variables, the looks) is indexed by an Orazaka Studio pack; the assistant answers from it, with links
+  variants, the variables, the looks) is indexed by an Sovkora Studio pack; the assistant answers from it, with links
   to the pages it used.
 - ✓ **Suggestions are actions the owner confirms**: an answer may carry typed commands (`addSection`, `setVariant`,
   `setStyle`, `startFromExample`); the editor shows them as a diff and applies them on « Apply » through Puck's
   `dispatch`, onto the draft, undoable. Never a silent edit, never a publish.
-- ✓ **Through Orazaka's API only**, behind an `AssistantPort` in Akinaza (`apps/web/lib/assistant.ts`, the same shape
+- ✓ **Through Sovkora's API only**, behind an `AssistantPort` in Folioviv (`apps/web/lib/assistant.ts`, the same shape
   as `lib/translation.ts`), off by default in the settings (`assistant.editor.enabled`), with a per-shop daily quota
-  the administrator sets, and the credits of Orazaka's pricebook. It sends the question, the locale and the
+  the administrator sets, and the credits of Sovkora's pricebook. It sends the question, the locale and the
   document's structure (types, variants, style), never a customer, a booking or a price.
-- ! The pack (index of `docs/editor/`, the command schema) is Orazaka-lane work and gates slice A4.
+- ! The pack (index of `docs/editor/`, the command schema) is Sovkora-lane work and gates slice A4.
 
 ### 6. Upstream
 
@@ -230,7 +230,7 @@ are the code itself, and the generic fixes still go upstream.
 ## Performance
 
 - ✓ The public page never imports `@krizaka/composer` (dependency-cruiser rule + the JS ratchet of ADR-004 §4).
-- ✓ The editor is one lazy chunk on Boutique › Page; its budget is measured in Akinaza on the built route: eager JS
+- ✓ The editor is one lazy chunk on Boutique › Page; its budget is measured in Folioviv on the built route: eager JS
   ≤ 200 kB gz over the app shell, CSS ≤ 20 kB gz. `@krizaka/composer` has its own size-limit (editor entry and
   `rsc` entry), measured in its repository; the budget never again forces the editor's design.
 
@@ -246,7 +246,7 @@ Deprecated in the minor that follows A2, removed in the next major (changeset `m
 | `registry/examples/shop-composer/`, the `shop-composer` page of ui.krizaka.com, its rows in `docs/inventory/ui-usage.*` | a « Shop editor » page of ui.krizaka.com linking `@krizaka/composer` |
 | kept and moved: `look-picker.tsx` (Style panel field), `thumbnails.tsx` (variant field), `diff.ts` (publish diff), `messages.ts`; `fields.ts` (zod → fields) moves into the composer | — |
 
-In Akinaza, `components/boutique/ShopComposerPanel.tsx` is replaced by the composer's mount, and the engine flag is
+In Folioviv, `components/boutique/ShopComposerPanel.tsx` is replaced by the composer's mount, and the engine flag is
 removed one release after A2 is green.
 
 ## Work this decision makes obsolete
@@ -269,9 +269,9 @@ Issues in krizaka-internal, sub-issues of krizaka-internal#1889. Rewritten by th
 | **C2** (#1897) | krizaka-composer · platform | editor words FR/EN through `@krizaka/i18n`, the test against English left in French; the i18n hook proposed upstream | C1 |
 | **C3** (krizaka-internal#1905) | krizaka-composer · platform | ergonomics: the chrome on `--kz-*`, `@krizaka/ui` fields and actions, keyboard reorder, a11y journey (axe), themed preview, the #214 layout guard; a11y fixes proposed upstream | C1 |
 | **L2** (#1892) | krizaka-ui · platform | `ShopPage` schema 2 as a composer document: nested slots, `style`, bindings, per-locale text; `migrateShopPage` 1 → 2; parser limits | C1 |
-| **A1** (#1893) | akinaza · akinaza | Boutique › Page on `@krizaka/composer` behind an admin setting (`editor.engine`), the config derived from the catalogue, routes unchanged, schema 2 read and written | C2, C3, L2 |
-| **L3 / A2** (#1894) | both | the five example shops and « Start from this shop »; the Style panel; bindings resolved at render; the old engine removed from Akinaza | A1 |
-| **A3** (#1895) | akinaza · akinaza | the editor's usage docs (`docs/editor/`, EN/FR), then the assistant behind `AssistantPort` (off by default, quota, confirm-to-apply) | A2, the Orazaka pack |
+| **A1** (#1893) | folioviv · folioviv | Boutique › Page on `@krizaka/composer` behind an admin setting (`editor.engine`), the config derived from the catalogue, routes unchanged, schema 2 read and written | C2, C3, L2 |
+| **L3 / A2** (#1894) | both | the five example shops and « Start from this shop »; the Style panel; bindings resolved at render; the old engine removed from Folioviv | A1 |
+| **A3** (#1895) | folioviv · folioviv | the editor's usage docs (`docs/editor/`, EN/FR), then the assistant behind `AssistantPort` (off by default, quota, confirm-to-apply) | A2, the Sovkora pack |
 | **L4** (#1896) | krizaka-ui · platform | removal of the old composer (table above), major changeset, the ui.krizaka.com page swapped | A2 green one release |
 
 ## Consequences

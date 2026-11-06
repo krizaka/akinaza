@@ -1,6 +1,6 @@
 "use client";
 
-import type { TermIssueReason } from "@akinaza/core";
+import type { TermIssueReason } from "@folioviv/core";
 import { krizakaFetch, KrizakaQueryProvider, useMutation, useQuery, useQueryClient } from "@krizaka/query";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
@@ -46,7 +46,7 @@ const reportAnswer = z.object({
 type Report = z.infer<typeof reportAnswer>;
 
 /**
- * The administrator's side of the anti-phishing addresses (ADR-005, akinaza#537): the queue of held shop addresses (the term that matched, a preview,
+ * The administrator's side of the anti-phishing addresses (ADR-005, folioviv#537): the queue of held shop addresses (the term that matched, a preview,
  * clear or keep held with a reason, all audited), the protected terms (words and /regex/, a pattern that could backtrack refused where it is typed),
  * and the one-off re-judging of the shops that predate the hold (a report first, then apply).
  */
@@ -85,7 +85,7 @@ export function AddressPreview({ slug, term }: Readonly<{ slug: string; term: st
       ) : (
         slug
       )}
-      <span className="text-fg-secondary">.akinaza.shop</span>
+      <span className="text-fg-secondary">.folioviv.shop</span>
     </span>
   );
 }

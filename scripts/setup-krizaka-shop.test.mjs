@@ -7,11 +7,11 @@ test("Krizaka's page is real: no « demo », no invented price, every product in
   expect(text).not.toMatch(/demo|démo|example|fictif|fictional/i);
   expect(SHOP.slug).toBe("krizaka");
   const products = OFFERS.slice(0, 3);
-  expect(products.map((o) => o.nameEn)).toEqual(["Yomizaka", "Akinaza", "Orazaka"]);
+  expect(products.map((o) => o.nameEn)).toEqual(["Verikora", "Folioviv", "Sovkora"]);
   for (const o of products) {
     expect(o.descriptionEn).toMatch(/^In development\./);
     expect(o.descriptionFr).toMatch(/^En développement\./);
-    expect(o.descriptionEn).toMatch(/dev\.(yomizaka|akinaza|orazaka)\.com/);
+    expect(o.descriptionEn).toMatch(/dev\.(verikora|folioviv|sovkora)\.com/);
   }
   for (const o of OFFERS) expect([o.priceCents, o.priceVaries], `${o.nameEn}: no list price, it reads « On quote »`).toEqual([0, true]);
   expect(OFFERS[3].nameEn).toBe("Krizaka Entreprise");

@@ -1,12 +1,12 @@
-# ADR-005 — Shop addresses: the app on akinaza.com, the shops on their own domain, custom domains, and isolation
+# ADR-005 — Shop addresses: the app on folioviv.com, the shops on their own domain, custom domains, and isolation
 
-Status: **proposed** (2026-10-29). Issue: krizaka/akinaza#77 (Feature, under the Dev preview epic #52). Slices: the
+Status: **proposed** (2026-10-29). Issue: krizaka/folioviv#77 (Feature, under the Dev preview epic #52). Slices: the
 sub-issues of #77 listed at the end. Reuses the configured-origin rule of `@krizaka/auth` 0.13 (`landingRedirect({ origin })`).
 
 ## Context
 
 - Merchants want their own address: a custom slug, a short host, and later their own domain (#77). Level 1 (editable slug,
-  former slugs answer 308, `shop_former_slugs`) and level 2 (`<slug>.akinaza.com`, wildcard on App Platform, `noindex`)
+  former slugs answer 308, `shop_former_slugs`) and level 2 (`<slug>.folioviv.com`, wildcard on App Platform, `noindex`)
   are live since 2026-10-22. Level 3 (the merchant's own domain) is parked.
 - The founder pasted a security analysis and asks « est-ce une bonne direction ? ». Its thesis: never host merchant
   content on the brand's main domain; a dedicated wildcard domain for shops (like `*.myshopify.com`, `*.vercel.app`);
@@ -18,9 +18,9 @@ sub-issues of #77 listed at the end. Reuses the configured-origin rule of `@kriz
 
 | Piece | Today | Where |
 | --- | --- | --- |
-| Shop page | `www.akinaza.com/{locale}/s/{slug}` and `{slug}.akinaza.com` (rewrite to the same page), `published = true` only | `apps/web/proxy.ts`, `lib/host.ts` `shopOfHost`/`routeFor`, `packages/db` `publicShop` |
-| Signed-in app, studio, admin console | the same origin `www.akinaza.com`; the console on `admin.akinaza.com` (same app, host-routed, IP-gated) | `lib/host.ts`, `deploy/digitalocean/app.yaml` |
-| Session cookie | `akinaza_session`: HttpOnly, `Secure` in production, `SameSite=Lax`, `Path=/`, no `Domain` (host-only). **No prefix.** | `apps/web/lib/session.ts` |
+| Shop page | `www.folioviv.com/{locale}/s/{slug}` and `{slug}.folioviv.com` (rewrite to the same page), `published = true` only | `apps/web/proxy.ts`, `lib/host.ts` `shopOfHost`/`routeFor`, `packages/db` `publicShop` |
+| Signed-in app, studio, admin console | the same origin `www.folioviv.com`; the console on `admin.folioviv.com` (same app, host-routed, IP-gated) | `lib/host.ts`, `deploy/digitalocean/app.yaml` |
+| Session cookie | `folioviv_session`: HttpOnly, `Secure` in production, `SameSite=Lax`, `Path=/`, no `Domain` (host-only). **No prefix.** | `apps/web/lib/session.ts` |
 | Locale cookie | `NEXT_LOCALE`, `SameSite=Lax`, no `Secure`, no prefix | `proxy.ts` |
 | CSP | one policy for every route: `script-src 'self' 'unsafe-inline'`, `frame-ancestors 'self'`, `form-action 'self'`, `object-src 'none'`, embeds only after a click | `apps/web/next.config.mjs` |
 | CSRF | no Origin / `Sec-Fetch-Site` check on the API routes; `SameSite=Lax` is the only barrier (Server Actions have Next's own Origin check) | — |
@@ -30,17 +30,17 @@ sub-issues of #77 listed at the end. Reuses the configured-origin rule of `@kriz
 
 ### The risks of today's setup
 
-1. **Same origin as the signed-in app.** A shop page is served from `www.akinaza.com`, the origin of the session, the
+1. **Same origin as the signed-in app.** A shop page is served from `www.folioviv.com`, the origin of the session, the
    studio and the books. An injection in a shop page (a future rich-text field, a JSON-LD block, a dependency bug) is a
    script on the app: it reads the CSRF-free API with the owner's or a customer's session. `script-src 'unsafe-inline'`
    turns any HTML injection into script execution.
-2. **Same site as the app, the console and every other shop.** `*.akinaza.com` shops, `www` and `admin` share the
-   registrable domain `akinaza.com`. `SameSite=Lax` does not stop a request from `x.akinaza.com` to `www` (same-site),
-   and a script on any `*.akinaza.com` host can **toss** a cookie with `Domain=akinaza.com` that `www` will receive
+2. **Same site as the app, the console and every other shop.** `*.folioviv.com` shops, `www` and `admin` share the
+   registrable domain `folioviv.com`. `SameSite=Lax` does not stop a request from `x.folioviv.com` to `www` (same-site),
+   and a script on any `*.folioviv.com` host can **toss** a cookie with `Domain=folioviv.com` that `www` will receive
    (session fixation, login CSRF): only a `__Host-` name forbids that.
-3. **Phishing under our name.** Any well-formed slug becomes `<slug>.akinaza.com` with a valid certificate and our brand
-   in the bar (`desjardins-connexion.akinaza.com`). The reserved list holds platform words, no brands, no « login /
-   verify » terms. One phishing shop can get **akinaza.com itself** listed by Safe Browsing — the app included.
+3. **Phishing under our name.** Any well-formed slug becomes `<slug>.folioviv.com` with a valid certificate and our brand
+   in the bar (`desjardins-connexion.folioviv.com`). The reserved list holds platform words, no brands, no « login /
+   verify » terms. One phishing shop can get **folioviv.com itself** listed by Safe Browsing — the app included.
 4. **Host trusted for absolute URLs** (the proxy's redirect case) and no existence check (every random subdomain renders
    the 404 through the app and the database).
 
@@ -73,39 +73,39 @@ for exactly this; `myshopify.com`, `vercel.app`, `netlify.app` are on the Public
 
 | Surface | Host | Cookies of value |
 | --- | --- | --- |
-| Marketing, sign-in, the app, the studio, booking confirmation | `www.akinaza.com` (apex 308 → www) | the session |
-| Administration console | `admin.akinaza.com` (IP-gated, as today) | its own host-only session |
-| Shops | `<slug>.akinaza.shop` (wildcard), and later the merchant's own domain | **none** |
-| Development | `dev.akinaza.com` (as today) | — |
+| Marketing, sign-in, the app, the studio, booking confirmation | `www.folioviv.com` (apex 308 → www) | the session |
+| Administration console | `admin.folioviv.com` (IP-gated, as today) | its own host-only session |
+| Shops | `<slug>.folioviv.shop` (wildcard), and later the merchant's own domain | **none** |
+| Development | `dev.folioviv.com` (as today) | — |
 
-- **The shop domain is `akinaza.shop`** (decided 2026-10-29: the founder bought it at Porkbun; DNS and deploy set up in
-  slice 5, not before). Shops answer on `<slug>.akinaza.shop`. A separate registrable name (not `shops.akinaza.com`) is
-  the point: a different registrable domain is a different site. `akinaza.shop` itself (apex and `www`) 308s to
-  `www.akinaza.com`. The other candidates weighed (`akinaza.page`, HSTS-preloaded TLD; `akinaza.site`) are not taken.
-- **`*.akinaza.com` stops being a shop address.** Its wildcard is removed from the App Platform spec once the shop domain
-  serves; `<slug>.akinaza.com` answers 308 to `<slug>.akinaza.shop` while the wildcard lasts (a few months, for the
+- **The shop domain is `folioviv.shop`** (decided 2026-10-29: the founder bought it at Porkbun; DNS and deploy set up in
+  slice 5, not before). Shops answer on `<slug>.folioviv.shop`. A separate registrable name (not `shops.folioviv.com`) is
+  the point: a different registrable domain is a different site. `folioviv.shop` itself (apex and `www`) 308s to
+  `www.folioviv.com`. The other candidates weighed (`folioviv.page`, HSTS-preloaded TLD; `folioviv.site`) are not taken.
+- **`*.folioviv.com` stops being a shop address.** Its wildcard is removed from the App Platform spec once the shop domain
+  serves; `<slug>.folioviv.com` answers 308 to `<slug>.folioviv.shop` while the wildcard lasts (a few months, for the
   addresses already shared), then the wildcard goes and only named hosts remain.
 - **Booking stays a hop to the app.** The shop domain shows the shop, its services and its free times (anonymous, as
-  today). Confirming (sign-in at the last step) is a top-level navigation to `www.akinaza.com/{locale}/book/…` with the
+  today). Confirming (sign-in at the last step) is a top-level navigation to `www.folioviv.com/{locale}/book/…` with the
   choices in the URL; the session cookie never exists on a shop host. The studio's preview of a draft stays on the app
   (authenticated); the published page lives on the shop domain.
 - **PSL plan** (the design holds without it, because the shop domain carries no credential):
-  1. Extend `akinaza.shop`'s registration to **several years** first (renewal ≈ 31 $ US/year at Porkbun): the guidelines
+  1. Extend `folioviv.shop`'s registration to **several years** first (renewal ≈ 31 $ US/year at Porkbun): the guidelines
      want ≥ 2 years left at submission and > 1 year kept at all times, else the entry is removed.
-  2. Open the PR on `publicsuffix/list` adding `akinaza.shop` to the **private section** (organisation « Krizaka », a
-     rationale: user-controlled subdomains `<slug>.akinaza.shop`, cookie and site isolation between merchants, the
+  2. Open the PR on `publicsuffix/list` adding `folioviv.shop` to the **private section** (organisation « Krizaka », a
+     rationale: user-controlled subdomains `<slug>.folioviv.shop`, cookie and site isolation between merchants, the
      abuse contact), submitted by Oussama as the domain owner's representative.
-  3. Add the `_psl.akinaza.shop` TXT record `https://github.com/publicsuffix/list/pull/<n>` and **never remove it**.
-  4. Timing: when Akinaza serves real merchants. The guidelines refuse small, test or beta projects; a refusal now
+  3. Add the `_psl.folioviv.shop` TXT record `https://github.com/publicsuffix/list/pull/<n>` and **never remove it**.
+  4. Timing: when Folioviv serves real merchants. The guidelines refuse small, test or beta projects; a refusal now
      would cost the re-submission. Until merged and shipped by browsers (months), shops are same-site with each other.
 
 ### 2. Custom slugs
 
 - Form: `^[a-z0-9]+(-[a-z0-9]+)*$`, 3–40 characters (one DNS label, ≤ 63; 40 keeps it printable), ASCII only (no
   punycode, so no homograph).
-- **One reserved list** in `@akinaza/core`, read by the slug schema **and** the host router (today's two lists merge):
+- **One reserved list** in `@folioviv/core`, read by the slug schema **and** the host router (today's two lists merge):
   platform words (`www`, `app`, `api`, `admin`, `dev`, `mail`, `cname`, `cdn`, `static`, `status`, `staging`, `s`, `en`,
-  `fr`, `es`, `report`, `sign-in`, `sign-up`, `help`, `support`, `billing`, `legal`, `akinaza`, `krizaka`, `orazaka`…).
+  `fr`, `es`, `report`, `sign-in`, `sign-up`, `help`, `support`, `billing`, `legal`, `folioviv`, `krizaka`, `sovkora`…).
 - **Anti-phishing**, data in the database (the administrator edits it; settings are the source of truth): a list of
   protected brands and institutions (banks, payment networks, governments, big platforms — e.g. `desjardins`, `interac`,
   `paypal`, `revenu-quebec`, `canada`, `gouv`) and of lure terms (`login`, `signin`, `verify`, `secure`, `account`,
@@ -120,15 +120,15 @@ for exactly this; `myshopify.com`, `vercel.app`, `netlify.app` are on the Public
 ### 3. Custom domains (level 3)
 
 - **Ownership first, TLS second.** The merchant adds `reservation.monsalon.ca`; we show a TXT record
-  `_akinaza-verify.reservation.monsalon.ca = <random token per shop and domain>` and a CNAME to
-  `edge.akinaza.shop`. The domain is `pending` until the TXT matches; it is re-checked periodically, and **re-verified
+  `_folioviv-verify.reservation.monsalon.ca = <random token per shop and domain>` and a CNAME to
+  `edge.folioviv.shop`. The domain is `pending` until the TXT matches; it is re-checked periodically, and **re-verified
   each time it is attached to a shop** (a domain released by one shop is never inherited by another: no dangling takeover).
 - **TLS per hostname: Cloudflare for SaaS** (recommended): the shop domain's zone on Cloudflare, a fallback origin to the
   App Platform app, custom hostnames created by API behind a port (`CustomHostnames` in `packages/core`, the Cloudflare
   adapter in `packages/db` or a small package; the vendor is a value, never a name in the domain code). Cost: 0 $ up to
   100 domains, then 0.10 $ US/month each. To prove in the first slice of level 3 (a spike): App Platform accepts a request
   whose `Host` is a custom hostname it does not list (App Platform is itself behind Cloudflare: the Cloudflare-to-Cloudflare
-  path must be tested), else a Worker forwards to `<slug>.akinaza.shop` with a signed header.
+  path must be tested), else a Worker forwards to `<slug>.folioviv.shop` with a signed header.
 - **Alternative: Caddy** on a small Droplet (≈ 6–12 $ US/month), on-demand TLS whose `ask` endpoint answers 200 only for an
   `active` domain, reverse-proxying to the app. Cheaper at scale, but we then own TLS, renewals, DDoS and one more machine.
   Kept as the fallback if the spike fails or the bill grows past ~1,000 domains.
@@ -139,7 +139,7 @@ for exactly this; `myshopify.com`, `vercel.app`, `netlify.app` are on the Public
 
 ### 4. Cookies
 
-- App: `__Host-akinaza_session` (HttpOnly, Secure, `Path=/`, `SameSite=Lax`), `__Host-NEXT_LOCALE`. The console:
+- App: `__Host-folioviv_session` (HttpOnly, Secure, `Path=/`, `SameSite=Lax`), `__Host-NEXT_LOCALE`. The console:
   `SameSite=Strict`. Renaming signs everyone out once (acceptable in Dev preview).
 - **No `Domain=` attribute anywhere**, ever. Development over plain http keeps the names without prefix
   (`__Host-` requires Secure), behind one function that names cookies.
@@ -149,7 +149,7 @@ for exactly this; `myshopify.com`, `vercel.app`, `netlify.app` are on the Public
 
 ### 5. Host validation
 
-- One module decides, in this order: the configured app hosts (exact, from env: www, admin, dev); `<label>.akinaza.shop`
+- One module decides, in this order: the configured app hosts (exact, from env: www, admin, dev); `<label>.folioviv.shop`
   where the label passes the slug form **and** a published shop has it; an `active` custom domain from `shop_domains`.
   Existence is read through a short in-memory cache (positive and negative, ~60 s; a suspension takes effect within it).
   Anything else: **421 Misdirected Request** (or 404), rendered without the database.
@@ -160,8 +160,8 @@ for exactly this; `myshopify.com`, `vercel.app`, `netlify.app` are on the Public
 
 - **Shop hosts**: `default-src 'none'`; `script-src 'nonce-…' 'strict-dynamic'` (no `'unsafe-inline'`; shop pages are
   dynamic already, so a per-request nonce costs no static page); `style-src 'self' 'unsafe-inline'` (styles cannot run
-  code); `img-src`/`media-src` this origin + the media CDN; `connect-src 'self'`; `form-action 'self' https://www.akinaza.com`;
-  `frame-ancestors https://www.akinaza.com` (the studio's preview) else `'none'`; `base-uri 'none'`; `object-src 'none'`.
+  code); `img-src`/`media-src` this origin + the media CDN; `connect-src 'self'`; `form-action 'self' https://www.folioviv.com`;
+  `frame-ancestors https://www.folioviv.com` (the studio's preview) else `'none'`; `base-uri 'none'`; `object-src 'none'`.
 - **App**: today's policy, then the same nonce move; `frame-ancestors 'self'`.
 - **Console**: the strictest (`frame-ancestors 'none'`, no embeds).
 - Embeds (TikTok, YouTube, Instagram) stay behind a click, in `frame-src` only.
@@ -186,16 +186,16 @@ for exactly this; `myshopify.com`, `vercel.app`, `netlify.app` are on the Public
 
 ### 9. Migration and SEO
 
-- `www.akinaza.com/{locale}/s/{slug}` → **308** `https://{slug}.akinaza.shop/{locale}` (path and query kept), the same
-  for `/service/…` and `/slots`; `{slug}.akinaza.com` → 308 the same. The booking hop keeps its own app path.
+- `www.folioviv.com/{locale}/s/{slug}` → **308** `https://{slug}.folioviv.shop/{locale}` (path and query kept), the same
+  for `/service/…` and `/slots`; `{slug}.folioviv.com` → 308 the same. The booking hop keeps its own app path.
 - **One canonical per shop**: its active custom domain if any, else its shop-domain host; every other address 308s to it.
   Shop pages stay `noindex` until the founder opens them to search (then sitemap per shop host, hreflang en/fr/es).
 
 ## What needs Oussama
 
-1. ~~Buy the shop domain~~ — done: `akinaza.shop` (2026-10-29). Still his: extend its registration to several years
+1. ~~Buy the shop domain~~ — done: `folioviv.shop` (2026-10-29). Still his: extend its registration to several years
    (≈ 31 $ US/year) before the PSL submission.
-2. **Cloudflare**: move `akinaza.shop`'s DNS to Cloudflare and enable Cloudflare for SaaS (0 $ up to 100 custom domains, then
+2. **Cloudflare**: move `folioviv.shop`'s DNS to Cloudflare and enable Cloudflare for SaaS (0 $ up to 100 custom domains, then
    0.10 $ US/month each) — or choose the Caddy fallback.
 3. Approve the brand / lure-term list's first content and who reviews held slugs.
 4. Later: the PSL submission (his name as the domain owner's representative).
@@ -205,7 +205,7 @@ Slices 1–4 below need none of this and close today's risks on today's hosts.
 ## Consequences
 
 - The app's origin never serves owner content; a shop bug cannot reach a session. Phishing on a shop no longer threatens
-  `akinaza.com`'s reputation.
+  `folioviv.com`'s reputation.
 - Booking adds one top-level hop to the app (the sign-in was already at the last step).
 - Until the PSL, shops are same-site with each other; harmless because the shop domain holds no credential.
 - One more domain to renew and monitor; one vendor (Cloudflare) for level 3, behind a port.
@@ -223,16 +223,16 @@ Slices 1–4 below need none of this and close today's risks on today's hosts.
    reserved list. Guard: spoofed-`Host` tests; a test that the slug list and the host list are the same object.
 4. #537 — Anti-phishing slugs (DB list, folding, held for review), publication gate, slug-change rate limit, takedown path.
    Guard: table tests of the folding and the hold.
-5. #538 — `akinaza.shop` setup (when we implement, not now): DNS (Porkbun or Cloudflare per decision 2; `*` and apex records,
+5. #538 — `folioviv.shop` setup (when we implement, not now): DNS (Porkbun or Cloudflare per decision 2; `*` and apex records,
    App Platform's TXT validation for the wildcard certificate), the domain and its wildcard in
    `deploy/digitalocean/app.yaml`, `APP_SHOP_DOMAIN` declared in `lib/env.ts`, the booking hop, 308 migration,
-   canonicals, then removal of `*.akinaza.com`. Guard: redirect table test, the seo-family check per host.
+   canonicals, then removal of `*.folioviv.com`. Guard: redirect table test, the seo-family check per host.
    **Code landed (2026-10-29, `APP_SHOP_DOMAIN`):** `lib/shop-domain.ts` (the domain, the shop of a host, the canonical origin from configuration), `lib/host.ts`
-   (`<slug>.akinaza.shop` serves the shop; the booking's last step and everything of the app is a 308 hop to www; the old `<slug>.akinaza.com` and
+   (`<slug>.folioviv.shop` serves the shop; the booking's last step and everything of the app is a 308 hop to www; the old `<slug>.folioviv.com` and
    `/<locale>/s/<slug>` are 308s), the proxy (existence of the shop by an internal route and a short, bounded memory: 404 for an unknown or held shop, 308 for a
    former slug, #549; the app's session cookie dropped from what a shop page reads; strict CSP with `form-action` and `frame-ancestors` limited to the app; `no-store`;
    robots and a per-shop sitemap on the shop host), the page's canonical on the shop domain, `scripts/check-shop-host.mjs` (CI journey through a seeded shop).
-   Unset, nothing changes. **Not applied:** the DNS (krizaka-infra `stacks/dns/zone_akinaza_shop.tf`) and `deploy/digitalocean/app.yaml` are for Oussama to apply, DNS first.
+   Unset, nothing changes. **Not applied:** the DNS (krizaka-infra `stacks/dns/zone_folioviv_shop.tf`) and `deploy/digitalocean/app.yaml` are for Oussama to apply, DNS first.
 6. #539 — Custom domains (after the Cloudflare decision): spike on App Platform + Cloudflare for SaaS, `shop_domains`, TXT
    ownership, the `CustomHostnames` port, the console's view, no-store HTML. Guard: state-machine tests, takeover test.
 7. #540 — PSL submission (`_psl` TXT + the `publicsuffix/list` PR, after the multi-year renewal) — Incubation until eligible.
@@ -253,4 +253,4 @@ Slices 1–4 below need none of this and close today's risks on today's hosts.
 
 > Decision (CTO, 2026-10-29, reversible, #537): the protected-terms list is seeded with the Krizaka family names, the reserved technical words and the lure words; third-party brands are left out and added by the admin in the console when there is a reason.
 
-> Built (akinaza#537): a held shop is saved but **not public on any read** (page, former address, map, booking, feed) until an administrator clears it (`shops.slug_held`, `GET /api/admin/slug-holds`, `POST /api/admin/slug-holds/:id`); the list is edited in the console as a setting whose save refuses a pattern that does not compile or could backtrack catastrophically (safe-regex2 plus a refusal of repeated alternation). The verdict is taken when the slug changes. Address changes are limited per shop (`limits.slugChanges` per `limits.slugChangeWindowDays`, default 3 per 30 days, `AK_SLUG_RATE_LIMIT` 429); the former-slug lock was already in 0021 (trigger). The console page « Shop addresses » (`/console/addresses`) is the administrator's side: the held queue (matched term, the address as visitors read it with the term marked, **clear** or **keep held with a reason**, both audited as `shop.slug_hold_cleared` / `shop.slug_hold_kept`; a cleared address is remembered in `shops.slug_cleared_for` so it is never held again), the protected terms as a list (add, edit, remove; a pattern is checked under the field with the same `protectedTermsIssues` as the save, so an unsafe one is refused where it is typed), and the one-off **re-judging** of the shops that predate 0045 (`POST /api/admin/slug-holds/rejudge`: a dry-run report first, `apply: true` holds them and e-mails each owner the `slug-held` template in their language, audited as `shop.slug_rejudged`). Not yet: the host router's check (#549).
+> Built (folioviv#537): a held shop is saved but **not public on any read** (page, former address, map, booking, feed) until an administrator clears it (`shops.slug_held`, `GET /api/admin/slug-holds`, `POST /api/admin/slug-holds/:id`); the list is edited in the console as a setting whose save refuses a pattern that does not compile or could backtrack catastrophically (safe-regex2 plus a refusal of repeated alternation). The verdict is taken when the slug changes. Address changes are limited per shop (`limits.slugChanges` per `limits.slugChangeWindowDays`, default 3 per 30 days, `AK_SLUG_RATE_LIMIT` 429); the former-slug lock was already in 0021 (trigger). The console page « Shop addresses » (`/console/addresses`) is the administrator's side: the held queue (matched term, the address as visitors read it with the term marked, **clear** or **keep held with a reason**, both audited as `shop.slug_hold_cleared` / `shop.slug_hold_kept`; a cleared address is remembered in `shops.slug_cleared_for` so it is never held again), the protected terms as a list (add, edit, remove; a pattern is checked under the field with the same `protectedTermsIssues` as the save, so an unsafe one is refused where it is typed), and the one-off **re-judging** of the shops that predate 0045 (`POST /api/admin/slug-holds/rejudge`: a dry-run report first, `apply: true` holds them and e-mails each owner the `slug-held` template in their language, audited as `shop.slug_rejudged`). Not yet: the host router's check (#549).

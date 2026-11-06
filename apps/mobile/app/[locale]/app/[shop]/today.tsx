@@ -1,11 +1,11 @@
-import { localDay } from "@akinaza/core";
+import { localDay } from "@folioviv/core";
 import { useMutation, useQuery, useQueryClient } from "@krizaka/query";
 import { DayStrip, ListDetail, Screen } from "@krizaka/ui/native";
 import { List } from "@krizaka/ui/native/list";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as React from "react";
 
-import { akinaza, queries } from "@/config";
+import { folioviv, queries } from "@/config";
 import { DEFAULT_TIMEZONE, isDay, LANGUAGE_TAG, stripWindow } from "@/domain/day";
 import { useI18n } from "@/i18n";
 import { AppHeader } from "@/ui/AppHeader";
@@ -36,7 +36,7 @@ export default function Today() {
   const marks = useQuery(queries.calendar(strip.start, strip.end, shop));
   const marked = new Set((marks.data ?? []).filter((d) => d.visits > 0).map((d) => d.day));
   const move = useMutation({
-    mutationFn: ({ id, kind }: { id: string; kind: "in" | "out" }) => (kind === "in" ? akinaza.checkIn(id, shop) : akinaza.checkOut(id, shop)),
+    mutationFn: ({ id, kind }: { id: string; kind: "in" | "out" }) => (kind === "in" ? folioviv.checkIn(id, shop) : folioviv.checkOut(id, shop)),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queries.day(wanted, shop).queryKey }),
   });
   return (

@@ -36,19 +36,19 @@ describe.runIf(enabled)("API keys over HTTP", () => {
   const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   const sessions: Record<string, string> = {};
   const make = async (label: string) => {
-    const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [`${label}-${stamp}@akinaza.test`]);
+    const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [`${label}-${stamp}@folioviv.test`]);
     sessions[label] = (await createSession(row!.id, { ip: null, userAgent: "vitest" })).token;
   };
   beforeAll(async () => {
     await migrate();
     for (const label of ["owner", "other", "noshop", "admin"]) await make(label);
-    await query("UPDATE accounts SET role = 'ADMIN' WHERE email = $1", [`admin-${stamp}@akinaza.test`]);
+    await query("UPDATE accounts SET role = 'ADMIN' WHERE email = $1", [`admin-${stamp}@folioviv.test`]);
     await call(saveShop, "POST", "/api/walker/shop", { cookie: sessions.owner, json: { name: "Atelier", legalName: "Atelier", address: "1 rue Test", slug: `atelier-${stamp}`, ownerName: "Éric" } });
     await call(saveShop, "POST", "/api/walker/shop", { cookie: sessions.other, json: { name: "Autre", legalName: "Autre", address: "2 rue Test", slug: `autre-${stamp}`, ownerName: "Zoé" } });
   });
   beforeEach(() => resetRateLimits());
   afterAll(async () => {
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@folioviv.test`]);
     await pool().end();
   });
 
@@ -69,7 +69,7 @@ describe.runIf(enabled)("API keys over HTTP", () => {
     expect((await call(clients, "GET", "/api/v1/clients", { bearer: `${key}x` })).status).toBe(401);
     expect((await call(bookings, "GET", "/api/v1/bookings?day=tomorrow", { bearer: key })).status).toBe(400);
     // another owner's shop is never reachable with this key
-    const otherShop = (await query<{ id: string }>("SELECT s.id FROM shops s JOIN accounts a ON a.id = s.owner_id WHERE a.email = $1", [`other-${stamp}@akinaza.test`]))[0]!.id;
+    const otherShop = (await query<{ id: string }>("SELECT s.id FROM shops s JOIN accounts a ON a.id = s.owner_id WHERE a.email = $1", [`other-${stamp}@folioviv.test`]))[0]!.id;
     expect((await call(clients, "GET", `/api/v1/clients?shopId=${otherShop}`, { bearer: key })).status).toBe(404);
     // rotation: the new key works, the old one lives through its grace period, then revoking stops one at once
     const rotated = await call(rotate, "POST", "/x", { cookie: sessions.owner, params: { id: made.body.apiKey.id } });
@@ -90,7 +90,7 @@ describe.runIf(enabled)("API keys over HTTP", () => {
   });
 
   it("holds as many keys as the plan allows", async () => {
-    const [{ n }] = await query<{ n: number }>("SELECT count(*)::int AS n FROM api_keys k JOIN accounts a ON a.id = k.owner_id WHERE a.email = $1 AND k.revoked_at IS NULL", [`owner-${stamp}@akinaza.test`]);
+    const [{ n }] = await query<{ n: number }>("SELECT count(*)::int AS n FROM api_keys k JOIN accounts a ON a.id = k.owner_id WHERE a.email = $1 AND k.revoked_at IS NULL", [`owner-${stamp}@folioviv.test`]);
     let last = 0;
     for (let i = n; i <= 2; i++) last = (await call(create, "POST", "/api/me/api-keys", { cookie: sessions.owner, json: { name: `k${i}`, scopes: ["clients:read"], expiresInDays: 7 } })).status;
     expect(last).toBe(409);
@@ -119,10 +119,10 @@ describe.runIf(enabled)("API keys over HTTP", () => {
     await call(resetSetting, "DELETE", "/x", { cookie: admin, params: { key: "plans.free.apiKeys" }, json: {} });
     resetAppSettings();
     const history = (await call(settingsHistory, "GET", "/api/admin/settings/history?key=features.apiKeys", { cookie: admin })).body.history as { before: unknown; after: unknown; actorLabel: string }[];
-    // The history of a global setting outlives a run on a shared database (akinaza#341): read this run's administrator's entries.
-    const ours = history.filter((h) => h.actorLabel === `admin-${stamp}@akinaza.test`);
+    // The history of a global setting outlives a run on a shared database (folioviv#341): read this run's administrator's entries.
+    const ours = history.filter((h) => h.actorLabel === `admin-${stamp}@folioviv.test`);
     expect(ours.map((h) => [h.before, h.after])).toEqual([[false, null], [null, false]]);
-    expect(history[0]!.actorLabel).toBe(`admin-${stamp}@akinaza.test`);
+    expect(history[0]!.actorLabel).toBe(`admin-${stamp}@folioviv.test`);
   });
 
   it("stores bounded storefront stream settings without a rebuild and audits each administrator's change", async () => {
@@ -141,7 +141,7 @@ describe.runIf(enabled)("API keys over HTTP", () => {
         expect(screen.values[key]).toEqual({ value, source: "global" });
         expect((await query<{ value: unknown }>("SELECT value FROM app_settings WHERE scope = 'global' AND key = $1", [key]))[0]!.value).toBe(value);
         const history = (await call(settingsHistory, "GET", `/api/admin/settings/history?key=${key}`, { cookie: sessions.admin })).body.history;
-        expect(history[0]).toMatchObject({ before: null, after: value, actorLabel: `admin-${stamp}@akinaza.test` });
+        expect(history[0]).toMatchObject({ before: null, after: value, actorLabel: `admin-${stamp}@folioviv.test` });
       } finally {
         await call(resetSetting, "DELETE", "/x", { ...opts, json: {} });
         resetAppSettings();

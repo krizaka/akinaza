@@ -1,7 +1,7 @@
 import { lookup as dnsLookup } from "node:dns/promises";
 import net from "node:net";
 
-import { CalendarSourceError } from "@akinaza/core";
+import { CalendarSourceError } from "@folioviv/core";
 
 /**
  * An address the owner types is fetched by the server, so it must lead to the public internet and nowhere else (no SSRF): `https` only

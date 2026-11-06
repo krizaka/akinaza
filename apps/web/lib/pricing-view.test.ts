@@ -16,7 +16,7 @@ const ADMIN = { id: null, label: "admin@example.com" };
 const inForce = () => pricesInForce(NOW);
 const view = async (prices?: Awaited<ReturnType<typeof inForce>>, locale: "en" | "fr" = "en", founderOnSale = false) => pricingPlans(publicCatalogue(await (prices ?? (await inForce())).catalogue(NOW)), locale, { founderOnSale });
 
-describe("the public pricing page reads the catalogue (akinaza#380)", () => {
+describe("the public pricing page reads the catalogue (folioviv#380)", () => {
   it("shows Starter at 29 $ (three free months), Pro at 69 $ and Association at 1 $, with the fees of the catalogue: 0 % on cards, the capped debit fee", async () => {
     const [starter, scale, association, ...rest] = await view();
     expect(rest).toEqual([]);
@@ -91,7 +91,7 @@ describe("the public pricing page reads the catalogue (akinaza#380)", () => {
     }
   });
 
-  it("lists as running only what runs: client payments, their fees, the contract and the transfers are all planned (akinaza#440)", async () => {
+  it("lists as running only what runs: client payments, their fees, the contract and the transfers are all planned (folioviv#440)", async () => {
     for (const plan of await view()) {
       const running = plan.features.filter((f) => !f.soon).map((f) => f.id);
       for (const planned of ["payments", "fees", "contract", "transfers"] as const) {expect(running, `${plan.id} ${planned}`).not.toContain(planned);}
@@ -129,7 +129,7 @@ describe("the page and its messages", () => {
   });
 });
 
-describe("the plan names are plain words (akinaza#440)", () => {
+describe("the plan names are plain words (folioviv#440)", () => {
   it("has no « Scale B2B » jargon on the public page or the home, in either language", () => {
     for (const t of [en, fr]) {
       expect(t.pricing.plans.scale).toBe("Pro");

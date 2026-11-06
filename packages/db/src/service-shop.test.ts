@@ -179,7 +179,7 @@ describe("access notes (keys, door codes) are encrypted at rest", () => {
   });
 });
 
-describe("the business type (the vocabulary, krizaka/akinaza#117)", () => {
+describe("the business type (the vocabulary, krizaka/folioviv#117)", () => {
   it("is professional by default and is the owner's to choose", async () => {
     const owner = await account(t.db, "type-default@example.test");
     const input = { name: "Sans type", legalName: "Sans type", address: "1 rue Test", slug: "sans-type", ownerName: "Léa" };

@@ -3,7 +3,7 @@ import type { PriceEntry } from "@krizaka/settings";
 
 import { INTL_LOCALE } from "./format";
 
-/** The catalogue's figures in the visitor's writing (akinaza#371): no amount is ever typed in a message, it is formatted here. */
+/** The catalogue's figures in the visitor's writing (folioviv#371): no amount is ever typed in a message, it is formatted here. */
 
 /** An entry's amount as the visitor reads it (« 45 $ », « $45 »), or null for an entry without a figure. */
 export function priceText(entry: Pick<PriceEntry, "amountCents" | "unit">, locale: "en" | "fr"): string | null {

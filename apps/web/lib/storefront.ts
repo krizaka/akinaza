@@ -1,5 +1,5 @@
-import { bookingPreselect, localDay, MEMBER_STATE, type MemberDay, memberStateAt, openStatus, resolveTemplate, type Template, weekdayOf, weekSchedule } from "@akinaza/core";
-import type { PublicMedia, PublicShop } from "@akinaza/db";
+import { bookingPreselect, localDay, MEMBER_STATE, type MemberDay, memberStateAt, openStatus, resolveTemplate, type Template, weekdayOf, weekSchedule } from "@folioviv/core";
+import type { PublicMedia, PublicShop } from "@folioviv/db";
 
 import type { CommunityPublicView } from "@/lib/community-view";
 import type { DefaultImage, ResolvedDefaults } from "@/lib/default-media";
@@ -63,7 +63,7 @@ export interface StorefrontView {
   status: { open: boolean; label: string; detail: string } | null;
   bookHref: string;
   services: ServiceView[];
-  /** Who works here (first names), when several people do, each with where they stand now (akinaza#209) when it is known. */
+  /** Who works here (first names), when several people do, each with where they stand now (folioviv#209) when it is known. */
   team: { id: string; name: string; state: string | null; free: boolean }[];
   zones: { id: string; name: string }[];
   map: { center: LngLat; zoom: number; places: { id: string; name: string; position: LngLat }[] } | null;
@@ -136,7 +136,7 @@ const mediaView = (m: PublicMedia, locale: Locale) => {
 
 const longDate = (day: string, locale: Locale) => new Intl.DateTimeFormat(lang(locale), { timeZone: "UTC", day: "numeric", month: "long" }).format(new Date(`${day}T12:00:00Z`));
 
-/** One member on the public page: a first name and one state, never a client, a service or a reason (akinaza#209). */
+/** One member on the public page: a first name and one state, never a client, a service or a reason (folioviv#209). */
 function memberView(member: { id: string; name: string }, day: MemberDay | undefined, now: Date, timezone: string, locale: Locale, t: ReturnType<typeof translator>): StorefrontView["team"][number] {
   if (!day) return { id: member.id, name: member.name, state: null, free: false };
   const state = memberStateAt(day, now, timezone);

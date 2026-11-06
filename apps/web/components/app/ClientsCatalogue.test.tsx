@@ -44,7 +44,7 @@ describe("Clients on the catalogue template (D5)", () => {
     expect(readable(html)).toContain("Aucun client ne correspond");
   });
 
-  it("draws the binder's dividers per tag, each a link that holds the tag in the address, with its count (akinaza#337)", () => {
+  it("draws the binder's dividers per tag, each a link that holds the tag in the address, with its count (folioviv#337)", () => {
     const html = render();
     expect(readable(html)).toMatch(/Tous[\s\S]*Fidèle\s*1/);
     expect(html).toContain('href="/fr/app/s1/clients?tags=t1"');

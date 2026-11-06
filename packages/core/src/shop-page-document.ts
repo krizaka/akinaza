@@ -4,7 +4,7 @@ import { shopStarters, type ShopPage, type ShopStarterId } from "@krizaka/ui/sho
 import type { ShopType } from "./shop-media";
 
 /**
- * The shop page as a document (akinaza#400, ADR-007): the @krizaka/ui/shop format, stored in `shop_page_versions`.
+ * The shop page as a document (folioviv#400, ADR-007): the @krizaka/ui/shop format, stored in `shop_page_versions`.
  * Here lives the one table that turns today's page (the legacy `shop_page.sections` list) into that document;
  * the migration's SQL is generated from it (`packages/db/src/shop-page-document-migration.ts`), so the two cannot drift.
  */
@@ -123,7 +123,7 @@ export const starterIdFor = (trade: ShopType): ShopStarterId => STARTER_BY_TRADE
 
 
 /**
- * The two demo shops are the Krizaka UI showcase (akinaza#404): their public page offers the other compositions of its trade through a « See it another way »
+ * The two demo shops are the Krizaka UI showcase (folioviv#404): their public page offers the other compositions of its trade through a « See it another way »
  * switch (`?look=`), and only theirs. The first look is the page's own (the document the shop publishes); the others are the starters of @krizaka/ui/shop
  * drawn with the same shop data. A shop that is not a demo has no switch: its owner decides, in the composer.
  */

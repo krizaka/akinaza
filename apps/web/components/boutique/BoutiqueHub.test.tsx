@@ -11,7 +11,7 @@ const props = (over: Partial<BoutiqueHubProps> = {}): BoutiqueHubProps => ({
   shopId: "s1",
   allowed: ["page", "languages", "team", "invoices", "shops"],
   current: { section: "page", tab: "identity" },
-  shop: { name: "Pattes de Saint-Henri", published: true, publicUrl: "https://www.akinaza.com/en/s/pattes-de-saint-henri" },
+  shop: { name: "Pattes de Saint-Henri", published: true, publicUrl: "https://www.folioviv.com/en/s/pattes-de-saint-henri" },
   children: <p>the section</p>,
   ...over,
 });
@@ -25,12 +25,12 @@ describe("Boutique, the shop's hub on SettingsLayout (K4)", () => {
     expect(text(render(props(), "fr")).match(/Boutique/)).not.toBeNull();
     expect(text(html)).toContain("Pattes de Saint-Henri");
     expect(text(html)).toContain("Published");
-    expect(html).toContain("https://www.akinaza.com/en/s/pattes-de-saint-henri");
+    expect(html).toContain("https://www.folioviv.com/en/s/pattes-de-saint-henri");
   });
 
   it("lets the address wrap on a 360 px phone instead of pushing the page wider", () => {
     const html = render(props());
-    expect(html).toMatch(/class="[^"]*break-all[^"]*"[^>]*>https:\/\/www\.akinaza\.com/);
+    expect(html).toMatch(/class="[^"]*break-all[^"]*"[^>]*>https:\/\/www\.folioviv\.com/);
   });
 
   it("gathers the sections in groups, each one an address, and marks the open one", () => {

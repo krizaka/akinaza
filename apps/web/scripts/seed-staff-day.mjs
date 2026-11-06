@@ -4,12 +4,12 @@
 // is created and linked to her sign-in when it is missing. Idempotent: a re-run finds the same client and the same appointment.
 //
 //   DATABASE_URL=… DATABASE_CA_CERT=… [QA_STAFF_EMAIL=…] [QA_STAFF_SHOP=cedre-ciseaux] [QA_STAFF_HOUR=16] node scripts/seed-staff-day.mjs
-const CLIENT = { fullName: "Léa Fictive (démo)", email: "lea.fictive@akinaza.test" };
+const CLIENT = { fullName: "Léa Fictive (démo)", email: "lea.fictive@folioviv.test" };
 const DEFAULT_HOUR = 16;
 
 /** The staff member and the hour to seed, from the environment; refuses what cannot work. */
 export function staffDayFromEnv(env) {
-  const email = (env.QA_STAFF_EMAIL ?? "camille.staff@akinaza.test").trim().toLowerCase();
+  const email = (env.QA_STAFF_EMAIL ?? "camille.staff@folioviv.test").trim().toLowerCase();
   if (!/^[^@\s]+@[^@\s]+$/.test(email)) throw new Error("QA_STAFF_EMAIL is invalid");
   const hour = env.QA_STAFF_HOUR === undefined ? DEFAULT_HOUR : Number(env.QA_STAFF_HOUR);
   if (!Number.isInteger(hour) || hour < 0 || hour > 23) throw new Error("QA_STAFF_HOUR is a whole hour from 0 to 23");

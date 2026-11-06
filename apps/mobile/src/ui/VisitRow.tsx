@@ -1,4 +1,4 @@
-import type { DayVisit } from "@akinaza/core";
+import type { DayVisit } from "@folioviv/core";
 import { Badge, Txt } from "@krizaka/ui/native";
 import * as React from "react";
 import { Pressable, View } from "react-native";

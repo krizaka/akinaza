@@ -1,12 +1,12 @@
-import { loadShop, saveShopPage, shopPageSchema } from "@akinaza/db";
+import { loadShop, saveShopPage, shopPageSchema } from "@folioviv/db";
 
 import { requireSession, requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { handle, idParam, readJson, refuse } from "@/lib/http";
 import { appSettings } from "@/lib/settings";
-import { slugPolicy } from "@/lib/slug-policy";
 import { forgetShops } from "@/lib/shop-directory";
+import { slugPolicy } from "@/lib/slug-policy";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +28,7 @@ export function POST(req: Request) {
       return Response.json(created, { status: 201 });
     }
     const saved = await saveShopPage(db(), session.account.id, input, shopId ? { shopId: idParam(shopId) } : {}, await slugPolicy());
-    forgetShops(); // published, unpublished or renamed: the shop host answers from the database again (akinaza#549)
+    forgetShops(); // published, unpublished or renamed: the shop host answers from the database again (folioviv#549)
     return Response.json(saved);
   });
 }

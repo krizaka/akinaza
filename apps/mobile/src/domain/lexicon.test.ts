@@ -1,4 +1,4 @@
-import { LEXICON } from "@akinaza/core";
+import { LEXICON } from "@folioviv/core";
 
 import webEn from "../../../web/messages/en.json";
 import webFr from "../../../web/messages/fr.json";

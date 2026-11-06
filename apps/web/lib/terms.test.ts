@@ -18,7 +18,7 @@ const fr = bindProduct(frRaw);
 const ROOT = join(__dirname, "..");
 const read = (path: string) => readFileSync(join(ROOT, path), "utf8");
 
-describe("the terms of use (akinaza#379)", () => {
+describe("the terms of use (folioviv#379)", () => {
   it("is a public page in both languages: routed, in the sitemap and in llms.txt", () => {
     expect(PAGES).toContain("terms");
     expect(pagePath("fr", "terms")).toBe("/fr/terms");
@@ -57,7 +57,7 @@ describe("the terms of use (akinaza#379)", () => {
     }
   });
 
-  it("reserves Krizaka's rights: IP, licence limited to the subscription, no resale or white label, marks (akinaza#409)", () => {
+  it("reserves Krizaka's rights: IP, licence limited to the subscription, no resale or white label, marks (folioviv#409)", () => {
     const text = (d: typeof fr) => d.terms.sections.map((s) => `${s.h} ${format(s.p, publisherVars())}`).join("\n");
     const french = text(fr);
     for (const needle of ["appartiennent à Technologies Krizaka Inc.", "Pour la durée de votre abonnement seulement", "non cessible et non sous-licenciable", "marque blanche", "service concurrent", "Loi sur le droit d'auteur", "Loi sur les marques de commerce", "TRADEMARKS.md", "sa propre licence"]) {

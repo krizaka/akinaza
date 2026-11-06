@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { clientFilesOf, invoiceForClientAccount } from "@akinaza/db";
+import { clientFilesOf, invoiceForClientAccount } from "@folioviv/db";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { db, migrate, query } from "@/lib/db";

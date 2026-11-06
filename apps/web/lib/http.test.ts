@@ -1,4 +1,4 @@
-import { ShopError } from "@akinaza/db";
+import { ShopError } from "@folioviv/db";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 

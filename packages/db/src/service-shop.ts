@@ -1,4 +1,4 @@
-import { addLocalDays, businessTypeSchema, holdSlug, type ProtectedTerm, type MemberDay, timeOffDays, type TimeOffRange, timeOffRanges, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@akinaza/core";
+import { addLocalDays, businessTypeSchema, holdSlug, type ProtectedTerm, type MemberDay, timeOffDays, type TimeOffRange, timeOffRanges, canCancel, type DependantInput, dependantInputSchema, localDay, openSlots, popularServiceId, type ShopRules, shopRulesSchema, type Slot, slugSchema, type TakenVisit, vocabularyOf, type WeeklyWindow } from "@folioviv/core";
 import { addDays, compareAsc } from "date-fns";
 import { and, asc, between, desc, eq, gte, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -47,7 +47,7 @@ export const shopPageSchema = z.object({
   publicPhone: z.string().trim().max(40).optional(),
   publicEmail: z.string().trim().max(120).optional(),
   publicWebsite: z.string().trim().max(200).optional(),
-  /** The kind of business: it sets the words of the screens and whether a booking is made for a dog (krizaka/akinaza#117). Omitted = left as it is. */
+  /** The kind of business: it sets the words of the screens and whether a booking is made for a dog (krizaka/folioviv#117). Omitted = left as it is. */
   businessType: businessTypeSchema.optional(),
   /** What a seat of a group service is called (« chiens »): « Up to 5 dogs ». */
   seatUnitFr: z.string().trim().max(30).optional(),
@@ -342,7 +342,7 @@ function daysOfRange(range: TimeOffRange): string[] {
 }
 
 /**
- * Time off for any member of the team, as a date range (akinaza#208). Stored as days, so the slots, the opening status and
+ * Time off for any member of the team, as a date range (folioviv#208). Stored as days, so the slots, the opening status and
  * the brief keep reading `days_off`; a range that overlaps another simply joins it (one row per staff and day).
  */
 export async function addTimeOff(db: Db, shopId: string, staffId: string, range: TimeOffRange, reason?: string): Promise<void> {
@@ -473,7 +473,7 @@ export async function publicShop(db: Db, slug: string): Promise<PublicShop | nul
   return row ? publicShopOf(db, row) : null;
 }
 
-/** The shop as its page would show it, published or not: the owner's preview of the draft (akinaza#402). The caller checked the member. */
+/** The shop as its page would show it, published or not: the owner's preview of the draft (folioviv#402). The caller checked the member. */
 export async function previewShop(db: Db, shopId: string): Promise<PublicShop | null> {
   const [row] = await db.select().from(shops).where(eq(shops.id, shopId));
   return row?.slug ? publicShopOf(db, row) : null;
@@ -515,7 +515,7 @@ async function publicShopOf(db: Db, row: typeof shops.$inferSelect): Promise<Pub
 }
 
 /**
- * Each member's day, for « who is here today » on the public page (akinaza#209): their weekly windows, today's visits as
+ * Each member's day, for « who is here today » on the public page (folioviv#209): their weekly windows, today's visits as
  * bare time ranges (never a client nor a service) and the time off they are on. The page computes the state from it.
  */
 export async function teamDay(db: Db, shopId: string, now: Date): Promise<Map<string, MemberDay>> {

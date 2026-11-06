@@ -1,5 +1,5 @@
-import { type CalendarKind, CalendarSourceError } from "@akinaza/core";
-import { addConnection, connectionSecret, openField, recordSyncOk, removeConnection, sealField } from "@akinaza/db";
+import { type CalendarKind, CalendarSourceError } from "@folioviv/core";
+import { addConnection, connectionSecret, openField, recordSyncOk, removeConnection, sealField } from "@folioviv/db";
 import { z } from "zod";
 
 import { configuredKinds, oauthApps } from "@/app/calendar-edge";

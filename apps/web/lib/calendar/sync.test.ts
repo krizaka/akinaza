@@ -1,5 +1,5 @@
-import { type CalendarSource, CalendarSourceError } from "@akinaza/core";
-import { type DueConnection, recordSyncFailure, recordSyncOk } from "@akinaza/db";
+import { type CalendarSource, CalendarSourceError } from "@folioviv/core";
+import { type DueConnection, recordSyncFailure, recordSyncOk } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { audit } from "@/lib/audit";
@@ -9,7 +9,7 @@ import { syncConnection } from "./sync";
 vi.mock("@/lib/audit", () => ({ audit: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), openField: vi.fn(() => "https://calendar.example.com/me.ics"), recordSyncOk: vi.fn(), recordSyncFailure: vi.fn(), claimDueConnections: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), openField: vi.fn(() => "https://calendar.example.com/me.ics"), recordSyncOk: vi.fn(), recordSyncFailure: vi.fn(), claimDueConnections: vi.fn() }));
 
 const KEY = Buffer.alloc(32, 1);
 const NOW = new Date("2026-10-26T12:00:00Z");

@@ -26,13 +26,13 @@ describe("the offers' order and link (#597)", () => {
     const s = await walkerShop(t.db, "offers-order");
     const base = (await loadShop(t.db, await shopOf(s.shopId))).services.length;
     const ids: string[] = [];
-    for (const name of ["Yomizaka", "Akinaza", "Orazaka", "Entreprise"]) ids.push(await saveService(t.db, s.shopId, offer(name)));
+    for (const name of ["Verikora", "Folioviv", "Sovkora", "Entreprise"]) ids.push(await saveService(t.db, s.shopId, offer(name)));
     const listed = async () => (await loadShop(t.db, await shopOf(s.shopId))).services.map((x) => x.nameEn).slice(base);
-    expect(await listed()).toEqual(["Yomizaka", "Akinaza", "Orazaka", "Entreprise"]);
+    expect(await listed()).toEqual(["Verikora", "Folioviv", "Sovkora", "Entreprise"]);
     const all = (await loadShop(t.db, await shopOf(s.shopId))).services.map((x) => x.id);
     const reordered = [...all.slice(0, base), ids[3]!, ids[0]!, ids[1]!, ids[2]!];
     expect(await reorderServices(t.db, s.shopId, reordered)).toBe(true);
-    expect(await listed()).toEqual(["Entreprise", "Yomizaka", "Akinaza", "Orazaka"]);
+    expect(await listed()).toEqual(["Entreprise", "Verikora", "Folioviv", "Sovkora"]);
   });
 
   it("refuses a reorder that omits, repeats or invents an offer", async () => {
@@ -46,15 +46,15 @@ describe("the offers' order and link (#597)", () => {
 
   it("carries an https link to the public page, and clears it with null", async () => {
     const s = await walkerShop(t.db, "offers-link");
-    const id = await saveService(t.db, s.shopId, offer("Yomizaka", { linkUrl: "https://dev.yomizaka.com" }));
+    const id = await saveService(t.db, s.shopId, offer("Verikora", { linkUrl: "https://dev.verikora.com" }));
     const row = await shopOf(s.shopId);
     const found = (await loadShop(t.db, row)).services.find((x) => x.id === id);
-    expect(found?.linkUrl).toBe("https://dev.yomizaka.com");
-    await saveService(t.db, s.shopId, offer("Yomizaka", { id, linkUrl: null }));
+    expect(found?.linkUrl).toBe("https://dev.verikora.com");
+    await saveService(t.db, s.shopId, offer("Verikora", { id, linkUrl: null }));
     expect((await loadShop(t.db, row)).services.find((x) => x.id === id)?.linkUrl).toBeNull();
-    await saveService(t.db, s.shopId, offer("Yomizaka", { id, linkUrl: "https://dev.yomizaka.com" }));
+    await saveService(t.db, s.shopId, offer("Verikora", { id, linkUrl: "https://dev.verikora.com" }));
     const pub = await publicShop(t.db, "pattes-offers-link");
-    expect(pub?.services.find((x) => x.id === id)?.linkUrl).toBe("https://dev.yomizaka.com");
+    expect(pub?.services.find((x) => x.id === id)?.linkUrl).toBe("https://dev.verikora.com");
   });
 
   it("refuses a link that is not https", async () => {

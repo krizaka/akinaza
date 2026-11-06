@@ -1,7 +1,7 @@
 import { addDays, differenceInCalendarDays, format, parseISO } from "date-fns";
 
 /**
- * Time off as date ranges (« vacances du 20 au 27 », akinaza#208), stored as days so every rule that reads `days_off`
+ * Time off as date ranges (« vacances du 20 au 27 », folioviv#208), stored as days so every rule that reads `days_off`
  * (slots, the opening status, the Monday brief) keeps working. Dates are the shop's calendar days, `yyyy-MM-dd`.
  */
 export const TIME_OFF_RULES = { maxDays: 92 } as const;

@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 const ROOT = join(__dirname, "..", "..", "..");
 const read = (path: string) => readFileSync(join(ROOT, path), "utf8");
 
-/** krizaka/akinaza#174: the social-sync feature is retired until Google / Meta access exists (#74). */
+/** krizaka/folioviv#174: the social-sync feature is retired until Google / Meta access exists (#74). */
 describe("the social-sync feature is retired", () => {
   it("has no route, helper, domain module, schema or env switch left", () => {
     for (const gone of [

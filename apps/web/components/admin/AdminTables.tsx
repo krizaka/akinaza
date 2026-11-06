@@ -73,32 +73,32 @@ const auditEntryColumns = (say: Say, locale: SayLocale): DataTableColumn<AuditEn
 export function UsersTable({ users }: Readonly<{ users: AdminUser[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo(() => adminUserColumns(say, locale), [say, locale]);
-  return <DataTable caption={say("admin.users.caption")} rows={users} columns={columns} getRowId={(u) => u.id} rowLabel={(u) => u.email} defaultPageSize={25} defaultSort={{ column: "lastSeenAt", direction: "descending" }} toolbar={toolbar("akinaza-users.csv")} />;
+  return <DataTable caption={say("admin.users.caption")} rows={users} columns={columns} getRowId={(u) => u.id} rowLabel={(u) => u.email} defaultPageSize={25} defaultSort={{ column: "lastSeenAt", direction: "descending" }} toolbar={toolbar("folioviv-users.csv")} />;
 }
 
 export function ShopsTable({ shops }: Readonly<{ shops: AdminShop[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo(() => adminShopColumns(say, locale), [say, locale]);
-  return <DataTable caption={say("admin.shops.caption")} rows={shops} columns={columns} getRowId={(s) => s.id} defaultPageSize={25} toolbar={toolbar("akinaza-shops.csv")} />;
+  return <DataTable caption={say("admin.shops.caption")} rows={shops} columns={columns} getRowId={(s) => s.id} defaultPageSize={25} toolbar={toolbar("folioviv-shops.csv")} />;
 }
 
 /** Invoices with their taxes and what the ledger holds for each: a difference is shown in red. */
 export function InvoicesTable({ invoices }: Readonly<{ invoices: AdminInvoice[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo(() => adminInvoiceColumns(say, locale), [say, locale]);
-  return <DataTable caption={say("admin.invoices.caption")} rows={invoices} columns={columns} getRowId={(i) => i.id} defaultPageSize={25} defaultSort={{ column: "issuedOn", direction: "descending" }} toolbar={toolbar("akinaza-invoices.csv")} />;
+  return <DataTable caption={say("admin.invoices.caption")} rows={invoices} columns={columns} getRowId={(i) => i.id} defaultPageSize={25} defaultSort={{ column: "issuedOn", direction: "descending" }} toolbar={toolbar("folioviv-invoices.csv")} />;
 }
 
 /** The ledger against the invoices, per shop and month. */
 export function LedgerTable({ checks }: Readonly<{ checks: LedgerCheck[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo(() => ledgerCheckColumns(say, locale), [say, locale]);
-  return <DataTable caption={say("admin.ledger.caption")} rows={checks} columns={columns} getRowId={(c) => `${c.shop}-${c.period}`} defaultPageSize={25} defaultSort={{ column: "period", direction: "descending" }} toolbar={toolbar("akinaza-ledger-checks.csv")} />;
+  return <DataTable caption={say("admin.ledger.caption")} rows={checks} columns={columns} getRowId={(c) => `${c.shop}-${c.period}`} defaultPageSize={25} defaultSort={{ column: "period", direction: "descending" }} toolbar={toolbar("folioviv-ledger-checks.csv")} />;
 }
 
 /** The audit log: sortable, filterable by action, exportable. */
 export function AuditTable({ entries }: Readonly<{ entries: AuditEntry[] }>) {
   const { say, locale } = useSay();
   const columns = useMemo(() => auditEntryColumns(say, locale), [say, locale]);
-  return <DataTable caption={say("admin.audit.caption")} rows={entries} columns={columns} getRowId={(e) => e.id} defaultPageSize={25} toolbar={toolbar("akinaza-audit.csv")} />;
+  return <DataTable caption={say("admin.audit.caption")} rows={entries} columns={columns} getRowId={(e) => e.id} defaultPageSize={25} toolbar={toolbar("folioviv-audit.csv")} />;
 }

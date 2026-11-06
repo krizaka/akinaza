@@ -1,5 +1,5 @@
-import { SOCIAL_PLATFORMS } from "@akinaza/core";
-import { saveSocialLinks, socialLinksOf } from "@akinaza/db";
+import { SOCIAL_PLATFORMS } from "@folioviv/core";
+import { saveSocialLinks, socialLinksOf } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";

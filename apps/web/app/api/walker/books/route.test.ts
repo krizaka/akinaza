@@ -1,5 +1,5 @@
-import { booksAnswer } from "@akinaza/core";
-import { prepareShopReturn, shopDay } from "@akinaza/db";
+import { booksAnswer } from "@folioviv/core";
+import { prepareShopReturn, shopDay } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireShop } from "@/lib/access";
@@ -9,7 +9,7 @@ import { GET } from "./route";
 
 vi.mock("@/lib/access", () => ({ requireShop: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), prepareShopReturn: vi.fn(), shopDay: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), prepareShopReturn: vi.fn(), shopDay: vi.fn() }));
 
 const get = (query = "") => GET(new Request(`http://localhost/api/walker/books${query}`));
 

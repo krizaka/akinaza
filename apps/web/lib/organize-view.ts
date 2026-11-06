@@ -1,7 +1,7 @@
 import type { SavedView, StatusSet, SystemView, ViewFilters, WorkspaceTag } from "@krizaka/organize";
 import { viewSearch } from "@krizaka/organize/contract";
 
-/** What a list of clients or invoices needs to draw its tags, its binder dividers and its views (akinaza#337). Plain data: it crosses to the client. */
+/** What a list of clients or invoices needs to draw its tags, its binder dividers and its views (folioviv#337). Plain data: it crosses to the client. */
 export interface OrganizeData {
   kind: "client" | "invoice";
   /** The owner and the manager write tags; anyone else reads them. */

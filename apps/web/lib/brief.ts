@@ -1,5 +1,5 @@
-import { BRIEF_KIND, DEFAULT_BRIEF_RULES, SHOP_ACTION, shopBrief,type ShopRecommendation } from "@akinaza/core";
-import { briefActionsOf, briefMailShops, briefSnapshot, claimBriefAction, claimBriefDelivery, enqueueMail, mailById, reachableClients, recordBriefResult, schema } from "@akinaza/db";
+import { BRIEF_KIND, DEFAULT_BRIEF_RULES, SHOP_ACTION, shopBrief,type ShopRecommendation } from "@folioviv/core";
+import { briefActionsOf, briefMailShops, briefSnapshot, claimBriefAction, claimBriefDelivery, enqueueMail, mailById, reachableClients, recordBriefResult, schema } from "@folioviv/db";
 import { isBriefDue, weekOf } from "@krizaka/brief";
 import { eq } from "drizzle-orm";
 

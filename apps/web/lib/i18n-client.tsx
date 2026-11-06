@@ -1,7 +1,7 @@
 "use client";
 
-import type { BusinessType } from "@akinaza/core";
-import { vocabularyOf } from "@akinaza/core";
+import type { BusinessType } from "@folioviv/core";
+import { vocabularyOf } from "@folioviv/core";
 import { createI18nReact } from "@krizaka/i18n/react";
 import { createContext, useCallback, useContext } from "react";
 
@@ -13,10 +13,10 @@ export type ConsoleMessages = Pick<Messages, "console">;
 
 export const { I18nProvider, useI18n } = createI18nReact<ConsoleMessages, Locale>({ locales: ["en", "fr"], defaultLocale: "en" });
 
-/** The business type whose words the screens below speak (krizaka/akinaza#117): the shop's, read on the server. */
+/** The business type whose words the screens below speak (krizaka/folioviv#117): the shop's, read on the server. */
 const VocabularyContext = createContext<BusinessType>("pets");
 
-/** The words of a shop's business type for everything below. The default, outside a shop, is the base (pet-care) wording of the first business Akinaza served. */
+/** The words of a shop's business type for everything below. The default, outside a shop, is the base (pet-care) wording of the first business Folioviv served. */
 export function VocabularyProvider({ type, children }: Readonly<{ type: BusinessType; children: React.ReactNode }>) {
   return <VocabularyContext.Provider value={type}>{children}</VocabularyContext.Provider>;
 }

@@ -1,4 +1,4 @@
-import { keepSlugHold } from "@akinaza/db";
+import { keepSlugHold } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireAdmin } from "@/lib/access";

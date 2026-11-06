@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 
-import { type ConsentPurpose, consentsInForce, type DependantProfile, localDay, sniffImage, visitMinutes } from "@akinaza/core";
+import { type ConsentPurpose, consentsInForce, type DependantProfile, localDay, sniffImage, visitMinutes } from "@folioviv/core";
 import { addDays } from "date-fns";
 import { and, asc, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 
@@ -40,7 +40,7 @@ export interface DayVisit {
   checkedInAt: string | null;
   checkedOutAt: string | null;
   bookings: DayBooking[];
-  /** The label of the owner's other calendar this visit overlaps (« Google »…), or null: Akinaza flags it and deletes neither side (ADR-004). */
+  /** The label of the owner's other calendar this visit overlaps (« Google »…), or null: Folioviv flags it and deletes neither side (ADR-004). */
   agendaConflict: string | null;
 }
 
@@ -265,7 +265,7 @@ export async function issueReportLink(db: Db, shopId: string, bookingId: string,
       | undefined;
     if (!row) return refuse("AK_NO_REPORT");
     if (row.erased_at || !row.email) return refuse("AK_CLIENT_UNREACHABLE");
-    // The consents live in the privacy module (akinaza#370): the last word on the service purpose is the one in force.
+    // The consents live in the privacy module (folioviv#370): the last word on the service purpose is the one in force.
     const history = await tx.execute(sql`SELECT purpose, granted, version, at FROM privacy.consent WHERE subject_kind = 'client' AND subject_id = ${row.client_id} ORDER BY seq DESC`);
     if (!consentsInForce((history.rows as Array<{ purpose: ConsentPurpose; granted: boolean; version: string; at: Date | string }>).map((h) => ({ purpose: h.purpose, granted: h.granted, textVersion: h.version, at: new Date(h.at) }))).service) refuse("AK_NO_CONSENT");
     const token = `rp1.${randomBytes(32).toString("base64url")}`;
@@ -400,7 +400,7 @@ export async function scrubMail(db: Db, id: string): Promise<void> {
   await db.update(mailOutbox).set({ html: "", bodyText: "", status: sql`CASE WHEN ${mailOutbox.status} = 'sent' THEN 'sent' ELSE 'failed' END` }).where(eq(mailOutbox.id, id));
 }
 
-/** The oldest pending mails; `scope.ids` keeps only those (a test flushes what it queued, never another file's: akinaza#341). */
+/** The oldest pending mails; `scope.ids` keeps only those (a test flushes what it queued, never another file's: folioviv#341). */
 export async function pendingMail(db: Db, limit = 20, scope: { ids?: readonly string[] } = {}) {
   const pending = eq(mailOutbox.status, "pending");
   return db.select().from(mailOutbox).where(scope.ids ? and(pending, inArray(mailOutbox.id, [...scope.ids])) : pending).orderBy(asc(mailOutbox.createdAt)).limit(limit);

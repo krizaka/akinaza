@@ -1,6 +1,6 @@
-# Akinaza — agent contract
+# Folioviv — agent contract
 
-> Governance of **`krizaka/akinaza`**: Akinaza, a Krizaka product — the operating system of independent Québec shops.
+> Governance of **`krizaka/folioviv`**: Folioviv, a Krizaka product — the operating system of independent Québec shops.
 > Agent-neutral: humans and AI agents follow the same rules. Epic: krizaka/.github#52.
 
 ## 1. What this repository is
@@ -15,14 +15,14 @@
   `fetch` in a client `useEffect`, no hand-written `<table>` or multi-field `<form>`.
 
 - **Storefront photos are uploaded by the owner** (`/api/walker/media/upload`): JPEG/PNG/WebP checked by bytes, ≤ 2 MB after the
-  phone redraws them, stored content-hashed under `user/akinaza/shops/<shop>/` of the media storage by `@krizaka/storage` (`lib/media-storage.ts`; the
+  phone redraws them, stored content-hashed under `user/folioviv/shops/<shop>/` of the media storage by `@krizaka/storage` (`lib/media-storage.ts`; the
   administrator's `storage.*` settings over `MEDIA_STORAGE_*` / `MEDIA_CDN_HOSTNAME`; no local copy of the upload code, nothing
   encrypted since the files are public on the CDN), only the CDN address kept; the keys published before the package stay valid. Off (503, the owner pastes an address) until the storage is configured.
 
-- **Proposed images and videos (#267).** So that no section of a storefront is empty, each trade (`SHOP_TYPES` in `@akinaza/core`: salon, coaching,
+- **Proposed images and videos (#267).** So that no section of a storefront is empty, each trade (`SHOP_TYPES` in `@folioviv/core`: salon, coaching,
   workshop, cleaning, pets, consulting - never a restaurant or a bar) has default media for the slots `cover` (image + silent loop), `gallery` and `service`
   (`packages/core/src/shop-media.ts`). The files are generated locally and never committed (`apps/web/scripts/default-media/`: FLUX.2 klein through
-  `sd-cli`, ffmpeg loops, `sharp` renditions), live on the media CDN under `apps/akinaza/defaults/<type>/<slot>/` (hashed names, uploaded with krizaka-com's
+  `sd-cli`, ffmpeg loops, `sharp` renditions), live on the media CDN under `apps/folioviv/defaults/<type>/<slot>/` (hashed names, uploaded with krizaka-com's
   `cdn-assets.mjs`), and are named by `apps/web/lib/default-media.manifest.json` (the only thing committed). They are neutral pictures: no real person, no text,
   never presented as the owner's shop. A slot the owner filled is never replaced; the owner chooses a proposal in « Images proposées » or turns them off
   (`shop_page.use_defaults`); the administrator holds `features.defaultMedia` and `storefront.defaultMedia.types`.
@@ -34,7 +34,7 @@
   version until the owner updates (« update available »). The demo shops (and the Saint-Henri persona) each wear a template of their trade, applied once by their seed.
   The administrator holds `features.storefrontTemplates` (on),
   `storefront.templates.offered` and `storefront.templates.default.<trade>`. A missing block or variant goes to krizaka-ui first.
-- **The shop as a place (B45, #310-#315, #317).** The public page can carry a wall (`shop_wall`, `shop_wall_items`: photos, cards, the sign; percent positions, a tilt of ±8°, a texture among four, `limits.wallItems`, twelve drawn), the latest video (`shop_reels`: an MP4/WebM uploaded - checked by its bytes and its container's duration against `limits.reelSeconds` and `limits.reelMegabytes` - or a link to a TikTok, a YouTube Short or an Instagram reel on an exact host, shown behind a facade: **nothing loads from a platform before the visitor clicks**), the shop's profile links (plain outbound anchors), a bulletin board (`shop_announcements`, three up at a time) and verified reviews (`shop_reviews`, a first name and an initial only, a Bayesian score from `reviews.*`; a small read model until `@krizaka/reviews`, krizaka-ts#37). The rules are `packages/core/src/community.ts`, the operations `packages/db/src/shop-community.ts` (every function takes the shop; another shop's row is not found), the owner's place is Boutique › Page (owner and manager write, staff read the API). The page's `frame-src` names this origin (the studio's preview) and the three embed hosts, nothing else. The demo shops get their place from `demo-community.ts` (media on the CDN under `sites/akinaza/demo/<slug>/`, never committed).
+- **The shop as a place (B45, #310-#315, #317).** The public page can carry a wall (`shop_wall`, `shop_wall_items`: photos, cards, the sign; percent positions, a tilt of ±8°, a texture among four, `limits.wallItems`, twelve drawn), the latest video (`shop_reels`: an MP4/WebM uploaded - checked by its bytes and its container's duration against `limits.reelSeconds` and `limits.reelMegabytes` - or a link to a TikTok, a YouTube Short or an Instagram reel on an exact host, shown behind a facade: **nothing loads from a platform before the visitor clicks**), the shop's profile links (plain outbound anchors), a bulletin board (`shop_announcements`, three up at a time) and verified reviews (`shop_reviews`, a first name and an initial only, a Bayesian score from `reviews.*`; a small read model until `@krizaka/reviews`, krizaka-ts#37). The rules are `packages/core/src/community.ts`, the operations `packages/db/src/shop-community.ts` (every function takes the shop; another shop's row is not found), the owner's place is Boutique › Page (owner and manager write, staff read the API). The page's `frame-src` names this origin (the studio's preview) and the three embed hosts, nothing else. The demo shops get their place from `demo-community.ts` (media on the CDN under `sites/folioviv/demo/<slug>/`, never committed).
 
 - **No mobile app in the dev preview.** `apps/mobile` is an unbuilt skeleton, outside the workspace until the mobile phase (A5,
   krizaka/.github#52); the walker's phone is served by the phone-first web app. The Dev preview criteria `mobile.*` are `na` for that
@@ -42,45 +42,45 @@
 
 ## 2. Non-negotiables
 
-- **Akinaza prepares; the merchant files.** "Prepare my tax return" produces the GST/QST figures (FPZ-500) and their
+- **Folioviv prepares; the merchant files.** "Prepare my tax return" produces the GST/QST figures (FPZ-500) and their
   working papers; nothing in the code or the copy files, transmits or promises electronic transmission to Revenu Québec or
   the CRA. A test scans the e-mails for such a promise.
 - **Money is integer cents.** No float, no `real`, no `numeric` read as a float. GST 5/100 and QST 9975/100000 are exact
-  fractions, applied once per invoice on the taxable subtotal, rounded half away from zero (`@akinaza/core`). Changing a
+  fractions, applied once per invoice on the taxable subtotal, rounded half away from zero (`@folioviv/core`). Changing a
   rate or a rounding rule needs a test on known invoices first.
 - **The ledger is the authority.** Append-only (triggers); every invoice's ledger entries equal its taxes at commit (a
   deferred constraint trigger); a correction is a credit note. An AI's figures are reconciled against the ledger and every
   difference is shown — never silently adopted.
-- **Restaurants, cafés, bars and bakeries are excluded** (a sales recording system certified MEV-WEB is required in Québec): the database refuses those shop kinds. Akinaza targets service businesses only.
-  The point of sale stays a stub behind `APP_POS_ENABLED`. **Subscription payments (prices are a catalogue the administrator edits at `/console/prices`, ADR-009, akinaza#371: the founder offer 39 $ CAD/month plus taxes for the first businesses by its `founderCap` limit; Starter 45 $ and Scale B2B 99 $ plus taxes, public, Scale's B2B features « soon »; 0 % on cards, a capped debit fee per order; the seed in `apps/web/lib/pricing.ts`, read only through `lib/price-catalogue.ts`; a subscription keeps the version it was sold at) go through a payments port** (`apps/web/lib/payments`, ADR-003): the vendor is configuration (`PAYMENTS_PROVIDER`), the price is data at the vendor, the webhook is verified and idempotent; the offer shows only when `APP_FOUNDER_OFFER_ENABLED`. No merchant payment (the shop's own sales) is wired.
+- **Restaurants, cafés, bars and bakeries are excluded** (a sales recording system certified MEV-WEB is required in Québec): the database refuses those shop kinds. Folioviv targets service businesses only.
+  The point of sale stays a stub behind `APP_POS_ENABLED`. **Subscription payments (prices are a catalogue the administrator edits at `/console/prices`, ADR-009, folioviv#371: the founder offer 39 $ CAD/month plus taxes for the first businesses by its `founderCap` limit; Starter 45 $ and Scale B2B 99 $ plus taxes, public, Scale's B2B features « soon »; 0 % on cards, a capped debit fee per order; the seed in `apps/web/lib/pricing.ts`, read only through `lib/price-catalogue.ts`; a subscription keeps the version it was sold at) go through a payments port** (`apps/web/lib/payments`, ADR-003): the vendor is configuration (`PAYMENTS_PROVIDER`), the price is data at the vendor, the webhook is verified and idempotent; the offer shows only when `APP_FOUNDER_OFFER_ENABLED`. No merchant payment (the shop's own sales) is wired.
 - **Loi 25 by design.** Consent per purpose, never pre-ticked, append-only; the access, portability and erasure of a client file are
-  `@krizaka/privacy` (akinaza#370): the subject is `{ kind: "client", id }`, `packages/db/src/privacy.ts` registers one contributor per
+  `@krizaka/privacy` (folioviv#370): the subject is `{ kind: "client", id }`, `packages/db/src/privacy.ts` registers one contributor per
   module (the file, the visits, the invoices, the requests, the consents), `exportClient` assembles the document, `eraseClient` runs every
   contributor in one transaction and withdraws the live consents; the shop's owner answers a client from the console
   (`/api/walker/clients/[id]/export` and `/erase`, permission `privacy`, audited). Retention is data (`RETENTION_RULES`,
-  `@akinaza/core`): invoices, their lines, payments and the tax ledger stay six years (the erasure blanks the person, keeps the row); a
+  `@folioviv/core`): invoices, their lines, payments and the tax ledger stay six years (the erasure blanks the person, keeps the row); a
   new table that holds personal data gets a contributor and a rule. The privacy impact assessment, the register of transfers outside
   Québec (`docs/privacy/`, tested against `deploy/digitalocean/app.yaml`) and the claims the lawyer reads (krizaka/.github#250) are the
   published position: a public text states a place or a flow only where the code or the spec proves it (`public-claims.test.ts`,
   `transfers.test.ts`). Canadian hosting is planned, not claimed.
-- **No AI in the product, in its screens or its words.** Akinaza says what it does (appointments, invoices, tax figures) in plain words; never « IA », « intelligent » or « révolutionnaire ». If a model is ever needed, it goes through Orazaka, behind a port, and the epic krizaka/akinaza#161 is reopened first.
+- **No AI in the product, in its screens or its words.** Folioviv says what it does (appointments, invoices, tax figures) in plain words; never « IA », « intelligent » or « révolutionnaire ». If a model is ever needed, it goes through Sovkora, behind a port, and the epic krizaka/folioviv#161 is reopened first.
   **One model is now involved (2026-10-23, #258, decision recorded on #161): translating the shop page's texts.** It goes through the `TranslationPort`
-  (`packages/db/src/translation-port.ts`; the adapter in `apps/web/lib/translation.ts` calls the Orazaka Studio `text-translation`, krizaka/orazaka-packs#119).
+  (`packages/db/src/translation-port.ts`; the adapter in `apps/web/lib/translation.ts` calls the Sovkora Studio `text-translation`, krizaka/sovkora-packs#119).
   Only the page's own texts and a glossary (shop name, service names, street address) are sent, never anything about a client. The owner sees
   « traduction automatique » (never « IA »), edits any text, an edited text is never overwritten without asking, and a text whose source changed is flagged « à revoir ».
-  The administrator holds `features.storefrontTranslation`, `storefront.languages.allowed` and `limits.translationsPerShopPerDay`. Nothing else in Akinaza uses a model: the ledger, the figures and the tax return stay deterministic.
+  The administrator holds `features.storefrontTranslation`, `storefront.languages.allowed` and `limits.translationsPerShopPerDay`. Nothing else in Folioviv uses a model: the ledger, the figures and the tax return stay deterministic.
 
 ## 3. The product is independent
 
 - No link to another Krizaka product, no family switcher. Krizaka is the publisher, named **only in the footer** and the
-  legal mentions. The colour is the Akinaza brand (Laurentian forest green with warm copper), the mark
+  legal mentions. The colour is the Folioviv brand (Laurentian forest green with warm copper), the mark
   `AkinazaLogo` ("the open shop"), the mascot **the beaver**, the artisan. Components use `--kz-*` roles only;
   dark and light are first-class.
 
 ## 4. Security of the dev environment
 
 - Sign-up is closed server-side (`AUTH_SIGNUP_ENABLED` not `true` → 403); QA accounts only (`apps/web/scripts/qa-accounts.mjs`).
-- The administration lives on **admin.akinaza.com** (same app, host-routed by `proxy.ts` / `lib/host.ts`; 404 on the
+- The administration lives on **admin.folioviv.com** (same app, host-routed by `proxy.ts` / `lib/host.ts`; 404 on the
   product host); a session, the ADMIN role **and** an address of `AUTH_ALLOWED_IPS`. Never indexed.
 - Passwords scrypt; sessions random tokens kept as keyed hashes; rate limits on sign-in; CSP same-origin, HSTS.
 - Environment variables by bounded context (`APP_`, `DATABASE_`, `AUTH_`, `ABUSE_`, `REALTIME_`), declared once in
@@ -98,7 +98,7 @@
 
 ## 5. Database
 
-- PostgreSQL 16, schema in `packages/db/src/schema.ts` (Drizzle). `pnpm --filter @akinaza/db db:generate` writes the
+- PostgreSQL 16, schema in `packages/db/src/schema.ts` (Drizzle). `pnpm --filter @folioviv/db db:generate` writes the
   next migration; rules the schema cannot say are custom SQL migrations. A merged migration is never edited.
   **One baseline** (`0000_baseline`, krizaka-internal#2044: no production yet, no history kept); the price grid is data from code (`price-schedule.ts`, run by `migrate`). `pnpm db:rebuild` (`--yes` for a non-local host, `--cast` for the demo cast, `--write-expected` after a schema change) drops every schema, migrates from zero, seeds the configuration and checks the schema against `packages/db/src/schema-expected.json`; CI builds a database from zero and runs the same check (`db-rebuild.test.ts`). Dev is rebuilt with it, never patched by hand.
 - One database per worktree/session; never a shared or `*_demo` database from a session. Tests create a database per file
@@ -147,7 +147,7 @@ with a message and, where safe, a `fix:`; written for Tsx and `.ts` is parsed as
 | `no-unjustified-numeric-export` | a numeric (or `…ToMilliseconds(n)`) `export const` in feature code without `// @fixed: <reason>` just above |
 | `no-locale-ternary` | a text chosen with a locale ternary (`locale === "fr" ? a.nameFr : a.nameEn`, `isFr ? …`): a message (`say`) or the pair indexed by the locale, `{ fr, en }[locale]`; a choice between two locale tags (`"fr-CA" : "en-CA"`) is allowed |
 | `no-hand-made-nav`, `no-hand-made-language-switch` | a navigation bar that is not `NavBar` of @krizaka/ui (own Radix NavigationMenu, a local `NavBar`/`TopNav`), a hand-made language switch (`hrefLang` in a component, a row of `aria-pressed={locale === …}` buttons): use `NavBar` and `NavBar.Language` (« Navigation in the family », ui.krizaka.com) |
-| `no-status-move` | `ws.status.move(…)`: Akinaza has no editable status set; an invoice's state is derived from the ledger, so a « bulk paid » must not exist (akinaza#337) |
+| `no-status-move` | `ws.status.move(…)`: Folioviv has no editable status set; an invoice's state is derived from the ledger, so a « bulk paid » must not exist (folioviv#337) |
 | `no-utc-day-slice` | `x.toISOString().slice(0, 10)`: that is the UTC day, not the shop's (in Montréal after 19:00 it is tomorrow). `localDay(instant, timeZone)` of `@krizaka/intl` (`shopDay` on the server) |
 
 - **Run**: `npm run lint` runs everything (it includes `ast-grep test` and the ratchet). `npx ast-grep scan` lists the

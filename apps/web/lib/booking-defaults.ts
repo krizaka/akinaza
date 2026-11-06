@@ -1,4 +1,4 @@
-import type { BookingPreselect } from "@akinaza/core";
+import type { BookingPreselect } from "@folioviv/core";
 
 /** One value of a query string (the first when it repeats), or null. */
 export const searchValue = (value: string | string[] | undefined): string | null => (Array.isArray(value) ? value[0] : value) ?? null;

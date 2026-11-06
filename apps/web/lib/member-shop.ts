@@ -1,4 +1,4 @@
-import { shopOfMember, type ShopPermission, shopsOfMember } from "@akinaza/db";
+import { shopOfMember, type ShopPermission, shopsOfMember } from "@folioviv/db";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 

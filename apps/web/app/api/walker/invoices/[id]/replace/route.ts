@@ -1,4 +1,4 @@
-import { invoiceInputSchema, replaceInvoice } from "@akinaza/db";
+import { invoiceInputSchema, replaceInvoice } from "@folioviv/db";
 
 import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";

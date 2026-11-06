@@ -1,4 +1,4 @@
-import { ASSOCIATION_KINDS, associationProofOf, submitAssociationProof } from "@akinaza/db";
+import { ASSOCIATION_KINDS, associationProofOf, submitAssociationProof } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireSession } from "@/lib/access";

@@ -3,7 +3,7 @@
 // deployment) the free period starts on the hosted test checkout (never a real card). Without them nothing is on sale: the prices are planned, no card is asked.
 import { expect, test } from "@playwright/test";
 
-const EMAIL = process.env.E2E_EMAIL ?? "lea.beaulieu@akinaza.test";
+const EMAIL = process.env.E2E_EMAIL ?? "lea.beaulieu@folioviv.test";
 const CAST_WORD = process.env.E2E_PASSWORD ?? "local-cast-password-0123";
 
 test("an owner reaches the plans from the account menu and starts the free months", async ({ page }) => {

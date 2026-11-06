@@ -1,10 +1,11 @@
 import crypto from "node:crypto";
 
+import { systemClock } from "@/app/system-clock";
+
 import { ownCookie } from "./cookie";
 import { query } from "./db";
 import { sessionSecret } from "./env";
 import { SESSION_COOKIE } from "./session-cookie";
-import { systemClock } from "@/app/system-clock";
 
 /**
  * Web sessions. The cookie holds a random token (`as1.` + 32 bytes); the table keeps only its keyed hash, so a leaked

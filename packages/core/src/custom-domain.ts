@@ -1,5 +1,5 @@
 /**
- * A merchant's own domain (ADR-005 §3, akinaza#539). Ownership first (a TXT record), TLS second (the edge service issues a certificate for the
+ * A merchant's own domain (ADR-005 §3, folioviv#539). Ownership first (a TXT record), TLS second (the edge service issues a certificate for the
  * hostname), and only then the shop is served there. Everything here is pure: the DNS and the edge service are ports the caller passes in, so the
  * state machine is tested with stubs and the vendor stays a configuration value, never a name in this code.
  */
@@ -21,15 +21,15 @@ export const CHECKED_STATES: readonly DomainState[] = [DOMAIN_STATE.pendingTxt, 
 /** A domain that claims its hostname once its TXT was proven: one shop at a time (the database holds the same rule as a partial unique index). */
 export const CLAIMING_STATES: readonly DomainState[] = [DOMAIN_STATE.pendingTls, DOMAIN_STATE.active];
 
-/** The label of the record the merchant adds: `_akinaza-verify.<hostname>`. */
-export const TXT_PREFIX = "_akinaza-verify";
-export const TXT_VALUE_PREFIX = "akinaza-site-verification=";
+/** The label of the record the merchant adds: `_folioviv-verify.<hostname>`. */
+export const TXT_PREFIX = "_folioviv-verify";
+export const TXT_VALUE_PREFIX = "folioviv-site-verification=";
 
 export const txtRecordName = (hostname: string): string => `${TXT_PREFIX}.${hostname}`;
 export const txtRecordValue = (token: string): string => TXT_VALUE_PREFIX + token;
 
 /** Registrable names that are ours: never accepted as a merchant's domain. */
-const PLATFORM_DOMAINS = ["akinaza.com", "akinaza.shop", "krizaka.com", "krizaka.dev"];
+const PLATFORM_DOMAINS = ["folioviv.com", "folioviv.shop", "krizaka.com", "krizaka.dev"];
 const LABEL = /^(?!-)[a-z0-9-]{1,63}(?<!-)$/;
 const TLD = /^(?:[a-z]{2,}|xn--[a-z0-9-]+)$/;
 const IPV4 = /^\d{1,3}(?:\.\d{1,3}){3}$/;

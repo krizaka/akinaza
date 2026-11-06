@@ -1,4 +1,4 @@
-import { SHOP_PERMISSIONS, SHOP_ROLES } from "@akinaza/db";
+import { SHOP_PERMISSIONS, SHOP_ROLES } from "@folioviv/db";
 
 import { systemClock } from "@/app/system-clock";
 import { requireShop } from "@/lib/access";

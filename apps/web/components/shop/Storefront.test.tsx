@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 
-import { type PublicShop, type ShopPageConfig } from "@akinaza/db";
+import { type PublicShop, type ShopPageConfig } from "@folioviv/db";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
@@ -171,13 +171,13 @@ describe("the trade's proposed pictures on the public page (#267)", () => {
   });
 });
 
-// akinaza#567: the « Open now » chip was green on the dark photo in the light theme, unreadable. The guard has two halves: the facts of a hero wear the
+// folioviv#567: the « Open now » chip was green on the dark photo in the light theme, unreadable. The guard has two halves: the facts of a hero wear the
 // `scrim` tone (never a theme-tinted one), and that tone reads at 4.5:1 (WCAG AA, small text) over the WORST photo, a white one, in both themes.
 const tokens = readFileSync(createRequire(import.meta.url).resolve("@krizaka/tokens/tokens.css"), "utf8");
 const luminance = (v: number) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
 const ratio = (a: number, b: number) => (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 
-describe("the facts of a hero, drawn over the shop's photo (akinaza#567)", () => {
+describe("the facts of a hero, drawn over the shop's photo (folioviv#567)", () => {
   it.each(["en", "fr"] as const)("wear the scrim tone, not a tinted one (%s)", (locale) => {
     const html = renderToStaticMarkup(<Storefront locale={locale} view={buildStorefront({ page: walker, locale, now: NOW })} />);
     const hero = html.slice(0, html.indexOf("</section>")); // the facts are the badges of the first section

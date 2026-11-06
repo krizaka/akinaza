@@ -1,9 +1,9 @@
 # The Cahier storefront — design (phase 1)
 
-Refs krizaka/akinaza#236 (the shop as a place). Status: **proposal, waiting for the CTO's « validé »**. No code changes in this PR.
+Refs krizaka/folioviv#236 (the shop as a place). Status: **proposal, waiting for the CTO's « validé »**. No code changes in this PR.
 
-It designs the public shop page (`/[locale]/s/[slug]`) and its booking journey in the Cahier, the artistic notebook that Akinaza's public
-shop pages wear as the one product exception to « products stay pro plain Krizaka UI » (decision 2026-10-23, akinaza#236). The owner app
+It designs the public shop page (`/[locale]/s/[slug]`) and its booking journey in the Cahier, the artistic notebook that Folioviv's public
+shop pages wear as the one product exception to « products stay pro plain Krizaka UI » (decision 2026-10-23, folioviv#236). The owner app
 stays plain Krizaka UI, and so does the owner studio around its preview.
 
 It builds on, and never contradicts:
@@ -61,7 +61,7 @@ Every Cahier page (`@2` templates) has a **fixed head** (not orderable, always i
 
 **« Réserver » is always reachable** (§ 3): in the head; in the site bar's primary slot once the head has scrolled away (desktop); in the
 `StickyAction` bar at the bottom of a phone, hidden while the head's button is on screen; in the closing call. One look everywhere: the
-**Akinaza primary**, never the template's hue, so a client learns one button across every shop.
+**Folioviv primary**, never the template's hue, so a client learns one button across every shop.
 
 The three trades below are drawn on the three layouts of the catalogue, one each, so the wireframes cover every structure:
 **the salon** on `salon-vitrine@2` (L1 Vitrine), **the dog walker** on `pets-histoire@2` (L3 Histoire), **the workshop** on `workshop-carte@2`
@@ -79,7 +79,7 @@ wall of finished cuts.
 
 ```
 +----------------------------------------------------------------------------------------------------+
-| (A) Akinaza · Cèdre & Ciseaux                               FR | EN     ( Mon compte )  [[ Réserver ]] |  <- bar: Réserver joins once the head is out
+| (A) Folioviv · Cèdre & Ciseaux                               FR | EN     ( Mon compte )  [[ Réserver ]] |  <- bar: Réserver joins once the head is out
 +----------------------------------------------------------------------------------------------------+
 |                                                                                                    |
 |   .--------------------------------------------.                                                   |
@@ -125,7 +125,7 @@ wall of finished cuts.
 |   +------------------------------------------------------------------------------------------+     |
 |   | Une place vous attend.                                                [[ Réserver ]]       |     |
 |   +------------------------------------------------------------------------------------------+     |
-|   footer · Akinaza · publié par Krizaka                                                            |
+|   footer · Folioviv · publié par Krizaka                                                            |
 +----------------------------------------------------------------------------------------------------+
 ```
 
@@ -184,7 +184,7 @@ more than for a salon, so « Horaires et lieu » climbs to the third body sectio
 
 ```
 +----------------------------------------------------------------------------------------------------+
-| (A) Akinaza · Les Promenades Lafontaine                    FR | EN               [[ Réserver ]]    |
+| (A) Folioviv · Les Promenades Lafontaine                    FR | EN               [[ Réserver ]]    |
 +----------------------------------------------------------------------------------------------------+
 |  (kraft paper, grain)                                                                              |
 |   .------------------------------------------------.   # ouvert · dernière sortie 17 h #            |
@@ -258,7 +258,7 @@ sign), and the services are a **price list of index cards in one column**, the h
 
 ```
 +----------------------------------------------------------------------------------------------------+
-| (A) Akinaza · Atelier Ferland                              FR | EN               [[ Réserver ]]    |
+| (A) Folioviv · Atelier Ferland                              FR | EN               [[ Réserver ]]    |
 +----------------------------------------------------------------------------------------------------+
 |  (Seyès ruling, red margin)                                                                        |
 | § | .-----------------------------------.   ==/ [ cover 16:9, 480 wide ] /==   (o)/ « Retour des   / |
@@ -355,7 +355,7 @@ column in z order, every item straight. Under it, a real list (`ul`) of the item
 The **reel lives on the wall**: v2 templates do not place the separate `reels` section (§ 8.2).
 
 **The bulletin board.** The shop's current announcements (#232), at most three, as `PinnedNote` flyers (pin, the date stamped, an optional
-photo in a `Polaroid`), the newest first; the same flyer component as the neighbourhood feed on the Akinaza home (#243), so a flyer reads the
+photo in a `Polaroid`), the newest first; the same flyer component as the neighbourhood feed on the Folioviv home (#243), so a flyer reads the
 same in both places. Hidden when none is current.
 
 **Hours and places.** `OpeningHours` on a ruled card, today's row stamped « aujourd'hui »; the map in a **straight** frame taped at two
@@ -444,7 +444,7 @@ The grain is one inline SVG filter per page (one `<svg>` in the layout, referenc
 ### 4.3 The trade's hue
 
 The template's hue (`brand-akinaza`, `cobalt`, `sky`, `cyan`, `indigo`, `steel`, `ink`) is set by `data-hue` on the page and mapped to
-`--kz-hue`, `--kz-hue-2`, `--kz-hue-text` in both themes. It never colours body text, never the primary button (always the Akinaza primary),
+`--kz-hue`, `--kz-hue-2`, `--kz-hue-text` in both themes. It never colours body text, never the primary button (always the Folioviv primary),
 never a surface larger than a stamp; the page stays mostly paper and ink.
 
 ### 4.4 Typography — `@krizaka/fonts` roles and `TextStyle` (krizaka-ui#561, merged as #564)
@@ -483,7 +483,7 @@ stays visible.
 | Tape | translucent white paper | translucent chalk paper at 22 % |
 | Post-it | pale paper of the ink's family | the same note, dimmed to keep ≥ 7:1 with its ink |
 | Wall textures | brick, zellige, ridge, plaster at day | the same at night: −35 % lightness, no glow (the neon sign is the only light, and it keeps ≥ 3:1) |
-| Primary button | Akinaza primary | Akinaza primary (dark) |
+| Primary button | Folioviv primary | Folioviv primary (dark) |
 
 Both themes are first-class: every template × paper × texture is captured in both before it ships (§ 9).
 
@@ -551,7 +551,7 @@ Boutique › Page (phone, 390 px)                    Boutique › Page (desktop)
 | Bulletin board | announcements (#232): text ≤ 500, photo, end date | the flyer, ≤ 3 shown | `features.shopAnnouncements`, the daily limit |
 | Sections | order and visibility of the body (`shop_page.sections`, as today) | the head's order (sign, photo, post-it, vibe, facts, « Réserver ») | the `features.shop*` switches |
 | Hue, layout, variants, dividers, tape, stamps, motion, doodles | — | all of them | — |
-| « Réserver » | — | always present, always the Akinaza primary | — |
+| « Réserver » | — | always present, always the Folioviv primary | — |
 
 ### 5.3 The limits that keep every shop beautiful
 
@@ -607,7 +607,7 @@ Boutique › Page (phone, 390 px)                    Boutique › Page (desktop)
 | Below the fold | the wall, the board, the team, the reviews with `content-visibility: auto` and an intrinsic size; images `loading=lazy` | — |
 | Third parties | none before a click (the reel facade), Loi 25 | — |
 
-The PR of each step publishes Lighthouse mobile numbers (before/after) and the CLS of a full scroll on Bunny (`pr-assets/akinaza/<key>`).
+The PR of each step publishes Lighthouse mobile numbers (before/after) and the CLS of a full scroll on Bunny (`pr-assets/folioviv/<key>`).
 
 ---
 
@@ -617,11 +617,11 @@ The PR of each step publishes Lighthouse mobile numbers (before/after) and the C
 
 Already in flight, reused as they are (with the addenda below): `TapedPhoto` (merged, #542), `Stamp` / `SpecimenTag` (merged), `TextStyle`
 (merged, #564), `Page paper` + `margin` (merged, ADR-004), `Wall` · `Polaroid` · `PinnedNote` · `ShopSign` (#537, PR #540), `Stuck` · `Doodle` ·
-`Signature` (#554, PR #565 — Akinaza uses `Stuck` and `Doodle`, never `Signature`), `RetroTv` (#536), `WallEditor` (#538), krizaka-motion's wall
+`Signature` (#554, PR #565 — Folioviv uses `Stuck` and `Doodle`, never `Signature`), `RetroTv` (#536), `WallEditor` (#538), krizaka-motion's wall
 primitives (#49). `GradeStamp` (#548) is **not** used on shop pages.
 
 > **UI-1 · feat(page): two more papers — `dot-grid` and `kraft`, with a shared grain**
-> For Akinaza's Cahier storefront (akinaza#238, `docs/design/cahier-storefront.md` § 4.1). `Page paper` and `Section paper` accept
+> For Folioviv's Cahier storefront (folioviv#238, `docs/design/cahier-storefront.md` § 4.1). `Page paper` and `Section paper` accept
 > `"ruled" | "lines" | "dot-grid" | "kraft"` (absent = plain). Tokens `--kz-paper-dot`, `--kz-paper-kraft`, `--kz-paper-kraft-ink`,
 > `--kz-paper-grain-opacity` in light and dark (« carnet de nuit »); the grain is one inline SVG `feTurbulence` filter with a fixed seed,
 > mounted once (`PaperGrain`), referenced by id. No image file.
@@ -629,9 +629,9 @@ primitives (#49). `GradeStamp` (#548) is **not** used on shop pages.
 > examples and stories for each paper × theme; `cahier.test.ts` green; changeset (minor).
 
 > **UI-2 · feat(specimen-tag): `Stamp` tones `ink` and `hue`, an optional glyph, and a straight text**
-> For the facts, the vibe tag, the prices and durations of Akinaza's storefront (akinaza#238, #241). `Stamp tone="ink"` (the page's ink) and
+> For the facts, the vibe tag, the prices and durations of Folioviv's storefront (folioviv#238, #241). `Stamp tone="ink"` (the page's ink) and
 > `tone="hue"` (`--kz-hue-text`); `icon` slot (a `@krizaka/icons` glyph, `aria-hidden`); the border keeps its askew, the text is straight
-> (`straightText`, default true for `size="sm"`); `size` `sm` · `md`. Supersedes akinaza#238's « `Badge tone="ink"` »: one stamp in the system.
+> (`straightText`, default true for `size="sm"`); `size` `sm` · `md`. Supersedes folioviv#238's « `Badge tone="ink"` »: one stamp in the system.
 > Acceptance: contrast ≥ 4.5:1 for every tone in both themes, axe clean, examples, changeset.
 
 > **UI-3 · feat(separator): `variant="hand"` — three hand-drawn shapes**
@@ -640,7 +640,7 @@ primitives (#49). `GradeStamp` (#548) is **not** used on shop pages.
 > Acceptance: no layout shift (fixed height), both themes, examples, changeset.
 
 > **UI-4 · feat(service-card): `variant="index"` — a stamped index card**
-> For akinaza#239. A ruled card (one Seyès line under the name), a punched hole (SVG, `aria-hidden`), **straight**, the duration and the price
+> For folioviv#239. A ruled card (one Seyès line under the name), a punched hole (SVG, `aria-hidden`), **straight**, the duration and the price
 > as `Stamp`s (tabular digits), what is included, the action as a secondary `Button`; lift + paper shadow on hover and focus (120 ms), none
 > under reduced motion; a `list` density for one column. Same props as today, the variant only changes the drawing.
 > Acceptance: keyboard and screen reader output identical to the default variant (a test), both themes, phone 360 px, changeset.
@@ -652,19 +652,19 @@ primitives (#49). `GradeStamp` (#548) is **not** used on shop pages.
 > box and stacks in z order on a phone, with the real list underneath; text is never laid on a texture.
 
 > **UI-6 · feat(media): `EmbedFacade` — a click-to-load facade for TikTok, YouTube Shorts and Instagram**
-> For akinaza#234 (Loi 25: nothing loads from a platform before the visitor asks). The lite-youtube-embed pattern (Apache-2.0, studied in
-> akinaza#236): a poster (given by the host, from the public oEmbed where it exists), a play button that names the platform, the iframe only
+> For folioviv#234 (Loi 25: nothing loads from a platform before the visitor asks). The lite-youtube-embed pattern (Apache-2.0, studied in
+> folioviv#236): a poster (given by the host, from the public oEmbed where it exists), a play button that names the platform, the iframe only
 > after the click, `sandbox` and `allow` minimal; fits inside `RetroTv`'s screen. Acceptance: a test that no request leaves before the click;
 > keyboard; reduced motion; ≤ 2 kB gzip; changeset.
 
 > **UI-7 · feat(blocks): `ReviewSummary` and `ReviewCard` — a score you can trust**
-> For akinaza#233 (data from `@krizaka/reviews`, krizaka-ts#37). `ReviewSummary`: the score as a `Stamp` (« 4,8 / 5 »), the count with
+> For folioviv#233 (data from `@krizaka/reviews`, krizaka-ts#37). `ReviewSummary`: the score as a `Stamp` (« 4,8 / 5 »), the count with
 > « vérifiés », five `Meter`s for the distribution, a text equivalent (« 4,8 sur 5, 27 avis vérifiés »); renders nothing under the host's
 > minimum. `ReviewCard`: first name + initial, month, the service, the text, the owner's reply indented. Never a « /20 » (that is
 > `GradeStamp`'s register). Acceptance: axe clean, both themes, phone, FR/EN labels, changeset.
 
 > **UI-8 · feat(fonts): Krizaka Cahier covers Spanish (ñ, á, í, ó, ú, ü, ¿, ¡)**
-> Akinaza's shop pages are offered in French, English and Spanish (akinaza#258); the pen is subset to the French alphabet. Extend the subset
+> Folioviv's shop pages are offered in French, English and Spanish (folioviv#258); the pen is subset to the French alphabet. Extend the subset
 > (`scripts/subset.py`), keep the 52 kB budget or raise it with the reason. Until then, products fall back to the `text` face for pen roles in
 > `es`. Acceptance: the glyph-coverage test lists the Spanish set; size budget; changeset.
 
@@ -729,12 +729,12 @@ Body order of `@2` by layout (after the fixed head; the owner's own order still 
 
 ## 9. The cut — one PR each, in order
 
-**krizaka-ui first** (filed from § 8.1, then released; the in-flight #537/#540, #554/#565, #536 and #538 finish with their addenda). The Akinaza
-steps below each name the release they need. Every Akinaza step ships its tests (vitest, a render test, a 360 px overflow test, the hydration
+**krizaka-ui first** (filed from § 8.1, then released; the in-flight #537/#540, #554/#565, #536 and #538 finish with their addenda). The Folioviv
+steps below each name the release they need. Every Folioviv step ships its tests (vitest, a render test, a 360 px overflow test, the hydration
 crawl clean), captures in both themes at 390 px and desktop on Bunny, `docs/UX_DECISIONS.md`, and keeps a shop on `@1` or without a template
 rendering exactly as today (a snapshot test).
 
-| # | Akinaza PR (title) | Maps onto | Needs | Acceptance |
+| # | Folioviv PR (title) | Maps onto | Needs | Acceptance |
 | :-- | :-- | :-- | :-- | :-- |
 | C1 | **feat(templates): the v2 schema — the `cahier` block, full `TextStyle`, the head as data** | #238 (prep), #261 step 7 | `@krizaka/ui` ≥ 3.51 (`text-style/server`) | `@1` and `@2` coexist; every `@2` parses; `parseTextStyle` server-side; the pen can never be a title/body/price font (schema test); a `@1` shop and a shop with no template render byte-identical before/after |
 | C2 | **feat(storefront): paper and ink — the four papers, stamps for the facts, hand-drawn dividers, the hue** | **#238** | UI-1, UI-2, UI-3 | migration `shop_page.paper` (CHECK on the four), `features.cahierStorefront`; the facts off the photo onto paper; contrast token test per paper × theme; tenant-isolation sweep; Lighthouse CLS 0, no LCP regression |
@@ -774,7 +774,7 @@ rendering exactly as today (a snapshot test).
 
 1. **The art lives in the frames, never in the way.** The head is drawn at once (sign, taped photo, post-it, vibe, facts, « Réserver »); every
    word sits on paper; anything you click to book is straight; the booking journey keeps only a thin paper head and plain controls.
-2. **« Réserver » is one look across every shop**, the Akinaza primary (never the hue), always reachable: head, bar, phone sticky bar (hidden
+2. **« Réserver » is one look across every shop**, the Folioviv primary (never the hue), always reachable: head, bar, phone sticky bar (hidden
    while the head's button shows), closing call.
 3. **Cahier = template `@2` data, bounded owner choices.** The owner chooses among enums (paper, sign, wall texture, text-style presets, post-it
    hold and ink); the template fixes hue, layout, variants, dividers, tape, motion; the pen is never the owner's choice. `@1` shops never move

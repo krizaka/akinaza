@@ -1,7 +1,8 @@
-import { translateShop } from "@akinaza/db";
+import { translateShop } from "@folioviv/db";
 import { localDay } from "@krizaka/intl";
 import { z } from "zod";
 
+import { requestNow } from "@/app/request-now";
 import { requireOwner } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
@@ -9,14 +10,13 @@ import { handle, readJson, refuse } from "@/lib/http";
 import { limit } from "@/lib/rate-limit";
 import { translationPort } from "@/lib/translation";
 import { translationRules } from "@/lib/translation-settings";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
 const body = z.object({ locale: z.enum(["fr", "en", "es"]), redo: z.array(z.string().max(120)).max(100).optional() });
 
 /**
- * « Traduire »: one language of the page, through the Orazaka translation port. The administrator's switch and daily limit apply; a text the owner
+ * « Traduire »: one language of the page, through the Sovkora translation port. The administrator's switch and daily limit apply; a text the owner
  * edited is redone only when named in `redo` (« refaire la traduction »).
  */
 export function POST(req: Request) {

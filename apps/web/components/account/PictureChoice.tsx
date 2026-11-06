@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 
 /**
  * Inside a form, the radio group of Krizaka UI mirrors each picture with a hidden `<input type="radio">` (so the choice travels
- * with the form). Those mirrors have no name of their own: an accessibility audit counts six unlabelled controls (akinaza#440).
+ * with the form). Those mirrors have no name of their own: an accessibility audit counts six unlabelled controls (folioviv#440).
  * Each mirror takes the name of the picture it stands for. Until the library names them itself, this is the one place that does.
  */
 export function nameMirrors(root: ParentNode): number {

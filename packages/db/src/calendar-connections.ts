@@ -1,4 +1,4 @@
-import { type BusyInterval, type BusyRange, type CalendarKind, mergeBusy, nextSyncDelayMinutes, type Validators } from "@akinaza/core";
+import { type BusyInterval, type BusyRange, type CalendarKind, mergeBusy, nextSyncDelayMinutes, type Validators } from "@folioviv/core";
 import { and, asc, eq, isNull, or, sql } from "drizzle-orm";
 
 import type { Db, Tx } from "./client";
@@ -156,7 +156,7 @@ export async function busyBetween(db: Reader, shopId: string, staffId: string, w
   return rows.map((r) => ({ startsAt: new Date(r.start), endsAt: new Date(r.end) }));
 }
 
-/** Which of these appointments overlap the owner's other calendars, and the label of the calendar: Akinaza flags it, it never deletes either side. */
+/** Which of these appointments overlap the owner's other calendars, and the label of the calendar: Folioviv flags it, it never deletes either side. */
 export async function agendaConflicts(db: Reader, appointmentIds: readonly string[]): Promise<Map<string, string>> {
   if (appointmentIds.length === 0) return new Map();
   const rows = await db.execute(sql`

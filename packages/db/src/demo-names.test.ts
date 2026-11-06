@@ -6,8 +6,8 @@ import { OWNER_STATES } from "./seed-owner-states";
 import { SAINT_HENRI } from "./seed-walker";
 
 /**
- * Akinaza serves service businesses only: a restaurant, a café, a bar or a bakery must bill through a sales recording module
- * certified by Revenu Québec (AGENTS § 2). The demo data must never show one as a shop or as a client (krizaka/akinaza#326).
+ * Folioviv serves service businesses only: a restaurant, a café, a bar or a bakery must bill through a sales recording module
+ * certified by Revenu Québec (AGENTS § 2). The demo data must never show one as a shop or as a client (krizaka/folioviv#326).
  */
 const FOOD_AND_DRINK = /(?<!\p{L})(caf[eé]s?|restaurants?|resto|bars?|bistrots?|bistros?|brasseries?|boulangeries?|bakery|bakeries|p[aâ]tisseries?|pubs?|tavernes?|taverns?)(?!\p{L})/iu;
 

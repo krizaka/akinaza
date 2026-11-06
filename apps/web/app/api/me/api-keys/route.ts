@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { systemClock } from "@/app/system-clock";
 import { requireOwner } from "@/lib/access";
-import { AKINAZA_API_KEY_RULES, apiKeys, assertKeysAllowed, keyAct, maxActiveKeys } from "@/lib/api-access";
+import { apiKeys, assertKeysAllowed, FOLIOVIV_API_KEY_RULES, keyAct, maxActiveKeys } from "@/lib/api-access";
 import { audit } from "@/lib/audit";
 import { handle, readJson } from "@/lib/http";
 import { limit } from "@/lib/rate-limit";
@@ -14,7 +14,7 @@ export const GET = (req: Request) =>
   handle(async () => {
     const { session } = await requireOwner(req);
     const keys = apiKeys(systemClock);
-    return Response.json({ keys: (await keys.list(session.account.id)).map((k) => keys.publicView(k)), scopes: AKINAZA_API_KEY_RULES.scopes, maxActive: await maxActiveKeys(session.account.id, systemClock.now()), maxExpiryDays: AKINAZA_API_KEY_RULES.maxExpiryDays });
+    return Response.json({ keys: (await keys.list(session.account.id)).map((k) => keys.publicView(k)), scopes: FOLIOVIV_API_KEY_RULES.scopes, maxActive: await maxActiveKeys(session.account.id, systemClock.now()), maxExpiryDays: FOLIOVIV_API_KEY_RULES.maxExpiryDays });
   });
 
 /** Creates a key: the whole key is in this answer and nowhere else, ever. */

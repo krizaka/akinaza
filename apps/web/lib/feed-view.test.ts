@@ -1,4 +1,4 @@
-import type { FeedFlyerRow } from "@akinaza/db";
+import type { FeedFlyerRow } from "@folioviv/db";
 import { describe, expect, it } from "vitest";
 
 import { buildFeed } from "./feed-view";

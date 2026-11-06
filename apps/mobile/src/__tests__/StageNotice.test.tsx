@@ -17,7 +17,7 @@ const show = async (stage: string, locale: "fr" | "en" = "fr") =>
 
 afterEach(cleanup);
 
-describe("the development-version notice (akinaza#368)", () => {
+describe("the development-version notice (folioviv#368)", () => {
   it("shows on the dev stage, in the language of the app", async () => {
     await show("dev");
     expect(screen.getByText("Version de développement")).toBeTruthy();

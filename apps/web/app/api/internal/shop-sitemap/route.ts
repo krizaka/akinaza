@@ -1,5 +1,5 @@
-import { slugSchema } from "@akinaza/core";
-import { publicShop } from "@akinaza/db";
+import { slugSchema } from "@folioviv/core";
+import { publicShop } from "@folioviv/db";
 
 import { requestNow } from "@/app/request-now";
 import { db } from "@/lib/db";

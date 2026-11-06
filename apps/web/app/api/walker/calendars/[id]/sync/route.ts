@@ -1,4 +1,4 @@
-import { claimDueConnections } from "@akinaza/db";
+import { claimDueConnections } from "@folioviv/db";
 import { z } from "zod";
 
 import { calendarSourceMaker } from "@/app/calendar-edge";

@@ -1,5 +1,5 @@
 // @template: app-dashboard
-import { prepareShopReturn, shopDay } from "@akinaza/db";
+import { prepareShopReturn, shopDay } from "@folioviv/db";
 import { ChipLink } from "@krizaka/ui/chip-link";
 import { EmptyState } from "@krizaka/ui/empty-state";
 import { Mascot } from "@krizaka/ui/mascots";

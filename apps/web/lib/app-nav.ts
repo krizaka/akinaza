@@ -1,4 +1,4 @@
-import type { ShopPermission, ShopRole } from "@akinaza/db";
+import type { ShopPermission, ShopRole } from "@folioviv/db";
 
 import { accountRoutes, type RouteLocale, shopRoutes } from "./routes";
 import { may } from "./shop-permissions";

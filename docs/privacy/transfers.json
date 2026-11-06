@@ -5,7 +5,7 @@
   "contextsNotDeployed": {
     "MAIL_": "mail delivery is off in the deployment (MAIL_PROVIDER=none keeps every mail pending); when it is turned on, add the provider to `processors` first",
     "PAYMENTS_": "the subscription processor is configured outside the spec; add it to `processors` before it is set in the spec",
-    "AI_": "no model runs in the deployment; the translation call to Orazaka is off until the Studio is wired"
+    "AI_": "no model runs in the deployment; the translation call to Sovkora is off until the Studio is wired"
   },
   "stores": [
     { "id": "app", "what": "the application (sessions, the BFF, the files in transit)", "supplier": "digitalocean", "region": "tor", "country": "CA", "province": "outside Québec (Ontario)", "evidence": "deploy/digitalocean/app.yaml `region:`" },
@@ -17,6 +17,6 @@
     { "id": "bunny", "name": "Bunny", "category": "media storage and CDN", "receives": "the photos and files an owner or a client adds; the CDN edge serves them worldwide", "deployed": true, "region": "storage zone: New York; CDN edge locations: to-confirm", "agreement": "to-collect", "dpa": "provider's data processing terms, to collect (krizaka/.github#285)" },
     { "id": "mailgun", "name": "Mailgun", "category": "e-mail delivery", "receives": "the recipient's address and the body of a walk report or an invoice mail", "deployed": false, "region": "to-confirm", "agreement": "to-collect", "dpa": "provider's data processing terms, to collect (krizaka/.github#285)" },
     { "id": "stripe", "name": "Stripe", "category": "payment processor", "receives": "the subscriber's e-mail and payment details, on the processor's hosted page; never a shop client's data", "deployed": false, "region": "to-confirm", "agreement": "to-collect", "dpa": "provider's data processing terms, to collect (krizaka/.github#285)" },
-    { "id": "orazaka", "name": "Orazaka (Krizaka's engine)", "category": "translation of a shop page", "receives": "the page's own texts and a glossary (shop name, service names, street address); never anything about a client", "deployed": false, "region": "to-confirm (its GPU hosting is RunPod, in the supplier register)", "agreement": "internal, to write", "dpa": "to write with the engine's hosting provider" }
+    { "id": "sovkora", "name": "Sovkora (Krizaka's engine)", "category": "translation of a shop page", "receives": "the page's own texts and a glossary (shop name, service names, street address); never anything about a client", "deployed": false, "region": "to-confirm (its GPU hosting is RunPod, in the supplier register)", "agreement": "internal, to write", "dpa": "to write with the engine's hosting provider" }
   ]
 }

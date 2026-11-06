@@ -59,7 +59,7 @@ describe("GST 5 % and QST 9.975 % on known invoices", () => {
   it("applies a discount before the taxes, refuses fractional cents or a quantity finer than a hundredth", () => {
     expect(invoiceTotals([{ ...standard(5_000), discountCents: 1_000 }], { registrant: true })).toMatchObject({ subtotalCents: 4_000, gstCents: 200, qstCents: 399 });
     expect(() => invoiceTotals([standard(10.5)], { registrant: true })).toThrow();
-    expect(() => invoiceTotals([standard(100, 1.005)], { registrant: true })).toThrow(); // a quantity is to the hundredth: 1.5 is billable now (krizaka/akinaza#111), 1.005 is not
+    expect(() => invoiceTotals([standard(100, 1.005)], { registrant: true })).toThrow(); // a quantity is to the hundredth: 1.5 is billable now (krizaka/folioviv#111), 1.005 is not
     expect(() => invoiceTotals([{ ...standard(5_000), discountCents: -100 }], { registrant: true })).toThrow();
     expect(() => invoiceTotals([{ ...standard(5_000), discountCents: 6_000 }], { registrant: true })).toThrow();
   });
@@ -71,7 +71,7 @@ describe("GST 5 % and QST 9.975 % on known invoices", () => {
   });
 });
 
-describe("fractional quantities: hours billed by the quarter, the tenth, the hundredth (krizaka/akinaza#111)", () => {
+describe("fractional quantities: hours billed by the quarter, the tenth, the hundredth (krizaka/folioviv#111)", () => {
   it("bills 7.5 hours at $150.00: $1 125.00, GST $56.25, QST $112.22 (112.21875)", () => {
     const t = invoiceTotals([standard(15_000, 7.5)], { registrant: true });
     expect(t.lines[0]).toMatchObject({ quantity: 7.5, quantityHundredths: 750, amountCents: 112_500 });

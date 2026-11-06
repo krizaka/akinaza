@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { RETENTION_RULES, retentionOf, TAX_RETENTION_YEARS, taxRetentionEnd } from "./retention";
 
-describe("retention rules as data (akinaza#370)", () => {
+describe("retention rules as data (folioviv#370)", () => {
   it("keeps tax records six years after the end of the year, cited by name and article", () => {
     expect(TAX_RETENTION_YEARS).toBe(6);
     for (const id of ["invoices", "tax-ledger"]) {

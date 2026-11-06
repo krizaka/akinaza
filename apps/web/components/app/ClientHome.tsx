@@ -1,6 +1,6 @@
 "use client";
 
-import { type BusinessType, invoiceState } from "@akinaza/core";
+import { type BusinessType, invoiceState } from "@folioviv/core";
 import { formatDate } from "@krizaka/intl";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
@@ -39,7 +39,7 @@ export interface ClientFileView {
   }[];
   /** The invoices at this shop, each with what the ledger says of it (its state is derived: `invoiceState`). */
   invoices: { id: string; number: string; issuedOn: string; dueOn: string | null; totalCents: number; paidCents: number; creditOf: string | null; superseded: boolean }[];
-  /** The requests kept at this shop, and what to choose from (akinaza#210). */
+  /** The requests kept at this shop, and what to choose from (folioviv#210). */
   requests: RequestsData;
   /** `now` as an ISO string, taken by the server: which bookings are still ahead. */
   now: string;

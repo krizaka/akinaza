@@ -1,4 +1,4 @@
-import type { ExploreShop } from "@akinaza/core";
+import type { ExploreShop } from "@folioviv/core";
 
 // @fixed: below a kilometre a distance is said in metres, rounded to ten (a shop's position is its area's centre, not its door)
 const METRES_BELOW = 1000;

@@ -76,7 +76,7 @@ export async function founderGate(query: Query, accountId: string, limit: number
 }
 
 /**
- * The price a subscription is sold at (akinaza#371): the catalogue's version offered at the checkout is kept on the account
+ * The price a subscription is sold at (folioviv#371): the catalogue's version offered at the checkout is kept on the account
  * while it has no subscription yet; from the first subscription on nothing rewrites it (the webhook writes only the state),
  * so a founder keeps the founder price whatever the administrator schedules later.
  */
@@ -94,7 +94,7 @@ export async function soldVersionOf(query: Query, accountId: string): Promise<st
 export type Transaction = <T>(work: (query: TxQuery) => Promise<T>) => Promise<T>;
 
 /**
- * Applies a verified payment event once, recording its id and writing its effect in ONE transaction (akinaza#269): a handler
+ * Applies a verified payment event once, recording its id and writing its effect in ONE transaction (folioviv#269): a handler
  * that throws rolls both back, so the processor's retry applies the event; a replay changes nothing. The record is the
  * `payment_events` table.
  */

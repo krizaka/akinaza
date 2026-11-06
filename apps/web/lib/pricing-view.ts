@@ -5,12 +5,12 @@ import { centsText, priceText, rateText } from "./price-text";
 import { ASSOCIATION, FOUNDER, SCALE, STARTER } from "./pricing";
 
 /**
- * The public pricing page's plans, built from the catalogue's public view (akinaza#380): every price, rate and cap is read from the
+ * The public pricing page's plans, built from the catalogue's public view (folioviv#380): every price, rate and cap is read from the
  * entries and formatted with the visitor's locale, never typed in a message. A feature that is not built says « soon » and carries
  * no figure; the founder plan appears only while its offer is on sale.
  *
  * What runs (`soon: false`) is listed with a tick; what is planned (`soon: true`) is shown apart under « Soon », with no tick
- * (akinaza#440): the client payments and the terms that depend on them (the fees), the signed order contract, the B2B transfers.
+ * (folioviv#440): the client payments and the terms that depend on them (the fees), the signed order contract, the B2B transfers.
  * The plan above Starter lists only what differs: « Everything in Starter », then its planned features.
  */
 export type FeatureId = "inherits" | "booking" | "invoices" | "books" | "payments" | "fees" | "contract" | "transfers";

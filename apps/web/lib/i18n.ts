@@ -17,7 +17,7 @@ export const LOCALES: readonly Locale[] = ["en", "fr"];
 
 /**
  * The languages a shop's public page can speak (#258). The product's own words (menus, buttons) exist in English and French only;
- * the shop's content can also be offered in Spanish, translated through Orazaka. A page in Spanish keeps the English product words.
+ * the shop's content can also be offered in Spanish, translated through Sovkora. A page in Spanish keeps the English product words.
  */
 export type PageLocale = Locale | "es";
 export const PAGE_LOCALES: readonly PageLocale[] = ["en", "fr", "es"];

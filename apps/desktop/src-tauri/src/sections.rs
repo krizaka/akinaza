@@ -65,7 +65,7 @@ pub fn section_url(base: &str, current: Option<&Url>, locale: &str, section: &st
 mod tests {
     use super::*;
 
-    const BASE: &str = "https://www.akinaza.com";
+    const BASE: &str = "https://www.folioviv.com";
     const SHOP: &str = "0f8c2a3e-1b2c-4d5e-8f90-123456789abc";
 
     #[test]
@@ -74,19 +74,19 @@ mod tests {
             section_url(BASE, None, "fr", "section.today")
                 .unwrap()
                 .as_str(),
-            "https://www.akinaza.com/fr/app"
+            "https://www.folioviv.com/fr/app"
         );
         assert_eq!(
             section_url(BASE, None, "en", "section.invoices")
                 .unwrap()
                 .as_str(),
-            "https://www.akinaza.com/en/app/invoices"
+            "https://www.folioviv.com/en/app/invoices"
         );
         assert_eq!(
             section_url(BASE, None, "de", "section.books")
                 .unwrap()
                 .as_str(),
-            "https://www.akinaza.com/fr/app/books"
+            "https://www.folioviv.com/fr/app/books"
         );
     }
 

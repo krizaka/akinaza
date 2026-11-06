@@ -6,7 +6,7 @@ import { SignInForm } from "./SignInForm";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn(), refresh: vi.fn() }) }));
 
-describe("sign-in offers the password reset, in both languages (krizaka/akinaza#299)", () => {
+describe("sign-in offers the password reset, in both languages (krizaka/folioviv#299)", () => {
   it("« Mot de passe oublié ? » leads to the reset page of the same language", () => {
     const html = renderIn("fr", "professional", <SignInForm next="/fr/app" />);
     expect(html).toContain('href="/fr/forgot-password"');

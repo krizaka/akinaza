@@ -1,6 +1,7 @@
-import { feedPeople, revokeFeedToken, rotateFeedToken } from "@akinaza/db";
+import { feedPeople, revokeFeedToken, rotateFeedToken } from "@folioviv/db";
 import { z } from "zod";
 
+import { requestNow } from "@/app/request-now";
 import { agendaScope, requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
@@ -9,7 +10,6 @@ import { feedOverview } from "@/lib/feed-overview";
 import { feedTokenHash, feedUrl, newFeedToken } from "@/lib/feed-token";
 import { handle, readJson, refuse } from "@/lib/http";
 import { appSettings } from "@/lib/settings";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

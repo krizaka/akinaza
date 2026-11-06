@@ -1,4 +1,4 @@
-// What Krizaka says on its page in Akinaza (akinaza#489): the company is Akinaza's first real client, and it enters this through the owner
+// What Krizaka says on its page in Folioviv (folioviv#489): the company is Folioviv's first real client, and it enters this through the owner
 // console like any client. Only what is true today: three products, all in development, and one offer on quote (no price is invented).
 export const SHOP = {
   name: "Krizaka",
@@ -8,8 +8,8 @@ export const SHOP = {
   slug: "krizaka",
   area: "Montréal",
   publicEmail: "bonjour@krizaka.com",
-  taglineFr: "Des outils de logiciel faits à Montréal : Yomizaka, Akinaza et Orazaka.",
-  taglineEn: "Software tools made in Montréal: Yomizaka, Akinaza and Orazaka.",
+  taglineFr: "Des outils de logiciel faits à Montréal : Verikora, Folioviv et Sovkora.",
+  taglineEn: "Software tools made in Montréal: Verikora, Folioviv and Sovkora.",
   bioFr: "Krizaka est une entreprise de logiciel de Montréal. Nous construisons trois produits, tous en développement et bâtis au grand jour, et nous accompagnons les équipes qui veulent adopter l'IA sans perdre la maîtrise de leurs données.",
   bioEn: "Krizaka is a software company in Montréal. We build three products, all in development and built in the open, and we help teams adopt AI without losing control of their data.",
   seatUnitFr: "personnes",
@@ -32,9 +32,9 @@ function product(name, host, [whatFr, whatEn], [promiseFr, promiseEn]) {
 }
 
 export const OFFERS = [
-  product("Yomizaka", "dev.yomizaka.com", ["Yomizaka lit un bail ou un document et en tire ce qui compte.", "Yomizaka reads a lease or a document and pulls out what matters."], ["Un produit bâti au grand jour", "A product built in the open"]),
-  product("Akinaza", "dev.akinaza.com", ["Akinaza donne une page, des rendez-vous, des factures et des livres aux petites entreprises de services.", "Akinaza gives small service businesses a page, bookings, invoices and books."], ["Elle prépare vos taxes, vous les produisez", "It prepares your taxes, you file them"]),
-  product("Orazaka", "dev.orazaka.com", ["Orazaka est le moteur d'IA souverain sur lequel nos produits s'appuient.", "Orazaka is the sovereign AI engine our products run on."], ["Un moteur que vous hébergez vous-même", "An engine you host yourself"]),
+  product("Verikora", "dev.verikora.com", ["Verikora lit un bail ou un document et en tire ce qui compte.", "Verikora reads a lease or a document and pulls out what matters."], ["Un produit bâti au grand jour", "A product built in the open"]),
+  product("Folioviv", "dev.folioviv.com", ["Folioviv donne une page, des rendez-vous, des factures et des livres aux petites entreprises de services.", "Folioviv gives small service businesses a page, bookings, invoices and books."], ["Elle prépare vos taxes, vous les produisez", "It prepares your taxes, you file them"]),
+  product("Sovkora", "dev.sovkora.com", ["Sovkora est le moteur d'IA souverain sur lequel nos produits s'appuient.", "Sovkora is the sovereign AI engine our products run on."], ["Un moteur que vous hébergez vous-même", "An engine you host yourself"]),
   {
     nameFr: "Krizaka Entreprise",
     nameEn: "Krizaka Entreprise",

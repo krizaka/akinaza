@@ -1,11 +1,11 @@
-import { actorOf, ensureShopWorkspace, workspaceOf } from "@akinaza/db";
+import { actorOf, ensureShopWorkspace, workspaceOf } from "@folioviv/db";
 import type { Query } from "@krizaka/organize";
 
 import { systemClock } from "@/app/system-clock";
 
 import { query, transaction } from "./db";
 
-/** « The workspace, organised » over the app's pool (akinaza#337): the shop's tags and saved views for clients and invoices. */
+/** « The workspace, organised » over the app's pool (folioviv#337): the shop's tags and saved views for clients and invoices. */
 const deps = { transaction, clock: systemClock };
 
 export const workspace = (shopId: string) => workspaceOf(deps, shopId);

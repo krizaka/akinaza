@@ -1,4 +1,4 @@
-import { computeFigures, DEFAULT_FIGURE_THRESHOLDS, nextActions } from "@akinaza/core";
+import { computeFigures, DEFAULT_FIGURE_THRESHOLDS, nextActions } from "@folioviv/core";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 

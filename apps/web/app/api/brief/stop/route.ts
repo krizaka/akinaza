@@ -1,4 +1,4 @@
-import { unsubscribeBrief } from "@akinaza/db";
+import { unsubscribeBrief } from "@folioviv/db";
 import { z } from "zod";
 
 import { db } from "@/lib/db";

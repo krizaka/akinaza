@@ -4,7 +4,7 @@ import { MEDIA_ROOT, type MediaStorage } from "./media-storage";
 
 /**
  * The owner's photos for the storefront (cover, gallery) and the files of a client's request: stored by `@krizaka/storage` (the
- * administrator's provider, the bytes checked by their magic number, content-hashed names) under `user/akinaza/shops/<shop>/…`, and
+ * administrator's provider, the bytes checked by their magic number, content-hashed names) under `user/folioviv/shops/<shop>/…`, and
  * answered as a CDN address — the only thing the database keeps. Off (fails closed) until the storage is configured.
  */
 // @fixed: the largest upload the server takes (the phone redraws a photo at 1920 px as a JPEG first, ~0.5–1.5 MB) — an abuse limit.
@@ -30,7 +30,7 @@ export const PURPOSE_FEATURE = {
 } as const satisfies Partial<Record<MediaPurpose, `features.${string}`>>;
 
 export function mediaPrefix(shopId: string, purpose: MediaPurpose): string {
-  return `user/akinaza/shops/${shopId}/${purposeDirectory[purpose]}/`;
+  return `user/folioviv/shops/${shopId}/${purposeDirectory[purpose]}/`;
 }
 
 const IMAGES = ["image/jpeg", "image/png", "image/webp"] as const;
@@ -60,7 +60,7 @@ export async function storeVideo(media: MediaStorage, shopId: string, bytes: Uin
 // @fixed: the largest file attached to a client's request (a photo redrawn by the phone, or a short PDF) — an abuse limit.
 export const MAX_REQUEST_FILE_BYTES = 5 * 1024 * 1024;
 
-/** What a client may attach to a request (akinaza#210): a JPEG, PNG or WebP image, or a PDF — by its bytes, never its name. */
+/** What a client may attach to a request (folioviv#210): a JPEG, PNG or WebP image, or a PDF — by its bytes, never its name. */
 export function detectRequestFile(bytes: Uint8Array): { ext: "jpg" | "png" | "webp" | "pdf"; mime: string; kind: "image" | "pdf" } | null {
   const image = detectImage(bytes);
   if (image) return { ...image, kind: "image" };
@@ -77,7 +77,7 @@ export async function storeRequestFile(media: MediaStorage, shopId: string, requ
 
 /**
  * Removes a stored file by its CDN address (a deleted request, an erased client). Only an address of this storage's CDN under
- * `user/akinaza/` is accepted: nothing else can be deleted through it. Answers whether the storage removed it (a file already
+ * `user/folioviv/` is accepted: nothing else can be deleted through it. Answers whether the storage removed it (a file already
  * gone counts as removed).
  */
 export async function deleteStored(media: MediaStorage, url: string): Promise<boolean> {

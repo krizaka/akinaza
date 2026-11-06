@@ -11,7 +11,7 @@ import { signInUrl } from "@/lib/next-url";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
-/** No session, no page. The frame is drawn below, where the shop (or the lack of one) is known. The administration lives apart (admin.akinaza.com). */
+/** No session, no page. The frame is drawn below, where the shop (or the lack of one) is known. The administration lives apart (admin.folioviv.com). */
 export default async function MemberLayout({ children, params }: { children: React.ReactNode; params: Promise<{ locale: string }> }) {
   const locale = asLocale((await params).locale);
   if (!(await pageSession())) redirect(signInUrl(locale, (await headers()).get(PATH_HEADER)));

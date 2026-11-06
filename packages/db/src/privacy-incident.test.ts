@@ -17,11 +17,11 @@ afterAll(async () => t.drop());
 it("keeps one register per scope on the real database, and an entry until its retention ends", async () => {
   const run = queryOf(t.db);
   const register = createIncidentRegister({ clock: { now: () => new Date() } });
-  const actor = { id: null, label: "admin@akinaza.test" };
-  const mine = await register.open(run, { scope: "akinaza", kind: "loss", description: "A laptop was lost.", information: ["invoice"] }, actor);
-  await register.open(run, { scope: "yomizaka", kind: "access", description: "Another tenant.", information: ["lease"] }, actor);
-  expect((await register.list(run, "akinaza")).map((i) => i.id)).toEqual([mine.id]);
-  expect(await register.get(run, "yomizaka", mine.id)).toBeNull();
-  await expect(register.close(run, "yomizaka", mine.id, actor)).rejects.toMatchObject({ code: "INCIDENT_UNKNOWN" });
+  const actor = { id: null, label: "admin@folioviv.test" };
+  const mine = await register.open(run, { scope: "folioviv", kind: "loss", description: "A laptop was lost.", information: ["invoice"] }, actor);
+  await register.open(run, { scope: "verikora", kind: "access", description: "Another tenant.", information: ["lease"] }, actor);
+  expect((await register.list(run, "folioviv")).map((i) => i.id)).toEqual([mine.id]);
+  expect(await register.get(run, "verikora", mine.id)).toBeNull();
+  await expect(register.close(run, "verikora", mine.id, actor)).rejects.toMatchObject({ code: "INCIDENT_UNKNOWN" });
   await expect(run("DELETE FROM privacy.incident WHERE id = $1", [mine.id])).rejects.toThrow(/retention/);
 });

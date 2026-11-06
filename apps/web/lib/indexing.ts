@@ -23,7 +23,7 @@ export const closedRobots = (siteUrl?: string): string => {
 const bare = (host: string | null | undefined) => (host ?? "").trim().toLowerCase().replace(/:\d+$/, "");
 export const publicHost = (env: Record<string, string | undefined> = process.env): string => {
   try {
-    return bare(new URL(env.APP_PUBLIC_URL ?? "https://www.akinaza.com").host);
+    return bare(new URL(env.APP_PUBLIC_URL ?? "https://www.folioviv.com").host);
   } catch {
     return "";
   }

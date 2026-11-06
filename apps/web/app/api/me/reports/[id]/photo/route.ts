@@ -1,4 +1,4 @@
-import { reportPhoto } from "@akinaza/db";
+import { reportPhoto } from "@folioviv/db";
 
 import { requireOwnClient } from "@/lib/access";
 import { db } from "@/lib/db";

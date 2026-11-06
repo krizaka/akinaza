@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
 
+import { requestNow } from "@/app/request-now";
 import { downloadPageOpen } from "@/lib/downloads";
 import { LOCALES } from "@/lib/i18n";
 import { pagePath, PAGES, SITE_URL } from "@/lib/site";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-static";
 

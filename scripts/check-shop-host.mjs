@@ -1,4 +1,4 @@
-// A seeded shop through its own domain, end to end (ADR-005 slices 4-5, akinaza#538, #549). Against a built server that declares APP_SHOP_DOMAIN
+// A seeded shop through its own domain, end to end (ADR-005 slices 4-5, folioviv#538, #549). Against a built server that declares APP_SHOP_DOMAIN
 // (ci-after-build.sh starts one on its own port): the shop answers on <slug>.<shop domain> with its strict policy and no cookie of the app, the booking's last
 // step is a hop to the app, an unknown shop is a 404, the old addresses are 308s, and the shop host has its own robots.txt, sitemap and canonical.
 // Usage: node scripts/check-shop-host.mjs --base http://127.0.0.1:3001 --shop-domain shops.localhost --slug pattes-saint-henri --port 3001
@@ -69,7 +69,7 @@ async function main() {
   const problems = [];
   const expect = (ok, what) => ok || problems.push(what);
 
-  const page = await ask(base, shopHost, "/fr", { cookie: "akinaza_session=forged; theme=dark" });
+  const page = await ask(base, shopHost, "/fr", { cookie: "folioviv_session=forged; theme=dark" });
   problems.push(...shopPageProblems(page, { origin, appOrigin }).map((p) => `GET ${shopHost}/fr: ${p}`));
   expect(!page.body.includes("forged"), "the session cookie reached the page");
 

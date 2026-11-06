@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 
-import { shopRolesOver } from "@akinaza/db";
+import { shopRolesOver } from "@folioviv/db";
 import { RolesError } from "@krizaka/auth";
 
 import { query } from "./db";

@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest";
 import { sealField } from "./crypto";
 import { GUARDED_DIGITS, leaksPlaintext } from "./plaintext-leak";
 
-/** akinaza#358: random ciphertext, ids and hashes hold any short run of digits; only the plaintext itself is a leak. */
-describe("the privacy check never reads digit runs in random bytes (akinaza#358)", () => {
+/** folioviv#358: random ciphertext, ids and hashes hold any short run of digits; only the plaintext itself is a leak. */
+describe("the privacy check never reads digit runs in random bytes (folioviv#358)", () => {
   const secret = "Code 4821, clé sous le pot de lavande";
 
   it("passes a ciphertext that holds every guarded digit sequence", () => {

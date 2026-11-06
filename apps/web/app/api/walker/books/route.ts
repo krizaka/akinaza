@@ -1,17 +1,17 @@
-import { prepareShopReturn, shopDay } from "@akinaza/db";
+import { prepareShopReturn, shopDay } from "@folioviv/db";
 
+import { requestNow } from "@/app/request-now";
 import { requireShop } from "@/lib/access";
 import { booksView, periodChoices, periodFor } from "@/lib/books";
 import { queryOf } from "@/lib/day-param";
 import { db } from "@/lib/db";
 import { handle } from "@/lib/http";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
 /**
  * « Livres » for the apps (D8): the period's combined GST/QST return (`?period=2026-Q3` or `2026-02`, the latest completed quarter
- * by default), prepared from the ledger as the web's page prepares it. Prepared only: the merchant files it, Akinaza never does.
+ * by default), prepared from the ledger as the web's page prepares it. Prepared only: the merchant files it, Folioviv never does.
  */
 export function GET(req: Request) {
   return handle(async () => {

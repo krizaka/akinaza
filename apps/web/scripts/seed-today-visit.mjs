@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 // Test-only: one visit TODAY for the demo owner (the Saint-Henri walker), one hour after the clock, so the phone's Maestro flow
-// "Aujourd'hui" always goes list, detail, start, finish whatever time CI runs (krizaka/akinaza#433). The clock is `new Date()`, or
+// "Aujourd'hui" always goes list, detail, start, finish whatever time CI runs (krizaka/folioviv#433). The clock is `new Date()`, or
 // SEED_NOW (an ISO instant) to replay a time; the date is never typed here. Run after seed-saint-henri.mjs; idempotent.
 //
-//   DATABASE_URL=… pnpm --filter @akinaza/web exec tsx scripts/seed-today-visit.mjs
-import { createDb, pg, poolConfig } from "@akinaza/db";
-import { seedTodayVisit } from "@akinaza/db/seed-walker";
+//   DATABASE_URL=… pnpm --filter @folioviv/web exec tsx scripts/seed-today-visit.mjs
+import { createDb, pg, poolConfig } from "@folioviv/db";
+import { seedTodayVisit } from "@folioviv/db/seed-walker";
 
 async function main() {
   if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is missing");

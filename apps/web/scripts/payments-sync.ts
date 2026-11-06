@@ -14,7 +14,7 @@ import { appPrices } from "../lib/price-catalogue";
 
 const plans = JSON.parse(readFileSync(fileURLToPath(new URL("../../../infra/payments/plans.json", import.meta.url)), "utf8")) as ProcessorPlans;
 const catalogue = processorCatalogue(plans, await appPrices().catalogue(new Date()));
-const dir = mkdtempSync(join(tmpdir(), "akinaza-catalogue-"));
+const dir = mkdtempSync(join(tmpdir(), "folioviv-catalogue-"));
 const file = join(dir, "catalogue.json");
 try {
   writeFileSync(file, JSON.stringify(catalogue), { mode: 0o600 });

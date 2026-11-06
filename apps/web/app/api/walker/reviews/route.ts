@@ -1,5 +1,5 @@
-import { reviewScore } from "@akinaza/core";
-import { reviewsOf } from "@akinaza/db";
+import { reviewScore } from "@folioviv/core";
+import { reviewsOf } from "@folioviv/db";
 
 import { requireShop } from "@/lib/access";
 import { reviewRules } from "@/lib/community";

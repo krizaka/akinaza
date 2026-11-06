@@ -17,11 +17,11 @@ import { query as run } from "./db";
 import { refuse } from "./http";
 
 /**
- * The confidentiality incident register (Loi 25, akinaza#392) on `@krizaka/privacy`: the administration opens an incident, assesses the
+ * The confidentiality incident register (Loi 25, folioviv#392) on `@krizaka/privacy`: the administration opens an incident, assesses the
  * risk of serious injury, records the notices to the Commission and to the people concerned, closes it, and exports the register.
  * The register holds the facts and no personal data of the people concerned. Its scope is this product: another scope is never read.
  */
-export const INCIDENT_SCOPE = "akinaza";
+export const INCIDENT_SCOPE = "folioviv";
 
 /** The pool's SQL runner, typed as the register asks. */
 const query: Query = async <T = Record<string, unknown>>(text: string, params?: unknown[]) => (await run(text, params)) as T[];
@@ -123,6 +123,6 @@ export async function exportIncidentRegister(actor: Actor, format: "json" | "csv
   await audit({ action: "privacy.incident_register_exported", actorId: actor.id, actorLabel: actor.email, detail: { format, entries: document.entries.length }, headers });
   const day = document.generatedAt.slice(0, 10);
   return format === "csv"
-    ? { body: registerToCsv(document.entries), type: "text/csv; charset=utf-8", filename: `akinaza-incident-register-${day}.csv` }
-    : { body: JSON.stringify(document, null, 2), type: "application/json; charset=utf-8", filename: `akinaza-incident-register-${day}.json` };
+    ? { body: registerToCsv(document.entries), type: "text/csv; charset=utf-8", filename: `folioviv-incident-register-${day}.csv` }
+    : { body: JSON.stringify(document, null, 2), type: "application/json; charset=utf-8", filename: `folioviv-incident-register-${day}.json` };
 }

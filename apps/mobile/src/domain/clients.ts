@@ -1,4 +1,4 @@
-import type { ShopClient } from "@akinaza/core";
+import type { ShopClient } from "@folioviv/core";
 
 const plain = (text: string) => text.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
 

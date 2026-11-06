@@ -1,5 +1,5 @@
-import { currentAnnouncements, type ReelTransition, reviewScore, type ScoreRules, WALL_KIND, type WallTexture } from "@akinaza/core";
-import type { CommunityView } from "@akinaza/db";
+import { currentAnnouncements, type ReelTransition, reviewScore, type ScoreRules, WALL_KIND, type WallTexture } from "@folioviv/core";
+import type { CommunityView } from "@folioviv/db";
 
 import { type Locale, translator } from "@/lib/i18n";
 

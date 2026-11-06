@@ -18,7 +18,7 @@ type Handler = (req: Request) => Promise<Response>;
 
 describe.runIf(enabled)("an owner adds shops", () => {
   const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
-  const email = `owner-${stamp}@akinaza.test`;
+  const email = `owner-${stamp}@folioviv.test`;
   let session = "";
   const page = (n: number) => ({ name: `Atelier ${n}`, legalName: `Atelier ${n} inc.`, address: `${n} rue Exemple, Montréal QC`, slug: `limit-${stamp}-${n}`, ownerName: "Éric", businessType: "professional" });
   const call = async (handler: Handler, url: string, body: unknown) => {
@@ -35,7 +35,7 @@ describe.runIf(enabled)("an owner adds shops", () => {
   });
   beforeEach(() => resetRateLimits());
   afterAll(async () => {
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@folioviv.test`]);
     vi.unstubAllEnvs();
     await pool().end();
   });

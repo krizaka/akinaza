@@ -21,7 +21,7 @@ const open = async (status = 201) => {
   return { media, calls };
 };
 
-describe("a client's request files (akinaza#210)", () => {
+describe("a client's request files (folioviv#210)", () => {
   it("a photo or a PDF, by its bytes; anything else is refused", () => {
     expect(detectRequestFile(jpeg)).toMatchObject({ kind: "image", ext: "jpg" });
     expect(detectRequestFile(pdf)).toEqual({ ext: "pdf", mime: "application/pdf", kind: "pdf" });
@@ -33,16 +33,16 @@ describe("a client's request files (akinaza#210)", () => {
     const { media, calls } = await open();
     const stored = await storeRequestFile(media, SHOP, REQUEST, pdf);
     expect(stored.kind).toBe("pdf");
-    expect(stored.url).toMatch(new RegExp(`^https://cdn\\.example/user/akinaza/shops/${SHOP}/requests/${REQUEST}/file\\.[0-9a-f]{10}\\.pdf$`));
+    expect(stored.url).toMatch(new RegExp(`^https://cdn\\.example/user/folioviv/shops/${SHOP}/requests/${REQUEST}/file\\.[0-9a-f]{10}\\.pdf$`));
     expect(calls[0]).toMatchObject({ url: stored.url.replace("https://cdn.example/", "https://storage.example/zone-x/"), method: "PUT" });
   });
 
   it("deleting reaches only this zone's own files, and a file already gone counts as removed", async () => {
     const { media, calls } = await open(404);
-    const key = `user/akinaza/shops/${SHOP}/requests/${REQUEST}/0123456789abcdef.jpg`;
+    const key = `user/folioviv/shops/${SHOP}/requests/${REQUEST}/0123456789abcdef.jpg`;
     expect(await deleteStored(media, `https://cdn.example/${key}`)).toBe(true);
     expect(calls).toEqual([{ url: `https://storage.example/zone-x/${key}`, method: "DELETE", headers: { AccessKey: "test-access-value" } }]);
-    for (const url of ["https://elsewhere.example/user/akinaza/x.jpg", "https://cdn.example/site/home/backdrop.jpg", "https://cdn.example/user/akinaza/../../site/x"]) expect(await deleteStored(media, url)).toBe(false);
+    for (const url of ["https://elsewhere.example/user/folioviv/x.jpg", "https://cdn.example/site/home/backdrop.jpg", "https://cdn.example/user/folioviv/../../site/x"]) expect(await deleteStored(media, url)).toBe(false);
     expect(calls).toHaveLength(1);
   });
 });

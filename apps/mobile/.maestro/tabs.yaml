@@ -1,6 +1,6 @@
 # The five tabs of the shop (D8), signed in as the demo shop's owner: maestro test .maestro/tabs.yaml -e PERSONA_EMAIL=… -e PERSONA_PASSWORD=…
 # (a simulator with the app installed and a dev backend with the demo shop; in CI mobile-e2e.yml makes both, the login never comes from this file).
-appId: com.krizaka.akinaza
+appId: com.krizaka.folioviv
 tags:
   - ci
 ---

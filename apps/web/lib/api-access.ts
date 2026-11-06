@@ -6,8 +6,8 @@ import { refuse } from "./http";
 import { limit } from "./rate-limit";
 import { appSettings, assertFeature } from "./settings";
 
-/** Akinaza's API-key rules — data. Keys are `akz_…`; each scope is read-only for now. */
-export const AKINAZA_API_KEY_RULES: ApiKeyRules = {
+/** Folioviv's API-key rules — data. Keys are `akz_…`; each scope is read-only for now. */
+export const FOLIOVIV_API_KEY_RULES: ApiKeyRules = {
   prefix: "akz",
   scopes: ["bookings:read", "clients:read", "invoices:read", "reports:read"],
   secretBytes: 24,
@@ -17,7 +17,7 @@ export const AKINAZA_API_KEY_RULES: ApiKeyRules = {
 };
 
 
-export const apiKeys = (clock: Clock): ApiKeys => createApiKeys({ store: pgApiKeyStore(query), rules: AKINAZA_API_KEY_RULES, clock });
+export const apiKeys = (clock: Clock): ApiKeys => createApiKeys({ store: pgApiKeyStore(query), rules: FOLIOVIV_API_KEY_RULES, clock });
 
 /** The HTTP answer of each refusal of the module: stable codes the page translates and the API documents. */
 const ANSWER: Record<ApiKeyCode, number> = {

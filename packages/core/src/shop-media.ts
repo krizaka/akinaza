@@ -4,7 +4,7 @@
  * Shop types and slot ids are shared with the storefront templates (#261).
  */
 
-/** The trades Akinaza serves. Never restaurants, cafés or bars (AGENTS section 2). */
+/** The trades Folioviv serves. Never restaurants, cafés or bars (AGENTS section 2). */
 export const SHOP_TYPES = ["salon", "coaching", "workshop", "cleaning", "pets", "consulting"] as const;
 export type ShopType = (typeof SHOP_TYPES)[number];
 
@@ -31,7 +31,7 @@ export const DEFAULT_SLOT_IDS = Object.keys(DEFAULT_SLOTS) as DefaultSlot[];
 
 export const RENDITION_FORMATS = ["avif", "webp"] as const;
 
-/** Where the defaults live, as logical paths under `apps/akinaza/` on the media zone (ADR-014 layout v2). */
+/** Where the defaults live, as logical paths under `apps/folioviv/` on the media zone (ADR-014 layout v2). */
 export const DEFAULTS_ROOT = "defaults";
 
 export interface DefaultMedia {

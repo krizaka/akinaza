@@ -1,4 +1,4 @@
-import { parseFieldKey, saveEditedTranslation, shopLanguagesOf,translatableFields } from "@akinaza/db";
+import { parseFieldKey, saveEditedTranslation, shopLanguagesOf,translatableFields } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireOwner } from "@/lib/access";

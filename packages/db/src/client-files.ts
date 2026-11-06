@@ -1,4 +1,4 @@
-import type { DependantProfile } from "@akinaza/core";
+import type { DependantProfile } from "@folioviv/core";
 import { and, asc, desc, eq, isNull, sql } from "drizzle-orm";
 
 import type { Db } from "./client";

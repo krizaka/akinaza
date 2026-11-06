@@ -6,7 +6,7 @@ import { privacySchema } from "@krizaka/privacy";
  * (`@krizaka/privacy` v1: consents written once, the record of each export and erasure), then the shop clients' consents moved into
  * it - subject `client`, the client file's id - and the old table dropped. One source of truth for a consent.
  */
-export const PRIVACY_MIGRATION_HEADER = "-- Privacy (@krizaka/privacy, akinaza#370): consents by purpose written once, the record of exports and erasures. The clients' consents move here.\n";
+export const PRIVACY_MIGRATION_HEADER = "-- Privacy (@krizaka/privacy, folioviv#370): consents by purpose written once, the record of exports and erasures. The clients' consents move here.\n";
 
 export const PRIVACY_MIGRATION_BACKFILL = `
 -- The decisions made so far, in their order: the sequence keeps the last word of each purpose where it was.

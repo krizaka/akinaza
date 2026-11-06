@@ -1,4 +1,4 @@
-import { saveShopPage, shopPageSchema, shopsOfOwner } from "@akinaza/db";
+import { saveShopPage, shopPageSchema, shopsOfOwner } from "@folioviv/db";
 
 import { requireSession } from "@/lib/access";
 import { db } from "@/lib/db";

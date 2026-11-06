@@ -30,7 +30,7 @@ export const dependantInputSchema = z.object({ kind: z.enum(DEPENDANT_KINDS), na
 export type DependantInput = z.infer<typeof dependantInputSchema>;
 
 /** A shop page address: lowercase words joined by hyphens, never a word the site itself uses. « krizaka » is not here: the company opens its own shop on it through the held-address review (the `slugs.protectedTerms` setting holds it until an administrator clears it, #489). */
-export const RESERVED_SLUGS = ["admin", "api", "app", "en", "fr", "s", "report", "privacy", "sign-in", "sign-up", "forgot-password", "reset-password", "console", "akinaza", "www", "dev"] as const;
+export const RESERVED_SLUGS = ["admin", "api", "app", "en", "fr", "s", "report", "privacy", "sign-in", "sign-up", "forgot-password", "reset-password", "console", "folioviv", "www", "dev"] as const;
 export const slugSchema = z
   .string()
   .trim()
@@ -173,7 +173,7 @@ export const shopRulesSchema = z.object({
   slotStepMinutes: z.number().int().min(5).max(240),
   minNoticeMinutes: z.number().int().min(0).max(10_080),
   reportLinkDays: z.number().int().min(1).max(365),
-  /** The terms new invoices are issued under, in days; 0 = due on receipt (krizaka/akinaza#113). */
+  /** The terms new invoices are issued under, in days; 0 = due on receipt (krizaka/folioviv#113). */
   paymentTermsDays: z.number().int().min(0).max(365),
 });
 export type ShopRules = z.infer<typeof shopRulesSchema>;

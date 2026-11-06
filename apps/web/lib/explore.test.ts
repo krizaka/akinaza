@@ -1,4 +1,4 @@
-import type { ExploreShop } from "@akinaza/core";
+import type { ExploreShop } from "@folioviv/core";
 import { describe, expect, it } from "vitest";
 
 import { distanceLabel, mapCenter } from "./explore";

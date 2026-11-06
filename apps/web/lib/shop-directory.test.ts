@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { createShopDirectory, forgetShops, type ShopVerdict, verdictFromAnswer } from "./shop-directory";
 
-/** ADR-005 slice 4 (akinaza#549): the proxy asks whether a shop host names a shop, through a short, bounded memory. */
+/** ADR-005 slice 4 (folioviv#549): the proxy asks whether a shop host names a shop, through a short, bounded memory. */
 describe("the shop directory", () => {
   it("reads the internal route's answer", () => {
     expect(verdictFromAnswer({ slug: "salon" })).toEqual({ kind: "shop" });

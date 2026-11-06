@@ -13,7 +13,7 @@ describe("the bilingual e-mail templates (krizaka-notifications format)", () => 
     for (const id of Object.keys(MAIL_TEMPLATES) as MailTemplateId[]) {
       const declared = [...Object.keys(MAIL_TEMPLATES[id]), "product"].sort();
       for (const locale of MAIL_LOCALES) {
-        const rendered = renderMailTemplate(id, preview(id), { locale, appUrl: "https://dev.akinaza.com", dir: DIR });
+        const rendered = renderMailTemplate(id, preview(id), { locale, appUrl: "https://dev.folioviv.com", dir: DIR });
         expect(rendered.locale).toBe(locale);
         expect(rendered.subject.length).toBeGreaterThan(5);
         expect(rendered.html).toContain(`lang="${locale}"`);
@@ -28,7 +28,7 @@ describe("the bilingual e-mail templates (krizaka-notifications format)", () => 
   it("never promises to file or transmit a tax return, in either language", () => {
     for (const id of Object.keys(MAIL_TEMPLATES) as MailTemplateId[]) {
       for (const locale of MAIL_LOCALES) {
-        const r = renderMailTemplate(id, preview(id), { locale, appUrl: "https://dev.akinaza.com", dir: DIR });
+        const r = renderMailTemplate(id, preview(id), { locale, appUrl: "https://dev.folioviv.com", dir: DIR });
         expect(`${r.subject} ${r.text}`).not.toMatch(/e-?fil|t[ée]l[ée]transm|transmis|file your return|produit pour vous/i);
       }
     }

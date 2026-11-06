@@ -8,7 +8,7 @@ import { revokeSession } from "@/lib/session";
 
 const jar = vi.hoisted(() => ({ get: vi.fn(), set: vi.fn() }));
 const asked = vi.hoisted(() => ({ path: null as string | null }));
-vi.mock("next/headers", () => ({ cookies: async () => jar, headers: async () => new Headers(asked.path ? { "x-akinaza-path": asked.path } : {}) }));
+vi.mock("next/headers", () => ({ cookies: async () => jar, headers: async () => new Headers(asked.path ? { "x-folioviv-path": asked.path } : {}) }));
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((to: string) => {
     throw new Error(`REDIRECT ${to}`);
@@ -17,7 +17,7 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/lib/access", async (original) => ({ ...(await original<typeof import("@/lib/access")>()), pageSession: vi.fn() }));
 vi.mock("@/lib/session", async (original) => ({ ...(await original<typeof import("@/lib/session")>()), revokeSession: vi.fn() }));
 
-/** The gate behind the bar (krizaka/akinaza#255): the bar is a hint, the app and the API check the real session. */
+/** The gate behind the bar (krizaka/folioviv#255): the bar is a hint, the app and the API check the real session. */
 describe("signed out, the app is closed", () => {
   it.each(["en", "fr"])("a visitor of /%s/app/** is sent to sign-in", async (locale) => {
     vi.mocked(pageSession).mockResolvedValue(null);
@@ -38,13 +38,13 @@ describe("signed out, the app is closed", () => {
 
   it("the API answers 401 without a session, with a forged cookie too", async () => {
     expect((await profile(new Request("http://localhost/api/me/profile"))).status).toBe(401);
-    expect((await profile(new Request("http://localhost/api/me/profile", { headers: { cookie: "akinaza_session=forged" } }))).status).toBe(401);
+    expect((await profile(new Request("http://localhost/api/me/profile", { headers: { cookie: "folioviv_session=forged" } }))).status).toBe(401);
   });
 
   it("signing out revokes the session and clears the cookie", async () => {
     jar.get.mockReturnValue({ value: `as1.${"B".repeat(43)}` });
     expect((await signOut(new Request("http://localhost/api/auth/sign-out", { method: "POST" }))).status).toBe(204);
     expect(revokeSession).toHaveBeenCalledWith(`as1.${"B".repeat(43)}`);
-    expect(jar.set).toHaveBeenCalledWith(expect.objectContaining({ name: "akinaza_session", value: "", maxAge: 0, path: "/" }));
+    expect(jar.set).toHaveBeenCalledWith(expect.objectContaining({ name: "folioviv_session", value: "", maxAge: 0, path: "/" }));
   });
 });

@@ -48,7 +48,7 @@ describe("the home is short and concrete", () => {
   it("each screen is a real capture with its text and alt in both languages, on the CDN", () => {
     for (const locale of ["en", "fr"] as const) {
       for (const { id } of SCREENS) {
-        const base = `${MEDIA_CDN}/sites/akinaza/tour/phone-${id}-${locale}.`;
+        const base = `${MEDIA_CDN}/sites/folioviv/tour/phone-${id}-${locale}.`;
         expect(screenStill(id, locale).startsWith(base)).toBe(true);
         expect(screenStill(id, locale).slice(base.length)).toMatch(/^[0-9a-f]{10}\.jpg$/);
         for (const m of [en, fr]) expect(m.landing.screens[id].title && m.landing.screens[id].text && m.landing.screens[id].alt, id).toBeTruthy();
@@ -76,7 +76,7 @@ describe("the home is short and concrete", () => {
 });
 
 describe("the words are plain: no AI, no hype, no engine on the public pages", () => {
-  const HYPE = /\bIA\b|\bAI\b|intelligen|artificial|assistant|orazaka|révolution|revolution|magic|magique|cutting-edge|game-chang/i;
+  const HYPE = /\bIA\b|\bAI\b|intelligen|artificial|assistant|sovkora|révolution|revolution|magic|magique|cutting-edge|game-chang/i;
   it("the landing, the meta and llms.txt never say it", () => {
     for (const m of [en, fr]) expect(words([m.landing, m.meta]).filter((w) => HYPE.test(w))).toEqual([]);
     expect(llmsText()).not.toMatch(HYPE);
@@ -151,7 +151,7 @@ describe("the responsive guard", () => {
   });
 });
 
-describe("the hero follows the session (krizaka/akinaza#285)", () => {
+describe("the hero follows the session (krizaka/folioviv#285)", () => {
   const label = (dict: typeof en, message: "openShop" | "tryDemo" | "signIn") => dict.landing.actions[message];
 
   it("signed out, EN: « Try the demo shop » first, « Sign in » second", () => {

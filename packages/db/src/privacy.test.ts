@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { RETENTION_RULES } from "@akinaza/core";
+import { RETENTION_RULES } from "@folioviv/core";
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -40,7 +40,7 @@ describe("consents by purpose (the shared module)", () => {
     expect(await (await clientPrivacy(t.db)).hasConsent(queryOf(t.db), clientSubject(s.client.id), "marketing")).toBe(false);
   });
 
-  it("refuses a purpose Akinaza did not declare", async () => {
+  it("refuses a purpose Folioviv did not declare", async () => {
     const s = await salon(t.db);
     await expect((await clientPrivacy(t.db)).recordConsent(queryOf(t.db), { subject: clientSubject(s.client.id), purpose: "advertising", version: "v1", granted: true })).rejects.toThrow(/did not declare|not one the product declared/);
   });
@@ -63,9 +63,9 @@ describe("the right of access holds every module's data, and the erasure leaves 
   it("exports the requests with the addresses of their files", async () => {
     const w = await walkerShop(t.db, "pr");
     const requestId = await saveClientRequest(t.db, w.camille.clientId, { serviceId: w.solo, title: "Une demande", note: "bonjour" });
-    await addClientRequestFile(t.db, w.camille.clientId, requestId, { url: "https://cdn.example/user/akinaza/r/a.pdf", kind: "pdf", bytes: 10 });
+    await addClientRequestFile(t.db, w.camille.clientId, requestId, { url: "https://cdn.example/user/folioviv/r/a.pdf", kind: "pdf", bytes: 10 });
     const document = await exportClient(t.db, Buffer.alloc(32, 1), w.camille.clientId);
-    expect(document.modules.requests).toMatchObject([{ title: "Une demande", files: [{ url: "https://cdn.example/user/akinaza/r/a.pdf", kind: "pdf" }] }]);
+    expect(document.modules.requests).toMatchObject([{ title: "Une demande", files: [{ url: "https://cdn.example/user/folioviv/r/a.pdf", kind: "pdf" }] }]);
   });
 
   it("erases every module in one transaction and leaves the invoices, their lines and the ledger (six years)", async () => {

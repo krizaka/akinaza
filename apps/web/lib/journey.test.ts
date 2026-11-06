@@ -1,7 +1,7 @@
-import type { BookingDetail, PublicShop, StaffSlot } from "@akinaza/db";
+import { canCancel } from "@folioviv/core";
+import type { BookingDetail, PublicShop, StaffSlot } from "@folioviv/db";
 import { describe, expect, it } from "vitest";
 
-import { canCancel } from "@akinaza/core";
 import { cancellationRule, confirmationStep, guestStep, serviceStep, timesHref, timesStep } from "./journey";
 
 const TZ = "America/Toronto";

@@ -1,14 +1,14 @@
-import { localDay } from "@akinaza/core";
-import { invoiceByToken, invoiceReplacementByToken } from "@akinaza/db";
+import { localDay } from "@folioviv/core";
+import { invoiceByToken, invoiceReplacementByToken } from "@folioviv/db";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
+import { requestNow } from "@/app/request-now";
 import { InvoicePublicDocument } from "@/components/app/InvoicePublicDocument";
 import { PrintInvoiceButton } from "@/components/app/PrintInvoiceButton";
 import { db } from "@/lib/db";
 import { asLocale } from "@/lib/i18n";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false }, referrer: "no-referrer" };
@@ -21,7 +21,7 @@ export default async function PublicInvoicePage({ params, searchParams }: Readon
   const invoice = replacementId
     ? await invoiceReplacementByToken(db(), token, replacementId, requestNow())
     : await invoiceByToken(db(), token, requestNow());
-  // An unknown or expired link is a 404, with the product's calm not-found page (akinaza#381).
+  // An unknown or expired link is a 404, with the product's calm not-found page (folioviv#381).
   if (!invoice) notFound();
   return (
     <>

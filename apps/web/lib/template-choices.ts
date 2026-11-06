@@ -1,5 +1,5 @@
-import { latestTemplate, preselectedTemplate, type ShopType, type Template, templatesFor } from "@akinaza/core";
-import type { ShopPageConfig } from "@akinaza/db";
+import { latestTemplate, preselectedTemplate, type ShopType, type Template, templatesFor } from "@folioviv/core";
+import type { ShopPageConfig } from "@folioviv/db";
 
 /**
  * What the template picker needs for one shop (#261, step 4): the templates the administrator offers for its trade (latest version each), the one the picker

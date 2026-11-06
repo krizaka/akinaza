@@ -5,7 +5,7 @@ import { NotFoundPage } from "./NotFoundPage";
 
 const text = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
 
-describe("the 404 of an unknown address is branded, in the language of the address (krizaka/akinaza#299)", () => {
+describe("the 404 of an unknown address is branded, in the language of the address (krizaka/folioviv#299)", () => {
   it("/fr/nope: the code, the French words and the way back to the French home", () => {
     const html = renderToStaticMarkup(<NotFoundPage locale="fr" />);
     expect(text(html)).toContain("404");

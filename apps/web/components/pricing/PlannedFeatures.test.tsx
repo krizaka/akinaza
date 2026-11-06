@@ -7,7 +7,7 @@ import en from "../../messages/en.json";
 import fr from "../../messages/fr.json";
 import { PlannedFeatures } from "./PlannedFeatures";
 
-describe("what is planned on the pricing page (akinaza#440)", () => {
+describe("what is planned on the pricing page (folioviv#440)", () => {
   const html = renderToStaticMarkup(<PlannedFeatures title={en.pricing.plannedTitle} soon={en.pricing.soon} items={["Your clients' payments", "The signed order contract"]} />);
 
   it("wears a Soon chip on every line and no tick", () => {

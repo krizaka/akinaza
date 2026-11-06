@@ -1,9 +1,9 @@
-import { RESERVED_SLUGS } from "@akinaza/core";
+import { RESERVED_SLUGS } from "@folioviv/core";
 
 import { SITE_URL } from "./site";
 
 /**
- * Two sites, one app: dev.akinaza.com (the product) and admin.akinaza.com (the administration console). The proxy
+ * Two sites, one app: dev.folioviv.com (the product) and admin.folioviv.com (the administration console). The proxy
  * decides by the host: on the admin host every page is the console (`/en/users` is served by `/en/console/users`) and
  * nothing else; on the product host the console does not exist (404). Pure, so it is tested without a server.
  */
@@ -14,8 +14,8 @@ const PLATFORM_HOSTS = new Set(["www", "dev", "admin", "api", "app", "mail", "cn
 const SLUG = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 /**
- * A shop's own address (krizaka/akinaza#77, level 2): `<slug>.akinaza.com` is the shop page, `apex` the platform's domain
- * (akinaza.com). One label, a well-formed slug, never a platform host; null for anything else.
+ * A shop's own address (krizaka/folioviv#77, level 2): `<slug>.folioviv.com` is the shop page, `apex` the platform's domain
+ * (folioviv.com). One label, a well-formed slug, never a platform host; null for anything else.
  */
 export function shopOfHost(host: string | null | undefined, apex: string): string | null {
   const name = (host ?? "").toLowerCase().replace(/:\d+$/, "");

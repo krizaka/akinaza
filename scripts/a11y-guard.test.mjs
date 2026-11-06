@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-// The accessibility guard (a bug means a missing guard; akinaza#445 left « contrast not measured »): axe-core WCAG 2.1 AA in the
+// The accessibility guard (a bug means a missing guard; folioviv#445 left « contrast not measured »): axe-core WCAG 2.1 AA in the
 // dev-preview crawl, held by a ratchet baseline that only goes down.
 const read = (name) => readFileSync(new URL(`../${name}`, import.meta.url), "utf8");
 

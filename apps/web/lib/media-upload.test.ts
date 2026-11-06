@@ -47,7 +47,7 @@ describe("what an owner may upload", () => {
   it("the storage refuses a type that is not allowed and a size over the limit, with the package's codes", async () => {
     const { media } = await open();
     await expect(storeImage(media, SHOP, new TextEncoder().encode("<svg/>"))).rejects.toThrow("not an image");
-    const bad = await media.storage.upload({ prefix: "user/akinaza/shops/", name: `${SHOP}/gallery/photo.gif`, bytes: gif, allow: ["image/jpeg"] }).catch((e: unknown) => e);
+    const bad = await media.storage.upload({ prefix: "user/folioviv/shops/", name: `${SHOP}/gallery/photo.gif`, bytes: gif, allow: ["image/jpeg"] }).catch((e: unknown) => e);
     expect((bad as StorageError).code).toBe(STORAGE_CODE.badType);
     const small = (await open(recorder(), { maxBytes: 16 })).media;
     const big = await storeImage(small, SHOP, jpeg).catch((e: unknown) => e);
@@ -59,7 +59,7 @@ describe("where it goes", () => {
   it("is a content-hashed key under the shop, so an address never changes content", async () => {
     const { media, calls } = await open();
     const url = await storeImage(media, SHOP, jpeg, "brand");
-    expect(url).toMatch(new RegExp(`^https://cdn\\.example/user/akinaza/shops/${SHOP}/brand/photo\\.[0-9a-f]{10}\\.jpg$`));
+    expect(url).toMatch(new RegExp(`^https://cdn\\.example/user/folioviv/shops/${SHOP}/brand/photo\\.[0-9a-f]{10}\\.jpg$`));
     expect(await storeImage(media, SHOP, jpeg, "brand")).toBe(url);
     expect(calls[0]!.url).toBe(url.replace("https://cdn.example/", "https://storage.example/zone-x/"));
   });
@@ -67,8 +67,8 @@ describe("where it goes", () => {
   it("maps each media purpose to its own directory", async () => {
     const { media } = await open();
     for (const purpose of ["brand", "wall", "reels", "cards", "announcements", "gallery"] as const) {
-      expect(mediaPrefix(SHOP, purpose)).toBe(`user/akinaza/shops/${SHOP}/${purpose}/`);
-      expect(await storeImage(media, SHOP, jpeg, purpose)).toMatch(new RegExp(`^https://cdn\\.example/user/akinaza/shops/${SHOP}/${purpose}/photo\\.[0-9a-f]{10}\\.jpg$`));
+      expect(mediaPrefix(SHOP, purpose)).toBe(`user/folioviv/shops/${SHOP}/${purpose}/`);
+      expect(await storeImage(media, SHOP, jpeg, purpose)).toMatch(new RegExp(`^https://cdn\\.example/user/folioviv/shops/${SHOP}/${purpose}/photo\\.[0-9a-f]{10}\\.jpg$`));
     }
   });
 
@@ -89,7 +89,7 @@ describe("where it goes", () => {
   it("follows the administrator's choice over the environment's (another zone)", async () => {
     const { media, calls } = await open(recorder(), { admin: { provider: "http", zone: "chosen-zone" } });
     await storeImage(media, SHOP, jpeg);
-    expect(calls[0]!.url).toMatch(/^https:\/\/storage\.example\/chosen-zone\/user\/akinaza\/shops\//);
+    expect(calls[0]!.url).toMatch(/^https:\/\/storage\.example\/chosen-zone\/user\/folioviv\/shops\//);
   });
 
   it("fails without leaking the access key when the storage refuses", async () => {
@@ -100,8 +100,8 @@ describe("where it goes", () => {
   });
 });
 
-describe("the files already published stay readable (akinaza#414)", () => {
-  const legacyKey = `user/akinaza/shops/${SHOP}/gallery/0123456789abcdef.jpg`;
+describe("the files already published stay readable (folioviv#414)", () => {
+  const legacyKey = `user/folioviv/shops/${SHOP}/gallery/0123456789abcdef.jpg`;
   const legacyUrl = `https://cdn.example/${legacyKey}`;
 
   it("keeps the key, the zone address and the public address of a file stored before the package", async () => {
@@ -121,6 +121,6 @@ describe("the files already published stay readable (akinaza#414)", () => {
   });
 
   it("names only this CDN's files under the media root", () => {
-    for (const url of ["https://elsewhere.example/user/akinaza/shops/x.jpg", "https://cdn.example/site/home/backdrop.jpg", "https://cdn.example/user/akinaza/shops/../../site/x"]) expect(keyOfAddress("cdn.example", url)).toBeNull();
+    for (const url of ["https://elsewhere.example/user/folioviv/shops/x.jpg", "https://cdn.example/site/home/backdrop.jpg", "https://cdn.example/user/folioviv/shops/../../site/x"]) expect(keyOfAddress("cdn.example", url)).toBeNull();
   });
 });

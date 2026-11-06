@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { framePaperOf, TEMPLATES, TEMPLATES_V2 } from "@akinaza/core";
+import { framePaperOf, TEMPLATES, TEMPLATES_V2 } from "@folioviv/core";
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -155,7 +155,7 @@ describe("`trust` is an orderable section (#261, step 3)", () => {
   });
 });
 
-describe("the update to the notebook's version (akinaza#316)", () => {
+describe("the update to the notebook's version (folioviv#316)", () => {
   it("moves a shop from @1 to @2 and keeps its content: its trade, logo and image defaults", async () => {
     const shop = await walkerShop(t.db, "to-v2");
     await saveShopPageConfig(t.db, shop.shopId, { shopType: "salon", logoUrl: "https://example.test/logo.png", useDefaults: false });
@@ -167,7 +167,7 @@ describe("the update to the notebook's version (akinaza#316)", () => {
   });
 });
 
-describe("the paper of the applied template (akinaza#305)", () => {
+describe("the paper of the applied template (folioviv#305)", () => {
   it("is null until a template is applied, then the template's paper in the frame's words, per shop", async () => {
     const a = await walkerShop(t.db, "paper-a");
     const b = await walkerShop(t.db, "paper-b");

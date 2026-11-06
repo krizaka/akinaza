@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    akinaza_desktop_lib::run();
+    folioviv_desktop_lib::run();
 }

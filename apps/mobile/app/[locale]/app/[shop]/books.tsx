@@ -16,7 +16,7 @@ import { useShop } from "@/use-shop";
 
 /**
  * Livres (`/fr/app/<shop>/books?period=2026-Q3`), as the web's: the period's GST and QST nets, prepared from the ledger, each
- * to remit or to claim. Akinaza prepares; the merchant reviews and files the return themselves — nothing is sent from here.
+ * to remit or to claim. Folioviv prepares; the merchant reviews and files the return themselves — nothing is sent from here.
  * The lines and their sources stay on the web's page (one link).
  */
 export default function Books() {

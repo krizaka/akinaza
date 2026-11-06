@@ -1,4 +1,4 @@
-// Every cookie the built app sets is host-only (ADR-005 slice 1, akinaza#534): no `Domain=`, `Path=/`, and `__Host-` prefixed (with Secure) when the
+// Every cookie the built app sets is host-only (ADR-005 slice 1, folioviv#534): no `Domain=`, `Path=/`, and `__Host-` prefixed (with Secure) when the
 // origin is https. It crawls the public pages, the shop page and the sign-in, and reads each `Set-Cookie`.
 // Usage: node scripts/check-cookies.mjs --base http://localhost:3000 [--email <e> --password <p>]
 import { pathToFileURL } from "node:url";

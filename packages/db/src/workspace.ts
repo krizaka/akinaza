@@ -1,4 +1,4 @@
-import { shopTypeOf } from "@akinaza/core";
+import { shopTypeOf } from "@folioviv/core";
 import { type Actor, type AuditTrail, type Clock, createWorkspace, dbWorkspaceStore, filterSql, type KindConfig, type Query, type StatusSet, type Transaction, type ViewFilters, type WorkspaceDecl, workspaceMigration } from "@krizaka/organize";
 
 import { INVOICE_STATUS_SET, KIND_DEFAULTS, presetVariant } from "./workspace-defaults";
@@ -6,10 +6,10 @@ import { INVOICE_STATUS_SET, KIND_DEFAULTS, presetVariant } from "./workspace-de
 export { workspaceMigration };
 
 /**
- * « The workspace, organised » for Akinaza (krizaka-ts ADR-003, akinaza#337): the SHOP is the scope, so tags and saved views belong to
+ * « The workspace, organised » for Folioviv (krizaka-ts ADR-003, folioviv#337): the SHOP is the scope, so tags and saved views belong to
  * the shop (not to an account), and another shop's tag, view or entity id is a 404. Two kinds: the shop's clients and its invoices.
  *
- * An invoice's state is DERIVED from what was paid and what superseded it (`invoiceState` in @akinaza/core): `stateSql` is the same rule
+ * An invoice's state is DERIVED from what was paid and what superseded it (`invoiceState` in @folioviv/core): `stateSql` is the same rule
  * in SQL so the list can filter on it — a test keeps both in step. There is no way to MOVE it: no « bulk paid » exists.
  */
 export const WORKSPACE: WorkspaceDecl = {

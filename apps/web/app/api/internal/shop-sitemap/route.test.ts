@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const publicShop = vi.fn();
-vi.mock("@akinaza/db", () => ({ publicShop: (...args: unknown[]) => publicShop(...args) }));
+vi.mock("@folioviv/db", () => ({ publicShop: (...args: unknown[]) => publicShop(...args) }));
 vi.mock("@/lib/db", () => ({ db: () => ({}) }));
 
 import { GET } from "./route";

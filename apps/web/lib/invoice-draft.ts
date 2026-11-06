@@ -1,4 +1,4 @@
-import { type InvoiceTotals, invoiceTotals, type LineInput, type TaxCategory } from "@akinaza/core";
+import { type InvoiceTotals, invoiceTotals, type LineInput, type TaxCategory } from "@folioviv/core";
 
 import { parseQuantity } from "./quantity";
 
@@ -38,7 +38,7 @@ export function draftRequestLines(lines: readonly DraftLine[]): Record<string, u
 }
 
 /**
- * The total in view: the very computation the server runs at issue (`invoiceTotals` of @akinaza/core — GST 5 % and QST
+ * The total in view: the very computation the server runs at issue (`invoiceTotals` of @folioviv/core — GST 5 % and QST
  * 9,975 % once on the taxable total, half away from zero), on the service's price and tax category. Null without a complete line.
  */
 export function draftPreview(lines: readonly DraftLine[], services: readonly DraftService[], shop: { registrant: boolean }): InvoiceTotals | null {

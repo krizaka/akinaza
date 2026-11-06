@@ -1,4 +1,4 @@
-// The main journeys of Akinaza, compared to their baselines (krizaka/.github#375), as the seeded cast (krizaka/.github#356:
+// The main journeys of Folioviv, compared to their baselines (krizaka/.github#375), as the seeded cast (krizaka/.github#356:
 // apps/web/scripts/seed-cast.mjs, CI-only credentials, never a real account): a client's way in (a shop's public page, a service,
 // where booking starts) and the walker's own side.
 import { readFileSync } from "node:fs";
@@ -7,7 +7,7 @@ import { defineJourneyTests } from "@krizaka/page-audit/visual";
 import { expect, test } from "@playwright/test";
 
 const BASE = process.env.VISUAL_BASE_URL ?? "http://localhost:3000";
-const EMAIL = process.env.E2E_EMAIL ?? "lea.beaulieu@akinaza.test";
+const EMAIL = process.env.E2E_EMAIL ?? "lea.beaulieu@folioviv.test";
 const PASSWORD = process.env.E2E_PASSWORD ?? "local-cast-password-0123";
 const SHOP = "/fr/s/pattes-saint-henri";
 // Rows are stamped with the day of the run: dates are masked, and the browser clock is the moment the seed finished.

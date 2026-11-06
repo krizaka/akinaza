@@ -43,7 +43,7 @@ const issuesOf = (error: unknown): string | null => {
 const accentLabel = (name: string) => name.split(":").join(" · ");
 
 /**
- * Boutique › Page › Layout (akinaza#402): the shop page composer of @krizaka/ui, its draft saved by itself, published after a diff, with the history
+ * Boutique › Page › Layout (folioviv#402): the shop page composer of @krizaka/ui, its draft saved by itself, published after a diff, with the history
  * and the accent. Every call is a mutation or a query of @krizaka/query (no effect fetches): the draft is `PUT` whole, the server refuses a document
  * that is not valid with the path of each issue.
  */

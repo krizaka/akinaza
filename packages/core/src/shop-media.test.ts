@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_MEDIA, DEFAULT_SLOT_IDS, DEFAULT_SLOTS, defaultMediaPaths, defaultsFor, SHOP_TYPES, shopTypeOf } from "./shop-media";
 
 describe("the default media of the storefronts (#267)", () => {
-  it("names the trades Akinaza serves, never a restaurant or a bar", () => {
+  it("names the trades Folioviv serves, never a restaurant or a bar", () => {
     expect(SHOP_TYPES).toEqual(["salon", "coaching", "workshop", "cleaning", "pets", "consulting"]);
     for (const banned of ["restaurant", "cafe", "bar", "bakery"]) expect(SHOP_TYPES as readonly string[]).not.toContain(banned);
   });
@@ -18,7 +18,7 @@ describe("the default media of the storefronts (#267)", () => {
     expect(DEFAULT_MEDIA).toHaveLength(SHOP_TYPES.length * DEFAULT_SLOT_IDS.reduce((n, slot) => n + DEFAULT_SLOTS[slot].count, 0));
   });
 
-  it("ids, alt keys and file paths are unique, and every path sits under the Akinaza defaults prefix", () => {
+  it("ids, alt keys and file paths are unique, and every path sits under the Folioviv defaults prefix", () => {
     expect(new Set(DEFAULT_MEDIA.map((m) => m.id)).size).toBe(DEFAULT_MEDIA.length);
     expect(new Set(DEFAULT_MEDIA.map((m) => m.altKey)).size).toBe(DEFAULT_MEDIA.length);
     const paths = defaultMediaPaths();

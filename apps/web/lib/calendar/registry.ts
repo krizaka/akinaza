@@ -1,4 +1,4 @@
-import type { CalendarKind, CalendarSource, ConnectableSource } from "@akinaza/core";
+import type { CalendarKind, CalendarSource, ConnectableSource } from "@folioviv/core";
 
 import { caldavSource } from "./caldav-source";
 import { googleSource } from "./google-source";
@@ -6,7 +6,7 @@ import { icsUrlSource } from "./ics-url-source";
 import type { OAuthKind } from "./oauth-state";
 import { outlookSource } from "./outlook-source";
 
-/** The OAuth client of Akinaza at a provider (the owner's consent is asked for it); absent until the administrator has created it. */
+/** The OAuth client of Folioviv at a provider (the owner's consent is asked for it); absent until the administrator has created it. */
 export interface OAuthApp {
   clientId: string;
   clientSecret: string;

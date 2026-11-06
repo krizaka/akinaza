@@ -16,7 +16,7 @@ export interface ProcessorPlans {
 
 /**
  * The catalogue the processor is set up with (`krizaka-payments-setup`): the amounts, the currency and the interval are READ from the
- * price catalogue in force (`price_versions`, the administrator's source of truth), never typed in a file (akinaza#633). An entry the
+ * price catalogue in force (`price_versions`, the administrator's source of truth), never typed in a file (folioviv#633). An entry the
  * catalogue does not hold, or one without a figure (`preparing`), is an error: the processor never sells a guess.
  */
 export function processorCatalogue(plans: ProcessorPlans, entries: readonly PriceEntry[]) {

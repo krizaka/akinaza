@@ -19,33 +19,33 @@ export async function register() {
   const { assertProductionEnv, readEnv } = await import("./lib/env");
   assertProductionEnv();
   if (!readEnv().DATABASE_URL) {
-    console.warn("[akinaza] DATABASE_URL is not set: the public pages work, the shop does not.");
+    console.warn("[folioviv] DATABASE_URL is not set: the public pages work, the shop does not.");
     return;
   }
   const { migrate } = await import("./lib/db");
   await migrate();
-  console.log("[akinaza] migrations up to date");
+  console.log("[folioviv] migrations up to date");
   // Webhook deliveries (and their retries) go out from here: a tick every few seconds, leased so several instances never send twice.
   const { deliverDueWebhooks } = await import("./app/webhooks-edge");
   const { systemClock } = await import("./app/system-clock");
-  setInterval(() => void deliverDueWebhooks(systemClock.now()).catch((error) => console.error("[akinaza] webhook tick failed", error)), WEBHOOK_TICK_MS).unref();
+  setInterval(() => void deliverDueWebhooks(systemClock.now()).catch((error) => console.error("[folioviv] webhook tick failed", error)), WEBHOOK_TICK_MS).unref();
   // The Monday brief by e-mail: claimed per shop and week in the database, so several instances never send twice.
   const { sendDueBriefsAt } = await import("./app/brief-edge");
-  setInterval(() => void sendDueBriefsAt(systemClock.now()).catch((error) => console.error("[akinaza] brief tick failed", error)), BRIEF_TICK_MS).unref();
+  setInterval(() => void sendDueBriefsAt(systemClock.now()).catch((error) => console.error("[folioviv] brief tick failed", error)), BRIEF_TICK_MS).unref();
   // The owner's other calendars (ADR-004): the due ones are read, leased in the database so several instances never read the same one.
   const { syncDueCalendars } = await import("./lib/calendar/sync");
   const { dataKey } = await import("./lib/env");
   const { calendarSourceMaker } = await import("./app/calendar-edge");
-  setInterval(() => void calendarSourceMaker().then((make) => syncDueCalendars(systemClock.now(), dataKey(), make)).catch((error) => console.error("[akinaza] calendar tick failed", error)), CALENDAR_TICK_MS).unref();
+  setInterval(() => void calendarSourceMaker().then((make) => syncDueCalendars(systemClock.now(), dataKey(), make)).catch((error) => console.error("[folioviv] calendar tick failed", error)), CALENDAR_TICK_MS).unref();
   // Explorer's stored availability (ADR-006 decision 4): the rows a change, a new day or the passing time made due are recomputed; the sweep leases them in the database.
-  const { settleAvailability } = await import("@akinaza/db");
+  const { settleAvailability } = await import("@folioviv/db");
   const { db } = await import("./lib/db");
-  setInterval(() => void settleAvailability(db(), systemClock.now()).catch((error) => console.error("[akinaza] explore availability tick failed", error)), EXPLORE_TICK_MS).unref();
+  setInterval(() => void settleAvailability(db(), systemClock.now()).catch((error) => console.error("[folioviv] explore availability tick failed", error)), EXPLORE_TICK_MS).unref();
   // Merchants' own domains (ADR-005 §3, #539): proof of ownership, certificate, re-check of the live ones; nothing runs without an edge service configured.
   const { domainPorts } = await import("./lib/domains/ports");
-  const { checkDueDomains } = await import("@akinaza/db");
+  const { checkDueDomains } = await import("@folioviv/db");
   setInterval(() => {
     const ports = domainPorts(process.env, systemClock.now());
-    if (ports) void checkDueDomains(db(), ports, { everyMs: DOMAIN_TICK_MS - 1000, batch: 50 }).catch((error) => console.error("[akinaza] domains tick failed", error));
+    if (ports) void checkDueDomains(db(), ports, { everyMs: DOMAIN_TICK_MS - 1000, batch: 50 }).catch((error) => console.error("[folioviv] domains tick failed", error));
   }, DOMAIN_TICK_MS).unref();
 }

@@ -1,5 +1,5 @@
-import { documentFromLegacy } from "@akinaza/core";
-import { type PublicShop } from "@akinaza/db";
+import { documentFromLegacy } from "@folioviv/core";
+import { type PublicShop } from "@folioviv/db";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
@@ -34,7 +34,7 @@ const render = (count: number, locale: "fr" | "en", variant: Variant = "mosaic")
   return renderToStaticMarkup(<ShopPageView page={page} view={view} locale={locale} today="2026-10-19" />);
 };
 
-describe("the gallery's mosaic is the ShopGallery of @krizaka/ui (akinaza#481)", () => {
+describe("the gallery's mosaic is the ShopGallery of @krizaka/ui (folioviv#481)", () => {
   const html = render(7, "en");
   it("draws one named tile button per photo, in a group named after the shop, with the lightbox closed (no dialog in the markup)", () => {
     expect(html).toContain('class="kz-sg');

@@ -1,21 +1,21 @@
 # ADR-001 — The generic "service shop" model
 
 - Status: accepted (2026-10-17)
-- Issue: krizaka/akinaza#52 (the dog walker is the first proof)
-- Deciders: Akinaza product session; Oussama (the use case)
+- Issue: krizaka/folioviv#52 (the dog walker is the first proof)
+- Deciders: Folioviv product session; Oussama (the use case)
 
 ## Context
 
-Akinaza is the all-in-one for independent Québec shops. Its first vertical use case is a dog walker, but the same
+Folioviv is the all-in-one for independent Québec shops. Its first vertical use case is a dog walker, but the same
 bones serve a hair salon, a groomer, a tutor, a cleaner: a shop that sells **time** (a service), with a bounded
 **capacity**, booked by **clients** who may bring **dependants** (a dog, a child, a cat), produces a **visit
 report**, and bills with GST/QST. The schema already had shops, staff, services, weekly schedules, clients with
 Loi 25 consents, appointments (no double booking, by the database), invoices and an append-only tax ledger. What it
 lacked is the rest of the vertical-neutral service-shop vocabulary.
 
-Hard requirements: Akinaza prepares, never files; money is integer cents; the ledger is the authority; Loi 25
+Hard requirements: Folioviv prepares, never files; money is integer cents; the ledger is the authority; Loi 25
 (consent, erasure, export, data in Canada); an access code (door code, key location) is encrypted at rest;
-French first, English second; AI only through Orazaka; every parameter that changes behaviour is data.
+French first, English second; AI only through Sovkora; every parameter that changes behaviour is data.
 
 ## Decision
 
@@ -29,7 +29,7 @@ One model, vertical-neutral names, vertical details in validated JSON. Nothing i
 | Availability | `schedules` (weekly windows per staff) + `days_off` | recurring slots and exceptions; slots are computed, never stored |
 | Rules | `shop_rules` | cancellation window, booking horizon, slot step, report-link life: data per shop, defaults seeded by migration, bounds in `CHECK`s |
 | Client | `clients` (+ `account_id`, `access_notes_enc`) | the shop's file on a person; linked to a sign-in account when the person signs in |
-| Dependant | `dependants` | `kind` (`dog`, `cat`, `other`), `name`, `profile` JSON validated by the vertical's schema in `@akinaza/core` (breed, size, temperament, vet, emergency contact) |
+| Dependant | `dependants` | `kind` (`dog`, `cat`, `other`), `name`, `profile` JSON validated by the vertical's schema in `@folioviv/core` (breed, size, temperament, vet, emergency contact) |
 | Visit | `appointments` (+ `zone_id`, `checked_in_at`, `checked_out_at`) | one block of staff time; `EXCLUDE` keeps a staff member from being in two places |
 | Booking | `bookings` | one dependant on one visit. A group walk is **one** appointment with several bookings, capped by `services.capacity` |
 | Visit report | `visit_reports` | per booking: note, photo, duration, a view token (hash), the mail it produced |
@@ -46,7 +46,7 @@ working unchanged (`appointments.client_id` stays for a visit with a single clie
 
 ### Slots are computed, not stored
 
-`@akinaza/core` `openSlots()` is pure: weekly windows, days off, the shop's time zone, the service length, the step,
+`@folioviv/core` `openSlots()` is pure: weekly windows, days off, the shop's time zone, the service length, the step,
 the horizon, the visits already taken and the clock (injected) give the offered start times. A group visit with free
 seats of the same service and zone is offered as joinable ("2 of 5 dogs"); anything else overlapping is not offered.
 The database remains the judge at write time (`EXCLUDE` + capacity under lock), so a race ends in a refusal, never in
@@ -74,7 +74,7 @@ This protects against a leaked database or backup; it is not a defence against a
 
 ### Reports and mail
 
-`@krizaka/email` is not published yet. The report is rendered with Akinaza's own bilingual templates
+`@krizaka/email` is not published yet. The report is rendered with Folioviv's own bilingual templates
 (`mail-templates/walk-report`, the krizaka-notifications format) and written to `mail_outbox`; a provider module
 (`MAIL_PROVIDER`, `MAIL_API_KEY`, `MAIL_DOMAIN`, `MAIL_FROM`) delivers it and fails closed: without configuration the
 mail stays `pending`, the report is still available to the client in their space and by its private link. Swapping the
@@ -83,8 +83,8 @@ report page (`/{locale}/report/{token}`), whose token is random, stored hashed, 
 
 ### AI
 
-A draft of the report text from the photo and the note is an Orazaka Studio call (`AI_API_URL`, Akinaza's `oz_`
-key). Akinaza's dev deployment has no service key yet and Orazaka has no such Studio, so the first slice writes the
+A draft of the report text from the photo and the note is an Sovkora Studio call (`AI_API_URL`, Folioviv's `oz_`
+key). Folioviv's dev deployment has no service key yet and Sovkora has no such Studio, so the first slice writes the
 report by hand and the draft is a follow-up (the walker always edits and sends; nothing is sent by the AI).
 
 ## Consequences

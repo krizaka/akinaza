@@ -1,6 +1,7 @@
 import { SiteFooter as FamilyFooter, SiteFooterColumn, SiteFooterLink } from "@krizaka/ui/site-footer";
 import Link from "next/link";
 
+import { BRAND_ID } from "@/lib/brand-id";
 import { downloadPageOpen } from "@/lib/downloads";
 import { productFooterLabels } from "@/lib/footer-labels";
 import { format, getDictionary, type Locale, translator } from "@/lib/i18n";
@@ -18,7 +19,7 @@ export function SiteFooter({ locale }: Readonly<{ locale: Locale }>) {
   const t = translator(locale);
   return (
     <FamilyFooter
-      current="akinaza"
+      current={BRAND_ID}
       family={false}
       labels={productFooterLabels(locale)}
       aria-label={t("chrome.footerLabel")}
@@ -60,7 +61,7 @@ export function SiteFooter({ locale }: Readonly<{ locale: Locale }>) {
       </SiteFooterColumn>
       <SiteFooterColumn title="Krizaka">
         <SiteFooterLink href={REPO_URL}>{t("chrome.sourceCode")}</SiteFooterLink>
-        <SiteFooterLink href={contactHref("dev-akinaza-footer", locale)}>{t("chrome.contact")}</SiteFooterLink>
+        <SiteFooterLink href={contactHref("dev-folioviv-footer", locale)}>{t("chrome.contact")}</SiteFooterLink>
       </SiteFooterColumn>
     </FamilyFooter>
   );

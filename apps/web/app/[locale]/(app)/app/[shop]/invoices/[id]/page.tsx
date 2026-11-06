@@ -1,16 +1,16 @@
-import { localDay } from "@akinaza/core";
-import { invoiceDetail } from "@akinaza/db";
-import { invoiceDeliveryHistory, invoiceMailSettings } from "@akinaza/db";
+import { localDay } from "@folioviv/core";
+import { invoiceDetail } from "@folioviv/db";
+import { invoiceDeliveryHistory, invoiceMailSettings } from "@folioviv/db";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
+import { requestNow } from "@/app/request-now";
 import { InvoiceDetailView } from "@/components/app/InvoiceDetailView";
 import { db } from "@/lib/db";
 import { asLocale } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

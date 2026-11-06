@@ -13,7 +13,7 @@ export interface PaymentsSettings {
   PAYMENTS_PRICE_KEY_ASSOCIATION: string;
 }
 
-/** Akinaza's plans at the processor (`lib/pricing.ts`, akinaza#371): the founder offer, Starter and Scale are subscriptions, found by lookup key. */
+/** Folioviv's plans at the processor (`lib/pricing.ts`, folioviv#371): the founder offer, Starter and Scale are subscriptions, found by lookup key. */
 export const FOUNDER_PLAN = PROCESSOR_PLANS[FOUNDER].kind;
 export const STARTER_PLAN = PROCESSOR_PLANS[STARTER].kind;
 export const SCALE_PLAN = PROCESSOR_PLANS[SCALE].kind;

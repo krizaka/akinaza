@@ -1,4 +1,4 @@
-import { feedPeople, liveFeeds } from "@akinaza/db";
+import { feedPeople, liveFeeds } from "@folioviv/db";
 
 import { db } from "./db";
 import { appSettings } from "./settings";

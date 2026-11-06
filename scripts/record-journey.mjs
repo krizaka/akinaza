@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// One continuous phone take of Akinaza's journey on a running deployment, as the fictional Saint-Henri persona, captured
+// One continuous phone take of Folioviv's journey on a running deployment, as the fictional Saint-Henri persona, captured
 // with the Chrome DevTools screencast (every frame the compositor paints, with its timestamp) and encoded at a constant
 // 30 fps: the storefront → a service and a slot → booking confirmed → the walker's day with check-in/out → the report →
 // what the client receives → « Vos livres » (GST/QST of the quarter). It writes the full take, one clip per beat (cut
 // from the same take, for the StepShowcase), a poster per beat and journey.json (the API calls with their request ids,
 // the beats' times and the capture's real frame rate).
 //
-//   E2E_BASE=https://dev.akinaza.com E2E_LOCALE=fr E2E_OUT=<dir> \
+//   E2E_BASE=https://dev.folioviv.com E2E_LOCALE=fr E2E_OUT=<dir> \
 //   E2E_CLIENT_EMAIL=… E2E_CLIENT_PASSWORD=… E2E_CLIENT_DOG=Rex E2E_WALKER_EMAIL=… E2E_WALKER_PASSWORD=… \
 //     node scripts/record-journey.mjs
 //
@@ -153,7 +153,7 @@ try {
     g.fillText("🐕", 300, 700);
     g.font = "bold 44px sans-serif";
     g.fillStyle = "#0c3b1f";
-    g.fillText("Illustration — Akinaza demo", 330, 860);
+    g.fillText("Illustration — Folioviv demo", 330, 860);
     return canvas.toDataURL("image/jpeg", 0.85).split(",")[1];
   });
   const photoPath = path.join(OUT, "walk.jpg");

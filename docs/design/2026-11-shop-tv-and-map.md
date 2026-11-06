@@ -7,7 +7,7 @@ krizaka-internal#2329 (not in this spec; `map.tsx` is not touched).
 
 Subject: the public shop page `/[locale]/s/[slug]` (`components/shop/ShopPageView.tsx`): the `community` section in its
 `tv` variant (`components/shop/ShopVideoTv.tsx` on `@krizaka/ui/retro-tv`) and the `visit` section (`@krizaka/ui`
-`VisitSection` + `MapGate`). Register: the product's (Krizaka UI, Akinaza brand tokens), both themes, phone first.
+`VisitSection` + `MapGate`). Register: the product's (Krizaka UI, Folioviv brand tokens), both themes, phone first.
 
 ## Brief (market strategist)
 
@@ -23,27 +23,27 @@ Subject: the public shop page `/[locale]/s/[slug]` (`components/shop/ShopPageVie
 
 ## Before (real renders, 2026-11-03)
 
-The demo shops on www.akinaza.com show their videos as a filmstrip, so the television is captured from its catalogue page
-(ui.krizaka.com/components/retro-tv), the map from `www.akinaza.com/fr/s/pattes-saint-henri`.
+The demo shops on www.folioviv.com show their videos as a filmstrip, so the television is captured from its catalogue page
+(ui.krizaka.com/components/retro-tv), the map from `www.folioviv.com/fr/s/pattes-saint-henri`.
 
 | Render | What a stranger sees in five seconds |
 | :-- | :-- |
-| [TV, desktop, dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/before-tv-desk-dark.png) | An olive cabinet with blue knobs, a truncated « CH 3 · PL… » label, scanlines; the player's controls are piled in the middle of the picture. |
-| [TV, desktop, light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/before-tv-desk-light.png) | The same cabinet, washed out; the knobs read as two blue buttons that do nothing. |
-| [TV, phone, dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/before-tv-phone-dark.png) · [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/before-tv-phone-light.png) | The screen is 60 % of the set; the controls wrap over the video; the stand eats the bottom. |
-| [Map, desktop, dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/before-map-desk-dark.png) · [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/before-map-desk-light.png) | A 1150 × 645 px map of all Montréal, no pin in view, no hours, no list of areas: the page's biggest block says nothing. |
-| [Map, phone, dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/before-map-phone-dark.png) · [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/before-map-phone-light.png) | A full-width still; the areas served are not written anywhere. |
-| [Page, phone, dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/before-page-phone-dark.png) · [light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/before-page-phone-light.png) | The whole page, for the order of the sections. |
+| [TV, desktop, dark](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/before-tv-desk-dark.png) | An olive cabinet with blue knobs, a truncated « CH 3 · PL… » label, scanlines; the player's controls are piled in the middle of the picture. |
+| [TV, desktop, light](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/before-tv-desk-light.png) | The same cabinet, washed out; the knobs read as two blue buttons that do nothing. |
+| [TV, phone, dark](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/before-tv-phone-dark.png) · [light](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/before-tv-phone-light.png) | The screen is 60 % of the set; the controls wrap over the video; the stand eats the bottom. |
+| [Map, desktop, dark](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/before-map-desk-dark.png) · [light](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/before-map-desk-light.png) | A 1150 × 645 px map of all Montréal, no pin in view, no hours, no list of areas: the page's biggest block says nothing. |
+| [Map, phone, dark](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/before-map-phone-dark.png) · [light](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/before-map-phone-light.png) | A full-width still; the areas served are not written anywhere. |
+| [Page, phone, dark](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/before-page-phone-dark.png) · [light](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/before-page-phone-light.png) | The whole page, for the order of the sections. |
 
 ## After (HTML prototype on the real tokens, rendered with Playwright)
 
-Prototype: [prototype.html](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/prototype.html) (tokens
-`@krizaka/tokens` + the Akinaza brand file, no hex). Demo data, said as demo.
+Prototype: [prototype.html](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/prototype.html) (tokens
+`@krizaka/tokens` + the Folioviv brand file, no hex). Demo data, said as demo.
 
 | | Dark | Light |
 | :-- | :-- | :-- |
-| Desktop 1440 | [after-desk-dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/after-desk-dark.png) | [after-desk-light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/after-desk-light.png) |
-| Phone 390 | [after-phone-dark](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/after-phone-dark.png) | [after-phone-light](https://krizaka-assets.b-cdn.net/pr-assets/akinaza/2330-design/after-phone-light.png) |
+| Desktop 1440 | [after-desk-dark](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/after-desk-dark.png) | [after-desk-light](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/after-desk-light.png) |
+| Phone 390 | [after-phone-dark](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/after-phone-dark.png) | [after-phone-light](https://krizaka-assets.b-cdn.net/pr-assets/folioviv/2330-design/after-phone-light.png) |
 
 ### The television — `RetroTv variant="modern"`
 
@@ -79,7 +79,7 @@ Still a television: a cabinet, a bezel, a screen, two dials, two feet. Nothing e
 - `VisitSection` gains `mapSize` (passed to the gate) and `areas?: { label: string; items: string[] }`, drawn as a
   labelled list beside the hours in `split` and above the map on a phone. The list is the map's text version and
   answers « is my street covered » without the map.
-- Akinaza: the shop page's visit section draws `split` with `mapSize="compact"` and `areas` from the shop's map places
+- Folioviv: the shop page's visit section draws `split` with `mapSize="compact"` and `areas` from the shop's map places
   (`view.map.places[].name`), the open status first. Desktop: the card (status, « Nous venons à », hours) in 22rem on
   the left, the map on the right; the address under the map. Phone: the card, then the still.
 
@@ -118,7 +118,7 @@ Still a television: a cabinet, a bezel, a screen, two dials, two feet. Nothing e
    `visit-split-areas`. Tests: `compact` shows the still and the button on a phone and goes live from `sm`; `areas`
    render as a labelled `<ul>`; the frame's caps hold at 1440 px.
 
-## Akinaza changes — after the krizaka-ui release
+## Folioviv changes — after the krizaka-ui release
 
 - `ShopVideoTv.tsx`: `variant="modern"`, `layout="auto"`, `programme`, `aside` = the section's heading, lead and the
   booking action; the caption function from the messages (`console.shopPage.tvNow`: « {title} · {n} sur {count} » /

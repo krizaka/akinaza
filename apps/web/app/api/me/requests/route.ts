@@ -1,4 +1,4 @@
-import { clientRequestInputSchema, clientRequestsOf, saveClientRequest } from "@akinaza/db";
+import { clientRequestInputSchema, clientRequestsOf, saveClientRequest } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireOwnClient } from "@/lib/access";
@@ -7,7 +7,7 @@ import { handle, readJson, refuse } from "@/lib/http";
 
 export const dynamic = "force-dynamic";
 
-/** The client's requests at one shop (akinaza#210): their own file only. */
+/** The client's requests at one shop (folioviv#210): their own file only. */
 export const GET = (req: Request) =>
   handle(async () => {
     const clientId = new URL(req.url).searchParams.get("clientId") ?? "";

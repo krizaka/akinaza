@@ -19,13 +19,13 @@ export const SCENES = {
   new: { path: (locale, shop) => `/${locale}/app/${shop.id}/shop/new`, expect: { fr: "Votre métier", en: "Your trade" }, signedIn: true },
   // The public pages wait for the shop's name (its heading, there on every device); a button's words move with the layout.
   storefront: { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Pattes de Saint-Henri", en: "Pattes de Saint-Henri" }, signedIn: false },
-  // The home's neighbourhood feed (akinaza#318): the flyers the demo shops pinned, shot as the section alone.
+  // The home's neighbourhood feed (folioviv#318): the flyers the demo shops pinned, shot as the section alone.
   home: { path: (locale) => `/${locale}`, expect: { fr: "Affiché dans votre quartier", en: "Posted in your neighbourhood" }, signedIn: false, element: "section:has([data-testid=neighbourhood-feed])" },
   // The demo shops (packages/db/src/demo-shops.ts), each on a template of its trade (#261, step 6).
   salon: { path: (locale) => `/${locale}/s/cedre-ciseaux`, expect: { fr: "Salon Cèdre & Ciseaux", en: "Salon Cèdre & Ciseaux" }, signedIn: false },
   workshop: { path: (locale) => `/${locale}/s/encre-vive`, expect: { fr: "Encre Vive Studio", en: "Encre Vive Studio" }, signedIn: false },
   consulting: { path: (locale) => `/${locale}/s/ferland-conseil`, expect: { fr: "Ferland Conseil", en: "Ferland Conseil" }, signedIn: false },
-  // The owner's guide (akinaza#382, `pnpm run shots:docs`): its figures are captured from the demo shop, never drawn.
+  // The owner's guide (folioviv#382, `pnpm run shots:docs`): its figures are captured from the demo shop, never drawn.
   "docs-shop": { path: (locale, shop) => `/${locale}/app/${shop.id}/settings/page`, expect: { fr: "Votre page boutique", en: "Your shop page" }, signedIn: true },
   "docs-bookings": { path: (locale, shop) => `/${locale}/s/${shop.slug}`, expect: { fr: "Pattes de Saint-Henri", en: "Pattes de Saint-Henri" }, signedIn: false },
   "docs-invoices": { path: (locale, shop) => `/${locale}/app/${shop.id}/invoices/new`, expect: { fr: "Nouvelle facture", en: "New invoice" }, signedIn: true },
@@ -167,9 +167,9 @@ async function main() {
   const list = (name) => (process.env[name] ? process.env[name].split(",").map((s) => s.trim()).filter(Boolean) : undefined);
   const scenes = plan(list("SHOTS_SCENES"), list("SHOTS_DEVICES"));
   const BASE = `http://localhost:${PORT}`;
-  const container = `akinaza-shots-${process.pid}`;
+  const container = `folioviv-shots-${process.pid}`;
   const dbPassword = crypto.randomBytes(18).toString("base64url");
-  const DATABASE_URL = `postgresql://akinaza:${dbPassword}@localhost:${DB_PORT}/akinaza_shots`;
+  const DATABASE_URL = `postgresql://folioviv:${dbPassword}@localhost:${DB_PORT}/folioviv_shots`;
   const env = {
     ...process.env,
     DATABASE_URL,
@@ -186,7 +186,7 @@ async function main() {
   const clientsPassword = crypto.randomBytes(18).toString("base64url");
   mkdirSync(OUT, { recursive: true });
 
-  const started = spawnSync("docker", ["run", "-d", "--rm", "--name", container, "-e", "POSTGRES_USER=akinaza", `-e`, `POSTGRES_PASSWORD=${dbPassword}`, "-e", "POSTGRES_DB=akinaza_shots", "-p", `${DB_PORT}:5432`, "postgres:16"], { encoding: "utf8" });
+  const started = spawnSync("docker", ["run", "-d", "--rm", "--name", container, "-e", "POSTGRES_USER=folioviv", `-e`, `POSTGRES_PASSWORD=${dbPassword}`, "-e", "POSTGRES_DB=folioviv_shots", "-p", `${DB_PORT}:5432`, "postgres:16"], { encoding: "utf8" });
   if (started.status !== 0) throw new Error(`docker run failed: ${started.stderr}`);
   let app = null;
   const out = (line) => process.stdout.write(`${line}\n`);
@@ -194,7 +194,7 @@ async function main() {
     const db = await connectWhenUp(pg, DATABASE_URL);
     out("shots: database up");
 
-    app = spawn("pnpm", ["--filter", "@akinaza/web", "exec", "next", "dev", "-p", String(PORT)], { cwd: root, env, stdio: "ignore" });
+    app = spawn("pnpm", ["--filter", "@folioviv/web", "exec", "next", "dev", "-p", String(PORT)], { cwd: root, env, stdio: "ignore" });
     await waitForApp(db, BASE, LOCALE);
     out("shots: app up, schema there");
 
@@ -202,13 +202,13 @@ async function main() {
       const r = spawnSync("pnpm", args, { cwd: root, env: { ...env, ...extra }, encoding: "utf8" });
       if (r.status !== 0) throw new Error(`${args.join(" ")} failed:\n${r.stdout}\n${r.stderr}`);
     };
-    run(["--filter", "@akinaza/web", "exec", "tsx", "scripts/seed-saint-henri.mjs"], { QA_WALKER_PASSWORD: walkerPassword, QA_CLIENTS_PASSWORD: clientsPassword });
-    run(["--filter", "@akinaza/db", "seed:demos"]);
-    run(["--filter", "@akinaza/web", "exec", "tsx", "scripts/set-setting.mjs", "features.storefrontTemplates", "true", "--actor", "shots-storefront"]);
-    for (const flag of flagsOf(process.env.SHOTS_FLAGS)) run(["--filter", "@akinaza/web", "exec", "tsx", "scripts/set-setting.mjs", flag, "true", "--actor", "shots-storefront"]);
+    run(["--filter", "@folioviv/web", "exec", "tsx", "scripts/seed-saint-henri.mjs"], { QA_WALKER_PASSWORD: walkerPassword, QA_CLIENTS_PASSWORD: clientsPassword });
+    run(["--filter", "@folioviv/db", "seed:demos"]);
+    run(["--filter", "@folioviv/web", "exec", "tsx", "scripts/set-setting.mjs", "features.storefrontTemplates", "true", "--actor", "shots-storefront"]);
+    for (const flag of flagsOf(process.env.SHOTS_FLAGS)) run(["--filter", "@folioviv/web", "exec", "tsx", "scripts/set-setting.mjs", flag, "true", "--actor", "shots-storefront"]);
     // The demo shops' owners only (a person's value of the administration, as in production): `SHOTS_DEMO_FLAGS=features.cahierStorefront`.
     const demoOwners = (await db.query("SELECT a.email FROM shops s JOIN accounts a ON a.id = s.owner_id WHERE s.slug = ANY($1)", [DEMO_SLUGS])).rows;
-    for (const flag of flagsOf(process.env.SHOTS_DEMO_FLAGS)) for (const { email } of demoOwners) run(["--filter", "@akinaza/web", "exec", "tsx", "scripts/set-setting.mjs", flag, "true", "--user", email, "--actor", "shots-storefront"]);
+    for (const flag of flagsOf(process.env.SHOTS_DEMO_FLAGS)) for (const { email } of demoOwners) run(["--filter", "@folioviv/web", "exec", "tsx", "scripts/set-setting.mjs", flag, "true", "--user", email, "--actor", "shots-storefront"]);
     const { rows } = await db.query("SELECT s.id, s.slug, a.email FROM shops s JOIN accounts a ON a.id = s.owner_id WHERE s.slug = 'pattes-saint-henri'");
     if (!rows[0]) throw new Error("the Saint-Henri shop was not seeded");
     const shop = { id: rows[0].id, slug: rows[0].slug };

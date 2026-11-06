@@ -1,4 +1,4 @@
-import { ACTION_KINDS, type ActionKind, applyOwnerOverrides, DEFAULT_FIGURE_THRESHOLDS, type FigureThresholds, type OwnerOverrides, sanitizeThresholds } from "@akinaza/core";
+import { ACTION_KINDS, type ActionKind, applyOwnerOverrides, DEFAULT_FIGURE_THRESHOLDS, type FigureThresholds, type OwnerOverrides, sanitizeThresholds } from "@folioviv/core";
 
 import { appSettings } from "@/lib/settings";
 

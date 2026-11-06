@@ -1,4 +1,4 @@
-import { CHECKED_STATES, checkDomain, type CustomHostnames, DOMAIN_ERROR, DOMAIN_STATE, type DomainLimits, newDomainToken, readHostname, type TxtResolver } from "@akinaza/core";
+import { CHECKED_STATES, checkDomain, type CustomHostnames, DOMAIN_ERROR, DOMAIN_STATE, type DomainLimits, newDomainToken, readHostname, type TxtResolver } from "@folioviv/core";
 import { and, asc, eq, inArray, isNull, lt, ne, or, sql } from "drizzle-orm";
 
 import type { Db } from "./client";
@@ -6,7 +6,7 @@ import { ShopError } from "./errors";
 import { shopDomains, shops } from "./schema";
 
 /**
- * Merchants' own domains (ADR-005 §3, akinaza#539). The option is paid and enabled per shop by an administrator; the owner then adds a hostname,
+ * Merchants' own domains (ADR-005 §3, folioviv#539). The option is paid and enabled per shop by an administrator; the owner then adds a hostname,
  * proves it with a TXT record, and the edge service issues its certificate. A domain is served only when `active`, only while the option is on and the
  * shop is published. Every function takes the shop it works on: another shop's domain is simply not found.
  */

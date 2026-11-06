@@ -5,10 +5,10 @@ type Vars = Record<string, string | undefined>;
 
 const bare = (host: string | null | undefined) => (host ?? "").trim().toLowerCase().replace(/:\d+$/, "");
 const DOMAIN = /^(?:[a-z0-9-]+\.)+[a-z]{2,}$/;
-const APP_DEFAULT = "https://www.akinaza.com";
+const APP_DEFAULT = "https://www.folioviv.com";
 
 /**
- * ADR-005 slice 5 (akinaza#538): the registrable domain the shops live on (`akinaza.shop`), declared by `APP_SHOP_DOMAIN`. A separate
+ * ADR-005 slice 5 (folioviv#538): the registrable domain the shops live on (`folioviv.shop`), declared by `APP_SHOP_DOMAIN`. A separate
  * registrable name is a separate site: no cookie of the app reaches a shop host and a script on a shop cannot toss one for `www`.
  * Unset (or malformed): shops stay on `<slug>.<apex of the app>`, as before. The environment is a parameter (pure, tested).
  */

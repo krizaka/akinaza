@@ -3,7 +3,7 @@ import { join, relative } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-// Bunny layout v2 (ADR-014, krizaka/.github#368): this site reads `sites/akinaza/`, `apps/akinaza/defaults/` and `org/v1/maps/`.
+// Bunny layout v2 (ADR-014, krizaka/.github#368): this site reads `sites/folioviv/`, `apps/folioviv/defaults/` and `org/v1/maps/`.
 // The legacy `site/…` and `/maps/v1` zone paths are deleted once released, so nothing here may name them again.
 const REPO = join(__dirname, "../../..");
 const ROOTS = ["apps/web", "packages", "deploy"];

@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 
-import type { BriefSnapshot } from "@akinaza/core";
+import type { BriefSnapshot } from "@folioviv/core";
 import { sql } from "drizzle-orm";
 
 import type { Db } from "./client";

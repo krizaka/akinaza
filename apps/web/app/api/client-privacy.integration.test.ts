@@ -9,7 +9,7 @@ import { apiCall, closeSuite, type Handler, openBookableShop, testAccount } from
 import { POST as erase } from "./walker/clients/[id]/erase/route";
 import { GET as exportData } from "./walker/clients/[id]/export/route";
 
-/** The shop answers a client's access and erasure requests from the console (akinaza#370). Real PostgreSQL (DATABASE_IT=1). */
+/** The shop answers a client's access and erasure requests from the console (folioviv#370). Real PostgreSQL (DATABASE_IT=1). */
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 
 describe.runIf(enabled)("a client's access and erasure answered by the shop", () => {

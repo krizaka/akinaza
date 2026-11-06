@@ -1,4 +1,4 @@
-import { shopClients } from "@akinaza/db";
+import { shopClients } from "@folioviv/db";
 
 import { requireShop } from "@/lib/access";
 import { db } from "@/lib/db";

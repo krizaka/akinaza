@@ -5,12 +5,12 @@ import * as React from "react";
 
 import { I18nProvider } from "@/i18n";
 
-import Today from "../../app/[locale]/app/[shop]/today";
 import Books from "../../app/[locale]/app/[shop]/books";
-import Boutique from "../../app/[locale]/app/[shop]/settings";
 import Clients from "../../app/[locale]/app/[shop]/clients";
 import Figures from "../../app/[locale]/app/[shop]/figures";
 import Invoices from "../../app/[locale]/app/[shop]/invoices/index";
+import Boutique from "../../app/[locale]/app/[shop]/settings";
+import Today from "../../app/[locale]/app/[shop]/today";
 import Home from "../../app/[locale]/app/index";
 
 const SHOP = "6f1d2c3b-4a5e-4f60-8a7b-9c0d1e2f3a4b";
@@ -32,11 +32,11 @@ jest.mock("expo-linking", () => ({ openURL: jest.fn() }));
 /** The server, as the screens read it: one function per query, each test says what it answers. */
 jest.mock("@/config", () => {
   const api = { day: jest.fn(), calendar: jest.fn(), clients: jest.fn(), invoices: jest.fn(), shop: jest.fn(), books: jest.fn(), figures: jest.fn(), me: jest.fn() };
-  const q = (name: keyof typeof api) => (...args: unknown[]) => ({ queryKey: ["akinaza", name, ...args.map((a) => a ?? "-")], queryFn: () => (api[name] as (...a: unknown[]) => unknown)(...args) });
+  const q = (name: keyof typeof api) => (...args: unknown[]) => ({ queryKey: ["folioviv", name, ...args.map((a) => a ?? "-")], queryFn: () => (api[name] as (...a: unknown[]) => unknown)(...args) });
   return {
     api,
-    akinaza: { checkIn: jest.fn(), checkOut: jest.fn() },
-    webUrl: (path: string) => `https://www.akinaza.com${path}`,
+    folioviv: { checkIn: jest.fn(), checkOut: jest.fn() },
+    webUrl: (path: string) => `https://www.folioviv.com${path}`,
     queries: { day: q("day"), calendar: q("calendar"), clients: q("clients"), invoices: q("invoices"), shop: q("shop"), books: q("books"), figures: q("figures"), me: q("me") },
   };
 });
@@ -94,8 +94,8 @@ describe("the phone app's five tabs, each with its three states (D8)", () => {
     expect(await screen.findByText("Saint-Henri")).toBeTruthy();
     expect(screen.getByText("Nelson · Camille")).toBeTruthy();
     await fireEvent.press(screen.getByText("Commencer"));
-    const { akinaza } = jest.requireMock("@/config") as { akinaza: Record<string, jest.Mock> };
-    expect(akinaza.checkIn).toHaveBeenCalledWith("a1", SHOP);
+    const { folioviv } = jest.requireMock("@/config") as { folioviv: Record<string, jest.Mock> };
+    expect(folioviv.checkIn).toHaveBeenCalledWith("a1", SHOP);
   });
 
   it("Aujourd'hui: pressing a row of the list opens it (visit in the URL)", async () => {

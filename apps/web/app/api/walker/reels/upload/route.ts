@@ -1,5 +1,5 @@
-import { detectVideo } from "@akinaza/core";
-import { addUploadedReel } from "@akinaza/db";
+import { detectVideo } from "@folioviv/core";
+import { addUploadedReel } from "@folioviv/db";
 
 import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";

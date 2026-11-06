@@ -1,4 +1,4 @@
-import type { ShopRecommendation } from "@akinaza/core";
+import type { ShopRecommendation } from "@folioviv/core";
 import { describe, expect, it } from "vitest";
 
 import { daysInWords } from "./brief";

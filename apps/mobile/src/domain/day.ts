@@ -16,7 +16,7 @@ export function timeOf(instant: string, timeZone: string, locale: string): strin
   return new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit", hour12: false, timeZone }).format(new Date(instant));
 }
 
-/** The shop's time zone until its own is read (Québec's, the market Akinaza serves). */
+/** The shop's time zone until its own is read (Québec's, the market Folioviv serves). */
 // @fixed: a default read only before the shop answers with its own time zone
 export const DEFAULT_TIMEZONE = "America/Toronto";
 

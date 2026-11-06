@@ -1,5 +1,5 @@
-import { shopRulesSchema } from "@akinaza/core";
-import { saveRules } from "@akinaza/db";
+import { shopRulesSchema } from "@folioviv/core";
+import { saveRules } from "@folioviv/db";
 
 import { requireOwner } from "@/lib/access";
 import { audit } from "@/lib/audit";

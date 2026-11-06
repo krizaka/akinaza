@@ -1,7 +1,7 @@
 "use client";
 
-import type { ShopType } from "@akinaza/core";
-import type { ShopPageConfig } from "@akinaza/db";
+import type { ShopType } from "@folioviv/core";
+import type { ShopPageConfig } from "@folioviv/db";
 import { Alert } from "@krizaka/ui/alert";
 import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";

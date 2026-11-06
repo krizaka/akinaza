@@ -1,6 +1,6 @@
 # The quick invoice (D8): pick a service, add the line, see GST and QST, issue it, find it in the list. The backend of CI is
 # throwaway, so issuing an invoice changes nothing that lasts.
-appId: com.krizaka.akinaza
+appId: com.krizaka.folioviv
 tags:
   - ci
 ---

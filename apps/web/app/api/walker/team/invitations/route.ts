@@ -1,4 +1,4 @@
-import { enqueueMail } from "@akinaza/db";
+import { enqueueMail } from "@folioviv/db";
 import { z } from "zod";
 
 import { systemClock } from "@/app/system-clock";

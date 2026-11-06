@@ -9,7 +9,7 @@ const services = [
 const clients = [{ id: "c-1", fullName: "Studio Lumen inc. (démo)", language: "fr" as const }];
 const line = (over: Partial<ReturnType<typeof emptyLine>>) => ({ ...emptyLine("k"), ...over });
 
-describe("Nouvelle facture: the preview is the server's own computation (@akinaza/core invoiceTotals)", () => {
+describe("Nouvelle facture: the preview is the server's own computation (@folioviv/core invoiceTotals)", () => {
   it("10 h at 150 $ + a 1 500 $ licence + a 500 $ pack: GST 175,00 $, QST 349,13 $ (349,125 rounds up), once on the taxable total", () => {
     const totals = draftPreview(
       [line({ serviceId: "s-hour", quantity: "10" }), line({ description: "Licence", quantity: "1", unitPriceCents: 150_000 }), line({ description: "Support (forfait)", quantity: "1", unitPriceCents: 50_000 })],

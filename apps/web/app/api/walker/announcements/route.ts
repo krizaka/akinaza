@@ -1,4 +1,4 @@
-import { addAnnouncement, announcementsOf } from "@akinaza/db";
+import { addAnnouncement, announcementsOf } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";

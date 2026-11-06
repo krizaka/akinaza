@@ -13,7 +13,7 @@ const textOf = (html: string) =>
     .replace(/[ \t]+/g, " ")
     .replace(/ ?\n ?/g, "\n");
 
-/** QC-INV-008 of Yomizaka's qc-invoice ruleset (orazaka-packs, document-validation): a payment-terms mention. Kept here as the guard that the document says it. */
+/** QC-INV-008 of Verikora's qc-invoice ruleset (sovkora-packs, document-validation): a payment-terms mention. Kept here as the guard that the document says it. */
 const QC_INV_008 = /(?:conditions?\s+de\s+paiement|modalit[ée]s?\s+de\s+paiement|payable\s+(?:dans|sous|au\s+plus|[àa]\s+\d|[àa]\s+r[ée]ception|d[èe]s|le\b)|\bnet\s*\d+|[ée]ch[ée]ance|payment\s+terms|due\s+(?:date|on|upon))/i;
 
 describe("the invoice document says when it is due and under which terms", () => {
@@ -36,7 +36,7 @@ describe("the invoice document says when it is due and under which terms", () =>
     expect(textOf(renderToStaticMarkup(<InvoiceDocument invoice={invoice({ language: "en", termsDays: 0, dueOn: "2026-10-21" })} locale="en" backHref="/en/app/x/invoices" />))).toMatch(/Due on receipt/);
   });
 
-  it("a fractional quantity reads as a person writes it: 7,5 in French, 7.5 in English (krizaka/akinaza#111)", () => {
+  it("a fractional quantity reads as a person writes it: 7,5 in French, 7.5 in English (krizaka/folioviv#111)", () => {
     const lines = [{ ...invoice().lines[0]!, quantityHundredths: 750, amountCents: 112_500 }];
     expect(textOf(renderToStaticMarkup(<InvoiceDocument invoice={invoice({ lines })} locale="en" backHref="/en/app/x/invoices" />))).toMatch(/Qté 7,5 × 150,00[\s\u00a0\u202f]\$/);
     expect(textOf(renderToStaticMarkup(<InvoiceDocument invoice={invoice({ language: "en", lines })} locale="fr" backHref="/fr/app/x/invoices" />))).toMatch(/Qty 7\.5 × \$150\.00/);

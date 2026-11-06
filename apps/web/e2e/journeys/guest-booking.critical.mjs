@@ -1,7 +1,7 @@
 // Journey: the guest booking (krizaka-internal#1934). An anonymous visitor opens a shop, picks a service and a free time, gives their details,
 // receives the 6-digit code by e-mail, types it and lands on the receipt. Behind a CAPTCHA: the server runs with Cloudflare's always-pass
 // TEST key (public, documented, refused when APP_ENVIRONMENT=prod: lib/captcha.ts); a second server with the always-fail test key proves
-// the refusal (nothing is mailed, nothing is booked). Demo data only, under @akinaza.test addresses.
+// the refusal (nothing is mailed, nothing is booked). Demo data only, under @folioviv.test addresses.
 import { expect, test } from "@playwright/test";
 
 import { testMailbox } from "./test-mailbox.mjs";
@@ -49,7 +49,7 @@ async function fillDetails(page, locale, email) {
 for (const locale of ["en", "fr"]) {
   test(`guest booking, ${locale}: anonymous visitor to slot, e-mail code, confirmed, receipt`, async ({ page, baseURL }) => {
     const w = W[locale];
-    const email = `e2e-guest-${locale}-${Date.now()}@akinaza.test`;
+    const email = `e2e-guest-${locale}-${Date.now()}@folioviv.test`;
     await reachGuestStep(page, baseURL, locale);
     expect(page.url()).not.toContain("/sign-in");
     await expect(page.locator("[data-guest-cancel-rule]")).toHaveCount(1);
@@ -69,7 +69,7 @@ for (const locale of ["en", "fr"]) {
 }
 
 test("guest booking, security check refused: nothing is mailed, no code step", async ({ page }) => {
-  const email = `e2e-guest-refused-${Date.now()}@akinaza.test`;
+  const email = `e2e-guest-refused-${Date.now()}@folioviv.test`;
   await reachGuestStep(page, FAIL_BASE, "en");
   await fillDetails(page, "en", email);
   await captchaSolved(page);

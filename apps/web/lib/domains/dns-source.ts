@@ -1,4 +1,4 @@
-import type { TxtResolver } from "@akinaza/core";
+import type { TxtResolver } from "@folioviv/core";
 
 import { systemTxt } from "./dns-txt";
 import { harnessDns } from "./edge-hostnames";

@@ -1,4 +1,4 @@
-import { briefTokenKnown } from "@akinaza/db";
+import { briefTokenKnown } from "@folioviv/db";
 import { Page } from "@krizaka/ui/page";
 import { PageHero } from "@krizaka/ui/page-hero";
 import type { Metadata } from "next";
@@ -19,7 +19,7 @@ export const metadata: Metadata = { robots: { index: false, follow: false }, ref
 export default async function StopBriefPage({ params }: Readonly<{ params: Promise<{ locale: string; token: string }> }>) {
   const { locale: raw, token } = await params;
   const locale = asLocale(raw);
-  // A link that leads nowhere is a 404, never a page that looks alive (akinaza#381).
+  // A link that leads nowhere is a 404, never a page that looks alive (folioviv#381).
   if (!(await briefTokenKnown(db(), token))) notFound();
   const t = getDictionary(locale).console.brief.stop;
   return (

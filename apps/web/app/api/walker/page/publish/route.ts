@@ -1,4 +1,4 @@
-import { publishShopPageDraft } from "@akinaza/db";
+import { publishShopPageDraft } from "@folioviv/db";
 
 import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";

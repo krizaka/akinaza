@@ -1,5 +1,5 @@
-import { addLocalDays, canCancel, groupSlotsByDay, invoiceTotals, localDay } from "@akinaza/core";
-import type { BookingDetail, PublicShop, StaffSlot } from "@akinaza/db";
+import { addLocalDays, canCancel, groupSlotsByDay, invoiceTotals, localDay } from "@folioviv/core";
+import type { BookingDetail, PublicShop, StaffSlot } from "@folioviv/db";
 
 import { type Locale, translator } from "@/lib/i18n";
 import { type Choice, confirmHref, journeyBase, serviceHref, timesHref } from "@/lib/journey-paths";

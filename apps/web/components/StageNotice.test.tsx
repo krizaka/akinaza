@@ -7,7 +7,7 @@ import { StageNotice } from "./StageNotice";
 
 const source = (name: string) => readFileSync(new URL(name, import.meta.url), "utf8");
 
-describe("the development-version notice (akinaza#440)", () => {
+describe("the development-version notice (folioviv#440)", () => {
   it("shows in the stage dev, in both languages", () => {
     expect(renderToStaticMarkup(<StageNotice locale="fr" stage="dev" />)).toContain("Version de développement");
     expect(renderToStaticMarkup(<StageNotice locale="en" stage="dev" />)).toContain("Development version");

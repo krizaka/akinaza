@@ -2,15 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <!-- akinaza://app/… opens the same page of the back office in the window (tauri-plugin-krizaka turns it into a route). -->
+  <!-- folioviv://app/… opens the same page of the back office in the window (tauri-plugin-krizaka turns it into a route). -->
   <key>CFBundleURLTypes</key>
   <array>
     <dict>
       <key>CFBundleURLName</key>
-      <string>com.krizaka.akinaza.desktop</string>
+      <string>com.krizaka.folioviv.desktop</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>akinaza</string>
+        <string>folioviv</string>
       </array>
     </dict>
   </array>

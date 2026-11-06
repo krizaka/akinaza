@@ -1,4 +1,4 @@
-import { booksAnswer, calendarAnswer, clientsAnswer, dayAnswer, figuresAnswer, invoicesAnswer, issuedInvoice, meAnswer, shopAnswer } from "@akinaza/core";
+import { booksAnswer, calendarAnswer, clientsAnswer, dayAnswer, figuresAnswer, invoicesAnswer, issuedInvoice, meAnswer, shopAnswer } from "@folioviv/core";
 import type { ApiClient, SessionStore } from "@krizaka/app-client";
 import { z } from "zod";
 
@@ -29,7 +29,7 @@ export const inShop = (path: string, shopId?: string): string => {
   return `${path}${joiner}shopId=${encodeURIComponent(shopId)}`;
 };
 
-export function createAkinazaApi(api: Pick<ApiClient, "call">, session: Pick<SessionStore, "saveToken" | "clearToken">) {
+export function createFoliovivApi(api: Pick<ApiClient, "call">, session: Pick<SessionStore, "saveToken" | "clearToken">) {
   const get = <T extends z.ZodType>(schema: T, path: string): Promise<z.infer<T>> => api.call<unknown>(path).then((value) => schema.parse(value));
   const post = (path: string, body?: unknown) => api.call<unknown>(path, { method: "POST", ...(body === undefined ? {} : { body }) });
   return {
@@ -66,4 +66,4 @@ export function createAkinazaApi(api: Pick<ApiClient, "call">, session: Pick<Ses
   };
 }
 
-export type AkinazaApi = ReturnType<typeof createAkinazaApi>;
+export type FoliovivApi = ReturnType<typeof createFoliovivApi>;

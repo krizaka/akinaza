@@ -19,9 +19,9 @@ export TZ=UTC
 export NEXT_PUBLIC_ABUSE_CAPTCHA_SITE_KEY=1x00000000000000000000AA
 export ABUSE_CAPTCHA_PROVIDER=turnstile
 export MAIL_PROVIDER=mailgun MAIL_API_KEY=e2e MAIL_DOMAIN=mg.e2e.test MAIL_API_URL=http://127.0.0.1:3299
-pnpm --filter @akinaza/web build
+pnpm --filter @folioviv/web build
 export NODE_ENV=production
-pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs --check
+pnpm --filter @folioviv/web exec tsx scripts/seed-cast.mjs --check
 trap 'tail -100 web-journeys.log web-journeys-fail.log || true' ERR
 (cd apps/web && ABUSE_CAPTCHA_SECRET_KEY=1x0000000000000000000000000000000AA PORT=3000 APP_PUBLIC_URL=http://localhost:3000 nohup npx next start -p 3000 > ../../web-journeys.log 2>&1 &)
 (cd apps/web && ABUSE_CAPTCHA_SECRET_KEY=2x0000000000000000000000000000000AA PORT=3001 APP_PUBLIC_URL=http://localhost:3001 nohup npx next start -p 3001 > ../../web-journeys-fail.log 2>&1 &)

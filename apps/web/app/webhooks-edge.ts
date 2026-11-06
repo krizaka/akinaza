@@ -1,4 +1,4 @@
-import { openField, sealField } from "@akinaza/db";
+import { openField, sealField } from "@folioviv/db";
 
 import { dataKey } from "@/lib/env";
 import { sendWebhook, webhooks } from "@/lib/webhooks";

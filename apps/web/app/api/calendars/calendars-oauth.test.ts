@@ -1,4 +1,4 @@
-import { addConnection, recordSyncOk } from "@akinaza/db";
+import { addConnection, recordSyncOk } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireShop } from "@/lib/access";
@@ -15,7 +15,7 @@ vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/env", () => ({
   dataKey: () => Buffer.alloc(32, 7),
   sessionSecret: () => "session-secret",
-  env: () => ({ APP_PUBLIC_URL: "https://www.akinaza.com" }),
+  env: () => ({ APP_PUBLIC_URL: "https://www.folioviv.com" }),
   calendarOAuthApps: () => ({ google: { clientId: "cid", clientSecret: "csec" } }),
 }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
@@ -24,7 +24,7 @@ vi.mock("@/lib/calendar/overview", async (original) => ({
   ...(await original<typeof import("@/lib/calendar/overview")>()),
   calendarOverview: vi.fn(async () => ({ wholeShop: true, people: [{ id: "11111111-1111-4111-8111-111111111111", name: "Julie" }], connections: [], enabled: true, kinds: [] })),
 }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), addConnection: vi.fn(), recordSyncOk: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), addConnection: vi.fn(), recordSyncOk: vi.fn() }));
 
 const params = (kind: string) => ({ params: Promise.resolve({ kind }) });
 const flags = (over: Record<string, unknown> = {}) =>
@@ -46,7 +46,7 @@ describe("connecting Google or Outlook (#282, ADR-004)", () => {
     const { url } = (await res.json()) as { url: string };
     const q = new URL(url).searchParams;
     expect(q.get("scope")).toBe("https://www.googleapis.com/auth/calendar.freebusy");
-    expect(q.get("redirect_uri")).toBe("https://www.akinaza.com/api/calendars/callback/google");
+    expect(q.get("redirect_uri")).toBe("https://www.folioviv.com/api/calendars/callback/google");
     expect(q.get("code_challenge_method")).toBe("S256");
     const cookie = res.headers.get("set-cookie")!;
     expect(cookie).toMatch(/HttpOnly/);
@@ -76,7 +76,7 @@ describe("the callback", () => {
   const verifier = newPkce().verifier;
   const stateOf = (over: Partial<Parameters<typeof signState>[0]> = {}) => signState({ kind: "google", shopId: "s1", staffId: null, accountId: "acc", label: "Mine", locale: "fr", ...over }, "session-secret", NOW);
   const hit = (kind: string, state: string, nonce: string, extra = "code=abc", cookie: string | null = pkceCookie(nonce, verifier, true).split(";")[0]!) =>
-    callback(new Request(`https://www.akinaza.com/api/calendars/callback/${kind}?state=${encodeURIComponent(state)}&${extra}`, { headers: cookie ? { cookie } : {} }), params(kind));
+    callback(new Request(`https://www.folioviv.com/api/calendars/callback/${kind}?state=${encodeURIComponent(state)}&${extra}`, { headers: cookie ? { cookie } : {} }), params(kind));
   const answers = () =>
     vi.fn(async (url: RequestInfo | URL, init?: RequestInit) => {
       const u = String(url);

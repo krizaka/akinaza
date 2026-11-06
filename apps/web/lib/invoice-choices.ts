@@ -1,4 +1,4 @@
-import { schema } from "@akinaza/db";
+import { schema } from "@folioviv/db";
 import { and, asc, eq, isNull } from "drizzle-orm";
 
 import { db } from "@/lib/db";

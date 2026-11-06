@@ -1,4 +1,4 @@
-import { addWindow, windowInputSchema } from "@akinaza/db";
+import { addWindow, windowInputSchema } from "@folioviv/db";
 
 import { requireShop } from "@/lib/access";
 import { db } from "@/lib/db";

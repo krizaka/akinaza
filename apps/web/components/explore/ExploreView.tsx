@@ -1,6 +1,6 @@
 "use client";
 
-import { clearExplore, exploreRequest, hasExploreFilters, quartiersOf, type RankedShop } from "@akinaza/core";
+import { clearExplore, exploreRequest, hasExploreFilters, quartiersOf, type RankedShop } from "@folioviv/core";
 import { keepPreviousData, krizakaFetch, KrizakaQueryProvider, useQuery } from "@krizaka/query";
 import { NuqsAdapter } from "@krizaka/query/url/next";
 import { Alert } from "@krizaka/ui/alert";

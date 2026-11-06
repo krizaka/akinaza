@@ -1,4 +1,4 @@
-import { saveShopPageConfig, shopPageConfigOf, shopPageSaveSchema } from "@akinaza/db";
+import { saveShopPageConfig, shopPageConfigOf, shopPageSaveSchema } from "@folioviv/db";
 
 import { requireOwner } from "@/lib/access";
 import { db } from "@/lib/db";

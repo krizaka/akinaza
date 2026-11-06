@@ -12,7 +12,7 @@ const en = bindProduct(enRaw);
 const fr = bindProduct(frRaw);
 
 /**
- * akinaza#362. A public text names a place (Canada, Toronto) only when the configured region of the store it describes
+ * folioviv#362. A public text names a place (Canada, Toronto) only when the configured region of the store it describes
  * says so, and never promises conformity to a law: a feature is named by what it does (the consent is noted by purpose),
  * never by the law it answers. The points that need a lawyer are on the lawyer-review list, not in the copy.
  */
@@ -64,7 +64,7 @@ const NOT_RESIDENCY: Record<string, string> = {
   "terms.sections.2.p": "names the Canada Revenue Agency, a tax authority, not a storage place",
   "terms.sections.11.p": "the federal laws of Canada that govern the terms, not a storage place",
   "docs.pages.books.sections.2.p.0": "names the Canada Revenue Agency, a tax authority, not a storage place",
-  // The console's Storage screen (akinaza#397): the administrator's own screen, each sentence says what ONE chosen region means (from the package's region table; storage-regions.test.ts holds it), never what is deployed.
+  // The console's Storage screen (folioviv#397): the administrator's own screen, each sentence says what ONE chosen region means (from the package's region table; storage-regions.test.ts holds it), never what is deployed.
   "console.admin.storage.canada": "the group title of the Canadian regions on the administrator's screen",
   "console.admin.storage.residency.canada": "what the chosen region means, from the region table",
   "console.admin.storage.residency.canada-ab": "what the chosen region means, from the region table",
@@ -96,7 +96,7 @@ const LEGAL_PROMISE = /\bloi\s*(25|96)\b|\blaw\s*(25|96)\b|\bbill\s*(64|96)\b|dÃ
 const spec = readFileSync(SPEC, "utf8");
 const DEV = environmentOf("dev", spec);
 
-describe("a public place claim follows the configured region (akinaza#362)", () => {
+describe("a public place claim follows the configured region (folioviv#362)", () => {
   it("reads the deployed environment: the app and the database in Toronto, the media in New York", () => {
     expect(DEV).toEqual({ name: "dev", app: "tor", database: "tor1", media: "ny" });
   });
@@ -130,10 +130,10 @@ describe("a public place claim follows the configured region (akinaza#362)", () 
   });
 });
 
-describe("the notice describes only the flows the code has (akinaza#364)", () => {
-  it("does not say the tax ledger is sent to another service: the figures are computed inside Akinaza", () => {
+describe("the notice describes only the flows the code has (folioviv#364)", () => {
+  it("does not say the tax ledger is sent to another service: the figures are computed inside Folioviv", () => {
     for (const m of [en, fr]) {
-      expect(m.privacy.body).not.toMatch(/orazaka|envoy|sent to/i);
+      expect(m.privacy.body).not.toMatch(/sovkora|envoy|sent to/i);
     }
   });
 
@@ -149,7 +149,7 @@ describe("the notice describes only the flows the code has (akinaza#364)", () =>
   });
 });
 
-describe("no public text promises conformity to a law (akinaza#362)", () => {
+describe("no public text promises conformity to a law (folioviv#362)", () => {
   it("refuses the promise in every message, en and fr", () => {
     const hits = [...leaves(en), ...leaves(fr)].filter(([, text]) => LEGAL_PROMISE.test(text)).map(([path]) => path);
     expect(hits).toEqual([]);

@@ -6,7 +6,7 @@ import { DEMO_RETURN } from "@/lib/landing-demo";
 /** The three figures a merchant carries to the return: sales, net GST, net QST. */
 const KEY_LINES = ["101", "109", "209"] as const;
 
-/** « Your tax report, ready »: the quarter's invoices and expenses become the three figures of the return. Prepared for the merchant to file; never filed by Akinaza. */
+/** « Your tax report, ready »: the quarter's invoices and expenses become the three figures of the return. Prepared for the merchant to file; never filed by Folioviv. */
 export function BooksPreview({ locale }: Readonly<{ locale: Locale }>) {
   const d = getDictionary(locale);
   const t = d.landing;

@@ -2,7 +2,7 @@
 // not on Team and not under the page's decoration settings. Demo data only (the seeded cast).
 import { expect, test } from "@playwright/test";
 
-const EMAIL = process.env.E2E_EMAIL ?? "lea.beaulieu@akinaza.test";
+const EMAIL = process.env.E2E_EMAIL ?? "lea.beaulieu@folioviv.test";
 const CAST_WORD = process.env.E2E_PASSWORD ?? "local-cast-password-0123";
 
 test("owner opens the hours: Boutique lists Hours and days off, and the section holds the week", async ({ page }) => {

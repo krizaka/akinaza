@@ -1,5 +1,5 @@
-import { dependantInputSchema } from "@akinaza/core";
-import { addDependant } from "@akinaza/db";
+import { dependantInputSchema } from "@folioviv/core";
+import { addDependant } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireOwnClient } from "@/lib/access";

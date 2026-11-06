@@ -1,13 +1,13 @@
 # Privacy impact assessment (EFVP)
 
-> Akinaza, under art. 3.3 of the *Act respecting the protection of personal information in the private sector*, CQLR c. P-39.1 ([LégisQuébec](https://www.legisquebec.gouv.qc.ca/en/document/cs/P-39.1)). Status: **good-faith version, to be validated by the lawyer**; open points are on the checklist ([krizaka/.github#250](https://github.com/krizaka/.github/issues/250)) and block nothing. Written from the code and the deployment spec, never from a promise. Companion: [transfers outside Québec](transfers.md). Issue: akinaza#369.
+> Folioviv, under art. 3.3 of the *Act respecting the protection of personal information in the private sector*, CQLR c. P-39.1 ([LégisQuébec](https://www.legisquebec.gouv.qc.ca/en/document/cs/P-39.1)). Status: **good-faith version, to be validated by the lawyer**; open points are on the checklist ([krizaka/.github#250](https://github.com/krizaka/.github/issues/250)) and block nothing. Written from the code and the deployment spec, never from a promise. Companion: [transfers outside Québec](transfers.md). Issue: folioviv#369.
 > Reviewed by the person in charge of the protection of personal information: **pending** (date to be filled at the review).
 
 ## The project
 
-Akinaza is a new electronic service: it lets an independent shop in Québec (salon, workshop, coach, cleaning, pets, consulting; never a restaurant or a bar) take bookings, send bilingual invoices with GST and QST, keep a tax ledger and prepare, never file, its GST/QST figures. It collects personal information about two groups: the **shop owners and their staff** (accounts) and the **shops' clients**. The proportionality of this assessment follows art. 3.3: sensitivity, purpose, quantity, distribution, medium.
+Folioviv is a new electronic service: it lets an independent shop in Québec (salon, workshop, coach, cleaning, pets, consulting; never a restaurant or a bar) take bookings, send bilingual invoices with GST and QST, keep a tax ledger and prepare, never file, its GST/QST figures. It collects personal information about two groups: the **shop owners and their staff** (accounts) and the **shops' clients**. The proportionality of this assessment follows art. 3.3: sensitivity, purpose, quantity, distribution, medium.
 
-**Roles.** For its shop-owner accounts and its billing, Akinaza (Technologies Krizaka Inc.) is the enterprise that collects. For the information about a shop's clients, the shop decides why it is held; Akinaza holds it **for the shop as a service provider under art. 18.3**, and the terms say so (terms, section 7). Question for the lawyer below.
+**Roles.** For its shop-owner accounts and its billing, Folioviv (Technologies Krizaka Inc.) is the enterprise that collects. For the information about a shop's clients, the shop decides why it is held; Folioviv holds it **for the shop as a service provider under art. 18.3**, and the terms say so (terms, section 7). Question for the lawyer below.
 
 ## Data map
 
@@ -37,7 +37,7 @@ Quantity: small (dev preview; a few shops). Distribution: the shop's members onl
 | A client cannot get or erase their data | Export and erasure from `@krizaka/privacy` contributors; the owner answers from the console; 30-day delay | Low |
 | Over-collection | A client file holds what the shop needs; consent per purpose, never pre-ticked | Low |
 | Data kept too long | Retention rules as data (`packages/core/src/retention.ts`); erasure keeps only what tax law keeps | Medium: the audit log and mail queue have no purge yet (open) |
-| An incident goes unnoticed or unreported | Company [incident procedure and register](https://github.com/krizaka/.github/blob/main/docs/privacy/incident-procedure.md); an entry point in the admin console is planned (akinaza#392) | Medium until the console entry exists |
+| An incident goes unnoticed or unreported | Company [incident procedure and register](https://github.com/krizaka/.github/blob/main/docs/privacy/incident-procedure.md); an entry point in the admin console is planned (folioviv#392) | Medium until the console entry exists |
 | Provider outside Québec | [Transfer register](transfers.md); written contracts to collect; Canadian hosting planned | Medium until contracts and regions are confirmed |
 | The model that translates a shop page | Only the page's texts and a glossary leave; nothing about a client | Low |
 
@@ -51,6 +51,6 @@ Proceed to the dev preview; before sign-up opens: confirm regions and collect co
 
 ## Questions for the lawyer (also on the checklist)
 
-- Is Akinaza a service provider of the shop under art. 18.3 for the clients' information, and does that need a separate data processing agreement?
+- Is Folioviv a service provider of the shop under art. 18.3 for the clients' information, and does that need a separate data processing agreement?
 - Is a provider's standard addendum enough for arts. 17 and 18.3? Does a CDN edge outside Canada count as a communication outside Québec?
 - Is "proportionate" met by this document for a service of this size and sensitivity?

@@ -1,4 +1,4 @@
-import type { FigureAnswer, NextActionAnswer } from "@akinaza/core";
+import type { FigureAnswer, NextActionAnswer } from "@folioviv/core";
 
 import en from "../i18n/en.json";
 import fr from "../i18n/fr.json";

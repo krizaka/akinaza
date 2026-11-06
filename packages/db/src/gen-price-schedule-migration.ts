@@ -1,7 +1,7 @@
 import { PRICE_SCHEDULE_SQL } from "./price-schedule";
 
-/** `pnpm --filter @akinaza/db exec tsx src/gen-price-schedule-migration.ts > drizzle/0053_prices_association.sql` */
-process.stdout.write(`-- The new price grid as dated catalogue versions, and the Association plan's proof (akinaza ADR-003 addendum 2026-10-30).
+/** `pnpm --filter @folioviv/db exec tsx src/gen-price-schedule-migration.ts > drizzle/0053_prices_association.sql` */
+process.stdout.write(`-- The new price grid as dated catalogue versions, and the Association plan's proof (folioviv ADR-003 addendum 2026-10-30).
 ${PRICE_SCHEDULE_SQL}
 -- The proof an association submits (its NEQ, its registered charity number, or its incorporation document's reference): one pending
 -- at a time, decided once by an administrator. Until approved the account is on Starter.

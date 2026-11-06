@@ -81,7 +81,7 @@ describe("the rest of the model", () => {
   });
   it("lets the company claim its own name: « krizaka » is a protected term (held until an administrator clears it), not a reserved word (#489)", () => {
     expect(slugSchema.parse("krizaka")).toBe("krizaka");
-    for (const bad of ["akinaza", "www", "admin"]) expect(slugSchema.safeParse(bad).success).toBe(false);
+    for (const bad of ["folioviv", "www", "admin"]) expect(slugSchema.safeParse(bad).success).toBe(false);
   });
   it("validates a dog's profile at the door", () => {
     expect(dependantInputSchema.parse({ kind: "dog", name: "Rex", profile: { size: "large", vet: { name: "Clinique Saint-Henri", phone: "514-555-0100" } } }).profile.size).toBe("large");

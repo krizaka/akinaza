@@ -10,8 +10,8 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 /** Concurrent streams per public shop page on this instance, shared across route bundles. */
-const holder = globalThis as unknown as { __akinazaStorefrontStreams?: Map<string, number> };
-const streams = holder.__akinazaStorefrontStreams ??= new Map<string, number>();
+const holder = globalThis as unknown as { __foliovivStorefrontStreams?: Map<string, number> };
+const streams = holder.__foliovivStorefrontStreams ??= new Map<string, number>();
 
 export function GET(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   return handle(async () => {

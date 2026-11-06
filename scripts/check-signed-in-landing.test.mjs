@@ -6,7 +6,7 @@ import { inApp, pathOf, watchSignInLink } from "./check-signed-in-landing.mjs";
 
 describe("the signed-in landing check (krizaka-ui#827)", () => {
   it("names the path a visitor landed on", () => {
-    assert.equal(pathOf("https://www.akinaza.com/fr/app?x=1"), "/fr/app");
+    assert.equal(pathOf("https://www.folioviv.com/fr/app?x=1"), "/fr/app");
   });
 
   it("is run by CI after the build, as the seeded persona", () => {

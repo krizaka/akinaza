@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return { title: t.console.meta.signIn, robots: { index: false, follow: false } };
 }
 
-/** Sign-in on @krizaka/ui's auth template, Akinaza's mark and its owl. Sign-up is closed — the page says so. */
+/** Sign-in on @krizaka/ui's auth template, Folioviv's mark and its owl. Sign-up is closed — the page says so. */
 export default async function SignInPage({ params, searchParams }: Readonly<{ params: Promise<{ locale: string }>; searchParams: Promise<{ next?: string }> }>) {
   const locale = asLocale((await params).locale);
   // Back to where the person was going — an address of this site only, in this language (never an open redirect).
@@ -42,7 +42,7 @@ export default async function SignInPage({ params, searchParams }: Readonly<{ pa
         <>
           <strong className="block font-semibold text-fg">{t.closedTitle}</strong>
           <span className="block">{t.closed}</span>{" "}
-          <a className="font-semibold text-fg-accent" href={contactHref("akinaza-sign-in", locale)}>
+          <a className="font-semibold text-fg-accent" href={contactHref("folioviv-sign-in", locale)}>
             {t.contact}
           </a>
         </>

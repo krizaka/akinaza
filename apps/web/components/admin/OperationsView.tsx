@@ -9,7 +9,7 @@ import type { Operations } from "@/lib/admin-content";
 import { useSay } from "@/lib/i18n-client";
 import { budgetShare } from "@/lib/operations-shared";
 
-/** What an operator reads to know whether Akinaza is well: the database budget, and whether the tax ledger still agrees with the invoices. */
+/** What an operator reads to know whether Folioviv is well: the database budget, and whether the tax ledger still agrees with the invoices. */
 export function OperationsView({ ops }: Readonly<{ ops: Operations }>) {
   const { say } = useSay();
   const t = (key: string, vars?: Record<string, string | number>) => say(`admin.operations.${key}`, vars);

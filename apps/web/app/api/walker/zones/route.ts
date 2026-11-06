@@ -1,4 +1,4 @@
-import { addZone, zonePlaceSchema } from "@akinaza/db";
+import { addZone, zonePlaceSchema } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";

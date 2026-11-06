@@ -1,4 +1,4 @@
-import { localDay, localInstant } from "@akinaza/core";
+import { localDay, localInstant } from "@folioviv/core";
 import { addDays, addHours, addMinutes, addMonths } from "date-fns";
 import { persona } from "@krizaka/org";
 import { and, eq, sql } from "drizzle-orm";
@@ -73,19 +73,19 @@ export const SAINT_HENRI = {
   } as Record<string, { descriptionFr: string; descriptionEn: string; includedFr: string[]; includedEn: string[] }>,
   /** The shop's photos: the cover (the Lachine canal at dawn, Folioviv's own demo image) and the gallery (the real recordings of the walker's journey on dev). */
   media: {
-    cover: { url: "https://krizaka-assets.b-cdn.net/sites/akinaza/demo/pets-cover.18173bdfbf.webp", altFr: "Le canal Lachine au petit matin, le chemin de la promenade.", altEn: "The Lachine canal at dawn, the walk's path." },
+    cover: { url: "https://krizaka-assets.b-cdn.net/sites/folioviv/demo/pets-cover.18173bdfbf.webp", altFr: "Le canal Lachine au petit matin, le chemin de la promenade.", altEn: "The Lachine canal at dawn, the walk's path." },
     gallery: [
-      { url: "https://krizaka-assets.b-cdn.net/sites/orazaka/gallery/mtl-ruelle.021f8cb018.webp", altFr: "Une ruelle de quartier sous la pluie.", altEn: "A neighbourhood alley in the rain.", captionFr: "Le quartier", captionEn: "The neighbourhood", wide: true },
+      { url: "https://krizaka-assets.b-cdn.net/sites/sovkora/gallery/mtl-ruelle.021f8cb018.webp", altFr: "Une ruelle de quartier sous la pluie.", altEn: "A neighbourhood alley in the rain.", captionFr: "Le quartier", captionEn: "The neighbourhood", wide: true },
       {
-        url: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/phone-report.af3aa7b92b.jpg",
-        webmUrl: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/report.47b4fef558.webm",
-        mp4Url: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/report.b1f25d285f.mp4",
+        url: "https://krizaka-assets.b-cdn.net/sites/folioviv/tour/phone-report.af3aa7b92b.jpg",
+        webmUrl: "https://krizaka-assets.b-cdn.net/sites/folioviv/tour/report.47b4fef558.webm",
+        mp4Url: "https://krizaka-assets.b-cdn.net/sites/folioviv/tour/report.b1f25d285f.mp4",
         altFr: "Léa écrit le rapport d'une promenade : une photo et un mot.",
         altEn: "Léa writes the report of a walk: a photo and a note.",
         captionFr: "Le rapport après la sortie",
         captionEn: "The report after the walk",
       },
-      { url: "https://krizaka-assets.b-cdn.net/sites/akinaza/tour/phone-client.c5b88410f9.jpg", altFr: "Le rapport reçu par la cliente, avec la photo de son chien.", altEn: "The report as the client receives it, with her dog's photo.", captionFr: "Ce que vous recevez", captionEn: "What you receive" },
+      { url: "https://krizaka-assets.b-cdn.net/sites/folioviv/tour/phone-client.c5b88410f9.jpg", altFr: "Le rapport reçu par la cliente, avec la photo de son chien.", altEn: "The report as the client receives it, with her dog's photo.", captionFr: "Ce que vous recevez", captionEn: "What you receive" },
     ],
   },
   hours: [
@@ -96,16 +96,16 @@ export const SAINT_HENRI = {
     { weekday: 6, startsAt: "09:00", endsAt: "12:00" },
   ],
   clients: [
-    { email: "camille.tremblay@akinaza.test", name: cast("camille").displayName, phone: "514-555-0101", language: cast("camille").locale, notes: "Code de la porte 4821, clé de secours sous le pot de lavande.", dogs: [{ name: "Rex", breed: "Labrador", size: "large" as const, temperament: "Joueur, tire un peu en laisse" }] },
-    { email: "jordan.lee@akinaza.test", name: cast("jordan").displayName, phone: "514-555-0102", language: cast("jordan").locale, notes: "Buzzer 12, leash on the hook by the door.", dogs: [{ name: "Luna", breed: "Border collie", size: "medium" as const, temperament: "Shy with other dogs at first" }] },
-    { email: "nadia.benali@akinaza.test", name: cast("nadia").displayName, phone: "514-555-0103", language: cast("nadia").locale, notes: null, dogs: [{ name: "Biscuit", breed: "Cavapoo", size: "small" as const, temperament: "Doux" }, { name: "Pixel", breed: "Chihuahua", size: "small" as const, temperament: "Craintif des vélos" }] },
-    { email: "etienne.gagnon@akinaza.test", name: cast("etienne").displayName, phone: "514-555-0104", language: cast("etienne").locale, notes: "Cadenas du portail : 0719.", dogs: [{ name: "Érable", breed: "Golden retriever", size: "large" as const, temperament: "Adore l'eau" }] },
-    { email: "sofia.rossi@akinaza.test", name: cast("sofia").displayName, phone: "514-555-0105", language: cast("sofia").locale, notes: null, dogs: [{ name: "Tofu", breed: "Shiba inu", size: "medium" as const, temperament: "Independent, never off leash" }] },
+    { email: "camille.tremblay@folioviv.test", name: cast("camille").displayName, phone: "514-555-0101", language: cast("camille").locale, notes: "Code de la porte 4821, clé de secours sous le pot de lavande.", dogs: [{ name: "Rex", breed: "Labrador", size: "large" as const, temperament: "Joueur, tire un peu en laisse" }] },
+    { email: "jordan.lee@folioviv.test", name: cast("jordan").displayName, phone: "514-555-0102", language: cast("jordan").locale, notes: "Buzzer 12, leash on the hook by the door.", dogs: [{ name: "Luna", breed: "Border collie", size: "medium" as const, temperament: "Shy with other dogs at first" }] },
+    { email: "nadia.benali@folioviv.test", name: cast("nadia").displayName, phone: "514-555-0103", language: cast("nadia").locale, notes: null, dogs: [{ name: "Biscuit", breed: "Cavapoo", size: "small" as const, temperament: "Doux" }, { name: "Pixel", breed: "Chihuahua", size: "small" as const, temperament: "Craintif des vélos" }] },
+    { email: "etienne.gagnon@folioviv.test", name: cast("etienne").displayName, phone: "514-555-0104", language: cast("etienne").locale, notes: "Cadenas du portail : 0719.", dogs: [{ name: "Érable", breed: "Golden retriever", size: "large" as const, temperament: "Adore l'eau" }] },
+    { email: "sofia.rossi@folioviv.test", name: cast("sofia").displayName, phone: "514-555-0105", language: cast("sofia").locale, notes: null, dogs: [{ name: "Tofu", breed: "Shiba inu", size: "medium" as const, temperament: "Independent, never off leash" }] },
   ],
 };
 
 /** The e-mails of the persona's accounts, in the order the seed expects them (the walker first). */
-export const SAINT_HENRI_EMAILS = ["lea.beaulieu@akinaza.test", ...SAINT_HENRI.clients.map((c) => c.email)] as const;
+export const SAINT_HENRI_EMAILS = ["lea.beaulieu@folioviv.test", ...SAINT_HENRI.clients.map((c) => c.email)] as const;
 
 /** The storefront's words, places and photos of the persona: idempotent, so a shop seeded before them gains them on the next run. */
 export async function enrichSaintHenri(db: Db, ownerId: string, shopId: string): Promise<void> {
@@ -212,7 +212,7 @@ const TEST_WALKER = "Marche de test";
 const TEST_VISIT_SERVICE = "Puppy visit 20 min";
 
 /**
- * A test-only visit TODAY for the demo owner, whatever time the suite runs at (krizaka/akinaza#433): a puppy visit one hour after
+ * A test-only visit TODAY for the demo owner, whatever time the suite runs at (krizaka/folioviv#433): a puppy visit one hour after
  * the injected clock, kept on the shop's current day (after 23:00 local it falls back to 22:30). The phone's Maestro flow then always
  * goes list, detail, start, finish. Not a slot offered to clients: it is inserted directly, once (a re-run finds it). Dev and CI only.
  */

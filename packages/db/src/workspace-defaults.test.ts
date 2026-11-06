@@ -1,10 +1,10 @@
-import { INVOICE_STATE, SHOP_TYPES } from "@akinaza/core";
+import { INVOICE_STATE, SHOP_TYPES } from "@folioviv/core";
 import { checkKindConfig, checkMove, checkViewFilters, MARKERS, type StatusSet } from "@krizaka/organize/contract";
 import { describe, expect, it } from "vitest";
 
 import { CLIENT_KIND, INVOICE_KIND, INVOICE_STATUS_SET, KIND_DEFAULTS, presetVariant, TAG_WRITERS } from "./workspace-defaults";
 
-describe("the administrator's defaults of the workspace (akinaza#337)", () => {
+describe("the administrator's defaults of the workspace (folioviv#337)", () => {
   it.each(KIND_DEFAULTS.map((k) => [k.kind, k] as const))("%s: the configuration is valid for the package", (_kind, config) => {
     expect(() => checkKindConfig(config)).not.toThrow();
   });
@@ -24,7 +24,7 @@ describe("the administrator's defaults of the workspace (akinaza#337)", () => {
     }
   });
 
-  it("the presets never name a restaurant, a bar or a café (Akinaza does not serve them)", () => {
+  it("the presets never name a restaurant, a bar or a café (Folioviv does not serve them)", () => {
     const words = JSON.stringify(KIND_DEFAULTS.map((k) => k.tags.presets)).toLowerCase();
     expect(words).not.toMatch(/restaurant|\bbar\b|caf[ée]|resto/);
   });

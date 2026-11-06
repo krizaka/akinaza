@@ -7,7 +7,7 @@ import frRaw from "@/messages/fr.json";
 const en = bindProduct(enRaw);
 const fr = bindProduct(frRaw);
 
-/** Akinaza holds no client money: no message may speak of an escrow (krizaka/akinaza#372). */
+/** Folioviv holds no client money: no message may speak of an escrow (krizaka/folioviv#372). */
 const ESCROW = /sous séquestre|séquestre|held in escrow|escrow/i;
 
 const strings = (value: unknown, path = ""): string[] =>

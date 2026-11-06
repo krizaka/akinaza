@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createAkinazaApi } from "./api";
+import { createFoliovivApi } from "./api";
 import { keys } from "./queries";
 
 const DAY = { shopId: "s1", timezone: "America/Toronto", day: "2026-10-20", visits: [] };
@@ -9,7 +9,7 @@ const BOOKS = { period: { id: "2026-Q3", start: "2026-07-01", end: "2026-09-30" 
 /** A fake transport: what the app asked for, and the answer it gets. */
 function fake(answer: unknown) {
   const asked: { path: string; method?: string }[] = [];
-  const api = createAkinazaApi({ call: async <T,>(path: string, init?: { method?: string }) => (asked.push({ path, method: init?.method }), answer as T) }, { saveToken: async () => undefined, clearToken: async () => undefined });
+  const api = createFoliovivApi({ call: async <T,>(path: string, init?: { method?: string }) => (asked.push({ path, method: init?.method }), answer as T) }, { saveToken: async () => undefined, clearToken: async () => undefined });
   return { api, asked };
 }
 

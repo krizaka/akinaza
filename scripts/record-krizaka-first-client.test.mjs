@@ -14,7 +14,7 @@ describe("record-krizaka-first-client (the studio's walkthroughs)", () => {
     }
   });
 
-  it("says the data is demo data and that Akinaza prepares, never files", () => {
+  it("says the data is demo data and that Folioviv prepares, never files", () => {
     expect(source).toMatch(/demo data/);
     expect(source).toMatch(/never files|never filed|jamais produite/);
     expect(source).not.toMatch(/transmit|send it to Revenu Québec/i);
@@ -30,7 +30,7 @@ describe("record-krizaka-first-client (the studio's walkthroughs)", () => {
     expect(source).toContain('"7,5"');
     expect(source).toMatch(/payment terms and the due date/);
     expect(source).toMatch(/business type decides the vocabulary/);
-    expect(source).toContain("https://www.akinaza.com");
+    expect(source).toContain("https://www.folioviv.com");
   });
 
   it("keeps the credentials in the environment, never in the file or in the output", () => {

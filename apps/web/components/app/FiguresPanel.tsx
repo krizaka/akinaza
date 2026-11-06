@@ -1,4 +1,4 @@
-import type { Figure, FigureId } from "@akinaza/core";
+import type { Figure, FigureId } from "@folioviv/core";
 import { GlossaryTerm } from "@krizaka/ui/glossary-term";
 import { KpiExplained } from "@krizaka/ui/kpi-explained";
 import Link from "next/link";

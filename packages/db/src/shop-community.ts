@@ -1,4 +1,4 @@
-import { ANNOUNCEMENT_LIMITS, REEL_TRANSITIONS, type ReelTransition, REVIEW_STATE, WALL_KIND, externalReel, REVIEW_LIMITS, REVIEW_STATES, SOCIAL_PLATFORMS, socialLink, type SocialPlatform, type WallItem, wallSchema, type WallTexture } from "@akinaza/core";
+import { ANNOUNCEMENT_LIMITS, REEL_TRANSITIONS, type ReelTransition, REVIEW_STATE, WALL_KIND, externalReel, REVIEW_LIMITS, REVIEW_STATES, SOCIAL_PLATFORMS, socialLink, type SocialPlatform, type WallItem, wallSchema, type WallTexture } from "@folioviv/core";
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -7,7 +7,7 @@ import { ShopError } from "./errors";
 import { isPublicShop, shopAnnouncements, shopReels, shopReviews, shops, shopSocialLinks, shopWall, shopWallItems } from "./schema";
 
 /**
- * The shop as a place (akinaza#236, B45): the wall, the reels, the profile links, the bulletin board and the reviews of the public page.
+ * The shop as a place (folioviv#236, B45): the wall, the reels, the profile links, the bulletin board and the reviews of the public page.
  * Every function takes the shop it works on and never a bare id: another shop's row is simply not found (`false`), whatever the id says.
  */
 
@@ -68,7 +68,7 @@ export interface ReelRow {
   createdAt: Date;
 }
 
-/** The owner's playlist, in the order the page plays it (akinaza#469). */
+/** The owner's playlist, in the order the page plays it (folioviv#469). */
 export async function reelsOf(db: Db, shopId: string): Promise<ReelRow[]> {
   return db.select().from(shopReels).where(eq(shopReels.shopId, shopId)).orderBy(asc(shopReels.position), asc(shopReels.createdAt), asc(shopReels.id));
 }

@@ -1,4 +1,4 @@
-import { invoiceTotals, type TaxCategory } from "@akinaza/core";
+import { invoiceTotals, type TaxCategory } from "@folioviv/core";
 import { localDay } from "@krizaka/intl";
 
 /** The strip shows a few days before the chosen one, so « yesterday » is one tap away; it stays put while the chosen day is inside it. */

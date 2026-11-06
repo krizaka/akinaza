@@ -1,4 +1,4 @@
-# Akinaza for the Mac
+# Folioviv for the Mac
 
 The owner's back office (the day, clients, invoices, books, the shop) in a native window. No point of sale: it stays a stub
 behind `APP_POS_ENABLED` (#79's countertop scope is closed, D9). Tauri 2 on
@@ -12,18 +12,18 @@ browser tab cannot:
   — the web's own paths, in the shop and the language of the page on screen (`/en/app/<shop>/settings`), else the web's short
   address that opens the shop last worked in (`apps/web/lib/app-addresses.test.ts` checks each is a live page of the web); ⌘R
   reloads the page;
-- `akinaza://app/…` and `https://www.akinaza.com/app/…` links that open the same page in the window;
-- the navigation guard: the window stays on Akinaza's own address, other web links open in the browser, the rest is refused. The hosted page has no Tauri capability: it cannot call the app, and nothing on the Mac is
+- `folioviv://app/…` and `https://www.folioviv.com/app/…` links that open the same page in the window;
+- the navigation guard: the window stays on Folioviv's own address, other web links open in the browser, the rest is refused. The hosted page has no Tauri capability: it cannot call the app, and nothing on the Mac is
 readable from it.
 
 ```bash
 pnpm install
 cd apps/desktop
 pnpm check                        # Rust tests (the sections' addresses, the menu's words); on macOS, as in desktop.yml
-AKINAZA_APP_URL=http://localhost:3000 pnpm tauri dev
+FOLIOVIV_APP_URL=http://localhost:3000 pnpm tauri dev
 ```
 
-The deployment shown is `https://www.akinaza.com` (dev.akinaza.com redirects there); a build for another one sets `AKINAZA_APP_URL`
+The deployment shown is `https://www.folioviv.com` (dev.folioviv.com redirects there); a build for another one sets `FOLIOVIV_APP_URL`
 (https, or loopback in development).
 
 ## Release

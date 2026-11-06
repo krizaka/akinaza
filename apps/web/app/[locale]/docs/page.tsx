@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Readonly<{ params: Promise<{ 
   return pageMetadata(asLocale((await params).locale), "docs");
 }
 
-/** The owner's guide: five pages, one job each, in the product's own words (akinaza#382). The five appear once, as the list; the card above it is the entry (akinaza#440). */
+/** The owner's guide: five pages, one job each, in the product's own words (folioviv#382). The five appear once, as the list; the card above it is the entry (folioviv#440). */
 export default async function Docs({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const locale = asLocale((await params).locale);
   const d = getDictionary(locale).docs;
@@ -28,7 +28,7 @@ export default async function Docs({ params }: Readonly<{ params: Promise<{ loca
           lead={d.lead}
           linkAs={Link}
           collectionsTitle={d.collectionsTitle}
-          collections={[{ id: "akinaza", brand: "akinaza", title: d.collection.title, href: pagePath(locale, "docs/shop"), description: d.collection.description, links: [] }]}
+          collections={[{ id: "folioviv", brand: "folioviv", title: d.collection.title, href: pagePath(locale, "docs/shop"), description: d.collection.description, links: [] }]}
           popular={{ title: d.popularTitle, items: DOC_IDS.map((id) => ({ href: docHref(locale, id), title: d.pages[id].title })) }}
         />
       </main>

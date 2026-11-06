@@ -18,27 +18,27 @@ describe("the dev-preview crawl (ui.themes-devices)", () => {
     expect(OPTIONS.ignoreConsole).toEqual([]);
   });
 
-  it("waits for the page to load, never for the network to go quiet: the home's looping video never does (akinaza#341)", () => {
+  it("waits for the page to load, never for the network to go quiet: the home's looping video never does (folioviv#341)", () => {
     const source = readFileSync(new URL("./check-overflow.mjs", import.meta.url), "utf8");
     expect(source).not.toContain('"networkidle"');
     expect(source).toContain('waitUntil: "load"');
     expect(OPTIONS.settleMs).toBe(SETTLE_MS);
   });
 
-  it("also holds the signed-in frame to it (akinaza#396): the owner's rail, header and account menu on the pages of the day, in both languages and themes", () => {
+  it("also holds the signed-in frame to it (folioviv#396): the owner's rail, header and account menu on the pages of the day, in both languages and themes", () => {
     for (const page of ["/today", "/clients", "/invoices", "/books", "/shop"]) expect(FRAME_PAGES).toContain(page);
     expect(FRAME_LOCALES).toEqual(["fr", "en"]);
     const source = readFileSync(new URL("./check-overflow.mjs", import.meta.url), "utf8");
     expect(source).toContain("/api/auth/sign-in");
   });
 
-  it("holds the signed-in frame to a screen that fits under the notice (akinaza#444), and an action to 36 px; the bar over the notice (akinaza#440) is the audit's top-chrome check", () => {
+  it("holds the signed-in frame to a screen that fits under the notice (folioviv#444), and an action to 36 px; the bar over the notice (folioviv#440) is the audit's top-chrome check", () => {
     expect(CHECKS).toMatchObject({ frame: true, minAction: 36 });
     expect(OPTIONS.height).toBe(900);
   });
 
   it("keeps the axe ratchet per repo: a11y-baseline.json, at the phone and the desktop width", () => {
-    expect(A11Y).toMatchObject({ app: "akinaza", widths: A11Y_WIDTHS });
+    expect(A11Y).toMatchObject({ app: "folioviv", widths: A11Y_WIDTHS });
     expect(A11Y.baseline).toMatch(/a11y-baseline\.json$/);
     expect(A11Y_WIDTHS).toEqual([390, 1440]);
   });
@@ -50,7 +50,7 @@ describe("the dev-preview crawl (ui.themes-devices)", () => {
     for (const f of ["ShopFrame", "AppFrame"]) expect(readFileSync(new URL(`../apps/web/components/app/${f}.tsx`, import.meta.url), "utf8")).toContain("<FrameSlot>");
   });
 
-  it("crawls the frame as an owner with an EMPTY shop and an owner with ONE item per list, seeded by CI like the dev seed (akinaza#405)", () => {
+  it("crawls the frame as an owner with an EMPTY shop and an owner with ONE item per list, seeded by CI like the dev seed (folioviv#405)", () => {
     expect(STATE_OWNERS.map((o) => o.state)).toEqual(["empty", "one"]);
     const ci = readFileSync(new URL("./ci-after-build.sh", import.meta.url), "utf8");
     expect(ci).toContain("scripts/seed-owner-states.mjs");
@@ -58,7 +58,7 @@ describe("the dev-preview crawl (ui.themes-devices)", () => {
     expect(readFileSync(new URL("../apps/web/scripts/seed-cast.mjs", import.meta.url), "utf8")).toContain("ensureOwnerStates(");
   });
 
-  it("never asks the media CDN for the basemap: tile and glyph requests are answered by the audit itself (akinaza#625)", async () => {
+  it("never asks the media CDN for the basemap: tile and glyph requests are answered by the audit itself (folioviv#625)", async () => {
     expect(OPTIONS.launch).toBe(launchWithStubbedTiles);
     expect(TILE_PATH.test("/maps/v1/glyphs/Noto/0-255.pbf")).toBe(true);
     expect(TILE_PATH.test("/fr/s/pattes-saint-henri")).toBe(false);

@@ -1,4 +1,4 @@
-import { feedFlyers } from "@akinaza/db";
+import { feedFlyers } from "@folioviv/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { resetRateLimits } from "@/lib/rate-limit";
@@ -6,7 +6,7 @@ import { shopSectionFeatures } from "@/lib/settings";
 
 import { GET } from "./route";
 
-vi.mock("@akinaza/db", () => ({ feedFlyers: vi.fn() }));
+vi.mock("@folioviv/db", () => ({ feedFlyers: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: () => ({}) }));
 vi.mock("@/lib/settings", () => ({ shopSectionFeatures: vi.fn() }));
 

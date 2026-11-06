@@ -1,4 +1,4 @@
-import { type FramePaper, shopTypeOf, starterFor } from "@akinaza/core";
+import { type FramePaper, shopTypeOf, starterFor } from "@folioviv/core";
 import { migrateShopPage, parseShopPage, type ShopPage, type ShopPageIssue } from "@krizaka/ui/shop";
 import { and, desc, eq, inArray, sql } from "drizzle-orm";
 
@@ -7,7 +7,7 @@ import { ShopError } from "./errors";
 import { shopPage, shopPageVersions, shops } from "./schema";
 
 /**
- * The shop page as a document (akinaza#400): one draft, one published (the page itself), the older ones archived. A write validates with
+ * The shop page as a document (folioviv#400): one draft, one published (the page itself), the older ones archived. A write validates with
  * `parseShopPage` (after `migrateShopPage`, so an old schema is brought forward); every read does the same, so a stored document of an older
  * schema still renders. Every function takes the shop it works on: another shop's version is simply not found.
  */
@@ -137,7 +137,7 @@ export async function shopPageVersionsOf(db: Db, shopId: string): Promise<ShopPa
   return db.select(listColumns).from(shopPageVersions).where(eq(shopPageVersions.shopId, shopId)).orderBy(desc(shopPageVersions.version));
 }
 
-/** The paper under the page, set by the template the owner applied (akinaza#305), or null (the look's own). */
+/** The paper under the page, set by the template the owner applied (folioviv#305), or null (the look's own). */
 export async function shopPaperOf(db: Db, shopId: string): Promise<FramePaper | null> {
   const [row] = await db.select({ paper: shopPage.paper }).from(shopPage).where(eq(shopPage.shopId, shopId));
   return row?.paper ?? null;

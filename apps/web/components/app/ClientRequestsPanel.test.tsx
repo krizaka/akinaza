@@ -19,8 +19,8 @@ const request: ShopRequestView = {
   service: { fr: "Coupe", en: "Haircut" },
   staffName: "Camille",
   files: [
-    { id: "f1", url: "https://cdn.example/user/akinaza/shops/s/requests/r1/a.jpg", kind: "image" },
-    { id: "f2", url: "https://cdn.example/user/akinaza/shops/s/requests/r1/b.pdf", kind: "pdf" },
+    { id: "f1", url: "https://cdn.example/user/folioviv/shops/s/requests/r1/a.jpg", kind: "image" },
+    { id: "f2", url: "https://cdn.example/user/folioviv/shops/s/requests/r1/b.pdf", kind: "pdf" },
   ],
 };
 const render = (requests: ShopRequestView[], locale: "en" | "fr" = "fr") =>
@@ -30,11 +30,11 @@ const render = (requests: ShopRequestView[], locale: "en" | "fr" = "fr") =>
     </I18nProvider>,
   );
 
-describe("the shop sees what the client keeps (akinaza#210)", () => {
+describe("the shop sees what the client keeps (folioviv#210)", () => {
   it("each request with its service, person, note and files to open — read only", () => {
     const html = render([request]);
     for (const text of ["Ses demandes gardées", "Coupe + balayage", "Coupe · Camille", "Comme la dernière fois", "Photo 1", "Document 2"]) expect(html).toContain(text);
-    expect(html).toContain('href="https://cdn.example/user/akinaza/shops/s/requests/r1/b.pdf"');
+    expect(html).toContain('href="https://cdn.example/user/folioviv/shops/s/requests/r1/b.pdf"');
     expect(html).not.toMatch(/<button|<form/);
     expect(render([request], "en")).toContain("Haircut · Camille");
   });

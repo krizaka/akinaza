@@ -1,1 +1,1 @@
-export type { FieldView, TranslationState } from "@akinaza/db";
+export type { FieldView, TranslationState } from "@folioviv/db";

@@ -1,4 +1,4 @@
-import { listSlots, type PublicShop } from "@akinaza/db";
+import { listSlots, type PublicShop } from "@folioviv/db";
 import type { BookingTime } from "@krizaka/ui/shop/booking";
 
 import { nextFreeTime } from "./closing-call";

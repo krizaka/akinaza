@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * The words of a shop come from its business type, never from a guess (krizaka/akinaza#117). The model is
+ * The words of a shop come from its business type, never from a guess (krizaka/folioviv#117). The model is
  * vertical-neutral (ADR-001: a shop sells time, takes bookings, and may report on a visit); what changes from one kind of
  * business to another is the vocabulary — « walk » and « dog » for a pet-care shop, « appointment » and « client » for a
  * studio, a consultant or a repairer — and whether a booking is made for a dependant (a dog) and ends with a report. Only

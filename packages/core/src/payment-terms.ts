@@ -3,7 +3,7 @@ import { z } from "zod";
 import { addLocalDays } from "./service-shop";
 
 /**
- * Payment terms of an invoice (krizaka/akinaza#113). For a supply of $500 or more a buyer needs the terms to claim its input
+ * Payment terms of an invoice (krizaka/folioviv#113). For a supply of $500 or more a buyer needs the terms to claim its input
  * tax credits (DORS/91-45, art. 3): a due date, and the terms it comes from (« net 30 »). The days are the shop's rule
  * (`shop_rules.payment_terms_days`, 30 by default), chosen again on an invoice if it differs; 0 is « due on receipt ».
  */

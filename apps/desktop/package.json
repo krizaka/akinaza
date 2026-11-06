@@ -1,5 +1,5 @@
 {
-  "name": "@akinaza/desktop",
+  "name": "@folioviv/desktop",
   "private": true,
   "version": "0.1.0",
   "description": "Folioviv for the Mac (Tauri 2): the owner's back office in a native window.",

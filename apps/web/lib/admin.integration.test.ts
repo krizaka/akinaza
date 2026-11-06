@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { seedDemoShop } from "@akinaza/db/seed";
+import { seedDemoShop } from "@folioviv/db/seed";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { auditLog, deleteAccount, exportAccount, listUsers, revokeUserSessions, setUserRole, setUserStatus, userDetail } from "./admin";
@@ -22,9 +22,9 @@ describe.runIf(enabled)("administration", () => {
   beforeAll(async () => {
     await migrate();
     const make = async (email: string, role: string) => (await query<{ id: string }>("INSERT INTO accounts (email, role, password_hash) VALUES ($1, $2, 'x') RETURNING id", [email, role]))[0]!.id;
-    admin = { id: await make(`adm-${stamp}@akinaza.test`, "ADMIN"), email: `adm-${stamp}@akinaza.test` };
-    merchant = { id: await make(`mer-${stamp}@akinaza.test`, "USER"), email: `mer-${stamp}@akinaza.test` };
-    plain = { id: await make(`pla-${stamp}@akinaza.test`, "USER"), email: `pla-${stamp}@akinaza.test` };
+    admin = { id: await make(`adm-${stamp}@folioviv.test`, "ADMIN"), email: `adm-${stamp}@folioviv.test` };
+    merchant = { id: await make(`mer-${stamp}@folioviv.test`, "USER"), email: `mer-${stamp}@folioviv.test` };
+    plain = { id: await make(`pla-${stamp}@folioviv.test`, "USER"), email: `pla-${stamp}@folioviv.test` };
     await seedDemoShop(db(), merchant.email);
   });
   afterAll(async () => {
@@ -71,7 +71,7 @@ describe.runIf(enabled)("administration", () => {
   it("exports an account with its shops, never its password hash", async () => {
     const out = await exportAccount(admin, merchant.id);
     expect(JSON.stringify(out)).not.toContain("password");
-    expect(out).toMatchObject({ format: "akinaza-account-export/1", account: { email: merchant.email }, shops: [{ name: "Salon Laurier" }] });
+    expect(out).toMatchObject({ format: "folioviv-account-export/1", account: { email: merchant.email }, shops: [{ name: "Salon Laurier" }] });
   });
 
   it("erases an account without a shop; refuses one that owns a shop (invoices are kept six years)", async () => {

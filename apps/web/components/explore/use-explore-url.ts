@@ -1,6 +1,6 @@
 "use client";
 
-import { EXPLORE_KINDS, EXPLORE_OPEN, EXPLORE_RADII, type ExploreRadius, type ExploreUrlState } from "@akinaza/core";
+import { EXPLORE_KINDS, EXPLORE_OPEN, EXPLORE_RADII, type ExploreRadius, type ExploreUrlState } from "@folioviv/core";
 import { parseAsArrayOf, parseAsFloat, parseAsString, parseAsStringLiteral, useQueryStates, withUrlDefaults } from "@krizaka/query/url";
 
 const RADII = EXPLORE_RADII.map(String) as ["1", "3", "10", "25"];

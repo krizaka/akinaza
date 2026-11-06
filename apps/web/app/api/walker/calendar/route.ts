@@ -1,4 +1,4 @@
-import { visitDays } from "@akinaza/db";
+import { visitDays } from "@folioviv/db";
 
 import { agendaScope, requireShop } from "@/lib/access";
 import { calendarQuery, queryOf } from "@/lib/day-param";

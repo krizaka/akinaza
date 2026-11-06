@@ -1,4 +1,4 @@
-import { isWorkspaceKind } from "@akinaza/db";
+import { isWorkspaceKind } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireAdmin } from "@/lib/access";
@@ -15,7 +15,7 @@ const kindOf = async (params: Promise<{ kind: string }>) => {
 };
 
 /**
- * The administrator's configuration of a kind (akinaza#337): the roles that write tags, the max, the default tag set per trade
+ * The administrator's configuration of a kind (folioviv#337): the roles that write tags, the max, the default tag set per trade
  * and language, the status set and the system views. The database is the source of truth; code only seeded it.
  */
 export function GET(req: Request, { params }: { params: Promise<{ kind: string }> }) {

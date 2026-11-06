@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { founderGate, founderSeats } from "./billing";
 import { migrate, pool, query } from "./db";
 
-/** The founder offer's seats on a real PostgreSQL (CI's service; locally `DATABASE_IT=1 DATABASE_URL=… pnpm test`) — akinaza#363. */
+/** The founder offer's seats on a real PostgreSQL (CI's service; locally `DATABASE_IT=1 DATABASE_URL=… pnpm test`) — folioviv#363. */
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 
 describe.runIf(enabled)("the founder offer's seats", () => {
@@ -14,7 +14,7 @@ describe.runIf(enabled)("the founder offer's seats", () => {
   let newcomer: string;
 
   const account = async (tag: string) =>
-    (await query<{ id: string }>("INSERT INTO accounts (email, role, password_hash) VALUES ($1, 'USER', 'x') RETURNING id", [`seat-${tag}-${stamp}@akinaza.test`]))[0]!.id;
+    (await query<{ id: string }>("INSERT INTO accounts (email, role, password_hash) VALUES ($1, 'USER', 'x') RETURNING id", [`seat-${tag}-${stamp}@folioviv.test`]))[0]!.id;
 
   beforeAll(async () => {
     await migrate();

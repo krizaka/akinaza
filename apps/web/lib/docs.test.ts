@@ -12,7 +12,7 @@ import { pagePath,PAGES } from "./site";
 const ROOT = join(__dirname, "..");
 const read = (p: string) => readFileSync(join(ROOT, p), "utf8");
 
-describe("the owner's guide (akinaza#382)", () => {
+describe("the owner's guide (folioviv#382)", () => {
   it("is five pages at most, one job each, in both languages with the same sections", () => {
     expect(DOC_IDS).toEqual(["shop", "bookings", "invoices", "books", "data"]);
     expect(DOC_IDS.length).toBeLessThanOrEqual(5);
@@ -59,7 +59,7 @@ describe("the owner's guide (akinaza#382)", () => {
     expect(neighbours("data")).toEqual({ previous: "books", next: null });
   });
 
-  it("says only what is true: Akinaza prepares and never files, no escrow, no AI wording, no figure typed", () => {
+  it("says only what is true: Folioviv prepares and never files, no escrow, no AI wording, no figure typed", () => {
     for (const d of [en.docs, fr.docs]) {
       const text = JSON.stringify(d);
       expect(text).not.toMatch(/escrow|séquestre|\bAI\b|\bIA\b|intellig|restaurant/i);
@@ -80,7 +80,7 @@ describe("the owner's guide (akinaza#382)", () => {
   });
 });
 
-describe("the guide's hub lists the five pages once (akinaza#440)", () => {
+describe("the guide's hub lists the five pages once (folioviv#440)", () => {
   it("keeps the list and drops the chips of the card above it", () => {
     const hub = read("app/[locale]/docs/page.tsx");
     expect(hub).toContain("links: []");

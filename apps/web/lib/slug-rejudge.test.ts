@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 const found = vi.hoisted(() => ({ applied: [] as boolean[], mails: [] as { to: string; locale: string; subject: string; text: string }[], delivered: 0 }));
-vi.mock("@akinaza/db", () => ({
+vi.mock("@folioviv/db", () => ({
   rejudgeShops: async (_db: unknown, _terms: unknown, o: { apply: boolean }) => (
     found.applied.push(o.apply),
     [
@@ -19,7 +19,7 @@ vi.mock("./slug-policy", () => ({ slugPolicy: async () => ({ terms: [] }) }));
 
 import { rejudgeAndNotify } from "./slug-rejudge";
 
-const settings = { provider: "none" as const, apiUrl: "http://x", appUrl: "https://www.akinaza.com" };
+const settings = { provider: "none" as const, apiUrl: "http://x", appUrl: "https://www.folioviv.com" };
 const now = new Date("2026-10-29T12:00:00Z");
 
 describe("the one-off re-judging of the shops that predate the hold (ADR-005, #537)", () => {
@@ -38,7 +38,7 @@ describe("the one-off re-judging of the shops that predate the hold (ADR-005, #5
     expect(found.mails.map((m) => [m.to, m.locale])).toEqual([["a@x.test", "fr"], ["b@x.test", "en"]]);
     expect(found.mails[0]!.subject).toContain("Salon Laurier");
     expect(found.mails[0]!.text).toContain("login-laurier");
-    expect(found.mails[0]!.text).toContain("https://www.akinaza.com/fr/app/s1/settings/page");
+    expect(found.mails[0]!.text).toContain("https://www.folioviv.com/fr/app/s1/settings/page");
     expect(found.mails[1]!.text).toContain("stays private until we have checked it");
   });
 });

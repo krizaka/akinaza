@@ -1,6 +1,6 @@
 /**
- * The calendar sources of a shop (ADR-004, akinaza#282): a port, one adapter per provider or format. A source is **read-only**:
- * it tells when the owner is busy, nothing else (no title, no attendee), and Akinaza never writes to it.
+ * The calendar sources of a shop (ADR-004, folioviv#282): a port, one adapter per provider or format. A source is **read-only**:
+ * it tells when the owner is busy, nothing else (no title, no attendee), and Folioviv never writes to it.
  */
 export const CALENDAR_KINDS = ["ics", "google", "outlook", "caldav"] as const;
 export type CalendarKind = (typeof CALENDAR_KINDS)[number];

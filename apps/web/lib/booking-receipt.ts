@@ -1,7 +1,8 @@
-import { bookingDetail, enqueueMail, mailById } from "@akinaza/db";
+import { bookingDetail, enqueueMail, mailById } from "@folioviv/db";
 import { renderEmail } from "@krizaka/email";
 
 import { requestNow } from "@/app/request-now";
+import { BRAND_ID } from "@/lib/brand-id";
 import { db } from "@/lib/db";
 import type { Locale } from "@/lib/i18n";
 import { confirmationStep } from "@/lib/journey";
@@ -37,7 +38,7 @@ export async function sendBookingReceipt(recipient: ReceiptRecipient, bookingId:
   const manageUrl = `${manageBase(settings.appUrl)}/${recipient.locale}/s/${detail.shop.slug}/service/${detail.service.id}/confirmation?booking=${detail.id}`;
   const mail = await renderEmail(
     "bookingReceipt",
-    { brand: "akinaza", businessName: detail.shop.name, serviceName: step.title, when: step.when, who: step.who, where: step.where, priceLine: step.price, cancelRule: step.cancelRule, manageUrl },
+    { brand: BRAND_ID, businessName: detail.shop.name, serviceName: step.title, when: step.when, who: step.who, where: step.where, priceLine: step.price, cancelRule: step.cancelRule, manageUrl },
     { locale: recipient.locale },
   );
   const id = await enqueueMail(db(), { to: recipient.email, locale: recipient.locale, template: "booking-receipt", subject: mail.subject, html: mail.html, text: mail.text, relatedKind: "booking", relatedId: bookingId });

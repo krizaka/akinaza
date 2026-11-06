@@ -1,4 +1,4 @@
-import { CONSENT_PURPOSES, type ConsentPurpose } from "@akinaza/core";
+import { CONSENT_PURPOSES, type ConsentPurpose } from "@folioviv/core";
 import { createPrivacy, dbPrivacyStore, type Privacy, type PrivacyContributor, type Query, type Subject } from "@krizaka/privacy";
 import { eq } from "drizzle-orm";
 import type pg from "pg";
@@ -10,10 +10,10 @@ import { clients, dependants, shops } from "./schema";
 import { transactionOn } from "./transaction";
 
 /**
- * Loi 25 for Akinaza (akinaza#370), over `@krizaka/privacy`: consents by purpose, the right of access (an export assembled from every
+ * Loi 25 for Folioviv (folioviv#370), over `@krizaka/privacy`: consents by purpose, the right of access (an export assembled from every
  * module that holds the client's data) and erasure (every module, one transaction). The data subject is a client file: a kind and an
- * id. The module is the package's; this file only says what Akinaza holds and what erasing it means. What tax law keeps (invoices,
- * their lines, payments, the ledger) stays, and `eraseFor` blanks the personal fields around it (`RETENTION_RULES`, `@akinaza/core`).
+ * id. The module is the package's; this file only says what Folioviv holds and what erasing it means. What tax law keeps (invoices,
+ * their lines, payments, the ledger) stays, and `eraseFor` blanks the personal fields around it (`RETENTION_RULES`, `@folioviv/core`).
  */
 export const CLIENT_SUBJECT_KIND = "client";
 export const clientSubject = (clientId: string): Subject => ({ kind: CLIENT_SUBJECT_KIND, id: clientId });

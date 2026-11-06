@@ -1,9 +1,9 @@
-import { protectedTermsIssues, type TermIssueReason } from "@akinaza/core";
+import { protectedTermsIssues, type TermIssueReason } from "@folioviv/core";
 
 /**
  * The console's view of the `slugs.protectedTerms` setting (one term per line: a word, or `/regex/`; `# comment` and blank lines kept as they are).
  * The administrator adds, edits and removes lines; the text goes back to the setting whole. Pure, so the same checks run under the field as the
- * server's save (`protectedTermsIssues` of @akinaza/core, the schema of the setting).
+ * server's save (`protectedTermsIssues` of @folioviv/core, the schema of the setting).
  */
 
 export type TermKind = "word" | "pattern" | "comment";

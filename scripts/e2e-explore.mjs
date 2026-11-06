@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// End-to-end of Explorer's filters (akinaza#575) on a running deployment, in a real browser, as a visitor on her phone: she opens
+// End-to-end of Explorer's filters (folioviv#575) on a running deployment, in a real browser, as a visitor on her phone: she opens
 // Explorer, narrows by kind, types a name, shares the link, goes back and forward, and clears everything. The address is the state
 // (kind, q, near, view), the typed text makes one request, and the page never shifts. Optionally takes a capture of each step in
 // both themes. It reads public pages only: no account, nothing written.
 //
-//   E2E_BASE=https://dev.akinaza.com [E2E_LOCALE=fr] [E2E_OUT=<dir>] pnpm run e2e:explore
+//   E2E_BASE=https://dev.folioviv.com [E2E_LOCALE=fr] [E2E_OUT=<dir>] pnpm run e2e:explore
 //
 // Needs a Chromium for playwright-core (PLAYWRIGHT_BROWSERS_PATH or the default cache).
 import { mkdirSync } from "node:fs";

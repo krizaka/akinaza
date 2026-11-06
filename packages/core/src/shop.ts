@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 /**
- * The businesses Akinaza serves: independent Québec **service businesses** (hair and beauty salons, studios,
+ * The businesses Folioviv serves: independent Québec **service businesses** (hair and beauty salons, studios,
  * consultants, freelancers). **Restaurants, cafés, bars and bakeries with on-site consumption are excluded**: in Québec
- * they must use a sales recording system (SEV) certified MEV-WEB by Revenu Québec — Akinaza is not one. The point of sale is a stub behind a flag
+ * they must use a sales recording system (SEV) certified MEV-WEB by Revenu Québec — Folioviv is not one. The point of sale is a stub behind a flag
  * until the SRM scope and the payment provider are decided (epic krizaka/.github#52).
  */
 export const SHOP_KINDS = ["salon", "boutique", "services", "other"] as const;
@@ -33,7 +33,7 @@ export function consentsInForce(history: readonly (Consent & { at: Date })[]): R
 }
 
 /** The realtime topics: one per shop's booking slots (a slot taken disappears from every open booking page). */
-export const REALTIME_CHANNEL = "akinaza_events";
+export const REALTIME_CHANNEL = "folioviv_events";
 export const slotsTopic = (shopId: string) => `shop:${shopId}:slots`;
 /** The page of a shop changed (the wall, the reel, the board, the reviews): the open storefronts, and the studio's preview, render again. */
 export const pageTopic = (shopId: string) => `shop:${shopId}:page`;

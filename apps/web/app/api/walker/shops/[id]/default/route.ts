@@ -1,4 +1,4 @@
-import { setDefaultShop } from "@akinaza/db";
+import { setDefaultShop } from "@folioviv/db";
 
 import { requireSession } from "@/lib/access";
 import { db } from "@/lib/db";

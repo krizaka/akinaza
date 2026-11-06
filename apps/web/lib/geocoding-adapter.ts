@@ -23,7 +23,7 @@ export function httpGeocoder(config: { url: string; attribution: GeoAttribution;
     async search(query, { locale, signal }) {
       const url = new URL(config.url);
       url.search = new URLSearchParams({ q: query, format: "json", limit: String(RESULTS), countrycodes: "ca", "accept-language": locale }).toString();
-      const res = await fetcher(url, { headers: { "User-Agent": "Akinaza/1.0 (+https://www.akinaza.com)", Accept: "application/json" }, signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(TIMEOUT_MS)]) : AbortSignal.timeout(TIMEOUT_MS) });
+      const res = await fetcher(url, { headers: { "User-Agent": "Folioviv/1.0 (+https://www.folioviv.com)", Accept: "application/json" }, signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(TIMEOUT_MS)]) : AbortSignal.timeout(TIMEOUT_MS) });
       if (!res.ok) throw new Error(`geocoder answered ${res.status}`);
       const rows = (await res.json()) as Row[];
       return (Array.isArray(rows) ? rows : []).flatMap((r): GeoPlace[] => {

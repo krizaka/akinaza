@@ -1,8 +1,8 @@
 import type { PageLocale, SourceLocale } from "./shop-translations";
 
 /**
- * Translation is Orazaka's job, never Akinaza's (AGENTS section 2, epic #161): this port is the only door. Nothing here names a model or a vendor;
- * the adapter (`orazaka.ts`) calls the Orazaka Studio `text-translation` and answers with the run that made the texts.
+ * Translation is Sovkora's job, never Folioviv's (AGENTS section 2, epic #161): this port is the only door. Nothing here names a model or a vendor;
+ * the adapter (`sovkora.ts`) calls the Sovkora Studio `text-translation` and answers with the run that made the texts.
  */
 export interface TranslationRequest {
   from: SourceLocale;
@@ -14,7 +14,7 @@ export interface TranslationRequest {
 }
 
 export interface TranslationResult {
-  /** The Orazaka run that produced the texts (kept with each translation: where it came from). */
+  /** The Sovkora run that produced the texts (kept with each translation: where it came from). */
   runId: string;
   texts: readonly { key: string; text: string }[];
 }

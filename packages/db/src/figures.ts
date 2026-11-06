@@ -1,4 +1,4 @@
-import type { FiguresInput } from "@akinaza/core";
+import type { FiguresInput } from "@folioviv/core";
 import { sql } from "drizzle-orm";
 
 import type { Db } from "./client";
@@ -19,7 +19,7 @@ export interface SlotUse {
 
 /**
  * What the owner's figures read (#260), in the shop's own calendar: every invoice with what was paid on it, the payments, the expenses, the
- * appointments of the period, and how often the working blocks were booked. Read only; the figures themselves are computed in `@akinaza/core`.
+ * appointments of the period, and how often the working blocks were booked. Read only; the figures themselves are computed in `@folioviv/core`.
  */
 export async function figuresSnapshot(db: Db, shopId: string, at: { today: string; computedAt: string; period: { start: string; end: string } }): Promise<{ input: FiguresInput; slots: SlotUse[] }> {
   const [shop] = await rows<{ timezone: string }>(db, sql`SELECT timezone FROM shops WHERE id = ${shopId}`);

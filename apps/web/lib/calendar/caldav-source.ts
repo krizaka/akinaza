@@ -1,11 +1,11 @@
-import { type BusyRange, type BusyResult, type CalendarSource, CalendarSourceError, mergeBusy, parseBusy } from "@akinaza/core";
+import { type BusyRange, type BusyResult, type CalendarSource, CalendarSourceError, mergeBusy, parseBusy } from "@folioviv/core";
 
 import { assertPublicHost, parseCalendarUrl, type Resolver } from "./public-url";
 
 
 /**
  * iCloud and any CalDAV server, read-only (RFC 4791): one `REPORT calendar-query` over the window on the calendar collection the owner gives,
- * over HTTPS, with a Basic credential (for iCloud an app-specific password, never the Apple ID's). Recurring events are expanded by Akinaza
+ * over HTTPS, with a Basic credential (for iCloud an app-specific password, never the Apple ID's). Recurring events are expanded by Folioviv
  * (`parseBusy`), so the server is not asked to. Change detection by `sync-token` (RFC 6578) is a later optimisation.
  */
 export interface CaldavOptions {

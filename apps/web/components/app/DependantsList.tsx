@@ -1,6 +1,6 @@
 "use client";
 
-import type { DependantProfile } from "@akinaza/core";
+import type { DependantProfile } from "@folioviv/core";
 import { Badge } from "@krizaka/ui/badge";
 
 import { AccessNotes } from "@/components/app/AccessNotes";

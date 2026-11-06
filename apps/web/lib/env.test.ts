@@ -4,7 +4,7 @@ import { assertProductionEnv, calendarOAuthApps, consoleAllowedIps, dataKey, pro
 
 const PROD = {
   NODE_ENV: "production",
-  DATABASE_URL: "postgresql://akinaza_db:x@db.example:25060/akinaza_db?sslmode=require",
+  DATABASE_URL: "postgresql://folioviv_db:x@db.example:25060/folioviv_db?sslmode=require",
   DATABASE_CA_CERT: "-----BEGIN CERTIFICATE-----",
   AUTH_SESSION_SECRET: "a".repeat(40),
   APP_DATA_ENCRYPTION_KEY: Buffer.alloc(32, 7).toString("base64"),
@@ -71,6 +71,6 @@ describe("env", () => {
     expect(readEnv({}).MAIL_PROVIDER).toBe("none");
     expect(() => readEnv({ MAIL_PROVIDER: "sendgrid" })).toThrow();
     expect(productionProblems(readEnv({ ...PROD, MAIL_PROVIDER: "mailgun" }))).toEqual(["MAIL_PROVIDER=mailgun needs MAIL_API_KEY and MAIL_DOMAIN"]);
-    expect(productionProblems(readEnv({ ...PROD, MAIL_PROVIDER: "mailgun", MAIL_API_KEY: "k", MAIL_DOMAIN: "mg.akinaza.com" }))).toEqual([]);
+    expect(productionProblems(readEnv({ ...PROD, MAIL_PROVIDER: "mailgun", MAIL_API_KEY: "k", MAIL_DOMAIN: "mg.folioviv.com" }))).toEqual([]);
   });
 });

@@ -1,6 +1,6 @@
 import { randomBytes, randomUUID } from "node:crypto";
 
-import { leaksPlaintext } from "@akinaza/db/plaintext-leak";
+import { leaksPlaintext } from "@folioviv/db/plaintext-leak";
 import { addHours } from "date-fns";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -49,13 +49,13 @@ async function call(handler: unknown, method: string, path: string, opts: { toke
 }
 
 /**
- * Whether a webhook payload carries something of the client's (their phone, their name, a name field). akinaza#341: the
+ * Whether a webhook payload carries something of the client's (their phone, their name, a name field). folioviv#341: the
  * journey once checked `/514/` on the whole JSON, which a random UUID (`…f514…`) matches about one run in ten — the booking
  * step then failed and the four steps after it with it.
  */
 const leaksClient = (payload: unknown) => /514-555-0100|Camille|Tremblay|Chien|"(fullName|phone|email)"/.test(JSON.stringify(payload));
 
-describe("the journey's privacy check reads the client's data, never a UUID's digits (akinaza#341)", () => {
+describe("the journey's privacy check reads the client's data, never a UUID's digits (folioviv#341)", () => {
   it("passes a payload of ids, even one whose UUID holds « 514 »", () => {
     expect(leaksClient({ appointmentId: "3f8ae756-47dd-4206-b741-4c6a6f514cf2", shopId: "74f669e4-9848-4507-9403-f2514bb0aa11" })).toBe(false);
   });
@@ -75,7 +75,7 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
   const ids: { shop?: string; solo?: string; stHenri?: string; clientFile?: string; dog?: string; booking?: string; visit?: string; report?: string; token?: string } = {};
 
   const account = async (label: string) => {
-    const email = `${label}-${stamp}@akinaza.test`;
+    const email = `${label}-${stamp}@folioviv.test`;
     const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [email]);
     return { id: row!.id, email, token: (await createSession(row!.id, { ip: null, userAgent: "vitest" })).token };
   };
@@ -90,7 +90,7 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
   beforeEach(() => resetRateLimits());
   afterAll(async () => {
     // The shop stays (the ledger and the consents are written once, so a shop is never deleted); only the accounts go.
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@folioviv.test`]);
     await realtimeBus().close();
     vi.unstubAllEnvs();
     await pool().end();
@@ -223,13 +223,13 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
   });
 
   it("delivers through the mail provider when it is configured — one POST, the key in the header only — and gives up after five failures", async () => {
-    const mailgun = { provider: "mailgun" as const, apiKey: "key-secret-1", domain: "mg.example.test", from: "Akinaza <no-reply@mg.example.test>", apiUrl: "https://api.mailgun.net", appUrl: "https://dev.akinaza.com" };
+    const mailgun = { provider: "mailgun" as const, apiKey: "key-secret-1", domain: "mg.example.test", from: "Folioviv <no-reply@mg.example.test>", apiUrl: "https://api.mailgun.net", appUrl: "https://dev.folioviv.com" };
     const seen: { url: string; auth: string; body: URLSearchParams }[] = [];
     const ok = (async (url: string, init: RequestInit) => {
       seen.push({ url, auth: (init.headers as Record<string, string>).Authorization!, body: init.body as URLSearchParams });
       return new Response("{}", { status: 200 });
     }) as unknown as typeof fetch;
-    // Only this journey's mails: CI's database is shared by the integration files running in parallel (akinaza#341).
+    // Only this journey's mails: CI's database is shared by the integration files running in parallel (folioviv#341).
     const ours = (await query<{ id: string }>("SELECT id FROM mail_outbox WHERE related_id = $1 AND status = 'pending'", [ids.report])).map((m) => m.id);
     const stillPending = await flushOutbox(db(), new Date(), mailgun, ok, { ids: ours });
     expect(stillPending.sent).toBeGreaterThanOrEqual(1); // the earlier, unconfigured mail goes out now
@@ -240,7 +240,7 @@ describe.runIf(enabled)("the dog walker's journey over HTTP", () => {
     expect(seen[0]!.url).toBe("https://api.mailgun.net/v3/mg.example.test/messages");
     expect(seen[0]!.auth).toBe(`Basic ${Buffer.from("api:key-secret-1").toString("base64")}`);
     expect(seen[0]!.body.get("to")).toBe(accounts.client.email);
-    expect(seen[0]!.body.get("from")).toBe("Akinaza <no-reply@mg.example.test>");
+    expect(seen[0]!.body.get("from")).toBe("Folioviv <no-reply@mg.example.test>");
     expect(seen[0]!.body.get("text")).not.toContain("key-secret-1");
     ids.token = /report\/(rp1\.[A-Za-z0-9_-]{43})/.exec(seen[0]!.body.get("text")!)?.[1];
     const [row] = await query<{ status: string; sent_at: Date | null }>("SELECT status, sent_at FROM mail_outbox WHERE id = $1", [sent.mailId]);

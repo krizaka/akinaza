@@ -1,4 +1,4 @@
-import { shopOfOwner } from "@akinaza/db";
+import { shopOfOwner } from "@folioviv/db";
 
 import { systemClock } from "@/app/system-clock";
 

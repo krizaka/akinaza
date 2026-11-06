@@ -1,4 +1,4 @@
-import { invoiceState, remainingCents } from "@akinaza/core";
+import { invoiceState, remainingCents } from "@folioviv/core";
 import { Alert } from "@krizaka/ui/alert";
 import Link from "next/link";
 

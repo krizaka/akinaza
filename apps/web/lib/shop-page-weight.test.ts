@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 /**
- * What keeps a shop's public page light and still (ADR-004, akinaza#459, #460): the budgets themselves are measured in CI (`scripts/check-perf-budgets.mjs`);
+ * What keeps a shop's public page light and still (ADR-004, folioviv#459, #460): the budgets themselves are measured in CI (`scripts/check-perf-budgets.mjs`);
  * these hold the causes that were found, so a change that brings one back fails here, before the measure.
  */
 const read = (path: string) => readFileSync(join(__dirname, "..", path), "utf8");
@@ -13,7 +13,7 @@ const SHOP = "app/[locale]/s/[slug]/(public)";
 describe("a shop's public page paints its first screen at once", () => {
   it("streams no skeleton in front of the page: the hero is in the first chunk with its image preload, and nothing swaps in after it (CLS)", () => {
     expect(existsSync(join(__dirname, "..", SHOP, "loading.tsx"))).toBe(false);
-    // The booking steps keep theirs, one level down: a `loading.tsx` on `service/` itself would wrap `[id]/layout.tsx` and send the 404 after a 200 (akinaza#293).
+    // The booking steps keep theirs, one level down: a `loading.tsx` on `service/` itself would wrap `[id]/layout.tsx` and send the 404 after a 200 (folioviv#293).
     expect(existsSync(join(__dirname, "..", SHOP, "service/loading.tsx"))).toBe(false);
     expect(existsSync(join(__dirname, "..", SHOP, "service/[id]/loading.tsx"))).toBe(true);
   });

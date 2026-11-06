@@ -2,9 +2,9 @@
 // Puts a storefront template (at the notebook's version) on a shop, by slug, through the product's own `applyTemplate`: the recorders'
 // way to give a seeded demo shop the look of a trade (the demo shops get theirs from `seed:demos`; Éric's studio is seeded without one).
 //
-//   DATABASE_URL=… pnpm --filter @akinaza/web exec tsx scripts/apply-shop-template.mjs <slug> <template-id>
-import { CAHIER_VERSION, TEMPLATES, TEMPLATES_V2 } from "@akinaza/core";
-import { applyTemplate, createDb, pg, poolConfig } from "@akinaza/db";
+//   DATABASE_URL=… pnpm --filter @folioviv/web exec tsx scripts/apply-shop-template.mjs <slug> <template-id>
+import { CAHIER_VERSION, TEMPLATES, TEMPLATES_V2 } from "@folioviv/core";
+import { applyTemplate, createDb, pg, poolConfig } from "@folioviv/db";
 
 const [slug, templateId] = process.argv.slice(2);
 if (!slug || !templateId) {

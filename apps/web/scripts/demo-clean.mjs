@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// Removes what a journey left on the demo shop: a dog, a booking, a client file the cast does not name (akinaza #1915). The journeys that
+// Removes what a journey left on the demo shop: a dog, a booking, a client file the cast does not name (folioviv #1915). The journeys that
 // write on dev call it when they end; `seed-cast.mjs --check` fails while anything is left. Dev and local only; prints counts, never a name.
 // The connection comes from the environment, as for seed-cast.mjs.
 //
-//   pnpm --filter @akinaza/web exec tsx scripts/demo-clean.mjs
-import { createDb, pg, poolConfig } from "@akinaza/db";
-import { cleanDemoLeftovers } from "@akinaza/db/demo-clean";
+//   pnpm --filter @folioviv/web exec tsx scripts/demo-clean.mjs
+import { createDb, pg, poolConfig } from "@folioviv/db";
+import { cleanDemoLeftovers } from "@folioviv/db/demo-clean";
 
 import { assertNotProduction, DEMO_CAST } from "./seed-cast.mjs";
 

@@ -1,5 +1,5 @@
 /**
- * Which shop a shop host names (ADR-005 slice 4, akinaza#549). The proxy answers 404 to a well-formed slug that is no shop, before anything is routed or
+ * Which shop a shop host names (ADR-005 slice 4, folioviv#549). The proxy answers 404 to a well-formed slug that is no shop, before anything is routed or
  * rendered from it. It reads the answer through an internal route (the proxy has no database of its own: the cluster's connection budget is one), and keeps it
  * a short while: positive answers a minute, negative ones a few seconds (a shop just published is reachable at once), at most `MAX` entries (a flood of random
  * labels costs misses, never memory). A lookup that fails is never cached and never refuses: the page layer answers 404 for an unknown shop all the same.
@@ -23,7 +23,7 @@ type Seen = Map<string, { verdict: ShopVerdict; until: number }>;
  * The memory the proxy reads, kept on `globalThis` so that a route handler of the same process (publish, rename, hold) can empty it: the proxy and the routes are
  * separate bundles, one module graph each. Another instance learns the change within the TTLs above.
  */
-const SHARED = Symbol.for("akinaza.shop-directory");
+const SHARED = Symbol.for("folioviv.shop-directory");
 function sharedMemory(): Seen {
   const holder = globalThis as unknown as Record<symbol, Seen | undefined>;
   const memory = holder[SHARED] ?? new Map();
@@ -31,7 +31,7 @@ function sharedMemory(): Seen {
   return memory;
 }
 
-/** A shop was published, unpublished, held, cleared or renamed (akinaza#549): the next request on its host asks the database again, here at once. */
+/** A shop was published, unpublished, held, cleared or renamed (folioviv#549): the next request on its host asks the database again, here at once. */
 export function forgetShops(): void {
   sharedMemory().clear();
 }
@@ -70,7 +70,7 @@ export const shopVerdict = createShopDirectory(fetchShopVerdict);
 const internalLookup = (query: string) => fetch(`http://127.0.0.1:${loopbackPort()}${SHOP_LOOKUP_PATH}?${query}`, { cache: "no-store", signal: AbortSignal.timeout(2000) });
 
 /**
- * A host that is none of ours (ADR-005 §3, akinaza#539): the internal route says which shop an `active` custom domain serves. The same short memory as a
+ * A host that is none of ours (ADR-005 §3, folioviv#539): the internal route says which shop an `active` custom domain serves. The same short memory as a
  * shop host (an unverified, suspended or unpaid domain stops within it); the key is the hostname the browser asked for, which is only ever looked up.
  */
 export const fetchCustomHostVerdict: ShopLookup = async (host) => {

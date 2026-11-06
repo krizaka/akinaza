@@ -1,4 +1,4 @@
-import { type BusyInterval, type BusyRange, type BusyResult, type CalendarRef, CalendarSourceError, type ConnectableSource, type Grant, mergeBusy } from "@akinaza/core";
+import { type BusyInterval, type BusyRange, type BusyResult, type CalendarRef, CalendarSourceError, type ConnectableSource, type Grant, mergeBusy } from "@folioviv/core";
 
 import { jsonOf, postForm, str } from "./oauth-fetch";
 

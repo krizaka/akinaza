@@ -1,8 +1,8 @@
-import type { PreparedReturn, ReturnLine } from "@akinaza/core";
+import type { PreparedReturn, ReturnLine } from "@folioviv/core";
 
 /**
  * « Vos livres »: the combined GST/QST return (Revenu Québec's FPZ-500), prepared from the ledger for the merchant to
- * review and file themselves. Akinaza never transmits it. This module is the pure part: which period, and what the
+ * review and file themselves. Folioviv never transmits it. This module is the pure part: which period, and what the
  * screen says about the prepared figures.
  */
 export interface Period {

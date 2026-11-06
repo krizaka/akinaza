@@ -9,7 +9,7 @@ import { InvoicePreview } from "./InvoicePreview";
 
 const render = (locale: "en" | "fr") => [BookPreview, InvoicePreview, BooksPreview].map((P) => renderToStaticMarkup(<P locale={locale} />));
 
-describe("the home's demo cards: one action and its result (akinaza#470, krizaka-internal#683)", () => {
+describe("the home's demo cards: one action and its result (folioviv#470, krizaka-internal#683)", () => {
   it.each(["en", "fr"] as const)("draws the booking, the invoice and the return in %s, hidden from assistive tech", (locale) => {
     const [book, invoice, books] = render(locale);
     for (const h of [book, invoice, books]) expect(h).toContain('aria-hidden="true"');

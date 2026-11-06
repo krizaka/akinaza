@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import { coverSizes, coverSrcSet } from "./cover-renditions";
 
-const CDN = "https://krizaka-assets.b-cdn.net/sites/akinaza/demo";
+const CDN = "https://krizaka-assets.b-cdn.net/sites/folioviv/demo";
 
-describe("cover renditions (akinaza#459)", () => {
+describe("cover renditions (folioviv#459)", () => {
   it("gives the demo covers three widths, the middle one for a phone", () => {
     const set = coverSrcSet(`${CDN}/salon-cover.dfc17581a8.webp`)!;
     expect(set.split(", ")).toHaveLength(3);

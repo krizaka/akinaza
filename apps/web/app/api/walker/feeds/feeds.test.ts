@@ -1,4 +1,4 @@
-import { feedPeople, liveFeeds, revokeFeedToken, rotateFeedToken } from "@akinaza/db";
+import { feedPeople, liveFeeds, revokeFeedToken, rotateFeedToken } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireShop } from "@/lib/access";
@@ -12,7 +12,7 @@ vi.mock("@/lib/access", async (original) => ({ ...(await original<typeof import(
 vi.mock("@/lib/audit", () => ({ audit: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), feedPeople: vi.fn(), liveFeeds: vi.fn(), rotateFeedToken: vi.fn(), revokeFeedToken: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), feedPeople: vi.fn(), liveFeeds: vi.fn(), rotateFeedToken: vi.fn(), revokeFeedToken: vi.fn() }));
 
 const STAFF = "11111111-1111-4111-8111-111111111111";
 const OTHER = "22222222-2222-4222-8222-222222222222";

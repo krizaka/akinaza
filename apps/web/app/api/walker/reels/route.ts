@@ -1,4 +1,4 @@
-import { addExternalReel, reelsOf } from "@akinaza/db";
+import { addExternalReel, reelsOf } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";

@@ -68,28 +68,28 @@ describe("the new prices are a dated version of the catalogue, never a rewritten
   it("Starter 29 $ with three free months, Pro 69 $, and the founder offer ends: each a version audited in settings_audit", async () => {
     const rows = (await t.db.execute(sql`SELECT key, price, before, actor_label FROM price_versions ORDER BY key`)).rows as { key: string; price: { amountCents: number; availability: string; limits: Record<string, number> }; before: { amountCents: number }; actor_label: string }[];
     const by = Object.fromEntries(rows.map((r) => [r.key, r]));
-    expect(by["akinaza.starter"]).toMatchObject({ price: { amountCents: 2900, limits: { trialDays: 90, directDebitBps: 50 } }, before: { amountCents: 4500 } });
-    expect(by["akinaza.scale"]).toMatchObject({ price: { amountCents: 6900 }, before: { amountCents: 9900 } });
-    expect(by["akinaza.founder"]).toMatchObject({ price: { availability: "internal", amountCents: 3900 } });
+    expect(by["folioviv.starter"]).toMatchObject({ price: { amountCents: 2900, limits: { trialDays: 90, directDebitBps: 50 } }, before: { amountCents: 4500 } });
+    expect(by["folioviv.scale"]).toMatchObject({ price: { amountCents: 6900 }, before: { amountCents: 9900 } });
+    expect(by["folioviv.founder"]).toMatchObject({ price: { availability: "internal", amountCents: 3900 } });
     const audit = (await t.db.execute(sql`SELECT key FROM settings_audit WHERE actor_label = ${PRICE_SCHEDULE[0]!.label} ORDER BY key`)).rows as { key: string }[];
-    expect(audit.map((a) => a.key)).toEqual(["akinaza.founder", "akinaza.scale", "akinaza.starter"]);
+    expect(audit.map((a) => a.key)).toEqual(["folioviv.founder", "folioviv.scale", "folioviv.starter"]);
   });
 
   it("grandfathering: the version a subscriber was sold at is still 45 $ (the seed) while a newcomer is offered 29 $", async () => {
     const prices = priceCatalogue(
-      { keys: ["akinaza.starter"], isKey: (k) => k === "akinaza.starter", defaultOf: () => ({ ...seed, limits: { ...seed.limits } }) },
+      { keys: ["folioviv.starter"], isKey: (k) => k === "folioviv.starter", defaultOf: () => ({ ...seed, limits: { ...seed.limits } }) },
       priceStore({ query: async (text, params) => (await t.pool.query(text, params as unknown[])).rows as never }),
     );
     const now = new Date();
-    const offered = await prices.entry("akinaza.starter", new Date(now.getTime() + 1000));
+    const offered = await prices.entry("folioviv.starter", new Date(now.getTime() + 1000));
     expect(offered.amountCents).toBe(2900);
-    const sold = await prices.version("seed:akinaza.starter");
+    const sold = await prices.version("seed:folioviv.starter");
     expect(sold?.amountCents).toBe(4500);
-    expect(offered.versionId).not.toBe("seed:akinaza.starter");
+    expect(offered.versionId).not.toBe("seed:folioviv.starter");
   });
 
   it("scheduledPrice applies the schedule onto a seed (the processor's catalogue sells these amounts)", () => {
-    expect(scheduledPrice("akinaza.starter", seed)).toMatchObject({ amountCents: 2900, limits: { trialDays: 90 } });
-    expect(scheduledPrice("akinaza.other", seed)).toEqual(seed);
+    expect(scheduledPrice("folioviv.starter", seed)).toMatchObject({ amountCents: 2900, limits: { trialDays: 90 } });
+    expect(scheduledPrice("folioviv.other", seed)).toEqual(seed);
   });
 });

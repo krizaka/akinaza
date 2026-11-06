@@ -1,7 +1,7 @@
 "use client";
 
-import type { BusinessType } from "@akinaza/core";
-import type { ShopPageConfig, ShopPageSection } from "@akinaza/db";
+import type { BusinessType } from "@folioviv/core";
+import type { ShopPageConfig, ShopPageSection } from "@folioviv/db";
 import { Alert } from "@krizaka/ui/alert";
 import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";

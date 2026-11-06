@@ -1,11 +1,11 @@
-import { holdSlug, type ProtectedTerm } from "@akinaza/core";
+import { holdSlug, type ProtectedTerm } from "@folioviv/core";
 import { and, asc, eq, isNotNull, isNull, ne, or, sql } from "drizzle-orm";
 
 import type { Db } from "./client";
 import { accounts, shops } from "./schema";
 
 /**
- * The administrator's review of held shop addresses (ADR-005 slice 4, akinaza#537): the queue, the two decisions (clear, or keep held with a reason),
+ * The administrator's review of held shop addresses (ADR-005 slice 4, folioviv#537): the queue, the two decisions (clear, or keep held with a reason),
  * and the one-off re-judging of the shops that existed before the hold did (dry run first, then apply).
  */
 

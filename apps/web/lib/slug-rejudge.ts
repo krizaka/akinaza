@@ -1,4 +1,4 @@
-import { type Db, enqueueMail, mailById, rejudgeShops } from "@akinaza/db";
+import { type Db, enqueueMail, mailById, rejudgeShops } from "@folioviv/db";
 
 import { productName } from "./brand-name";
 import { deliver } from "./mail";

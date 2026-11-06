@@ -39,8 +39,8 @@ jobs:
         run: |
           password="$(openssl rand -hex 16)"
           echo "::add-mask::$password"
-          DEMO_ACCOUNT_EMAIL=lea.beaulieu@akinaza.test DEMO_ACCOUNT_PASSWORD="$password" bash scripts/ci-mobile-backend.sh
-          E2E_EMAIL=lea.beaulieu@akinaza.test E2E_PASSWORD="$password" node apps/web/scripts/showcase-web.mjs "$GITHUB_WORKSPACE/showcase-web" --base http://localhost:3000 --locale fr
+          DEMO_ACCOUNT_EMAIL=lea.beaulieu@folioviv.test DEMO_ACCOUNT_PASSWORD="$password" bash scripts/ci-mobile-backend.sh
+          E2E_EMAIL=lea.beaulieu@folioviv.test E2E_PASSWORD="$password" node apps/web/scripts/showcase-web.mjs "$GITHUB_WORKSPACE/showcase-web" --base http://localhost:3000 --locale fr
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: showcase-web
@@ -56,7 +56,7 @@ jobs:
       contents: read
     uses: krizaka/.github/.github/workflows/mobile-e2e.yml@79f6ff6292edefebc59fc968dbc2c203da81c3ea # main (krizaka/.github#318)
     with:
-      app-id: com.krizaka.akinaza
+      app-id: com.krizaka.folioviv
       app-directory: apps/mobile
       flows-directory: .maestro-showcase
       artifact-name: maestro-showcase
@@ -64,7 +64,7 @@ jobs:
       package-manager: pnpm
       lockfile-directory: .
       install-command: pnpm install --frozen-lockfile
-      demo-email: lea.beaulieu@akinaza.test
+      demo-email: lea.beaulieu@folioviv.test
       setup-command: bash scripts/ci-mobile-backend.sh
       reverse-ports: "3000"
       allow-cleartext: true
@@ -81,7 +81,7 @@ jobs:
       pull-requests: write
     uses: krizaka/.github/.github/workflows/app-videos.yml@79f6ff6292edefebc59fc968dbc2c203da81c3ea # main (krizaka/.github#374: sites/<product>/download)
     with:
-      product: akinaza
+      product: folioviv
       manifest: apps/web/content/app-videos.json
       artifacts: |
         showcase-web

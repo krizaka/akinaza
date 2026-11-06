@@ -1,4 +1,4 @@
-import { shopClients } from "@akinaza/db";
+import { shopClients } from "@folioviv/db";
 
 import { v1 } from "@/lib/api-v1";
 import { db } from "@/lib/db";

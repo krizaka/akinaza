@@ -1,5 +1,5 @@
-import { CalendarSourceError } from "@akinaza/core";
-import { addConnection, recordSyncOk, sealField } from "@akinaza/db";
+import { CalendarSourceError } from "@folioviv/core";
+import { addConnection, recordSyncOk, sealField } from "@folioviv/db";
 
 import { oauthApps } from "@/app/calendar-edge";
 import { systemClock } from "@/app/system-clock";
@@ -32,7 +32,7 @@ function mayConnect(staffId: string | null, overview: { wholeShop: boolean; peop
 /** A refusal the page already explains stays quiet; anything else is logged without its detail. */
 function logUnexpected(error: unknown): void {
   if (error instanceof HttpError || error instanceof CalendarSourceError) return;
-  console.error("[akinaza] calendar callback failed", error instanceof Error ? error.message : "unknown");
+  console.error("[folioviv] calendar callback failed", error instanceof Error ? error.message : "unknown");
 }
 
 /**

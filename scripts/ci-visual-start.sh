@@ -14,11 +14,11 @@ export PORT=3000
 export APP_FIXED_NOW=2026-10-28T15:00:00Z
 # The app's declared public origin (landingRedirect requires it in production: never read from the request's Host).
 export APP_PUBLIC_URL=http://localhost:3000
-pnpm --filter @akinaza/web build
+pnpm --filter @folioviv/web build
 export NODE_ENV=production
 trap 'tail -100 web-visual.log || true' ERR
 # The cast first (it migrates), then the server on it.
-pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs --check
+pnpm --filter @folioviv/web exec tsx scripts/seed-cast.mjs --check
 (cd apps/web && nohup npx next start -p 3000 > ../../web-visual.log 2>&1 &)
 for _ in $(seq 1 90); do curl -sf http://localhost:3000/api/healthz >/dev/null && break; sleep 1; done
 curl -sf http://localhost:3000/api/healthz >/dev/null

@@ -1,17 +1,17 @@
-import { CONSENT_TEXT_VERSION, eraseClient, eraseClientRequests } from "@akinaza/db";
+import { CONSENT_TEXT_VERSION, eraseClient, eraseClientRequests } from "@folioviv/db";
 
 import { db } from "./db";
 import { mediaStorage } from "./media-storage";
 import { deleteStored } from "./media-upload";
 
-/** Removes files from the media storage, best effort: a failure is logged with the address, never the key (akinaza#210). */
+/** Removes files from the media storage, best effort: a failure is logged with the address, never the key (folioviv#210). */
 export async function removeStoredFiles(urls: readonly string[]): Promise<void> {
   if (!urls.length) return;
   const media = await mediaStorage().catch(() => null);
   if (!media) return;
   for (const url of urls) {
     const removed = await deleteStored(media, url).catch(() => false);
-    if (!removed) console.error(`[akinaza] a request file could not be removed from the storage: ${url}`);
+    if (!removed) console.error(`[folioviv] a request file could not be removed from the storage: ${url}`);
   }
 }
 

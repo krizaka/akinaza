@@ -18,7 +18,7 @@ afterAll(async () => t.drop());
 
 const NOW = new Date("2026-10-21T15:00:00Z"); // Wednesday 11:00 in Montréal; the last completed quarter is 2026-Q3
 
-describe("Krizaka, a software studio, as Akinaza's first client (demo data, clearly marked)", () => {
+describe("Krizaka, a software studio, as Folioviv's first client (demo data, clearly marked)", () => {
   it("builds a services business: bookable and invoiceable services, business clients, demo numbers", async () => {
     const first = await seedKrizaka(t.db, NOW);
     expect(first.created).toBe(true);

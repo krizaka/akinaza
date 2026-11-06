@@ -1,4 +1,4 @@
-import { invoiceDetail } from "@akinaza/db";
+import { invoiceDetail } from "@folioviv/db";
 import { z } from "zod";
 
 import { systemClock } from "@/app/system-clock";

@@ -8,7 +8,7 @@ import { downloadPageOpen } from "./downloads";
 import { getDictionary, LOCALES } from "./i18n";
 
 const ROOT = join(__dirname, "..");
-const PATH = /^sites\/akinaza\/download\/(web|android|ios|mac)-[a-z0-9-]+\.[0-9a-f]{10}\.(webm|mp4|jpg)$/;
+const PATH = /^sites\/folioviv\/download\/(web|android|ios|mac)-[a-z0-9-]+\.[0-9a-f]{10}\.(webm|mp4|jpg)$/;
 
 describe("the download page's videos (krizaka/.github#315)", () => {
   it("are known to the manifest with a file of each kind, hashed, under the product's download folder", () => {
@@ -34,7 +34,7 @@ describe("the download page's videos (krizaka/.github#315)", () => {
   it("the page reads the manifest only: no address of a video is typed in it", () => {
     const page = readFileSync(join(ROOT, "app/[locale]/download/page.tsx"), "utf8");
     expect(page).toContain("APP_VIDEOS");
-    expect(page).not.toMatch(/b-cdn|products\/akinaza|\.(mp4|webm|jpg)["'`]/);
+    expect(page).not.toMatch(/b-cdn|products\/folioviv|\.(mp4|webm|jpg)["'`]/);
   });
 
   it(`none is older than ${MAX_AGE_DAYS} days: a stale recording means the e2e job stopped publishing`, () => {

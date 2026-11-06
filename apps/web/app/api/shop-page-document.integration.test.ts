@@ -12,7 +12,7 @@ import { POST as publish } from "./walker/page/publish/route";
 import { POST as rollback } from "./walker/page/rollback/route";
 import { GET as versions } from "./walker/page/versions/route";
 
-/** The shop page as a document over HTTP (akinaza#400): who may write and publish, a refused document, one audit row each. Real PostgreSQL (DATABASE_IT=1). */
+/** The shop page as a document over HTTP (folioviv#400): who may write and publish, a refused document, one audit row each. Real PostgreSQL (DATABASE_IT=1). */
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 
 describe.runIf(enabled)("the shop page document over HTTP", () => {

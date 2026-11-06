@@ -29,13 +29,13 @@ function sources(dir: string): string[] {
   });
 }
 
-describe("the seed of the catalogue is the history: the founder offer, Starter and Scale as first sold, and the new Association entry (akinaza#371, ADR-009)", () => {
+describe("the seed of the catalogue is the history: the founder offer, Starter and Scale as first sold, and the new Association entry (folioviv#371, ADR-009)", () => {
   it("the founder offer 39 $ a month for the first 20 businesses; Starter 45 $ and Scale B2B 99 $ a month, public — CAD, plus taxes", () => {
     expect(PRICES.keys).toEqual([FOUNDER, STARTER, SCALE, ASSOCIATION]);
     expect(PRICES.defaultOf(FOUNDER)).toEqual({ unit: "month", amountCents: 3900, currency: "CAD", taxes: "plus-taxes", availability: "founder-limited", limits: { founderCap: 20, cardFeeBps: 0, directDebitBps: 50, directDebitCapCents: 1500 } });
     expect(PRICES.defaultOf(STARTER)).toEqual({ unit: "month", amountCents: 4500, currency: "CAD", taxes: "plus-taxes", availability: "public", limits: { cardFeeBps: 0, directDebitBps: 50, directDebitCapCents: 1500 } });
     expect(PRICES.defaultOf(SCALE)).toEqual({ unit: "month", amountCents: 9900, currency: "CAD", taxes: "plus-taxes", availability: "public", limits: { cardFeeBps: 0, directDebitBps: 25, directDebitCapCents: 1000 } });
-    // The seed is never rewritten (a subscriber sold at `seed:akinaza.starter` keeps 45 $): the new grid is a dated version of the catalogue.
+    // The seed is never rewritten (a subscriber sold at `seed:folioviv.starter` keeps 45 $): the new grid is a dated version of the catalogue.
     expect(PRICES.defaultOf(ASSOCIATION)).toEqual({ unit: "month", amountCents: 100, currency: "CAD", taxes: "plus-taxes", availability: "public", limits: { trialDays: 90, cardFeeBps: 0, directDebitBps: 50, directDebitCapCents: 1500 } });
   });
 
@@ -49,8 +49,8 @@ describe("the seed of the catalogue is the history: the founder offer, Starter a
     expect(await prices.entry(ASSOCIATION, at)).toMatchObject({ amountCents: 100, availability: "public" });
     expect((await prices.entry(FOUNDER, at)).availability).toBe("internal");
     // Existing subscribers keep the version they were sold at.
-    expect((await prices.version("seed:akinaza.starter"))?.amountCents).toBe(4500);
-    expect((await prices.version("seed:akinaza.founder"))?.amountCents).toBe(3900);
+    expect((await prices.version("seed:folioviv.starter"))?.amountCents).toBe(4500);
+    expect((await prices.version("seed:folioviv.founder"))?.amountCents).toBe(3900);
   });
 
   it("0 % on cards in every entry: a card payment of any order carries no fee", () => {
@@ -84,7 +84,7 @@ describe("the seed of the catalogue is the history: the founder offer, Starter a
     for (const bad of [-1, 1.5, Number.NaN]) {expect(() => directDebitFeeCents(starter, bad)).toThrow(RangeError);}
   });
 
-  it("the processor's catalogue is built from the prices in force in the database, never from typed amounts (akinaza#633)", async () => {
+  it("the processor's catalogue is built from the prices in force in the database, never from typed amounts (folioviv#633)", async () => {
     expect(plans.plans.map((p) => p.lookupKey).sort()).toEqual(Object.values(PROCESSOR_PLANS).map((p) => p.lookupKey).sort());
     expect(read("infra/payments/plans.json")).not.toMatch(/"amount|amountCents|"currency|"interval/);
     const entries = await (await pricesInForce(new Date("2026-11-01T12:00:00Z"))).catalogue(new Date("2026-11-02T12:00:00Z"));
@@ -137,7 +137,7 @@ describe("the seed of the catalogue is the history: the founder offer, Starter a
   });
 });
 
-describe("every price shown says « plus taxes », and none is typed in a message (akinaza#363, #371)", () => {
+describe("every price shown says « plus taxes », and none is typed in a message (folioviv#363, #371)", () => {
   const SAYS_TAXES = /plus (GST|TPS|taxes)|taxes (extra|en sus)|before tax|avant taxes/i;
 
   it("no message types an amount, in either language (findTypedPrices)", () => {

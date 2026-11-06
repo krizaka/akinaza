@@ -43,7 +43,7 @@ describe.runIf(enabled)("roles of a shop over HTTP", () => {
   const accounts: Record<string, { id: string; email: string }> = {};
   const UUID = "00000000-0000-4000-8000-000000000001";
   const make = async (label: string) => {
-    const email = `${label}-${stamp}@akinaza.test`;
+    const email = `${label}-${stamp}@folioviv.test`;
     const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [email]);
     accounts[label] = { id: row!.id, email };
     sessions[label] = (await createSession(row!.id, { ip: null, userAgent: "vitest" })).token;
@@ -67,7 +67,7 @@ describe.runIf(enabled)("roles of a shop over HTTP", () => {
   });
   beforeEach(() => resetRateLimits());
   afterAll(async () => {
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@folioviv.test`]);
     await pool().end();
   });
 
@@ -125,7 +125,7 @@ describe.runIf(enabled)("roles of a shop over HTTP", () => {
     expect((await call(acceptInvite, "POST", "/api/auth/accept-invite", { cookie: sessions.second, json: { token } })).status).toBe(200);
     expect((await call(acceptInvite, "POST", "/api/auth/accept-invite", { cookie: sessions.second, json: { token } })).body.code).toBe("INVITE_INVALID");
     expect((await call(invite, "POST", "/api/walker/team/invitations", { cookie: sessions.camille, json: { email: "x@example.test", role: "staff" } })).body.code).toBe("FORBIDDEN");
-    const again = await call(invite, "POST", "/api/walker/team/invitations", { cookie: sessions.owner, json: { email: `later-${stamp}@akinaza.test`, role: "staff" } });
+    const again = await call(invite, "POST", "/api/walker/team/invitations", { cookie: sessions.owner, json: { email: `later-${stamp}@folioviv.test`, role: "staff" } });
     expect((await call(revokeInvitation, "DELETE", "/x", { cookie: sessions.owner, params: { id: again.body.invitation.id } })).status).toBe(200);
   });
 
@@ -137,7 +137,7 @@ describe.runIf(enabled)("roles of a shop over HTTP", () => {
     expect((await call(changeRole, "PATCH", "/x", { cookie: sessions.owner, params: { accountId: m }, json: { role: "owner" } })).status).toBe(200);
     expect((await call(removeMember, "DELETE", "/x", { cookie: sessions.manager, params: { accountId: c } })).status).toBe(200); // the new owner removes staff
     expect((await call(zones, "POST", "/api/walker/zones", { cookie: sessions.camille, json: { name: "Z" } })).body.code).toBe("NO_SHOP");
-    const trail = await query<{ action: string }>("SELECT action FROM audit_log WHERE action LIKE 'team.%' AND actor_label LIKE $1", [`%-${stamp}@akinaza.test`]);
+    const trail = await query<{ action: string }>("SELECT action FROM audit_log WHERE action LIKE 'team.%' AND actor_label LIKE $1", [`%-${stamp}@folioviv.test`]);
     expect(new Set(trail.map((t) => t.action))).toEqual(new Set(["team.invited", "team.joined", "team.role_changed", "team.member_removed", "team.invitation_revoked"]));
   });
 });

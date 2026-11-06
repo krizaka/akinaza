@@ -1,15 +1,17 @@
 import { brandOf, displayName } from "@krizaka/org";
 
+import { BRAND_ID } from "./brand-id";
+
+export { BRAND_ID };
+
 /**
- * The commercial name (krizaka-internal#2039, #2103): the code name stays in the repository, the packages and the addresses;
- * every word a person reads is « Folioviv by Krizaka », read from `@krizaka/org` and never typed here. Surfaces drawn at build
- * (the static pages, the manifest, the social card) use this default; a surface drawn per request reads the administrator's
- * `brand.displayName` through `productName()` (lib/brand-name.ts).
+ * The commercial name (krizaka-internal#2039, #2103, #2659): every word a person reads is « Folioviv by Krizaka », read from
+ * `@krizaka/org` and never typed here. Surfaces drawn at build (the static pages, the manifest, the social card) use this default; a
+ * surface drawn per request reads the administrator's `brand.displayName` through `productName()` (lib/brand-name.ts).
  */
-export const CODE_NAME = "akinaza";
 
 /** The name shown when the administrator has set none. */
-export const PRODUCT_NAME = displayName(CODE_NAME);
+export const PRODUCT_NAME = displayName(BRAND_ID);
 
 /** A message tree with `{product}` filled in. Pure: the catalogues keep the placeholder, the bound copy is what a page reads. */
 export function bindProduct<T>(tree: T, name: string = PRODUCT_NAME): T {
@@ -26,4 +28,4 @@ export function bindProduct<T>(tree: T, name: string = PRODUCT_NAME): T {
 }
 
 /** « by Krizaka » / « par Krizaka »: the endorsement under the name, for `ProductLockup`. */
-export const endorsementIn = (locale: "en" | "fr"): string => brandOf(CODE_NAME).endorsement[locale];
+export const endorsementIn = (locale: "en" | "fr"): string => brandOf(BRAND_ID).endorsement[locale];

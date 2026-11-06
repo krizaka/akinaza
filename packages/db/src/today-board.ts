@@ -1,4 +1,4 @@
-import { type BoardPeriod, INVOICE_STATE, invoiceState, remainingCents, type TodayBoard } from "@akinaza/core";
+import { type BoardPeriod, INVOICE_STATE, invoiceState, remainingCents, type TodayBoard } from "@folioviv/core";
 import { sql } from "drizzle-orm";
 
 import type { Db } from "./client";

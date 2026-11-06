@@ -1,7 +1,7 @@
 "use client";
 
-import { invoiceState, remainingCents } from "@akinaza/core";
-import type { ClientFile, ClientNote } from "@akinaza/db";
+import { invoiceState, remainingCents } from "@folioviv/core";
+import type { ClientFile, ClientNote } from "@folioviv/db";
 import { Badge } from "@krizaka/ui/badge";
 import { DataTable, type DataTableColumn } from "@krizaka/ui/data-table";
 import { DetailLayout } from "@krizaka/ui/detail-layout";
@@ -41,7 +41,7 @@ export interface ClientFilePanelProps {
   tab: ClientFileTab;
   /** The shop's calendar day: an invoice's derived state (`invoiceState`). */
   today: string;
-  /** The shop's tags and who may write them (akinaza#337), and the ones this client wears. */
+  /** The shop's tags and who may write them (folioviv#337), and the ones this client wears. */
   organize?: OrganizeData;
   tags?: TagLite[];
 }

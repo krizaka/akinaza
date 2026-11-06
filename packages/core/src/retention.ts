@@ -1,6 +1,6 @@
 /**
  * How long each kind of record is kept, as data (Loi 25, P-39.1 art. 23: personal information is destroyed or anonymised once its purposes
- * are achieved, subject to a retention period the law sets; akinaza#370). The privacy erasure reads it: a record whose `keep` is `tax`
+ * are achieved, subject to a retention period the law sets; folioviv#370). The privacy erasure reads it: a record whose `keep` is `tax`
  * survives the erasure of the person it names, with the personal fields blanked; everything else goes.
  */
 

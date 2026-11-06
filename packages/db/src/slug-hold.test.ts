@@ -1,4 +1,4 @@
-import { parseProtectedTerms } from "@akinaza/core";
+import { parseProtectedTerms } from "@folioviv/core";
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 

@@ -11,7 +11,7 @@ import type { Locale } from "@/lib/i18n";
  */
 export function BrandLockup({ locale, size = 26 }: Readonly<{ locale: Locale; size?: number }>) {
   return (
-    <span className="inline-flex items-center gap-2.5" data-brand="akinaza">
+    <span className="inline-flex items-center gap-2.5" data-brand="folioviv">
       <AkinazaLogo size={size} />
       <span className="flex items-baseline gap-1.5 leading-tight">
         <span className="text-base font-semibold tracking-tight text-fg">{PRODUCT_NAME}</span>

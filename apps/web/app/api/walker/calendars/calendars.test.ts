@@ -1,4 +1,4 @@
-import { addConnection, connectionSecret, feedPeople, listConnections, recordSyncOk, removeConnection, sealField } from "@akinaza/db";
+import { addConnection, connectionSecret, feedPeople, listConnections, recordSyncOk, removeConnection, sealField } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireShop } from "@/lib/access";
@@ -13,7 +13,7 @@ vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/env", () => ({ dataKey: () => Buffer.alloc(32, 7), calendarOAuthApps: () => ({ google: { clientId: "cid", clientSecret: "csec" } }) }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
 vi.mock("@/lib/rate-limit", () => ({ limit: vi.fn() }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), addConnection: vi.fn(), connectionSecret: vi.fn(), feedPeople: vi.fn(), listConnections: vi.fn(), recordSyncOk: vi.fn(), removeConnection: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), addConnection: vi.fn(), connectionSecret: vi.fn(), feedPeople: vi.fn(), listConnections: vi.fn(), recordSyncOk: vi.fn(), removeConnection: vi.fn() }));
 vi.mock("@/lib/calendar/public-url", async (original) => ({ ...(await original<typeof import("@/lib/calendar/public-url")>()), assertPublicHost: vi.fn(async () => undefined) }));
 
 type Fetch = typeof globalThis.fetch;

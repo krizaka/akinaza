@@ -26,9 +26,9 @@ export async function apiCall(handler: unknown, method: string, path: string, op
   return { status: res.status, body: type.includes("json") ? await res.json() : null };
 }
 
-/** An account `<label>-<stamp>@akinaza.test` and a session for it. */
+/** An account `<label>-<stamp>@folioviv.test` and a session for it. */
 export async function testAccount(label: string, stamp: string) {
-  const email = `${label}-${stamp}@akinaza.test`;
+  const email = `${label}-${stamp}@folioviv.test`;
   const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [email]);
   return { id: row!.id, email, token: (await createSession(row!.id, { ip: null, userAgent: "vitest" })).token };
 }
@@ -60,7 +60,7 @@ export async function handlersOf(load: () => Promise<Record<string, unknown>>): 
 
 /** The end of a suite: its accounts go (shops stay: the ledger and the consents are written once), the env and the pool close. */
 export async function closeSuite(stamp: string) {
-  await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+  await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@folioviv.test`]);
   vi.unstubAllEnvs();
   await pool().end();
 }

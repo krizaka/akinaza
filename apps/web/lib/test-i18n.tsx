@@ -1,4 +1,4 @@
-import type { BusinessType } from "@akinaza/core";
+import type { BusinessType } from "@folioviv/core";
 import { KrizakaQueryProvider } from "@krizaka/query";
 import { renderToStaticMarkup } from "react-dom/server";
 

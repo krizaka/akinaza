@@ -7,7 +7,7 @@ import { retiredAddresses } from "../next.config.mjs";
 import { accountRoutes, shopRoutes } from "./routes";
 
 /**
- * One language of addresses in the signed-in space (akinaza#582): the address bar is part of the product, and an English
+ * One language of addresses in the signed-in space (folioviv#582): the address bar is part of the product, and an English
  * console must not carry French words (`/en/app/<shop>/aujourdhui`, `/boutique`). The segments are English, in both locales;
  * the French ones answer 308 to them (next.config.mjs).
  */
@@ -22,7 +22,7 @@ function segments(dir: string): string[] {
 const words = (path: string) => path.split(/[/?&=]/).filter(Boolean);
 const SHOP = "0b1c2d3e-4f50-4a6b-8c7d-9e0f1a2b3c4d";
 
-describe("no English console path contains a French word (akinaza#582)", () => {
+describe("no English console path contains a French word (folioviv#582)", () => {
   it("the folders of the signed-in space", () => {
     expect(segments(APP).filter((s) => FRENCH.includes(s.toLowerCase()))).toEqual([]);
   });

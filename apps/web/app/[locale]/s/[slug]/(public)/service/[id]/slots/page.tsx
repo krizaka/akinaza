@@ -1,12 +1,12 @@
-import { listSlots } from "@akinaza/db";
+import { listSlots } from "@folioviv/db";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { requestNow } from "@/app/request-now";
 import { JourneyFrame } from "@/components/journey/JourneyFrame";
 import { ShopSlots } from "@/components/shop/ShopSlots";
 import { StorefrontLive } from "@/components/shop/StorefrontLive";
-import { requestNow } from "@/app/request-now";
 import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";
 import { asLocale, translator } from "@/lib/i18n";

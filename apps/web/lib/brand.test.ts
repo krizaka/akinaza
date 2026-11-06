@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import fr from "@/messages/fr.json";
 
-import { bindProduct, CODE_NAME, PRODUCT_NAME } from "./brand";
+import { bindProduct, BRAND_ID, PRODUCT_NAME } from "./brand";
 import { getDictionary } from "./i18n";
 import { renderMailTemplate } from "./mail-templates";
 
@@ -13,7 +13,7 @@ const BRIEF = { shop: "Salon Laurier", line1: "a", line2: "", has2: false, line3
 describe("the commercial name (krizaka-internal#2039)", () => {
   it("is never the code name", () => {
     expect(PRODUCT_NAME).toBe("Folioviv");
-    expect(PRODUCT_NAME.toLowerCase()).not.toBe(CODE_NAME);
+    expect(PRODUCT_NAME.toLowerCase()).not.toBe(BRAND_ID);
   });
 
   it("fills {product} in a whole tree and leaves the other placeholders", () => {
@@ -21,7 +21,7 @@ describe("the commercial name (krizaka-internal#2039)", () => {
   });
 
   it("the catalogues carry the placeholder, never a code name; the bound dictionaries carry the commercial name", () => {
-    for (const catalogue of [en, fr]) expect(JSON.stringify(catalogue)).not.toMatch(/akinaza(?!\.com)/i);
+    for (const catalogue of [en, fr]) expect(JSON.stringify(catalogue)).not.toMatch(/folioviv(?!\.com)/i);
     for (const locale of ["en", "fr"] as const) {
       const bound = JSON.stringify(getDictionary(locale));
       expect(bound).not.toContain("{product}");

@@ -1,6 +1,6 @@
 "use client";
 
-import { SHOP_TYPES, type ShopType } from "@akinaza/core";
+import { SHOP_TYPES, type ShopType } from "@folioviv/core";
 import { krizakaFetch } from "@krizaka/query";
 import { Alert } from "@krizaka/ui/alert";
 import { Card } from "@krizaka/ui/card";

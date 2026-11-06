@@ -1,8 +1,8 @@
 {
-  "name": "@akinaza/mobile",
+  "name": "@folioviv/mobile",
   "version": "0.1.0",
   "private": true,
-  "description": "Akinaza for iOS and Android (Expo): the owner's day, bookings, quick invoice, clients.",
+  "description": "Folioviv for iOS and Android (Expo): the owner's day, bookings, quick invoice, clients.",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
@@ -14,8 +14,8 @@
     "export": "expo export --platform ios --platform android"
   },
   "dependencies": {
-    "@akinaza/client": "workspace:*",
-    "@akinaza/core": "workspace:*",
+    "@folioviv/client": "workspace:*",
+    "@folioviv/core": "workspace:*",
     "@krizaka/app-client": "^0.2.0",
     "@krizaka/discovery": "^0.1.0",
     "@krizaka/i18n": "^0.2.1",

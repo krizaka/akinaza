@@ -4,7 +4,7 @@ import en from "../messages/en.json";
 import fr from "../messages/fr.json";
 import { DEMO_GST_CENTS, DEMO_QST_CENTS, DEMO_RETURN, DEMO_SUBTOTAL_CENTS, demoInvoice } from "./landing-demo";
 
-describe("the home's demo data (akinaza#470)", () => {
+describe("the home's demo data (folioviv#470)", () => {
   it("applies GST 5 % and QST 9.975 % to the cent", () => {
     expect(DEMO_GST_CENTS).toBe(Math.round(DEMO_SUBTOTAL_CENTS * 0.05));
     expect(DEMO_QST_CENTS).toBe(Math.round(DEMO_SUBTOTAL_CENTS * 0.09975));

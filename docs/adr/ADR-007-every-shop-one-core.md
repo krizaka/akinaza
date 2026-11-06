@@ -1,8 +1,8 @@
 # ADR-007 — Every kind of shop on one core: offer kinds, products and variants, stock, drops, lookbooks, presets
 
-Status: **accepted** (2026-10-30, by the CTO; summary to the founder in the 7-hour report). Issue: krizaka/akinaza#591 (Feature).
+Status: **accepted** (2026-10-30, by the CTO; summary to the founder in the 7-hour report). Issue: krizaka/folioviv#591 (Feature).
 Founder request (2026-10-30): clothing boutiques — the alternative-chic neighbourhood shop, the street-wear shop — must have
-their page on Akinaza, with tools for that kind of shop and « ultra advanced » animations, on an architecture that serves
+their page on Folioviv, with tools for that kind of shop and « ultra advanced » animations, on an architecture that serves
 **every** kind of shop.
 
 ## Context (main, 2026-10-30)
@@ -11,7 +11,7 @@ their page on Akinaza, with tools for that kind of shop and « ultra advanced »
 | :-- | :-- | :-- |
 | What a shop sells | **time only**: `services` (duration, capacity, price, tax category, « from » price) booked into `appointments` (staff time, `EXCLUDE`) and `bookings` (a seat) | ADR-001, `packages/db/src/schema.ts` |
 | The kind of shop | **three overlapping lists**: `shops.kind` (salon · boutique · services · other: gates the counter), `shops.business_type` (professional · pets: the vocabulary), `shop_page.shop_type` (salon · coaching · workshop · cleaning · pets · consulting: the templates) | `core/shop.ts`, `core/vocabulary.ts`, `core/storefront-templates/schema.ts` |
-| Excluded businesses | restaurants, cafés, bars, bakeries with on-site consumption (Revenu Québec's SRM / MEV-WEB, which Akinaza is not) | `core/shop.ts` `EXCLUDED_KINDS` |
+| Excluded businesses | restaurants, cafés, bars, bakeries with on-site consumption (Revenu Québec's SRM / MEV-WEB, which Folioviv is not) | `core/shop.ts` `EXCLUDED_KINDS` |
 | The page | a versioned document of sections with Krizaka UI variants and six looks, edited in the composer | ADR-004 and its addendum |
 | Search | Postgres (`shop_search` read model, trigram + full text), one typed filter schema | ADR-006 |
 | Money | integer cents, GST/QST per line by tax category, invoices and an append-only tax ledger; payments through the shop's own processor are « Soon » | `core/tax.ts`, `core/ledger.ts`, ADR-003 |
@@ -21,8 +21,8 @@ Two findings shape the decision:
 
 1. **The three type lists are already a fork in waiting.** A fourth vertical would add a fourth list. The decision replaces
    them with one preset.
-2. **The issue's fourth archetype, a café-boutique, is outside Akinaza.** A café with on-site consumption must use a
-   certified SRM; Akinaza is not one and the exclusion stays. The hybrid archetype is a **barbershop-boutique** instead
+2. **The issue's fourth archetype, a café-boutique, is outside Folioviv.** A café with on-site consumption must use a
+   certified SRM; Folioviv is not one and the exclusion stays. The hybrid archetype is a **barbershop-boutique** instead
    (booked cuts plus grooming products at the counter and online): same shape, inside the rules.
 
 ## Options weighed
@@ -67,7 +67,7 @@ out », whoever is second. A reservation expires after a shop setting (default 1
 event from the processor, or by a sweep with an injected clock. The counter (#605) and the online shop read and write the
 **same** `stock_levels`: shared stock is the default. Several locations are kept for later; the model already has them.
 
-**Order states are a pure state machine** in `@akinaza/core` (`draft → reserved → paid → ready → collected | delivered`,
+**Order states are a pure state machine** in `@folioviv/core` (`draft → reserved → paid → ready → collected | delivered`,
 plus `cancelled` and `refunded`/`partly refunded`), tested like `invoice-state`. The processor's webhook is the only writer
 of « paid » and « refunded » (ADR-003). Money stays integer cents.
 
@@ -78,7 +78,7 @@ empty for them, and no code path they use changes.
 
 ### 2. A shop type is a preset (data), not a fork
 
-One catalogue, `SHOP_PRESETS` in `@akinaza/core` (versioned like the storefront templates). It replaces the three lists:
+One catalogue, `SHOP_PRESETS` in `@folioviv/core` (versioned like the storefront templates). It replaces the three lists:
 
 | Field | Example (`clothing-boutique`) |
 | :-- | :-- |
@@ -118,12 +118,12 @@ settings as data):
   fetched on pointer intent, never on a touch screen by default, never autoplayed with sound; every media box has its aspect
   ratio (CLS 0); under reduced motion the tilt and the story stop, and a swatch still changes the image, instantly. The
   per-look performance check (`check:perf`) gains a clothing page fixture.
-- The owner picks looks and section variants; **Akinaza never hand-codes one shop's page.**
+- The owner picks looks and section variants; **Folioviv never hand-codes one shop's page.**
 
 ### 4. Owner tools for a clothing boutique
 
 - **Photo-first entry:** drop N photos, get N item drafts (one photo each, the file name as a first title). A draft is never
-  published by itself. A draft of title and description from the photo is an Orazaka call, decided in ADR-008 (#592).
+  published by itself. A draft of title and description from the photo is an Sovkora call, decided in ADR-008 (#592).
 - **CSV entry and imports** (#607): one importer with column mappings as data (a generic profile, plus the Shopify and Square
   product export profiles), a dry run that shows every line and its error, idempotent by SKU, audited. CSV parsing through a
   trusted library (papaparse, MIT) behind a `@krizaka/*` facade, never imported directly by the app.
@@ -134,12 +134,12 @@ settings as data):
 
 ### 5. Commerce and the law (Québec)
 
-Akinaza prepares, the shop is the merchant. Sources are the laws themselves; every line marked ⚖ goes to the lawyer review
+Folioviv prepares, the shop is the merchant. Sources are the laws themselves; every line marked ⚖ goes to the lawyer review
 (krizaka/.github#250).
 
 - **Taxes:** clothing and accessories are taxable supplies at GST 5 % and QST 9.975 % (`standard`; no children's clothing
   relief in Québec). The existing tax module and ledger apply per line; a shop under the small-supplier threshold sells
-  without taxes as today. Akinaza prepares the figures and never files them.
+  without taxes as today. Folioviv prepares the figures and never files them.
 - **Distance contracts** (Consumer Protection Act, CQLR c. P-40.1, ss. 54.1–54.16): before the client confirms, the checkout
   shows the merchant's identity and contact, the description of each item, the itemised price, delivery costs, taxes and
   total in Canadian dollars, the delivery or pickup date, and the cancellation, return, exchange and refund policy (s. 54.4).
@@ -161,7 +161,7 @@ Akinaza prepares, the shop is the merchant. Sources are the laws themselves; eve
   people (models) need their consent: the upload asks the owner to confirm it (Civil Code arts. 35–36) and records the answer. ⚖
 - **Payment:** through the shop's own processor, **Stripe Connect Standard** (krizaka/krizaka-ts#281): the shop is the
   merchant of record, the money never passes through Krizaka, **one platform Connect webhook** for all shops (shops declare
-  none), card data never in Akinaza (hosted fields, PCI SAQ A), 0 % on cards (ADR-003). Nothing of checkout is built before
+  none), card data never in Folioviv (hosted fields, PCI SAQ A), 0 % on cards (ADR-003). Nothing of checkout is built before
   #281 is released.
 - **Drops and bots:** a per-client limit, the rate limiter (`apps/web/lib/rate-limit.ts`) on checkout, and a reservation that expires. No queue
   system now.
@@ -170,7 +170,7 @@ Akinaza prepares, the shop is the merchant. Sources are the laws themselves; eve
 
 Ports and adapters, data before code, the same layering as ADR-001 and ADR-006:
 
-| Port | Pure part (`@akinaza/core`) | Adapter |
+| Port | Pure part (`@folioviv/core`) | Adapter |
 | :-- | :-- | :-- |
 | Catalogue | product and variant schemas, price resolution, the preset catalogue | `packages/db` (Drizzle), `catalogue_items` view |
 | Inventory | the reserve/release rules, low-stock signal | `packages/db`: one-statement reservation, ledger trigger |

@@ -1,5 +1,5 @@
-import { slugSchema } from "@akinaza/core";
-import { currentSlugOf, publicShop } from "@akinaza/db";
+import { slugSchema } from "@folioviv/core";
+import { currentSlugOf, publicShop } from "@folioviv/db";
 import { permanentRedirect } from "next/navigation";
 import { cache } from "react";
 

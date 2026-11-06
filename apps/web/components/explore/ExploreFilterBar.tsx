@@ -1,6 +1,6 @@
 "use client";
 
-import { EXPLORE_KINDS, EXPLORE_OPEN, EXPLORE_RADII, type ExploreChip, exploreChips, type ExploreKind, type ExploreOpen, type ExploreRadius, type ExploreUrlState, withoutChip } from "@akinaza/core";
+import { EXPLORE_KINDS, EXPLORE_OPEN, EXPLORE_RADII, type ExploreChip, exploreChips, type ExploreKind, type ExploreOpen, type ExploreRadius, type ExploreUrlState, withoutChip } from "@folioviv/core";
 import { type ActiveFilter, FilterBar, FilterMenu } from "@krizaka/ui/filter-bar";
 import { SearchField } from "@krizaka/ui/search-field";
 import { useState } from "react";

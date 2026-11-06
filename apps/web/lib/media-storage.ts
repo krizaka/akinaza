@@ -7,7 +7,7 @@ import { systemClock } from "@/app/system-clock";
 import { appSettings } from "./settings";
 
 /** Everything the owners' and the clients' files live under: the layout the storage checks every key against. */
-export const MEDIA_ROOT = "user/akinaza/shops/";
+export const MEDIA_ROOT = "user/folioviv/shops/";
 export const mediaLayout = defineLayout([MEDIA_ROOT]);
 
 /**

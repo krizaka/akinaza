@@ -1,5 +1,5 @@
-import { OWNER_BOUNDS, OWNER_TUNABLE, parseOwnerOverrides } from "@akinaza/core";
-import { saveShopFigureOverrides, shopFigureOverrides } from "@akinaza/db";
+import { OWNER_BOUNDS, OWNER_TUNABLE, parseOwnerOverrides } from "@folioviv/core";
+import { saveShopFigureOverrides, shopFigureOverrides } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireOwner } from "@/lib/access";

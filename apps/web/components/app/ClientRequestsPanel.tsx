@@ -13,7 +13,7 @@ export interface ShopRequestView {
   files: { id: string; url: string; kind: "image" | "pdf" }[];
 }
 
-/** What the client keeps at the shop (akinaza#210), for the team preparing the visit: read only, the files to open. */
+/** What the client keeps at the shop (folioviv#210), for the team preparing the visit: read only, the files to open. */
 export function ClientRequestsPanel({ requests }: Readonly<{ requests: ShopRequestView[] }>) {
   const { say, locale } = useSay();
   if (!requests.length) return null;

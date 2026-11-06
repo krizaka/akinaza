@@ -1,13 +1,13 @@
 import { randomUUID } from "node:crypto";
 
-import { addLocalDays, localDay } from "@akinaza/core";
-import { addTimeOff, addWindow, listSlots, offOn, removeTimeOff, ShopError, teamDay, teamTimeOff } from "@akinaza/db";
-import { seedDemoShop } from "@akinaza/db/seed";
+import { addLocalDays, localDay } from "@folioviv/core";
+import { addTimeOff, addWindow, listSlots, offOn, removeTimeOff, ShopError, teamDay, teamTimeOff } from "@folioviv/db";
+import { seedDemoShop } from "@folioviv/db/seed";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { db, migrate, pool, query } from "./db";
 
-/** Team time off as ranges (akinaza#208), on a real PostgreSQL (CI's service; locally `DATABASE_IT=1 DATABASE_URL=… pnpm test`). */
+/** Team time off as ranges (folioviv#208), on a real PostgreSQL (CI's service; locally `DATABASE_IT=1 DATABASE_URL=… pnpm test`). */
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 
 describe.runIf(enabled)("team time off", () => {
@@ -24,8 +24,8 @@ describe.runIf(enabled)("team time off", () => {
 
   beforeAll(async () => {
     await migrate();
-    await query("INSERT INTO accounts (email, role, password_hash) VALUES ($1, 'USER', 'x')", [`timeoff-${stamp}@akinaza.test`]);
-    ({ shopId } = await seedDemoShop(db(), `timeoff-${stamp}@akinaza.test`, now));
+    await query("INSERT INTO accounts (email, role, password_hash) VALUES ($1, 'USER', 'x')", [`timeoff-${stamp}@folioviv.test`]);
+    ({ shopId } = await seedDemoShop(db(), `timeoff-${stamp}@folioviv.test`, now));
     const people = await query<{ id: string; name: string }>("SELECT id, name FROM staff WHERE shop_id = $1", [shopId]);
     julie = people.find((p) => p.name === "Julie")!.id;
     marc = people.find((p) => p.name === "Marc")!.id;
@@ -71,7 +71,7 @@ describe.runIf(enabled)("team time off", () => {
     await expect(addTimeOff(db(), shopId, randomUUID(), { from: day(0), to: day(0) })).rejects.toBeInstanceOf(ShopError);
   });
 
-  it("each member's day for the public page: bare time ranges of today's visits, and the time off they are on (akinaza#209)", async () => {
+  it("each member's day for the public page: bare time ranges of today's visits, and the time off they are on (folioviv#209)", async () => {
     await addTimeOff(db(), shopId, marc, { from: localDay(now, tz), to: day(0) });
     const days = await teamDay(db(), shopId, now);
     const julieToday = days.get(julie)!;

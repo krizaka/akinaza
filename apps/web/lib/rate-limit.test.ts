@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import { hit, MAX_KEYS, resetRateLimits } from "./rate-limit";
 
-/** krizaka/akinaza#49: filling the store with distinct keys must not give a blocked caller a fresh count. */
+/** krizaka/folioviv#49: filling the store with distinct keys must not give a blocked caller a fresh count. */
 describe("the in-process rate limiter", () => {
   beforeEach(() => resetRateLimits());
   const T0 = 1_000_000;

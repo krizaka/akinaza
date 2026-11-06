@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { defaultPicture, pickerChoices } from "./org-defaults";
 
-describe("default pictures come from the org JSON (akinaza#411)", () => {
+describe("default pictures come from the org JSON (folioviv#411)", () => {
   it("a shop and a banner get a picture of their own kind, the same for the same seed", () => {
     for (const kind of ["shop", "banner", "person"] as const) {
       const a = defaultPicture(kind, "Salon Alma");
@@ -28,7 +28,7 @@ describe("default pictures come from the org JSON (akinaza#411)", () => {
   });
 });
 
-describe("a shop without a photo wears a default banner (akinaza#499)", () => {
+describe("a shop without a photo wears a default banner (folioviv#499)", () => {
   it("is the org's banner for the shop's id, in two widths, the same every time", async () => {
     const { defaultBanner } = await import("./org-defaults");
     const b = defaultBanner("shop-1");

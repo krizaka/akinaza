@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 const body = z.object({ confirm: z.literal(true) });
 
 /**
- * Loi 25, erasure answered by the shop (akinaza#370): the file, the dependants, the notes, the reports and their photos are erased and
+ * Loi 25, erasure answered by the shop (folioviv#370): the file, the dependants, the notes, the reports and their photos are erased and
  * the live consents withdrawn; the invoices and the tax ledger stay for six years, as tax law requires. Owner only; written to the audit log.
  */
 export const POST = clientPrivacyRoute(async ({ req, session, client }) => {

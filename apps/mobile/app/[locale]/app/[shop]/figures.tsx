@@ -18,7 +18,7 @@ const URGENCY_TONE = { now: "danger", soon: "warning", week: "neutral" } as cons
 
 /**
  * Vos chiffres (`/fr/app/<shop>/figures`): « what to do now » and the figures, each saying what it means, how it is computed from the
- * invoices and where it comes from (`GET /api/walker/figures`, #260). Akinaza prepares the figures; the merchant checks them and files
+ * invoices and where it comes from (`GET /api/walker/figures`, #260). Folioviv prepares the figures; the merchant checks them and files
  * the returns themselves. The grid follows the size class: one column on a phone, more on a tablet.
  */
 export default function Figures() {

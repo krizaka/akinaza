@@ -1,4 +1,4 @@
-import { demoLooksOf } from "@akinaza/core";
+import { demoLooksOf } from "@folioviv/core";
 import Link from "next/link";
 
 import { type Locale, translator } from "@/lib/i18n";
@@ -6,7 +6,7 @@ import { type Locale, translator } from "@/lib/i18n";
 const LOOK_WORDS = { compact: "console.shopPage.looks.compact", editorial: "console.shopPage.looks.editorial", gallery: "console.shopPage.looks.gallery", route: "console.shopPage.looks.route", journal: "console.shopPage.looks.journal" } as const;
 
 /**
- * « See it another way » (akinaza#404): on the demo shops ONLY (`demoLooksOf` is empty for any other shop, and then nothing is drawn), the other
+ * « See it another way » (folioviv#404): on the demo shops ONLY (`demoLooksOf` is empty for any other shop, and then nothing is drawn), the other
  * compositions of Krizaka UI for the same shop. A plain list of links (`?look=`), so it works without JavaScript and the current look says so.
  */
 export function DemoLookSwitch({ slug, current, path, locale }: Readonly<{ slug: string; current: string; path: string; locale: Locale }>) {

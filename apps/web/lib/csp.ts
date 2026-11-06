@@ -1,7 +1,7 @@
 import { MEDIA_CDN } from "./tour";
 
 /**
- * Content Security Policy (ADR-005 slice 3, akinaza#535). Two policies, one builder, set by the proxy on each response (a nonce is per request, so it
+ * Content Security Policy (ADR-005 slice 3, folioviv#535). Two policies, one builder, set by the proxy on each response (a nonce is per request, so it
  * cannot live in next.config):
  *  - the public shop pages (`/<locale>/s/**`, a shop host) get the STRICT one: `default-src 'none'`, scripts only with this response's nonce
  *    (Next stamps it on its own scripts) and what they load (`strict-dynamic`), no `'unsafe-inline'` script, nothing eval'd in production;

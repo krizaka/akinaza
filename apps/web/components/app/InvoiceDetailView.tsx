@@ -1,5 +1,5 @@
-import { invoiceState } from "@akinaza/core";
-import type { invoiceDeliveryHistory } from "@akinaza/db";
+import { invoiceState } from "@folioviv/core";
+import type { invoiceDeliveryHistory } from "@folioviv/db";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { DetailLayout } from "@krizaka/ui/detail-layout";

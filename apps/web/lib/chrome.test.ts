@@ -21,7 +21,7 @@ describe("the bar's composition (NavBar of @krizaka/ui, 3.30)", () => {
     expect(chrome).not.toMatch(/NavBar\.Family|NavBar\.Badge/);
   });
 
-  it("has « Explorer » in the bar and in the phone panel, through the same NavBar items (akinaza#235)", () => {
+  it("has « Explorer » in the bar and in the phone panel, through the same NavBar items (folioviv#235)", () => {
     expect(chrome).toContain('id: "explore"');
     expect(chrome).toContain('pagePath(locale, "explore")');
     // One list feeds the bar's links and the phone panel's: the entry is in both, never hand-made in one.

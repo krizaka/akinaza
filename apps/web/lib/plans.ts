@@ -4,7 +4,7 @@ import { AVAILABILITY } from "@krizaka/settings";
 import { ASSOCIATION, FOUNDER, type PriceKey, SCALE, STARTER } from "./pricing";
 
 /**
- * The plans a business chooses at the checkout (ADR-003 addendum 2026-10-30) and the rules that are Akinaza's, not the processor's:
+ * The plans a business chooses at the checkout (ADR-003 addendum 2026-10-30) and the rules that are Folioviv's, not the processor's:
  * which catalogue entry each plan is, who may have the Association plan (an administrator approved its proof), and the free trial
  * (the entry's `trialDays` limit, once per account, never on a live processor key). Vendor-free; the amounts come from the catalogue.
  */

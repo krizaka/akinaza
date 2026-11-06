@@ -26,7 +26,7 @@ const modeOf = (themeId: string): "light" | "dark" | "system" => (themeId === "l
 /**
  * Appearance (ADR-006 §4, krizaka-ui#657): the package's `AppearanceSettings` over `useAppearance()`. The theme set is the product register's —
  * System, Light, Dark and the optional Blueprint and Carbone surfaces, never the Cahier papers (those are the public shop pages'). A choice
- * applies at once; the mode is saved on the account, the language reloads the page in it. Akinaza keeps its own accent (no accent row), and no sound.
+ * applies at once; the mode is saved on the account, the language reloads the page in it. Folioviv keeps its own accent (no accent row), and no sound.
  */
 export function PreferencesSettings({ preferences }: Readonly<{ preferences: PreferencesView }>) {
   const { say } = useSay();

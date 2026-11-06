@@ -1,7 +1,7 @@
 # ADR-004 — The customisable shop: the page as a document, Krizaka UI variants, look presets, the owner's composer
 
 Status: accepted (2026-10-27); §2 « Options weighed » (the rejection of Puck) and §3's hand-made editor superseded by
-[ADR-010](ADR-010-shop-editor-on-puck.md) (2026-10-31). Issue: krizaka/akinaza#398. Product half of krizaka-ui
+[ADR-010](ADR-010-shop-editor-on-puck.md) (2026-10-31). Issue: krizaka/folioviv#398. Product half of krizaka-ui
 [ADR-007](https://github.com/krizaka/krizaka-ui/blob/main/docs/adr/ADR-007-shop-composer.md) (the library half: schema,
 13 section types, presets, `@krizaka/ui/shop-composer`, krizaka-ui#742–#746). Prices stay data (ADR-009, krizaka/.github#253).
 
@@ -26,7 +26,7 @@ Status: accepted (2026-10-27); §2 « Options weighed » (the rejection of Puck)
 
 ## Decision
 
-**One model: the shop page is the `@krizaka/ui/shop` document stored in Akinaza's database. Every section and variant
+**One model: the shop page is the `@krizaka/ui/shop` document stored in Folioviv's database. Every section and variant
 comes from `@krizaka/ui`. The Cahier is a look preset, not a second schema. A template is a starter document plus a
 preset, and its version is the preset's `version`. The owner edits in the composer, and the administrator bounds it
 through settings.**
@@ -70,16 +70,16 @@ through settings.**
   read is left.
   ! Until then, the legacy columns are read by nothing on the public path.
 
-### 2. `@krizaka/ui` versus Akinaza
+### 2. `@krizaka/ui` versus Folioviv
 
-| `@krizaka/ui` / `@krizaka/tokens` (first) | Akinaza |
+| `@krizaka/ui` / `@krizaka/tokens` (first) | Folioviv |
 | :-- | :-- |
 | `shopPageSchema`, `defineSection`, `migrateShopPage`, the 13 section types and their variants, the starters, `ShopFrame` | storage, routes, audit, roles, tenancy |
 | the look presets and their contrast matrix; the Cahier's paper, stamps and dividers as preset v2 | `TRADE_PRESETS`, `DEMO_LOOKS`, the accent column |
 | `@krizaka/ui/shop-composer` (outline, inspector, history, preview bridge) and `WallEditor`, `RetroTv`, `PinnedNote` | `ShopComposerPanel` (data, autosave, publish), the draft preview route |
 | `EmbedFacade`, `map-gate` | the resolvers (services and prices from the catalogue, media through `planPhotos`, reviews through their rule) |
 
-- ✕ **A section, variant or editor widget written in Akinaza** → it goes into krizaka-ui (meta, stories, tests), is
+- ✕ **A section, variant or editor widget written in Folioviv** → it goes into krizaka-ui (meta, stories, tests), is
   released, and is then used here.
 
 ### 3. The editor (Boutique › Page)
@@ -123,7 +123,7 @@ Measured in CI on both demo shops, phone 390 × 844, by a script run in `ci-afte
 
 - ✕ A free colour, free CSS or HTML, nested blocks, a section above the hero, or code per shop
   → AA and the frame cannot be proven otherwise.
-- ✕ A café, restaurant or bar preset → Akinaza serves service shops.
+- ✕ A café, restaurant or bar preset → Folioviv serves service shops.
 - ✕ An embed that loads before a click, or sound on autoplay → privacy, the CSP, and LCP.
 - ✕ The same photo twice on a page, a stock default in the services menu, or real faces in the demo photos.
 - ✕ « See it another way » on a real shop → the owner decides, in the composer. Only the demo shops get it, as the
@@ -150,7 +150,7 @@ Epic #236 is delivered across S2–S5. S1 comes first: nothing else ships to a r
   column.
 - The composer is ours to maintain. In exchange, no third-party release can break the studio.
 
-## Addendum (2026-10-27, akinaza#478): one direction for the storefront, and six looks
+## Addendum (2026-10-27, folioviv#478): one direction for the storefront, and six looks
 
 Status: accepted. The founder (2026-10-27): the shop page's sections look dated: the closing call (a flat box with one
 button), the wall (#477), the photo scroller (krizaka-ui#797) and the small TV (#469). He asks for one design pass and
@@ -160,7 +160,7 @@ way » and chosen in the editor. This addendum folds in the decisions already ta
 (#469, `RetroTv` playlist in `@krizaka/ui` 3.68.0) and the compact footer that each app configures (#479).
 
 Captures of today's page, one per existing composition, phone and desktop, both themes (demo shops on dev, 2026-10-27):
-`https://krizaka-assets.b-cdn.net/pr-assets/akinaza/design-478/<look>-<phone|desktop>-<light|dark>.jpg`, where `<look>` is
+`https://krizaka-assets.b-cdn.net/pr-assets/folioviv/design-478/<look>-<phone|desktop>-<light|dark>.jpg`, where `<look>` is
 `1-cahier` (Pattes, `?look=journal`), `3-editorial` (Cèdre, `?look=editorial`), `4-boutique` (Cèdre, `?look=gallery`),
 `5-affiche` (Cèdre, compact) and `6-nuit-base` (Pattes, route). These are the **starting points**. The « Krizaka » look and
 the « Nuit » surface do not exist yet, so they are described below.
@@ -217,7 +217,7 @@ AA in both modes for each of its accents, and the visitor's dark / light choice 
 | The idea | the artistic notebook (B54's reference) | Krizaka's own page, the flock at work | a magazine page, calm and airy | warm, the shop as a place | bold and modern, big type | calm, low light, the TV glows |
 | Paper · surface | `seyes` (`kraft` for pets) · `paper` | `plain` · `ink` | `plain` · `paper` | `washi` · `warm` | `plain` · `contrast` | `plain` · `deep` (dark) / `dusk` (light) |
 | Faces (title · note) | `display` · `cahier` | `product-display` · `mono` | `display` · `mono` | `display` · `cahier` | `poster` · `mono` | `product-display` · `mono` |
-| Accents | akinaza, akinaza:accent-2 | krizaka, akinaza | akinaza:accent-2, akinaza | akinaza:accent-2, akinaza | akinaza, yomizaka | krizaka, akinaza |
+| Accents | folioviv, folioviv:accent-2 | krizaka, folioviv | folioviv:accent-2, folioviv | folioviv:accent-2, folioviv | folioviv, verikora | krizaka, folioviv |
 | Density · photo | airy · warm, grain 1, radius none, `polaroid` frame | compact · none, radius xs | airy · none, radius none | airy · warm, radius xs | compact · none, radius none | compact · cool, radius xs |
 | Hero | `split` | `poster` | `banner` | `poster` | `banner` | `tv` (poster LCP) |
 | Services | `index` | `menu` | `menu` (2 columns) | `cards` | `menu` | `menu` |
@@ -269,7 +269,7 @@ photos, wall or TV (the pictures are the subject). The words stay beside the bir
 
 ### 6. Slices
 
-The library first, then the Akinaza adoption, **the closing call first**. Each slice keeps §4 and §5 and carries its own
+The library first, then the Folioviv adoption, **the closing call first**. Each slice keeps §4 and §5 and carries its own
 perf and a11y acceptance.
 
 | # | Slice | Issue |

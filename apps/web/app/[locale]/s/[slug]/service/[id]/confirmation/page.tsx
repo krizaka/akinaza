@@ -1,15 +1,15 @@
-import { bookingDetail, clientFilesOf } from "@akinaza/db";
+import { bookingDetail, clientFilesOf } from "@folioviv/db";
 import { Alert } from "@krizaka/ui/alert";
 import { DescriptionList } from "@krizaka/ui/description-list";
 import { Stamp } from "@krizaka/ui/specimen-tag";
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
+import { requestNow } from "@/app/request-now";
 import { ButtonLink } from "@/components/ButtonLink";
 import { ConsoleProviders } from "@/components/console/ConsoleProviders";
 import { CancelBooking } from "@/components/journey/CancelBooking";
 import { JourneyFrame } from "@/components/journey/JourneyFrame";
-import { requestNow } from "@/app/request-now";
 import { pageSession } from "@/lib/access";
 import { searchValue } from "@/lib/booking-defaults";
 import { db } from "@/lib/db";

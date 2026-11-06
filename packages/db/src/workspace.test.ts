@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import { INVOICE_STATE, invoiceState, localDay } from "@akinaza/core";
+import { INVOICE_STATE, invoiceState, localDay } from "@folioviv/core";
 import { workspaceMigration } from "@krizaka/organize";
 import { parseView } from "@krizaka/organize/contract";
 import { eq } from "drizzle-orm";

@@ -6,7 +6,7 @@ import { HERO_TAKE, heroTake } from "@/lib/tour";
 
 /**
  * The hero's product: the real journey on a phone — the storefront, a booking, the walker's day, the report, « Vos livres » —
- * one continuous take recorded on dev.akinaza.com (lib/tour.ts), a muted loop over its poster. The poster is painted at once
+ * one continuous take recorded on dev.folioviv.com (lib/tour.ts), a muted loop over its poster. The poster is painted at once
  * (the page's LCP, preloaded by the page), never revealed; under reduced motion it stays a still.
  */
 export function HeroPhone({ locale }: Readonly<{ locale: Locale }>) {

@@ -58,7 +58,7 @@ function nameOf(el: Element): string {
   return (labelled?.textContent ?? el.textContent ?? el.getAttribute("title") ?? "").trim();
 }
 
-describe("the profile's controls all have an accessible name (akinaza#440)", () => {
+describe("the profile's controls all have an accessible name (folioviv#440)", () => {
   it.each(["en", "fr"] as const)("in %s: the name field, the six pictures and what mirrors them for the form, the e-mail change, the save", async (locale) => {
     const page = await mount(locale);
     const controls = [...page.querySelectorAll("input:not([type=hidden]), button, select, textarea")];

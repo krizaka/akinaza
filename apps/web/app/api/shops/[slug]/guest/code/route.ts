@@ -1,5 +1,5 @@
-import { slugSchema } from "@akinaza/core";
-import { publicShop } from "@akinaza/db";
+import { slugSchema } from "@folioviv/core";
+import { publicShop } from "@folioviv/db";
 import { verificationMail } from "@krizaka/email-verification";
 
 import { systemClock } from "@/app/system-clock";

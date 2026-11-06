@@ -1,6 +1,6 @@
 "use client";
 
-import { INVOICE_STATE, invoiceState, remainingCents } from "@akinaza/core";
+import { INVOICE_STATE, invoiceState, remainingCents } from "@folioviv/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";
@@ -54,7 +54,7 @@ export function byUrgency<T extends InvoiceRowView>(invoices: readonly T[], toda
 const QUICK_METHODS = ["cash", "card", "transfer"] as const;
 
 /**
- * The issued invoices (akinaza#218, D2): in the screen's words (`useTableLabels`), the number narrow and the client wide, the
+ * The issued invoices (folioviv#218, D2): in the screen's words (`useTableLabels`), the number narrow and the client wide, the
  * state derived from the ledger (`invoiceState`) as a chip with its tone, the overdue first; searched by number and client,
  * filtered by state, exported as CSV, each unfolding its amounts and its quick actions — open, edit (#207), cash the balance.
  * A card per invoice on a phone.

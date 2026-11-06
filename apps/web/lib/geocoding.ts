@@ -1,5 +1,5 @@
 /**
- * Geocoding behind a port (krizaka/akinaza#235): Explorer turns an address or a postal code into a place through `GeocodingPort`,
+ * Geocoding behind a port (krizaka/folioviv#235): Explorer turns an address or a postal code into a place through `GeocodingPort`,
  * never through a vendor named in the code. The adapter is chosen by the environment (`lib/geocoding-adapter.ts`); a test passes a
  * fake. The attribution travels with the port and is shown wherever its answers are. A shared package is asked for in krizaka-ts
  * (krizaka/krizaka-ts#180); until it lands this seam is the contract it will fill.

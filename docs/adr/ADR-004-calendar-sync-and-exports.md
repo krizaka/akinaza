@@ -1,25 +1,25 @@
 # ADR-004 — Calendar sources and the owner's exports
 
-- Status: proposed (2026-10-26, krizaka/akinaza#282, phase 1). Waits for « validé » from Claude (CTO) before any code.
-- Deciders: Akinaza owner-side session; Oussama (the request, 2026-10-23).
+- Status: proposed (2026-10-26, krizaka/folioviv#282, phase 1). Waits for « validé » from Claude (CTO) before any code.
+- Deciders: Folioviv owner-side session; Oussama (the request, 2026-10-23).
 - Design: [`docs/design/calendar-sync.md`](../design/calendar-sync.md).
 
 ## Context
 
-An owner already lives in a calendar and a phone. Akinaza should **read** what they already use (busy times, existing
-appointments) and **give back** their own data in formats their tools take, without locking anything in. Akinaza
+An owner already lives in a calendar and a phone. Folioviv should **read** what they already use (busy times, existing
+appointments) and **give back** their own data in formats their tools take, without locking anything in. Folioviv
 prepares and never files (AGENTS section 2); nothing here touches taxes.
 
 ## Decision
 
-1. **Akinaza stays the source of truth for its own appointments.** An imported event is *shown and blocks time*; it is
-   never edited, moved or deleted from Akinaza. Writing a booking into the owner's calendar (two-way) is **later**, not now
+1. **Folioviv stays the source of truth for its own appointments.** An imported event is *shown and blocks time*; it is
+   never edited, moved or deleted from Folioviv. Writing a booking into the owner's calendar (two-way) is **later**, not now
    (it needs write scopes, a second consent and conflict handling for little gain: the private ICS feed gives phones the
    same view with no OAuth).
 2. **Two ports, one adapter per provider or format** (krizaka-ts ADR-001: modules, ports, outbox):
-   - `CalendarSource` (`@akinaza/core` type, adapters in `apps/web/lib/calendar/`): `authorizeUrl`, `exchange`,
+   - `CalendarSource` (`@folioviv/core` type, adapters in `apps/web/lib/calendar/`): `authorizeUrl`, `exchange`,
      `listCalendars`, `busy(range)`, `events(range)`, `subscribe`/`renew` (where the provider pushes), `revoke`.
-   - `Export` (`@akinaza/core` type): `format(shop, subject) -> { contentType, filename, body }`, one function per format.
+   - `Export` (`@folioviv/core` type): `format(shop, subject) -> { contentType, filename, body }`, one function per format.
 3. **Sources, with the minimum read-only scope** (provider documents read 2026-10-26):
    | Source | Auth | Minimum scope | Change feed |
    |:--|:--|:--|:--|
@@ -28,8 +28,8 @@ prepares and never files (AGENTS section 2); nothing here touches taxes.
    | iCloud and any CalDAV | app-specific password (iCloud) or server credentials, over HTTPS | read only (`REPORT` free-busy / calendar-query, RFC 4791) | polling (`ctag` / `sync-token`, RFC 6578) |
    | ICS URL | none (the URL is the secret) | read only | polling with `ETag` / `If-Modified-Since` |
    The first release reads **busy times only** (no titles, no attendees): the smallest scope, the smallest Loi 25 surface.
-4. **Busy time blocks slots.** `availability` subtracts imported busy intervals. A conflict between an Akinaza
-   appointment and an imported event is **never resolved by deleting either**: Akinaza keeps its appointment, flags the
+4. **Busy time blocks slots.** `availability` subtracts imported busy intervals. A conflict between an Folioviv
+   appointment and an imported event is **never resolved by deleting either**: Folioviv keeps its appointment, flags the
    overlap to the owner in Today (« chevauche votre agenda Google »), and the owner decides.
 5. **Exports** (the owner's data, to their tools):
    - **A private ICS feed** per shop and per staff member (RFC 5545), subscribed to by Google, Apple and Outlook. Its URL
@@ -46,7 +46,7 @@ prepares and never files (AGENTS section 2); nothing here touches taxes.
    goes through the outbox.
 8. **Shared module?** The ICS and CSV/vCard writers and the CalDAV/ICS readers are generic: they go to
    **`@krizaka/calendar`** (krizaka-ts, a new module — issue to open there before phase 2). OAuth adapters for Google and
-   Microsoft stay in Akinaza (they hold its client ids and its consent texts). If krizaka-ts does not take the module
+   Microsoft stay in Folioviv (they hold its client ids and its consent texts). If krizaka-ts does not take the module
    first, the writers live in `packages/core/src/exports/` and move later; the ports do not change.
 9. **The administrator configures everything** (charter section 8): `features.calendarSync`, per provider
    `calendarSync.<provider>.enabled`, `calendarSync.intervalMinutes` (bounded), `calendarSync.maxCalendarsPerShop`,

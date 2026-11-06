@@ -92,7 +92,7 @@ export function llmsText(): string {
 - [${en.pricing.title}](${SITE_URL}/en/pricing) · [${getDictionary("fr").pricing.title} (fr)](${SITE_URL}/fr/pricing): the plans, read from the price catalogue
 - [${en.docs.title}](${SITE_URL}/en/docs) · [${getDictionary("fr").docs.title} (fr)](${SITE_URL}/fr/docs): the owner's guide, five pages
 ${DOC_IDS.map((id) => `  - [${en.docs.pages[id].title}](${SITE_URL}/en/docs/${id})`).join("\n")}
-- [Contact ${en.meta.siteName}](${KRIZAKA_URL}/en/contact?topic=akinaza): the one way to reach the team
+- [Contact ${en.meta.siteName}](${KRIZAKA_URL}/en/contact?topic=folioviv): the one way to reach the team
 
 ## Source
 

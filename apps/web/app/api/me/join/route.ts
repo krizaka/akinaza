@@ -1,4 +1,4 @@
-import { joinInputSchema, joinShop } from "@akinaza/db";
+import { joinInputSchema, joinShop } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireSession } from "@/lib/access";

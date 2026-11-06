@@ -1,4 +1,4 @@
-import { discardShopPageDraft } from "@akinaza/db";
+import { discardShopPageDraft } from "@folioviv/db";
 
 import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";

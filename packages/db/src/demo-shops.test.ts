@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { CAHIER_VERSION, framePaperOf, TEMPLATES_V2 } from "@akinaza/core";
+import { CAHIER_VERSION, framePaperOf, TEMPLATES_V2 } from "@folioviv/core";
 
 import { demoCounts, DEMO_SHOPS, seedDemoShops, ST_HENRI_DEMO_SHOPS } from "./demo-shops";
 import { shopZones } from "./schema";
@@ -26,7 +26,7 @@ describe("the three fictional demo shops", () => {
     expect(second.map((s) => s.shopId)).toEqual(first.map((s) => s.shopId));
   });
 
-  it("wear the notebook's template of their trade, and its paper is stored (akinaza#316: the demos show the @2 paper once features.cahierStorefront is on)", async () => {
+  it("wear the notebook's template of their trade, and its paper is stored (folioviv#316: the demos show the @2 paper once features.cahierStorefront is on)", async () => {
     const shops = await seedDemoShops(t.db);
     for (const demo of DEMO_SHOPS) {
       const shopId = shops.find((s) => s.slug === demo.shop.slug)!.shopId;
@@ -114,7 +114,7 @@ describe("the demo shops use the proposed images (#267)", () => {
 
 describe("the demo shops each wear a template of their trade (#261, step 6)", () => {
   it("has the template applied at its latest version, in the template's order, and a second run keeps it", async () => {
-    const { latestTemplate, TEMPLATES, TEMPLATES_V2 } = await import("@akinaza/core");
+    const { latestTemplate, TEMPLATES, TEMPLATES_V2 } = await import("@folioviv/core");
     const { sectionsFromTemplate, shopPageConfigOf } = await import("./shop-page");
     expect(DEMO_SHOPS.map((d) => d.template)).toEqual(["salon-vitrine", "workshop-histoire", "consulting-carte"]);
     for (const demo of DEMO_SHOPS) {
@@ -139,7 +139,7 @@ describe("a dev database seeded by an older version", () => {
       // An older seed: the same address, another owner, no trade and no template.
       const { accounts, shops } = await import("./schema");
       const { eq } = await import("drizzle-orm");
-      const [stranger] = await other.db.insert(accounts).values({ email: "eric@akinaza.test" }).returning({ id: accounts.id });
+      const [stranger] = await other.db.insert(accounts).values({ email: "eric@folioviv.test" }).returning({ id: accounts.id });
       await other.db.update(shops).set({ ownerId: stranger!.id }).where(eq(shops.id, older[0]!.shopId));
       const again = await seedDemoShops(other.db);
       expect(again[0]!.shopId).toBe(older[0]!.shopId);

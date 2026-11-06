@@ -8,7 +8,7 @@ on:
     inputs:
       base:
         description: The dev app to walk through
-        default: https://dev.akinaza.com
+        default: https://dev.folioviv.com
         required: true
 
 permissions:

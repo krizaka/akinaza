@@ -1,39 +1,39 @@
-# akinaza dev — DigitalOcean App Platform (TOR1), smallest instance: dev.akinaza.com. Secrets are DO SECRETs, filled from the
+# folioviv dev — DigitalOcean App Platform (TOR1), smallest instance: dev.folioviv.com. Secrets are DO SECRETs, filled from the
 # maintainer's local secrets store (never committed): each __NAME__ below is replaced by the deploy session, then
 #   doctl apps create --spec <rendered>   (or  doctl apps update <APP_ID> --spec <rendered>).
-# The database is akinaza_db on krizaka-dev-pg (tor1: Toronto, krizaka-infra docs/PLAN.md) behind its PgBouncer pool (transaction mode, size 2); migrations run at start
+# The database is folioviv_db on krizaka-dev-pg (tor1: Toronto, krizaka-infra docs/PLAN.md) behind its PgBouncer pool (transaction mode, size 2); migrations run at start
 # on the direct URL.
-name: akinaza-dev
+name: folioviv-dev
 region: tor
 domains:
   # The public address (epic krizaka/.github#119): www is primary and indexed, the apex answers 308 with www (ingress below).
-  - domain: www.akinaza.com
+  - domain: www.folioviv.com
     type: PRIMARY
-  - domain: akinaza.com
+  - domain: folioviv.com
     type: ALIAS
-    # And every <slug>.akinaza.com: a shop's own address (#77, level 2; lib/host.ts shopOfHost). Certificate by TXT tokens on Porkbun.
+    # And every <slug>.folioviv.com: a shop's own address (#77, level 2; lib/host.ts shopOfHost). Certificate by TXT tokens on Porkbun.
     wildcard: true
-  # The shops' own domain (ADR-005 slice 5, #538): <slug>.akinaza.shop is a shop and nothing of the app, in another site than www. The apex and www lead to
-  # www.akinaza.com (the app, lib/shop-domain.ts). Apply AFTER the DNS of krizaka-infra (stacks/dns/zone_akinaza_shop.tf) answers, else App Platform cannot validate it.
-  - domain: akinaza.shop
+  # The shops' own domain (ADR-005 slice 5, #538): <slug>.folioviv.shop is a shop and nothing of the app, in another site than www. The apex and www lead to
+  # www.folioviv.com (the app, lib/shop-domain.ts). Apply AFTER the DNS of krizaka-infra (stacks/dns/zone_folioviv_shop.tf) answers, else App Platform cannot validate it.
+  - domain: folioviv.shop
     type: ALIAS
     wildcard: true
-  - domain: www.akinaza.shop
+  - domain: www.folioviv.shop
     type: ALIAS
   # The development address: every page goes to www (308); the API, .well-known and healthz keep serving, noindex (APP_DEV_HOST).
-  - domain: dev.akinaza.com
+  - domain: dev.folioviv.com
     type: ALIAS
   # The administration console: the same app, host-routed (lib/host.ts); session + ADMIN role + AUTH_ALLOWED_IPS.
-  - domain: admin.akinaza.com
+  - domain: admin.folioviv.com
     type: ALIAS
 # The apex leads to www (308); the other hosts are the app's (dev's page redirect and noindex are the app's own: lib/indexing.ts).
 ingress:
   rules:
     - match:
         authority:
-          exact: akinaza.com
+          exact: folioviv.com
       redirect:
-        authority: www.akinaza.com
+        authority: www.folioviv.com
         redirect_code: 308
     - match:
         path:
@@ -43,7 +43,7 @@ ingress:
 services:
   - name: web
     github:
-      repo: krizaka/akinaza
+      repo: krizaka/folioviv
       branch: main
       deploy_on_push: true
     dockerfile_path: deploy/docker/Dockerfile
@@ -62,14 +62,14 @@ services:
         value: production
       - key: APP_PUBLIC_URL
         scope: RUN_TIME
-        value: https://www.akinaza.com
+        value: https://www.folioviv.com
       - key: APP_DEV_HOST
         scope: RUN_TIME
-        value: dev.akinaza.com
-      # The shops' domain: <slug>.akinaza.shop serves a shop; <slug>.akinaza.com and /<locale>/s/<slug> answer 308 to it (lib/shop-domain.ts).
+        value: dev.folioviv.com
+      # The shops' domain: <slug>.folioviv.shop serves a shop; <slug>.folioviv.com and /<locale>/s/<slug> answer 308 to it (lib/shop-domain.ts).
       - key: APP_SHOP_DOMAIN
         scope: RUN_TIME
-        value: akinaza.shop
+        value: folioviv.shop
       - key: APP_COMMIT_SHA
         scope: BUILD_TIME
         value: ${_self.COMMIT_HASH}
@@ -84,7 +84,7 @@ services:
       - key: AUTH_SIGNUP_ENABLED
         scope: RUN_TIME
         value: "false"
-      # Only these client addresses (do-connecting-ip) reach admin.akinaza.com, its sign-in included; empty = nobody.
+      # Only these client addresses (do-connecting-ip) reach admin.folioviv.com, its sign-in included; empty = nobody.
       # (krizaka-deploy keeps the live value: the addresses are not committed.)
       - key: AUTH_ALLOWED_IPS
         scope: RUN_TIME
@@ -136,7 +136,7 @@ services:
       - key: ABUSE_CLIENT_IP_HEADER
         scope: RUN_TIME
         value: do-connecting-ip
-      # The media zone of this site on Bunny (akinaza-dev; its own zone, never the krizaka-assets one): the storage key is a SECRET.
+      # The media zone of this site on Bunny (`akinaza-dev`: a Bunny zone keeps the name it was created with; its own zone, never the krizaka-assets one): the storage key is a SECRET.
       # The storage endpoint is New York (ny): photos and files are NOT in Canada, so no public text says so (apps/web/lib/public-claims.test.ts).
       - key: MEDIA_STORAGE_API_KEY
         scope: RUN_TIME

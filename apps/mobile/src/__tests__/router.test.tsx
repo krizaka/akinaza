@@ -8,9 +8,9 @@ import { I18nProvider } from "@/i18n";
 
 import AppLayout from "../../app/[locale]/app/_layout";
 import ShopTabs from "../../app/[locale]/app/[shop]/_layout";
-import Today from "../../app/[locale]/app/[shop]/today";
 import Books from "../../app/[locale]/app/[shop]/books";
 import Figures from "../../app/[locale]/app/[shop]/figures";
+import Today from "../../app/[locale]/app/[shop]/today";
 
 const SHOP = "6f1d2c3b-4a5e-4f60-8a7b-9c0d1e2f3a4b";
 
@@ -18,11 +18,11 @@ jest.mock("@/auth", () => ({ AUTH: { signedOut: "signedOut", signedIn: "signedIn
 jest.mock("expo-linking", () => ({ ...jest.requireActual("expo-linking"), openURL: jest.fn() }));
 jest.mock("@/config", () => {
   const api = { day: jest.fn(), calendar: jest.fn(), clients: jest.fn(), invoices: jest.fn(), shop: jest.fn(), books: jest.fn(), figures: jest.fn(), me: jest.fn() };
-  const q = (name: keyof typeof api) => (...args: unknown[]) => ({ queryKey: ["akinaza", name, ...args.map((a) => a ?? "-")], queryFn: () => (api[name] as (...a: unknown[]) => unknown)(...args) });
+  const q = (name: keyof typeof api) => (...args: unknown[]) => ({ queryKey: ["folioviv", name, ...args.map((a) => a ?? "-")], queryFn: () => (api[name] as (...a: unknown[]) => unknown)(...args) });
   return {
     api,
-    akinaza: {},
-    webUrl: (path: string) => `https://www.akinaza.com${path}`,
+    folioviv: {},
+    webUrl: (path: string) => `https://www.folioviv.com${path}`,
     queries: { day: q("day"), calendar: q("calendar"), clients: q("clients"), invoices: q("invoices"), shop: q("shop"), books: q("books"), figures: q("figures"), me: q("me") },
   };
 });

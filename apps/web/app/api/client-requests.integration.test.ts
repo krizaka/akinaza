@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 
-import { addClientRequestFile, eraseClientRequests } from "@akinaza/db";
-import { seedDemoShop } from "@akinaza/db/seed";
+import { addClientRequestFile, eraseClientRequests } from "@folioviv/db";
+import { seedDemoShop } from "@folioviv/db/seed";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { db, migrate, pool, query } from "@/lib/db";
@@ -12,7 +12,7 @@ import { POST as uploadFile } from "./me/requests/[id]/files/route";
 import { DELETE as deleteRequest } from "./me/requests/[id]/route";
 import { GET as listRequests, POST as saveRequest } from "./me/requests/route";
 
-/** « Mes demandes » over HTTP (akinaza#210), on a real PostgreSQL (CI's service; locally DATABASE_IT=1 DATABASE_URL=…). */
+/** « Mes demandes » over HTTP (folioviv#210), on a real PostgreSQL (CI's service; locally DATABASE_IT=1 DATABASE_URL=…). */
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 type Handler = (req: Request, ctx: { params: Promise<never> }) => Promise<Response>;
 async function call(handler: unknown, method: string, path: string, opts: { cookie?: string; json?: unknown; body?: BodyInit; params?: Record<string, string> } = {}) {
@@ -34,10 +34,10 @@ describe.runIf(enabled)("a client's requests at a shop", () => {
 
   beforeAll(async () => {
     await migrate();
-    const account = async (label: string) => (await query<{ id: string }>("INSERT INTO accounts (email, role, password_hash) VALUES ($1, 'USER', 'x') RETURNING id", [`${label}-${stamp}@akinaza.test`]))[0]!.id;
+    const account = async (label: string) => (await query<{ id: string }>("INSERT INTO accounts (email, role, password_hash) VALUES ($1, 'USER', 'x') RETURNING id", [`${label}-${stamp}@folioviv.test`]))[0]!.id;
     const [owner, other, aliceId, bobId] = [await account("req-owner"), await account("req-other"), await account("req-alice"), await account("req-bob")];
-    const { shopId } = await seedDemoShop(db(), `req-owner-${stamp}@akinaza.test`);
-    const { shopId: otherShop } = await seedDemoShop(db(), `req-other-${stamp}@akinaza.test`);
+    const { shopId } = await seedDemoShop(db(), `req-owner-${stamp}@folioviv.test`);
+    const { shopId: otherShop } = await seedDemoShop(db(), `req-other-${stamp}@folioviv.test`);
     void owner;
     void other;
     client = (await query<{ id: string }>("UPDATE clients SET account_id = $1 WHERE id = (SELECT id FROM clients WHERE shop_id = $2 ORDER BY created_at LIMIT 1) RETURNING id", [aliceId, shopId]))[0]!.id;
@@ -63,8 +63,8 @@ describe.runIf(enabled)("a client's requests at a shop", () => {
 
   it("a request keeps at most five files; uploading without a storage answers 503; deleting returns the files' addresses", async () => {
     const id = (await call(saveRequest, "POST", "/api/me/requests", { cookie: alice, json: { clientId: client, serviceId, title: "Avec photo" } })).body.id as string;
-    for (let i = 0; i < 5; i++) await addClientRequestFile(db(), client, id, { url: `https://cdn.example/user/akinaza/r/${i}.jpg`, kind: "image", bytes: 10 });
-    await expect(addClientRequestFile(db(), client, id, { url: "https://cdn.example/user/akinaza/r/6.jpg", kind: "image", bytes: 10 })).rejects.toMatchObject({ code: "AK_REQUEST_FILES_FULL" });
+    for (let i = 0; i < 5; i++) await addClientRequestFile(db(), client, id, { url: `https://cdn.example/user/folioviv/r/${i}.jpg`, kind: "image", bytes: 10 });
+    await expect(addClientRequestFile(db(), client, id, { url: "https://cdn.example/user/folioviv/r/6.jpg", kind: "image", bytes: 10 })).rejects.toMatchObject({ code: "AK_REQUEST_FILES_FULL" });
     const form = new FormData();
     form.set("clientId", client);
     form.set("file", new File([Uint8Array.from([0xff, 0xd8, 0xff, 0xe0, 1, 2, 3])], "cut.jpg"));
@@ -76,8 +76,8 @@ describe.runIf(enabled)("a client's requests at a shop", () => {
 
   it("erasing the client removes every request and answers the files to delete from the storage (Loi 25)", async () => {
     const id = (await call(saveRequest, "POST", "/api/me/requests", { cookie: alice, json: { clientId: client, serviceId, title: "À effacer" } })).body.id as string;
-    await addClientRequestFile(db(), client, id, { url: "https://cdn.example/user/akinaza/r/erase.pdf", kind: "pdf", bytes: 10 });
-    expect(await eraseClientRequests(db(), client)).toContain("https://cdn.example/user/akinaza/r/erase.pdf");
+    await addClientRequestFile(db(), client, id, { url: "https://cdn.example/user/folioviv/r/erase.pdf", kind: "pdf", bytes: 10 });
+    expect(await eraseClientRequests(db(), client)).toContain("https://cdn.example/user/folioviv/r/erase.pdf");
     expect((await query("SELECT 1 FROM client_requests WHERE client_id = $1", [client])).length).toBe(0);
   });
 });

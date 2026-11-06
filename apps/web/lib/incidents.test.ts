@@ -13,7 +13,7 @@ vi.mock("./db", () => ({ query: async () => ({ rows: [] }) }));
 
 import { exportIncidentRegister, INCIDENT_SCOPE, incidentRegister, openIncident, stepIncident } from "./incidents";
 
-const admin = { id: "a1", email: "admin@akinaza.test" };
+const admin = { id: "a1", email: "admin@folioviv.test" };
 const input = { kind: "access" as const, description: "A shared link stayed public.", information: ["invoice"], personsConcerned: 2 };
 const serious = { action: "assess" as const, assessment: { sensitivity: "high" as const, consequences: "high" as const, likelihood: "medium" as const, seriousInjury: true, rationale: "Invoices name the shop customers." } };
 
@@ -22,7 +22,7 @@ beforeEach(() => {
   audited.length = 0;
 });
 
-describe("the incident register of the administration (Loi 25, akinaza#392)", () => {
+describe("the incident register of the administration (Loi 25, folioviv#392)", () => {
   it("opens, assesses, notifies both, closes - and audits every step without the description", async () => {
     const opened = await openIncident(admin, input);
     expect(opened.status).toBe("open");
@@ -51,7 +51,7 @@ describe("the incident register of the administration (Loi 25, akinaza#392)", ()
     await openIncident(admin, input);
     const csv = await exportIncidentRegister(admin, "csv");
     expect(csv.type).toContain("text/csv");
-    expect(csv.filename).toMatch(/^akinaza-incident-register-\d{4}-\d{2}-\d{2}\.csv$/);
+    expect(csv.filename).toMatch(/^folioviv-incident-register-\d{4}-\d{2}-\d{2}\.csv$/);
     const json = await exportIncidentRegister(admin, "json");
     expect(JSON.parse(json.body).entries).toHaveLength(1);
     expect(audited.filter((a) => a.action === "privacy.incident_register_exported")).toHaveLength(2);
@@ -60,22 +60,22 @@ describe("the incident register of the administration (Loi 25, akinaza#392)", ()
 
 describe("tenant isolation: another scope's register is neither read nor written", () => {
   const register = createIncidentRegister({ clock: { now: () => new Date() } });
-  const other = { id: "z1", label: "admin@akinaza.test" };
+  const other = { id: "z1", label: "admin@folioviv.test" };
 
   it("never lists the entries of another scope", async () => {
-    await register.open(async () => ({ rows: [] }) as never, { ...input, scope: "yomizaka" }, other);
+    await register.open(async () => ({ rows: [] }) as never, { ...input, scope: "verikora" }, other);
     await openIncident(admin, input);
     const mine = await incidentRegister();
     expect(mine).toHaveLength(1);
-    expect(INCIDENT_SCOPE).toBe("akinaza");
+    expect(INCIDENT_SCOPE).toBe("folioviv");
   });
 
   it("cannot step, close or export an incident of another scope", async () => {
-    const foreign = await register.open(async () => ({ rows: [] }) as never, { ...input, scope: "yomizaka" }, other);
+    const foreign = await register.open(async () => ({ rows: [] }) as never, { ...input, scope: "verikora" }, other);
     await expect(stepIncident(admin, foreign.id, serious)).rejects.toMatchObject({ status: 404 });
     await expect(stepIncident(admin, foreign.id, { action: "close" })).rejects.toMatchObject({ status: 404 });
     expect(JSON.parse((await exportIncidentRegister(admin, "json")).body).entries).toHaveLength(0);
-    const untouched = await store.current.get("yomizaka", foreign.id);
+    const untouched = await store.current.get("verikora", foreign.id);
     expect(untouched?.status).toBe("open");
   });
 });
