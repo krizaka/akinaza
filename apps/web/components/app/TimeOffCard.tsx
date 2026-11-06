@@ -26,7 +26,7 @@ const timeOffForm = createKrizakaForm({
   defaultValues: { staffId: "", from: "", to: "", reason: "" },
 });
 
-/** Time off for anyone on the team, as a date range (akinaza#208): the booking slots leave those days out, Today says who is off. */
+/** Time off for anyone on the team, as a date range (folioviv#208): the booking slots leave those days out, Today says who is off. */
 export function TimeOffCard({ data }: Readonly<{ data: TimeOffData }>) {
   const { say, locale } = useSay();
   const call = useCall();

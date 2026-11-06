@@ -1,4 +1,4 @@
-// `DATABASE_URL=… pnpm --filter @akinaza/db seed you@example.com` — the demo shop for a development database of your own.
+// `DATABASE_URL=… pnpm --filter @folioviv/db seed you@example.com` — the demo shop for a development database of your own.
 import { fileURLToPath } from "node:url";
 
 import { createDb, pg, poolConfig } from "./client";
@@ -14,4 +14,4 @@ const pool = new pg.Pool(poolConfig(process.env.DATABASE_URL ?? "", process.env.
 await migrate(pool, MIGRATIONS_DIR);
 const result = await seedDemoShop(createDb(pool), email);
 await pool.end();
-console.log(result.created ? `akinaza: demo shop ${result.shopId} created` : `akinaza: the account already has a shop (${result.shopId})`);
+console.log(result.created ? `folioviv: demo shop ${result.shopId} created` : `folioviv: the account already has a shop (${result.shopId})`);

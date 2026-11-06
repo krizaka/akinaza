@@ -1,4 +1,4 @@
-import { BUSINESS_TYPES } from "@akinaza/core";
+import { BUSINESS_TYPES } from "@folioviv/core";
 import { describe, expect, it } from "vitest";
 
 import { bindProduct } from "@/lib/brand";

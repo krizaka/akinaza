@@ -1,7 +1,7 @@
+import { requestNow } from "@/app/request-now";
 import { requireShop } from "@/lib/access";
 import { loadShopBrief } from "@/lib/brief";
 import { handle } from "@/lib/http";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

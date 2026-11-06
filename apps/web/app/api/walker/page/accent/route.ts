@@ -1,4 +1,4 @@
-import { draftShopPage, setShopAccent, ShopPageInvalidError } from "@akinaza/db";
+import { draftShopPage, setShopAccent, ShopPageInvalidError } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";

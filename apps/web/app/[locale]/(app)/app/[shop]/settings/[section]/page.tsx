@@ -1,5 +1,5 @@
-import { localDay, OWNER_BOUNDS, OWNER_TUNABLE, type OwnerTunable, reviewScore, shopTypeOf, WALL_LIMITS } from "@akinaza/core";
-import { announcementsOf, draftShopPage, invoiceMailSettings, loadShop, publishedShopPage, reelsOf, reelTransitionOf, reviewsOf, SHOP_ROLES, shopAccentOf, shopFigureOverrides, shopMediaOf, shopPageConfigOf, shopPageVersionsOf, shopStaff, socialLinksOf, teamTimeOff, translationRows, translationRunsOn,wallOf } from "@akinaza/db";
+import { localDay, OWNER_BOUNDS, OWNER_TUNABLE, type OwnerTunable, reviewScore, shopTypeOf, WALL_LIMITS } from "@folioviv/core";
+import { announcementsOf, draftShopPage, invoiceMailSettings, loadShop, publishedShopPage, reelsOf, reelTransitionOf, reviewsOf, SHOP_ROLES, shopAccentOf, shopFigureOverrides, shopMediaOf, shopPageConfigOf, shopPageVersionsOf, shopStaff, socialLinksOf, teamTimeOff, translationRows, translationRunsOn,wallOf } from "@folioviv/db";
 import { shopPresets } from "@krizaka/tokens/shop-presets";
 import { Button } from "@krizaka/ui/button";
 import { PageHeader } from "@krizaka/ui/page-header";
@@ -77,7 +77,7 @@ async function PageSection({ locale, shopId, tab }: Readonly<{ locale: RouteLoca
   return <ShopSetupView data={data} tab={tab} />;
 }
 
-/** Boutique › Page › Layout (akinaza#402): the composer on the shop's draft, with what is live for the diff, the history and the accent. */
+/** Boutique › Page › Layout (folioviv#402): the composer on the shop's draft, with what is live for the diff, the history and the accent. */
 async function ComposerTab({ locale, shopId }: Readonly<{ locale: RouteLocale; shopId: string }>) {
   const { shop } = await memberShop(shopId, "catalogue");
   const [draft, live, accent, versions, pageConfig] = await Promise.all([draftShopPage(db(), shop.id), publishedShopPage(db(), shop.id), shopAccentOf(db(), shop.id), shopPageVersionsOf(db(), shop.id), shopPageConfigOf(db(), shop.id)]);

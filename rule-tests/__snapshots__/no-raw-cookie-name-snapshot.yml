@@ -1,14 +1,14 @@
 id: no-raw-cookie-name
 snapshots:
-  "const SHOP = 'akinaza_shop';\n":
+  "const SHOP = 'folioviv_shop';\n":
     labels:
-    - source: "'akinaza_shop'"
+    - source: "'folioviv_shop'"
       style: primary
       start: 13
       end: 27
-  "export const SESSION_COOKIE = \"akinaza_session\";\n":
+  "export const SESSION_COOKIE = \"folioviv_session\";\n":
     labels:
-    - source: "\"akinaza_session\""
+    - source: "\"folioviv_session\""
       style: primary
       start: 30
       end: 47

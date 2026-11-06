@@ -1,5 +1,6 @@
-import { exportAppointments, exportClients, exportInvoices } from "@akinaza/db";
+import { exportAppointments, exportClients, exportInvoices } from "@folioviv/db";
 
+import { requestNow } from "@/app/request-now";
 import { requireShop } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { appointmentsCsv, appointmentsHeader, appointmentsIcs, BOM, clientsCsv, clientsHeader, type ExportFile, formatOf, icsClose, icsOpen, invoicesCsv, invoicesHeader, isExportFile, kindOf } from "@/lib/data-export";
@@ -8,7 +9,6 @@ import { handle, refuse } from "@/lib/http";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { limit } from "@/lib/rate-limit";
 import { appSettings } from "@/lib/settings";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +64,7 @@ export function GET(req: Request, ctx: { params: Promise<{ file: string }> }) {
     return new Response(body, {
       headers: {
         "Content-Type": formatOf(file) === "ics" ? "text/calendar; charset=utf-8" : "text/csv; charset=utf-8",
-        "Content-Disposition": `attachment; filename="akinaza-${file}"`,
+        "Content-Disposition": `attachment; filename="folioviv-${file}"`,
         "Cache-Control": "private, no-store",
         "X-Robots-Tag": "noindex, nofollow",
       },

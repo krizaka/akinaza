@@ -1,4 +1,4 @@
-import type { PageLocale } from "@akinaza/db";
+import type { PageLocale } from "@folioviv/db";
 
 import { appSettings } from "@/lib/settings";
 

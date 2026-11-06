@@ -1,5 +1,5 @@
-import { parseExploreParams } from "@akinaza/core";
-import { exploreSearch } from "@akinaza/db";
+import { parseExploreParams } from "@folioviv/core";
+import { exploreSearch } from "@folioviv/db";
 
 import { systemClock } from "@/app/system-clock";
 import { db } from "@/lib/db";

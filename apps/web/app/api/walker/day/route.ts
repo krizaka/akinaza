@@ -1,10 +1,10 @@
-import { dayVisits, shopDay } from "@akinaza/db";
+import { dayVisits, shopDay } from "@folioviv/db";
 
+import { requestNow } from "@/app/request-now";
 import { agendaScope, requireShop } from "@/lib/access";
 import { dayParam, queryOf } from "@/lib/day-param";
 import { db } from "@/lib/db";
 import { handle } from "@/lib/http";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

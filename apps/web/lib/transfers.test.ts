@@ -6,7 +6,7 @@ import en from "../messages/en.json";
 import fr from "../messages/fr.json";
 
 /**
- * akinaza#369. The register of the places that hold personal information (docs/privacy/transfers.json) follows the deployment spec:
+ * folioviv#369. The register of the places that hold personal information (docs/privacy/transfers.json) follows the deployment spec:
  * a store, a region or a configuration context the spec adds and the register does not list fails here, so the assessment of a
  * transfer outside Québec (P-39.1 art. 17) is written before the data goes there.
  */
@@ -55,7 +55,7 @@ export function gaps(spec: string, register: Pick<Register, "contexts" | "stores
   return out;
 }
 
-describe("the transfer register follows the deployment spec (akinaza#369)", () => {
+describe("the transfer register follows the deployment spec (folioviv#369)", () => {
   it("covers every store, region and configuration context of the spec", () => {
     expect(gaps(SPEC, REGISTER)).toEqual([]);
   });
@@ -88,7 +88,7 @@ describe("the transfer register follows the deployment spec (akinaza#369)", () =
       if (!p.deployed) expect(p.region, p.id).toMatch(/to-confirm/);
       expect(p.agreement, p.id).toMatch(/^(to-collect|internal, to write)$/);
     }
-    expect(REGISTER.processors.filter((p) => !p.deployed).map((p) => p.id)).toEqual(["mailgun", "stripe", "orazaka"]);
+    expect(REGISTER.processors.filter((p) => !p.deployed).map((p) => p.id)).toEqual(["mailgun", "stripe", "sovkora"]);
   });
 
   it("names every supplier in the readable version, and points the open regions to .github#285", () => {
@@ -106,7 +106,7 @@ describe("the transfer register follows the deployment spec (akinaza#369)", () =
   });
 });
 
-describe("the privacy notice names every category of processor (akinaza#369)", () => {
+describe("the privacy notice names every category of processor (folioviv#369)", () => {
   it.each([["en", en], ["fr", fr]] as const)("%s: a line per category, none promising a residency", (_lang, m) => {
     const items = m.privacy.processors.items;
     expect(items).toHaveLength(5);

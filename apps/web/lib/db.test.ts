@@ -4,10 +4,10 @@ import { migrationPoolConfig, poolConfig, transactionOn } from "./db";
 
 describe("the pool", () => {
   it("verifies TLS against the cluster's CA, never blindly", () => {
-    const config = poolConfig({ DATABASE_URL: "postgresql://u:p@db.example:25060/akinaza_db?sslmode=require", DATABASE_CA_CERT: "-----BEGIN CERTIFICATE-----\\nX" });
+    const config = poolConfig({ DATABASE_URL: "postgresql://u:p@db.example:25060/folioviv_db?sslmode=require", DATABASE_CA_CERT: "-----BEGIN CERTIFICATE-----\\nX" });
     expect(config.ssl).toEqual({ ca: "-----BEGIN CERTIFICATE-----\nX", rejectUnauthorized: true });
     expect(config.connectionString).not.toContain("sslmode");
-    expect(poolConfig({ DATABASE_URL: "postgresql://u:p@localhost:5432/akinaza_db" }).ssl).toBeUndefined();
+    expect(poolConfig({ DATABASE_URL: "postgresql://u:p@localhost:5432/folioviv_db" }).ssl).toBeUndefined();
   });
 
   it("caps the pool by DATABASE_MAX_CONNECTIONS", () => {

@@ -1,9 +1,10 @@
 // @template: app-list-detail
-import { clientOverview } from "@akinaza/db";
+import { clientOverview } from "@folioviv/db";
 import { EmptyState } from "@krizaka/ui/empty-state";
 import { Mascot } from "@krizaka/ui/mascots";
 import { PageHeader } from "@krizaka/ui/page-header";
 
+import { requestNow } from "@/app/request-now";
 import { ClientsCatalogue } from "@/components/app/ClientsCatalogue";
 import { readClientsQuery } from "@/lib/clients-view";
 import { db } from "@/lib/db";
@@ -11,7 +12,6 @@ import { asLocale, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { organizeData, tagsOfRows } from "@/lib/organize-data";
 import { titleOf } from "@/lib/page-title";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

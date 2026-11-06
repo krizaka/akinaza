@@ -1,4 +1,4 @@
-import { applyTemplate, ShopError, shopPageConfigOf } from "@akinaza/db";
+import { applyTemplate, ShopError, shopPageConfigOf } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireOwner } from "@/lib/access";
@@ -10,7 +10,7 @@ vi.mock("@/lib/access", () => ({ requireOwner: vi.fn() }));
 vi.mock("@/lib/audit", () => ({ audit: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/template-rules", () => ({ templateRules: vi.fn(), templateCatalogue: vi.fn(async () => []) }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), applyTemplate: vi.fn(), shopPageConfigOf: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), applyTemplate: vi.fn(), shopPageConfigOf: vi.fn() }));
 
 const post = (body: unknown) => POST(new Request("http://localhost/api/walker/shop-page/template", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }));
 

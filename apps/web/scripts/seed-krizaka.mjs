@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-// Seeds « Krizaka (démo) » — a software studio in Montréal, the first client of Akinaza (dogfooding) — on the database of
+// Seeds « Krizaka (démo) » — a software studio in Montréal, the first client of Folioviv (dogfooding) — on the database of
 // ONE deployment: its owner Éric, three fictional business clients, services billed by the hour or by the project, bilingual
 // invoices and a quarter of books, through the product's own operations. Sign-up is closed there: these accounts are the only
 // way in. Passwords come from the environment and are never printed. Idempotent: a re-run only sets the passwords again.
 // Every figure is a demo figure (fake tax numbers, plausible amounts), never Krizaka's own.
 //
 //   DATABASE_URL=… DATABASE_CA_CERT=… QA_KRIZAKA_PASSWORD=… QA_CLIENTS_PASSWORD=… \
-//     pnpm --filter @akinaza/web exec tsx scripts/seed-krizaka.mjs
-import { createDb, pg, poolConfig } from "@akinaza/db";
-import { KRIZAKA_EMAILS, renameFormerClients, seedKrizaka } from "@akinaza/db/seed-krizaka";
+//     pnpm --filter @folioviv/web exec tsx scripts/seed-krizaka.mjs
+import { createDb, pg, poolConfig } from "@folioviv/db";
+import { KRIZAKA_EMAILS, renameFormerClients, seedKrizaka } from "@folioviv/db/seed-krizaka";
 
 import { hashPassword } from "./qa-accounts.mjs";
 

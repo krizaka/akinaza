@@ -1,7 +1,7 @@
 import { defaultFor, defaultUrl, listDefaults, type OrgDefaultItem } from "@krizaka/org";
 
 /**
- * Akinaza's people wear the Krizaka org JSON's default pictures (`@krizaka/org` `defaults.person`, ADR-011/014, akinaza#499): never a URL written
+ * Folioviv's people wear the Krizaka org JSON's default pictures (`@krizaka/org` `defaults.person`, ADR-011/014, folioviv#499): never a URL written
  * here, never the old gradient silhouette. The profile keeps the picture the person chose as `avatarSeed` (the id of a `person` item); a person
  * who chose nothing gets `defaultFor("person", id)`, deterministic, so they look the same on every screen and in every app.
  */

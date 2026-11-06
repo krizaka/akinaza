@@ -1,7 +1,7 @@
 "use client";
 
 
-import { WALL_KIND, type WallTexture } from "@akinaza/core";
+import { WALL_KIND, type WallTexture } from "@folioviv/core";
 import { EmbedFacade } from "@krizaka/ui/embed-facade";
 import { RetroTv, type RetroTvLabels } from "@krizaka/ui/retro-tv";
 import { Wall, type WallItem } from "@krizaka/ui/wall";

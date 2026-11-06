@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { listInvoices, recordPayment, replaceInvoice } from "@akinaza/db";
+import { listInvoices, recordPayment, replaceInvoice } from "@folioviv/db";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import { db, migrate, pool, query } from "@/lib/db";
@@ -29,7 +29,7 @@ describe.runIf(enabled)("a services business issues an invoice over HTTP", () =>
   const sessions: Record<"owner" | "stranger" | "client", string> = { owner: "", stranger: "", client: "" };
   const ids: { service?: string; clientFile?: string } = {};
   const account = async (label: string) => {
-    const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [`${label}-${stamp}@akinaza.test`]);
+    const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [`${label}-${stamp}@folioviv.test`]);
     return (await createSession(row!.id, { ip: null, userAgent: "vitest" })).token;
   };
 
@@ -45,7 +45,7 @@ describe.runIf(enabled)("a services business issues an invoice over HTTP", () =>
   });
   beforeEach(() => resetRateLimits());
   afterAll(async () => {
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@folioviv.test`]);
     await pool().end();
   });
 
@@ -70,7 +70,7 @@ describe.runIf(enabled)("a services business issues an invoice over HTTP", () =>
     expect((await call(invoices, "/api/walker/invoices", { token: owner, json: { language: "fr", issuedOn: "2026-10-21", lines: [{ serviceId: "00000000-0000-4000-8000-000000000000", quantity: 1 }] } })).status).toBe(404);
   });
 
-  it("the list knows what was received and what was superseded (akinaza#218)", async () => {
+  it("the list knows what was received and what was superseded (folioviv#218)", async () => {
     const body = { clientId: ids.clientFile, language: "fr" as const, issuedOn: "2026-10-22", lines: [{ description: "Atelier / Workshop", quantity: 1, unitPriceCents: 10_000 }] };
     const issued = await call(invoices, "/api/walker/invoices", { token: sessions.owner, json: body });
     const [{ shop_id: shopId }] = (await query<{ shop_id: string }>("SELECT shop_id FROM invoices WHERE id = $1", [issued.body.id])) as [{ shop_id: string }];

@@ -1,6 +1,6 @@
 "use client";
 
-import { OWNER_BOUNDS, OWNER_TUNABLE, type OwnerOverrides, type OwnerTunable } from "@akinaza/core";
+import { OWNER_BOUNDS, OWNER_TUNABLE, type OwnerOverrides, type OwnerTunable } from "@folioviv/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";

@@ -1,7 +1,7 @@
 # Livres → « Vos chiffres » (#168, #260, #433): the period's GST/QST nets, then the explained figures, one opened into its detail with the
-# lexique's words (the same wording as the web's console). Akinaza prepares; nothing is filed from here. The figures are found by
+# lexique's words (the same wording as the web's console). Folioviv prepares; nothing is filed from here. The figures are found by
 # their id (`figure-<id>`), never by their wording; the backend (scripts/ci-mobile-backend.sh) serves them from the demo shop's invoices.
-appId: com.krizaka.akinaza
+appId: com.krizaka.folioviv
 tags:
   - ci
 ---

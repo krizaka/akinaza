@@ -1,7 +1,7 @@
 import { DOC_IDS, type DocId, pagePath } from "./site";
 
 /**
- * The owner's guide (akinaza#382): five pages, one job each. The structure is here (ids, order, where the app's « Help »
+ * The owner's guide (folioviv#382): five pages, one job each. The structure is here (ids, order, where the app's « Help »
  * links lead); the words are `docs.*` in the messages, in both languages.
  */
 export { DOC_IDS, type DocId };

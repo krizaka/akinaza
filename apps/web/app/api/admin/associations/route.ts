@@ -1,4 +1,4 @@
-import { pendingAssociations } from "@akinaza/db";
+import { pendingAssociations } from "@folioviv/db";
 
 import { requireAdmin } from "@/lib/access";
 import { db } from "@/lib/db";

@@ -1,4 +1,4 @@
-import { draftShopPage, saveShopPageDraft, shopAccentOf } from "@akinaza/db";
+import { draftShopPage, saveShopPageDraft, shopAccentOf } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";

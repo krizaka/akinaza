@@ -1,4 +1,4 @@
-import type { FigureAnswer, NextActionAnswer } from "@akinaza/core";
+import type { FigureAnswer, NextActionAnswer } from "@folioviv/core";
 
 import type { Locale } from "./links";
 import { dollars } from "./money";

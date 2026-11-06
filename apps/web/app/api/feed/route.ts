@@ -1,4 +1,4 @@
-import { feedFlyers } from "@akinaza/db";
+import { feedFlyers } from "@folioviv/db";
 
 import { db } from "@/lib/db";
 import { buildFeed } from "@/lib/feed-view";

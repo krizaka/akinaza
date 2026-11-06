@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { FlyerView } from "@/lib/community-view";
 
 /**
- * The board never ends on an orphan (akinaza#440): two or four flyers sit two by two, otherwise three by three and a last, incomplete row
+ * The board never ends on an orphan (folioviv#440): two or four flyers sit two by two, otherwise three by three and a last, incomplete row
  * is left out (five show three, seven and eight show six). One, two, three and four are shown whole.
  */
 export function bulletinLayout(count: number): {

@@ -32,10 +32,10 @@ describe("the password reset link's lifetime", () => {
 
 /** The service answers like the real one: a person's own value first, else the global one. */
 const withFlag = (own: Record<string, boolean>, global = false) => {
-  (globalThis as unknown as { __akinazaSettings: unknown }).__akinazaSettings = { get: vi.fn(async (_key: string, ctx: { userId: string | null }) => (ctx.userId && ctx.userId in own ? own[ctx.userId] : global)) };
+  (globalThis as unknown as { __foliovivSettings: unknown }).__foliovivSettings = { get: vi.fn(async (_key: string, ctx: { userId: string | null }) => (ctx.userId && ctx.userId in own ? own[ctx.userId] : global)) };
 };
 
-describe("the notebook storefront is the owner's setting (akinaza#316, #261: on for the demo shops' owners only)", () => {
+describe("the notebook storefront is the owner's setting (folioviv#316, #261: on for the demo shops' owners only)", () => {
   afterEach(() => resetAppSettings());
 
   it("is a global-or-person flag, off by default: a code constant never turns it on", () => {
@@ -62,14 +62,14 @@ describe("the notebook storefront is the owner's setting (akinaza#316, #261: on 
 
 describe("the protected shop-address terms (ADR-005 slice 4, #537)", () => {
   it("default to the family, reserved and lure words, global only, all readable by the slug guard, and hold a look-alike login address", async () => {
-    const { holdSlug, parseProtectedTerms } = await import("@akinaza/core");
+    const { holdSlug, parseProtectedTerms } = await import("@folioviv/core");
     const def = SETTINGS["slugs.protectedTerms"];
     expect(def.scopes).toEqual(["global"]);
     expect(def.schema.safeParse(def.default).success).toBe(true);
     const { terms, invalid } = parseProtectedTerms(def.default);
     expect(invalid).toEqual([]);
     expect(terms.length).toBeGreaterThan(5);
-    for (const word of ["krizaka", "akinaza", "yomizaka", "orazaka", "admin", "api", "www", "app", "login", "auth", "support", "help", "billing", "mail", "status", "security", "account", "dashboard"]) expect(holdSlug(`x-${word}-x`, terms).held, word).toBe(true);
+    for (const word of ["krizaka", "folioviv", "verikora", "sovkora", "admin", "api", "www", "app", "login", "auth", "support", "help", "billing", "mail", "status", "security", "account", "dashboard"]) expect(holdSlug(`x-${word}-x`, terms).held, word).toBe(true);
     expect(holdSlug("paypal-aide", terms).held).toBe(false); // third-party brands are the console's, added when there is a reason
     expect(holdSlug("mon-l0gin", terms).held).toBe(true);
     expect(holdSlug("pattes-saint-henri", terms).held).toBe(false);

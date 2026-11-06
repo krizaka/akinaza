@@ -35,11 +35,11 @@ describe("session tokens", () => {
 describe("the session token of a request", () => {
   const token = newToken();
   it("reads the cookie of the web", () => {
-    expect(sessionTokenOf(new Headers({ cookie: `a=b; akinaza_session=${token}` }))).toBe(token);
+    expect(sessionTokenOf(new Headers({ cookie: `a=b; folioviv_session=${token}` }))).toBe(token);
   });
   it("reads the bearer of a native app, and prefers it to a stale cookie", () => {
     expect(sessionTokenOf(new Headers({ authorization: `Bearer ${token}` }))).toBe(token);
-    expect(sessionTokenOf(new Headers({ authorization: `bearer ${token}`, cookie: `akinaza_session=${newToken()}` }))).toBe(token);
+    expect(sessionTokenOf(new Headers({ authorization: `bearer ${token}`, cookie: `folioviv_session=${newToken()}` }))).toBe(token);
   });
   it.each([[new Headers()], [new Headers({ authorization: "Basic abc" })], [new Headers({ cookie: "other=1" })]])("answers nothing without a session", (headers) => {
     expect(sessionTokenOf(headers)).toBeUndefined();

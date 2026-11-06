@@ -73,7 +73,7 @@ describe.runIf(enabled)("tenant isolation over the walker surface", () => {
     note.set("note", "Belle promenade");
     await call(saveReport as Handler, "POST", `/api/walker/bookings/${ids.booking}/report`, { ...asA, params: { id: ids.booking }, form: note });
     ids.invoice = (await call(invoices as Handler, "POST", "/api/walker/invoices", { ...asA, json: { clientId: ids.client, language: "fr", issuedOn: "2026-10-23", lines: [{ description: "Coupe", unitPriceCents: 3000, quantity: 1 }] } })).body.id;
-    // the shop's tags and saved views (akinaza#337): shop A's, which shop B's owner must never reach
+    // the shop's tags and saved views (folioviv#337): shop A's, which shop B's owner must never reach
     ids.clientTag = (await call(clientTag as Handler, "POST", "/api/walker/clients/tags", { ...asA, json: { name: "Privé A", marker: "red" } })).body.tag.id;
     ids.invoiceTag = (await call(invoiceTag as Handler, "POST", "/api/walker/invoices/tags", { ...asA, json: { name: "Privé A", marker: "red" } })).body.tag.id;
     ids.clientView = (await call(clientView as Handler, "POST", "/api/walker/clients/views", { ...asA, json: { name: "Vue A", filters: { tags: [ids.clientTag] }, shared: true } })).body.view.id;

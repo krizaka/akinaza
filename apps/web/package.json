@@ -1,8 +1,8 @@
 {
-  "name": "@akinaza/web",
+  "name": "@folioviv/web",
   "version": "0.1.0",
   "private": true,
-  "description": "Akinaza's web app and BFF: the public showcase, authentication, core dashboard, and administration.",
+  "description": "Folioviv's web app and BFF: the public showcase, authentication, core dashboard, and administration.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,8 +13,8 @@
     "qa-accounts": "node scripts/qa-accounts.mjs"
   },
   "dependencies": {
-    "@akinaza/core": "workspace:*",
-    "@akinaza/db": "workspace:*",
+    "@folioviv/core": "workspace:*",
+    "@folioviv/db": "workspace:*",
     "@krizaka/api-keys": "^0.1.0",
     "@krizaka/auth": "^0.12.0",
     "@krizaka/brief": "0.1.0",

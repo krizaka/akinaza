@@ -1,11 +1,11 @@
-import { slugSchema } from "@akinaza/core";
-import { listSlots, publicShop } from "@akinaza/db";
+import { slugSchema } from "@folioviv/core";
+import { listSlots, publicShop } from "@folioviv/db";
 import { z } from "zod";
 
+import { requestNow } from "@/app/request-now";
 import { db } from "@/lib/db";
 import { handle, refuse } from "@/lib/http";
 import { limit } from "@/lib/rate-limit";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

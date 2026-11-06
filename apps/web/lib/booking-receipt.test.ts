@@ -5,7 +5,7 @@ const STARTS_AT = new Date("2026-11-02T15:00:00.000Z");
 const RUN_CLOCK = "2026-11-02T01:00:00.000Z"; // 14 h before the slot: inside the 24 h window
 const HOURS = 24;
 
-vi.mock("@akinaza/db", () => ({
+vi.mock("@folioviv/db", () => ({
   // The window is judged at the instant the caller passes, as the real query does.
   bookingDetail: vi.fn(async (_db: unknown, _account: string, id: string, now: Date) => {
     seen.now = now;
@@ -42,7 +42,7 @@ vi.mock("@/lib/journey", () => ({
 
 import { sendBookingReceipt } from "./booking-receipt";
 
-const recipient = { accountId: "acc", email: "a@example.test", locale: "en" as const, settings: { appUrl: "https://dev.akinaza.com" } as never };
+const recipient = { accountId: "acc", email: "a@example.test", locale: "en" as const, settings: { appUrl: "https://dev.folioviv.com" } as never };
 
 describe("the booking receipt mail", () => {
   beforeEach(() => {

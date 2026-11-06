@@ -15,7 +15,7 @@ const read = (path: string) => readFileSync(join(ROOT, path), "utf8");
 const APP = "app/[locale]/(app)/app";
 const SHOP = `${APP}/[shop]`;
 
-describe("the owner's app keeps only what the job needs (krizaka/akinaza#161)", () => {
+describe("the owner's app keeps only what the job needs (krizaka/folioviv#161)", () => {
   it("has the places of a shop in the bar (what each role sees is lib/app-nav); no connections", () => {
     const layout = read("components/app/SpaceChrome.tsx");
     expect(layout).toContain("placesFor(member.role)");

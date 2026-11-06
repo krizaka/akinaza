@@ -13,7 +13,7 @@ import { contactHref, pagePath } from "@/lib/site";
 
 /**
  * The founder offer: a limited offer with the setup included. Shown only when `APP_FOUNDER_OFFER_ENABLED`; every
- * figure — the price, the cap, the fees — is the catalogue's entry in force (akinaza#371), formatted with the locale, never
+ * figure — the price, the cap, the fees — is the catalogue's entry in force (folioviv#371), formatted with the locale, never
  * typed in a message. Starter and Scale B2B follow, each with its price from the catalogue. The button is a plain form (no script): it
  * opens the payment page, or the sign-in page when nobody is signed in.
  */
@@ -28,7 +28,7 @@ export async function FounderOffer({ locale }: Readonly<{ locale: Locale }>) {
     return (
       <Section id="offer" title={t.full.title} lead={format(t.full.lead, { limit: seats.limit })} reveal divider>
         <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
-          <a href={contactHref("dev-akinaza-offer", locale)}>{t.talk}</a>
+          <a href={contactHref("dev-folioviv-offer", locale)}>{t.talk}</a>
         </Button>
       </Section>
     );
@@ -53,7 +53,7 @@ export async function FounderOffer({ locale }: Readonly<{ locale: Locale }>) {
           </Button>
         </form>
         <Button asChild variant="secondary" size="lg" className="w-full sm:w-auto">
-          <a href={contactHref("dev-akinaza-offer", locale)}>{t.talk}</a>
+          <a href={contactHref("dev-folioviv-offer", locale)}>{t.talk}</a>
         </Button>
       </div>
       <p className="mt-3 max-w-2xl text-sm text-fg-secondary">{t.note}</p>

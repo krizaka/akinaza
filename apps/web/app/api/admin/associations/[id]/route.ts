@@ -1,4 +1,4 @@
-import { decideAssociation } from "@akinaza/db";
+import { decideAssociation } from "@folioviv/db";
 import { z } from "zod";
 
 import { systemClock } from "@/app/system-clock";

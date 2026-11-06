@@ -1,4 +1,4 @@
-/** Aujourd'hui's board (D4): what the day's page reads from the bookings and the ledger (`todayBoard` of @akinaza/db). */
+/** Aujourd'hui's board (D4): what the day's page reads from the bookings and the ledger (`todayBoard` of @folioviv/db). */
 /** The periods of the activity strip, in days (`?period=`). */
 // @fixed: the activity strip's three periods (7, 30 and 90 days), named by the direction (B2)
 export const BOARD_PERIODS = [7, 30, 90] as const;

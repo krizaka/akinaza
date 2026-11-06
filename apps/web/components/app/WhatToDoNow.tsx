@@ -1,4 +1,4 @@
-import type { NextAction } from "@akinaza/core";
+import type { NextAction } from "@folioviv/core";
 import { Card } from "@krizaka/ui/card";
 import { NextActions } from "@krizaka/ui/next-actions";
 import Link from "next/link";

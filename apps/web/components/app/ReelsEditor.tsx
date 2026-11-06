@@ -1,6 +1,6 @@
 "use client";
 
-import { REEL_TRANSITIONS, type ReelTransition, SOCIAL_PLATFORMS, type SocialPlatform } from "@akinaza/core";
+import { REEL_TRANSITIONS, type ReelTransition, SOCIAL_PLATFORMS, type SocialPlatform } from "@folioviv/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";

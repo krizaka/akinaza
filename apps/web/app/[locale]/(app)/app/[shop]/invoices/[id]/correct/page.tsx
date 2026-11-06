@@ -1,16 +1,16 @@
-import { invoiceDetail, shopDay } from "@akinaza/db";
+import { invoiceDetail, shopDay } from "@folioviv/db";
 import { PageHeader } from "@krizaka/ui/page-header";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 
+import { requestNow } from "@/app/request-now";
 import { InvoiceCorrection } from "@/components/app/InvoiceCorrection";
 import { db } from "@/lib/db";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
 import { memberShop } from "@/lib/member-shop";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

@@ -74,7 +74,7 @@ describe("Boutique, the hub of the shop's configuration (K4)", () => {
   });
 });
 
-describe("the layout tab (akinaza#402)", () => {
+describe("the layout tab (folioviv#402)", () => {
   it("is for the roles that write the page, not for staff", () => {
     expect(PAGE_TAB_NEEDS.composer).toBe("catalogue");
     expect(pageTabsAllowed((permission) => permission !== "catalogue" && permission !== "settings")).not.toContain("composer");

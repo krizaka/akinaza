@@ -1,4 +1,4 @@
-import { checkOut } from "@akinaza/db";
+import { checkOut } from "@folioviv/db";
 
 import { visitRoute } from "../../shared";
 

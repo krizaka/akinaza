@@ -8,7 +8,7 @@ import { readEnv } from "./env";
 const dir = join(__dirname, "../../../deploy/digitalocean");
 const spec = readFileSync(join(dir, "app.yaml"), "utf8");
 
-describe("the stage of the deployment (akinaza#440)", () => {
+describe("the stage of the deployment (folioviv#440)", () => {
   it("is dev by default and prod only when said, nothing else", () => {
     expect(readEnv({}).APP_ENVIRONMENT).toBe("dev");
     expect(readEnv({ APP_ENVIRONMENT: "prod" }).APP_ENVIRONMENT).toBe("prod");

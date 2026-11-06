@@ -1,5 +1,5 @@
 // @template: app-dashboard
-import { shopDay } from "@akinaza/db";
+import { shopDay } from "@folioviv/db";
 import { PageHeader } from "@krizaka/ui/page-header";
 import type { Metadata } from "next";
 

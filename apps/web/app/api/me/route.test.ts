@@ -31,20 +31,20 @@ describe("GET /api/me, the public bar's hint", () => {
 
   it("an expired or revoked session is signed out too", async () => {
     vi.mocked(resolveSession).mockResolvedValue(null);
-    const res = await ask(`akinaza_session=${TOKEN}`);
+    const res = await ask(`folioviv_session=${TOKEN}`);
     expect(resolveSession).toHaveBeenCalledWith(TOKEN);
     expect((await res.json()).signedIn).toBe(false);
   });
 
   it("signed in: the name, e-mail and avatar seed for the bar - and only those", async () => {
     vi.mocked(resolveSession).mockResolvedValue({ id: "sess", account: { id: "a1", email: "camille@example.com", role: "USER", locale: "fr" } });
-    const body = await (await ask(`akinaza_session=${TOKEN}`)).json();
+    const body = await (await ask(`folioviv_session=${TOKEN}`)).json();
     expect(body).toEqual({ signedIn: true, signupOpen: false, account: { id: "a-1", name: "Camille", email: "camille@example.com", avatarSeed: "s3" } });
   });
 
   it("the personalised answer of a signed-in person is private, no-store and varies with the cookie (krizaka-ui#800)", async () => {
     vi.mocked(resolveSession).mockResolvedValue({ id: "sess", account: { id: "a1", email: "camille@example.com", role: "USER", locale: "fr" } });
-    const res = await ask(`akinaza_session=${TOKEN}`);
+    const res = await ask(`folioviv_session=${TOKEN}`);
     expect(res.headers.get("cache-control")).toBe("private, no-store");
     expect(res.headers.get("vary")).toBe("Cookie");
   });

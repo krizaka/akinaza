@@ -1,4 +1,4 @@
-import { saveShopLanguages, translateShop } from "@akinaza/db";
+import { saveShopLanguages, translateShop } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireOwner } from "@/lib/access";
@@ -11,7 +11,7 @@ vi.mock("@/lib/access", () => ({ requireOwner: vi.fn() }));
 vi.mock("@/lib/audit", () => ({ audit: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/translation-settings", () => ({ translationRules: vi.fn() }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), translateShop: vi.fn(), saveShopLanguages: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), translateShop: vi.fn(), saveShopLanguages: vi.fn() }));
 
 const post = (route: (req: Request) => Promise<Response>, body: unknown) => route(new Request("http://localhost/api/walker/translations", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }));
 const put = (body: unknown) => languages(new Request("http://localhost/api/walker/translations", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }));
@@ -31,7 +31,7 @@ describe("the shop page's translation routes (#258)", () => {
     expect(translateShop).not.toHaveBeenCalled();
   });
 
-  it("runs through the Orazaka port with the administrator's daily limit, and answers 503 while the Studio is not wired", async () => {
+  it("runs through the Sovkora port with the administrator's daily limit, and answers 503 while the Studio is not wired", async () => {
     vi.mocked(translateShop).mockImplementation(async (_db, port, input) => {
       expect(input).toMatchObject({ shopId: "s1", locale: "es", dailyLimit: 5 });
       await port.translate({ from: "fr", to: "es", glossary: [], texts: [] });

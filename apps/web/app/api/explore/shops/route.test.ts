@@ -1,11 +1,11 @@
-import { exploreQuerySchema } from "@akinaza/core";
-import { exploreSearch } from "@akinaza/db";
+import { exploreQuerySchema } from "@folioviv/core";
+import { exploreSearch } from "@folioviv/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { GET } from "./route";
 
 vi.mock("@/lib/db", () => ({ db: () => ({}) }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), exploreSearch: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), exploreSearch: vi.fn() }));
 
 const get = (qs: string) => GET(new Request(`http://localhost/api/explore/shops${qs}`, { headers: { "x-forwarded-for": `10.0.0.${Math.floor(Math.random() * 200)}` } }));
 

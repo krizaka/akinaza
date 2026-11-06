@@ -1,10 +1,10 @@
-import type { AppointmentExportRow, ClientExportRow, InvoiceExportRow } from "@akinaza/db";
+import type { AppointmentExportRow, ClientExportRow, InvoiceExportRow } from "@folioviv/db";
 
 import { escape, fold, stamp } from "@/lib/ics";
 
 /**
  * The owner's data exports (#420, ADR-004 §5), as text: CSV (RFC 4180, UTF-8 with a byte-order mark so a spreadsheet reads the accents) and
- * an iCalendar file. Pure: the rows come from `@akinaza/db` (`exports.ts`), the words from the messages, the route streams the result.
+ * an iCalendar file. Pure: the rows come from `@folioviv/db` (`exports.ts`), the words from the messages, the route streams the result.
  */
 
 export const EXPORT_KINDS = ["appointments", "clients", "invoices"] as const;
@@ -75,7 +75,7 @@ export const invoicesCsv = (rows: readonly InvoiceExportRow[], w: ExportWords): 
 
 /** The opening and closing of the appointments calendar file. */
 export const icsOpen = (name: string): string =>
-  ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Akinaza//Export//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", `X-WR-CALNAME:${escape(name)}`].map(fold).join("\r\n") + "\r\n";
+  ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Folioviv//Export//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", `X-WR-CALNAME:${escape(name)}`].map(fold).join("\r\n") + "\r\n";
 export const icsClose = (): string => "END:VCALENDAR\r\n";
 
 const ICS_STATUS: Record<AppointmentExportRow["status"], "CONFIRMED" | "CANCELLED"> = { booked: "CONFIRMED", done: "CONFIRMED", noShow: "CONFIRMED", cancelled: "CANCELLED" };
@@ -87,7 +87,7 @@ export function appointmentsIcs(rows: readonly AppointmentExportRow[], w: Export
       const service = serviceName(r, locale);
       const lines = [
         "BEGIN:VEVENT",
-        `UID:${r.id}@akinaza.com`,
+        `UID:${r.id}@folioviv.com`,
         `DTSTAMP:${stamp(now)}`,
         `DTSTART:${stamp(r.startsAt)}`,
         `DTEND:${stamp(r.endsAt)}`,

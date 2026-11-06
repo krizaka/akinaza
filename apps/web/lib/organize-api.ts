@@ -1,4 +1,4 @@
-import { actorOf, tagCounts, type WorkspaceKind } from "@akinaza/db";
+import { actorOf, tagCounts, type WorkspaceKind } from "@folioviv/db";
 import { MARKERS, type ViewFilters } from "@krizaka/organize/contract";
 import { z } from "zod";
 
@@ -7,7 +7,7 @@ import { handle, idParam, readJson } from "./http";
 import { ensureWorkspace, rows, workspace } from "./workspace";
 
 /**
- * The HTTP surface of the shop's tags and saved views (akinaza#337), one set of routes per kind (`/api/walker/clients/tags`,
+ * The HTTP surface of the shop's tags and saved views (folioviv#337), one set of routes per kind (`/api/walker/clients/tags`,
  * `/api/walker/invoices/views`…). Every handler goes through `requireShop` — the permission of the kind, so a role without it never
  * gets here — and passes the shop and the member's role to the layer, which refuses a tag write from staff (403) and answers 404 to
  * any tag, view or entity id of another shop. There is no route that moves an invoice's state: it is derived from the ledger.

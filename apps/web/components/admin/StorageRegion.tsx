@@ -17,7 +17,7 @@ export interface SavedStorage {
 }
 
 /**
- * Where the files are kept (akinaza#397): the administrator picks a provider and region (Toronto first), sees at once what the residency
+ * Where the files are kept (folioviv#397): the administrator picks a provider and region (Toronto first), sees at once what the residency
  * sentence will say (the package's region table, never a guess in Canada's favour), and saves it. Saved through the audited settings
  * route; the access keys never come through this screen.
  */

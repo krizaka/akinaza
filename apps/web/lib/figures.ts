@@ -1,5 +1,5 @@
-import { computeFigures, declarationPeriod, type Figure, type FigureId, FILING, type NextAction, nextActions, type Period } from "@akinaza/core";
-import { figuresSnapshot, shopFigureOverrides } from "@akinaza/db";
+import { computeFigures, declarationPeriod, type Figure, type FigureId, FILING, type NextAction, nextActions, type Period } from "@folioviv/core";
+import { figuresSnapshot, shopFigureOverrides } from "@folioviv/db";
 
 import { db } from "./db";
 import { figureRules } from "./figure-rules";
@@ -12,7 +12,7 @@ export interface ShopFigures {
 
 /**
  * The owner's figures and « que faire maintenant » for a shop at an instant (#260): the ledger and the shop's rows read in its own calendar,
- * computed by `@akinaza/core`, judged by the administrator's thresholds. The period is the declaration period that contains `today` (or the
+ * computed by `@folioviv/core`, judged by the administrator's thresholds. The period is the declaration period that contains `today` (or the
  * one asked for); the shop's filing frequency is not captured yet, so quarters, as « Vos livres » prepares them.
  */
 export async function loadFigures(shop: { id: string }, today: string, now: Date, period?: Period): Promise<ShopFigures> {

@@ -1,4 +1,4 @@
-import { SHOP_TYPES } from "@akinaza/core";
+import { SHOP_TYPES } from "@folioviv/core";
 import { describe, expect, it, vi } from "vitest";
 
 import { templateChoicesByTrade } from "@/lib/template-choices";

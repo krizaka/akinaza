@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// No empty map (akinaza#488): on the pages that draw a map, the live map's box must have a size and a canvas. The shop page's map once drew as an empty
+// No empty map (folioviv#488): on the pages that draw a map, the live map's box must have a size and a canvas. The shop page's map once drew as an empty
 // grey box (the map was `absolute inset-0` in a frame with no height of its own: 0 px); nothing in the crawl noticed, because a 0 px element overflows nothing.
 //
 //   node scripts/check-maps.mjs --base http://localhost:3000

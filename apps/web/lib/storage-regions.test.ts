@@ -11,7 +11,7 @@ const fr = bindProduct(frRaw);
 
 const KEYS = ["canada-qc", "canada-on", "canada-ab", "canada", "elsewhere", "unknown", "user-cloud", "device"] as const;
 
-describe("where the administrator keeps the files (akinaza#397)", () => {
+describe("where the administrator keeps the files (folioviv#397)", () => {
   it("offers Toronto, and says Ontario for it", () => {
     const toronto = REGION_CHOICES.find((c) => c.id === "digitalocean-spaces:tor1")!;
     expect(CANADIAN_CHOICES).toContain(toronto);

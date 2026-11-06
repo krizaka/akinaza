@@ -3,9 +3,9 @@
 // five clients gets one open group walk at the next 14:00 slot (packages/db/src/qa-reset-walker.ts). Only the shop with the
 // persona's slug is touched; nothing is printed but the counts. Idempotent.
 //
-//   DATABASE_URL=… DATABASE_CA_CERT=… pnpm --filter @akinaza/web exec tsx scripts/qa-reset-walker.mjs
-import { createDb, pg, poolConfig } from "@akinaza/db";
-import { resetWalkerPersona } from "@akinaza/db/qa-reset-walker";
+//   DATABASE_URL=… DATABASE_CA_CERT=… pnpm --filter @folioviv/web exec tsx scripts/qa-reset-walker.mjs
+import { createDb, pg, poolConfig } from "@folioviv/db";
+import { resetWalkerPersona } from "@folioviv/db/qa-reset-walker";
 
 const SLUG = "pattes-saint-henri";
 

@@ -1,71 +1,71 @@
 {
   "$schema": "https://raw.githubusercontent.com/krizaka/.github/main/docs/standards/dev-preview.schema.json",
   "version": 1,
-  "product": "akinaza",
+  "product": "folioviv",
   "index": "off",
   "criteria": {
     "site.healthy": {
-      "evidence": "https://www.akinaza.com/api/healthz",
+      "evidence": "https://www.folioviv.com/api/healthz",
       "checked": "2026-10-16"
     },
     "site.signup-closed": {
-      "evidence": "https://github.com/krizaka/akinaza/blob/main/apps/web/app/api/auth/sign-up/route.ts",
+      "evidence": "https://github.com/krizaka/folioviv/blob/main/apps/web/app/api/auth/sign-up/route.ts",
       "checked": "2026-10-16"
     },
     "site.qa-signin": {
-      "evidence": "https://www.akinaza.com/en/sign-in",
+      "evidence": "https://www.folioviv.com/en/sign-in",
       "checked": "2026-10-16"
     },
     "journey.core": {
-      "evidence": "https://krizaka-assets.b-cdn.net/pr-assets/akinaza/hero-take/take-fr.mp4",
+      "evidence": "https://krizaka-assets.b-cdn.net/pr-assets/folioviv/hero-take/take-fr.mp4",
       "checked": "2026-10-19",
       "note": "One continuous phone take (FR; EN: take-en.mp4): storefront, slot, booking, walker check-in/out, report sent, the client's report, Vos livres. Request ids in journey-fr.json / journey-en.json beside it."
     },
-    "journey.ai-via-orazaka": {
-      "na": "Akinaza ships no AI feature (krizaka/akinaza#161): nothing to prove."
+    "journey.ai-via-sovkora": {
+      "na": "Folioviv ships no AI feature (krizaka/folioviv#161): nothing to prove."
     },
     "ui.krizaka-ui": {
-      "evidence": "https://github.com/krizaka/akinaza/blob/main/scripts/check-overflow.mjs",
+      "evidence": "https://github.com/krizaka/folioviv/blob/main/scripts/check-overflow.mjs",
       "checked": "2026-10-19",
       "note": "CI crawl (check-overflow): 8 pages x 6 widths x dark/light, refuses horizontal overflow, console errors, HTTP errors, empty pages; one footer (probe)."
     },
     "ui.themes-devices": {
-      "evidence": "https://krizaka-assets.b-cdn.net/pr-assets/akinaza/hero-take/after/books-phone-light.png",
+      "evidence": "https://krizaka-assets.b-cdn.net/pr-assets/folioviv/hero-take/after/books-phone-light.png",
       "checked": "2026-10-19",
-      "note": "CI crawl job 'Lint · Typecheck · Tests · Build' (scripts/check-overflow.mjs) + reviewed captures, phone and desktop, dark and light: https://krizaka-assets.b-cdn.net/pr-assets/akinaza/hero-take/after/"
+      "note": "CI crawl job 'Lint · Typecheck · Tests · Build' (scripts/check-overflow.mjs) + reviewed captures, phone and desktop, dark and light: https://krizaka-assets.b-cdn.net/pr-assets/folioviv/hero-take/after/"
     },
     "ux.ia-review": {
       "evidence": null,
       "gap": "No UX/IA review.",
-      "issue": "https://github.com/krizaka/akinaza/issues/27"
+      "issue": "https://github.com/krizaka/folioviv/issues/27"
     },
     "mobile.build": {
-      "na": "Akinaza has no mobile app in the dev preview: AGENTS.md §1 says so (apps/mobile is an unbuilt skeleton, outside the workspace until the mobile phase A5). The dog walker uses the phone-first web app."
+      "na": "Folioviv has no mobile app in the dev preview: AGENTS.md §1 says so (apps/mobile is an unbuilt skeleton, outside the workspace until the mobile phase A5). The dog walker uses the phone-first web app."
     },
     "mobile.ux-review": {
       "na": "Follows mobile.build, which is na."
     },
     "quality.ci-green": {
-      "evidence": "https://github.com/krizaka/akinaza/actions?query=branch%3Amain",
+      "evidence": "https://github.com/krizaka/folioviv/actions?query=branch%3Amain",
       "checked": "2026-10-16"
     },
     "quality.tests": {
-      "evidence": "https://github.com/krizaka/akinaza/actions?query=branch%3Amain",
+      "evidence": "https://github.com/krizaka/folioviv/actions?query=branch%3Amain",
       "checked": "2026-10-16"
     },
     "security.alerts": {
-      "evidence": "https://github.com/krizaka/akinaza/security",
+      "evidence": "https://github.com/krizaka/folioviv/security",
       "checked": "2026-10-16"
     },
     "docs.current": {
       "evidence": null,
       "gap": "README/AGENTS/docs not checked against the dev deployment.",
-      "issue": "https://github.com/krizaka/akinaza/issues/33"
+      "issue": "https://github.com/krizaka/folioviv/issues/33"
     },
     "seo.family": {
-      "evidence": "https://github.com/krizaka/akinaza/blob/main/apps/web/lib/proxy.test.ts",
+      "evidence": "https://github.com/krizaka/folioviv/blob/main/apps/web/lib/proxy.test.ts",
       "checked": "2026-10-19",
-      "note": "node scripts/check-seo-family.mjs --base https://dev.akinaza.com --host https://dev.akinaza.com --index off: 6 pages and robots.txt, all good (run 2026-10-19)."
+      "note": "node scripts/check-seo-family.mjs --base https://dev.folioviv.com --host https://dev.folioviv.com --index off: 6 pages and robots.txt, all good (run 2026-10-19)."
     },
     "ops.cost": {
       "evidence": null,
@@ -73,36 +73,36 @@
       "issue": "https://github.com/krizaka/.github/issues/78"
     },
     "admin.gated": {
-      "evidence": "https://github.com/krizaka/akinaza/blob/main/apps/web/lib/admin-gate.test.ts",
+      "evidence": "https://github.com/krizaka/folioviv/blob/main/apps/web/lib/admin-gate.test.ts",
       "checked": "2026-10-19",
-      "note": "Every admin API route calls requireAdmin, every console page sits behind the signed layout (pageAdmin: session, ADMIN role, AUTH_ALLOWED_IPS, 404 otherwise); the console is a 404 on dev.akinaza.com (live: 404)."
+      "note": "Every admin API route calls requireAdmin, every console page sits behind the signed layout (pageAdmin: session, ADMIN role, AUTH_ALLOWED_IPS, 404 otherwise); the console is a 404 on dev.folioviv.com (live: 404)."
     },
     "admin.noindex": {
-      "evidence": "https://admin.akinaza.com/robots.txt",
+      "evidence": "https://admin.folioviv.com/robots.txt",
       "checked": "2026-10-16"
     },
     "admin.operator-tasks": {
       "evidence": null,
       "gap": "Console pages exist (audit, invoices); tasks not proven end to end.",
-      "issue": "https://github.com/krizaka/akinaza/issues/39"
+      "issue": "https://github.com/krizaka/folioviv/issues/39"
     },
     "admin.audit-log": {
       "evidence": null,
       "gap": "Audit page exists; not proven for every action.",
-      "issue": "https://github.com/krizaka/akinaza/issues/41"
+      "issue": "https://github.com/krizaka/folioviv/issues/41"
     },
     "admin.shell": {
       "evidence": null,
       "gap": "Admin shell/themes unverified.",
-      "issue": "https://github.com/krizaka/akinaza/issues/43"
+      "issue": "https://github.com/krizaka/folioviv/issues/43"
     },
     "admin.ux-review": {
       "evidence": null,
       "gap": "No UX/IA review of the console.",
-      "issue": "https://github.com/krizaka/akinaza/issues/45"
+      "issue": "https://github.com/krizaka/folioviv/issues/45"
     },
     "admin.ci": {
-      "evidence": "https://github.com/krizaka/akinaza/actions?query=branch%3Amain",
+      "evidence": "https://github.com/krizaka/folioviv/actions?query=branch%3Amain",
       "checked": "2026-10-16"
     },
     "mobile.app-links": {

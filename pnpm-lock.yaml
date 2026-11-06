@@ -57,10 +57,10 @@ importers:
 
   apps/mobile:
     dependencies:
-      '@akinaza/client':
+      '@folioviv/client':
         specifier: workspace:*
         version: link:../../packages/client
-      '@akinaza/core':
+      '@folioviv/core':
         specifier: workspace:*
         version: link:../../packages/core
       '@krizaka/app-client':
@@ -160,10 +160,10 @@ importers:
 
   apps/web:
     dependencies:
-      '@akinaza/core':
+      '@folioviv/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@akinaza/db':
+      '@folioviv/db':
         specifier: workspace:*
         version: link:../../packages/db
       '@krizaka/api-keys':
@@ -314,7 +314,7 @@ importers:
 
   packages/client:
     dependencies:
-      '@akinaza/core':
+      '@folioviv/core':
         specifier: workspace:*
         version: link:../core
       '@krizaka/app-client':
@@ -382,7 +382,7 @@ importers:
 
   packages/db:
     dependencies:
-      '@akinaza/core':
+      '@folioviv/core':
         specifier: workspace:*
         version: link:../core
       '@date-fns/tz':

@@ -1,7 +1,7 @@
 import { presetEndpoint, type ResidencyLabel, residencyLabel, S3_PRESETS } from "@krizaka/storage";
 
 /**
- * Where the administrator can keep the files (akinaza#397, org rule « storage configured by the admin »): the S3-compatible providers of
+ * Where the administrator can keep the files (folioviv#397, org rule « storage configured by the admin »): the S3-compatible providers of
  * `@krizaka/storage` and the regions each one offers. The country and province of a region come from the package's region table (one table for
  * every Krizaka product), so a sentence never claims Canada for a region the table does not know.
  */

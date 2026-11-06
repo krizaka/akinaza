@@ -4,12 +4,12 @@
 // The script knows the setting by its kind only (it imports no application code: the app's registry pulls the whole domain in), so the value is validated
 // by shape here and by the full registry when the app reads it.
 //
-//   DATABASE_URL=… pnpm --filter @akinaza/web exec tsx scripts/set-setting.mjs <key> <json-value> [--kind flag|choice|subset|integer] [--user <e-mail>] [--actor <e-mail or label>]
+//   DATABASE_URL=… pnpm --filter @folioviv/web exec tsx scripts/set-setting.mjs <key> <json-value> [--kind flag|choice|subset|integer] [--user <e-mail>] [--actor <e-mail or label>]
 //   e.g.  … set-setting.mjs features.storefrontTemplates true
-//         … set-setting.mjs features.cahierStorefront true --user ines.encrevive@akinaza.test   (one person's value: the demo shops' owners, never everyone)
+//         … set-setting.mjs features.cahierStorefront true --user ines.encrevive@folioviv.test   (one person's value: the demo shops' owners, never everyone)
 //         … set-setting.mjs storefront.templates.offered '["salon-carte","pets-histoire"]' --kind subset
 // The audit names the actor: an e-mail of an account is attributed to it; any other label is recorded without an account, as the app's own system actions are.
-import { pg, poolConfig } from "@akinaza/db";
+import { pg, poolConfig } from "@folioviv/db";
 import { choice, defineSettings, flag, GLOBAL_ONLY, integer, postgresSettings, SCOPE, subset } from "@krizaka/settings";
 
 const args = process.argv.slice(2);

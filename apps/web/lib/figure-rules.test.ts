@@ -1,4 +1,4 @@
-import { ACTION_KINDS, computeFigures, DEFAULT_FIGURE_THRESHOLDS, FIGURE_ID, LEXICON, nextActions } from "@akinaza/core";
+import { ACTION_KINDS, computeFigures, DEFAULT_FIGURE_THRESHOLDS, FIGURE_ID, LEXICON, nextActions } from "@folioviv/core";
 import { describe, expect, it } from "vitest";
 
 import { bindProduct } from "@/lib/brand";

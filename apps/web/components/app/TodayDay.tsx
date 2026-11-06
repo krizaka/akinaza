@@ -1,6 +1,6 @@
 "use client";
 
-import { BOARD_PERIODS, type BoardPeriod, type TodayBoard } from "@akinaza/core";
+import { BOARD_PERIODS, type BoardPeriod, type TodayBoard } from "@folioviv/core";
 import { Sparkline } from "@krizaka/charts/sparkline";
 import { Agenda, type AgendaItem } from "@krizaka/ui/agenda";
 import { Alert } from "@krizaka/ui/alert";

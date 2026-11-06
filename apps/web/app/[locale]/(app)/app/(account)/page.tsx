@@ -1,15 +1,15 @@
-import { localDay } from "@akinaza/core";
-import { clientBookings, clientFilesOf, clientInvoices, clientRequestsOf, dependantsOf, publicShop } from "@akinaza/db";
+import { localDay } from "@folioviv/core";
+import { clientBookings, clientFilesOf, clientInvoices, clientRequestsOf, dependantsOf, publicShop } from "@folioviv/db";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
+import { requestNow } from "@/app/request-now";
 import { ClientHome } from "@/components/app/ClientHome";
 import { pageSession } from "@/lib/access";
 import { db } from "@/lib/db";
 import { asLocale, getDictionary } from "@/lib/i18n";
 import { lastMember } from "@/lib/member-shop";
 import { shopRoutes } from "@/lib/routes";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +51,7 @@ async function ClientSpace({ accountId }: Readonly<{ accountId: string }>) {
   );
 }
 
-/** A client's requests at a shop, and the shop's catalogue to choose from when its page is published (akinaza#210). */
+/** A client's requests at a shop, and the shop's catalogue to choose from when its page is published (folioviv#210). */
 async function requestsOf(clientId: string, shopSlug: string | null) {
   const page = shopSlug ? await publicShop(db(), shopSlug) : null;
   return {

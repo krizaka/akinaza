@@ -24,7 +24,7 @@ describe("the pages render exactly one footer", () => {
     expect(footer).toContain('t("chrome.devNotice")');
   });
 
-  it("the links sit in three short columns (Product, Legal, Krizaka), not one tall column (akinaza#479)", () => {
+  it("the links sit in three short columns (Product, Legal, Krizaka), not one tall column (folioviv#479)", () => {
     expect(read("components/SiteFooter.tsx").match(/<SiteFooterColumn\b/g)).toHaveLength(3);
     for (const locale of ["en", "fr"]) {
       const chrome = JSON.parse(read(`messages/${locale}.json`)).chrome;

@@ -1,33 +1,33 @@
 {
-  "product": "akinaza",
+  "product": "folioviv",
   "plans": [
     {
-      "priceKey": "akinaza.founder",
-      "lookupKey": "akinaza_founder_monthly_cad",
-      "name": "Akinaza — Founder offer (monthly, setup included)",
+      "priceKey": "folioviv.founder",
+      "lookupKey": "folioviv_founder_monthly_cad",
+      "name": "Folioviv — Founder offer (monthly, setup included)",
       "taxCode": "txcd_10103001"
     },
     {
-      "priceKey": "akinaza.starter",
-      "lookupKey": "akinaza_starter_monthly_cad",
-      "name": "Akinaza — Starter (monthly)",
+      "priceKey": "folioviv.starter",
+      "lookupKey": "folioviv_starter_monthly_cad",
+      "name": "Folioviv — Starter (monthly)",
       "taxCode": "txcd_10103001"
     },
     {
-      "priceKey": "akinaza.scale",
-      "lookupKey": "akinaza_scale_monthly_cad",
-      "name": "Akinaza — Pro (monthly)",
+      "priceKey": "folioviv.scale",
+      "lookupKey": "folioviv_scale_monthly_cad",
+      "name": "Folioviv — Pro (monthly)",
       "taxCode": "txcd_10103001"
     },
     {
-      "priceKey": "akinaza.association",
-      "lookupKey": "akinaza_association_monthly_cad",
-      "name": "Akinaza — Association (monthly)",
+      "priceKey": "folioviv.association",
+      "lookupKey": "folioviv_association_monthly_cad",
+      "name": "Folioviv — Association (monthly)",
       "taxCode": "txcd_10103001"
     }
   ],
   "portal": {
-    "headline": "Akinaza — manage your subscription",
+    "headline": "Folioviv — manage your subscription",
     "cancel": "at_period_end"
   }
 }

@@ -1,5 +1,5 @@
-import type { CustomHostnames, DomainLimits } from "@akinaza/core";
-import type { DomainPorts } from "@akinaza/db";
+import type { CustomHostnames, DomainLimits } from "@folioviv/core";
+import type { DomainPorts } from "@folioviv/db";
 
 import { dnsOf } from "./dns-source";
 import { edgeHostnames } from "./edge-hostnames";

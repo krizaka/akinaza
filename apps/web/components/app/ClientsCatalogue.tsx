@@ -90,7 +90,7 @@ function bulkActions({ organize, selected, onExport, exportLabel }: { organize: 
 /**
  * Clients on the catalogue template (D5, review K3b): the plan strip (how many, what they owe, a meter of who is up to date),
  * the search and the filter chips with their counts — all in the address —, then the rows with their state and « Facturer »;
- * the tags are the binder's dividers, the views are links (akinaza#337); selected rows are tagged, untagged (at most 200) or exported. A name opens the client's file.
+ * the tags are the binder's dividers, the views are links (folioviv#337); selected rows are tagged, untagged (at most 200) or exported. A name opens the client's file.
  */
 export function ClientsCatalogue({ clients, query, timeZone, organize, tagsByClient }: Readonly<{ clients: ClientRowView[]; query: ClientsQuery; timeZone: string; organize: OrganizeData; tagsByClient: Record<string, TagLite[]> }>) {
   const { say, locale } = useSay();

@@ -1,6 +1,6 @@
 "use client";
 
-import { WALL_LIMITS, WALL_TEXTURES, type WallItem, type WallTexture } from "@akinaza/core";
+import { WALL_LIMITS, WALL_TEXTURES, type WallItem, type WallTexture } from "@folioviv/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Button } from "@krizaka/ui/button";
 import { Card } from "@krizaka/ui/card";

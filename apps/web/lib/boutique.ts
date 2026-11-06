@@ -1,4 +1,4 @@
-import type { ShopPermission } from "@akinaza/db";
+import type { ShopPermission } from "@folioviv/db";
 import type { SettingsNavGroup } from "@krizaka/ui/settings-layout";
 
 /**

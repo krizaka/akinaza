@@ -45,11 +45,11 @@ describe("the database budget", () => {
 describe("the administration host", () => {
   const env = { NODE_ENV: "production", AUTH_ALLOWED_IPS: "203.0.113.7", ABUSE_CLIENT_IP_HEADER: "do-connecting-ip" };
   const call = (host: string, ip: string) => new Headers({ host, "do-connecting-ip": ip });
-  it("refuses a foreign address everywhere on admin.akinaza.com, the sign-in included", () => {
-    expect(hostAllowed(call("admin.akinaza.com", "198.51.100.9"), env)).toBe(false);
-    expect(hostAllowed(call("admin.akinaza.com", "203.0.113.7"), env)).toBe(true);
+  it("refuses a foreign address everywhere on admin.folioviv.com, the sign-in included", () => {
+    expect(hostAllowed(call("admin.folioviv.com", "198.51.100.9"), env)).toBe(false);
+    expect(hostAllowed(call("admin.folioviv.com", "203.0.113.7"), env)).toBe(true);
   });
   it("leaves the product host open", () => {
-    expect(hostAllowed(call("dev.akinaza.com", "198.51.100.9"), env)).toBe(true);
+    expect(hostAllowed(call("dev.folioviv.com", "198.51.100.9"), env)).toBe(true);
   });
 });

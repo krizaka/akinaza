@@ -1,4 +1,4 @@
-import { enqueueMail, exportClient } from "@akinaza/db";
+import { enqueueMail, exportClient } from "@folioviv/db";
 import { AccountError, postgresAccounts } from "@krizaka/auth";
 
 import { requireSession } from "./access";
@@ -15,7 +15,7 @@ const escapeHtml = (text: string) => text.replace(/[&<>"]/g, (c) => ({ "&": "&am
 export const accountMailTemplate = (text: string): "password-reset" | "email-change" => (/\/reset-password\?token=/.test(text) ? "password-reset" : "email-change");
 
 /**
- * The account of an Akinaza member (`@krizaka/auth`, the shared block Yomizaka's contract came from): over this app's own
+ * The account of an Folioviv member (`@krizaka/auth`, the shared block Verikora's contract came from): over this app's own
  * PostgreSQL, its password hashing and its session token hash. The mails it sends (an address change, a password reset) are
  * queued in the outbox; they leave when a mail provider is configured. `passwordResetTtlMinutes` comes from the settings
  * (`auth.passwordResetTtlMinutes`), never from here.
@@ -52,7 +52,7 @@ export function accountAct(req: Request, scope: string, run: (session: Session) 
   });
 }
 
-/** What Akinaza keeps about a member besides the account: the shops they run and, for each client file of theirs, everything its shop holds (Loi 25, access). */
+/** What Folioviv keeps about a member besides the account: the shops they run and, for each client file of theirs, everything its shop holds (Loi 25, access). */
 export async function accountDataWith(accountId: string, key: Buffer): Promise<Record<string, unknown>> {
   const shops = await query<{ id: string; name: string; slug: string | null; published: boolean }>("SELECT id, name, slug, published FROM shops WHERE owner_id = $1 ORDER BY created_at", [accountId]);
   const files = await query<{ id: string }>("SELECT id FROM clients WHERE account_id = $1 AND erased_at IS NULL", [accountId]);

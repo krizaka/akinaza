@@ -7,7 +7,7 @@ import { appPrices } from "@/lib/price-catalogue";
 
 export const dynamic = "force-dynamic";
 
-/** The catalogue of prices for the admin screen (akinaza#371): each entry in force, what is scheduled, and each entry's history. */
+/** The catalogue of prices for the admin screen (folioviv#371): each entry in force, what is scheduled, and each entry's history. */
 export function GET(req: Request) {
   return handle(async () => {
     await requireAdmin(req);

@@ -1,6 +1,6 @@
 /**
- * The only place a cookie of the app is named and shaped (ADR-005 slice 1, akinaza#534). Shops live on sibling hosts of `www`, and any
- * script on one of them can toss a `Domain=akinaza.com` cookie that `www` would receive: so every cookie is host-locked with the
+ * The only place a cookie of the app is named and shaped (ADR-005 slice 1, folioviv#534). Shops live on sibling hosts of `www`, and any
+ * script on one of them can toss a `Domain=folioviv.com` cookie that `www` would receive: so every cookie is host-locked with the
  * `__Host-` prefix (Secure, `Path=/`, no `Domain`), and none is ever given a `Domain`. A plain-http origin (CI, local) cannot take the
  * prefix and keeps the plain names.
  */
@@ -8,7 +8,7 @@ const production = process.env.NODE_ENV === "production";
 const plainHttp = (process.env.APP_PUBLIC_URL ?? "").startsWith("http://");
 const hostLocked = production && !plainHttp;
 
-/** `akinaza_session` → `__Host-akinaza_session` where the browser can honour the prefix. */
+/** `folioviv_session` → `__Host-folioviv_session` where the browser can honour the prefix. */
 export function cookieName(base: string): string {
   return hostLocked ? `__Host-${base}` : base;
 }

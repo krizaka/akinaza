@@ -1,4 +1,4 @@
-import { addClientRequestFile, ownClientRequest } from "@akinaza/db";
+import { addClientRequestFile, ownClientRequest } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireOwnClient } from "@/lib/access";
@@ -11,7 +11,7 @@ import { detectRequestFile, MAX_REQUEST_FILE_BYTES, storeRequestFile } from "@/l
 export const dynamic = "force-dynamic";
 
 /**
- * One file for a request (akinaza#210): a photo of the cut they want, a document. Checked by its bytes (JPEG, PNG, WebP,
+ * One file for a request (folioviv#210): a photo of the cut they want, a document. Checked by its bytes (JPEG, PNG, WebP,
  * PDF), stored content-hashed under the shop's `requests/<id>/`, kept as its address. Off — 503 — until the storage is set.
  */
 export const POST = (req: Request, { params }: { params: Promise<{ id: string }> }) =>

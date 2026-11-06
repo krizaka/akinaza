@@ -1,5 +1,5 @@
-import type { PublicShop } from "@akinaza/db";
-import type { CommunityView } from "@akinaza/db";
+import type { PublicShop } from "@folioviv/db";
+import type { CommunityView } from "@folioviv/db";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
@@ -123,7 +123,7 @@ describe("what is not there is not drawn", () => {
   });
 });
 
-describe("the page is drawn from its document (akinaza#401)", () => {
+describe("the page is drawn from its document (folioviv#401)", () => {
   const page = html(community());
   const sources = (markup: string) => [...markup.matchAll(/<img[^>]*\ssrc="([^"]+)"/g)].map((m) => m[1]!.split("?")[0]!);
 

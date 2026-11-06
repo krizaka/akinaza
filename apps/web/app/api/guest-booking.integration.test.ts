@@ -45,19 +45,19 @@ describe.runIf(enabled)("booking as a guest", () => {
   });
   beforeEach(() => resetRateLimits());
   afterAll(async () => {
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@folioviv.test`]);
     await closeSuite(stamp);
   });
 
   it("refuses a request without the booking consent, and a service that is not the shop's", async () => {
-    const email = `no-consent-${stamp}@akinaza.test`;
+    const email = `no-consent-${stamp}@folioviv.test`;
     expect((await apiCall(code, "POST", `/api/shops/${slug}/guest/code`, { params: { slug }, json: start(email, { consentService: false }) })).status).toBe(400);
     expect((await apiCall(code, "POST", `/api/shops/${slug}/guest/code`, { params: { slug }, json: start(email, { serviceId: randomUUID() }) })).status).toBe(404);
     expect(mails.filter((m) => m.to === email)).toEqual([]);
   });
 
   it("mails a code, books and signs in only for the right code — once — and keeps no code in the outbox", async () => {
-    const email = `visitor-${stamp}@akinaza.test`;
+    const email = `visitor-${stamp}@folioviv.test`;
     const sent = await apiCall(code, "POST", `/api/shops/${slug}/guest/code`, { params: { slug }, json: start(email, { fullName: "Camille Roy" }) });
     expect(sent.status).toBe(201);
     const secret = codeIn(email);
@@ -68,7 +68,7 @@ describe.runIf(enabled)("booking as a guest", () => {
 
     const wrong = await apiCall(confirm, "POST", `/api/shops/${slug}/guest/confirm`, { params: { slug }, json: { challengeId: sent.body.challengeId, email, code: secret === "000000" ? "111111" : "000000" } });
     expect(wrong).toMatchObject({ status: 400, body: { code: "CODE_INVALID", attemptsLeft: 4 } });
-    const otherAddress = await apiCall(confirm, "POST", `/api/shops/${slug}/guest/confirm`, { params: { slug }, json: { challengeId: sent.body.challengeId, email: `thief-${stamp}@akinaza.test`, code: secret } });
+    const otherAddress = await apiCall(confirm, "POST", `/api/shops/${slug}/guest/confirm`, { params: { slug }, json: { challengeId: sent.body.challengeId, email: `thief-${stamp}@folioviv.test`, code: secret } });
     expect(otherAddress.status).toBe(400);
 
     const done = await apiCall(confirm, "POST", `/api/shops/${slug}/guest/confirm`, { params: { slug }, json: { challengeId: sent.body.challengeId, email, code: secret } });
@@ -86,7 +86,7 @@ describe.runIf(enabled)("booking as a guest", () => {
   });
 
   it("locks a challenge after five wrong codes, even for the right one", async () => {
-    const email = `locked-${stamp}@akinaza.test`;
+    const email = `locked-${stamp}@folioviv.test`;
     const sent = await apiCall(code, "POST", `/api/shops/${slug}/guest/code`, { params: { slug }, json: start(email) });
     const secret = codeIn(email);
     const bad = secret === "000000" ? "111111" : "000000";
@@ -99,7 +99,7 @@ describe.runIf(enabled)("booking as a guest", () => {
   });
 
   it("limits the codes mailed to one address, so a mailbox cannot be flooded", async () => {
-    const email = `flood-${stamp}@akinaza.test`;
+    const email = `flood-${stamp}@folioviv.test`;
     const statuses: number[] = [];
     for (let i = 0; i < 4; i += 1) {
       statuses.push((await apiCall(code, "POST", `/api/shops/${slug}/guest/code`, { params: { slug }, json: start(email) })).status);
@@ -118,7 +118,7 @@ describe.runIf(enabled)("booking as a guest", () => {
 
   it("fails closed when no mail channel is configured", async () => {
     vi.stubEnv("MAIL_PROVIDER", "none");
-    const res = await apiCall(code, "POST", `/api/shops/${slug}/guest/code`, { params: { slug }, json: start(`closed-${stamp}@akinaza.test`) });
+    const res = await apiCall(code, "POST", `/api/shops/${slug}/guest/code`, { params: { slug }, json: start(`closed-${stamp}@folioviv.test`) });
     expect(res).toMatchObject({ status: 503, body: { code: "MAIL_UNAVAILABLE" } });
     vi.stubEnv("MAIL_PROVIDER", "mailgun");
   });

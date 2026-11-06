@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 
-import type { CalendarKind } from "@akinaza/core";
+import type { CalendarKind } from "@folioviv/core";
 
 /** The providers the owner consents to at their own site (OAuth); the others are an address or a credential given here. */
 export const OAUTH_KINDS = ["google", "outlook"] as const satisfies readonly CalendarKind[];
@@ -54,7 +54,7 @@ export function newPkce(): { verifier: string; challenge: string } {
   return { verifier, challenge: crypto.createHash("sha256").update(verifier).digest("base64url") };
 }
 
-export const PKCE_COOKIE = "akinaza_cal_pkce";
+export const PKCE_COOKIE = "folioviv_cal_pkce";
 export const pkceCookie = (nonce: string, verifier: string, secure: boolean) =>
   `${PKCE_COOKIE}=${nonce}.${verifier}; Path=/api/calendars/callback; HttpOnly; SameSite=Lax; Max-Age=${STATE_TTL_SECONDS}${secure ? "; Secure" : ""}`;
 export const clearPkceCookie = (secure: boolean) => `${PKCE_COOKIE}=; Path=/api/calendars/callback; HttpOnly; SameSite=Lax; Max-Age=0${secure ? "; Secure" : ""}`;

@@ -1,5 +1,5 @@
-import { parseProtectedTerms } from "@akinaza/core";
-import type { SlugPolicy } from "@akinaza/db";
+import { parseProtectedTerms } from "@folioviv/core";
+import type { SlugPolicy } from "@folioviv/db";
 
 import { appSettings } from "./settings";
 

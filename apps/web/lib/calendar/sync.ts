@@ -1,5 +1,5 @@
-import { addLocalDays, type BusyRange, CalendarSourceError, localDay, localInstant, NO_VALIDATORS } from "@akinaza/core";
-import { claimDueConnections, type DueConnection, openField, recordSyncFailure, recordSyncOk } from "@akinaza/db";
+import { addLocalDays, type BusyRange, CalendarSourceError, localDay, localInstant, NO_VALIDATORS } from "@folioviv/core";
+import { claimDueConnections, type DueConnection, openField, recordSyncFailure, recordSyncOk } from "@folioviv/db";
 
 import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";

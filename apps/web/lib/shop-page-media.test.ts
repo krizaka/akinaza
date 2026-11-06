@@ -1,4 +1,4 @@
-import { documentFromLegacy } from "@akinaza/core";
+import { documentFromLegacy } from "@folioviv/core";
 import { shopStarters } from "@krizaka/ui/shop";
 import { describe, expect, it } from "vitest";
 
@@ -7,7 +7,7 @@ import { type PhotoPool, placedAddresses, planPhotos } from "./shop-page-media";
 const photo = (n: number) => ({ id: `p${n}`, src: `https://cdn.example/${n}.webp?w=960`, alt: `Photo ${n}` });
 const all = ["services", "team", "hours", "zones", "trust", "gallery", "wall", "reels", "announcements", "reviews", "follow"].map((id) => ({ id, visible: true }));
 
-describe("no duplicate photo on a page (akinaza#401)", () => {
+describe("no duplicate photo on a page (folioviv#401)", () => {
   it("gives the cover to the hero and keeps it out of the gallery and the wall, whatever the sizes in the address", () => {
     const pool: PhotoPool = { cover: { src: "https://cdn.example/1.webp", alt: "Cover" }, gallery: [photo(1), photo(2), photo(3)], wall: [photo(3), photo(4), { ...photo(2), id: "w2" }] };
     const plan = planPhotos(documentFromLegacy({ sections: all, trade: "salon" }), pool);
@@ -40,7 +40,7 @@ describe("no duplicate photo on a page (akinaza#401)", () => {
   });
 });
 
-describe("the closing call's photo (akinaza#480)", () => {
+describe("the closing call's photo (folioviv#480)", () => {
   const closing = { schema: 1, preset: { id: "salon-vitrine", version: 1 }, sections: [{ key: "s_hero", type: "hero", variant: "poster", settings: { focus: "center" } }, { key: "s_gallery", type: "gallery", variant: "grid", settings: { source: "all" } }, { key: "s_booking_closing", type: "booking", variant: "closing", settings: { count: 4 } }] };
   it("is a photo no earlier section drew, the cover and the gallery included", () => {
     const plan = planPhotos(closing as never, { cover: photo(0), gallery: Array.from({ length: 14 }, (_, i) => photo(i)), wall: [] });

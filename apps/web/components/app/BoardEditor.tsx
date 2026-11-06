@@ -1,6 +1,6 @@
 "use client";
 
-import { ANNOUNCEMENT_LIMITS, currentAnnouncements } from "@akinaza/core";
+import { ANNOUNCEMENT_LIMITS, currentAnnouncements } from "@folioviv/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";

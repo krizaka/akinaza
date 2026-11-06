@@ -1,4 +1,4 @@
-import { setAccessNotes } from "@akinaza/db";
+import { setAccessNotes } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireOwnClient } from "@/lib/access";

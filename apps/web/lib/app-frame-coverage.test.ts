@@ -10,7 +10,7 @@ const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => (statSyn
 /** The groups of the signed-in space, each with a layout that draws the frame: the account (a client, or no shop in use) and a shop. */
 const FRAMED = ["(account)", "[shop]"];
 
-describe("every signed-in page sits in the shared AppFrame (akinaza#431, #440: the same shell as Yomizaka)", () => {
+describe("every signed-in page sits in the shared AppFrame (folioviv#431, #440: the same shell as Verikora)", () => {
   it("has a page only inside a group whose layout wraps it in SpaceChrome (the ShopFrame of @krizaka/ui's AppFrame)", () => {
     const pages = walk(APP).filter((f) => /\/(page|route)\.tsx?$/.test(f) && /page\.tsx$/.test(f));
     expect(pages.length).toBeGreaterThan(10);

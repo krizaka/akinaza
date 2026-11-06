@@ -1,15 +1,15 @@
 id: no-raw-cookie-name
 valid:
   - |
-    export const SESSION_COOKIE = cookieName("akinaza_session");
+    export const SESSION_COOKIE = cookieName("folioviv_session");
   - |
     const LOCALE_COOKIE = cookieName("NEXT_LOCALE");
   - |
-    const label = "akinaza_sessions";
+    const label = "folioviv_sessions";
 invalid:
   - |
-    export const SESSION_COOKIE = "akinaza_session";
+    export const SESSION_COOKIE = "folioviv_session";
   - |
     request.cookies.get("NEXT_LOCALE");
   - |
-    const SHOP = 'akinaza_shop';
+    const SHOP = 'folioviv_shop';

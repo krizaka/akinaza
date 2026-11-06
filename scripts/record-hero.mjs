@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// The home's hero take and its three screen stills, on today's product (akinaza#554): Éric (the Krizaka studio's owner, a persona, never the
+// The home's hero take and its three screen stills, on today's product (folioviv#554): Éric (the Krizaka studio's owner, a persona, never the
 // administrator) on a phone, with the notebook storefront on. One continuous take: the public page of his studio → Today → an invoice →
 // « Your books ». Captured with the Chrome DevTools screencast (every frame the compositor paints, with its timestamp) and encoded at a
 // constant 30 fps. It writes, per language, `hero-<l>.{mp4,webm}`, its poster `phone-hero-<l>.jpg` and the stills `phone-{book,invoice,books}-<l>.jpg`
@@ -8,7 +8,7 @@
 //   E2E_BASE=http://localhost:3217 E2E_LOCALE=fr E2E_OUT=<dir> E2E_ERIC_EMAIL=… E2E_ERIC_PASSWORD=… [E2E_SLUG=krizaka-demo] node scripts/record-hero.mjs
 //
 // The database is a seeded, throw-away one (`seed-krizaka.mjs`, `apply-shop-template.mjs krizaka-demo consulting-histoire`, the
-// `features.cahierStorefront` flag for Éric): dev.akinaza.com redirects its pages to www by design. Needs Chromium for playwright-core and ffmpeg.
+// `features.cahierStorefront` flag for Éric): dev.folioviv.com redirects its pages to www by design. Needs Chromium for playwright-core and ffmpeg.
 // The password stays in the environment and is never printed. Nothing is sent: Éric only reads.
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";

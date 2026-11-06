@@ -1,5 +1,5 @@
-import { REEL_TRANSITIONS } from "@akinaza/core";
-import { reorderReels, setReelTransition } from "@akinaza/db";
+import { REEL_TRANSITIONS } from "@folioviv/core";
+import { reorderReels, setReelTransition } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";
@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 const body = z.object({ order: z.array(z.string().uuid()).max(12).optional(), transition: z.enum(REEL_TRANSITIONS).optional() }).refine((b) => b.order !== undefined || b.transition !== undefined, { message: "Nothing to change" });
 
 /**
- * The playlist of the shop's television (akinaza#469): the order of the videos (exactly the shop's own, each once - anything else is a 409 and changes
+ * The playlist of the shop's television (folioviv#469): the order of the videos (exactly the shop's own, each once - anything else is a 409 and changes
  * nothing) and the transition between two of them, one of three. Then the open pages draw themselves again.
  */
 export function PUT(req: Request) {

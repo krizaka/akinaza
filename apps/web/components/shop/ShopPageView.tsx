@@ -1,5 +1,6 @@
-import type { FramePaper } from "@akinaza/core";
+import type { FramePaper } from "@folioviv/core";
 import { Badge } from "@krizaka/ui/badge";
+import { cn } from "@krizaka/ui/cn";
 import { OpeningHours } from "@krizaka/ui/opening-hours";
 import { PaperGrain } from "@krizaka/ui/page";
 import type { ShopPage } from "@krizaka/ui/shop";
@@ -16,7 +17,6 @@ import { StorySection } from "@krizaka/ui/shop/story";
 import { TeamSection } from "@krizaka/ui/shop/team";
 import { VideoSection } from "@krizaka/ui/shop/video";
 import { VisitSection } from "@krizaka/ui/shop/visit";
-import { cn } from "@krizaka/ui/cn";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
@@ -87,7 +87,7 @@ const commonOf = (section: Section) => ({ id: section.key, "data-shop-key": sect
 
 /**
  * A fact on the hero is drawn over the shop's photo: it wears the `scrim` tone (white on a 60 % black veil, whatever the theme and the photo), never a
- * tinted tone whose text follows the theme (green on a dark photo was unreadable in the light theme, akinaza#567).
+ * tinted tone whose text follows the theme (green on a dark photo was unreadable in the light theme, folioviv#567).
  */
 function heroFact(b: NonNullable<Args<"hero">["section"]["blocks"]>[number], { view, community }: Pick<Ctx, "view" | "community">): ReactNode {
   if (b.settings.kind === "open-now" && view.status) {
@@ -225,7 +225,7 @@ function galleryLabel(view: StorefrontView, variant: string, t: Ctx["t"]): strin
 }
 
 /**
- * The mosaic is the package's `ShopGallery` (akinaza#481): a bento on a desktop, a snap strip on a phone, the lightbox a lazy chunk opened by a tile (no script before). Every tile has a fixed ratio
+ * The mosaic is the package's `ShopGallery` (folioviv#481): a bento on a desktop, a snap strip on a phone, the lightbox a lazy chunk opened by a tile (no script before). Every tile has a fixed ratio
  * (CLS 0); the `srcset` is the photo's width variants when it has some (`coverSrcSet`), else the file as it is.
  */
 function mosaicSection({ section, c, common, label, lead }: Args<"gallery"> & { common: ReturnType<typeof commonOf>; label: string; lead: string | undefined }): ReactNode {
@@ -338,7 +338,7 @@ const SECTIONS: Partial<Record<Section["type"], (args: { section: never; c: Ctx 
 const renderSection = (section: Section, c: Ctx): ReactNode => SECTIONS[section.type]?.({ section: section as never, c }) ?? null;
 
 /**
- * A shop's public page, drawn from its DOCUMENT (akinaza#401): `ShopFrame` and the `@krizaka/ui/shop/*` sections, in the document's order. The data (services, times,
+ * A shop's public page, drawn from its DOCUMENT (folioviv#401): `ShopFrame` and the `@krizaka/ui/shop/*` sections, in the document's order. The data (services, times,
  * team, hours, reviews) is the page's view, resolved by `buildStorefront`; the document says which sections, which variants and which settings. A section with nothing
  * to show is not drawn. The cover is the LCP (preloaded, a fixed ratio in the hero); every photo appears once (`planPhotos`); embeds stay behind their facade.
  */

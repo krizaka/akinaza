@@ -1,4 +1,4 @@
-import { replyToReview, setReviewState } from "@akinaza/db";
+import { replyToReview, setReviewState } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";

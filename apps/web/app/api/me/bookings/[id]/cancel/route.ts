@@ -1,11 +1,11 @@
-import { cancelBooking } from "@akinaza/db";
+import { cancelBooking } from "@folioviv/db";
 import { z } from "zod";
 
+import { requestNow } from "@/app/request-now";
 import { requireOwnClient } from "@/lib/access";
 import { db } from "@/lib/db";
 import { handle, idParam, readJson } from "@/lib/http";
 import { announceSlots } from "@/lib/realtime";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

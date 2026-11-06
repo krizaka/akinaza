@@ -11,8 +11,8 @@ vi.mock("@/lib/access", () => ({
   },
 }));
 const calls = vi.hoisted(() => ({ listed: 0, decided: [] as unknown[][], audited: [] as { action: string }[] }));
-vi.mock("@akinaza/db", async (original) => ({
-  ...(await original<typeof import("@akinaza/db")>()),
+vi.mock("@folioviv/db", async (original) => ({
+  ...(await original<typeof import("@folioviv/db")>()),
   pendingAssociations: async () => (calls.listed++, [{ id: "11111111-1111-4111-8111-111111111111", email: "oblique@example.test", kind: "neq", reference: "1234567890" }]),
   decideAssociation: async (_db: unknown, ...args: unknown[]) => (calls.decided.push(args), String(args[0]).startsWith("1")),
 }));

@@ -16,7 +16,7 @@ const say = (key: string, vars?: Record<string, string | number>) => {
 };
 vi.mock("@/lib/i18n-client", () => ({ useSay: () => ({ say, locale: "en" }) }));
 
-const url = "https://akinaza.example/api/feed/kf1.abcdef.ics";
+const url = "https://folioviv.example/api/feed/kf1.abcdef.ics";
 
 describe("the private feed address, shown once after rotating (#282)", () => {
   const html = renderToStaticMarkup(<FeedAddress id="feed-shop" name="Julie" url={url} />);

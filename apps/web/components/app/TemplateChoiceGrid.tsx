@@ -1,6 +1,6 @@
 "use client";
 
-import type { Template } from "@akinaza/core";
+import type { Template } from "@folioviv/core";
 import { ChoiceGrid } from "@krizaka/ui/choice-grid";
 
 import { TemplatePreview } from "@/components/app/TemplatePreview";

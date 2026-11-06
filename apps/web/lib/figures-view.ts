@@ -1,4 +1,4 @@
-import { type Figure, FIGURE_STATE, type FigureId, type FigureState, type FormulaTerm, LEXICON, type LexiconId, type NextAction, staleAt, type Unit } from "@akinaza/core";
+import { type Figure, FIGURE_STATE, type FigureId, type FigureState, type FormulaTerm, LEXICON, type LexiconId, type NextAction, staleAt, type Unit } from "@folioviv/core";
 
 import { type FormatLocale,formatMoney, INTL_LOCALE } from "./format";
 import { format, getDictionary, type Locale } from "./i18n";

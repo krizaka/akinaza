@@ -1,17 +1,17 @@
 #!/usr/bin/env node
-// End-to-end journey of the dog walker (Akinaza#52) on a running deployment, in a real browser, as the fictional Saint-Henri
+// End-to-end journey of the dog walker (Folioviv#52) on a running deployment, in a real browser, as the fictional Saint-Henri
 // persona: a client signs in on her phone, adds a second dog and books a group walk; the walker opens her day, starts the
 // walk, ends it, writes the report with a photo and sends it; the client reads the report. Every API call is recorded with
 // its request id (journey.json) — the proof that the video is a real run. Optionally records each part as a video.
 //
-//   E2E_BASE=https://dev.akinaza.com \
+//   E2E_BASE=https://dev.folioviv.com \
 //   E2E_CLIENT_EMAIL=… E2E_CLIENT_PASSWORD=… E2E_WALKER_EMAIL=… E2E_WALKER_PASSWORD=… \
 //   E2E_OUT=<dir> [E2E_VIDEO=1] [E2E_LOCALE=fr] pnpm run e2e:walker
 //
 // It needs a Chromium for playwright-core (PLAYWRIGHT_BROWSERS_PATH or the default cache). Nothing but the checks is printed;
 // passwords stay in the environment. It adds one dog and one booking on the client's file: run it on a throw-away or demo
 // database, never on someone's real data. `pnpm run e2e:walker` removes them when it ends (`demo:clean`, when the database address is
-// in the environment); `seed-cast --check` fails while they are still there (akinaza #1915).
+// in the environment); `seed-cast --check` fails while they are still there (folioviv #1915).
 import { mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -259,7 +259,7 @@ try {
     g.fillText("🐕", 300, 700);
     g.font = "bold 44px sans-serif";
     g.fillStyle = "#0c3b1f";
-    g.fillText("Illustration — Akinaza demo", 330, 860);
+    g.fillText("Illustration — Folioviv demo", 330, 860);
     return canvas.toDataURL("image/jpeg", 0.85).split(",")[1];
   });
   const photoPath = path.join(OUT, "walk.jpg");

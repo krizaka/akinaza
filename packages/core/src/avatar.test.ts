@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import { avatarChoice, avatarOf, avatarOptions, avatarSrc, pictureOf } from "./avatar";
 
-describe("a person without a photo wears the org JSON's default picture (akinaza#499)", () => {
+describe("a person without a photo wears the org JSON's default picture (folioviv#499)", () => {
   it("draws the picture the person chose", () => {
     const [first] = listDefaults("person");
     expect(pictureOf({ id: "a", avatarSeed: first!.id })?.id).toBe(first!.id);

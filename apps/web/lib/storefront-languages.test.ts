@@ -1,4 +1,4 @@
-import type { PublicShop } from "@akinaza/db";
+import type { PublicShop } from "@folioviv/db";
 import { describe, expect, it } from "vitest";
 
 import { bindProduct } from "@/lib/brand";

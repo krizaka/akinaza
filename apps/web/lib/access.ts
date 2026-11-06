@@ -1,4 +1,4 @@
-import { ownClient, SHOP_ROLES, shopClient, shopOfMember, type ShopPermission, type ShopRole } from "@akinaza/db";
+import { ownClient, SHOP_ROLES, shopClient, shopOfMember, type ShopPermission, type ShopRole } from "@folioviv/db";
 import { can } from "@krizaka/auth";
 import { cookies, headers } from "next/headers";
 
@@ -21,7 +21,7 @@ export function ipAllowed(requestHeaders: Headers, env: Record<string, string | 
   return !!ip && allowed.includes(ip);
 }
 
-/** admin.akinaza.com answers only addresses of AUTH_ALLOWED_IPS, its sign-in page and sign-in call included; the product host is open. */
+/** admin.folioviv.com answers only addresses of AUTH_ALLOWED_IPS, its sign-in page and sign-in call included; the product host is open. */
 export function hostAllowed(requestHeaders: Headers, env: Record<string, string | undefined> = process.env): boolean {
   return !isAdminHost(requestHeaders.get("host")) || ipAllowed(requestHeaders, env);
 }

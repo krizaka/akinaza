@@ -1,4 +1,4 @@
-import { shopMediaInputSchema } from "@akinaza/db";
+import { shopMediaInputSchema } from "@folioviv/db";
 import { describe, expect, it } from "vitest";
 
 import type { GalleryLine } from "@/lib/storefront-form";

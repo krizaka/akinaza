@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// Seeds the two owner states the page audit crawls (akinaza#405): an owner whose shop is EMPTY and an owner whose shop has ONE item per list,
+// Seeds the two owner states the page audit crawls (folioviv#405): an owner whose shop is EMPTY and an owner whose shop has ONE item per list,
 // through the product's own operations, on the database of ONE deployment (the same dataset locally and deployed). Sign-up is closed there:
 // these accounts are the only way in. The password comes from the environment and is never printed. Idempotent.
 //
-//   DATABASE_URL=… DATABASE_CA_CERT=… QA_OWNER_STATES_PASSWORD=… pnpm --filter @akinaza/web exec tsx scripts/seed-owner-states.mjs
-import { createDb, pg, poolConfig } from "@akinaza/db";
-import { OWNER_STATE_EMAILS, seedOwnerStates } from "@akinaza/db/seed-owner-states";
+//   DATABASE_URL=… DATABASE_CA_CERT=… QA_OWNER_STATES_PASSWORD=… pnpm --filter @folioviv/web exec tsx scripts/seed-owner-states.mjs
+import { createDb, pg, poolConfig } from "@folioviv/db";
+import { OWNER_STATE_EMAILS, seedOwnerStates } from "@folioviv/db/seed-owner-states";
 
 import { hashPassword } from "./qa-accounts.mjs";
 

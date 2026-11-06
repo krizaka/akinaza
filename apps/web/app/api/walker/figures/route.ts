@@ -1,10 +1,10 @@
-import { shopDay } from "@akinaza/db";
+import { shopDay } from "@folioviv/db";
 
+import { requestNow } from "@/app/request-now";
 import { requireShop } from "@/lib/access";
 import { db } from "@/lib/db";
 import { loadFigures } from "@/lib/figures";
 import { handle } from "@/lib/http";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

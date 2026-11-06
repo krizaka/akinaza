@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { formatQuantity, parseQuantity, QUANTITY_FIELD } from "./quantity";
 
-describe("a quantity typed on the invoice form (krizaka/akinaza#111)", () => {
+describe("a quantity typed on the invoice form (krizaka/folioviv#111)", () => {
   it("reads whole numbers and decimals with a point or a comma, to the hundredth", () => {
     expect(parseQuantity("10")).toBe(10);
     expect(parseQuantity("7.5")).toBe(7.5);

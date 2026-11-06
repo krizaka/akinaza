@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { seedDemoShop } from "@akinaza/db/seed";
+import { seedDemoShop } from "@folioviv/db/seed";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { db, migrate, pool, query } from "./db";
@@ -30,18 +30,18 @@ describe.runIf(enabled)("the shop of the address", () => {
   beforeAll(async () => {
     await migrate();
     const make = async (email: string) => (await query<{ id: string }>("INSERT INTO accounts (email, role, password_hash) VALUES ($1, 'USER', 'x') RETURNING id", [email]))[0]!.id;
-    owner = await make(`own-${stamp}@akinaza.test`);
-    outsider = await make(`out-${stamp}@akinaza.test`);
-    const other = await make(`oth-${stamp}@akinaza.test`);
-    await seedDemoShop(db(), `own-${stamp}@akinaza.test`);
-    await seedDemoShop(db(), `oth-${stamp}@akinaza.test`);
+    owner = await make(`own-${stamp}@folioviv.test`);
+    outsider = await make(`out-${stamp}@folioviv.test`);
+    const other = await make(`oth-${stamp}@folioviv.test`);
+    await seedDemoShop(db(), `own-${stamp}@folioviv.test`);
+    await seedDemoShop(db(), `oth-${stamp}@folioviv.test`);
     ownShop = (await query<{ id: string }>("SELECT scope_id AS id FROM memberships WHERE account_id = $1", [owner]))[0]!.id;
     otherShop = (await query<{ id: string }>("SELECT scope_id AS id FROM memberships WHERE account_id = $1", [other]))[0]!.id;
     // The owner of the first shop also works in the second, as staff.
     await query("INSERT INTO memberships (scope_id, account_id, role, created_at) VALUES ($1, $2, 'staff', now())", [otherShop, owner]);
   });
   afterAll(async () => {
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@folioviv.test`]);
     await pool().end();
   });
 

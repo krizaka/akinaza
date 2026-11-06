@@ -1,5 +1,5 @@
 [package]
-name = "akinaza-desktop"
+name = "folioviv-desktop"
 version = "0.1.0"
 description = "Folioviv for the Mac: the owner's back office in a native window"
 authors = ["Krizaka"]
@@ -8,7 +8,7 @@ license = "FSL-1.1-ALv2"
 rust-version = "1.80"
 
 [lib]
-name = "akinaza_desktop_lib"
+name = "folioviv_desktop_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

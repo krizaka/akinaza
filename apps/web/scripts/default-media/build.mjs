@@ -1,17 +1,17 @@
 #!/usr/bin/env tsx
 // The renditions and loops of the storefront defaults (#267), from the source images of generate.mjs.
-//   pnpm --filter @akinaza/web exec tsx scripts/default-media/build.mjs <src-dir> <out-dir>
+//   pnpm --filter @folioviv/web exec tsx scripts/default-media/build.mjs <src-dir> <out-dir>
 // Per shop type: the cover as AVIF/WebP at the widths the hero needs, its poster, and an 8 second silent loop (a slow breathing zoom that ends where it began:
 // webm and mp4); the gallery images; the service images (3:2 crops of the first gallery images). Then the manifest `apps/web/lib/default-media.manifest.json`
 // (logical path -> first 10 hex of the file's SHA-256, the same rule as krizaka-com's cdn-assets.mjs, so the URL here is the one the upload creates).
-// Upload afterwards, from krizaka-com:  node scripts/cdn-assets.mjs upload <out-dir> --to apps/akinaza/defaults
+// Upload afterwards, from krizaka-com:  node scripts/cdn-assets.mjs upload <out-dir> --to apps/folioviv/defaults
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { DEFAULT_SLOTS, DEFAULTS_ROOT, RENDITION_FORMATS, SHOP_TYPES } from "@akinaza/core";
+import { DEFAULT_SLOTS, DEFAULTS_ROOT, RENDITION_FORMATS, SHOP_TYPES } from "@folioviv/core";
 import sharp from "sharp";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -71,5 +71,5 @@ for (const type of SHOP_TYPES) {
 }
 
 const sorted = Object.fromEntries(Object.entries(manifest).sort(([a], [b]) => a.localeCompare(b)));
-writeFileSync(join(here, "../../lib/default-media.manifest.json"), `${JSON.stringify({ cdn: "https://krizaka-assets.b-cdn.net", root: "apps/akinaza", files: sorted }, null, 2)}\n`);
+writeFileSync(join(here, "../../lib/default-media.manifest.json"), `${JSON.stringify({ cdn: "https://krizaka-assets.b-cdn.net", root: "apps/folioviv", files: sorted }, null, 2)}\n`);
 console.log(Object.keys(sorted).length, "files in the manifest");

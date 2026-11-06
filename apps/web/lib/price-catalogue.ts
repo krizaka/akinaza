@@ -4,20 +4,20 @@ import { query } from "./db";
 import { CATALOGUE } from "./pricing";
 
 /**
- * The one catalogue of prices on the server (akinaza#371): the seed of `lib/pricing.ts`, plus the versions the administrator
+ * The one catalogue of prices on the server (folioviv#371): the seed of `lib/pricing.ts`, plus the versions the administrator
  * scheduled (`price_versions`, each audited in `settings_audit`). Pages read it at the date they render; a subscription reads
  * the version it was sold at.
  */
-const holder = globalThis as unknown as { __akinazaPrices?: PriceCatalogue };
+const holder = globalThis as unknown as { __foliovivPrices?: PriceCatalogue };
 
 export function appPrices(): PriceCatalogue {
-  holder.__akinazaPrices ??= priceCatalogue(CATALOGUE, priceStore({ query: async (sql, params) => query(sql, params as unknown[]) as never }));
-  return holder.__akinazaPrices;
+  holder.__foliovivPrices ??= priceCatalogue(CATALOGUE, priceStore({ query: async (sql, params) => query(sql, params as unknown[]) as never }));
+  return holder.__foliovivPrices;
 }
 
 /** For tests: forget the cached catalogue. */
 export const resetAppPrices = () => {
-  holder.__akinazaPrices = undefined;
+  holder.__foliovivPrices = undefined;
 };
 
 /** What a visitor may read: never an `internal` entry; an entry `preparing` without its figure. */

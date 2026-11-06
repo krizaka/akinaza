@@ -1,15 +1,15 @@
-import { type FramePaper, protectedTermsIssues, type ShopType, TEMPLATES } from "@akinaza/core";
+import { type FramePaper, protectedTermsIssues, type ShopType, TEMPLATES } from "@folioviv/core";
 import { PASSWORD_RESET_MAX_MINUTES, PASSWORD_RESET_MIN_MINUTES, PASSWORD_RESET_TTL_MINUTES } from "@krizaka/auth";
 import { bilingual, choice, defineSettings, DISPLAY_NAME_KEY, displayNameSetting, flag, GLOBAL_ONLY, integer, postgresSettings, SCOPE, type SettingsService, subset, text, WORKSPACE_SCOPES } from "@krizaka/settings";
 import { storageSettings } from "@krizaka/storage/settings";
 import { z } from "zod";
 
-import { PRODUCT_NAME } from "./brand";
+import { BRAND_ID, PRODUCT_NAME } from "./brand";
 import { query } from "./db";
 import { refuse } from "./http";
 
 /**
- * Akinaza's configuration as data (`@krizaka/settings`): what an administrator can change without a redeploy. No workspaces here:
+ * Folioviv's configuration as data (`@krizaka/settings`): what an administrator can change without a redeploy. No workspaces here:
  * a value is global, or one person's (a beta, a quota); `WORKSPACE_SCOPES` is global + workspace and a workspace is never named.
  */
 /** The ids of the catalogue: what the administrator can offer or preselect. */
@@ -23,7 +23,7 @@ function withTermsCheck<T extends { schema: z.ZodType<string> }>(def: T): T {
 
 export const SETTINGS = {
   // The name shown to people (krizaka-internal#2035): the administrator sets it, the default is the commercial name of @krizaka/org.
-  [DISPLAY_NAME_KEY]: displayNameSetting("akinaza"),
+  [DISPLAY_NAME_KEY]: displayNameSetting(BRAND_ID),
   "app.maintenance": flag("general", false),
   "app.maintenanceMessage": bilingual("general", { fr: `${PRODUCT_NAME} est en maintenance. Revenez dans quelques minutes.`, en: `${PRODUCT_NAME} is down for maintenance. Please come back in a few minutes.` }),
   // API keys (#178): the global switch, what a plan holds, the pace of one key.
@@ -34,7 +34,7 @@ export const SETTINGS = {
   "features.shopFollow": flag("features", false),
   "features.shopReviews": flag("features", true),
   "features.shopAnnouncements": flag("features", true),
-  // The notebook storefront (akinaza#305): the paper of the applied template under the public page. Off = the look's own paper, as before. A person's own value (an owner's beta, the demo shops' owners) wins over the global one.
+  // The notebook storefront (folioviv#305): the paper of the applied template under the public page. Off = the look's own paper, as before. A person's own value (an owner's beta, the demo shops' owners) wins over the global one.
   "features.cahierStorefront": flag("features", false, [SCOPE.global, SCOPE.user]),
   // The reviews (B45, #313): the prior mean (in tenths of a star) and its weight of the Bayesian score, and how many counted reviews before the score is shown.
   "reviews.minCount": integer("reviews", 5, { min: 1, max: 100, unit: "reviews" }, GLOBAL_ONLY),
@@ -55,13 +55,13 @@ export const SETTINGS = {
   "limits.reelSeconds": integer("limits", 60, { min: 1, max: 300, unit: "seconds" }),
   "limits.reelMegabytes": integer("limits", 40, { min: 1, max: 500, unit: "megabytes" }),
   // The founder offer's cap is no longer a setting: it is the Starter entry's `founderCap` in the catalogue of prices (#371, lib/pricing.ts).
-  // The shop page in other languages (#258): off until the Orazaka Studio is wired; the languages the owner may turn on; the runs per shop and day.
+  // The shop page in other languages (#258): off until the Sovkora Studio is wired; the languages the owner may turn on; the runs per shop and day.
   "features.storefrontTranslation": flag("features", false, GLOBAL_ONLY),
   "storefront.languages.allowed": subset("storefront", ["fr", "en", "es"] as const, ["fr", "en", "es"], GLOBAL_ONLY),
   "limits.translationsPerShopPerDay": integer("limits", 20, { min: 1, max: 500, unit: "runs" }, GLOBAL_ONLY),
   // The private calendar feeds of the shop and its staff (#282, ADR-004): off, every feed address answers 404 and none can be made.
   // Anti-phishing shop addresses (ADR-005 slice 4, #537): one term per line (a word, or /regex/ on the folded slug; # comments). A slug wearing one is held for review, never refused (core slug-guard). Seed (CTO decision, reversible): the Krizaka family names, the reserved technical words and the lure words; third-party brands are added in the console when there is a reason.
-  "slugs.protectedTerms": withTermsCheck(text("slugs", ["krizaka", "akinaza", "yomizaka", "orazaka", "admin", "api", "www", "app", "auth", "login", "signin", "help", "support", "billing", "mail", "status", "security", "secure", "account", "dashboard", "verify", "verification", "password", "wallet", "payment"].join("\n"), { max: 4000, empty: true }, GLOBAL_ONLY)),
+  "slugs.protectedTerms": withTermsCheck(text("slugs", ["krizaka", "folioviv", "verikora", "sovkora", "admin", "api", "www", "app", "auth", "login", "signin", "help", "support", "billing", "mail", "status", "security", "secure", "account", "dashboard", "verify", "verification", "password", "wallet", "payment"].join("\n"), { max: 4000, empty: true }, GLOBAL_ONLY)),
   "exports.icsFeed.enabled": flag("exports", true, GLOBAL_ONLY),
   // The owner's data downloads (#420, ADR-004 §5): appointments (CSV, ICS), clients and invoices (CSV). Off, none is served.
   "exports.data.enabled": flag("exports", true, GLOBAL_ONLY),
@@ -75,7 +75,7 @@ export const SETTINGS = {
   "calendarSync.maxCalendarsPerShop": integer("calendarSync", 5, { min: 1, max: 20, unit: "calendars" }, GLOBAL_ONLY),
   "calendarSync.windowDays": integer("calendarSync", 60, { min: 7, max: 120, unit: "days" }, GLOBAL_ONLY),
   // The owner's figures (#260): the default thresholds each figure is judged against, and the actions « que faire maintenant » may offer.
-  // Whether an owner may tune the thresholds of their own shop (#260), inside the bounds of @akinaza/core.
+  // Whether an owner may tune the thresholds of their own shop (#260), inside the bounds of @folioviv/core.
   "figures.ownerTunable": flag("figures", true, GLOBAL_ONLY),
   "figures.overdueWatchPct": integer("figures", 10, { min: 0, max: 100, unit: "%" }, GLOBAL_ONLY),
   "figures.overdueAlertPct": integer("figures", 25, { min: 0, max: 100, unit: "%" }, GLOBAL_ONLY),
@@ -115,16 +115,16 @@ export const settings = defineSettings(SETTINGS);
 export type SettingKey = keyof typeof SETTINGS;
 
 /** One instance per process, shared by every bundle: a change made in a route is seen by the next page at once. */
-const holder = globalThis as unknown as { __akinazaSettings?: SettingsService<typeof SETTINGS> };
+const holder = globalThis as unknown as { __foliovivSettings?: SettingsService<typeof SETTINGS> };
 
 export function appSettings(): SettingsService<typeof SETTINGS> {
-  holder.__akinazaSettings ??= postgresSettings(settings, { query: async (sql, params) => query(sql, params as unknown[]) as never, clock: () => performance.now() });
-  return holder.__akinazaSettings;
+  holder.__foliovivSettings ??= postgresSettings(settings, { query: async (sql, params) => query(sql, params as unknown[]) as never, clock: () => performance.now() });
+  return holder.__foliovivSettings;
 }
 
 /** For tests: forget the cached service. */
 export const resetAppSettings = () => {
-  holder.__akinazaSettings = undefined;
+  holder.__foliovivSettings = undefined;
 };
 
 export async function shopSectionFeatures(): Promise<Record<"wall" | "reels" | "follow" | "reviews" | "announcements", boolean>> {

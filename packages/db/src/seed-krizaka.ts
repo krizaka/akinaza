@@ -1,4 +1,4 @@
-import { applyRate, GST, localDay, QST } from "@akinaza/core";
+import { applyRate, GST, localDay, QST } from "@folioviv/core";
 import { addMonths } from "date-fns";
 import { and, eq } from "drizzle-orm";
 
@@ -40,9 +40,9 @@ export const KRIZAKA = {
   ],
   hours: [1, 2, 3, 4, 5].map((weekday) => ({ weekday, startsAt: "09:00", endsAt: "17:00" })),
   clients: [
-    { email: "contact.studiolumen@akinaza.test", name: "Studio Lumen inc. (démo)", phone: "514-555-0111", language: "fr" as const },
-    { email: "contact.atelierboreal@akinaza.test", name: "Atelier Boréal inc. (démo)", phone: "514-555-0112", language: "fr" as const },
-    { email: "contact.nordstudio@akinaza.test", name: "Nord Studio Montréal Ltd. (demo)", phone: "514-555-0113", language: "en" as const },
+    { email: "contact.studiolumen@folioviv.test", name: "Studio Lumen inc. (démo)", phone: "514-555-0111", language: "fr" as const },
+    { email: "contact.atelierboreal@folioviv.test", name: "Atelier Boréal inc. (démo)", phone: "514-555-0112", language: "fr" as const },
+    { email: "contact.nordstudio@folioviv.test", name: "Nord Studio Montréal Ltd. (demo)", phone: "514-555-0113", language: "en" as const },
   ],
 };
 
@@ -54,14 +54,14 @@ export const KRIZAKA_SECOND = {
 };
 
 /** The persona's accounts in the order the seed expects them: Éric (the owner) first, then one contact per client. */
-export const KRIZAKA_EMAILS = ["eric.krizaka@akinaza.test", ...KRIZAKA.clients.map((c) => c.email)] as const;
+export const KRIZAKA_EMAILS = ["eric.krizaka@folioviv.test", ...KRIZAKA.clients.map((c) => c.email)] as const;
 
 /**
  * Demo clients renamed since a deployment was seeded: the same account, client file and invoices (their ids and numbers stay),
  * under the new name. « Café du Parc » became « Studio Lumen »: Folioviv serves no café, restaurant or bar (AGENTS § 2, #326).
  */
 export const KRIZAKA_RENAMED_CLIENTS = [
-  { from: { email: "contact.cafedupark@akinaza.test", name: "Café du Parc inc. (démo)" }, to: KRIZAKA.clients[0]! },
+  { from: { email: "contact.cafedupark@folioviv.test", name: "Café du Parc inc. (démo)" }, to: KRIZAKA.clients[0]! },
 ] as const;
 
 /** Renames the former demo clients in place (idempotent): run before the persona's accounts are created again. */

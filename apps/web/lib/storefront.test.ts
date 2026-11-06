@@ -1,4 +1,4 @@
-import type { PublicShop } from "@akinaza/db";
+import type { PublicShop } from "@folioviv/db";
 import { describe, expect, it } from "vitest";
 
 import { buildStorefront, resolveSelection } from "./storefront";
@@ -109,9 +109,9 @@ describe("buildStorefront — a dog walker", () => {
   });
 
   it("leads an offer that lives on another site to that site, and draws a logo for each theme (#597)", () => {
-    const linked = { ...walker, services: walker.services.map((s, i) => (i === 0 ? { ...s, linkUrl: "https://dev.yomizaka.com" } : { ...s, linkUrl: null })), pageConfig: { sections: [], logoUrl: "https://cdn.example/l.png", logoDarkUrl: "https://cdn.example/d.png" } };
+    const linked = { ...walker, services: walker.services.map((s, i) => (i === 0 ? { ...s, linkUrl: "https://dev.verikora.com" } : { ...s, linkUrl: null })), pageConfig: { sections: [], logoUrl: "https://cdn.example/l.png", logoDarkUrl: "https://cdn.example/d.png" } };
     const result = buildStorefront({ page: linked as never, locale: "en", now: MONDAY_1030 });
-    expect(result.services[0]!.href).toBe("https://dev.yomizaka.com");
+    expect(result.services[0]!.href).toBe("https://dev.verikora.com");
     expect(result.services[1]!.href).toContain("/service/");
     expect(result.logoDarkUrl).toBe("https://cdn.example/d.png");
   });
@@ -208,7 +208,7 @@ describe("buildStorefront — edge cases", () => {
   });
 });
 
-describe("who is here today (akinaza#209)", () => {
+describe("who is here today (folioviv#209)", () => {
   const team = { ...salon, team: [{ id: "julie", name: "Julie" }, { id: "marc", name: "Marc" }, { id: "lea", name: "Léa" }] };
   const hours = week([1, 2, 3, 4, 5], "09:00", "17:00");
   const teamDay = new Map([

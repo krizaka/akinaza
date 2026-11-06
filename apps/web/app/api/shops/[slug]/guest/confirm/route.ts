@@ -1,5 +1,5 @@
-import { slugSchema } from "@akinaza/core";
-import { addDependant, dependantsOf, guestAccountFor, joinShop, publicShop } from "@akinaza/db";
+import { slugSchema } from "@folioviv/core";
+import { addDependant, dependantsOf, guestAccountFor, joinShop, publicShop } from "@folioviv/db";
 import { cookies } from "next/headers";
 
 import { systemClock } from "@/app/system-clock";

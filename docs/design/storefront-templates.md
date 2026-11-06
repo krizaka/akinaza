@@ -1,10 +1,10 @@
 # Storefront templates — proposal (phase 1)
 
-Issue: krizaka/akinaza#261. Part of epic #236 (the shops platform). Status: **validé** (CTO review: option C, with the corrections below). No code changes in this PR.
+Issue: krizaka/folioviv#261. Part of epic #236 (the shops platform). Status: **validé** (CTO review: option C, with the corrections below). No code changes in this PR.
 
 Oussama (2026-10-23): « proposer aussi quelques templates pour chaque boutique ». A shop owner starts from a finished storefront that suits
 their trade, not from a blank page. The public pages follow the Cahier (artistic notebook) style; the owner's back office stays plain Krizaka UI.
-Akinaza serves service businesses and never restaurants or bars (AGENTS section 2).
+Folioviv serves service businesses and never restaurants or bars (AGENTS section 2).
 
 Shared vocabulary with the default-media issue (#267): **shop types** `salon · coaching · workshop · cleaning · pets · consulting`; **media slots**
 `cover` (16:9, image or loop) · `gallery` (4:3) · `service` (3:2) · `logo` (1:1, optional) · `about`/`team` (default avatars) · later `announcement`, `reel`, `wall`, `share`.
@@ -38,7 +38,7 @@ Everything below is an export of the package (`node_modules/@krizaka/ui/package.
 - **Brand and fonts**: the `.brand-akinaza` hue (forest green + copper, `@krizaka/tokens/brands/scoped.css`), the family hues `data-hue` (cobalt · sky · cyan · indigo · steel · ink), the curated faces of `@krizaka/fonts`, light and dark tokens `var(--kz-*)`.
 
 ### Ready-to-file krizaka-ui blocks (nothing missing is hand-made here)
-1. **`PaperSurface` + paper tokens** (the spec of akinaza#238): `--kz-paper-{dot-grid,kraft,ruled,plain}`, grain by inline SVG, no image. *Needed by every Cahier template.*
+1. **`PaperSurface` + paper tokens** (the spec of folioviv#238): `--kz-paper-{dot-grid,kraft,ruled,plain}`, grain by inline SVG, no image. *Needed by every Cahier template.*
 2. **`Badge tone="ink"` (stamp)** and **hand-drawn `Divider`** variants (three shapes). *Needed to give the three layouts their Cahier look.*
 3. **`ServiceCard variant="index"`** (a ruled index card, price stamped), with lift and reduced motion. *Used by the « Carte » layout.*
 4. **`StorefrontSection` contract** is app-level (see option C), not a krizaka-ui block; only if a second product reuses it does it move to `@krizaka/ui`.

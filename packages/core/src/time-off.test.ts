@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { timeOffDays, timeOffRanges } from "./time-off";
 
-describe("time off as ranges (akinaza#208)", () => {
+describe("time off as ranges (folioviv#208)", () => {
   it("a range is every day, both ends included, across a month", () => {
     expect(timeOffDays({ from: "2026-10-30", to: "2026-11-02" })).toEqual(["2026-10-30", "2026-10-31", "2026-11-01", "2026-11-02"]);
     expect(timeOffDays({ from: "2026-12-24", to: "2026-12-24" })).toEqual(["2026-12-24"]);

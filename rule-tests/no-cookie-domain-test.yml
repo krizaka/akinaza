@@ -8,10 +8,10 @@ valid:
     jar.set({ name, value, path: "/", secure: true });
 invalid:
   - |
-    (await cookies()).set({ name: "a", value: "b", domain: "akinaza.com" });
+    (await cookies()).set({ name: "a", value: "b", domain: "folioviv.com" });
   - |
-    response.cookies.set("a", "b", { domain: ".akinaza.com" });
+    response.cookies.set("a", "b", { domain: ".folioviv.com" });
   - |
-    const header = `a=b; Path=/; Domain=akinaza.com`;
+    const header = `a=b; Path=/; Domain=folioviv.com`;
   - |
-    const header = "a=b; Domain=akinaza.com";
+    const header = "a=b; Domain=folioviv.com";

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Krizaka sets up its own page in Akinaza (akinaza#489), THROUGH THE OWNER CONSOLE like any client: the same forms a client fills, driven by a browser.
+// Krizaka sets up its own page in Folioviv (folioviv#489), THROUGH THE OWNER CONSOLE like any client: the same forms a client fills, driven by a browser.
 // No seed, no back door, no database access: the owner account is the one an operator provisioned (sign-up is closed).
 //
-//   E2E_BASE=https://www.akinaza.com E2E_EMAIL=… E2E_PASSWORD=… MEDIA_DIR=<folder with the files of PHOTOS and LOGO> \
+//   E2E_BASE=https://www.folioviv.com E2E_EMAIL=… E2E_PASSWORD=… MEDIA_DIR=<folder with the files of PHOTOS and LOGO> \
 //     node scripts/setup-krizaka-shop.mjs [--slug krizaka] [--shop <id of a shop already opened>]
 //
 // Credentials stay in the environment and are never printed. Idempotent for the texts, contact, logo and photos; an offer already on the page is left alone.

@@ -1,4 +1,4 @@
-import { reportByToken } from "@akinaza/db";
+import { reportByToken } from "@folioviv/db";
 import { Card } from "@krizaka/ui/card";
 import { Page } from "@krizaka/ui/page";
 import { PageHero } from "@krizaka/ui/page-hero";
@@ -7,11 +7,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { requestNow } from "@/app/request-now";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 import { db } from "@/lib/db";
 import { asLocale, format, getDictionary } from "@/lib/i18n";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 // A private page: its address is the credential. Never indexed, never cached, no referrer to the next site.
@@ -23,7 +23,7 @@ export default async function ReportPage({ params }: Readonly<{ params: Promise<
   const locale = asLocale(raw);
   const t = getDictionary(locale).console.report;
   const report = await reportByToken(db(), token, requestNow());
-  // An unknown or expired link is a 404, with the product's calm not-found page (akinaza#381).
+  // An unknown or expired link is a 404, with the product's calm not-found page (folioviv#381).
   if (!report) notFound();
   const lang = locale === "fr" ? "fr-CA" : "en-CA";
   return (

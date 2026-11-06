@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { isOnQuote } from "./service-price";
 
-describe("a service on quote (akinaza#489: Krizaka's Entreprise offer has no list price)", () => {
+describe("a service on quote (folioviv#489: Krizaka's Entreprise offer has no list price)", () => {
   it("is a service that varies and lists no price", () => {
     expect(isOnQuote({ priceCents: 0, priceVaries: true })).toBe(true);
   });

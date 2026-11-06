@@ -7,11 +7,11 @@ import { shops } from "./schema";
 import { publishedShopPage, publishShopPageDraft, saveShopPageDraft } from "./shop-page-versions";
 
 /**
- * The two demo shops' page (akinaza#403, #404): the photos of the shop-page ADR (generated, in the Krizaka banner style, no faces, on the media CDN under
- * `sites/akinaza/demo/`) and the document each publishes. The other compositions of the trade are offered by the public switch
+ * The two demo shops' page (folioviv#403, #404): the photos of the shop-page ADR (generated, in the Krizaka banner style, no faces, on the media CDN under
+ * `sites/folioviv/demo/`) and the document each publishes. The other compositions of the trade are offered by the public switch
  * (`demoLooksOf`), not stored. Seeded through the product's own operations; a second run changes nothing it already holds.
  */
-const CDN = "https://krizaka-assets.b-cdn.net/sites/akinaza/demo";
+const CDN = "https://krizaka-assets.b-cdn.net/sites/folioviv/demo";
 
 /** The CDN address of a demo photo: `<name>.<10 hex of its SHA-256>.webp`, a URL that never changes content. */
 const photo = (name: string, hash: string) => `${CDN}/${name}.${hash}.webp`;
@@ -24,7 +24,7 @@ export interface DemoPage {
   starter: ShopStarterId;
   cover: Shot;
   gallery: Shot[];
-  /** The gallery composition this demo shows instead of its starter's (akinaza#481: the salon shows the mosaic, so the dev seed and the deployed demo draw it). */
+  /** The gallery composition this demo shows instead of its starter's (folioviv#481: the salon shows the mosaic, so the dev seed and the deployed demo draw it). */
   galleryVariant?: "mosaic";
 }
 

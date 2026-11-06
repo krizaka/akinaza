@@ -10,7 +10,7 @@ const view = read("components/explore/ExploreView.tsx");
 const map = read("components/explore/ExploreMap.tsx");
 const root = join(__dirname, "../../..");
 
-describe("Explorer is a public page (akinaza#235)", () => {
+describe("Explorer is a public page (folioviv#235)", () => {
   it("is in the public pages: sitemap, hreflang and the title come from the same list", () => {
     expect(PAGES).toContain("explore");
     expect(pagePath("fr", "explore")).toBe("/fr/explore");

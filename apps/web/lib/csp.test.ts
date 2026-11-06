@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 
 import { describe, expect, it } from "vitest";
 
-import { CAPTCHA_HOST, contentSecurityPolicy, allowsCaptcha, isShopPath, jsonLdHtml, newNonce, upgradesInsecure } from "./csp";
+import { allowsCaptcha, CAPTCHA_HOST, contentSecurityPolicy, isShopPath, jsonLdHtml, newNonce, upgradesInsecure } from "./csp";
 
 const directive = (csp: string, name: string) => csp.split("; ").find((d) => d.startsWith(`${name} `))?.split(" ").slice(1) ?? [];
 const opts = { production: true, upgradeInsecure: true };
@@ -65,7 +65,7 @@ describe("the nonce", () => {
 
 describe("upgrade-insecure-requests", () => {
   it("is read per request: https and undeclared origins keep it, a plain-http one (the CI server) and development drop it", () => {
-    expect(upgradesInsecure(true, "https://www.akinaza.com")).toBe(true);
+    expect(upgradesInsecure(true, "https://www.folioviv.com")).toBe(true);
     expect(upgradesInsecure(true, undefined)).toBe(true);
     expect(upgradesInsecure(true, "http://localhost:3000")).toBe(false);
     expect(upgradesInsecure(false, undefined)).toBe(false);
@@ -107,11 +107,11 @@ describe("JSON-LD", () => {
   });
 });
 
-describe("a shop on its own domain (ADR-005 §6, akinaza#538)", () => {
-  const csp = contentSecurityPolicy({ ...opts, nonce: "bm9uY2U=", appOrigin: "https://www.akinaza.com" });
+describe("a shop on its own domain (ADR-005 §6, folioviv#538)", () => {
+  const csp = contentSecurityPolicy({ ...opts, nonce: "bm9uY2U=", appOrigin: "https://www.folioviv.com" });
   it("may submit to the app (the booking hop) and be framed only by the app (the studio's preview), nobody else", () => {
-    expect(directive(csp, "form-action")).toEqual(["'self'", "https://www.akinaza.com"]);
-    expect(directive(csp, "frame-ancestors")).toEqual(["https://www.akinaza.com"]);
+    expect(directive(csp, "form-action")).toEqual(["'self'", "https://www.folioviv.com"]);
+    expect(directive(csp, "frame-ancestors")).toEqual(["https://www.folioviv.com"]);
   });
   it("stays the strict policy: a nonce, no inline script", () => {
     expect(directive(csp, "script-src")).not.toContain("'unsafe-inline'");

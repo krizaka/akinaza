@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { prepareShopReturn } from "./shop-ops";
 import { accounts } from "./schema";
-import { localDay } from "@akinaza/core";
+import { localDay } from "@folioviv/core";
 import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri, seedTodayVisit } from "./seed-walker";
 import { shopPageConfigOf } from "./shop-page";
 import { listSlots, publicShop, revealAccessNotes, shopOfOwner } from "./service-shop";

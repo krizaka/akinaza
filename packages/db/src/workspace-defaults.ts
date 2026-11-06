@@ -1,8 +1,8 @@
-import { INVOICE_STATE } from "@akinaza/core";
+import { INVOICE_STATE } from "@folioviv/core";
 import type { KindConfig, Label, Marker, StatusSet, TagPreset } from "@krizaka/organize/contract";
 
 /**
- * The administrator's defaults for « the workspace, organised » (krizaka-ts ADR-003, akinaza#337), as DATA: a code constant only SEEDS
+ * The administrator's defaults for « the workspace, organised » (krizaka-ts ADR-003, folioviv#337), as DATA: a code constant only SEEDS
  * the database the first time (`config.seed`, never overwriting); afterwards the administrator edits it (`config.put`, versioned, audited).
  *
  *  - Tags are the shop's. The owner and the manager write them, staff only read (they do not reach Clients or Invoices at all);

@@ -4,7 +4,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { SHOP_TYPES } from "@akinaza/core";
+import { SHOP_TYPES } from "@folioviv/core";
 
 import hashes from "./demo-st-henri.hashes.json";
 import { ALL_DEMO_SHOPS, ST_HENRI_DEMO_SHOPS } from "./demo-shops";

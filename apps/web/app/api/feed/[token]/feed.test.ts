@@ -1,4 +1,4 @@
-import { feedByTokenHash, feedEntriesAround } from "@akinaza/db";
+import { feedByTokenHash, feedEntriesAround } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { sessionSecret } from "@/lib/env";
@@ -11,7 +11,7 @@ import { GET } from "./route";
 vi.mock("@/lib/brand-name", () => ({ productName: async () => "Folioviv" }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), feedByTokenHash: vi.fn(), feedEntriesAround: vi.fn(), feedTitle: vi.fn(async () => "Folioviv · Salon Laurier") }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), feedByTokenHash: vi.fn(), feedEntriesAround: vi.fn(), feedTitle: vi.fn(async () => "Folioviv · Salon Laurier") }));
 
 const call = (segment: string) => GET(new Request(`http://localhost/api/feed/${segment}`), { params: Promise.resolve({ token: segment }) });
 

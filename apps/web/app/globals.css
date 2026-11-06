@@ -1,5 +1,5 @@
 /* The Krizaka platform, in this order: Tailwind v4; @krizaka/tailwind (the --kz-* tokens, the role utilities, the
-   dark / light variants, the motion signature); @krizaka/ui's sources; the Akinaza brand of @krizaka/tokens — the
+   dark / light variants, the motion signature); @krizaka/ui's sources; the Folioviv brand of @krizaka/tokens — the
    Laurentian forest green with warm copper: the accent, the text on it, the ring, the section gradient — in both themes. No product token: the roles say
    everything these pages draw. */
 @import "tailwindcss";
@@ -56,7 +56,7 @@ body {
 
 /* ── Storefront templates (#261) ─────────────────────────────────────────────────────────────────────────────────────
    A template's hue, on the public page (`<main data-hue>`) and in the picker's previews: the --kz-hue contract of the
-   blocks (@krizaka/ui/blocks.css falls back to the accent, so a shop without a hue stays on the Akinaza brand). Krizaka
+   blocks (@krizaka/ui/blocks.css falls back to the accent, so a shop without a hue stays on the Folioviv brand). Krizaka
    palette only; --kz-hue is decorative (≥ 3:1), --kz-hue-text is for small text (≥ 4.5:1), both themes. */
 [data-hue="cobalt"] { --kz-hue: hsl(217 92% 60%); --kz-hue-2: hsl(206 92% 62%); --kz-hue-text: hsl(217 92% 74%); }
 [data-hue="sky"]    { --kz-hue: hsl(199 89% 52%); --kz-hue-2: hsl(190 85% 52%); --kz-hue-text: hsl(199 89% 66%); }
@@ -94,7 +94,7 @@ html.light [data-hue="ink"]    { --kz-hue: hsl(222 30% 22%); --kz-hue-2: hsl(217
   font-family: var(--kz-font-sans);
 }
 
-/* A shop's logo for each theme (akinaza#597): dark is the default, `html.light` swaps the file. */
+/* A shop's logo for each theme (folioviv#597): dark is the default, `html.light` swaps the file. */
 .kz-logo-light { display: none; }
 html.light .kz-logo-light { display: block; }
 html.light .kz-logo-dark { display: none; }

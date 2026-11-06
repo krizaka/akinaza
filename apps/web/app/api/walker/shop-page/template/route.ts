@@ -1,4 +1,4 @@
-import { applyTemplate, shopPageConfigOf } from "@akinaza/db";
+import { applyTemplate, shopPageConfigOf } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireOwner } from "@/lib/access";

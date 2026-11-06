@@ -1,4 +1,4 @@
-import { addDayOff } from "@akinaza/db";
+import { addDayOff } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";

@@ -12,10 +12,10 @@ describe("the QA accounts script", () => {
   });
 
   it("asks for both accounts, valid addresses, passwords of 12 characters", () => {
-    const env = { QA_USER_EMAIL: "QA+User@Akinaza.com", QA_USER_PASSWORD: "x".repeat(16), QA_ADMIN_EMAIL: "qa+admin@akinaza.com", QA_ADMIN_PASSWORD: "y".repeat(16) };
+    const env = { QA_USER_EMAIL: "QA+User@Folioviv.com", QA_USER_PASSWORD: "x".repeat(16), QA_ADMIN_EMAIL: "qa+admin@folioviv.com", QA_ADMIN_PASSWORD: "y".repeat(16) };
     expect(accountsFromEnv(env).map((a: { email: string; role: string }) => [a.email, a.role])).toEqual([
-      ["qa+user@akinaza.com", "USER"],
-      ["qa+admin@akinaza.com", "ADMIN"],
+      ["qa+user@folioviv.com", "USER"],
+      ["qa+admin@folioviv.com", "ADMIN"],
     ]);
     expect(accountsFromEnv(env).map((a: { name: string }) => a.name)).toEqual(["Éric Tremblay", "Mira Haddad"]);
     expect(() => accountsFromEnv({ ...env, QA_ADMIN_PASSWORD: "short" })).toThrow(/ADMIN password/);

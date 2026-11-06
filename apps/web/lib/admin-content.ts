@@ -1,6 +1,6 @@
 import { query } from "./db";
 
-/** What the console reads of Akinaza's own objects: shops, invoices and the checks of the tax ledger. Metadata and cents only: never a client's file or an invoice line. */
+/** What the console reads of Folioviv's own objects: shops, invoices and the checks of the tax ledger. Metadata and cents only: never a client's file or an invoice line. */
 
 export interface AdminShop {
   id: string;

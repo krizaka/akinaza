@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// End-to-end walk of the administration console (admin.akinaza.com, served here as admin.localhost): sign in as the
+// End-to-end walk of the administration console (admin.folioviv.com, served here as admin.localhost): sign in as the
 // administrator from an allowed address, open every page, act on an account (role, sessions, export, erasure), and check
 // that an address outside AUTH_ALLOWED_IPS is refused.
 //
@@ -24,8 +24,8 @@ const ALLOWED = "203.0.113.7";
 const OTHER = "198.51.100.9";
 const stamp = Date.now();
 const password = crypto.randomBytes(18).toString("base64url");
-const admin = `e2e-admin-${stamp}@akinaza.test`;
-const member = `e2e-member-${stamp}@akinaza.test`;
+const admin = `e2e-admin-${stamp}@folioviv.test`;
+const member = `e2e-member-${stamp}@folioviv.test`;
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL (a local PostgreSQL) is required");
 accountsFromEnv({ QA_USER_EMAIL: member, QA_USER_PASSWORD: password, QA_ADMIN_EMAIL: admin, QA_ADMIN_PASSWORD: password });
 
@@ -36,7 +36,7 @@ const check = (ok, what) => {
   if (!ok) failed += 1;
 };
 
-const app = spawn("pnpm", ["--filter", "@akinaza/web", "exec", "next", "dev", "-p", String(PORT)], {
+const app = spawn("pnpm", ["--filter", "@folioviv/web", "exec", "next", "dev", "-p", String(PORT)], {
   env: { ...process.env, AUTH_ALLOWED_IPS: ALLOWED, ABUSE_CLIENT_IP_HEADER: "do-connecting-ip", APP_SEARCH_INDEXING: "off" },
   stdio: "ignore",
 });
@@ -65,7 +65,7 @@ try {
     ids[role] = (await db.query("INSERT INTO accounts (email, role, password_hash) VALUES ($1, $2, $3) RETURNING id", [email, role, hash])).rows[0].id;
   }
   // A demo shop for the merchant, through the real pipeline (facts applied, rules sealed).
-  const seeded = spawnSync("pnpm", ["--filter", "@akinaza/db", "seed", member], { env: process.env, stdio: "ignore" });
+  const seeded = spawnSync("pnpm", ["--filter", "@folioviv/db", "seed", member], { env: process.env, stdio: "ignore" });
   if (seeded.status !== 0) throw new Error("the demo shop could not be seeded");
 
   const refused = await fetch(`${BASE}/en/sign-in`, { headers: { "do-connecting-ip": OTHER } });
@@ -116,9 +116,9 @@ try {
   await page.getByRole("button", { name: "Delete the account" }).click();
   await page.getByText("invoices are kept for six years").first().waitFor({ timeout: 15_000 });
   check((await db.query("SELECT 1 FROM accounts WHERE id = $1", [ids.USER])).rowCount === 1, "an account that owns a shop is not erased: its invoices are kept six years");
-  const plain = (await db.query("INSERT INTO accounts (email, role, password_hash) VALUES ($1, 'USER', $2) RETURNING id", [`e2e-plain-${stamp}@akinaza.test`, hash])).rows[0].id;
+  const plain = (await db.query("INSERT INTO accounts (email, role, password_hash) VALUES ($1, 'USER', $2) RETURNING id", [`e2e-plain-${stamp}@folioviv.test`, hash])).rows[0].id;
   await page.goto(`${BASE}/en/users/${plain}`, { waitUntil: "networkidle" });
-  await page.getByLabel("Type the account's e-mail to confirm").fill(`e2e-plain-${stamp}@akinaza.test`);
+  await page.getByLabel("Type the account's e-mail to confirm").fill(`e2e-plain-${stamp}@folioviv.test`);
   await page.getByRole("button", { name: "Delete the account" }).click();
   await page.waitForURL(`${BASE}/en/users`, { timeout: 15_000 });
   check((await db.query("SELECT 1 FROM accounts WHERE id = $1", [plain])).rowCount === 0, "an account without a shop is erased");

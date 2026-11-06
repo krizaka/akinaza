@@ -1,5 +1,5 @@
 # The first screen opens: maestro test .maestro/smoke.yaml (a simulator with the app installed). Runs in CI (mobile-e2e.yml).
-appId: com.krizaka.akinaza
+appId: com.krizaka.folioviv
 tags:
   - ci
 ---

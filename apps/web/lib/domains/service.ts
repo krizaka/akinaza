@@ -1,7 +1,7 @@
 import { randomBytes } from "node:crypto";
 
-import { dnsInstructions,type DomainState } from "@akinaza/core";
-import { addShopDomain, checkShopDomainNow, domainsOverview, listShopDomains, removeShopDomain, retryShopDomain, setCustomDomainOption } from "@akinaza/db";
+import { dnsInstructions,type DomainState } from "@folioviv/core";
+import { addShopDomain, checkShopDomainNow, domainsOverview, listShopDomains, removeShopDomain, retryShopDomain, setCustomDomainOption } from "@folioviv/db";
 
 import { systemClock } from "@/app/system-clock";
 import { audit } from "@/lib/audit";

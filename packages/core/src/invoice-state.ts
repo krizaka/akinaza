@@ -1,7 +1,7 @@
 import { isPastDue } from "./payment-terms";
 
 /**
- * Where an invoice stands for the list (akinaza#218): a credit note; an invoice cancelled by a credit note or replaced by a
+ * Where an invoice stands for the list (folioviv#218): a credit note; an invoice cancelled by a credit note or replaced by a
  * correction (#207); paid in full; partly paid; overdue (its due date passed with money still owed); or due. Integer cents,
  * the shop's calendar day as `yyyy-MM-dd`. Pure.
  */

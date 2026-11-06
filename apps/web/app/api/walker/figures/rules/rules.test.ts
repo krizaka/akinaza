@@ -1,4 +1,4 @@
-import { saveShopFigureOverrides, shopFigureOverrides } from "@akinaza/db";
+import { saveShopFigureOverrides, shopFigureOverrides } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireOwner } from "@/lib/access";
@@ -13,7 +13,7 @@ vi.mock("@/lib/audit", () => ({ audit: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/figure-rules", () => ({ adminFigureRules: vi.fn(async () => ({ defaults: { overdueWatchPct: 10, overdueAlertPct: 25, collectedWatchPct: 80, collectedAlertPct: 60, marginWatchPct: 30, marginAlertPct: 15, noShowWatchPct: 5, noShowAlertPct: 10, taxPeriodSoonDays: 14, maxActions: 3 }, offered: [] })) }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), saveShopFigureOverrides: vi.fn(), shopFigureOverrides: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), saveShopFigureOverrides: vi.fn(), shopFigureOverrides: vi.fn() }));
 
 const put = (body: unknown) => PUT(new Request("http://localhost/api/walker/figures/rules", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }));
 

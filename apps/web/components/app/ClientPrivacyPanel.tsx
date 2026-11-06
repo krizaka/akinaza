@@ -8,7 +8,7 @@ import { useOptionalShopRoutes } from "@/components/app/ShopSession";
 import { useCall } from "@/components/app/useCall";
 import { useSay } from "@/lib/i18n-client";
 
-/** The shop answers a client's access or erasure request (Loi 25, akinaza#370): the owner only. The export is one download; the erasure asks first. */
+/** The shop answers a client's access or erasure request (Loi 25, folioviv#370): the owner only. The export is one download; the erasure asks first. */
 export function ClientPrivacyPanel({ clientId }: Readonly<{ clientId: string }>) {
   const { say } = useSay();
   const call = useCall();

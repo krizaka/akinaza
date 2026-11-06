@@ -1,10 +1,11 @@
 // @template: app-list-detail
-import { localDay } from "@akinaza/core";
-import { clientFile, clientNotes, clientOverview, clientRequestsOf } from "@akinaza/db";
+import { localDay } from "@folioviv/core";
+import { clientFile, clientNotes, clientOverview, clientRequestsOf } from "@folioviv/db";
 import { SplitView } from "@krizaka/ui/split-view";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { requestNow } from "@/app/request-now";
 import { ClientFilePanel } from "@/components/app/ClientFilePanel";
 import { ClientNav } from "@/components/app/ClientNav";
 import { ClientPrivacyPanel } from "@/components/app/ClientPrivacyPanel";
@@ -17,7 +18,6 @@ import { organizeData, tagsOfRows } from "@/lib/organize-data";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
 import { isUuid } from "@/lib/shop-id";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +33,7 @@ export default async function ClientPage({ params, searchParams }: Readonly<{ pa
   const now = requestNow();
   const [file, overview] = await Promise.all([clientFile(db(), shop.id, id), clientOverview(db(), shop.id, now)]);
   if (!file) notFound();
-  // The client is this shop's (clientFile above): what they keep here, for the visit (akinaza#210).
+  // The client is this shop's (clientFile above): what they keep here, for the visit (folioviv#210).
   const [requests, notes, organized] = await Promise.all([clientRequestsOf(db(), id), clientNotes(db(), shop.id, id), organizeData(shop.id, "client", session.account, role, {})]);
   const worn = (await tagsOfRows(shop.id, "client", [id]))[id] ?? [];
   return (

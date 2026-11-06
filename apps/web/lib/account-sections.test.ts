@@ -27,7 +27,7 @@ describe("the role line of the profile", () => {
     expect(accountRoleLine(words("en"), { admin: false, member: { role: "staff", shop } })).toBe("Staff at Pattes de Saint-Henri");
   });
 
-  it("names an administrator, and says nothing for a client: they hold no role (akinaza#440)", () => {
+  it("names an administrator, and says nothing for a client: they hold no role (folioviv#440)", () => {
     expect(accountRoleLine(words("fr"), { admin: true, member: null })).toBe("Administrateur");
     expect(accountRoleLine(words("fr"), { admin: false, member: null })).toBeNull();
   });

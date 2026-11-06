@@ -6,7 +6,7 @@ import { ShopError } from "./errors";
 import { clientRequestFiles, clientRequests, clients, services, shopZones, staff } from "./schema";
 
 /**
- * « Mes demandes » (akinaza#210): a client keeps a request at a shop — a service, a preferred person, an area, a note, a
+ * « Mes demandes » (folioviv#210): a client keeps a request at a shop — a service, a preferred person, an area, a note, a
  * few files — to renew it in one tap. Every operation is on the client's own file (the caller proved it with
  * `requireOwnClient`); the files' bytes are on the media storage, this keeps their addresses. Deleting a request, or
  * erasing the client, answers the addresses to remove from the storage.

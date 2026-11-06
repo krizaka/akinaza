@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /**
- * Explorer (krizaka/akinaza#235): the published shops on a map and in a list, by address or postal code, « near me », filtered by
+ * Explorer (krizaka/folioviv#235): the published shops on a map and in a list, by address or postal code, « near me », filtered by
  * kind of service, open now and a free time today. The page is static (its words); the shops are asked from `/api/explore/shops`
  * by the browser (`@krizaka/query`), so a shop's change shows without a rebuild, and only public facts travel.
  */

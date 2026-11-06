@@ -36,7 +36,7 @@ describe("the shop page document", () => {
   });
 });
 
-describe("the demo looks (akinaza#404)", () => {
+describe("the demo looks (folioviv#404)", () => {
   it("offers three looks to the salon and two to the dog walker, and none to another shop", () => {
     expect(demoLooksOf("cedre-ciseaux").map((l) => l.id)).toEqual(["compact", "editorial", "gallery"]);
     expect(demoLooksOf("pattes-saint-henri").map((l) => l.id)).toEqual(["route", "journal"]);

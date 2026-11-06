@@ -1,5 +1,5 @@
-import type { BusinessType } from "@akinaza/core";
-import { defaultShopPageConfig } from "@akinaza/db";
+import type { BusinessType } from "@folioviv/core";
+import { defaultShopPageConfig } from "@folioviv/db";
 import { describe, expect, it, vi } from "vitest";
 
 import { renderIn } from "@/lib/test-i18n";

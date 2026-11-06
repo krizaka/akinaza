@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 
-import { type Db, enqueueInvoiceDelivery, enqueueMail, invoiceDetail, invoiceMailSettings, invoiceTokenHash, issueReportLink, mailById, markMailAttempt, markMailSent, pendingMail, scrubMail } from "@akinaza/db";
+import { type Db, enqueueInvoiceDelivery, enqueueMail, invoiceDetail, invoiceMailSettings, invoiceTokenHash, issueReportLink, mailById, markMailAttempt, markMailSent, pendingMail, scrubMail } from "@folioviv/db";
 import { addDays } from "date-fns";
 
 import { productName } from "./brand-name";

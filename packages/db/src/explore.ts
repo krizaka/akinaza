@@ -1,4 +1,4 @@
-import { type ExploreQuery, exploreQuerySchema, type ExploreShop, searchTokens } from "@akinaza/core";
+import { type ExploreQuery, exploreQuerySchema, type ExploreShop, searchTokens } from "@folioviv/core";
 import { and, type SQL, sql } from "drizzle-orm";
 
 import type { Db } from "./client";
@@ -113,7 +113,7 @@ async function nextFreeTime(db: Db, shopId: string, now: Date): Promise<Date | n
 }
 
 /**
- * The sweep (ADR-006 decision 4, CTO decision on akinaza#574): recomputes the stored availability of the rows that are due, at the
+ * The sweep (ADR-006 decision 4, CTO decision on folioviv#574): recomputes the stored availability of the rows that are due, at the
  * injected clock. A row is due when something it depends on changed (a trigger raised `avail_stale`: booking, hours, day off, rule,
  * service, calendar), when its shop's local day moved on, or when the stored time has passed. The flag is lowered before the
  * computing, so a change made meanwhile raises it again and the next sweep redoes the shop. Rows are leased (`SKIP LOCKED`), so

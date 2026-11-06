@@ -21,7 +21,7 @@ export interface StoredKind {
 }
 
 /**
- * The administrator's configuration of a kind (akinaza#337): the package's `TagSetEditor` (who manages tags, the set offered by trade) and,
+ * The administrator's configuration of a kind (folioviv#337): the package's `TagSetEditor` (who manages tags, the set offered by trade) and,
  * when the kind has a status set, its `StatusSetEditor`. Saved at the version read (409 when someone else saved first), audited.
  */
 export function OrganizeConfig({ stored }: Readonly<{ stored: StoredKind }>) {

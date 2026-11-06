@@ -57,7 +57,7 @@ function redirectOf(path: string, query: Record<string, string> = {}): { to: str
   return null;
 }
 
-describe("every retired address answers 308 to a page that exists (akinaza#381)", () => {
+describe("every retired address answers 308 to a page that exists (folioviv#381)", () => {
   const OLD: [string, Record<string, string>, string][] = [
     [`/fr/app/${SHOP}/shop`, {}, `/fr/app/${SHOP}/settings/page`],
     [`/en/app/${SHOP}/shop/languages`, {}, `/en/app/${SHOP}/settings/languages`],
@@ -97,7 +97,7 @@ describe("the eight pages that only redirected are gone", () => {
   });
 });
 
-describe("one booking path (akinaza#381)", () => {
+describe("one booking path (folioviv#381)", () => {
   it("the signed-in booking page is gone; the last step of the public path asks for the sign-in", () => {
     expect(existsSync(join(ROOT, "app/[locale]/(app)/s/[slug]/book/page.tsx"))).toBe(false);
     const confirm = read("app/[locale]/s/[slug]/service/[id]/confirm/page.tsx");
@@ -110,7 +110,7 @@ describe("one booking path (akinaza#381)", () => {
   });
 });
 
-describe("a link that leads nowhere answers 404, not a page that looks alive (akinaza#381)", () => {
+describe("a link that leads nowhere answers 404, not a page that looks alive (folioviv#381)", () => {
   it.each(["invoice", "report", "brief/stop"])("/%s/[token] calls notFound for an unknown or expired token", (route) => {
     const page = read(`app/[locale]/${route}/[token]/page.tsx`);
     expect(page).toContain("notFound()");

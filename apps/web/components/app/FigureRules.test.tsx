@@ -1,4 +1,4 @@
-import { OWNER_BOUNDS } from "@akinaza/core";
+import { OWNER_BOUNDS } from "@folioviv/core";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 

@@ -1,4 +1,4 @@
-import { type BusyRange, type BusyResult, type CalendarSource, CalendarSourceError, parseBusy, type Validators } from "@akinaza/core";
+import { type BusyRange, type BusyResult, type CalendarSource, CalendarSourceError, parseBusy, type Validators } from "@folioviv/core";
 
 import { assertPublicHost, parseCalendarUrl, type Resolver } from "./public-url";
 
@@ -36,7 +36,7 @@ async function readLimited(res: Response): Promise<string> {
 }
 
 async function request(doFetch: typeof fetch, url: URL, validators: Validators): Promise<Response> {
-  const headers: Record<string, string> = { accept: "text/calendar, text/plain;q=0.5", "user-agent": "Akinaza-calendar-sync" };
+  const headers: Record<string, string> = { accept: "text/calendar, text/plain;q=0.5", "user-agent": "Folioviv-calendar-sync" };
   if (validators.etag) headers["if-none-match"] = validators.etag;
   if (validators.lastModified) headers["if-modified-since"] = validators.lastModified;
   try {

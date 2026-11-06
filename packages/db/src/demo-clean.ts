@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm";
 import type { Db } from "./client";
 
 /**
- * Keeps the demo shop equal to its cast (krizaka/.github#356, akinaza #1915). A journey that runs on the shared dev database adds a dog, a
+ * Keeps the demo shop equal to its cast (krizaka/.github#356, folioviv #1915). A journey that runs on the shared dev database adds a dog, a
  * booking, sometimes a client of its own; this finds what the cast does not hold and removes it, through the schema's own foreign keys (a
  * visit report, then its booking, then the visit, then the dog, then the client file, then a sign-in that nothing else uses).
  */

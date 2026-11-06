@@ -1,4 +1,4 @@
-import { organizeOver as over } from "@akinaza/db";
+import { organizeOver as over } from "@folioviv/db";
 
 import { requireSession } from "./access";
 import { query } from "./db";

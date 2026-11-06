@@ -7,7 +7,7 @@ import { appPrices } from "@/lib/price-catalogue";
 
 export const dynamic = "force-dynamic";
 
-/** The administrator's catalogue of prices (akinaza#371, ADR-009): each entry in force, a change from a date, the history. */
+/** The administrator's catalogue of prices (folioviv#371, ADR-009): each entry in force, a change from a date, the history. */
 export default async function AdminPrices({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const t = translator(asLocale((await params).locale));
   const catalogue = appPrices();

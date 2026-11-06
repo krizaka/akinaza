@@ -6,7 +6,7 @@ import { sessionKey, useNavSession } from "@krizaka/ui/nav-bar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import { type AccountMenuWords,AkinazaAccountMenu } from "@/components/account/AkinazaAccountMenu";
+import { type AccountMenuWords,FoliovivAccountMenu } from "@/components/account/FoliovivAccountMenu";
 import { SignedOutActions } from "@/components/account/SignedOutActions";
 import type { Me } from "@/lib/me";
 
@@ -52,7 +52,7 @@ export function BarActionsView({ me, locale, words, placement, onSignOut }: Read
             <Link href={`/${locale}/app`} prefetch={false}>{words.openApp}</Link>
           </Button>
         ) : (
-          <AkinazaAccountMenu locale={locale} accountId={me.account.id} name={me.account.name} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} subscriptionHref={`/${locale}/app/profile/subscription`} words={words} onSignOut={onSignOut} />
+          <FoliovivAccountMenu locale={locale} accountId={me.account.id} name={me.account.name} avatarSeed={me.account.avatarSeed} settingsHref={`/${locale}/app/profile`} subscriptionHref={`/${locale}/app/profile/subscription`} words={words} onSignOut={onSignOut} />
         )}
       </>
     );
@@ -76,7 +76,7 @@ export function Island({ locale, words, placement }: Readonly<{ locale: "en" | "
   return <BarActionsView me={me} locale={locale} words={words} placement={placement} onSignOut={() => signOut.mutate()} />;
 }
 
-/** The public bar's account state: « Sign in » / « Try Akinaza », or « Open the app » and the avatar when a session is open. */
+/** The public bar's account state: « Sign in » / « Try Folioviv », or « Open the app » and the avatar when a session is open. */
 export function BarSession(props: Readonly<{ locale: "en" | "fr"; words: BarWords; placement: "bar" | "panel" }>) {
   return (
     <QueryClientProvider client={barClient()}>

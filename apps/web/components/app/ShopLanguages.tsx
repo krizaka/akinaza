@@ -1,6 +1,6 @@
 "use client";
 
-import type { PageLocale } from "@akinaza/db";
+import type { PageLocale } from "@folioviv/db";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Button } from "@krizaka/ui/button";

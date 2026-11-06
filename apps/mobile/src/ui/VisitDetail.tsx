@@ -1,4 +1,4 @@
-import type { DayVisit } from "@akinaza/core";
+import type { DayVisit } from "@folioviv/core";
 import { Badge, Button, DescriptionList, Txt } from "@krizaka/ui/native";
 import * as Linking from "expo-linking";
 import * as React from "react";

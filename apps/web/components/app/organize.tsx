@@ -22,7 +22,7 @@ import { useSay } from "@/lib/i18n-client";
 import { listHref, MARKER_HUE, type OrganizeData, type TagLite } from "@/lib/organize-view";
 
 /**
- * The shop's organisation of a list (akinaza#337, krizaka-ts ADR-003): tags with a colour marker, the binder's dividers per tag, the
+ * The shop's organisation of a list (folioviv#337, krizaka-ts ADR-003): tags with a colour marker, the binder's dividers per tag, the
  * saved views, and the selection's bulk tag and untag. This file only WIRES the pieces of @krizaka/ui (TagChip, MarkerPicker,
  * TagSelector creatable, SavedViews, the DataTable selection bar) to the shop's routes: it draws none of them. Nothing here moves an
  * invoice's state — it is derived from the ledger.

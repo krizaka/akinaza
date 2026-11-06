@@ -11,7 +11,7 @@ export interface LedgerAction {
 
 /**
  * Of what the shop invoiced last week, the GST and QST it collected minus the credits of last week's expenses: the money
- * to set aside for the return — and what is really the shop's. Computed with the ledger's own rules; Akinaza prepares, the
+ * to set aside for the return — and what is really the shop's. Computed with the ledger's own rules; Folioviv prepares, the
  * merchant files.
  */
 export function taxProvision({ snapshot }: BriefContext) {

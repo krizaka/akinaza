@@ -47,7 +47,7 @@ describe("shots-storefront (the captures of #261 on a seeded database)", () => {
   });
 });
 
-describe("the owner's guide's captures (akinaza#382)", () => {
+describe("the owner's guide's captures (folioviv#382)", () => {
   it("has one scene per page of the guide, taken from the demo shop's own views", async () => {
     const { DOCS_SCENES } = await import("./shots-storefront.mjs");
     expect(DOCS_SCENES).toEqual(["docs-shop", "docs-bookings", "docs-invoices", "docs-books", "docs-data"]);
@@ -67,7 +67,7 @@ describe("flagsOf: features switched on for a capture run only", () => {
   });
 });
 
-describe("the demo shops' own flag (akinaza#261)", () => {
+describe("the demo shops' own flag (folioviv#261)", () => {
   it("names the three demo shops and nothing else", () => {
     expect(DEMO_SLUGS).toEqual(["cedre-ciseaux", "encre-vive", "ferland-conseil"]);
   });

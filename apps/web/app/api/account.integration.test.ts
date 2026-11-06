@@ -37,7 +37,7 @@ describe.runIf(enabled)("the account baseline over HTTP", () => {
   const stamp = `${Date.now()}-${randomUUID().slice(0, 8)}`;
   const made: string[] = [];
   const account = async (label: string) => {
-    const email = `${label}-${stamp}@akinaza.test`;
+    const email = `${label}-${stamp}@folioviv.test`;
     const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, $2) RETURNING id", [email, await hashPassword(PASSWORD)]);
     made.push(email);
     const first = await createSession(row!.id, { ip: "203.0.113.5", userAgent: "vitest-a" });
@@ -48,7 +48,7 @@ describe.runIf(enabled)("the account baseline over HTTP", () => {
   });
   beforeEach(() => resetRateLimits());
   afterAll(async () => {
-    await query("DELETE FROM accounts WHERE email = ANY($1) OR email LIKE $2", [made, `%-${stamp}@akinaza.test`]);
+    await query("DELETE FROM accounts WHERE email = ANY($1) OR email LIKE $2", [made, `%-${stamp}@folioviv.test`]);
     await pool().end();
   });
 
@@ -68,7 +68,7 @@ describe.runIf(enabled)("the account baseline over HTTP", () => {
 
   it("changes the e-mail by a link to the new address: queued in the outbox, verified by the link, once", async () => {
     const a = await account("mail");
-    const next = `next-${stamp}@akinaza.test`;
+    const next = `next-${stamp}@folioviv.test`;
     made.push(next);
     expect((await call(changeEmail, "POST", "/api/me/email", { cookie: a.token, json: { newEmail: next, password: "wrong" } })).status).toBe(403);
     expect((await call(changeEmail, "POST", "/api/me/email", { cookie: a.token, json: { newEmail: next, password: PASSWORD } })).status).toBe(200);
@@ -86,7 +86,7 @@ describe.runIf(enabled)("the account baseline over HTTP", () => {
     const admin = { id: null, label: "vitest" };
     await appSettings().set(admin, { scope: "global", id: "" }, "auth.passwordResetTtlMinutes", 45, new Date());
     try {
-      expect((await call(forgotPassword, "POST", "/api/auth/password/forgot", { json: { email: `nobody-${stamp}@akinaza.test` } })).status).toBe(202);
+      expect((await call(forgotPassword, "POST", "/api/auth/password/forgot", { json: { email: `nobody-${stamp}@folioviv.test` } })).status).toBe(202);
       expect((await call(forgotPassword, "POST", "/api/auth/password/forgot", { json: { email: a.email } })).status).toBe(202);
       const [mail] = await query<{ body_text: string; template: string }>("SELECT body_text, template FROM mail_outbox WHERE to_email = $1 ORDER BY created_at DESC LIMIT 1", [a.email]);
       expect(mail!.template).toBe("password-reset");
@@ -120,7 +120,7 @@ describe.runIf(enabled)("the account baseline over HTTP", () => {
     const a = await account("gone");
     const shop = (await call(saveShop, "POST", "/api/walker/shop", { cookie: a.token, json: { name: "À moi", legalName: "À moi", address: "1 rue Test", slug: `a-moi-${stamp}`, ownerName: "Éric" } })).body.shopId as string;
     const out = await call(exportAccount, "GET", "/api/me/account-export", { cookie: a.token });
-    expect(out.res.headers.get("content-disposition")).toContain("akinaza-account.json");
+    expect(out.res.headers.get("content-disposition")).toContain("folioviv-account.json");
     expect(out.body).toMatchObject({ account: { email: a.email }, shops: [{ id: shop, name: "À moi" }], clientFiles: [] });
     expect(JSON.stringify(out.body)).not.toMatch(/password_hash|token_hash/);
     expect((await call(deleteAccount, "POST", "/api/me/delete", { cookie: a.token, json: { password: "nope" } })).status).toBe(403);

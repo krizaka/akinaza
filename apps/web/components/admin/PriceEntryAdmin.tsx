@@ -16,7 +16,7 @@ type Entry = PricesDescription["entries"][number];
 const ZONE = "America/Toronto";
 
 /**
- * One entry of the catalogue of prices, for the administrator (akinaza#371): the version in force and its limits, what is
+ * One entry of the catalogue of prices, for the administrator (folioviv#371): the version in force and its limits, what is
  * scheduled, a change from a date (now or later), and the history. Composed from `SettingsSection` / `SettingsRow` until the
  * price-list block of Krizaka UI exists (krizaka/krizaka-ui#713). A subscription already sold keeps its version.
  */

@@ -1,5 +1,6 @@
 "use client";
 
+import { dueOn, termsChoices } from "@folioviv/core";
 import { PlusIcon, TrashIcon } from "@krizaka/icons";
 import { Alert } from "@krizaka/ui/alert";
 import { Button, IconButton } from "@krizaka/ui/button";
@@ -15,7 +16,6 @@ import { formatLongDay, formatMoney } from "@/lib/format";
 import { useSay } from "@/lib/i18n-client";
 import { type DraftLine, draftPreview, draftRequestLines, type DraftService, emptyLine } from "@/lib/invoice-draft";
 import { QUANTITY_FIELD } from "@/lib/quantity";
-import { dueOn, termsChoices } from "@akinaza/core";
 
 export interface InvoiceFormData {
   /** The shop's today: the date of the invoice. */

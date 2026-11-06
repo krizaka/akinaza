@@ -1,4 +1,4 @@
-import { saveShopMedia, shopMediaInputSchema } from "@akinaza/db";
+import { saveShopMedia, shopMediaInputSchema } from "@folioviv/db";
 
 import { requireOwner } from "@/lib/access";
 import { audit } from "@/lib/audit";

@@ -20,25 +20,25 @@ const list = z
 export const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   /** The public origin of the site (canonical URLs, sitemap, llms.txt). */
-  APP_PUBLIC_URL: z.string().url().default("https://www.akinaza.com"),
-  /** The development address (`dev.akinaza.com`): every page goes to www (308); only the API, auth callbacks, webhooks, /.well-known and /healthz keep serving there, all noindex (lib/indexing.ts). Unset: no dev host. */
+  APP_PUBLIC_URL: z.string().url().default("https://www.folioviv.com"),
+  /** The development address (`dev.folioviv.com`): every page goes to www (308); only the API, auth callbacks, webhooks, /.well-known and /healthz keep serving there, all noindex (lib/indexing.ts). Unset: no dev host. */
   APP_DEV_HOST: z.string().optional(),
-  /** The registrable domain the shops live on (`akinaza.shop`): `<slug>.<domain>` serves a shop and nothing of the app, no session reaches it, the old addresses answer 308 (ADR-005 slice 5, lib/shop-domain.ts). Unset: shops stay on `<slug>.akinaza.com`. */
+  /** The registrable domain the shops live on (`folioviv.shop`): `<slug>.<domain>` serves a shop and nothing of the app, no session reaches it, the old addresses answer 308 (ADR-005 slice 5, lib/shop-domain.ts). Unset: shops stay on `<slug>.folioviv.com`. */
   APP_SHOP_DOMAIN: z.string().optional(),
   /** Hosts this deployment also answers to, comma separated, exact names (a preview with an address of its own). Every other host is a 421 (lib/allowed-hosts.ts). */
   APP_ALLOWED_HOSTS: list,
-  /** The edge service that issues a certificate per merchant domain (ADR-005 §3, akinaza#539): its name is a value (`cloudflare`; `memory` for development and tests only). Unset: the option cannot be used. */
+  /** The edge service that issues a certificate per merchant domain (ADR-005 §3, folioviv#539): its name is a value (`cloudflare`; `memory` for development and tests only). Unset: the option cannot be used. */
   APP_EDGE_PROVIDER: z.enum(["cloudflare", "memory"]).optional(),
   /** The edge service's API token and zone of the shop domain (keys by name, never printed). */
   APP_EDGE_API_TOKEN: z.string().optional(),
   APP_EDGE_ZONE_ID: z.string().optional(),
-  /** The name merchants point their CNAME at (default `edge.akinaza.shop`). */
+  /** The name merchants point their CNAME at (default `edge.folioviv.shop`). */
   APP_EDGE_CNAME_TARGET: z.string().optional(),
   /** Explorer's address search: a geocoding service that speaks the Nominatim protocol, and the attribution its terms ask for. Unset = the search is off (the map and the list still work). */
   APP_GEOCODER_URL: z.string().url().optional(),
   APP_GEOCODER_ATTRIBUTION_TEXT: z.string().optional(),
   APP_GEOCODER_ATTRIBUTION_URL: z.string().url().optional(),
-  /** PostgreSQL (the cluster krizaka-dev-pg in dev: database akinaza_db, role akinaza_db). */
+  /** PostgreSQL (the cluster krizaka-dev-pg in dev: database folioviv_db, role folioviv_db). */
   DATABASE_URL: z.string().optional(),
   /** The cluster's CA (PEM), to verify its certificate; without it a TLS URL is refused in production. */
   DATABASE_CA_CERT: z.string().optional(),
@@ -48,7 +48,7 @@ export const envSchema = z.object({
   MAIL_PROVIDER: z.enum(["mailgun", "none"]).default("none"),
   MAIL_API_KEY: z.string().optional(),
   MAIL_DOMAIN: z.string().optional(),
-  /** The sender, e.g. `Akinaza <no-reply@mg.akinaza.com>`; default `Akinaza <no-reply@MAIL_DOMAIN>`. */
+  /** The sender, e.g. `Folioviv <no-reply@mg.folioviv.com>`; default `Folioviv <no-reply@MAIL_DOMAIN>`. */
   MAIL_FROM: z.string().optional(),
   /** The provider's API origin (EU region: `https://api.eu.mailgun.net`). */
   MAIL_API_URL: z.string().url().default("https://api.mailgun.net"),
@@ -92,7 +92,7 @@ export const envSchema = z.object({
   PAYMENTS_PRICE_KEY_STARTER: z.string().default(PROCESSOR_PLANS[STARTER].lookupKey),
   PAYMENTS_PRICE_KEY_SCALE: z.string().default(PROCESSOR_PLANS[SCALE].lookupKey),
   PAYMENTS_PRICE_KEY_ASSOCIATION: z.string().default(PROCESSOR_PLANS[ASSOCIATION].lookupKey),
-  /** Akinaza's OAuth clients for the owner's calendars (ADR-004), created by the administrator at Google and at Microsoft; a provider without both halves is not offered. Each provider's flag in the administration is off by default. */
+  /** Folioviv's OAuth clients for the owner's calendars (ADR-004), created by the administrator at Google and at Microsoft; a provider without both halves is not offered. Each provider's flag in the administration is off by default. */
   AUTH_CALENDAR_GOOGLE_CLIENT_ID: z.string().optional(),
   AUTH_CALENDAR_GOOGLE_CLIENT_SECRET: z.string().optional(),
   AUTH_CALENDAR_OUTLOOK_CLIENT_ID: z.string().optional(),
@@ -123,7 +123,7 @@ export function productionProblems(env: Env): string[] {
 
 export function assertProductionEnv(source: Record<string, string | undefined> = process.env): void {
   const problems = productionProblems(readEnv(source));
-  if (problems.length) {throw new Error(`Akinaza refuses to start: ${problems.join("; ")}`);}
+  if (problems.length) {throw new Error(`Folioviv refuses to start: ${problems.join("; ")}`);}
 }
 
 export const env = () => readEnv();
@@ -157,7 +157,7 @@ export function sessionSecret(): string {
 // @fixed: AES-256 takes exactly 32 bytes — a property of the cipher.
 const DATA_KEY_BYTES = 32;
 const validDataKey = (base64: string | undefined) => Buffer.from(base64 ?? "", "base64").length === DATA_KEY_BYTES;
-const DEV_DATA_KEY = Buffer.alloc(32, "akinaza-development-only-data-key").toString("base64");
+const DEV_DATA_KEY = Buffer.alloc(32, "folioviv-development-only-data-key").toString("base64");
 export function dataKey(source: Record<string, string | undefined> = process.env): Buffer {
   const e = readEnv(source);
   if (e.APP_DATA_ENCRYPTION_KEY) {

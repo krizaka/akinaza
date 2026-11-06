@@ -16,7 +16,7 @@ export interface SiteBarLabels {
   sourceCode: string;
   theme: string;
   language: string;
-  /** « Explorer »: the shops on a map (akinaza#235). */
+  /** « Explorer »: the shops on a map (folioviv#235). */
   explore: string;
   menu: string;
   preferences: string;

@@ -1,4 +1,4 @@
-import { DEFAULT_MEDIA, defaultMediaPaths, SHOP_TYPES } from "@akinaza/core";
+import { DEFAULT_MEDIA, defaultMediaPaths, SHOP_TYPES } from "@folioviv/core";
 import { describe, expect, it } from "vitest";
 
 import { bindProduct } from "@/lib/brand";
@@ -21,9 +21,9 @@ describe("the default media are on the CDN and described (#267)", () => {
     for (const hash of Object.values(files)) expect(hash).toMatch(/^[0-9a-f]{10}$/);
   });
 
-  it("an address is the hashed object on the media zone: name.hash.ext under apps/akinaza/, never a guess", () => {
+  it("an address is the hashed object on the media zone: name.hash.ext under apps/folioviv/, never a guess", () => {
     const [path] = defaultMediaPaths();
-    expect(defaultFileUrl(path!)).toMatch(/^https:\/\/krizaka-assets\.b-cdn\.net\/apps\/akinaza\/defaults\/.+\.[0-9a-f]{10}\.(avif|webp|webm|mp4)$/);
+    expect(defaultFileUrl(path!)).toMatch(/^https:\/\/krizaka-assets\.b-cdn\.net\/apps\/folioviv\/defaults\/.+\.[0-9a-f]{10}\.(avif|webp|webm|mp4)$/);
     expect(defaultFileUrl("defaults/nope/cover/x.webp")).toBeNull();
   });
 
@@ -63,7 +63,7 @@ describe("the default media are on the CDN and described (#267)", () => {
   });
 });
 
-describe("each demo shop's images belong to its trade (akinaza#383)", () => {
+describe("each demo shop's images belong to its trade (folioviv#383)", () => {
   // A reviewed list: what may appear in the proposals of a trade, and the objects a trade must never show (« book » read as a noun on a hair salon).
   const OFF_TRADE: Record<string, RegExp> = {
     salon: /\b(book|books|notebook|laptop|paper|papers|desk|dog|bicycle|dumbbell|mat)s?\b/i,
@@ -77,8 +77,8 @@ describe("each demo shop's images belong to its trade (akinaza#383)", () => {
   };
 
   it("the demo shops' trades are the ones the default images are drawn for", async () => {
-    const { DEMO_SHOPS } = await import("@akinaza/db");
-    const { latestTemplate } = await import("@akinaza/core");
+    const { DEMO_SHOPS } = await import("@folioviv/db");
+    const { latestTemplate } = await import("@folioviv/core");
     for (const demo of DEMO_SHOPS) {
       expect(SHOP_TYPES, demo.shop.slug).toContain(demo.shopType);
       expect(latestTemplate(demo.template)!.shopTypes, demo.template).toContain(demo.shopType);

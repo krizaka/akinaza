@@ -1,4 +1,4 @@
-import { type Cents, invoiceTotals, type InvoiceTotals, type LineInput } from "@akinaza/core";
+import { type Cents, invoiceTotals, type InvoiceTotals, type LineInput } from "@folioviv/core";
 
 import type { InvoiceLine } from "./api";
 
@@ -11,7 +11,7 @@ export interface ShopServiceRef {
 }
 
 /**
- * What an invoice will total, before it is issued: the same tax code as the server (`@akinaza/core`, GST and QST computed once on the
+ * What an invoice will total, before it is issued: the same tax code as the server (`@folioviv/core`, GST and QST computed once on the
  * taxable base, to the cent). The server decides; this is what the owner sees while typing.
  */
 export function previewTotals(lines: readonly InvoiceLine[], services: readonly ShopServiceRef[], registrant: boolean): InvoiceTotals | null {

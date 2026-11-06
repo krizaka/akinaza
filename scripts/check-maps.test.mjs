@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { mapProblems } from "./check-maps.mjs";
 
-describe("no empty map (akinaza#488)", () => {
+describe("no empty map (folioviv#488)", () => {
   it("refuses a map box of 0 px, the bug of the shop page", () => {
     expect(mapProblems("/fr/s/x (dark)", { width: 1148, height: 0, canvasWidth: 1148, canvasHeight: 300 })).toEqual(["/fr/s/x (dark): the map box is 1148x0 px (empty)"]);
   });

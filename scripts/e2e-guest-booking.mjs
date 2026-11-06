@@ -10,7 +10,7 @@
 //
 //   E2E_BASE=http://localhost:3210 E2E_SLUG=<a published shop> [E2E_LOCALE=fr] [E2E_OUT=<dir>] [E2E_MAIL_PORT=3299] pnpm run e2e:guest
 //
-// Needs a Chromium for playwright-core. It adds one client file and one booking at that shop under an `@akinaza.test` address: demo data only.
+// Needs a Chromium for playwright-core. It adds one client file and one booking at that shop under an `@folioviv.test` address: demo data only.
 import { mkdirSync, renameSync, readdirSync } from "node:fs";
 import { createServer } from "node:http";
 import { createRequire } from "node:module";
@@ -23,7 +23,7 @@ const LOCALE = process.env.E2E_LOCALE === "fr" ? "fr" : "en";
 const SLUG = process.env.E2E_SLUG ?? "pattes-saint-henri";
 const OUT = process.env.E2E_OUT;
 const MAIL_PORT = Number(process.env.E2E_MAIL_PORT ?? 3299);
-const EMAIL = `e2e-guest-${Date.now()}@akinaza.test`;
+const EMAIL = `e2e-guest-${Date.now()}@folioviv.test`;
 if (OUT) mkdirSync(OUT, { recursive: true });
 
 // The words of the interface, in the language of the run (messages/<locale>.json, `console.guest` and `console.journey`).

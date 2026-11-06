@@ -32,7 +32,7 @@ no-show answer, buffers that stay attached to old bookings (Calendly's own forum
 
 None issues a **bilingual GST/QST receipt**. That, and French first, is Quebec's open lane.
 
-## Where Akinaza can do better, and what it really runs
+## Where Folioviv can do better, and what it really runs
 Chosen (7): each fits what the product already does, none is faked.
 1. **One route per step** — `/s/<shop>`, `/service/<id>`, `/creneau`, `/confirmation`: the URL is the state, the back button works, every step prefetches.
 2. **A menu that shows duration, price and the tax** — « 95 $ + TPS/TVQ = 109,97 $ », exact to the cent from the tax code, in both languages.

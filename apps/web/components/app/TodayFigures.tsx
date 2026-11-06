@@ -1,4 +1,4 @@
-import type { Figure, FigureId } from "@akinaza/core";
+import type { Figure, FigureId } from "@folioviv/core";
 
 import { getDictionary, type Locale } from "@/lib/i18n";
 import type { ShopRoutes } from "@/lib/routes";

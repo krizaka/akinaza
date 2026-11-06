@@ -1,4 +1,4 @@
-import { removeReel } from "@akinaza/db";
+import { removeReel } from "@folioviv/db";
 
 import { db } from "@/lib/db";
 import { takeDown } from "@/lib/shop-item-route";

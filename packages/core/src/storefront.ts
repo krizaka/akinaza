@@ -63,7 +63,7 @@ export function openStatus(windows: readonly WeeklyWindow[], now: Date, timezone
 }
 
 /**
- * Where one member of the team stands right now, for the public page (akinaza#209): free, busy until a time, starting
+ * Where one member of the team stands right now, for the public page (folioviv#209): free, busy until a time, starting
  * later today, done for the day, away today, or on time off until a day. Read from their weekly hours, today's visits and
  * their time off — never a client, a service or a reason. Pure: the clock and the zone are parameters.
  */

@@ -1,5 +1,5 @@
-import { type ShopType, shopTypeOf } from "@akinaza/core";
-import type { PublicShop } from "@akinaza/db";
+import { type ShopType, shopTypeOf } from "@folioviv/core";
+import type { PublicShop } from "@folioviv/db";
 
 import { type ResolvedDefaults, resolveDefaults } from "@/lib/default-media";
 import { appSettings } from "@/lib/settings";

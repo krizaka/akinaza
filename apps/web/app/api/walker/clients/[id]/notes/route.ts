@@ -1,11 +1,11 @@
-import { addClientNote } from "@akinaza/db";
+import { addClientNote } from "@folioviv/db";
 import { z } from "zod";
 
 import { accounts } from "@/app/accounts";
+import { requestNow } from "@/app/request-now";
 import { requireShopClient } from "@/lib/access";
 import { db } from "@/lib/db";
 import { handle, idParam } from "@/lib/http";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

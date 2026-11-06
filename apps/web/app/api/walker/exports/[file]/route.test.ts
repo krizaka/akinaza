@@ -1,4 +1,4 @@
-import { exportAppointments, exportClients, exportInvoices } from "@akinaza/db";
+import { exportAppointments, exportClients, exportInvoices } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireShop } from "@/lib/access";
@@ -13,7 +13,7 @@ vi.mock("@/lib/access", async (original) => ({ ...(await original<typeof import(
 vi.mock("@/lib/audit", () => ({ audit: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), exportAppointments: vi.fn(), exportClients: vi.fn(), exportInvoices: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), exportAppointments: vi.fn(), exportClients: vi.fn(), exportInvoices: vi.fn() }));
 
 async function* batches<T>(...all: T[][]): AsyncGenerator<T[]> {
   for (const b of all) yield b;
@@ -37,7 +37,7 @@ describe("the owner's data exports (#420)", () => {
     const res = await get("appointments.csv", "?locale=en");
     expect(res.status).toBe(200);
     expect(res.headers.get("content-type")).toContain("text/csv");
-    expect(res.headers.get("content-disposition")).toContain('attachment; filename="akinaza-appointments.csv"');
+    expect(res.headers.get("content-disposition")).toContain('attachment; filename="folioviv-appointments.csv"');
     expect(res.headers.get("cache-control")).toContain("no-store");
     const bytes = new Uint8Array(await res.clone().arrayBuffer());
     expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf]);
@@ -62,7 +62,7 @@ describe("the owner's data exports (#420)", () => {
     expect(text.startsWith("BEGIN:VCALENDAR\r\n")).toBe(true);
     expect(text.endsWith("END:VCALENDAR\r\n")).toBe(true);
     expect(text.match(/BEGIN:VEVENT/g)).toHaveLength(2);
-    expect(text).toContain("UID:a1@akinaza.com");
+    expect(text).toContain("UID:a1@folioviv.com");
     expect(text).toContain("DTSTART:20261121T150000Z");
     expect(text).toContain("SUMMARY:Coupe");
   });

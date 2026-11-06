@@ -12,7 +12,7 @@ describe("add to calendar", () => {
     expect(ics).toContain("DTSTART:20261027T170000Z");
     expect(ics).toContain("DTEND:20261027T180000Z");
     expect(ics).toContain("DTSTAMP:20261022T120000Z");
-    expect(ics).toContain("UID:b1@akinaza.com");
+    expect(ics).toContain("UID:b1@folioviv.com");
   });
   it("escapes commas, semicolons and line breaks, and omits what is not given", () => {
     const ics = buildIcs({ ...base, summary: "A, B; C", location: "4100 rue Notre-Dame O., Montréal", description: "ligne 1\nligne 2" });
@@ -36,11 +36,11 @@ describe("the private feed (ADR-004)", () => {
   ];
 
   it("writes one event per appointment, the service and the first names, and nothing else", () => {
-    const ics = buildFeedIcs({ name: "Akinaza · Salon Laurier", entries, now });
+    const ics = buildFeedIcs({ name: "Folioviv · Salon Laurier", entries, now });
     expect(ics.startsWith("BEGIN:VCALENDAR\r\n")).toBe(true);
     expect(ics.endsWith("END:VCALENDAR\r\n")).toBe(true);
     expect(ics.match(/BEGIN:VEVENT/g)).toHaveLength(2);
-    expect(ics).toContain("UID:a1@akinaza.com");
+    expect(ics).toContain("UID:a1@folioviv.com");
     expect(ics).toContain("DTSTART:20261027T140000Z");
     expect(ics).toContain("SUMMARY:Coupe\\, brushing · Camille\\, Luc");
     expect(ics).toContain("SUMMARY:Coloration\r\n");

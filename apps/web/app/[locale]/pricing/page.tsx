@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 /**
- * The prices, read from the catalogue at the date of the request (akinaza#380; the administrator's `/console/prices`): a price
+ * The prices, read from the catalogue at the date of the request (folioviv#380; the administrator's `/console/prices`): a price
  * changed there changes this page. The founder offer shows only while it is on sale, as on the home. What is not built says
  * « soon », with no figure. The action follows the home's: the demo shop and the sign-in while sign-up is closed.
  */
@@ -102,7 +102,7 @@ export default async function Pricing({ params }: Readonly<{ params: Promise<{ l
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdHtml(siteJsonLd(locale)) }} />
       <SiteHeader locale={locale} current="pricing" />
       <main id="content" className="pt-20">
-        <PricingPage brand="akinaza" title={d.title} lead={d.lead} plansLabel={d.plansLabel} plans={cards} faq={{ title: d.faqTitle, items: faqFor(d.faq, d.faqFreePeriodPlanned, selling).map((f) => ({ question: f.q, answer: f.a })) }} />
+        <PricingPage brand="folioviv" title={d.title} lead={d.lead} plansLabel={d.plansLabel} plans={cards} faq={{ title: d.faqTitle, items: faqFor(d.faq, d.faqFreePeriodPlanned, selling).map((f) => ({ question: f.q, answer: f.a })) }} />
       </main>
       <SiteFooter locale={locale} />
     </>

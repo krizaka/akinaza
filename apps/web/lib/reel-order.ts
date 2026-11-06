@@ -1,4 +1,4 @@
-/** The place a poster frame is taken from: a tenth into the video, never before a quarter second nor past two seconds, so it is neither black nor late (akinaza#469). */
+/** The place a poster frame is taken from: a tenth into the video, never before a quarter second nor past two seconds, so it is neither black nor late (folioviv#469). */
 export function posterTime(duration: number): number {
   if (!Number.isFinite(duration) || duration <= 0) {
     return 0;

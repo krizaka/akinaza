@@ -1,4 +1,4 @@
-import { SHOP_TYPES, TEMPLATES } from "@akinaza/core";
+import { SHOP_TYPES, TEMPLATES } from "@folioviv/core";
 import { describe, expect, it } from "vitest";
 
 import { bindProduct } from "@/lib/brand";

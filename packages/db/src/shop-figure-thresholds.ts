@@ -1,4 +1,4 @@
-import { type OwnerOverrides, parseOwnerOverrides } from "@akinaza/core";
+import { type OwnerOverrides, parseOwnerOverrides } from "@folioviv/core";
 import { eq, sql } from "drizzle-orm";
 
 import type { Db } from "./client";

@@ -1,9 +1,9 @@
-import { reportPhoto } from "@akinaza/db";
+import { reportPhoto } from "@folioviv/db";
 
+import { requestNow } from "@/app/request-now";
 import { db } from "@/lib/db";
 import { handle, refuse } from "@/lib/http";
 import { limit } from "@/lib/rate-limit";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

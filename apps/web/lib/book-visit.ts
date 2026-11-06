@@ -1,4 +1,4 @@
-import { bookVisit, ownerOfShop } from "@akinaza/db";
+import { bookVisit, ownerOfShop } from "@folioviv/db";
 
 import { requestNow } from "@/app/request-now";
 import { systemClock } from "@/app/system-clock";

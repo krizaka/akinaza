@@ -1,14 +1,14 @@
-import { saveShopLanguages, translationRunsOn } from "@akinaza/db";
-import { translationRows } from "@akinaza/db";
+import { saveShopLanguages, translationRunsOn } from "@folioviv/db";
+import { translationRows } from "@folioviv/db";
 import { localDay } from "@krizaka/intl";
 import { z } from "zod";
 
+import { requestNow } from "@/app/request-now";
 import { requireOwner } from "@/lib/access";
 import { audit } from "@/lib/audit";
 import { db } from "@/lib/db";
 import { handle, readJson } from "@/lib/http";
 import { translationRules } from "@/lib/translation-settings";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

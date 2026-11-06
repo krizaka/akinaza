@@ -1,5 +1,5 @@
-import { localDay, type TaxCategory } from "@akinaza/core";
-import { agendaConflicts, schema } from "@akinaza/db";
+import { localDay, type TaxCategory } from "@folioviv/core";
+import { agendaConflicts, schema } from "@folioviv/db";
 import { and, eq, ne, sql } from "drizzle-orm";
 
 import { type AppointmentStatus, isIsoDay } from "./day";

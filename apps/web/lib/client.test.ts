@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { errorFields, errorKey } from "./client";
 
-describe("what the browser reads of a refusal (akinaza#489)", () => {
+describe("what the browser reads of a refusal (folioviv#489)", () => {
   it("names the fields of a 400, so a form can point at one", () => {
     const refusal = { status: 400, body: { code: "BAD_REQUEST", fields: ["slug", 3, "name"] } };
     expect(errorKey(refusal)).toBe("BAD_REQUEST");

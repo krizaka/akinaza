@@ -1,5 +1,5 @@
-import type { ShopType, Template } from "@akinaza/core";
-import { SHOP_TYPES, TEMPLATES, TEMPLATES_V2 } from "@akinaza/core";
+import type { ShopType, Template } from "@folioviv/core";
+import { SHOP_TYPES, TEMPLATES, TEMPLATES_V2 } from "@folioviv/core";
 
 import { appSettings, cahierStorefrontOn } from "@/lib/settings";
 
@@ -14,7 +14,7 @@ export async function templateRules(): Promise<{ enabled: boolean; offered: stri
   return { enabled, offered: [...offered], defaults: Object.fromEntries(SHOP_TYPES.map((type, i) => [type, defaults[i]!])) as Record<ShopType, string> };
 }
 
-/** The templates a shop can apply: the notebook's `@2` joins the `@1` ones while `features.cahierStorefront` is on (akinaza#316); a shop on `@1` sees « update available » then, and keeps its own until the owner updates. */
+/** The templates a shop can apply: the notebook's `@2` joins the `@1` ones while `features.cahierStorefront` is on (folioviv#316); a shop on `@1` sees « update available » then, and keeps its own until the owner updates. */
 export async function templateCatalogue(userId: string | null): Promise<readonly Template[]> {
   return (await cahierStorefrontOn(userId)) ? [...TEMPLATES, ...TEMPLATES_V2] : TEMPLATES;
 }

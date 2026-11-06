@@ -14,8 +14,8 @@ describe("e2e-guest-booking (a client with no account books)", () => {
     expect(source).toContain("data-guest-cancel-rule");
   });
 
-  it("films the run and writes demo data only, under an @akinaza.test address", () => {
+  it("films the run and writes demo data only, under an @folioviv.test address", () => {
     expect(source).toContain("recordVideo");
-    expect(source).toContain("@akinaza.test");
+    expect(source).toContain("@folioviv.test");
   });
 });

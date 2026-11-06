@@ -1,6 +1,6 @@
 -- ONE baseline (krizaka-internal#2044, founder 2026-10-31: no production yet, no history kept): the schema of the 56 migrations before it,
 -- with the Krizaka modules' version markers. The price grid is data from code (src/price-schedule.ts, run by migrate()). A change of schema
--- from now on is a NEW migration after this one (`pnpm --filter @akinaza/db db:generate`); never an edit of a merged one.
+-- from now on is a NEW migration after this one (`pnpm --filter @folioviv/db db:generate`); never an edit of a merged one.
 SET LOCAL check_function_bodies = false;
 
 CREATE SCHEMA organize;

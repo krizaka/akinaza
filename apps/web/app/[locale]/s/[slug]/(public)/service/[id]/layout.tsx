@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { loadPublicShop } from "@/lib/shop-page";
 
 /**
- * A service that does not exist (or is not the shop's) answers 404 with the status 404 (akinaza#293). The pages stream behind
+ * A service that does not exist (or is not the shop's) answers 404 with the status 404 (folioviv#293). The pages stream behind
  * `loading.tsx`, so a `notFound()` thrown there arrives after the 200 has left; this layout sits above that boundary and decides
  * first (there is no `loading.tsx` on the `service` segment itself, which would wrap it again: the one of `[id]` is the same skeleton). A former shop address passes: the page itself moves it (308) with the rest of the path.
  */

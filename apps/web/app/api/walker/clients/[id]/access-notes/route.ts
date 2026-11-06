@@ -1,4 +1,4 @@
-import { revealAccessNotes } from "@akinaza/db";
+import { revealAccessNotes } from "@folioviv/db";
 
 import { requireShopClient } from "@/lib/access";
 import { audit } from "@/lib/audit";

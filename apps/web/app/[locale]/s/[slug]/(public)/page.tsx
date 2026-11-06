@@ -1,16 +1,16 @@
 
-import { demoLookDocument, demoLooksOf, localDay } from "@akinaza/core";
-import { communityOf, ownerOfShop, publishedShopPage, shopAccentOf, shopPaperOf, teamDay } from "@akinaza/db";
+import { demoLookDocument, demoLooksOf, localDay } from "@folioviv/core";
+import { communityOf, ownerOfShop, publishedShopPage, shopAccentOf, shopPaperOf, teamDay } from "@folioviv/db";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
+import { requestNow } from "@/app/request-now";
 import { DemoLookSwitch } from "@/components/shop/DemoLookSwitch";
 import { ShopPageView } from "@/components/shop/ShopPageView";
 import { StorefrontLive } from "@/components/shop/StorefrontLive";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
-import { requestNow } from "@/app/request-now";
 import { nextFreeTimeOf } from "@/lib/closing-call-read";
 import { reviewRules } from "@/lib/community";
 import { buildCommunity } from "@/lib/community-view";

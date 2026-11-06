@@ -12,7 +12,7 @@ const fr = bindProduct(frRaw);
 
 const read = (path: string) => readFileSync(join(__dirname, "..", path), "utf8");
 
-/** The plain product surface (krizaka/akinaza#161, #142): no mono uppercase eyebrow above a heading on the shop page, its journey or the offer. */
+/** The plain product surface (krizaka/folioviv#161, #142): no mono uppercase eyebrow above a heading on the shop page, its journey or the offer. */
 describe("the public shop page and its booking journey carry no eyebrow", () => {
   const files = [
     "components/shop/ShopPageView.tsx",

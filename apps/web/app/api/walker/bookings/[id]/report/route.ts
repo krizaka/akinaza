@@ -1,4 +1,4 @@
-import { saveReport } from "@akinaza/db";
+import { saveReport } from "@folioviv/db";
 
 import { requireShop } from "@/lib/access";
 import { db } from "@/lib/db";

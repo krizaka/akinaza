@@ -13,7 +13,7 @@ vi.mock("@/lib/price-catalogue", () => ({ appPrices: vi.fn() }));
 
 const post = (key: string, body: unknown) => POST(new Request(`http://localhost/api/admin/prices/${key}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) }), { params: Promise.resolve({ key }) });
 
-describe("POST /api/admin/prices/[key]: the administrator schedules a change from a date (akinaza#371)", () => {
+describe("POST /api/admin/prices/[key]: the administrator schedules a change from a date (folioviv#371)", () => {
   let prices: ReturnType<typeof priceCatalogue>;
   beforeEach(() => {
     prices = priceCatalogue(PRICES, memoryPriceStore());
@@ -33,7 +33,7 @@ describe("POST /api/admin/prices/[key]: the administrator schedules a change fro
 
   it("refuses a date in the past, an unknown entry and an on-sale entry without a figure", async () => {
     expect((await post(STARTER, { amountCents: 5000, effectiveFrom: "2000-01-01T00:00:00.000Z" })).status).toBe(400);
-    expect((await post("akinaza.nope", { amountCents: 5000 })).status).toBe(404);
+    expect((await post("folioviv.nope", { amountCents: 5000 })).status).toBe(404);
     expect((await post(STARTER, { amountCents: null })).status).toBe(400);
     expect((await post(STARTER, { fee: 3 })).status).toBe(400);
   });

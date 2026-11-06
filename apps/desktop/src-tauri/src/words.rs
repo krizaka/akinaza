@@ -6,7 +6,7 @@ use tauri_plugin_krizaka::kit::menu::MenuSpec;
 const FR: &str = include_str!("../menu/fr.json");
 const EN: &str = include_str!("../menu/en.json");
 
-/// `en` when the Mac's first language is English, `fr` otherwise (Akinaza is made in Québec).
+/// `en` when the Mac's first language is English, `fr` otherwise (Folioviv is made in Québec).
 pub fn locale_of(system: Option<&str>) -> &'static str {
     match system {
         Some(tag) if tag.to_ascii_lowercase().starts_with("en") => "en",

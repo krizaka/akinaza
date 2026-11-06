@@ -1,4 +1,4 @@
-import { LEXICON } from "@akinaza/core";
+import { LEXICON } from "@folioviv/core";
 import { Glossary } from "@krizaka/ui/glossary";
 
 import { getDictionary, type Locale } from "@/lib/i18n";

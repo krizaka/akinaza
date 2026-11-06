@@ -1,4 +1,4 @@
-import { localDay } from "@akinaza/core";
+import { localDay } from "@folioviv/core";
 import { eq } from "drizzle-orm";
 
 import type { Db } from "./client";
@@ -7,7 +7,7 @@ import { addWindow, joinShop, saveService, saveShopPage, shopOfOwner } from "./s
 import { issueInvoice, recordExpense } from "./shop-ops";
 
 /**
- * The two states of an owner's space that the cast's busy shops never show (akinaza#405): a shop with NOTHING in it
+ * The two states of an owner's space that the cast's busy shops never show (folioviv#405): a shop with NOTHING in it
  * (every list is its empty state) and a shop with exactly ONE item per list (a single row, a single card). The page audit
  * crawls the owner's frame as each of them, so an empty state or a lone row that overflows, hides its action or breaks the
  * layout fails CI like any other page. Demo data like the rest: fictional people, « (démo) » in the legal names, never a
@@ -15,15 +15,15 @@ import { issueInvoice, recordExpense } from "./shop-ops";
  */
 export const OWNER_STATES = {
   empty: {
-    email: "ines.debut@akinaza.test",
+    email: "ines.debut@folioviv.test",
     shop: { name: "Atelier du Début (démo)", legalName: "Atelier du Début (démo)", address: "3 rue Exemple, Montréal QC H2X 1Y3 (adresse fictive)", slug: "atelier-du-debut", ownerName: "Inès", businessType: "professional" as const },
   },
   one: {
-    email: "yan.seul@akinaza.test",
+    email: "yan.seul@folioviv.test",
     shop: { name: "Studio Unique (démo)", legalName: "Studio Unique inc. (démo)", address: "4 rue Exemple, Montréal QC H2X 1Y4 (adresse fictive)", slug: "studio-unique", ownerName: "Yan", businessType: "professional" as const },
     service: { nameFr: "Séance de conseil (à l'heure)", nameEn: "Consulting session (hourly)", durationMinutes: 60, priceCents: 9_000, capacity: 1 },
     window: { weekday: 3, startsAt: "10:00", endsAt: "14:00" },
-    client: { email: "contact.uniqueclient@akinaza.test", name: "Atelier Seul inc. (démo)", phone: "514-555-0121", language: "fr" as const },
+    client: { email: "contact.uniqueclient@folioviv.test", name: "Atelier Seul inc. (démo)", phone: "514-555-0121", language: "fr" as const },
   },
 };
 

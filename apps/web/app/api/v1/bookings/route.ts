@@ -1,4 +1,4 @@
-import { dayVisits, shopDay } from "@akinaza/db";
+import { dayVisits, shopDay } from "@folioviv/db";
 
 import { systemClock } from "@/app/system-clock";
 import { v1 } from "@/lib/api-v1";

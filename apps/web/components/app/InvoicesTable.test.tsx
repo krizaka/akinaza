@@ -1,4 +1,4 @@
-import { invoiceState } from "@akinaza/core";
+import { invoiceState } from "@folioviv/core";
 import { KrizakaQueryProvider } from "@krizaka/query";
 import { dataTableLabels } from "@krizaka/ui/data-table";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -61,7 +61,7 @@ const organised = () =>
     </I18nProvider>,
   );
 
-describe("the invoices list organised (akinaza#337)", () => {
+describe("the invoices list organised (folioviv#337)", () => {
   it("draws the tags' dividers with their counts, the tags on the rows and the system views as links holding the filters", () => {
     const html = organised();
     expect(readable(html)).toMatch(/Tous[\s\S]*À relancer\s*2/);
@@ -92,7 +92,7 @@ describe("the invoices list organised (akinaza#337)", () => {
   });
 });
 
-describe("the invoices list (akinaza#218)", () => {
+describe("the invoices list (folioviv#218)", () => {
   it("says where each invoice stands, in the shop's words", () => {
     const text = render("fr");
     for (const word of ["Payée", "En retard", "Payée en partie", "Annulée", "Note de crédit"]) {expect(text).toContain(word);}
@@ -159,7 +159,7 @@ describe("Factures in French (D2, review K3): the chrome, the columns, the deriv
 });
 
 
-describe("the columns' widths (akinaza#581)", () => {
+describe("the columns' widths (folioviv#581)", () => {
   // The table reads a column's role from its `type`: « title » takes the remaining width (w-full), « link » stays at its content.
   const cellOf = (html: string, label: string) => {
     const found = [...html.matchAll(/<td\b[^>]*data-label="([^"]*)"[^>]*class="([^"]*)"/g)].find((m) => m[1] === label);

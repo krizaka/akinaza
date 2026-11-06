@@ -42,7 +42,7 @@ describe("the founder offer on the public page", () => {
   });
 });
 
-describe("every figure of the offer is the catalogue's, formatted with the locale (akinaza#371)", () => {
+describe("every figure of the offer is the catalogue's, formatted with the locale (folioviv#371)", () => {
   it("reads the founder entry: 39 $ plus taxes, 0 % on cards, 0,5 % by debit capped at 15 $, the first 20 businesses", async () => {
     const entry = await founderEntry(fresh(), NOW);
     const enCopy = founderOfferCopy(entry, "en")!;
@@ -66,7 +66,7 @@ describe("every figure of the offer is the catalogue's, formatted with the local
   });
 });
 
-describe("the founder gate reads the cap from the catalogue (akinaza#371)", () => {
+describe("the founder gate reads the cap from the catalogue (folioviv#371)", () => {
   it("is the founder entry's founderCap: 20 by default, raised by the administrator with no deployment", async () => {
     const prices = fresh();
     const entry = await founderEntry(prices, NOW);

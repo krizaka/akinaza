@@ -25,7 +25,7 @@ describe("a services business issues an invoice from its own services (real Post
       issuedOn: "2026-10-21",
       lines: [
         { serviceId: hour, quantity: 10 },
-        { description: "Licence Orazaka On-Premise / On-Premise licence", quantity: 1, unitPriceCents: 150_000 },
+        { description: "Licence Sovkora On-Premise / On-Premise licence", quantity: 1, unitPriceCents: 150_000 },
         { description: "Support (forfait) / Support (flat fee)", quantity: 1, unitPriceCents: 50_000 },
       ],
     });
@@ -48,7 +48,7 @@ describe("a services business issues an invoice from its own services (real Post
     expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 1 }] }).success).toBe(true);
     expect(await refusal(issueShopInvoice(t.db, a.shop.id, { language: "fr", issuedOn: "2026-10-21", lines: [{ description: "Travail", quantity: 1 }] }))).toMatch(/AK_LINE_PRICE/);
     expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 7.555, unitPriceCents: 100 }] }).success).toBe(false);
-    expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 7.5, unitPriceCents: 100 }] }).success).toBe(true); // krizaka/akinaza#111
+    expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "2026-10-21", lines: [{ description: "x", quantity: 7.5, unitPriceCents: 100 }] }).success).toBe(true); // krizaka/folioviv#111
     expect(invoiceInputSchema.safeParse({ language: "fr", issuedOn: "21/10/2026", lines: [{ description: "x", quantity: 1, unitPriceCents: 100 }] }).success).toBe(false);
   });
 
@@ -69,7 +69,7 @@ describe("a services business issues an invoice from its own services (real Post
   });
 });
 
-describe("the due date and the payment terms of an invoice (krizaka/akinaza#113)", () => {
+describe("the due date and the payment terms of an invoice (krizaka/folioviv#113)", () => {
   const line = (s: Awaited<ReturnType<typeof salon>>) => [{ serviceId: s.services.cut.id, quantity: 1 }];
 
   it("issues under the shop's own terms (30 days by default) and keeps the due date they give", async () => {
@@ -146,7 +146,7 @@ describe("the due date and the payment terms of an invoice (krizaka/akinaza#113)
   });
 });
 
-describe("fractional quantities on an invoice: 7.5 hours (krizaka/akinaza#111)", () => {
+describe("fractional quantities on an invoice: 7.5 hours (krizaka/folioviv#111)", () => {
   const hourly = async () => {
     const s = await salon(t.db);
     await t.db.update(services).set({ priceCents: 15_000 }).where(eq(services.id, s.services.colour.id));

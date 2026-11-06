@@ -1,11 +1,11 @@
-import { localDay } from "@akinaza/core";
-import { communityOf, draftShopPage, ownerOfShop, previewShop, shopAccentOf, shopPaperOf, teamDay } from "@akinaza/db";
+import { localDay } from "@folioviv/core";
+import { communityOf, draftShopPage, ownerOfShop, previewShop, shopAccentOf, shopPaperOf, teamDay } from "@folioviv/db";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { requestNow } from "@/app/request-now";
 import { PreviewBridge } from "@/components/boutique/PreviewBridge";
 import { ShopPageView } from "@/components/shop/ShopPageView";
-import { requestNow } from "@/app/request-now";
 import { pageSession } from "@/lib/access";
 import { reviewRules } from "@/lib/community";
 import { buildCommunity } from "@/lib/community-view";
@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 /**
- * The owner's preview of the DRAFT page (akinaza#402), the page of the composer's iframe. The public route reads the published document only; this
+ * The owner's preview of the DRAFT page (folioviv#402), the page of the composer's iframe. The public route reads the published document only; this
  * one reads the draft, for a member who may edit the page (no session or another shop's: a 404). Same view as the public page, same sections.
  */
 export default async function ShopPreview({ params }: Readonly<{ params: Promise<{ locale: string; shop: string }> }>) {

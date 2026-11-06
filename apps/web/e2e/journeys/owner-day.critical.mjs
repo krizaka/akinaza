@@ -2,7 +2,7 @@
 // account) signs in and meets her day: the home is today's appointments and ONE primary action. Demo data only.
 import { expect, test } from "@playwright/test";
 
-const EMAIL = process.env.E2E_EMAIL ?? "lea.beaulieu@akinaza.test";
+const EMAIL = process.env.E2E_EMAIL ?? "lea.beaulieu@folioviv.test";
 const CAST_WORD = process.env.E2E_PASSWORD ?? "local-cast-password-0123";
 
 test("owner day: sign in, today is the home, one primary action", async ({ page }) => {

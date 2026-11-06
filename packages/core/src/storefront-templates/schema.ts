@@ -35,7 +35,7 @@ export const SECTION_VARIANTS = {
 export const HUES = ["brand-akinaza", "cobalt", "sky", "cyan", "indigo", "steel", "ink"] as const;
 export const PAPERS = ["plain", "dot-grid", "kraft", "ruled"] as const;
 
-/** The four papers of the shop frame (`ShopFrame paper`, @krizaka/ui): what a template's `paper` becomes on the page (akinaza#305). `ruled` is the Seyès ruling; `dot-grid`, retired by the notebook, is the tinted `washi`. */
+/** The four papers of the shop frame (`ShopFrame paper`, @krizaka/ui): what a template's `paper` becomes on the page (folioviv#305). `ruled` is the Seyès ruling; `dot-grid`, retired by the notebook, is the tinted `washi`. */
 export const FRAME_PAPERS = ["plain", "seyes", "kraft", "washi"] as const;
 export type FramePaper = (typeof FRAME_PAPERS)[number];
 const FRAME_PAPER_OF: Record<(typeof PAPERS)[number], FramePaper> = { plain: "plain", ruled: "seyes", kraft: "kraft", "dot-grid": "washi" };

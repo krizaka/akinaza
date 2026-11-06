@@ -1,6 +1,6 @@
 // Journey: an honest booking, to the receipt (krizaka-internal#1938, guard for #1910). The visitor is told, BEFORE confirming, what they chose,
 // what it costs with the taxes, and until when they can cancel; the receipt then says the same price and the same rule. Demo data only,
-// under @akinaza.test addresses; the mail goes to the journey's own mailbox, the security check runs on Cloudflare's always-pass TEST key.
+// under @folioviv.test addresses; the mail goes to the journey's own mailbox, the security check runs on Cloudflare's always-pass TEST key.
 import { expect, test } from "@playwright/test";
 
 import { testMailbox } from "./test-mailbox.mjs";
@@ -12,7 +12,7 @@ const mailbox = testMailbox(MAIL_PORT);
 test.beforeAll(() => mailbox.start());
 test.afterAll(() => mailbox.stop());
 
-const email = `e2e-honest-${Date.now()}@akinaza.test`;
+const email = `e2e-honest-${Date.now()}@folioviv.test`;
 
 test("an honest booking: choices carried, taxes included, the cancellation window said before, the same price on the receipt", async ({ page, baseURL }) => {
   await page.goto(`${baseURL}/en/s/${SLUG}`);

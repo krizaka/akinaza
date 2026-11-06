@@ -1,5 +1,5 @@
-import { CALENDAR_KINDS, type CalendarKind } from "@akinaza/core";
-import { type ConnectionInfo, feedPeople, listConnections } from "@akinaza/db";
+import { CALENDAR_KINDS, type CalendarKind } from "@folioviv/core";
+import { type ConnectionInfo, feedPeople, listConnections } from "@folioviv/db";
 
 import { db } from "@/lib/db";
 import { appSettings } from "@/lib/settings";

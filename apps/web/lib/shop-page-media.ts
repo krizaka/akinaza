@@ -1,7 +1,7 @@
 import type { ShopPage } from "@krizaka/ui/shop";
 
 /**
- * Where each photo of a shop page goes (akinaza#401): the cover first (it is the LCP), then the sections in the page's order. A photo appears ONCE on a page -
+ * Where each photo of a shop page goes (folioviv#401): the cover first (it is the LCP), then the sections in the page's order. A photo appears ONCE on a page -
  * a section receives only the photos no earlier section used (matched on the address, the cover's included), a disabled section takes none, and the gallery
  * keeps its bound. Pure; the page draws what this returns, `shop-page-media.test.ts` holds the rule.
  */

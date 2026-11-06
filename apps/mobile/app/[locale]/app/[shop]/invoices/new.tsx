@@ -1,12 +1,12 @@
-import { type InvoiceLine, previewTotals } from "@akinaza/client";
-import { localDay } from "@akinaza/core";
+import { type InvoiceLine, previewTotals } from "@folioviv/client";
+import { localDay } from "@folioviv/core";
 import { useMutation, useQuery, useQueryClient } from "@krizaka/query";
 import { Button, Card, Chip, Header, Screen, TextField, Txt } from "@krizaka/ui/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import * as React from "react";
 import { View } from "react-native";
 
-import { akinaza, queries } from "@/config";
+import { folioviv, queries } from "@/config";
 import { routes } from "@/domain/links";
 import { dollars } from "@/domain/money";
 import { parseQuantity } from "@/domain/quantity";
@@ -16,7 +16,7 @@ import { useShop } from "@/use-shop";
 
 /**
  * A quick invoice: pick services and quantities, see GST and QST to the cent, issue it. The server's tax code decides; this previews
- * it (`previewTotals`, the same `@akinaza/core` code: the totals equal the server's on known lines).
+ * it (`previewTotals`, the same `@folioviv/core` code: the totals equal the server's on known lines).
  * TODO(krizaka-ui#629): the lines become the native `LineItems` and `TotalsSummary` when they ship — never a copy here.
  */
 /** A service's name in the app's language (the pair indexed by the locale, never a ternary). */
@@ -40,7 +40,7 @@ export default function NewInvoice() {
   const clientName = clients.data?.find((c) => c.id === client)?.fullName;
 
   const issue = useMutation({
-    mutationFn: () => akinaza.issueInvoice({ clientId: client ?? null, language: locale, issuedOn: localDay(new Date(), shop.data!.shop.timezone), lines }, shopId),
+    mutationFn: () => folioviv.issueInvoice({ clientId: client ?? null, language: locale, issuedOn: localDay(new Date(), shop.data!.shop.timezone), lines }, shopId),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: queries.invoices(shopId).queryKey });
       router.replace(routes.invoices(locale, shopId) as never);

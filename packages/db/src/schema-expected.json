@@ -801,9 +801,9 @@
   },
   "config": {
     "public.price_versions": [
-      "akinaza.founder",
-      "akinaza.scale",
-      "akinaza.starter"
+      "folioviv.founder",
+      "folioviv.scale",
+      "folioviv.starter"
     ]
   }
 }

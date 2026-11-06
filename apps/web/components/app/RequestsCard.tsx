@@ -27,7 +27,7 @@ const requestForm = createKrizakaForm({
 });
 
 /**
- * « Mes demandes » (akinaza#210): requests kept at the shop, renewed in one tap, with a photo or a document attached. The form
+ * « Mes demandes » (folioviv#210): requests kept at the shop, renewed in one tap, with a photo or a document attached. The form
  * is folded behind « Garder une demande » and opens in place (D7); renewing is a secondary — the screen keeps one primary.
  */
 export function RequestsCard({ data }: Readonly<{ data: RequestsData }>) {

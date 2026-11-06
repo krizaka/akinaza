@@ -13,7 +13,7 @@ export interface FounderOfferCopy {
   debitCap: string;
 }
 
-/** How many businesses the founder offer is offered to: the founder entry's `founderCap` limit (akinaza#371). */
+/** How many businesses the founder offer is offered to: the founder entry's `founderCap` limit (folioviv#371). */
 export const founderCap = (entry: Pick<PriceEntry, "limits">): number => entry.limits.founderCap ?? 0;
 
 /** The founder entry in force at a date: its price, its cap and its fees. The administrator ends the offer by making it `internal`. */

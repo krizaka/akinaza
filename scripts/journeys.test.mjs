@@ -30,6 +30,6 @@ describe("the critical journeys", () => {
 
   it("walks the guest booking in both languages and proves the refused check mails nothing", () => {
     for (const step of ["/slots", "/confirm?", "data-guest-summary", "codeFor(email)", "captchaSolved", "confirmation", "data-booked-stamp", "toBe(400)", 'for (const locale of ["en", "fr"])']) expect(spec).toContain(step);
-    expect(spec).toContain("@akinaza.test");
+    expect(spec).toContain("@folioviv.test");
   });
 });

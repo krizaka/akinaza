@@ -1,4 +1,4 @@
-import { localDay, localInstant } from "@akinaza/core";
+import { localDay, localInstant } from "@folioviv/core";
 import { addDays } from "date-fns";
 import { and, eq, sql } from "drizzle-orm";
 

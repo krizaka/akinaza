@@ -11,6 +11,6 @@ describe("the demo owners' switches (local = deployed)", () => {
     for (const email of owners) expect(args).toContainEqual(["features.cahierStorefront", "true", "--user", email, "--actor", "seed-demo-flags"]);
   });
   it("only the seed's own .test addresses are ever switched", () => {
-    for (const a of demoOwnerFlagArgs()) expect(a[3]).toMatch(/@akinaza\.test$/);
+    for (const a of demoOwnerFlagArgs()) expect(a[3]).toMatch(/@folioviv\.test$/);
   });
 });

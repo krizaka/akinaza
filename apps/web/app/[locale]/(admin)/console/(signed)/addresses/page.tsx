@@ -3,7 +3,7 @@ import { asLocale, translator } from "@/lib/i18n";
 
 export const dynamic = "force-dynamic";
 
-/** Shop addresses: the held ones to review, the protected terms, the one-off re-judging (ADR-005 slice 4, akinaza#537). Data is read by the view through the query client. */
+/** Shop addresses: the held ones to review, the protected terms, the one-off re-judging (ADR-005 slice 4, folioviv#537). Data is read by the view through the query client. */
 export default async function AdminAddresses({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const t = translator(asLocale((await params).locale));
   return (

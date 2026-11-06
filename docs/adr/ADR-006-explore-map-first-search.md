@@ -1,7 +1,7 @@
 # ADR-006 — Explorer: map first, combined filters, dynamic search on trusted libraries
 
 Status: **proposed** (2026-10-29, revised the same day with the founder's two additions on #571: one map style and the shop
-route view, then configurability). Issue: krizaka/akinaza#571 (Feature). Slice 1 of the list at the end.
+route view, then configurability). Issue: krizaka/folioviv#571 (Feature). Slice 1 of the list at the end.
 Founder request (2026-10-29): « Inspire-toi de Google Maps : un bloc d'info sur la carte, l'utilisateur choisit d'aller à la
 boutique. Filtre plus riche, recherches combinées, recherche dynamique et optimisée, pas de roue réinventée. »
 
@@ -51,7 +51,7 @@ back/forward restore the search, the selected pin (`shop`) survives a reload.
 
 ## Decision 3 — One typed filter schema, compiled to Drizzle conditions (no hand-built SQL)
 
-A single zod schema, `ExploreQuery`, in `@akinaza/core` (pure, no db):
+A single zod schema, `ExploreQuery`, in `@folioviv/core` (pure, no db):
 
 ```
 q?: string (2..60)      kinds?: KindId[]        services?: ServiceKind[]
@@ -60,7 +60,7 @@ near?: [lng, lat]       within?: 1|3|10|25 (km)  bbox?: [w, s, e, n]
 price?: "$"|"$$"|"$$$"  limit (default 30, max 60)  cursor?: opaque keyset token
 ```
 
-`compileExplore(query, now)` in `@akinaza/db` returns an array of Drizzle `SQL` conditions combined with
+`compileExplore(query, now)` in `@folioviv/db` returns an array of Drizzle `SQL` conditions combined with
 `and(...conditions)`; each condition is a parameterised fragment (`inArray`, `eq`, `sql` template with bound values).
 There is no string concatenation of SQL and no user text inside a `sql.raw`. Drizzle's composable `where` is the "library to
 build the dynamic query": no extra query-builder dependency (Kysely, Prisma) is introduced; the ORM already in use is the
@@ -87,7 +87,7 @@ Order of the index work, each checked with `EXPLAIN (ANALYZE, BUFFERS)` on the s
   `earthdistance` 1.2, `btree_gin` 1.3, `btree_gist` 1.8 (installed) and even `postgis` 3.6.4 are all **available**, none
   except `btree_gist` is installed yet: slice 2's migration runs `CREATE EXTENSION IF NOT EXISTS` for the four, with a test
   that fails clearly when one is missing (CI uses the PostgreSQL service of the org workflow, the contrib set is in the
-  image). Only the dev cluster is configured today (one `AKINAZA_DATABASE_URL`, six shops): the same migration applies to
+  image). Only the dev cluster is configured today (one `FOLIOVIV_DATABASE_URL`, six shops): the same migration applies to
   production at its first deploy, and the managed service lists the same extensions.
 - **The read model** (`shop_search`) is refreshed by the writers that already change a published shop (publish, page save,
   services and hours saves), in the same transaction; a nightly check compares it with `publicShop` (a guard, not a source).
@@ -130,7 +130,7 @@ Order of the index work, each checked with `EXPLAIN (ANALYZE, BUFFERS)` on the s
   used. Desktop side card = `Card` in a fixed column. Any other missing piece goes to krizaka-ui, never copied here.
 - **Privacy** is unchanged: the card shows what the public page already says (no street address, no owner, no counts).
 
-## Decision 7 — One map style for every Akinaza map (founder addition)
+## Decision 7 — One map style for every Folioviv map (founder addition)
 
 **What exists (krizaka-ui 3.75, `@krizaka/ui/map`):** a style generated from the tokens, not a stock one: `mapPalette(scheme, brand)`
 (land, background, water, park, road, casing, building, boundary, labels from `@krizaka/tokens`), `mapFlavor` and `mapStyle`
@@ -142,21 +142,21 @@ geometry helpers. So the style generator is **not rebuilt**: it is extended.
 
 | Piece | What it adds | Notes |
 | --- | --- | --- |
-| `mapStyle` variants | `variant: "plain" \| "notebook" \| "muted"` and `scheme: "light" \| "dark" \| "auto"` (follows the theme). **Notebook** = the Cahier spirit on public pages: warm paper land, ink-blue linework, softened roads, hand-set label weight, drawn from the Cahier tokens (krizaka-ui 3.63, B60), never a hex typed in Akinaza | one generator, so explore, shop page, booking and the console cannot drift |
+| `mapStyle` variants | `variant: "plain" \| "notebook" \| "muted"` and `scheme: "light" \| "dark" \| "auto"` (follows the theme). **Notebook** = the Cahier spirit on public pages: warm paper land, ink-blue linework, softened roads, hand-set label weight, drawn from the Cahier tokens (krizaka-ui 3.63, B60), never a hex typed in Folioviv | one generator, so explore, shop page, booking and the console cannot drift |
 | `MapPin` | pin shapes (drop, disc, label chip) and states (rest, hover, selected, closed) in token colours; accessible name; `aria-pressed` when selected; replaces ad-hoc `Marker` children | clusters use the same palette |
 | `MapCluster` style | count bubble, radius and `maxZoom` options (clustering stays MapLibre-native) | `Cluster` exists: add the look and options |
 | `MapInfoCard` | the card of Decision 1: photo slot, title, meta line, status, one primary action; same content in the `BottomSheet` (phone) and the side column (desktop); keyboard and screen reader (dialog semantics without a trap) | content comes by props: fields shown are configurable (Decision 9) |
 | `BottomSheet` | non-modal, snap points, see Decision 6 | also usable by the console |
 | `RouteCard` | destination, « Itinéraire » menu of providers, the times row (walk, bike, drive, transit), reduced-motion-safe map | Decision 8 |
 
-**Rule:** after the pieces are released, **every** Akinaza map uses them and nothing else: explore (`ExploreMap`), the shop page
+**Rule:** after the pieces are released, **every** Folioviv map uses them and nothing else: explore (`ExploreMap`), the shop page
 (`VisitSection` map), the booking confirmation, the owner console (`MapSetup`, location picker). A guard follows the rule: an
 ast-grep rule refuses an import of `maplibre-gl` or `@krizaka/ui/map`'s raw `mapStyle` in `apps/web` outside the one wrapper
 (`components/maps/`), and a `check-maps` extension (the script exists) loads one page per map surface in both themes.
 
 ## Decision 8 — The shop page route view, redesigned (founder addition)
 
-**Today (captured on the seeded Saint-Henri shop, both themes, desktop and phone; CDN `pr-assets/akinaza/adr-006-route-before/visit-*.png`):**
+**Today (captured on the seeded Saint-Henri shop, both themes, desktop and phone; CDN `pr-assets/folioviv/adr-006-route-before/visit-*.png`):**
 the « Areas served » section is a large box with only the zoom buttons. On the phone it is the `StaticMap` fallback: a grid, three
 dots, no street, no area names, no scale. On desktop the basemap did not draw in the headless run (empty box, attribution only):
 whether that is the run (no WebGL or tiles) or a fault is not established, and the slice adds a check-maps case for it. There is
@@ -201,18 +201,18 @@ is changed, so a map with zero configuration is good.
 | Level | Who | Where it lives | What |
 | --- | --- | --- | --- |
 | **Library** | the developer | krizaka-ui props, documented with examples on ui.krizaka.com | style variant (notebook, plain, muted), scheme (light, dark, auto), pin shape and colour tokens, clustering on/off and radius, info card fields and layout, controls shown (zoom, locate me, fullscreen, compass, reset), gestures, initial viewport (bounds or centre and zoom), list-map sync on/off, route providers offered (Apple, Google, OSM, Waze, transit) |
-| **Admin** | Akinaza operators | the database through the existing admin settings store (`appSettings()`, `GET/PUT /api/admin/settings/[key]`, answers `{ value, source }`, with its audit history, as for the protected terms), read by the app and workers | default style variant and zoom; which filters appear and in which order; the service-type list; the radius options (`1, 3, 10, 25`); whether « open this week » and « a time today » show; the route providers shown and their order; the walking, cycling and driving speeds of the estimates |
+| **Admin** | Folioviv operators | the database through the existing admin settings store (`appSettings()`, `GET/PUT /api/admin/settings/[key]`, answers `{ value, source }`, with its audit history, as for the protected terms), read by the app and workers | default style variant and zoom; which filters appear and in which order; the service-type list; the radius options (`1, 3, 10, 25`); whether « open this week » and « a time today » show; the route providers shown and their order; the walking, cycling and driving speeds of the estimates |
 | **Owner** | one shop | the shop page settings in the console (same document as the other sections, versioned) | the pin label; the photo on the info card (among the shop's photos); which opening hours the card shows; whether the route card shows walking, cycling, driving and transit; « Show my address for directions » (off by default) |
 
 - **Precedence:** owner > admin > library default, each narrowing only what the level above allows (an owner cannot enable a
-  provider the admin removed). A single pure `resolveMapConfig(library, admin, owner)` in `@akinaza/core`, one schema (zod),
+  provider the admin removed). A single pure `resolveMapConfig(library, admin, owner)` in `@folioviv/core`, one schema (zod),
   tested for precedence, and the single place the pages read.
 - **Where each setting is seeded:** the admin keys are declared in the settings registry with their default (no value in a
   component), the owner keys in the shop page document schema with their default and a migration if needed.
 - **Audit:** admin changes go through the existing audited settings path (who, when, old and new value); owner changes are
   versioned with the page.
 
-## krizaka-ui pieces to build (in front of the Akinaza slices that use them)
+## krizaka-ui pieces to build (in front of the Folioviv slices that use them)
 
 1. `BottomSheet` (non-modal, snap points) — before slice 4 and before the route view.
 2. Map style variants (`notebook`, `plain`, `muted`; `auto` scheme) — before the route view.
@@ -221,9 +221,9 @@ is changed, so a map with zero configuration is good.
 5. `RouteCard` and `routeLinks` — the route view.
 6. A `@krizaka/query/url` facade (Decision 2) — slice 3.
 
-Each: meta, stories, tests, docs on ui.krizaka.com, released; then the Akinaza slice consumes it.
+Each: meta, stories, tests, docs on ui.krizaka.com, released; then the Folioviv slice consumes it.
 
-## Deviations found while building slice 2 (akinaza#574, PR #580)
+## Deviations found while building slice 2 (folioviv#574, PR #580)
 
 1. **`earthdistance` is not used**: it is not a *trusted* extension (no `trusted = true` in its control file; `pg_trgm`, `unaccent`, `cube` are), so the application role cannot create it. The position is a core `point` with a GiST index; the box prefilters, a haversine decides and orders.
 2. **Offset, not keyset cursor** (`offset` + `next`): a page is at most 200 and the order (name or distance) is stable; keyset waits for a list that outgrows it.
@@ -235,12 +235,12 @@ Each: meta, stories, tests, docs on ui.krizaka.com, released; then the Akinaza s
 ## Consequences
 
 - One indexed query replaces 1 + 4N; the page scales with results shown, not with shops registered.
-- Six krizaka-ui pieces (list above) in front of the Akinaza slices that use them; one map style and one config resolver for the whole product.
+- Six krizaka-ui pieces (list above) in front of the Folioviv slices that use them; one map style and one config resolver for the whole product.
 - An honest route view: the street address stays private unless the owner turns it on; the times are estimates and say so.
 - A read model to keep in step (guarded by the nightly comparison and a test per writer).
 - Four extensions to enable by migration (verified available on the dev cluster).
 
-## Slices (sub-issues of akinaza#571, in this order)
+## Slices (sub-issues of folioviv#571, in this order)
 
 1. This ADR (docs).
 2. Backend: `ExploreQuery` schema in core, `compileExplore`, the `shop_search` read model and its indexes (migration with the

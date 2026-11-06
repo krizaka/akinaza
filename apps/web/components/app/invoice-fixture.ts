@@ -18,7 +18,7 @@ export const invoice = (over: Partial<InvoiceView> = {}): InvoiceView => ({
   qstCents: 52_868,
   totalCents: 609_368,
   paidCents: 0,
-  client: { fullName: "Studio Lumen inc. (démo)", email: "contact.studiolumen@akinaza.test", phone: "514-555-0111" },
+  client: { fullName: "Studio Lumen inc. (démo)", email: "contact.studiolumen@folioviv.test", phone: "514-555-0111" },
   shop: { name: "Technologies Krizaka", legalName: "Technologies Krizaka inc. (démo)", address: "1 rue Exemple, Montréal QC", timezone: "America/Toronto", registrant: true, gstNumber: "123456789RT0001", qstNumber: "1234567890TQ0001", publicEmail: null },
   lines: [{ id: "l1", invoiceId: "i1", position: 1, description: "Développement logiciel / Software development", quantityHundredths: 1_000, unitPriceCents: 15_000, discountCents: 0, taxCategory: "standard", amountCents: 150_000 }],
   ...over,

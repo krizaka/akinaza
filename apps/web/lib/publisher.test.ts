@@ -10,7 +10,7 @@ import { publisherVars } from "./publisher";
 const enMessages = bindProduct(enRaw);
 const frMessages = bindProduct(frRaw);
 
-describe("publisher (akinaza#375): the legal facts come from @krizaka/org", () => {
+describe("publisher (folioviv#375): the legal facts come from @krizaka/org", () => {
   it("reads the legal name, the city and the region from the org JSON", () => {
     expect(publisherVars()).toEqual({ publisher: org.company.legalName, city: org.company.city, region: org.company.region });
   });

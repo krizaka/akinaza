@@ -1,11 +1,12 @@
 // @template: app-list-detail
-import { localDay } from "@akinaza/core";
-import { listInvoices } from "@akinaza/db";
-import { invoiceMailSettings } from "@akinaza/db";
+import { localDay } from "@folioviv/core";
+import { listInvoices } from "@folioviv/db";
+import { invoiceMailSettings } from "@folioviv/db";
 import { EmptyState } from "@krizaka/ui/empty-state";
 import { Mascot } from "@krizaka/ui/mascots";
 import { PageHeader } from "@krizaka/ui/page-header";
 
+import { requestNow } from "@/app/request-now";
 import { InvoicesTable } from "@/components/app/InvoicesTable";
 import { ButtonLink } from "@/components/ButtonLink";
 import { db } from "@/lib/db";
@@ -14,7 +15,6 @@ import { memberShop } from "@/lib/member-shop";
 import { organizeData, tagsOfRows } from "@/lib/organize-data";
 import { titleOf } from "@/lib/page-title";
 import { shopRoutes } from "@/lib/routes";
-import { requestNow } from "@/app/request-now";
 
 export const dynamic = "force-dynamic";
 

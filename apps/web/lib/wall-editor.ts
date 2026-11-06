@@ -1,4 +1,4 @@
-import { WALL_LIMITS } from "@akinaza/core";
+import { WALL_LIMITS } from "@folioviv/core";
 
 /**
  * The wall editor's moves, pure: the keyboard nudges an item by a step (Shift for a larger one), `[` and `]` tilt it, and nothing ever leaves the bounds

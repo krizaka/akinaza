@@ -1,4 +1,4 @@
-import { reorderReels, setReelTransition } from "@akinaza/db";
+import { reorderReels, setReelTransition } from "@folioviv/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireShop } from "@/lib/access";
@@ -10,7 +10,7 @@ vi.mock("@/lib/audit", () => ({ audit: vi.fn() }));
 vi.mock("@/lib/community", () => ({ assertShopFeature: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: () => ({}) }));
 vi.mock("@/lib/realtime", () => ({ announcePage: vi.fn() }));
-vi.mock("@akinaza/db", () => ({ reorderReels: vi.fn(), setReelTransition: vi.fn() }));
+vi.mock("@folioviv/db", () => ({ reorderReels: vi.fn(), setReelTransition: vi.fn() }));
 
 const A = "11111111-1111-4111-8111-111111111111";
 const B = "22222222-2222-4222-8222-222222222222";

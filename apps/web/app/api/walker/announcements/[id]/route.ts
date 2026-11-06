@@ -1,4 +1,4 @@
-import { removeAnnouncement } from "@akinaza/db";
+import { removeAnnouncement } from "@folioviv/db";
 
 import { db } from "@/lib/db";
 import { takeDown } from "@/lib/shop-item-route";

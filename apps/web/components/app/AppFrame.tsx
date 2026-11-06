@@ -8,13 +8,14 @@ import Link from "next/link";
 
 import { FrameSlot } from "@/components/app/FrameSlot";
 import { useFrameAccount } from "@/components/app/use-frame-account";
+import { BRAND_ID } from "@/lib/brand-id";
 import { useSay } from "@/lib/i18n-client";
 
 const ICONS = { overview: <HomeIcon />, users: <UserIcon />, shops: <UsersIcon />, invoices: <BillingIcon />, ledger: <ShieldIcon />, operations: <ServerIcon />, audit: <ClockIcon />, organize: <ShieldIcon />, incidents: <ShieldIcon />, addresses: <ShieldIcon />, prices: <BillingIcon />, storage: <ServerIcon />, associations: <ShieldIcon /> } as const;
 export type AdminPlace = keyof typeof ICONS;
 
 /**
- * The administration's signed-in frame (admin.akinaza.com): the shared `AppFrame` of @krizaka/ui in its `admin` variant, the same
+ * The administration's signed-in frame (admin.folioviv.com): the shared `AppFrame` of @krizaka/ui in its `admin` variant, the same
  * rail, header and account menu as the shop's space (`ShopFrame`), with a chip saying where you are. The first five sections are the
  * tab bar on a phone; the others sit at the rail's foot.
  */
@@ -34,7 +35,7 @@ export function AppFrame({ locale, email, name, avatarSeed, base, items, product
         mark={<AkinazaLogo size={28} animated={false} />}
         headerMark={<AkinazaLogo size={22} animated={false} />}
         homeHref={base}
-        accent="akinaza"
+        accent={BRAND_ID}
         variant="admin"
         sections={sections}
         currentId={items.find((key) => isCurrent(hrefOf(key)))}

@@ -3,8 +3,8 @@ import { createOrganize, OrganizeError, type OrganizeSchema } from "@krizaka/org
 export { OrganizeError };
 
 /**
- * « organize » for Akinaza (ADR-006, `@krizaka/organize`): a shop is an item. Its name, description, avatar and tags, and its place in
- * the owner's collections, come from the package; the shop's business (hours, staff, services, rules) stays Akinaza's own tables.
+ * « organize » for Folioviv (ADR-006, `@krizaka/organize`): a shop is an item. Its name, description, avatar and tags, and its place in
+ * the owner's collections, come from the package; the shop's business (hours, staff, services, rules) stays Folioviv's own tables.
  * The « default shop » (`shops.is_default`) is something else: the shop the app opens on, not the default collection.
  */
 export const ORGANIZE_SCHEMA: OrganizeSchema = {

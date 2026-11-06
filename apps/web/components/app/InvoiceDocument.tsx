@@ -1,4 +1,4 @@
-import type { invoiceDetail } from "@akinaza/db";
+import type { invoiceDetail } from "@folioviv/db";
 import Link from "next/link";
 
 import { formatMoney, INTL_LOCALE } from "@/lib/format";
@@ -10,7 +10,7 @@ export type InvoiceView = NonNullable<Awaited<ReturnType<typeof invoiceDetail>>>
 /**
  * One invoice as the client reads it: in the language of the invoice (not of the screen), with the supplier's GST and QST
  * numbers (what a buyer needs to claim the input tax credits), every line, the taxes to the cent and, for an invoice that
- * is due, its payment terms and due date (krizaka/akinaza#113: a buyer needs them from $500, DORS/91-45 art. 3).
+ * is due, its payment terms and due date (krizaka/folioviv#113: a buyer needs them from $500, DORS/91-45 art. 3).
  * Each label and its value are plain text, so the document reads the same as a PDF text layer or a screen reader.
  */
 export function InvoiceDocument({ invoice, locale, backHref, heading: Heading = "h1" }: Readonly<{ invoice: InvoiceView; locale: Locale; backHref?: string; /** `h2` inside a page whose `h1` is the invoice's number (DetailLayout). */ heading?: "h1" | "h2" }>) {

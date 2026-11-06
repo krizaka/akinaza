@@ -18,7 +18,7 @@ function accounts(subscribed: string[]) {
 }
 const some = (n: number) => Array.from({ length: n }, (_, i) => `a${i}`);
 
-describe("the founder offer closes at its limit (akinaza#363)", () => {
+describe("the founder offer closes at its limit (folioviv#363)", () => {
   it("is open below the limit and complete at it, the limit being a setting", async () => {
     expect(await founderSeats(accounts(some(19)).query, 20)).toEqual({ limit: 20, taken: 19, open: true });
     expect(await founderSeats(accounts(some(20)).query, 20)).toEqual({ limit: 20, taken: 20, open: false });
@@ -42,7 +42,7 @@ describe("the founder offer closes at its limit (akinaza#363)", () => {
 
 const paid = { checkoutRef: null, paymentRef: null, invoiceRef: null, amountTotal: null, amountDiscount: 0, currency: null, metadata: {} };
 
-describe("a founder keeps the founder price as long as the subscription runs (akinaza#363)", () => {
+describe("a founder keeps the founder price as long as the subscription runs (folioviv#363)", () => {
   it("the notifications of the processor write the state of the subscription, never its price or plan", async () => {
     const { query, sql } = accounts([]);
     const events = [
@@ -65,7 +65,7 @@ describe("a founder keeps the founder price as long as the subscription runs (ak
   });
 });
 
-describe("a subscription keeps the catalogue's version it was sold at (akinaza#371)", () => {
+describe("a subscription keeps the catalogue's version it was sold at (folioviv#371)", () => {
   /** One account row: its subscription and the version kept with it, written by the SQL the module sends. */
   function account() {
     const row: { sub: string | null; version: string | null } = { sub: null, version: null };
@@ -99,7 +99,7 @@ describe("a subscription keeps the catalogue's version it was sold at (akinaza#3
 
   it("no version is read for an account without a subscription", async () => {
     const { query } = account();
-    await recordOfferedVersion(query, "a1", "seed:akinaza.starter");
+    await recordOfferedVersion(query, "a1", "seed:folioviv.starter");
     expect(await soldVersionOf(query, "a1")).toBeNull();
   });
 });

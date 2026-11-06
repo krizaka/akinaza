@@ -8,7 +8,7 @@ import { tokenHash } from "./session";
 /**
  * A forgotten password, on `@krizaka/auth`: the block issues the link (one use, kept only as its hash, its lifetime from the
  * settings), mails it in the person's language and, from the link, sets the new password and ends every session. This file
- * only adds Akinaza's audit trail and turns the block's refusals into the app's answers.
+ * only adds Folioviv's audit trail and turns the block's refusals into the app's answers.
  */
 type Resets = Pick<AccountService, "requestPasswordReset" | "resetPassword">;
 

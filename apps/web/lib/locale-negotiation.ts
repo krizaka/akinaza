@@ -21,10 +21,10 @@ export function negotiateLocale(cookie: string | undefined, acceptLanguage: stri
 }
 
 /** The request header the proxy sets with the language of the address, read by the 404 pages (which have no params). */
-export const LOCALE_HEADER = "x-akinaza-locale";
+export const LOCALE_HEADER = "x-folioviv-locale";
 
 /** The request header the proxy sets with the requested path and query, read by the signed-in guard to come back after sign-in. */
-export const PATH_HEADER = "x-akinaza-path";
+export const PATH_HEADER = "x-folioviv-path";
 
 /** The language of a page's address: its `/en` or `/fr` segment, else the visitor's choice. Never the cookie's stale value. */
 export function pageLocaleOf(pathname: string, chosen: SiteLocale): SiteLocale {

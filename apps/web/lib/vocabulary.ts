@@ -1,10 +1,10 @@
-import type { BusinessType } from "@akinaza/core";
+import type { BusinessType } from "@folioviv/core";
 
 import { getDictionary,type Locale } from "@/lib/i18n";
 
 /**
- * The words of a business type (krizaka/akinaza#117). `console` holds the base words (the pet-care shop's, the first
- * business Akinaza served); `console.vocabularies.<type>` holds, for another type, only the messages that differ, under
+ * The words of a business type (krizaka/folioviv#117). `console` holds the base words (the pet-care shop's, the first
+ * business Folioviv served); `console.vocabularies.<type>` holds, for another type, only the messages that differ, under
  * the same paths. Pure: used by the server (titles, lines), by the client's `useSay` and by the tests.
  */
 export interface Tree {

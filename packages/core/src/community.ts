@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * The shop as a place (akinaza#236, B45): what the owner pins on the public page — the wall, the reel, the bulletin board, the profile links — and
+ * The shop as a place (folioviv#236, B45): what the owner pins on the public page — the wall, the reel, the bulletin board, the profile links — and
  * the clients' reviews with their score. Pure and deterministic: every bound lives here once, the database and the routes read it. The reviews
  * are a small read model until `@krizaka/reviews` (krizaka-ts#37) is published; its score is the same Bayesian average.
  */
@@ -145,7 +145,7 @@ export function externalReel(value: string): ExternalReel | null {
   return null;
 }
 
-/** How one video gives way to the next on the shop's television (akinaza#469): the channel switch (static and a roll, the set's signature), a crossfade, a slide. */
+/** How one video gives way to the next on the shop's television (folioviv#469): the channel switch (static and a roll, the set's signature), a crossfade, a slide. */
 export const REEL_TRANSITIONS = ["channel", "crossfade", "slide"] as const;
 export type ReelTransition = (typeof REEL_TRANSITIONS)[number];
 export const DEFAULT_REEL_TRANSITION: ReelTransition = "channel";

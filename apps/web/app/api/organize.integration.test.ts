@@ -13,7 +13,7 @@ import { GET as listClientViews, POST as createClientView } from "./walker/clien
 import { POST as applyInvoiceTags } from "./walker/invoices/tags/apply/route";
 import { GET as listInvoiceViews } from "./walker/invoices/views/route";
 
-/** The shop's tags, saved views and bulk tagging over HTTP (akinaza#337), on a real PostgreSQL (CI's service; locally DATABASE_IT=1 DATABASE_URL=…). */
+/** The shop's tags, saved views and bulk tagging over HTTP (folioviv#337), on a real PostgreSQL (CI's service; locally DATABASE_IT=1 DATABASE_URL=…). */
 const enabled = process.env.DATABASE_IT === "1" && !!process.env.DATABASE_URL;
 const routeSources = import.meta.glob<string>("./walker/**/route.ts", { query: "?raw", import: "default", eager: true });
 

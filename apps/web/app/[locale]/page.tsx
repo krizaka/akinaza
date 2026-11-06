@@ -42,7 +42,7 @@ export default async function Home({ params }: Readonly<{ params: Promise<{ loca
   // The hero's action follows the session, rendered on the server: no flash of the signed-out action.
   const feed = await homeFeed(locale);
   const hero = heroActions(locale, Boolean(await pageSession().catch(() => null)));
-  // The three jobs are the real components of the app, drawn with demo data (akinaza#470): below the fold, never the LCP.
+  // The three jobs are the real components of the app, drawn with demo data (folioviv#470): below the fold, never the LCP.
   const previews = { book: <BookPreview locale={locale} />, invoice: <InvoicePreview locale={locale} />, books: <BooksPreview locale={locale} /> };
   return (
     <>
@@ -70,7 +70,7 @@ export default async function Home({ params }: Readonly<{ params: Promise<{ loca
                   </Button>
                 ) : null}
               </div>
-              {/* What Akinaza is not for protects the product's claims: under the hero's actions, at a readable size (akinaza#440). */}
+              {/* What Folioviv is not for protects the product's claims: under the hero's actions, at a readable size (folioviv#440). */}
               <p className="m-0 mt-4 max-w-prose text-base text-fg-secondary" data-testid="scope-line">
                 {d.trust.scope}
               </p>

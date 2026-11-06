@@ -1,4 +1,4 @@
-import { PRICE_SCHEDULE, SCHEDULE_LABEL } from "@akinaza/db";
+import { PRICE_SCHEDULE, SCHEDULE_LABEL } from "@folioviv/db";
 import { memoryPriceStore, priceCatalogue } from "@krizaka/settings";
 
 import { PRICES } from "./pricing";

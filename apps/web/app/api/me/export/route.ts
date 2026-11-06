@@ -1,4 +1,4 @@
-import { exportClient } from "@akinaza/db";
+import { exportClient } from "@folioviv/db";
 
 import { requireOwnClient } from "@/lib/access";
 import { audit } from "@/lib/audit";
@@ -16,6 +16,6 @@ export function GET(req: Request) {
     limit("export", req, session.account.id, [10, 3600]);
     const data = await exportClient(db(), dataKey(), client.id);
     await audit({ action: "client.exported", actorId: session.account.id, actorLabel: session.account.email, targetId: client.id, headers: req.headers });
-    return new Response(JSON.stringify(data, null, 2), { headers: { "Content-Type": "application/json", "Content-Disposition": 'attachment; filename="akinaza-my-data.json"', "Cache-Control": "no-store" } });
+    return new Response(JSON.stringify(data, null, 2), { headers: { "Content-Type": "application/json", "Content-Disposition": 'attachment; filename="folioviv-my-data.json"', "Cache-Control": "no-store" } });
   });
 }

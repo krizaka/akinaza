@@ -89,7 +89,7 @@ describe("the profile (docs/ux/2026-10-full-review.md K6): picture, name, e-mail
     expect(text(html)).not.toContain(en.console.account.profile.description);
   });
 
-  it("speaks to a client alone: no team, no role row (akinaza#440)", () => {
+  it("speaks to a client alone: no team, no role row (folioviv#440)", () => {
     const html = text(around(<ProfileSettings profile={{ ...base, role: null }} />));
     expect(html).toContain(en.console.account.profile.profileDescriptionClient);
     expect(html).toContain(en.console.account.name.hintClient);

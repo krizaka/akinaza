@@ -4,7 +4,7 @@ import type { Cents } from "./money";
 /**
  * "Prepare my tax return": the figures of the combined GST/QST return (Revenu Québec's form FPZ-500 — Revenu Québec
  * administers both taxes for most Québec businesses), computed from the ledger, with the working papers that show
- * where each figure comes from. Akinaza **prepares**; the merchant reviews and files the return themselves. Nothing
+ * where each figure comes from. Folioviv **prepares**; the merchant reviews and files the return themselves. Nothing
  * here transmits anything to anyone.
  */
 export interface ReturnLine {
@@ -53,7 +53,7 @@ export function prepareReturn(input: { periodStart: string; periodEnd: string; s
   };
 }
 
-/** Compares figures (an Orazaka Studio's, say) with the ledger's: every line that differs, by how much. */
+/** Compares figures (an Sovkora Studio's, say) with the ledger's: every line that differs, by how much. */
 export function reconcile(ours: PreparedReturn, theirs: { line: string; amountCents: Cents }[]): { line: string; ours: Cents; theirs: Cents | null }[] {
   return ours.lines
     .map((l) => ({ line: l.line, ours: l.amountCents, theirs: theirs.find((t) => t.line === l.line)?.amountCents ?? null }))

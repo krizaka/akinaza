@@ -1,5 +1,5 @@
-import { localDay } from "@akinaza/core";
-import { addTimeOff, removeTimeOff, teamTimeOff } from "@akinaza/db";
+import { localDay } from "@folioviv/core";
+import { addTimeOff, removeTimeOff, teamTimeOff } from "@folioviv/db";
 import { z } from "zod";
 
 import { systemClock } from "@/app/system-clock";
@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const range = z.object({ staffId: z.uuid(), from: day, to: day });
 
-/** The team's time off from today on, as ranges per person (akinaza#208). Owner and manager: the schedule permission. */
+/** The team's time off from today on, as ranges per person (folioviv#208). Owner and manager: the schedule permission. */
 export const GET = (req: Request) =>
   handle(async () => {
     const { shop } = await requireShop(req, "schedule");

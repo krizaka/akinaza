@@ -22,7 +22,7 @@ const securityHeaders = [
 const UUID = "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}";
 
 /**
- * The old addresses and what replaced them, all 308 (akinaza#381). They sit here, in the configuration, and not in pages that only redirect.
+ * The old addresses and what replaced them, all 308 (folioviv#381). They sit here, in the configuration, and not in pages that only redirect.
  * The five addresses from before the shop was in the path (`/app/books`, `/app/clients`…) need the shop last worked in, which a
  * configuration cannot know: they stay route handlers with a 307 (`lib/legacy-redirect.ts`).
  */
@@ -34,7 +34,7 @@ export const retiredAddresses = [
   { source: `/:locale(en|fr)/app/:shop(${UUID})/shop`, destination: "/:locale/app/:shop/settings/page", permanent: true },
   { source: `/:locale(en|fr)/app/:shop(${UUID})/shop/languages`, destination: "/:locale/app/:shop/settings/languages", permanent: true },
   { source: `/:locale(en|fr)/app/:shop(${UUID})/team`, destination: "/:locale/app/:shop/settings/team", permanent: true },
-  // One language of addresses in the signed-in space: English, in both locales (akinaza#582). The French words answer 308.
+  // One language of addresses in the signed-in space: English, in both locales (folioviv#582). The French words answer 308.
   { source: `/:locale(en|fr)/app/:shop(${UUID})/aujourdhui`, destination: "/:locale/app/:shop/today", permanent: true },
   { source: `/:locale(en|fr)/app/:shop(${UUID})/boutique`, destination: "/:locale/app/:shop/settings", permanent: true },
   { source: `/:locale(en|fr)/app/:shop(${UUID})/boutique/:section`, destination: "/:locale/app/:shop/settings/:section", permanent: true },
@@ -48,14 +48,14 @@ export const retiredAddresses = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "standalone",
-  // The monorepo root: the standalone server then carries @akinaza/core and the hoisted dependencies.
+  // The monorepo root: the standalone server then carries @folioviv/core and the hoisted dependencies.
   outputFileTracingRoot: fileURLToPath(new URL("../..", import.meta.url)),
   reactStrictMode: true,
   // The 404 of an unknown address is branded too: app/global-not-found.tsx (it bypasses the [locale] layout).
   experimental: { globalNotFound: true },
   poweredByHeader: false,
   env: { NEXT_PUBLIC_APP_VERSION: appVersion },
-  transpilePackages: ["@akinaza/core", "@akinaza/db"],
+  transpilePackages: ["@folioviv/core", "@folioviv/db"],
   // The SQL migrations travel with the standalone server (lib/db.ts reads them at start).
   outputFileTracingIncludes: { "/*": ["../../packages/db/drizzle/**"] },
   // The pool stays a Node module, required at run time.

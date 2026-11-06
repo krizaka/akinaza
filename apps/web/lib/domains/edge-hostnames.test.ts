@@ -5,7 +5,7 @@ import { edgeHostnames, edgeTarget, tlsOf } from "./edge-hostnames";
 const configured = { APP_EDGE_PROVIDER: "cloudflare", APP_EDGE_API_TOKEN: "t", APP_EDGE_ZONE_ID: "z1" };
 const answer = (result: unknown, status = 200) => vi.fn(async () => new Response(JSON.stringify({ success: status < 400, result }), { status }));
 
-describe("the edge service behind CustomHostnames (ADR-005 §3, akinaza#539)", () => {
+describe("the edge service behind CustomHostnames (ADR-005 §3, folioviv#539)", () => {
   it("reads only a final « active » as active and only known dead ends as failed; everything else waits", () => {
     expect(tlsOf("active")).toBe("active");
     expect(tlsOf("pending_validation")).toBe("pending");
@@ -42,7 +42,7 @@ describe("the edge service behind CustomHostnames (ADR-005 §3, akinaza#539)", (
   });
 
   it("tells merchants where to point their CNAME", () => {
-    expect(edgeTarget({})).toBe("edge.akinaza.shop");
+    expect(edgeTarget({})).toBe("edge.folioviv.shop");
     expect(edgeTarget({ APP_EDGE_CNAME_TARGET: " Edge.Example.Shop " })).toBe("edge.example.shop");
   });
 });

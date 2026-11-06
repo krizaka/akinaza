@@ -1,4 +1,4 @@
-import { DEFAULT_FIGURE_THRESHOLDS } from "@akinaza/core";
+import { DEFAULT_FIGURE_THRESHOLDS } from "@folioviv/core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { figureRules } from "./figure-rules";

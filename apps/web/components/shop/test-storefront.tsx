@@ -1,4 +1,4 @@
-import { documentFromLegacy } from "@akinaza/core";
+import { documentFromLegacy } from "@folioviv/core";
 
 import type { Locale } from "@/lib/i18n";
 import type { StorefrontView } from "@/lib/storefront";

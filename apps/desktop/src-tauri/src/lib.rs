@@ -1,6 +1,6 @@
 //! Folioviv for the Mac: the owner's back office (today, invoices, books, clients, the shop) in a native window. The window
 //! shows the hosted web app, which stays the one place where the screens are written; `tauri-plugin-krizaka` adds what a
-//! browser tab cannot: the menu bar with ⌘1–⌘5 to the sections (in the Mac's language), `akinaza://` links that open the
+//! browser tab cannot: the menu bar with ⌘1–⌘5 to the sections (in the Mac's language), `folioviv://` links that open the
 //! same page, and the navigation guard (the window stays on Folioviv's address, other links open in the browser). The
 //! hosted page has no capability at all: it cannot call the app, and nothing on the Mac is readable from it.
 
@@ -10,15 +10,15 @@ mod words;
 use tauri::{Manager, WebviewUrl, WebviewWindowBuilder};
 use tauri_plugin_krizaka::kit::nav_guard::normalize_origin;
 
-/// The deployment the window shows; a build for another one sets `AKINAZA_APP_URL` (read at build time). It is the
-/// address the web answers on itself: dev.akinaza.com redirects there, and the guard never follows a hop to another origin.
+/// The deployment the window shows; a build for another one sets `FOLIOVIV_APP_URL` (read at build time). It is the
+/// address the web answers on itself: dev.folioviv.com redirects there, and the guard never follows a hop to another origin.
 // @fixed: the product's own address, the one its links name
-const DEFAULT_APP_URL: &str = "https://www.akinaza.com";
+const DEFAULT_APP_URL: &str = "https://www.folioviv.com";
 const WINDOW: &str = "main";
 const RELOAD: &str = "view.reload";
 
 fn app_origin() -> String {
-    let raw = option_env!("AKINAZA_APP_URL").unwrap_or(DEFAULT_APP_URL);
+    let raw = option_env!("FOLIOVIV_APP_URL").unwrap_or(DEFAULT_APP_URL);
     normalize_origin(raw).unwrap_or_else(|_| DEFAULT_APP_URL.to_string())
 }
 
@@ -26,8 +26,8 @@ pub fn run() {
     let origin = app_origin();
     tauri::Builder::default()
         .plugin(
-            tauri_plugin_krizaka::Builder::new("akinaza")
-                .link_hosts(["www.akinaza.com", "dev.akinaza.com"])
+            tauri_plugin_krizaka::Builder::new("folioviv")
+                .link_hosts(["www.folioviv.com", "dev.folioviv.com"])
                 .link_prefixes(["/app", "/fr/app", "/en/app"])
                 .hosted_origin(&origin)
                 .hosted_window(WINDOW)

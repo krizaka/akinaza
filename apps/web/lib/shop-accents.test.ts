@@ -1,12 +1,13 @@
 import { shopPresets } from "@krizaka/tokens/shop-presets";
 import { describe, expect, it } from "vitest";
 
+import { BRAND_ID } from "./brand-id";
 import { accentsByLook,acceptedAccents } from "./shop-accents";
 
 describe("the accents of a look", () => {
   it("offers the tested list of the look, led by its own accent", () => {
-    expect(acceptedAccents("salon-vitrine")[0]).toBe("akinaza");
-    expect(acceptedAccents("salon-atelier")).toContain("akinaza:accent-2");
+    expect(acceptedAccents("salon-vitrine")[0]).toBe(BRAND_ID);
+    expect(acceptedAccents("salon-atelier")).toContain(`${BRAND_ID}:accent-2`);
   });
   it("refuses everything for a look that does not exist", () => {
     expect(acceptedAccents("nope")).toEqual([]);

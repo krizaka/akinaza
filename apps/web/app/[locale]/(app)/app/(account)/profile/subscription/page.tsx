@@ -1,5 +1,5 @@
 // @template: app-settings
-import { associationProofOf } from "@akinaza/db";
+import { associationProofOf } from "@folioviv/db";
 import { redirect } from "next/navigation";
 
 import { systemClock } from "@/app/system-clock";
@@ -22,7 +22,7 @@ export const dynamic = "force-dynamic";
 export const generateMetadata = titleOf("profile");
 
 /**
- * The subscription: its state, the price it was sold at (the catalogue's version kept with it, akinaza#371), the founder offer
+ * The subscription: its state, the price it was sold at (the catalogue's version kept with it, folioviv#371), the founder offer
  * while it is on sale (the catalogue's entry in force), and the hosted page where it is managed.
  */
 export default async function Subscription({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {

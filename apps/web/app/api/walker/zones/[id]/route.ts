@@ -1,4 +1,4 @@
-import { archiveZone } from "@akinaza/db";
+import { archiveZone } from "@folioviv/db";
 
 import { requireShop } from "@/lib/access";
 import { db } from "@/lib/db";

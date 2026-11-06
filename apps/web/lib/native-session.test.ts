@@ -9,7 +9,7 @@ vi.mock("./session", async (orig) => ({
 
 import { agendaScope, optionalSession, requireSession } from "./access";
 
-const request = (headers: Record<string, string>) => new Request("https://www.akinaza.com/api/me", { headers });
+const request = (headers: Record<string, string>) => new Request("https://www.folioviv.com/api/me", { headers });
 
 describe("a native app's session", () => {
   it("is read from the bearer alone, by the optional and the required reads alike", async () => {
@@ -19,10 +19,10 @@ describe("a native app's session", () => {
   });
 
   it("wins over a different account's cookie, so every route sees the same person", async () => {
-    const both = request({ authorization: "Bearer bearer-token", cookie: "akinaza_session=cookie-token" });
+    const both = request({ authorization: "Bearer bearer-token", cookie: "folioviv_session=cookie-token" });
     expect((await optionalSession(both))?.account.id).toBe("app-account");
     expect((await requireSession(both)).account.id).toBe("app-account");
-    expect((await optionalSession(request({ cookie: "akinaza_session=cookie-token" })))?.account.id).toBe("web-account");
+    expect((await optionalSession(request({ cookie: "folioviv_session=cookie-token" })))?.account.id).toBe("web-account");
     expect(await optionalSession(request({}))).toBeNull();
   });
 });

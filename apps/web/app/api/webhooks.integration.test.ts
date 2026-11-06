@@ -36,7 +36,7 @@ describe.runIf(enabled)("webhooks and payments over HTTP", () => {
   const sessions: Record<string, string> = {};
   const ids: { client?: string; service?: string } = {};
   const make = async (label: string) => {
-    const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [`${label}-${stamp}@akinaza.test`]);
+    const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [`${label}-${stamp}@folioviv.test`]);
     sessions[label] = (await createSession(row!.id, { ip: null, userAgent: "vitest" })).token;
   };
   beforeAll(async () => {
@@ -50,7 +50,7 @@ describe.runIf(enabled)("webhooks and payments over HTTP", () => {
   });
   beforeEach(() => resetRateLimits());
   afterAll(async () => {
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@folioviv.test`]);
     await pool().end();
   });
 

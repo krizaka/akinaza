@@ -4,7 +4,7 @@ import { SHOP_ROLES } from "./roles";
 
 /**
  * Migration 0020, generated from the shared block (a test fails when the file and the block drift apart): memberships and invitations of a shop,
- * then what is Akinaza's own — the owner of every shop is its `owner` member (a shop created for an owner makes it, in the database), and a
+ * then what is Folioviv's own — the owner of every shop is its `owner` member (a shop created for an owner makes it, in the database), and a
  * team member's sign-in may be tied to the staff entry that clients book « with ».
  */
 export const ROLES_MIGRATION_HEADER = "-- Roles per shop (@krizaka/auth, #180): memberships and invitations; every shop's owner is its owner member.\n";

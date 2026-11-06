@@ -5,9 +5,9 @@
 // (seed-saint-henri.mjs); the migration that adds the columns is applied when the app starts. Reads DATABASE_URL,
 // DATABASE_CA_CERT and APP_DATA_ENCRYPTION_KEY from the environment, like the seed:
 //
-//   pnpm --filter @akinaza/web exec tsx scripts/enrich-saint-henri.mjs
-import { createDb, pg, poolConfig } from "@akinaza/db";
-import { seedSaintHenri } from "@akinaza/db/seed-walker";
+//   pnpm --filter @folioviv/web exec tsx scripts/enrich-saint-henri.mjs
+import { createDb, pg, poolConfig } from "@folioviv/db";
+import { seedSaintHenri } from "@folioviv/db/seed-walker";
 
 const need = (name) => {
   const value = process.env[name];

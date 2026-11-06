@@ -1,7 +1,7 @@
 import { Badge } from "@krizaka/ui/badge";
 
 /**
- * What a plan will include but does not run yet (akinaza#440): under its own heading, each line with a « Soon » chip and no tick —
+ * What a plan will include but does not run yet (folioviv#440): under its own heading, each line with a « Soon » chip and no tick —
  * the tick of a plan's list means « this runs today », nothing else. Plain `div`s with list roles, not `ul`/`li`: the plan card styles its own lists with a tick. Rendered by the pricing page above each plan's action.
  */
 export function PlannedFeatures({ title, soon, items }: Readonly<{ title: string; soon: string; items: readonly string[] }>) {

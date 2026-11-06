@@ -1,16 +1,16 @@
 # ADR-003 — Payments behind a port: the founder offer
 
-Status: accepted (2026-10-22). Issue: krizaka/akinaza#131.
+Status: accepted (2026-10-22). Issue: krizaka/folioviv#131.
 
 ## Context
-Akinaza sells one founder offer: 39 $ CAD a month, setup included, limited to the first shops. The org rules: the domain has no
+Folioviv sells one founder offer: 39 $ CAD a month, setup included, limited to the first shops. The org rules: the domain has no
 infrastructure and no vendor SDK, a vendor is chosen in configuration, prices and rules are data.
 
 ## Decision
 - **A payments port** (`apps/web/lib/payments/port.ts`): `createCustomer`, `checkout`, `portal`, `parseWebhook`, with
   vendor-free events (`subscription_started`, `subscription_changed`). The domain (`lib/billing.ts`) and the routes import no vendor.
 - **The adapter is configuration**: `lib/payments/stripe-adapter.ts` (a small client over `fetch`, no SDK), chosen by
-  `PAYMENTS_PROVIDER` in `lib/payments/config.ts`, the only file that picks it. Same shape as Yomizaka's (krizaka/yomizaka
+  `PAYMENTS_PROVIDER` in `lib/payments/config.ts`, the only file that picks it. Same shape as Verikora's (krizaka/verikora
   ADR-0004): the third product to need it extracts it into one shared package.
 - **The price is data at the processor**, found by lookup key (`PAYMENTS_PRICE_KEY_FOUNDER`); `scripts/payments-setup.mjs` creates the
   product, the price, the customer-portal configuration and the webhook endpoint (idempotent; live mode is refused without `--i-am-the-owner`).
@@ -22,7 +22,7 @@ infrastructure and no vendor SDK, a vendor is chosen in configuration, prices an
 ## Consequences
 Live mode is a change of keys and of the processor account, not of code.
 
-## Addendum (2026-10-25, akinaza#363): the grid, the limit, no fee
+## Addendum (2026-10-25, folioviv#363): the grid, the limit, no fee
 - **Prices are data in one module**, `apps/web/lib/pricing.ts`: founder 39 $ a month, plus taxes, setup included; regular 49 $ a month, plus taxes,
   **not public** (no page shows it while sign-up is closed). `infra/payments/plans.json` holds only the names, lookup keys and tax codes; the amounts are read from the database.
   Every price shown says « plus taxes », and no amount is typed in a message.
@@ -34,10 +34,10 @@ Live mode is a change of keys and of the processor account, not of code.
 - **Never a fee on transactions**: a plan is a flat monthly subscription; the catalogue has no field for a percentage, and the code never sends an
   application fee (`lib/pricing.test.ts`).
 
-## Addendum (2026-10-25, akinaza#371, ADR-009 krizaka/.github#253): prices from the catalogue
+## Addendum (2026-10-25, folioviv#371, ADR-009 krizaka/.github#253): prices from the catalogue
 - **Prices are a catalogue the administrator edits** (`@krizaka/settings`, `definePrices`): `apps/web/lib/pricing.ts` is only its **seed**.
-  `akinaza.founder` 39 $ a month plus taxes, setup included, `founder-limited` (`founderCap` 20; the administrator ends it by making it
-  `internal`); `akinaza.starter` 45 $ a month plus taxes, `public`; `akinaza.scale` (Scale B2B) 99 $ a month plus taxes, `public` — its B2B
+  `folioviv.founder` 39 $ a month plus taxes, setup included, `founder-limited` (`founderCap` 20; the administrator ends it by making it
+  `internal`); `folioviv.starter` 45 $ a month plus taxes, `public`; `folioviv.scale` (Scale B2B) 99 $ a month plus taxes, `public` — its B2B
   features are not built yet and are worded « soon », never claimed. Every entry: `cardFeeBps` 0; pre-authorised debit / B2B transfer
   orchestration fee Starter and founder `directDebitBps` 50 capped at `directDebitCapCents` 1500, Scale 25 / 1000. The funds stay with the
   processor; Krizaka only takes an application fee. They replace the regular 49 $ plan above.
@@ -49,7 +49,7 @@ Live mode is a change of keys and of the processor account, not of code.
 - **The home, the subscription page and the checkout read the catalogue.** The checkout sells only when the processor's amount equals the
   entry's (503 `PRICE_NOT_READY` otherwise: a scheduled change is set up at the processor with `pnpm run payments:setup` first), and keeps the
   entry's `versionId` on the account (`accounts.subscription_price_version`) while it has no subscription; nothing rewrites it afterwards, so
-  a founder keeps the founder price. Lookup keys: `akinaza_founder_monthly_cad`, `akinaza_starter_monthly_cad`, `akinaza_scale_monthly_cad`
+  a founder keeps the founder price. Lookup keys: `folioviv_founder_monthly_cad`, `folioviv_starter_monthly_cad`, `folioviv_scale_monthly_cad`
   (`PAYMENTS_PRICE_KEY_FOUNDER`, `PAYMENTS_PRICE_KEY_STARTER`, `PAYMENTS_PRICE_KEY_SCALE`).
 - **0 % on cards** in every entry; a pre-authorised debit or B2B transfer carries the entry's rate, capped per order (`directDebitFeeCents`).
   This replaces #363's « no fee field » test: 0 % on cards in every entry, and the debit fee of any order is at most the entry's cap.
@@ -73,16 +73,16 @@ Rules:
 - Status: decision recorded here; the implementation (catalogue versions, trial in the checkout, association proof queue, pricing page, captures) is a separate block.
 
 ## Addendum (2026-10-30, founder request): lower prices, three free months, the Association plan
-- **The grid** (in force from the `prices_association` migration): Starter 29 $ a month plus taxes with three free months; Pro (the `akinaza.scale` entry, B2B features still « soon »)
-  69 $ a month plus taxes; Association (`akinaza.association`) the Starter features, three free months, then 1 $ a month plus taxes. The founder offer
+- **The grid** (in force from the `prices_association` migration): Starter 29 $ a month plus taxes with three free months; Pro (the `folioviv.scale` entry, B2B features still « soon »)
+  69 $ a month plus taxes; Association (`folioviv.association`) the Starter features, three free months, then 1 $ a month plus taxes. The founder offer
   (39 $, `founder-limited`) ends: its entry becomes `internal` (cheaper plans make it pointless); a founder keeps the version it was sold at.
 - **All of it is catalogue data, never code.** The seed (`lib/pricing.ts`) is the HISTORY and is not rewritten: the new grid is a dated version of each
   entry in `price_versions` with its line in `settings_audit` (`packages/db/src/price-schedule.ts`, the generated SQL of the `prices_association` migration, a test keeps the
   file and the list equal). The prices, the free period (`trialDays` limit, 90 days, worded « 3 mois offerts » when it is whole months) and the
   availability of the Association plan are edited from `/console/prices` like any other limit. The migration is the writer of the first version; every reader (pages, checkout, the processor) reads `price_versions`, and
-  `infra/payments/plans.json` holds no amount. `pnpm run payments:setup` reads the amounts in force from the database (akinaza#633), creates the new processor price and moves the lookup key, so an existing subscription keeps its processor price.
+  `infra/payments/plans.json` holds no amount. `pnpm run payments:setup` reads the amounts in force from the database (folioviv#633), creates the new processor price and moves the lookup key, so an existing subscription keeps its processor price.
 - **Grandfathering.** `accounts.subscription_price_version` keeps the catalogue version an account was sold at; nothing rewrites it after the first
-  subscription, and `catalogue.version(id)` answers the old seed (`seed:akinaza.starter` is still 45 $, the founder 39 $). Tests: `association.test.ts`
+  subscription, and `catalogue.version(id)` answers the old seed (`seed:folioviv.starter` is still 45 $, the founder 39 $). Tests: `association.test.ts`
   (PostgreSQL, the version sold stays 45 $ while a newcomer is offered 29 $) and `pricing.test.ts`.
 - **The free period is the subscription's trial at the processor** (`trialing`), no promo machinery of our own: `lib/plans.ts` decides the days (the entry's
   `trialDays`, once per account: never for an account that already had a subscription), the checkout passes `trialDays` to the port, and the webhook's

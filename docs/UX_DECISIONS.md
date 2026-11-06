@@ -1,4 +1,4 @@
-# UX decisions — Akinaza
+# UX decisions — Folioviv
 
 Each notable choice: decision · problem · principle (with source) · refused · cost · the signal that would say we are wrong.
 Feedback: the pinned Discussion of the repository.
@@ -28,7 +28,7 @@ Feedback: the pinned Discussion of the repository.
 - **Problem**: trust — a tool that files for you is a tool you cannot check.
 - **Principle**: keep the user in control of irreversible actions (Norman, *The Design of Everyday Things*).
 - **Refused**: one-click filing; silently adopting the AI's figures.
-- **Cost**: a last step outside Akinaza.
+- **Cost**: a last step outside Folioviv.
 - **Wrong if**: merchants copy the figures with mistakes — then make the copy safer, still without filing.
 
 ## 4. The walker's day: one card per walk, the check-in is the biggest thing on it
@@ -70,19 +70,19 @@ Feedback: the pinned Discussion of the repository.
 ## 8. The landing tells one story in five sections, and its proof is the walker’s real day
 
 - **Decision**: the home is five sections: the promise (« Your shop, all in one place ») with the dog walker's real
-  journey on dev.akinaza.com in a phone (StepShowcase: the shop's page, the booking, the walker's day, the report, the
+  journey on dev.folioviv.com in a phone (StepShowcase: the shop's page, the booking, the walker's day, the report, the
   client's space; captions in the page), three outcomes (each card a way in, the first to the demo shop's real booking
   page), how it works in three steps with the beaver's promise from the film, trust (Loi 25 and Canada, « prepared, never
-  filed », open source, not for restaurants and bars, Orazaka named once as planned, the status from dev-preview.json),
+  filed », open source, not for restaurants and bars, Sovkora named once as planned, the status from dev-preview.json),
   the closing call. The bar has one « Product » menu and no version chip; the footer is @krizaka/ui's SiteFooter.
 - **Problem**: the old home spoke of « independent shops » in general, in nine blocks; the first real proof (the walker's
   journey) was nowhere on it.
 - **Principle**: show the product doing one real job before listing what it can do (recognition over recall; progressive
   disclosure).
 - **Refused**: a hand-made invoice mock-up in the hero, stills with burned-in captions, a claim that the tax assistant
-  runs on Orazaka before it does.
+  runs on Sovkora before it does.
 - **Cost**: stills until the journey's recording lands (then the same steps take its clips); the app is captured in French.
-- **Signal we are wrong**: visitors who are not dog walkers think Akinaza is only for dog walkers.
+- **Signal we are wrong**: visitors who are not dog walkers think Folioviv is only for dog walkers.
 
 ## 9. A shop's page sells: cover first, real availability inline, every section from the shop's data
 
@@ -117,11 +117,11 @@ Feedback: the pinned Discussion of the repository.
 - **Principle**: recognition over recall (the services are chosen, not typed) and the cost of an error (the taxes are
   computed on the server once, on the taxable total, so the screen never shows a figure the ledger will not hold).
 - **Refused**: a « send to Revenu Québec »
-  button (Akinaza prepares, the merchant files), a PDF engine of our own for now (the document prints from the browser).
-- **Cost**: three service lines and one free line per invoice; a quantity goes to the hundredth (7,5 h billed since krizaka/akinaza#111).
+  button (Folioviv prepares, the merchant files), a PDF engine of our own for now (the document prints from the browser).
+- **Cost**: three service lines and one free line per invoice; a quantity goes to the hundredth (7,5 h billed since krizaka/folioviv#111).
 - **Signal we are wrong**: owners who issue two invoices for one job because the form has too few lines.
 
-## The words of the business (krizaka/akinaza#117)
+## The words of the business (krizaka/folioviv#117)
 
 - **Decision**: a shop has a *business type* (« Type of business » on the shop page: professional services, or pet care).
   The type sets the words of every screen of the owner and of the clients of that shop (`console.vocabularies.<type>` in
@@ -137,12 +137,12 @@ Feedback: the pinned Discussion of the repository.
   a dog word that is not overridden.
 - **Signal we are wrong**: owners who set the wrong type, or ask for a third (groomers, repairers) that fits neither.
 
-## Payment terms and the due date (krizaka/akinaza#113)
+## Payment terms and the due date (krizaka/folioviv#113)
 
 - **Decision**: every invoice carries the terms it was issued under (« Net 30 days ») and the due date they give, in the
   language of the invoice. The shop sets its default terms once (the rules card of the shop page; 30 days, 0 = on receipt); one
   invoice can pick others from a short list. A credit note, and an invoice issued before this existed, carry none.
-- **Problem**: a buyer needs the payment terms from $500 to claim its input tax credits (DORS/91-45, art. 3); Yomizaka's
+- **Problem**: a buyer needs the payment terms from $500 to claim its input tax credits (DORS/91-45, art. 3); Verikora's
   `qc-invoice` flagged our own invoice (rule 008).
 - **Principle**: defaults that are right most of the time and visible (Nielsen: visibility of system status): the picker says
   what the default is.
@@ -151,7 +151,7 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: a custom date that is not « issue date + n days » cannot be expressed; use the nearest terms.
 - **Signal we are wrong**: owners who issue an invoice, then ask for another to change its due date.
 
-## Fractional hours (krizaka/akinaza#111)
+## Fractional hours (krizaka/folioviv#111)
 
 - **Decision**: a quantity on an invoice line can be fractional to the hundredth (7,5 h, 0,25 day); it is typed with a point or a
   comma and shown the way the invoice's language writes it. The amount is `round(quantity × price)` half away from zero in whole
@@ -195,7 +195,7 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: new sections can be enabled administratively before they are ready to accept shop content.
 - **Signal we are wrong**: owners cannot express their priorities with the available sections, or visitors cannot find services.
 
-## Invoice quick access on Today (krizaka/akinaza#218)
+## Invoice quick access on Today (krizaka/folioviv#218)
 
 - **Decision**: below the day, members allowed to invoice see a compact card with the three latest invoices, their totals
   and states, and the count of overdue invoices across the shop. Each opens its document; « All invoices » opens the list.
@@ -207,7 +207,7 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: older invoices require opening the list; the overdue count includes invoices outside the three shown.
 - **Signal we are wrong**: members mistake the latest three for all overdue invoices.
 
-## Proposed images: no empty section, never a fake shop (krizaka/akinaza#267)
+## Proposed images: no empty section, never a fake shop (krizaka/folioviv#267)
 
 - **Decision**: each trade (salon, coaching, workshop, cleaning, pets, consulting) has neutral default media — a cover with
   its silent loop, four photos, three service images — shown on the public page only where the owner has none, and offered
@@ -222,7 +222,7 @@ Feedback: the pinned Discussion of the repository.
   rendered and uploaded by hand (`scripts/default-media/`), with its alt texts to write in both languages.
 - **Signal we are wrong**: owners keep the defaults for months, or clients ask whether the photos are of the shop.
 
-## A template is picked, then the page stays the owner's (krizaka/akinaza#261, step 4)
+## A template is picked, then the page stays the owner's (krizaka/folioviv#261, step 4)
 
 - **Decision**: « Modèle de page » sits inside « Apparence » / « Look », above the sections: the trade's templates as tiles
   with a tiny preview (the hero, the sections in the template's order, its hue and paper), the applied one marked « Your
@@ -241,7 +241,7 @@ Feedback: the pinned Discussion of the repository.
   coarser business type question only when templates are offered.
 - **Signal we are wrong**: owners open the public page to see what a tile means, or lose track of which template they are on.
 
-## A template improves by version; the owner updates when they choose (krizaka/akinaza#261, step 5)
+## A template improves by version; the owner updates when they choose (krizaka/folioviv#261, step 5)
 
 - **Decision**: a template that improves ships as a new version beside the old one; a shop keeps the version it applied, and
   its page does not move. In « Apparence » the applied tile says « Update available », with what changes in one line and an
@@ -255,7 +255,7 @@ Feedback: the pinned Discussion of the repository.
 - **Cost**: the catalogue grows with every version; an owner may stay on an old look for a long time.
 - **Signal we are wrong**: most shops never update, or ask why their page looks older than the demo.
 
-## The hero follows the session, the 404 is ours (krizaka/akinaza#285, #299)
+## The hero follows the session, the 404 is ours (krizaka/folioviv#285, #299)
 
 - **Decision**: the hero's action is the session's: signed out « Try the demo shop » with « Sign in » beside it; signed in « Open my shop » into the owner's app. The public bar shows the account menu alone when signed in (no second « Open the app »), never an e-mail. « Talk to us » leaves the public pages; contact lives in the footer. An unknown address answers a branded 404 in the language of its address (`global-not-found`), and the sign-in offers « Forgot your password? ».
 - **Problem**: a signed-in owner was pitched to a stranger (« Talk to us »), the bar repeated « Open the app » beside the avatar, the sign-in never showed the reset link, and an unknown address got Next's default 404.
@@ -302,7 +302,7 @@ secondary. Empty, it is the `EmptyState` with the beaver (asked at 120 px; the b
 
 ## The demo's client is a service business, never a café (Phase 2, D0)
 
-The Krizaka persona's first client was « Café du Parc inc. (démo) »: a business Akinaza does not serve (a café, a restaurant, a
+The Krizaka persona's first client was « Café du Parc inc. (démo) »: a business Folioviv does not serve (a café, a restaurant, a
 bar or a bakery bills through a sales recording module certified by Revenu Québec, AGENTS § 2). It is now **« Studio Lumen inc.
 (démo) »**, the client of the direction's mockups (`docs/design/2026-10-direction.md`). A deployment already seeded is renamed in
 place by the idempotent seed (`renameFormerClients`, `KRIZAKA_RENAMED_CLIENTS`): the same account, client file and invoices, so no
@@ -325,8 +325,8 @@ among the shops and clients of every demo seed (`seed-krizaka`, `seed-walker`, `
 - **Problem**: no way to reach a client or an invoice without walking the lists; icons alone on a desktop rail; Today's primary was
   « Nouvelle facture » while the owner's next move is the next client.
 - **Principle**: recognition over recall (Nielsen) and one obvious next step per screen.
-- **Refused**: a local top bar or palette (krizaka-ui#640 and #647 extract the family's; until then Akinaza composes the released
-  pieces); a notifications bell with a count before Akinaza sends anything to count (krizaka-ts#60); a messages slot without
+- **Refused**: a local top bar or palette (krizaka-ui#640 and #647 extract the family's; until then Folioviv composes the released
+  pieces); a notifications bell with a count before Folioviv sends anything to count (krizaka-ts#60); a messages slot without
   conversations; a « Raccourcis » group on the rail before `RailNav` has groups (krizaka-ui#647).
 - **Cost**: one more query per page for the counts; the search reads at most five of each kind (the list is « see all »).
 - **Signal we are wrong**: owners keep opening Clients to find one by name, or ignore the next-appointment action.
@@ -359,7 +359,7 @@ among the shops and clients of every demo seed (`seed-krizaka`, `seed-walker`, `
   and removed: a service of the shop at its price, or « Autre » with its words and price; a quantity to the hundredth, typed
   with a comma or a point), **03 Quand ?** (today, under the shop's terms; the number is given at issue). The total is in view:
   beside the form from `lg` (a 20 rem aside), in a `StickyAction` above the phone's tab bar below it — and it is **the server's
-  own computation** (`draftPreview` calls `invoiceTotals` of @akinaza/core: GST and QST once on the taxable total, half away from
+  own computation** (`draftPreview` calls `invoiceTotals` of @folioviv/core: GST and QST once on the taxable total, half away from
   zero), in fr-CA or en-CA money from integer cents. The address prefills it: « Facturer ce client » on a client's file
   (`?client=`) and « Facturer ce rendez-vous » on a finished appointment's sheet (`?client=&service=&quantity=1`); a client or
   a service of another shop answers 404. Issued, the invoice opens with « Facture KZ-… émise » and the beaver (`success`), and
@@ -469,7 +469,7 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Decision**: the « Aller » menu lists the web rail's five places, in its order and words, in the Mac's language: ⌘1 Aujourd'hui ·
   ⌘2 Clients · ⌘3 Factures · ⌘4 Livres · ⌘5 Boutique (Today · Clients · Invoices · Books · Shop). Each opens the web's address of the
   shop on screen — Boutique is `/boutique`, the hub — else the web's short address. A test of the web reads the Mac's table and
-  refuses an address that is not a live page (`lib/app-addresses.test.ts`). The point of sale of #79 is out: Akinaza serves
+  refuses an address that is not a live page (`lib/app-addresses.test.ts`). The point of sale of #79 is out: Folioviv serves
   service businesses, the POS stays a stub.
 - **Problem**: the menu kept the order of an older rail (Factures before Clients) and the word « Commerce »; ⌘5 opened
   `/fr/app/<shop>/shop`, the address « Ma page boutique » had before K4, kept only as a redirect.
@@ -512,7 +512,7 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Cost**: the day's answer names its shop and time zone; one more walker route.
 - **Signal we are wrong**: owners look for the calendar as a tab, or open the web for the books on their phone.
 
-## D10 — The shop organises its clients and invoices (akinaza#337)
+## D10 — The shop organises its clients and invoices (folioviv#337)
 
 - **Decision**: tags belong to **the shop** (owner and manager write them, a client never sees them), with a colour marker of the closed
   palette (a dot, never the only signal: the name is always there). A shop starts with the administrator's default tag set for its
@@ -531,7 +531,7 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Cost**: none left. Since Krizaka UI 3.59 the screens wire the package's `TagChip`, `MarkerPicker`, `TagSelector creatable`, `SavedViews` and `DataTable bulkActions` to the shop's routes (`components/app/organize.tsx` draws none of them); the administrator edits the sets with `TagSetEditor` / `StatusSetEditor` (`/console/organize`). A saved view is the author's own (the « share with the team » switch left with the local dialog).
 - **Signal we are wrong**: owners ask for « mark as paid » on a selection, or never use a tag.
 
-## D12 — The signed-in app wears the product register 2027 (akinaza#352, ADR-006)
+## D12 — The signed-in app wears the product register 2027 (folioviv#352, ADR-006)
 
 - **Decision**: every page roots on `data-surface="product"` and loads `@krizaka/ui/blocks.css`, so the 3.55 register applies without a
   component change: slate ink, hairlines for cards only and a visible edge on every field (`--kz-border-control`), radius 14 on cards
@@ -544,16 +544,16 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Cost**: none in components; the files with a `rounded-*` use the radius roles and follow.
 - **Signal we are wrong**: titles read as a template in the captures; going back is one token (`--kz-font-display: var(--kz-font-sans)`).
 
-## Krizaka UI 3.59 adopted (akinaza#337, #352)
+## Krizaka UI 3.59 adopted (folioviv#337, #352)
 
 - **Problem**: four stand-ins waited for the package (tags and views, the admin's editors, Appearance, the booking weeks).
 - **Principle**: no hand-written copy of a block; the product keeps only the wiring to its routes.
-- **Chosen**: the invoice's derived state is the package's `StatusChip` over the administrator's status set, read-only (no `onMove`: the ledger moves it). Settings offer the product register's themes only — System, Light, Dark, then the optional Blueprint and Carbone surfaces — with the density and the language; no accent row (Akinaza keeps its forest green and copper) and no sound. The Cahier papers stay the public shop pages'. Booking shows the times by week (← This week →) and by part of the day (morning, afternoon, evening, cut at noon and 17 h on the shop's clock), the shop's time zone said under them.
+- **Chosen**: the invoice's derived state is the package's `StatusChip` over the administrator's status set, read-only (no `onMove`: the ledger moves it). Settings offer the product register's themes only — System, Light, Dark, then the optional Blueprint and Carbone surfaces — with the density and the language; no accent row (Folioviv keeps its forest green and copper) and no sound. The Cahier papers stay the public shop pages'. Booking shows the times by week (← This week →) and by part of the day (morning, afternoon, evening, cut at noon and 17 h on the shop's clock), the shop's time zone said under them.
 - **Refused**: an accent choice (the brand is the product's identity); a sound nobody asked for.
 - **Cost**: the booking page browses at most eight weeks ahead; the engine answers a week with nothing free with the empty line.
 - **Signal we are wrong**: owners ask to share a view with the team from the bar, or clients ask for a later week than eight.
 
-## The shop as a place: the studio of the wall, the board, the video and the reviews (akinaza#317, #310, #311, #312, #313, #314)
+## The shop as a place: the studio of the wall, the board, the video and the reviews (folioviv#317, #310, #311, #312, #313, #314)
 
 - **Problem**: the page promised a wall, a video, a board and reviews (« being prepared ») and the owner had no place to dress them.
 - **Principle**: one place, Boutique › Page, with the live preview beside it on a desktop and behind « View the page » on a phone; the owner and the manager write what is pinned on the page, the identity and the publication stay the owner's.
@@ -562,7 +562,7 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Cost**: reviews are a small table here until `@krizaka/reviews` is published (krizaka-ts#37), then they move. `frame-src` of the page now names the three embed hosts (and this origin, for the preview) instead of `none`.
 - **Signal we are wrong**: owners ask to drag pieces by hand, or lose a move because the keys are not found.
 
-## The shop as a place, on the public page (B45, part 2; akinaza#310, #312, #313, #314, #315)
+## The shop as a place, on the public page (B45, part 2; folioviv#310, #312, #313, #314, #315)
 
 - The page draws what the owner pinned, and nothing empty: the wall (Krizaka UI's `Wall`, a real list underneath, at most twelve pieces drawn), the shop's latest video in a `RetroTv` beside it, the bulletin board (three flyers at most, each with its whole text, newest first, gone after its last day), the verified score (`ReviewSummary` + three `ReviewCard`s, nothing under the administrator's minimum) and the profile links. A section with nothing to show is not drawn, so a new shop keeps its page.
 - **Another channel's video never loads before a click** (Loi 25): a TikTok, a YouTube Short or an Instagram reel sits behind `EmbedFacade`, whose poster is ours; the profile links are plain anchors with `rel="noopener noreferrer nofollow"` and no referrer. The page's CSP allows a frame only for those three hosts, and a frame exists only after the button was pressed.
@@ -578,7 +578,7 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 - **Refused**: a hidden « info » tooltip per figure (unreachable on a phone); a figure with no source.
 - **Cost**: a longer card; the quarter is assumed for the period until the shop's filing frequency is captured.
 - **Wrong if**: owners ignore the formula row (nobody opens the source link) - then fold it.
-- Akinaza prepares; the owner files. Print: « Imprimer ou enregistrer en PDF » on the books page (print styles hide controls).
+- Folioviv prepares; the owner files. Print: « Imprimer ou enregistrer en PDF » on the books page (print styles hide controls).
 
 ## The owner tunes when a figure asks for attention (#260)
 
@@ -600,7 +600,7 @@ number columns and `Stat` are tabular in @krizaka/ui already. Guarded by `compon
 
 ## Your other calendars keep your slots free (#282, ADR-004)
 
-- **Decision**: Boutique › Agenda lets the owner (or a team member, for their own agenda) connect the calendar they already use by its ICS address. Akinaza reads only the times they are busy and takes those slots off the booking page; an appointment that lands on such a time stays and is flagged in Today (« Chevauche votre agenda Google »), in the list and in the detail. Nothing is deleted on either side, and Akinaza never writes to the calendar. The connection asks for an explicit consent (what is read, why, how to stop); disconnecting deletes the connection and its busy times, so the slots open again at once.
+- **Decision**: Boutique › Agenda lets the owner (or a team member, for their own agenda) connect the calendar they already use by its ICS address. Folioviv reads only the times they are busy and takes those slots off the booking page; an appointment that lands on such a time stays and is flagged in Today (« Chevauche votre agenda Google »), in the list and in the detail. Nothing is deleted on either side, and Folioviv never writes to the calendar. The connection asks for an explicit consent (what is read, why, how to stop); disconnecting deletes the connection and its busy times, so the slots open again at once.
 - **Problem**: a client books the hour a dentist appointment already takes; the owner keeps two calendars in their head.
 - **Principle**: error prevention before error recovery (the slot is not offered), and visibility of system status (the state of each calendar, its last read, the reason in words when it cannot be read).
 - **Refused**: deciding for the owner when two things overlap (a rule that moves or cancels one would be wrong half the time); showing event titles (more data than blocking a time needs, and Loi 25); writing bookings into their calendar (the private link already does it).

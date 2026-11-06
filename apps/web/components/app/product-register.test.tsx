@@ -25,7 +25,7 @@ vi.mock("@/app/actions/remember-shop", () => ({ rememberShop: () => Promise.reso
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, replace: () => undefined, push: () => undefined }), usePathname: () => "/fr/app" }));
 
 /**
- * The product register (krizaka/akinaza#327 and #352, ADR-006): Plus Jakarta Sans for titles (`--kz-font-product-display`, from
+ * The product register (krizaka/folioviv#327 and #352, ADR-006): Plus Jakarta Sans for titles (`--kz-font-product-display`, from
  * @krizaka/fonts ≥ 0.5), the text sans for the rest, a code mono only for identifiers, tabular digits on every amount. The
  * register comes from @krizaka/ui's product surface (`data-surface="product"` on the root, blocks.css 3.55), which this test
  * reads as shipped; the app keeps no local rule for it.

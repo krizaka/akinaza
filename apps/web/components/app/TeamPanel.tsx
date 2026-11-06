@@ -1,6 +1,6 @@
 "use client";
 
-import type { ShopRole } from "@akinaza/db";
+import type { ShopRole } from "@folioviv/db";
 import { krizakaFetch, useMutation } from "@krizaka/query";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";

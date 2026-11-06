@@ -1,10 +1,10 @@
-import { DEFAULT_SLOTS, type DefaultMedia, defaultsFor, type DefaultSlot, type ShopType } from "@akinaza/core";
+import { DEFAULT_SLOTS, type DefaultMedia, defaultsFor, type DefaultSlot, type ShopType } from "@folioviv/core";
 
 import manifest from "./default-media.manifest.json";
 
 /**
  * The default images and videos of the storefronts (#267): files on the media CDN, named by `default-media.manifest.json` (logical path -> the first 10 hex of the file's
- * SHA-256, written by `scripts/default-media/build.mjs`; the URL never changes content). The data (which types and slots, which paths) is in `@akinaza/core`.
+ * SHA-256, written by `scripts/default-media/build.mjs`; the URL never changes content). The data (which types and slots, which paths) is in `@folioviv/core`.
  */
 const files = manifest.files as Record<string, string>;
 

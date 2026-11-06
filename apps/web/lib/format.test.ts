@@ -29,7 +29,7 @@ describe("format", () => {
   });
 });
 
-describe("dollars typed by the administrator (akinaza#371)", () => {
+describe("dollars typed by the administrator (folioviv#371)", () => {
   it("are whole cents, with a dot or a comma, or null", () => {
     expect(centsFromDollars("45")).toBe(4500);
     expect(centsFromDollars(" 45,50 ")).toBe(4550);

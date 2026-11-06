@@ -1,4 +1,4 @@
-import { removeClientRequestFile } from "@akinaza/db";
+import { removeClientRequestFile } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireOwnClient } from "@/lib/access";

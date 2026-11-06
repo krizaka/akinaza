@@ -1,9 +1,9 @@
-import type { checkIn } from "@akinaza/db";
+import type { checkIn } from "@folioviv/db";
 
+import { requestNow } from "@/app/request-now";
 import { requireShop } from "@/lib/access";
 import { db } from "@/lib/db";
 import { handle, idParam } from "@/lib/http";
-import { requestNow } from "@/app/request-now";
 
 type VisitCall<R> = (database: ReturnType<typeof db>, shopId: Parameters<typeof checkIn>[1], visitId: Parameters<typeof checkIn>[2], at: Date) => Promise<R>;
 

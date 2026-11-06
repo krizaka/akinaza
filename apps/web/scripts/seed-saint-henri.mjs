@@ -5,9 +5,9 @@
 // never printed; the maintainer keeps them in the QA sheet. Idempotent: a re-run only sets the passwords again.
 //
 //   DATABASE_URL=… DATABASE_CA_CERT=… APP_DATA_ENCRYPTION_KEY=… QA_WALKER_PASSWORD=… QA_CLIENTS_PASSWORD=… \
-//     pnpm --filter @akinaza/web exec tsx scripts/seed-saint-henri.mjs
-import { createDb, pg, poolConfig } from "@akinaza/db";
-import { SAINT_HENRI_EMAILS, seedSaintHenri } from "@akinaza/db/seed-walker";
+//     pnpm --filter @folioviv/web exec tsx scripts/seed-saint-henri.mjs
+import { createDb, pg, poolConfig } from "@folioviv/db";
+import { SAINT_HENRI_EMAILS, seedSaintHenri } from "@folioviv/db/seed-walker";
 
 import { hashPassword } from "./qa-accounts.mjs";
 

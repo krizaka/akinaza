@@ -6,7 +6,7 @@ import { query } from "./db";
 import { refuse } from "./http";
 import { appSettings } from "./settings";
 
-/** The events Akinaza tells an owner's systems about (#178): a new booking, an invoice paid in full. */
+/** The events Folioviv tells an owner's systems about (#178): a new booking, an invoice paid in full. */
 export const WEBHOOK_EVENTS = ["booking.created", "invoice.paid"] as const;
 
 /** The pace of retries: after the 1st failure 30 s, then 5 min, 30 min, 2 h, 12 h; six tries in all. */

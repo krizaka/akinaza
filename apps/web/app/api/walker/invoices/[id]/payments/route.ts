@@ -1,4 +1,4 @@
-import { paymentInputSchema, recordPayment } from "@akinaza/db";
+import { paymentInputSchema, recordPayment } from "@folioviv/db";
 
 import { systemClock } from "@/app/system-clock";
 import { requireShop } from "@/lib/access";

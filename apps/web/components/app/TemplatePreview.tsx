@@ -1,4 +1,4 @@
-import type { Template } from "@akinaza/core";
+import type { Template } from "@folioviv/core";
 
 /** Today's page without a template, after the hero: the order the storefront has always drawn (`trust` right before the photos). */
 export const PLAIN_PAGE_SECTIONS: readonly { id: string; variant: string; visible: boolean }[] = ["services", "team", "hours", "zones", "trust", "gallery"].map((id) => ({ id, variant: "default", visible: true }));

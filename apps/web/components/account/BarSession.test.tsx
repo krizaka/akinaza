@@ -25,7 +25,7 @@ const render = (me: Parameters<typeof BarActionsView>[0]["me"], locale: "en" | "
   renderToStaticMarkup(<BarActionsView me={me} locale={locale} words={wordsOf(locale === "en" ? en : (fr as typeof en))} placement={placement} onSignOut={() => undefined} />);
 const text = (html: string) => html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
 
-describe("the public bar knows who is there (krizaka/akinaza#255)", () => {
+describe("the public bar knows who is there (krizaka/folioviv#255)", () => {
   it("the signed-out actions carry data-signed-out-only, so html[data-session] hides them from the first paint (krizaka-ui#827)", () => {
     for (const placement of ["bar", "panel"] as const) {
       const html = render({ signedIn: false, signupOpen: true }, "en", placement);

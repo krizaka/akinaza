@@ -1,4 +1,4 @@
-import { exploreQuerySchema, type ExploreQuery } from "@akinaza/core";
+import { exploreQuerySchema, type ExploreQuery } from "@folioviv/core";
 import { eq, sql } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 

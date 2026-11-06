@@ -1,4 +1,4 @@
-import { defaultsFor, SHOP_TYPES, type ShopType } from "@akinaza/core";
+import { defaultsFor, SHOP_TYPES, type ShopType } from "@folioviv/core";
 
 import { defaultImage, defaultVideo } from "@/lib/default-media";
 import { getDictionary } from "@/lib/i18n";

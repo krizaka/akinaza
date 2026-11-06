@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { TEMPLATES, templatesFor } from "@akinaza/core";
+import { TEMPLATES, templatesFor } from "@folioviv/core";
 import { describe, expect, it, vi } from "vitest";
 
 import { bindProduct } from "@/lib/brand";

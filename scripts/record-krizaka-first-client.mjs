@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// « Krizaka, Akinaza's first client » — four narrated walkthroughs on the real dev site, as the persona Éric (the owner of
+// « Krizaka, Folioviv's first client » — four narrated walkthroughs on the real dev site, as the persona Éric (the owner of
 // « Krizaka (démo) », a software studio in Montréal; never an administrator): onboarding (the business and its services),
 // the invoice (hours and a flat fee, GST/QST to the cent), the books (what the ledger holds) and the prepared return (GST/QST
 // lines, never filed). EN and FR, desktop and phone. Everything on screen is demo data: fictional clients, made-up tax numbers,
@@ -25,7 +25,7 @@ const device = flag("device", "desktop");
 const locale = flag("locale", "en") === "fr" ? "fr" : "en";
 const wanted = flag("clips", "onboarding,invoice,books,return").split(",");
 const voice = args.includes("--voice");
-const BASE = (process.env.APP_BASE_URL ?? "https://www.akinaza.com").replace(/\/$/, "");
+const BASE = (process.env.APP_BASE_URL ?? "https://www.folioviv.com").replace(/\/$/, "");
 const need = (n) => {
   if (!process.env[n]) throw new Error(`${n} is required`);
   return process.env[n];
@@ -39,8 +39,8 @@ const VIEWPORT = device === "phone" ? { width: 390, height: 844 } : { width: 128
 export const WORDS = {
   onboarding: {
     open: {
-      en: "Éric opens Akinaza for Krizaka, a software studio in Montréal. This is demo data: a fictional business with made-up tax numbers.",
-      fr: "Éric ouvre Akinaza pour Krizaka, un studio de logiciel à Montréal. Ce sont des données de démonstration : une entreprise fictive, avec des numéros de taxes inventés.",
+      en: "Éric opens Folioviv for Krizaka, a software studio in Montréal. This is demo data: a fictional business with made-up tax numbers.",
+      fr: "Éric ouvre Folioviv pour Krizaka, un studio de logiciel à Montréal. Ce sont des données de démonstration : une entreprise fictive, avec des numéros de taxes inventés.",
     },
     services: {
       en: "Its services are bookable and invoiceable items, by the hour or by the project: development, design, consulting, a scoping workshop and a monthly support plan.",
@@ -51,8 +51,8 @@ export const WORDS = {
       fr: "La journée d'Éric parle les mots d'un studio : des rendez-vous et des clients, pas les promenades d'un promeneur de chiens. Le type d'entreprise fixe le vocabulaire, et la page de la boutique le dit.",
     },
     clients: {
-      en: "Three business clients are on file, each with a recorded consent. Akinaza only prepares taxes; it never files them.",
-      fr: "Trois clients d'affaires sont au dossier, chacun avec un consentement noté. Akinaza prépare les taxes; elle ne les produit jamais.",
+      en: "Three business clients are on file, each with a recorded consent. Folioviv only prepares taxes; it never files them.",
+      fr: "Trois clients d'affaires sont au dossier, chacun avec un consentement noté. Folioviv prépare les taxes; elle ne les produit jamais.",
     },
   },
   invoice: {
@@ -85,8 +85,8 @@ export const WORDS = {
       fr: "La déclaration de TPS et de TVQ du trimestre est préparée à partir de ces livres, ligne par ligne, pour le formulaire de Revenu Québec.",
     },
     notFiled: {
-      en: "It is prepared, never filed: Éric reviews it and files it himself. Nothing is sent from Akinaza.",
-      fr: "Elle est préparée, jamais produite : Éric la vérifie et la produit lui-même. Rien n'est envoyé depuis Akinaza.",
+      en: "It is prepared, never filed: Éric reviews it and files it himself. Nothing is sent from Folioviv.",
+      fr: "Elle est préparée, jamais produite : Éric la vérifie et la produit lui-même. Rien n'est envoyé depuis Folioviv.",
     },
   },
 };
@@ -121,7 +121,7 @@ const storageState = await (async () => {
 
 async function clip(id, run) {
   if (!wanted.includes(id)) return;
-  const take = await createTake({ chromium, base: BASE, viewport: VIEWPORT, scale: device === "phone" ? 2 : 1, locale, outDir: path.join(out, device), name: `akinaza-${id}-${locale}`, mobile: device === "phone", storageState, words: WORDS[id], voices: VOICES });
+  const take = await createTake({ chromium, base: BASE, viewport: VIEWPORT, scale: device === "phone" ? 2 : 1, locale, outDir: path.join(out, device), name: `folioviv-${id}-${locale}`, mobile: device === "phone", storageState, words: WORDS[id], voices: VOICES });
   const { page } = take;
   const glide = (dy, ms = 1600) =>
     page.evaluate(

@@ -1,4 +1,4 @@
-import { invoiceMailSettings, listInvoices } from "@akinaza/db";
+import { invoiceMailSettings, listInvoices } from "@folioviv/db";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
@@ -7,7 +7,7 @@ import { organizeData } from "@/lib/organize-data";
 
 import Invoices from "./page";
 
-vi.mock("@akinaza/db", async (importOriginal) => ({ ...(await importOriginal<typeof import("@akinaza/db")>()), listInvoices: vi.fn(), invoiceMailSettings: vi.fn() }));
+vi.mock("@folioviv/db", async (importOriginal) => ({ ...(await importOriginal<typeof import("@folioviv/db")>()), listInvoices: vi.fn(), invoiceMailSettings: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/organize-data", () => ({ organizeData: vi.fn(), tagsOfRows: vi.fn(async () => ({})) }));
 vi.mock("@/lib/member-shop", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/member-shop")>()), memberShop: vi.fn() }));

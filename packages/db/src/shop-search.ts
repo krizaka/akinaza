@@ -1,4 +1,4 @@
-import { INVOICE_STATE, invoiceState } from "@akinaza/core";
+import { INVOICE_STATE, invoiceState } from "@folioviv/core";
 import { and, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
 
 import type { Db } from "./client";

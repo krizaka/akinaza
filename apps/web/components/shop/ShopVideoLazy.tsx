@@ -14,7 +14,7 @@ const Tv = dynamic(() => import("@/components/shop/ShopVideoTv").then((m) => m.S
 const NEAR = "600px 0px";
 
 /**
- * The shop page's television, loaded when it nears the screen (akinaza#404, #469). Its player and cabinet are the heaviest part of the page and sit far below the
+ * The shop page's television, loaded when it nears the screen (folioviv#404, #469). Its player and cabinet are the heaviest part of the page and sit far below the
  * first screen: nothing of them is downloaded before the visitor scrolls close (the client JS budget counts what the page loads), and the player decides its
  * buttons from the browser, so a server render of it would differ from the first client render (React #418, `check:hydration`). Until then the section keeps
  * its anchor, its key and its heading, with the first poster in a box of the television's own shape: nothing moves when the set arrives.

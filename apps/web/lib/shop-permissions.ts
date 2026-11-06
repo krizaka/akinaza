@@ -1,4 +1,4 @@
-import { SHOP_ROLES, type ShopPermission, type ShopRole } from "@akinaza/db/roles";
+import { SHOP_ROLES, type ShopPermission, type ShopRole } from "@folioviv/db/roles";
 import { can } from "@krizaka/auth/client";
 
 /**

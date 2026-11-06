@@ -28,7 +28,7 @@ export interface Line extends LineInput {
 
 /**
  * A quantity as a whole number of hundredths (7.5 → 750), refusing what is not one: zero, more than two decimals, a value
- * that is not a finite number. The float is only the door; from here on the quantity is an integer (krizaka/akinaza#111).
+ * that is not a finite number. The float is only the door; from here on the quantity is an integer (krizaka/folioviv#111).
  */
 export function quantityHundredths(quantity: number): number {
   const scaled = Math.round(quantity * 100);

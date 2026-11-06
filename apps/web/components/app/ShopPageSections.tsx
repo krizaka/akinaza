@@ -1,6 +1,6 @@
 "use client";
 
-import { BUSINESS_TYPES, type BusinessType } from "@akinaza/core";
+import { BUSINESS_TYPES, type BusinessType } from "@folioviv/core";
 import { Alert } from "@krizaka/ui/alert";
 import { Badge } from "@krizaka/ui/badge";
 import { Card } from "@krizaka/ui/card";

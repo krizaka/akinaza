@@ -1,4 +1,4 @@
-import type { invoiceDeliveryHistory } from "@akinaza/db";
+import type { invoiceDeliveryHistory } from "@folioviv/db";
 
 import { formatDate } from "@/lib/format";
 import { format, getDictionary, type Locale } from "@/lib/i18n";

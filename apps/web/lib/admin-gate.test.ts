@@ -7,7 +7,7 @@ import { hostAllowed, ipAllowed } from "./access";
 import { routeFor } from "./host";
 
 /**
- * The administration's gate (Dev preview `admin.gated`): the console exists only on admin.akinaza.com, only for the
+ * The administration's gate (Dev preview `admin.gated`): the console exists only on admin.folioviv.com, only for the
  * ADMIN role, and only from an address of AUTH_ALLOWED_IPS (nobody in production without a list). This test proves the
  * whole surface is behind it, not just one route: a new console page or admin API route that forgets the lock fails here.
  */
@@ -50,12 +50,12 @@ describe("off the list, off the host", () => {
   const from = (host: string, ip: string) => new Headers({ host, "do-connecting-ip": ip });
 
   it("the console is a 404 on the public host and the administration host refuses an address off the list", () => {
-    expect(routeFor("dev.akinaza.com", "/en/console", "en")).toEqual({ kind: "notFound" });
-    expect(hostAllowed(from("admin.akinaza.com", "198.51.100.9"), env)).toBe(false);
-    expect(hostAllowed(from("admin.akinaza.com", "203.0.113.7"), env)).toBe(true);
+    expect(routeFor("dev.folioviv.com", "/en/console", "en")).toEqual({ kind: "notFound" });
+    expect(hostAllowed(from("admin.folioviv.com", "198.51.100.9"), env)).toBe(false);
+    expect(hostAllowed(from("admin.folioviv.com", "203.0.113.7"), env)).toBe(true);
   });
 
   it("with no list in production, nobody gets in", () => {
-    expect(ipAllowed(from("admin.akinaza.com", "203.0.113.7"), { NODE_ENV: "production", ABUSE_CLIENT_IP_HEADER: "do-connecting-ip" })).toBe(false);
+    expect(ipAllowed(from("admin.folioviv.com", "203.0.113.7"), { NODE_ENV: "production", ABUSE_CLIENT_IP_HEADER: "do-connecting-ip" })).toBe(false);
   });
 });

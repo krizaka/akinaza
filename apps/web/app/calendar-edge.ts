@@ -1,4 +1,4 @@
-import { CALENDAR_KINDS, type CalendarKind } from "@akinaza/core";
+import { CALENDAR_KINDS, type CalendarKind } from "@folioviv/core";
 
 import { type OAuthApps, sourceFactory, type SourceMaker } from "@/lib/calendar/registry";
 import { calendarOAuthApps } from "@/lib/env";

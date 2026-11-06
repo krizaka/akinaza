@@ -1,4 +1,4 @@
-import { prepareShopReturn } from "@akinaza/db";
+import { prepareShopReturn } from "@folioviv/db";
 
 import { v1 } from "@/lib/api-v1";
 import { db } from "@/lib/db";

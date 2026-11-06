@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReelTransition } from "@akinaza/core";
+import type { ReelTransition } from "@folioviv/core";
 import { EmbedFacade, type EmbedPlatform } from "@krizaka/ui/embed-facade";
 import { Section } from "@krizaka/ui/page";
 import { RetroTv, type RetroTvLabels, type RetroTvSource } from "@krizaka/ui/retro-tv";
@@ -53,7 +53,7 @@ function rememberSound(on: boolean): void {
 }
 
 /**
- * The shop's short videos (akinaza#469): one large television that plays the owner's playlist in their order, then again, with the owner's transition (a cut
+ * The shop's short videos (folioviv#469): one large television that plays the owner's playlist in their order, then again, with the owner's transition (a cut
  * under reduced motion, which the television decides). The sound starts off: a browser refuses sound without a gesture, so a visitor who kept the sound on
  * last time finds the set not playing by itself, and starts it with their own press. A link to a platform stays behind its facade until the visitor clicks.
  */

@@ -1,4 +1,4 @@
-import { CalendarSourceError } from "@akinaza/core";
+import { CalendarSourceError } from "@folioviv/core";
 import { describe, expect, it, vi } from "vitest";
 
 import { caldavSource, calendarDataOf } from "./caldav-source";
@@ -16,7 +16,7 @@ describe("Google (calendar.freebusy only)", () => {
   const app = { clientId: "cid", clientSecret: "csecret" };
 
   it("asks for the one busy-only scope, offline, with a PKCE challenge, and nothing wider", () => {
-    const url = new URL(googleSource(app).authorizeUrl({ state: "st", redirectUri: "https://www.akinaza.com/api/calendars/callback/google", codeChallenge: "chal" }));
+    const url = new URL(googleSource(app).authorizeUrl({ state: "st", redirectUri: "https://www.folioviv.com/api/calendars/callback/google", codeChallenge: "chal" }));
     expect(url.origin + url.pathname).toBe("https://accounts.google.com/o/oauth2/v2/auth");
     expect(url.searchParams.get("scope")).toBe(GOOGLE_SCOPE);
     expect(GOOGLE_SCOPE).toBe("https://www.googleapis.com/auth/calendar.freebusy");
@@ -77,7 +77,7 @@ describe("Outlook (Calendars.ReadBasic + offline_access)", () => {
   const app = { clientId: "cid", clientSecret: "csecret" };
 
   it("asks for the least privileged read scope and the refresh token, with PKCE", () => {
-    const url = new URL(outlookSource(app).authorizeUrl({ state: "st", redirectUri: "https://www.akinaza.com/api/calendars/callback/outlook", codeChallenge: "chal" }));
+    const url = new URL(outlookSource(app).authorizeUrl({ state: "st", redirectUri: "https://www.folioviv.com/api/calendars/callback/outlook", codeChallenge: "chal" }));
     expect(url.origin + url.pathname).toBe("https://login.microsoftonline.com/common/oauth2/v2.0/authorize");
     expect(url.searchParams.get("scope")).toBe(OUTLOOK_SCOPE);
     expect(OUTLOOK_SCOPE).toBe("https://graph.microsoft.com/Calendars.ReadBasic offline_access");

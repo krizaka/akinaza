@@ -1,21 +1,21 @@
 #!/usr/bin/env node
-// The whole Akinaza cast on a database, the same everywhere (krizaka/.github#356): local (`pnpm run dev:seed`), CI, Maestro, the
+// The whole Folioviv cast on a database, the same everywhere (krizaka/.github#356): local (`pnpm run dev:seed`), CI, Maestro, the
 // recorders and the dev deployment. The Saint-Henri walker (Léa) with her shop, five clients with their dogs, and
 // Éric (the Krizaka studio's owner), Mira (the administrator) — names, languages and roles come from `@krizaka/org`'s cast. Idempotent; refused outside dev.
 // Addresses of the walker and the clients are the seed's own fictional `.test` ones; secrets come from the environment and are
 // never printed (a database on this machine gets local defaults).
 //
 //   DATABASE_URL=… [DATABASE_CA_CERT=…] [APP_DATA_ENCRYPTION_KEY=…] [QA_WALKER_PASSWORD=… QA_CLIENTS_PASSWORD=… QA_ADMIN_EMAIL=… QA_ADMIN_PASSWORD=… QA_KRIZAKA_PASSWORD=…] \
-//     pnpm --filter @akinaza/web exec tsx scripts/seed-cast.mjs [--clean] [--check]
+//     pnpm --filter @folioviv/web exec tsx scripts/seed-cast.mjs [--clean] [--check]
 //
 // `--clean` removes what a journey left on the demo shop (a dog, a booking, a client file the cast does not name); `--check` fails
-// when anything of the kind is still there, besides comparing the fingerprint (akinaza #1915).
+// when anything of the kind is still there, besides comparing the fingerprint (folioviv #1915).
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import { createDb, migrate, pg, poolConfig } from "@akinaza/db";
-import { cleanDemoLeftovers, demoLeftovers } from "@akinaza/db/demo-clean";
-import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri } from "@akinaza/db/seed-walker";
+import { createDb, migrate, pg, poolConfig } from "@folioviv/db";
+import { cleanDemoLeftovers, demoLeftovers } from "@folioviv/db/demo-clean";
+import { SAINT_HENRI, SAINT_HENRI_EMAILS, seedSaintHenri } from "@folioviv/db/seed-walker";
 import { castOf, persona, seedFingerprint } from "@krizaka/org";
 
 import { hashPassword } from "./qa-accounts.mjs";
@@ -23,7 +23,7 @@ import { ensureOwnerStates } from "./seed-owner-states.mjs";
 
 /** What a LOCAL database gets when nothing is given. Never used on a host that is not this machine. */
 export const LOCAL_SECRET = "local-cast-password-0123";
-const LOCAL_KEY = Buffer.alloc(32, "akinaza-local-cast").toString("base64");
+const LOCAL_KEY = Buffer.alloc(32, "folioviv-local-cast").toString("base64");
 
 const isLocalHost = (databaseUrl) => {
   try {
@@ -36,9 +36,9 @@ const isLocalHost = (databaseUrl) => {
 export const WALKER = persona("akinaza", "lea");
 export const ERIC = persona("akinaza", "eric");
 export const ADMIN = persona("akinaza", "mira");
-/** The company's own account: it owns the real Krizaka shop (akinaza#489), set up through the owner console. Not a demo persona, not a person's login. */
+/** The company's own account: it owns the real Krizaka shop (folioviv#489), set up through the owner console. Not a demo persona, not a person's login. */
 export const KRIZAKA = { id: "krizaka", displayName: "Krizaka", locale: "fr", avatar: "krizaka" };
-export const KRIZAKA_EMAIL = "akinaza@krizaka.com";
+export const KRIZAKA_EMAIL = "folioviv@krizaka.com";
 
 /** The accounts of the cast: the walker, the five clients (same order as the seed) and the administrator. */
 export function castAccounts(env) {
@@ -51,7 +51,7 @@ export function castAccounts(env) {
   const walkerSecret = need("QA_WALKER_PASSWORD", LOCAL_SECRET);
   const clientsSecret = need("QA_CLIENTS_PASSWORD", LOCAL_SECRET);
   const addressOf = (name, p) => {
-    const email = (env[name] ?? `${p.id}@demo.akinaza.test`).trim().toLowerCase();
+    const email = (env[name] ?? `${p.id}@demo.folioviv.test`).trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+$/.test(email)) {throw new Error(`${name} is invalid`);}
     return email;
   };

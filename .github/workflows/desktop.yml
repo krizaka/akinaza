@@ -27,7 +27,7 @@ jobs:
     uses: krizaka/.github/.github/workflows/tauri-macos.yml@79f6ff6292edefebc59fc968dbc2c203da81c3ea # main
     with:
       working-directory: apps/desktop
-      product-name: Akinaza
+      product-name: Folioviv
       sign: false
 
   # Tag: signed and notarised in the `release` environment, the secrets passed by name.
@@ -38,7 +38,7 @@ jobs:
     uses: krizaka/.github/.github/workflows/tauri-macos.yml@79f6ff6292edefebc59fc968dbc2c203da81c3ea # main
     with:
       working-directory: apps/desktop
-      product-name: Akinaza
+      product-name: Folioviv
       sign: true
     secrets:
       APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}

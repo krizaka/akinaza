@@ -24,7 +24,7 @@ describe("the secret of a private calendar feed (ADR-004)", () => {
 
   it("is in the path, with or without the .ics a calendar app likes", () => {
     const token = newFeedToken();
-    expect(feedUrl("https://www.akinaza.com/", token)).toBe(`https://www.akinaza.com/api/feed/${token}.ics`);
+    expect(feedUrl("https://www.folioviv.com/", token)).toBe(`https://www.folioviv.com/api/feed/${token}.ics`);
     expect(tokenOfSegment(`${token}.ics`)).toBe(token);
     expect(tokenOfSegment(token)).toBe(token);
     expect(tokenOfSegment("agenda.ics")).toBeNull();

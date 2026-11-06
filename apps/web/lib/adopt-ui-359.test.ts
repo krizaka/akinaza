@@ -13,7 +13,7 @@ const sources = (dir: string): string[] =>
   });
 const all = sources(root).map((path) => ({ path, text: readFileSync(path, "utf8") }));
 
-describe("Krizaka UI 3.59 adopted (akinaza#337, #352): no local copy of a block", () => {
+describe("Krizaka UI 3.59 adopted (folioviv#337, #352): no local copy of a block", () => {
   it("leaves no TODO or note that waits for krizaka-ui#627, #690 or #657", () => {
     const waiting = all.filter(({ text }) => /(TODO|Remove|remove|until)[^\n]*krizaka-ui#(627|690|657)/.test(text)).map(({ path }) => path);
     expect(waiting).toEqual([]);

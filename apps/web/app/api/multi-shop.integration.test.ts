@@ -33,13 +33,13 @@ describe.runIf(enabled)("an owner with two shops over HTTP", () => {
   beforeAll(async () => {
     await migrate();
     for (const label of ["owner", "stranger"]) {
-      const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [`${label}-${stamp}@akinaza.test`]);
+      const [row] = await query<{ id: string }>("INSERT INTO accounts (email, password_hash) VALUES ($1, 'x') RETURNING id", [`${label}-${stamp}@folioviv.test`]);
       tokens[label] = (await createSession(row!.id, { ip: null, userAgent: "vitest" })).token;
     }
   });
   beforeEach(() => resetRateLimits());
   afterAll(async () => {
-    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@akinaza.test`]);
+    await query("DELETE FROM accounts WHERE email LIKE $1", [`%-${stamp}@folioviv.test`]);
     await pool().end();
   });
 

@@ -6,7 +6,7 @@ import { appSettings } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
-/** Where the files are kept (akinaza#397): the provider and region the administrator saved, and the residency it means. */
+/** Where the files are kept (folioviv#397): the provider and region the administrator saved, and the residency it means. */
 export default async function AdminStorage({ params }: Readonly<{ params: Promise<{ locale: string }> }>) {
   const t = translator(asLocale((await params).locale));
   const saved = await readStorageSettings((key) => appSettings().get(key) as Promise<string | number>);

@@ -12,7 +12,7 @@ const windows = [
 const visit = (from: string, to: string) => ({ startsAt: at(from), endsAt: at(to) });
 const day = { windows, visits: [visit("10:00", "10:45"), visit("10:45", "11:30"), visit("14:00", "15:00")], offUntil: null };
 
-describe("where a member of the team stands, for the public page (akinaza#209)", () => {
+describe("where a member of the team stands, for the public page (folioviv#209)", () => {
   it("before opening, they start at the first window", () => {
     expect(memberStateAt(day, at("08:10"), TZ)).toEqual({ kind: "startsAt", time: "09:00" });
   });

@@ -1,4 +1,4 @@
-import { type ShopRole, todayBoard } from "@akinaza/db";
+import { type ShopRole, todayBoard } from "@folioviv/db";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -7,7 +7,7 @@ import { memberShop } from "@/lib/member-shop";
 
 import Today from "./page";
 
-vi.mock("@akinaza/db", async (importOriginal) => ({ ...await importOriginal<typeof import("@akinaza/db")>(), todayBoard: vi.fn() }));
+vi.mock("@folioviv/db", async (importOriginal) => ({ ...await importOriginal<typeof import("@folioviv/db")>(), todayBoard: vi.fn() }));
 vi.mock("@/lib/db", () => ({ db: vi.fn(() => ({})) }));
 vi.mock("@/lib/member-shop", async (importOriginal) => ({ ...await importOriginal<typeof import("@/lib/member-shop")>(), memberShop: vi.fn() }));
 

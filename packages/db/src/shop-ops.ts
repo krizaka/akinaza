@@ -1,4 +1,4 @@
-import { dueOn, expenseEntries, invoiceEntries, invoiceTotals, type LedgerEntry, type LineInput, prepareReturn, type PreparedReturn, type SlotEvent, termsDaysSchema } from "@akinaza/core";
+import { dueOn, expenseEntries, invoiceEntries, invoiceTotals, type LedgerEntry, type LineInput, prepareReturn, type PreparedReturn, type SlotEvent, termsDaysSchema } from "@folioviv/core";
 import { and, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -12,7 +12,7 @@ const post = (tx: Tx, shopId: string, entries: LedgerEntry[]) =>
     : Promise.resolve();
 
 /**
- * Issues an invoice: the next number of the shop (its row locked — no gap, no duplicate), the totals of @akinaza/core
+ * Issues an invoice: the next number of the shop (its row locked — no gap, no duplicate), the totals of @folioviv/core
  * (GST/QST once on the taxable base, rounded to the cent), the lines, and the ledger entries — one transaction; the
  * database checks at commit that the lines and the ledger add up to the invoice.
  */
@@ -71,7 +71,7 @@ export async function book(db: Db, input: { shopId: string; staffId: string; ser
   return { id: row!.id, event: { type: "slot", shopId: input.shopId, staffId: input.staffId, startsAt: input.startsAt.toISOString(), endsAt: endsAt.toISOString(), status: "taken" } };
 }
 
-// The consents and the erasure of a client are the privacy module's (akinaza#370, privacy.ts): re-exported where they were.
+// The consents and the erasure of a client are the privacy module's (folioviv#370, privacy.ts): re-exported where they were.
 export { eraseClient, recordConsent } from "./privacy";
 
 /** The prepared GST/QST return of a shop over a period, from its ledger and its invoices (supplies, line 101). */
@@ -184,7 +184,7 @@ export async function listInvoices(db: Db, shopId: string) {
       clientId: invoices.clientId,
       client: clients.fullName,
       clientEmail: clients.email,
-      // What was received against it, and whether a credit note or a correction (#207) superseded it (akinaza#218).
+      // What was received against it, and whether a credit note or a correction (#207) superseded it (folioviv#218).
       paidCents: sql<number>`coalesce((SELECT sum(p.amount_cents) FROM payments p WHERE p.invoice_id = ${invoices.id}), 0)::int`,
       superseded: sql<boolean>`EXISTS (SELECT 1 FROM invoices o WHERE o.credit_of = ${invoices.id} OR o.replaces = ${invoices.id})`,
     })

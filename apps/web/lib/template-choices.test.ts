@@ -1,4 +1,4 @@
-import { SHOP_TYPES, TEMPLATES, TEMPLATES_V2 } from "@akinaza/core";
+import { SHOP_TYPES, TEMPLATES, TEMPLATES_V2 } from "@folioviv/core";
 import { describe, expect, it } from "vitest";
 
 import { templateChoices, templateChoicesByTrade, type TemplateRules } from "./template-choices";
@@ -62,7 +62,7 @@ describe("a template that improved (#261, step 5)", () => {
   });
 });
 
-describe("the notebook's catalogue (akinaza#316)", () => {
+describe("the notebook's catalogue (folioviv#316)", () => {
   it("offers « update available » from the shipped @1 to the shipped @2, and the trade's templates at @2", () => {
     const catalogue = [...TEMPLATES, ...TEMPLATES_V2];
     const c = templateChoices(rules(), "salon", { templateId: "salon-vitrine", templateVersion: 1, sectionsCustom: false }, catalogue)!;

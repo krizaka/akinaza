@@ -1,4 +1,4 @@
-import { bookingPreselect } from "@akinaza/core";
+import { bookingPreselect } from "@folioviv/core";
 import { describe, expect, it } from "vitest";
 
 import { bookingDefaults, searchValue } from "./booking-defaults";

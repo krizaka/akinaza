@@ -1,6 +1,6 @@
 "use client";
 
-import type { BookingPreselect } from "@akinaza/core";
+import type { BookingPreselect } from "@folioviv/core";
 import { krizakaFetch, useQuery } from "@krizaka/query";
 import { Alert } from "@krizaka/ui/alert";
 import { Button } from "@krizaka/ui/button";

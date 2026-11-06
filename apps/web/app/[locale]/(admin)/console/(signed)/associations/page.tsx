@@ -1,4 +1,4 @@
-import { pendingAssociations } from "@akinaza/db";
+import { pendingAssociations } from "@folioviv/db";
 
 import { AssociationQueue } from "@/components/admin/AssociationQueue";
 import { db } from "@/lib/db";

@@ -3,7 +3,7 @@
 // Demo data only; the run's clock is fixed (APP_FIXED_NOW), the demo invoices were issued months before it under the shop's 30-day terms.
 import { expect, test } from "@playwright/test";
 
-const EMAIL = process.env.E2E_EMAIL ?? "lea.beaulieu@akinaza.test";
+const EMAIL = process.env.E2E_EMAIL ?? "lea.beaulieu@folioviv.test";
 const CAST_WORD = process.env.E2E_PASSWORD ?? "local-cast-password-0123";
 const OVERDUE_LINK = /to collect · (\d+) overdue/;
 

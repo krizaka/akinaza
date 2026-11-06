@@ -15,14 +15,14 @@ vi.mock("@/lib/access", () => ({ requireSession: async () => ({ account: { id: "
 vi.mock("@/lib/audit", () => ({ audit: async () => undefined }));
 vi.mock("@/lib/db", () => ({ db: () => ({}), query: async () => [] }));
 vi.mock("@/lib/rate-limit", () => ({ limit: () => undefined }));
-vi.mock("@/lib/env", () => ({ env: () => ({ APP_PUBLIC_URL: "https://akinaza.test", PAYMENTS_STRIPE_SECRET_KEY: state.secret }) }));
+vi.mock("@/lib/env", () => ({ env: () => ({ APP_PUBLIC_URL: "https://folioviv.test", PAYMENTS_STRIPE_SECRET_KEY: state.secret }) }));
 vi.mock("@/lib/billing", () => ({
   customerOf: async () => "cus_1",
   founderGate: async () => "open",
   recordOfferedVersion: async (_q: unknown, _a: string, v: string) => void state.recorded.push(v),
   trialEligible: async () => state.eligible,
 }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), associationApproved: async () => state.approved }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), associationApproved: async () => state.approved }));
 vi.mock("@/lib/price-catalogue", async () => {
   const { pricesInForce: inForce } = await import("@/lib/test-prices");
   const catalogue = await inForce(new Date("2026-11-01T12:00:00Z"));
@@ -50,7 +50,7 @@ describe("the checkout sells a plan of the catalogue, with its free months (ADR-
     const r = await call("starter");
     expect(r.status).toBe(200);
     expect(state.requests[0]).toMatchObject({ kind: "starter", trialDays: 90 });
-    expect(state.recorded[0]).not.toBe("seed:akinaza.starter");
+    expect(state.recorded[0]).not.toBe("seed:folioviv.starter");
   });
 
   it("an account that already had a subscription gets no trial (once per account)", async () => {

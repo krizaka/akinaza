@@ -5,10 +5,10 @@ vi.mock("./session", async (orig) => ({ ...(await orig<typeof import("./session"
 
 // A signed-out caller is refused before any database or crypto work: the database is replaced by one that fails the test if it is touched. This also keeps the
 // 401 from paying for the whole data layer's cold import (it measured ~5 s on a loaded machine, the timeout of a test), so the suite times the 401 itself.
-vi.mock("@akinaza/db", () => new Proxy({}, { get: (_t, name) => (name === "then" ? undefined : () => { throw new Error(`a signed-out request touched the database (${String(name)})`); }) }));
+vi.mock("@folioviv/db", () => new Proxy({}, { get: (_t, name) => (name === "then" ? undefined : () => { throw new Error(`a signed-out request touched the database (${String(name)})`); }) }));
 vi.mock("./db", () => ({ db: () => { throw new Error("a signed-out request opened a database connection"); } }));
 
-const get = (path: string) => new Request(`https://www.akinaza.com${path}`, { headers: { "x-forwarded-for": "203.0.113.9" } });
+const get = (path: string) => new Request(`https://www.folioviv.com${path}`, { headers: { "x-forwarded-for": "203.0.113.9" } });
 
 type Route = { GET: (req: Request) => Promise<Response> | Response };
 const ROUTES: Record<string, () => Promise<Route>> = {

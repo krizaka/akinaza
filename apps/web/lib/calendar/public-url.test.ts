@@ -1,4 +1,4 @@
-import { CalendarSourceError } from "@akinaza/core";
+import { CalendarSourceError } from "@folioviv/core";
 import { describe, expect, it } from "vitest";
 
 import { assertPublicHost, isPrivateAddress, parseCalendarUrl } from "./public-url";

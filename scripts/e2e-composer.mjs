@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// End-to-end journey of the shop page composer (Akinaza#427) on a running deployment, in a real browser, as a shop owner on the
+// End-to-end journey of the shop page composer (Folioviv#427) on a running deployment, in a real browser, as a shop owner on the
 // dev fixtures: open Boutique > Page > Composer, reorder a section with Alt+ArrowDown, change the style, and check that the autosave
 // stored the draft; publish and check the PUBLIC page changed; roll back and check the public page AND the draft are restored; make
 // another edit and discard it, and check the draft equals the published page. It also runs the "never overflows" containment check
 // (the page has no horizontal scroll) on a phone and on a desktop width, dark and light.
 //
-//   E2E_BASE=https://dev.akinaza.com E2E_OWNER_EMAIL=... E2E_OWNER_PASS=... [E2E_SLUG=pattes-saint-henri] [E2E_LOCALE=fr] [E2E_OUT=<dir>] pnpm run e2e:composer
+//   E2E_BASE=https://dev.folioviv.com E2E_OWNER_EMAIL=... E2E_OWNER_PASS=... [E2E_SLUG=pattes-saint-henri] [E2E_LOCALE=fr] [E2E_OUT=<dir>] pnpm run e2e:composer
 //
 // It publishes two versions of the shop's page: run it on a demo or throw-away shop, never on someone's real page. Secrets stay in
 // the environment; nothing but the checks is printed. It needs a Chromium for playwright-core.

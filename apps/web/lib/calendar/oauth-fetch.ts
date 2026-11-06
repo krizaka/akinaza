@@ -1,4 +1,4 @@
-import { CalendarSourceError } from "@akinaza/core";
+import { CalendarSourceError } from "@folioviv/core";
 
 /** What a provider's HTTP answer means for a sync: the refusal worth a reconnection, the one worth waiting for, the outage worth a retry. */
 export async function jsonOf(res: Response): Promise<Record<string, unknown>> {

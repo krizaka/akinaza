@@ -1,4 +1,4 @@
-import { frameCounts, shopDay, type ShopRole } from "@akinaza/db";
+import { frameCounts, shopDay, type ShopRole } from "@folioviv/db";
 
 import { accounts } from "@/app/accounts";
 import { requestNow } from "@/app/request-now";

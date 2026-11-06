@@ -10,15 +10,15 @@ import { SCREENS } from "./landing";
 
 const home = readFileSync(new URL("../app/[locale]/page.tsx", import.meta.url), "utf8");
 
-describe("the home after the pages review (akinaza#440)", () => {
+describe("the home after the pages review (folioviv#440)", () => {
   it("labels the hero's phone with the real address of the site, not the development host", () => {
     for (const t of [en, fr]) {
-      expect(t.landing.visualLabel).toBe("www.akinaza.com");
+      expect(t.landing.visualLabel).toBe("www.folioviv.com");
       expect(t.landing.visualLabel).not.toMatch(/^dev\./);
     }
   });
 
-  it("says what Akinaza is not for under the hero's actions, at a readable size, and not in the quiet footnote", () => {
+  it("says what Folioviv is not for under the hero's actions, at a readable size, and not in the quiet footnote", () => {
     const actions = home.slice(home.indexOf("actions={"), home.indexOf("features={"));
     expect(actions).toContain("d.trust.scope");
     expect(actions).toMatch(/text-base text-fg-secondary/);
@@ -35,7 +35,7 @@ describe("the home after the pages review (akinaza#440)", () => {
   });
 });
 
-describe("the three cards draw the app's real components with demo data (akinaza#470)", () => {
+describe("the three cards draw the app's real components with demo data (folioviv#470)", () => {
   it("renders a preview per job, not a screenshot", () => {
     expect(SCREENS.map((s) => s.id)).toEqual(["book", "invoice", "books"]);
     for (const part of ["BookPreview", "InvoicePreview", "BooksPreview"]) expect(home).toContain(part);

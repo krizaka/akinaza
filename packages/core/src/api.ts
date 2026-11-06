@@ -4,7 +4,7 @@ import { DEPENDANT_KINDS } from "./service-shop";
 
 /**
  * What the owner's API answers and the apps read (iPhone, Android, Mac), validated on both sides. Structure only: the words
- * are messages. The server builds these answers from `@akinaza/db`; an app parses them at the edge and trusts the types.
+ * are messages. The server builds these answers from `@folioviv/db`; an app parses them at the edge and trusts the types.
  */
 export const VISIT_STATUSES = ["booked", "done", "cancelled", "noShow"] as const;
 
@@ -74,7 +74,7 @@ export type ShopAnswer = z.infer<typeof shopAnswer>;
 
 /**
  * « Livres » for the apps (`GET /api/walker/books?period=`, D8): the period's combined GST/QST return as the web prepares it — what
- * each net comes to and whether it is to remit or to claim. Prepared only: the merchant files it, never Akinaza.
+ * each net comes to and whether it is to remit or to claim. Prepared only: the merchant files it, never Folioviv.
  */
 const netAnswer = z.object({ netCents: z.number().int().nonnegative(), outcome: z.enum(["remit", "claim", "zero"]) });
 export const booksAnswer = z.object({
@@ -95,7 +95,7 @@ export const issuedInvoice = z.object({ id: z.string(), number: z.string().or(z.
  */
 export const meAnswer = z.object({
   signedIn: z.boolean(),
-  /** Whether sign-up is open (`AUTH_SIGNUP_ENABLED`): « Try Akinaza » is the primary action only then. */
+  /** Whether sign-up is open (`AUTH_SIGNUP_ENABLED`): « Try Folioviv » is the primary action only then. */
   signupOpen: z.boolean(),
   /** `id` draws the same default picture as the app's header when no tone was chosen. */
   account: z.object({ id: z.string().optional(), name: z.string().nullable(), email: z.string(), avatarSeed: z.string().nullable() }).optional(),

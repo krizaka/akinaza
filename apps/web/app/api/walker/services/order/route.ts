@@ -1,4 +1,4 @@
-import { reorderServices } from "@akinaza/db";
+import { reorderServices } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireShop } from "@/lib/access";
@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 const body = z.object({ order: z.array(z.string().uuid()).min(1).max(50) });
 
 /**
- * The owner's order of the offers on the page (akinaza#597): exactly the shop's active offers, each once - anything else is a 409 and changes nothing.
+ * The owner's order of the offers on the page (folioviv#597): exactly the shop's active offers, each once - anything else is a 409 and changes nothing.
  * Then the open pages draw themselves again.
  */
 export function PUT(req: Request) {

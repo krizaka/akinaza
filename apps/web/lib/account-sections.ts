@@ -1,4 +1,4 @@
-import type { ShopRole } from "@akinaza/db/roles";
+import type { ShopRole } from "@folioviv/db/roles";
 
 import { format } from "./i18n";
 import { ACCOUNT_SECTIONS, type AccountSection } from "./routes";
@@ -15,7 +15,7 @@ export function accountSectionsFor(role: ShopRole | null): AccountSection[] {
 
 type RoleWords = { roleAdmin: string; roleIn: string; shopRoles: Record<ShopRole, string> };
 
-/** What the account is, read only on the profile: an administrator, « Propriétaire chez <shop> » / « Employé chez <shop> »; nothing for a client, who holds no role anywhere (akinaza#440). */
+/** What the account is, read only on the profile: an administrator, « Propriétaire chez <shop> » / « Employé chez <shop> »; nothing for a client, who holds no role anywhere (folioviv#440). */
 export function accountRoleLine(words: RoleWords, who: { admin: boolean; member: { role: ShopRole; shop: { name: string } } | null }): string | null {
   if (who.admin) return words.roleAdmin;
   if (!who.member) return null;

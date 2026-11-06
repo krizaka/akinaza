@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   # The pipeline is the org's (krizaka/.github docs/standards/ci-and-deploy.md): the changes gate, the pnpm and Playwright caches,
-  # the timeouts and the gate that always reports live there. This file says only what is Akinaza's.
+  # the timeouts and the gate that always reports live there. This file says only what is Folioviv's.
   ci:
     uses: krizaka/.github/.github/workflows/node-ci.yml@79f6ff6292edefebc59fc968dbc2c203da81c3ea # main (merge queue, layout guard)
     permissions:
@@ -47,10 +47,10 @@ jobs:
       typecheck-script: typecheck
       next-cache-paths: apps/web/.next/cache
       postgres-image: postgres:16
-      postgres-name: akinaza
+      postgres-name: folioviv
       # Test values only — no real secret anywhere. The database tests create a database per file on this server.
       env: |
-        DATABASE_URL=postgresql://akinaza:ci-only-password@localhost:5432/akinaza
+        DATABASE_URL=postgresql://folioviv:ci-only-password@localhost:5432/folioviv
         DATABASE_IT=1
         APP_PUBLIC_URL=http://localhost:3000
       playwright: chromium

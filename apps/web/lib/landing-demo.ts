@@ -2,7 +2,7 @@ import type { InvoiceView } from "@/components/app/InvoiceDocument";
 import { getDictionary, type Locale } from "@/lib/i18n";
 
 /**
- * The demo data of the home's feature cards (akinaza#470): the real components of the app, drawn with these fictional figures
+ * The demo data of the home's feature cards (folioviv#470): the real components of the app, drawn with these fictional figures
  * (a dog walker in Saint-Henri, one invoice). Nothing here is a customer's; the cards say « demo ». The taxes are the app's own:
  * GST 5 % and QST 9.975 % of the subtotal, rounded to the cent.
  */

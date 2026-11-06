@@ -1,4 +1,4 @@
-import { type CustomHostnames, DOMAIN_STATE, txtRecordValue } from "@akinaza/core";
+import { type CustomHostnames, DOMAIN_STATE, txtRecordValue } from "@folioviv/core";
 import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -61,7 +61,7 @@ describe("merchants' own domains (real PostgreSQL 16, #539)", () => {
     await expect(addShopDomain(t.db, id, "a.monsalon.ca", { max: 2, random })).rejects.toMatchObject({ code: DOMAIN_CODE.exists });
     await addShopDomain(t.db, id, "b.monsalon.ca", { max: 2, random });
     await expect(addShopDomain(t.db, id, "c.monsalon.ca", { max: 2, random })).rejects.toMatchObject({ code: DOMAIN_CODE.limit });
-    await expect(addShopDomain(t.db, id, "login.akinaza.com", { max: 9, random })).rejects.toBeInstanceOf(ShopError);
+    await expect(addShopDomain(t.db, id, "login.folioviv.com", { max: 9, random })).rejects.toBeInstanceOf(ShopError);
   });
 
   it("goes pending TXT -> pending TLS -> active, and is served only then", async () => {
@@ -75,7 +75,7 @@ describe("merchants' own domains (real PostgreSQL 16, #539)", () => {
     expect(missing).toMatchObject({ state: DOMAIN_STATE.pendingTxt, attempts: 1, lastError: "txt-missing" });
     expect(w.created).toEqual([]);
 
-    w.records.set("_akinaza-verify.book.salon-serve.ca", [txtRecordValue(row.token)]);
+    w.records.set("_folioviv-verify.book.salon-serve.ca", [txtRecordValue(row.token)]);
     const proven = await checkShopDomain(t.db, missing, w.ports());
     expect(proven).toMatchObject({ state: DOMAIN_STATE.pendingTls, providerId: "ch_book.salon-serve.ca" });
     expect(proven.verifiedAt).not.toBeNull();
@@ -94,7 +94,7 @@ describe("merchants' own domains (real PostgreSQL 16, #539)", () => {
     const w = world();
     await setCustomDomainOption(t.db, id, true, null, NOW);
     const row = await addShopDomain(t.db, id, "go.salon-off.ca", { max: 5, random });
-    w.records.set("_akinaza-verify.go.salon-off.ca", [txtRecordValue(row.token)]);
+    w.records.set("_folioviv-verify.go.salon-off.ca", [txtRecordValue(row.token)]);
     w.setTls("active");
     let cur = await checkShopDomain(t.db, row, w.ports());
     cur = await checkShopDomain(t.db, cur, w.ports());
@@ -122,7 +122,7 @@ describe("merchants' own domains (real PostgreSQL 16, #539)", () => {
     await setCustomDomainOption(t.db, a, true, null, NOW);
     await setCustomDomainOption(t.db, b, true, null, NOW);
     const first = await addShopDomain(t.db, a, "shared.salon-take.ca", { max: 5, random });
-    w.records.set("_akinaza-verify.shared.salon-take.ca", [txtRecordValue(first.token)]);
+    w.records.set("_folioviv-verify.shared.salon-take.ca", [txtRecordValue(first.token)]);
     w.setTls("active");
     await checkShopDomain(t.db, await checkShopDomain(t.db, first, w.ports()), w.ports()).then(() => undefined);
     await expect(addShopDomain(t.db, b, "shared.salon-take.ca", { max: 5, random })).rejects.toMatchObject({ code: DOMAIN_CODE.taken });
@@ -147,7 +147,7 @@ describe("merchants' own domains (real PostgreSQL 16, #539)", () => {
     await setCustomDomainOption(t.db, b, true, null, NOW);
     const rowA = await addShopDomain(t.db, a, "race.salon-race.ca", { max: 5, random });
     const rowB = await addShopDomain(t.db, b, "race.salon-race.ca", { max: 5, random });
-    w.records.set("_akinaza-verify.race.salon-race.ca", [txtRecordValue(rowA.token), txtRecordValue(rowB.token)]);
+    w.records.set("_folioviv-verify.race.salon-race.ca", [txtRecordValue(rowA.token), txtRecordValue(rowB.token)]);
     expect((await checkShopDomain(t.db, rowA, w.ports())).state).toBe(DOMAIN_STATE.pendingTls);
     const lost = await checkShopDomain(t.db, rowB, w.ports());
     expect(lost).toMatchObject({ state: DOMAIN_STATE.failed, lastError: "taken", providerId: null });
@@ -159,7 +159,7 @@ describe("merchants' own domains (real PostgreSQL 16, #539)", () => {
     const w = world();
     await setCustomDomainOption(t.db, id, true, null, NOW);
     const row = await addShopDomain(t.db, id, "gone.salon-lapse.ca", { max: 5, random });
-    w.records.set("_akinaza-verify.gone.salon-lapse.ca", [txtRecordValue(row.token)]);
+    w.records.set("_folioviv-verify.gone.salon-lapse.ca", [txtRecordValue(row.token)]);
     w.setTls("active");
     let cur = await checkShopDomain(t.db, await checkShopDomain(t.db, row, w.ports()), w.ports());
     expect(cur.state).toBe(DOMAIN_STATE.active);
@@ -183,7 +183,7 @@ describe("merchants' own domains (real PostgreSQL 16, #539)", () => {
     const w = world();
     await setCustomDomainOption(t.db, id, true, null, NOW);
     const row = await addShopDomain(t.db, id, "tick.salon-tick.ca", { max: 5, random });
-    w.records.set("_akinaza-verify.tick.salon-tick.ca", [txtRecordValue(row.token)]);
+    w.records.set("_folioviv-verify.tick.salon-tick.ca", [txtRecordValue(row.token)]);
     expect(await checkDueDomains(t.db, w.ports(), { everyMs: 60_000, batch: 50 })).toBeGreaterThanOrEqual(1);
     const [after] = await t.db.select().from(shopDomains).where(eq(shopDomains.id, row.id));
     expect(after!.state).toBe(DOMAIN_STATE.pendingTls);

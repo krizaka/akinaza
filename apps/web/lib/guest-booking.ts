@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 
-import { type Db,dbCodeStore } from "@akinaza/db";
+import { type Db,dbCodeStore } from "@folioviv/db";
 import { createEmailVerification, VERIFY_FAILURE, type VerifyResult } from "@krizaka/email-verification";
 import { z } from "zod";
 

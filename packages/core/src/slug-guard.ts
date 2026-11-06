@@ -1,7 +1,7 @@
 import safeRegex from "safe-regex2";
 
 /**
- * Anti-phishing slugs (ADR-005 slice 4, akinaza#537). A shop address is `<slug>.akinaza.shop`: one that wears a protected brand or a lure word
+ * Anti-phishing slugs (ADR-005 slice 4, folioviv#537). A shop address is `<slug>.folioviv.shop`: one that wears a protected brand or a lure word
  * (`login`, `verify`…) is HELD for review (the shop keeps its default address), never silently refused. The list is a setting the console edits.
  */
 

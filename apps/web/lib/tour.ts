@@ -2,7 +2,7 @@
  * The landing's living proof, captured on a demo shop (Krizaka (démo), Éric's studio: fictional, seeded, QA personas, no real
  * person). The hero's phone plays one take of it (2026-10-29, scripts/record-hero.mjs: the notebook storefront, Today, an invoice, the books; Éric is a persona, never the administrator);
  * the three screens under it are stills of the booking page, an invoice and the quarter's books. All on the Krizaka media CDN under
- * hashed, immutable names (`sites/akinaza/tour/`, a prefix owned by this site: FOREIGN_WRITERS in krizaka-com);
+ * hashed, immutable names (`sites/folioviv/tour/`, a prefix owned by this site: FOREIGN_WRITERS in krizaka-com);
  * a new capture is a new hash here.
  */
 /** The Krizaka media CDN: the one host the page's CSP lets serve images (lib/csp.ts). */
@@ -24,7 +24,7 @@ const HERO: Record<TourLocale, { mp4: string; webm: string; poster: string }> = 
   en: { mp4: "9cba68ab85", webm: "1006f217d2", poster: "f56e98e080" },
 };
 
-const TOUR_DIR = `${MEDIA_CDN}/sites/akinaza/tour`;
+const TOUR_DIR = `${MEDIA_CDN}/sites/folioviv/tour`;
 
 export const screenStill = (id: ScreenId, locale: TourLocale) => `${TOUR_DIR}/phone-${id}-${locale}.${SCREEN_STILLS[id][locale]}.jpg`;
 

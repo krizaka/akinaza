@@ -1,4 +1,4 @@
-import { SHOP_TYPES } from "@akinaza/core";
+import { SHOP_TYPES } from "@folioviv/core";
 import type { Metadata } from "next";
 
 import { NewShop } from "@/components/app/NewShop";

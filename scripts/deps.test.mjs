@@ -4,7 +4,7 @@ import { describe, it } from "vitest";
 
 import { WORKSPACES, workspacesWithSources } from "./deps.mjs";
 
-describe("dependency-cruiser covers every workspace (akinaza#320)", () => {
+describe("dependency-cruiser covers every workspace (folioviv#320)", () => {
   it("lists every workspace that owns a tsconfig: a new one cannot escape the cruise", () => {
     assert.deepEqual(Object.keys(WORKSPACES).sort(), workspacesWithSources().sort());
   });

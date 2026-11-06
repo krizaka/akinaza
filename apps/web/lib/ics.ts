@@ -35,11 +35,11 @@ export function buildIcs(e: IcsEvent): string {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Akinaza//Booking//EN",
+    "PRODID:-//Folioviv//Booking//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:${e.uid}@akinaza.com`,
+    `UID:${e.uid}@folioviv.com`,
     `DTSTAMP:${stamp(e.now)}`,
     `DTSTART:${stamp(e.start)}`,
     `DTEND:${stamp(e.end)}`,
@@ -69,7 +69,7 @@ export function buildFeedIcs({ name, entries, now }: { name: string; entries: re
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Akinaza//Agenda//FR",
+    "PRODID:-//Folioviv//Agenda//FR",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     `X-WR-CALNAME:${escape(name)}`,
@@ -77,7 +77,7 @@ export function buildFeedIcs({ name, entries, now }: { name: string; entries: re
     "REFRESH-INTERVAL;VALUE=DURATION:PT1H",
     ...entries.flatMap((e) => [
       "BEGIN:VEVENT",
-      `UID:${e.appointmentId}@akinaza.com`,
+      `UID:${e.appointmentId}@folioviv.com`,
       `DTSTAMP:${stamp(now)}`,
       `DTSTART:${stamp(e.start)}`,
       `DTEND:${stamp(e.end)}`,

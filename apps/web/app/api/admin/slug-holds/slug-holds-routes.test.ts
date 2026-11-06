@@ -11,8 +11,8 @@ vi.mock("@/lib/access", () => ({
   },
 }));
 const calls = vi.hoisted(() => ({ listed: 0, cleared: [] as string[], kept: [] as { id: string; reason: string }[], audited: [] as unknown[], rejudged: [] as boolean[] }));
-vi.mock("@akinaza/db", async (original) => ({
-  ...(await original<typeof import("@akinaza/db")>()),
+vi.mock("@folioviv/db", async (original) => ({
+  ...(await original<typeof import("@folioviv/db")>()),
   heldShops: async () => (calls.listed++, [{ shopId: "11111111-1111-4111-8111-111111111111", name: "Salon", slug: "login-salon", term: "login", heldAt: null, ownerId: null }]),
   clearSlugHold: async (_db: unknown, id: string) => (calls.cleared.push(id), id.startsWith("1")),
   keepSlugHold: async (_db: unknown, id: string, reason: string) => (calls.kept.push({ id, reason }), id.startsWith("1")),

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ClientNote } from "@akinaza/db";
+import type { ClientNote } from "@folioviv/db";
 import { Alert } from "@krizaka/ui/alert";
 import { createKrizakaForm } from "@krizaka/ui/form";
 import { z } from "zod";

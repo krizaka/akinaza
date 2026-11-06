@@ -1,4 +1,4 @@
-import { saveShopPage, ShopError } from "@akinaza/db";
+import { saveShopPage, ShopError } from "@folioviv/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { requireSession } from "@/lib/access";
@@ -12,7 +12,7 @@ vi.mock("@/lib/settings", () => ({ appSettings: vi.fn() }));
 const policy = { terms: [{ source: "login" }] };
 vi.mock("@/lib/slug-policy", () => ({ slugPolicy: vi.fn(async () => policy) }));
 vi.mock("@/lib/organize", () => ({ organize: vi.fn() }));
-vi.mock("@akinaza/db", async (original) => ({ ...(await original<typeof import("@akinaza/db")>()), saveShopPage: vi.fn() }));
+vi.mock("@folioviv/db", async (original) => ({ ...(await original<typeof import("@folioviv/db")>()), saveShopPage: vi.fn() }));
 
 const page = { name: "Atelier", legalName: "Atelier inc.", address: "1 rue X", slug: "atelier-c", ownerName: "Éric", published: false };
 const post = () => POST(new Request("http://localhost/api/walker/shops", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(page) }));

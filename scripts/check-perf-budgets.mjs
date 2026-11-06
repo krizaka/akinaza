@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Performance budgets of the public shop pages (ADR-004, akinaza#401). The seeded demo shops, on a throttled phone profile
+// Performance budgets of the public shop pages (ADR-004, folioviv#401). The seeded demo shops, on a throttled phone profile
 // (390 x 844, 4x CPU slowdown, slow 4G), each page sampled RUNS times, the median judged:
 //   - LCP <= 2.5 s and the LCP element is the hero;  - CLS 0;  - at most 5 phone screens (page height / viewport height);
 //   - client JavaScript per route (the bytes the page loads) may only go down: perf-budgets.json is the ratchet.
@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 export const BUDGETS_FILE = fileURLToPath(new URL("../perf-budgets.json", import.meta.url));
 export const LIMITS = { lcpMs: 2500, cls: 0, screens: 5 };
 export const SHOP_ROUTES = ["/en/s/cedre-ciseaux", "/fr/s/cedre-ciseaux", "/en/s/pattes-saint-henri", "/fr/s/pattes-saint-henri"];
-// The explore pages are measured and reported, but their absolute budgets do not block until the page exists (akinaza#473).
+// The explore pages are measured and reported, but their absolute budgets do not block until the page exists (folioviv#473).
 export const NON_BLOCKING_ROUTES = ["/en/explore", "/fr/explore"];
 export const VIEWPORT = { width: 390, height: 844 };
 const HERO = '[class*="hero"], [data-section="hero"], [data-hero], main > :first-child';
@@ -66,7 +66,7 @@ export function judge(route, s, limits = LIMITS) {
 }
 
 /**
- * Whether the problems fail the run. A layout shift is deterministic (spread 0 over the runs, akinaza#460): it always fails. LCP and the screens vary with
+ * Whether the problems fail the run. A layout shift is deterministic (spread 0 over the runs, folioviv#460): it always fails. LCP and the screens vary with
  * the runner and fail only unless the run is declared non-blocking.
  */
 export function blocksRun(problems, perfBlocking = process.env.PERF_BLOCKING) {

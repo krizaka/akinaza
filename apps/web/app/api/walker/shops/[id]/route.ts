@@ -1,4 +1,4 @@
-import { SHOP_AVATAR_SEEDS } from "@akinaza/db";
+import { SHOP_AVATAR_SEEDS } from "@folioviv/db";
 import { z } from "zod";
 
 import { requireSession } from "@/lib/access";

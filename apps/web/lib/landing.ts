@@ -21,7 +21,7 @@ export const SCREENS = [
 
 type DevPreview = { criteria: Record<string, { evidence?: string | null; na?: boolean | string }> };
 
-/** The hero's actions, by the session (krizaka/akinaza#285): the messages are `landing.actions.<message>`. */
+/** The hero's actions, by the session (krizaka/folioviv#285): the messages are `landing.actions.<message>`. */
 export type HeroActionMessage = "openShop" | "tryDemo" | "signIn";
 export interface HeroAction {
   href: string;

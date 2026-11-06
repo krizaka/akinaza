@@ -1,5 +1,5 @@
-import { slugSchema } from "@akinaza/core";
-import { activeDomainOfSlug, currentSlugOf, publicShop, shopOfCustomHost } from "@akinaza/db";
+import { slugSchema } from "@folioviv/core";
+import { activeDomainOfSlug, currentSlugOf, publicShop, shopOfCustomHost } from "@folioviv/db";
 
 import { db } from "@/lib/db";
 import { NOINDEX } from "@/lib/indexing";
@@ -7,7 +7,7 @@ import { NOINDEX } from "@/lib/indexing";
 export const dynamic = "force-dynamic";
 
 /**
- * Whether an address is a shop (ADR-005 slice 4, akinaza#549): `{ slug }` for a published shop (a held or unpublished one is none), `{ moved }` for a former
+ * Whether an address is a shop (ADR-005 slice 4, folioviv#549): `{ slug }` for a published shop (a held or unpublished one is none), `{ moved }` for a former
  * address that leads to a current one, `{}` otherwise. The proxy asks it for a shop host before routing anything; it says nothing the public page does not.
  */
 export async function GET(request: Request) {

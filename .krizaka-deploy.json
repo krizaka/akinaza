@@ -1,9 +1,9 @@
 {
-  "app": "akinaza-dev",
-  "url": "https://dev.akinaza.com",
+  "app": "folioviv-dev",
+  "url": "https://dev.folioviv.com",
   "health": "/api/healthz",
   "indexing": "off",
   "spec": "deploy/digitalocean/app.yaml",
-  "product": "akinaza",
+  "product": "folioviv",
   "waitMinutes": 25
 }

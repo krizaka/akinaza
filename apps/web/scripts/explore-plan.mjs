@@ -1,13 +1,13 @@
 #!/usr/bin/env node
-// The query plan and the timings of Explorer's search on a synthetic set (ADR-006, akinaza#574). It needs a throw-away PostgreSQL given by
+// The query plan and the timings of Explorer's search on a synthetic set (ADR-006, folioviv#574). It needs a throw-away PostgreSQL given by
 // PLAN_PG (a connection string of a server where it may create and drop a database of its own), creates SHOPS shops (default 20000) with a
 // worker, hours, rules, two areas and three services each, refreshes the read model once, then prints the p50 and p95 of each filter shape
 // over RUNS runs (default 40) and the EXPLAIN (ANALYZE, BUFFERS) of the combined query. Synthetic data only.
 import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 
-import { exploreQuerySchema } from "@akinaza/core";
-import { createDb, exploreSearch, exploreStatement, migrate, pg, settleAvailability } from "@akinaza/db";
+import { exploreQuerySchema } from "@folioviv/core";
+import { createDb, exploreSearch, exploreStatement, migrate, pg, settleAvailability } from "@folioviv/db";
 import { PgDialect } from "drizzle-orm/pg-core";
 
 const server = process.env.PLAN_PG;

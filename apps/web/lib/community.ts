@@ -1,4 +1,4 @@
-import { type ScoreRules } from "@akinaza/core";
+import { type ScoreRules } from "@folioviv/core";
 
 import { refuse } from "@/lib/http";
 import { appSettings, type SettingKey } from "@/lib/settings";

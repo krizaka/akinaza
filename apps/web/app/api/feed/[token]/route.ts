@@ -1,4 +1,4 @@
-import { feedByTokenHash, feedEntriesAround, feedTitle } from "@akinaza/db";
+import { feedByTokenHash, feedEntriesAround, feedTitle } from "@folioviv/db";
 
 import { requestNow } from "@/app/request-now";
 import { productName } from "@/lib/brand-name";
