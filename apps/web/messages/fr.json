@@ -475,8 +475,7 @@
     "body": "{product} est en développement : seuls les comptes créés par notre équipe peuvent se connecter. Les données d'une boutique — ses clients, rendez-vous, factures et registre des taxes — sont gardées dans la base de données de {product} au Canada, chiffrées au repos, visibles de cette boutique seulement. Le consentement des clients est noté par finalité et peut être retiré ; les renseignements personnels d'un client peuvent être effacés, les factures qu'exige la loi fiscale étant gardées. Les chiffres de taxes préparés par {product} sont calculés à partir du registre de la période, dans {product} ; rien n'est produit pour un gouvernement, ni déposé auprès de lui, ni transmis. Rien n'est vendu. Pour poser une question ou faire supprimer vos données, utilisez le formulaire de contact.",
     "officer": {
       "title": "Responsable de la protection des renseignements personnels",
-      "role": "Responsable de la protection des renseignements personnels",
-      "text": "La personne responsable de la protection des renseignements personnels est publiée ici. Titre : {role}, {publisher}, {city} ({region}), Canada. Contact : contact@krizaka.com, pour accéder à vos renseignements, les corriger ou les effacer, retirer un consentement ou déposer une plainte ; nous répondons dans un délai de 30 jours."
+      "text": "Responsable de la protection des renseignements personnels : le président de {publisher} — confidentialite@krizaka.com. Écrivez à cette adresse pour accéder à vos renseignements, les corriger ou les effacer, retirer un consentement ou déposer une plainte ; nous répondons dans les 30 jours."
     },
     "processors": {
       "title": "Qui traite des renseignements pour nous",
@@ -586,7 +585,7 @@
       },
       {
         "h": "16. Nous joindre",
-        "p": "Par le formulaire de contact de Krizaka (sujet {product}), ou à contact@krizaka.com pour vos renseignements personnels. Nous répondons dans les 30 jours."
+        "p": "Par le formulaire de contact de Krizaka (sujet {product}), ou à confidentialite@krizaka.com pour vos renseignements personnels. Nous répondons dans les 30 jours."
       }
     ]
   },

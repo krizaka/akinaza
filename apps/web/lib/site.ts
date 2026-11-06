@@ -3,7 +3,7 @@ export const SITE_URL = "https://www.folioviv.com";
 export const REPO_URL = "https://github.com/krizaka/folioviv";
 /** Krizaka, the publisher: named only in the footer and the legal mentions (the products are independent). */
 export const KRIZAKA_URL = "https://www.krizaka.com";
-export const PRIVACY_UPDATED = "2026-10-26";
+export const PRIVACY_UPDATED = "2026-11-05";
 
 /** The published privacy impact assessment and the register of transfers outside Québec (docs/privacy, folioviv#369). */
 export const EFVP_URL = "https://github.com/krizaka/folioviv/blob/main/docs/privacy/efvp.md";
