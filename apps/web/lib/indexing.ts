@@ -28,8 +28,11 @@ export const publicHost = (env: Record<string, string | undefined> = process.env
     return "";
   }
 };
-/** Whether a response to this host may be indexed. A `dev.*` host never is: www is production, whatever APP_DEV_HOST or APP_SEARCH_INDEXING say. */
-export const indexableOn = (host: string | null | undefined, env: Record<string, string | undefined> = process.env): boolean => !bare(host).startsWith("dev.") && (indexable(env) || bare(host) === publicHost(env));
+/** The products' code-name hosts (wave 1, krizaka-internal#2630): a product's public address is its commercial domain, so www.akinaza.com is aligned, not advertised. */
+export const isCodeNameHost = (host: string | null | undefined): boolean => /^(www\.)?(akinaza|yomizaka|orazaka)\.com$/.test(bare(host));
+/** Whether a response to this host may be indexed. A `dev.*` host never is, nor a code-name host: www is production, whatever APP_DEV_HOST or APP_SEARCH_INDEXING say. */
+export const indexableOn = (host: string | null | undefined, env: Record<string, string | undefined> = process.env): boolean =>
+  !bare(host).startsWith("dev.") && !isCodeNameHost(host) && (indexable(env) || bare(host) === publicHost(env));
 export const isDevHost = (host: string | null | undefined, env: Record<string, string | undefined> = process.env): boolean => !!env.APP_DEV_HOST?.trim() && bare(host) === bare(env.APP_DEV_HOST);
 
 /** What the dev host keeps serving: robots.txt, /healthz, the API (auth callbacks, webhooks, the mobile apps' calls) and /.well-known. */

@@ -2,7 +2,7 @@
   "meta": {
     "siteName": "{product}",
     "titleTemplate": "{title} · {product}",
-    "description": "Your appointments, invoices and taxes, sorted. {product} is for salons, studios and the self-employed in Québec: clients book, you invoice, your GST/QST figures are ready. In French and in English."
+    "description": "Your bookings and invoices sorted, your taxes prepared. {product} is for salons, studios and the self-employed in Québec: clients book, you invoice, your GST/QST figures are ready. In French and in English."
   },
   "chrome": {
     "brandHome": "{product}, home",
@@ -57,7 +57,7 @@
     "message": "Data can be reset at any time. This is not a commercial offer yet."
   },
   "landing": {
-    "title": "Your appointments, invoices and taxes, sorted.",
+    "title": "Your bookings and invoices sorted, your taxes prepared.",
     "lead": "Clients book, you invoice, your tax figures are ready. In French and in English.",
     "actions": {
       "openShop": "Open my shop",
@@ -65,6 +65,7 @@
       "signIn": "Sign in"
     },
     "status": {
+      "paused": "Paused: access by invitation, write to us.",
       "development": "In development: sign-up is closed while we build it with the first shops.",
       "preview": "Dev preview: sign-up is closed, access by invitation."
     },
@@ -122,7 +123,7 @@
       "line": "Records in a database in Canada · Consent noted by purpose · Taxes prepared, return filed by you",
       "scope": "For studios, salons and the self-employed. Not for restaurants, cafés, bars or bakeries with on-site consumption."
     },
-    "visualLabel": "www.akinaza.com",
+    "visualLabel": "{product}",
     "feed": {
       "title": "Posted in your neighbourhood",
       "lead": "The flyers shops pin on their own page: an open day, a new service, a place left. Nothing here is advertising we sell.",
@@ -379,6 +380,11 @@
     }
   },
   "pricing": {
+    "access": {
+      "title": "Access by invitation",
+      "lead": "Access by invitation: write to us.",
+      "cta": "Write to us"
+    },
     "title": "Pricing",
     "lead": "Monthly plans in CAD, plus taxes. You can cancel at any time.",
     "plansLabel": "Plans",
@@ -538,11 +544,11 @@
       },
       {
         "h": "4. The subscription, the price and the renewal",
-        "p": "The subscription is monthly and renews by itself at the end of each period until you cancel. The price is the one in the catalogue published on the pricing page when you subscribe, plus the applicable taxes; it is kept with your subscription, and a price change does not apply to a subscription already sold unless you are told in writing at least 30 days ahead and can cancel before it takes effect. No fee can be charged unless the contract states it (art. 12 of the Consumer Protection Act, CPA). A feature marked « soon » is not billed."
+        "p": "The subscription is monthly and renews by itself at the end of each period until you cancel. The price is the one communicated to you before you subscribe, plus the applicable taxes; it is kept with your subscription, and a price change does not apply to a subscription already sold unless you are told in writing at least 30 days ahead and can cancel before it takes effect. No fee can be charged unless the contract states it (art. 12 of the Consumer Protection Act, CPA). A feature marked « soon » is not billed."
       },
       {
         "h": "5. Payments",
-        "p": "The subscription is paid on the hosted payment page of our payment processor: {product} never sees or keeps your card number. The payments of your own clients, when they are offered, go through your own account with your own processor: the money goes straight from the client to you. {product} never holds funds, does not keep anything for you or for your client, does not act as a trustee and keeps nothing back. The processor's fees are those of your contract with it; {product}'s fees on these payments are shown on the pricing page (no percentage on cards, a capped amount for pre-authorised debit)."
+        "p": "The subscription is paid on the hosted payment page of our payment processor: {product} never sees or keeps your card number. The payments of your own clients, when they are offered, go through your own account with your own processor: the money goes straight from the client to you. {product} never holds funds, does not keep anything for you or for your client, does not act as a trustee and keeps nothing back. The processor's fees are those of your contract with it; {product}'s fees on these payments are communicated to you before you turn them on."
       },
       {
         "h": "6. Cancellation and refunds",
