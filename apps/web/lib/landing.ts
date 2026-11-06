@@ -40,6 +40,6 @@ export function heroActions(locale: Locale, signedIn: boolean): { primary: HeroA
  */
 const PAUSED = true;
 export function productStatus(preview: DevPreview): "paused" | "development" | "preview" {
-  if (PAUSED) return "paused";
+  if (PAUSED) {return "paused";}
   return Object.values(preview.criteria).every((c) => Boolean(c.evidence) || Boolean(c.na)) ? "preview" : "development";
 }

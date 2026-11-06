@@ -22,8 +22,8 @@ const fr = bindProduct(frRaw);
 const ROOT = join(__dirname, "..");
 const read = (path: string) => readFileSync(join(ROOT, path), "utf8");
 const words = (node: unknown): string[] => {
-  if (typeof node === "string") return [node];
-  if (node && typeof node === "object") return Object.values(node).flatMap(words);
+  if (typeof node === "string") {return [node];}
+  if (node && typeof node === "object") {return Object.values(node).flatMap(words);}
   return [];
 };
 
@@ -36,18 +36,18 @@ afterEach(() => vi.unstubAllEnvs());
 
 describe("www.akinaza.com is a code-name host: closed to search engines whatever the configuration says", () => {
   it("knows the code-name hosts", () => {
-    for (const host of ["www.akinaza.com", "WWW.akinaza.com:443", "akinaza.com", "www.yomizaka.com", "www.orazaka.com"]) expect(`${host} ${isCodeNameHost(host)}`).toBe(`${host} true`);
-    for (const host of ["www.folioviv.com", "www.krizaka.com", "", null, undefined]) expect(`${host} ${isCodeNameHost(host)}`).toBe(`${host} false`);
+    for (const host of ["www.akinaza.com", "WWW.akinaza.com:443", "akinaza.com", "www.yomizaka.com", "www.orazaka.com"]) { expect(`${host} ${isCodeNameHost(host)}`).toBe(`${host} true`); }
+    for (const host of ["www.folioviv.com", "www.krizaka.com", "", null, undefined]) { expect(`${host} ${isCodeNameHost(host)}`).toBe(`${host} false`); }
   });
 
   it("is not indexable even with APP_SEARCH_INDEXING on, or when it is the public address", () => {
-    for (const env of [{}, { APP_SEARCH_INDEXING: "on" }, { APP_SEARCH_INDEXING: "off", APP_PUBLIC_URL: "https://www.akinaza.com" }]) expect(indexableOn("www.akinaza.com", env)).toBe(false);
+    for (const env of [{}, { APP_SEARCH_INDEXING: "on" }, { APP_SEARCH_INDEXING: "off", APP_PUBLIC_URL: "https://www.akinaza.com" }]) { expect(indexableOn("www.akinaza.com", env)).toBe(false); }
     expect(indexableOn("www.folioviv.com", {})).toBe(true);
   });
 
   it("every answer says noindex, robots.txt disallows everything", async () => {
     const www = (path: string) => proxy(new NextRequest(`https://www.akinaza.com${path}`, { headers: { host: "www.akinaza.com" } }));
-    for (const path of ["/fr", "/en", "/fr/pricing", "/en/sign-in", "/api/healthz"]) expect(`${path} ${(await www(path)).headers.get("x-robots-tag")}`).toBe(`${path} noindex, nofollow`);
+    for (const path of ["/fr", "/en", "/fr/pricing", "/en/sign-in", "/api/healthz"]) { expect(`${path} ${(await www(path)).headers.get("x-robots-tag")}`).toBe(`${path} noindex, nofollow`); }
     const res = await www("/robots.txt");
     expect(res.headers.get("x-robots-tag")).toBe("noindex, nofollow");
     expect(await res.text()).toMatch(/^User-agent: \*\nDisallow: \/\n/);
@@ -100,13 +100,13 @@ describe("no price anywhere public: the pages that show a price are gone from th
         expect(text).not.toMatch(FEES);
       }
       // The terms still say who pays whom, but name no amount.
-      for (const text of [...words(m.terms), ...words(m.privacy)]) expect(text).not.toMatch(AMOUNT);
+      for (const text of [...words(m.terms), ...words(m.privacy)]) { expect(text).not.toMatch(AMOUNT); }
     }
     expect(llmsText()).not.toMatch(/\d\s?\$|\$\s?\d/);
   });
 
   it("the terms point to no pricing page", () => {
-    for (const m of [fr, en]) expect(JSON.stringify(m.terms)).not.toMatch(/page des tarifs|pricing page/i);
+    for (const m of [fr, en]) { expect(JSON.stringify(m.terms)).not.toMatch(/page des tarifs|pricing page/i); }
   });
 });
 
@@ -126,17 +126,20 @@ describe("the line is « taxes préparées », never « réglées »; the host i
   it("the title, the lead and the description", () => {
     expect(fr.landing.title).toBe("Vos rendez-vous et vos factures réglés, vos taxes préparées.");
     expect(en.landing.title).toBe("Your bookings and invoices sorted, your taxes prepared.");
-    for (const text of [fr.landing.title, fr.landing.lead, fr.meta.description]) expect(text).not.toMatch(/taxes?[^.]{0,20}réglé/i);
-    for (const text of [en.landing.title, en.landing.lead, en.meta.description]) expect(text).not.toMatch(/taxes?,? sorted/i);
+    for (const text of [fr.landing.title, fr.landing.lead, fr.meta.description]) { expect(text).not.toMatch(/taxes?[^.]{0,20}réglé/i); }
+    for (const text of [en.landing.title, en.landing.lead, en.meta.description]) { expect(text).not.toMatch(/taxes?,? sorted/i); }
     expect(fr.meta.description).toMatch(/taxes préparées/);
     expect(en.meta.description).toMatch(/taxes prepared/);
   });
 
   it("the phone's label is the product's name, not its host", () => {
-    for (const m of [fr, en]) expect(m.landing.visualLabel).not.toMatch(/akinaza|www\.|\.com/i);
+    for (const m of [fr, en]) { expect(m.landing.visualLabel).not.toMatch(/akinaza|www\.|\.com/i); }
   });
 
   it("no code name in the words of the public face (a host is a link, never a label)", () => {
-    for (const m of [fr, en]) for (const text of [...words(m.landing), ...words(m.meta), ...words(m.pricing.access)]) expect(text).not.toMatch(/akinaza/i);
+    for (const m of [fr, en]) { for (const text of [...words(m.landing), ...words(m.meta), ...words(m.pricing.access)]) {
+        expect(text).not.toMatch(/akinaza/i);
+      }
+    }
   });
 });
