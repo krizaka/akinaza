@@ -41,7 +41,7 @@ describe("a person without a photo wears the org JSON's default picture (foliovi
   it("the cast names pictures the set has: seeding Éric and the others can never point at a missing one", () => {
     const people = new Set(listDefaults("person").map((i) => i.id));
     const banners = new Set(listDefaults("banner").map((i) => i.id));
-    for (const p of castOf("akinaza")) {
+    for (const p of castOf("folioviv")) {
       expect(people.has(p.avatar), `${p.id} avatar ${p.avatar}`).toBe(true);
       if (p.banner) expect(banners.has(p.banner), `${p.id} banner ${p.banner}`).toBe(true);
       expect(avatarChoice({ avatarSeed: p.avatar })).toBe(p.avatar);

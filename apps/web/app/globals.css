@@ -6,7 +6,7 @@
 @import "@krizaka/tailwind";
 @import "@krizaka/fonts/css";     /* the faces of @krizaka/fonts, Plus Jakarta Sans (--kz-font-product-display) for the product register's titles */
 @import "@krizaka/ui/tailwind.css";
-@import "@krizaka/tokens/brands/akinaza.css";
+@import "@krizaka/tokens/brands/folioviv.css";
 @import "@krizaka/tokens/appearance.css";  /* the optional surface sets (Blueprint, Carbone) and the density of the Appearance block (ADR-006 §4) */
 
 html {

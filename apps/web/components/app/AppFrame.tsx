@@ -1,7 +1,7 @@
 "use client";
 
 import { BillingIcon, ClockIcon, HomeIcon, ServerIcon, ShieldIcon, UserIcon, UsersIcon } from "@krizaka/icons";
-import { AkinazaLogo } from "@krizaka/ui";
+import { FoliovivLogo } from "@krizaka/ui";
 import { AppFrame as KrizakaAppFrame, type FrameSection } from "@krizaka/ui/app-frame";
 import { SkipLink } from "@krizaka/ui/skip-link";
 import Link from "next/link";
@@ -32,8 +32,8 @@ export function AppFrame({ locale, email, name, avatarSeed, base, items, product
       <KrizakaAppFrame
         name={productName}
         label={say("shell.admin")}
-        mark={<AkinazaLogo size={28} animated={false} />}
-        headerMark={<AkinazaLogo size={22} animated={false} />}
+        mark={<FoliovivLogo size={28} animated={false} />}
+        headerMark={<FoliovivLogo size={22} animated={false} />}
         homeHref={base}
         accent={BRAND_ID}
         variant="admin"

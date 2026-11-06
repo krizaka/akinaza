@@ -3,7 +3,7 @@
 import { brandOf, findCodeNames } from "@krizaka/org";
 import { expect, test } from "@playwright/test";
 
-const NAME = brandOf("akinaza").commercialName;
+const NAME = brandOf("folioviv").commercialName;
 
 for (const path of ["/fr", "/en", "/fr/sign-in"]) {
   test(`commercial name: ${path} says ${NAME} in the title and the page, no code name`, async ({ page }) => {

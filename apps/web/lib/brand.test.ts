@@ -11,9 +11,9 @@ import { renderMailTemplate } from "./mail-templates";
 const BRIEF = { shop: "Salon Laurier", line1: "a", line2: "", has2: false, line3: "", has3: false, url: "https://x.test", stop: "https://x.test/stop" };
 
 describe("the commercial name (krizaka-internal#2039)", () => {
-  it("is never the code name", () => {
+  it("is the commercial name", () => {
     expect(PRODUCT_NAME).toBe("Folioviv");
-    expect(PRODUCT_NAME.toLowerCase()).not.toBe(BRAND_ID);
+    expect(BRAND_ID).toBe("folioviv");
   });
 
   it("fills {product} in a whole tree and leaves the other placeholders", () => {

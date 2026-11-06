@@ -59,7 +59,7 @@ function Glyph({ id, variant }: Readonly<{ id: string; variant: string }>) {
  */
 export function TemplatePreview({ template, labels }: Readonly<{ template: Template | null; /** The sections' names, by id (`shopSetup.layout.sections.*`). */ labels: Record<string, string> }>) {
   const sections = (template ? template.sections : PLAIN_PAGE_SECTIONS).filter((s) => s.visible);
-  const hue = template && template.hue !== "brand-akinaza" ? template.hue : undefined;
+  const hue = template && template.hue !== "brand-folioviv" ? template.hue : undefined;
   return (
     <div aria-hidden="true" data-hue={hue} data-paper={template?.paper ?? "plain"} className="kz-tpl-preview flex w-full flex-col gap-[5px] rounded-md border border-border-default bg-surface-1 p-2 text-[9px] leading-none text-fg-secondary">
       <div className="kz-tpl-preview-hero flex h-7 flex-col justify-end gap-[3px] rounded-sm p-[5px]">
