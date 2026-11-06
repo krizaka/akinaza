@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// MANUAL TOOL (ADR-026), run by a person; owner: folioviv lane; listed in README.md « Manual tools »; the header below says how to run it.
 // The query plan and the timings of Explorer's search on a synthetic set (ADR-006, folioviv#574). It needs a throw-away PostgreSQL given by
 // PLAN_PG (a connection string of a server where it may create and drop a database of its own), creates SHOPS shops (default 20000) with a
 // worker, hours, rules, two areas and three services each, refreshes the read model once, then prints the p50 and p95 of each filter shape
