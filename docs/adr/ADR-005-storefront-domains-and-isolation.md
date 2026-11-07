@@ -1,12 +1,5 @@
 # ADR-005 — Shop addresses: the app on akinaza.com, the shops on their own domain, custom domains, and isolation
 
-> **Addendum 2026-11-06 (org standardisation, krizaka-internal#2685).** No code name serves anything any more: the app's
-> development address is `dev.folioviv.com` (console `admin.folioviv.com`), and the shops live on **`folioviv.shop`**
-> (bought, renewed to 2029): `<slug>.folioviv.shop`, the apex and `www` lead to the app. `akinaza.com` and `akinaza.shop`
-> below read `folioviv.com` and `folioviv.shop`; the platform domains a merchant can never claim are folioviv.com,
-> folioviv.shop, folioviv.app, krizaka.com and krizaka.dev. `folioviv.app` points at the dev app and serves nothing of
-> its own yet.
-
 Status: **proposed** (2026-10-29). Issue: krizaka/akinaza#77 (Feature, under the Dev preview epic #52). Slices: the
 sub-issues of #77 listed at the end. Reuses the configured-origin rule of `@krizaka/auth` 0.13 (`landingRedirect({ origin })`).
 
