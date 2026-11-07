@@ -1,6 +1,6 @@
 # Calendar sync and exports — design (#282, phase 1)
 
-Decisions are in [ADR-004](../adr/ADR-004-calendar-sync-and-exports.md). This page is the owner's side of it.
+Decisions are in ADR-004. This page is the owner's side of it.
 
 ## Owner screens (built from @krizaka/ui, French first, dark and light, phone and desktop)
 

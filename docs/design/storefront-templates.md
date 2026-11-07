@@ -67,7 +67,7 @@ Until 1 to 3 are released, templates use the existing blocks with `data-hue` and
 **Recommendation: C.** It is the only option that keeps the owner's content independent of the layout, lets the administrator hold the catalogue as data, and versions without migrating
 copies, while reusing the section components and tests that already exist. A is a page builder (« arbitrary page building » is already refused in `docs/UX_DECISIONS.md`); B hard-codes the trade into code.
 
-## 4. ADR (draft, to land in `docs/adr/ADR-004-storefront-templates.md` with phase 2)
+## 4. ADR (draft, to be recorded internally with phase 2)
 
 - **Decision**: a template is a versioned, validated record of **section order, section variants, media slot names, a hue and default text styles**, held as data in `packages/core` (a zod schema, parsed at build) and selected by the shop with `shop_page.template_id` + `template_version` (never implied by the shop's type). The page renders the existing section components in the template's order with its variants; the owner's own section order and visibility (`shop_page.sections`) remain **overrides** over the template.
 - **Rejected A (stored copy / generic builder)**: copies diverge from improvements, switching is a merge, it grows into a page builder. **Rejected B (a component per type)**: trade-specific code, every improvement six times, no admin control.

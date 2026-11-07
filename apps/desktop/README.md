@@ -2,7 +2,7 @@
 
 The owner's back office (the day, clients, invoices, books, the shop) in a native window. No point of sale: it stays a stub
 behind `APP_POS_ENABLED` (#79's countertop scope is closed, D9). Tauri 2 on
-`tauri-plugin-krizaka` of [`krizaka-tauri-kit`](https://github.com/krizaka/krizaka-tauri-kit) ([ADR-005](https://github.com/krizaka/.github/blob/main/docs/adr/ADR-005-tauri-app-kit.md)).
+`tauri-plugin-krizaka` of [`krizaka-tauri-kit`](https://github.com/krizaka/krizaka-tauri-kit) (ADR-005).
 
 The window shows the hosted web app, which stays the one place where the screens are written (the web's `/app` space). The native layer adds what a
 browser tab cannot:
