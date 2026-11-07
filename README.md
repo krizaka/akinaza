@@ -97,6 +97,29 @@ The database tests run on a real PostgreSQL 16: CI's service, or a Testcontainer
 
 Rules for contributors and agents: [AGENTS.md](AGENTS.md). Security: [SECURITY.md](SECURITY.md).
 
+<!-- krizaka:workflows:start -->
+## Workflows
+
+What runs in the Actions tab of this repository.
+
+- **Bump @krizaka packages** (`bump-krizaka.yml`): Opens one auto-merged PR that bumps the @krizaka packages after a release. Runs when another repository triggers it, on demand.
+- **CI** (`ci.yml`): Lint, tests and build of the repository. Runs on push, on every pull request, in the merge queue.
+- **Dependabot auto-merge** (`dependabot-automerge.yml`): Auto-merges safe Dependabot updates. Runs on every pull request.
+- **Desktop** (`desktop.yml`): Builds and checks the Mac app; a desktop tag builds the release. Runs on every pull request, on push.
+- **Docs map** (`docs-map.yml`): Checks the docs map of the repository. Runs on every pull request.
+- **Download videos** (`download-videos.yml`): Records the app videos for the download page. Runs on a schedule, on demand.
+- **E2E pricing (dev, test card)** (`e2e-pricing.yml`): Walks the pricing journey on dev with the test card. Runs on demand.
+- **Critical journeys** (`journeys.yml`): Runs the critical journeys; its gate is a required check. Runs on every pull request, in the merge queue, on push.
+- **Language guards** (`lang-guards.yml`): Rust guards: rustfmt, clippy, cargo-deny, tests. Runs on every pull request, in the merge queue, on push.
+- **Merge resolution** (`merge-resolution.yml`): Fails a PR that drops what main added without a deletion-explained line. Runs on every pull request.
+- **Mobile CI** (`mobile-ci.yml`): Lint, tests and build of the mobile app. Runs on push, on every pull request, in the merge queue.
+- **Release notes** (`release-notes.yml`): Writes the release notes. Runs on push.
+- **Scorecard** (`scorecard.yml`): OpenSSF Scorecard of the repository. Runs when branch rules change, on a schedule, on demand.
+- **Security scan** (`security.yml`): Secret scan (gitleaks) and workflow scan (zizmor); both are required checks. Runs on every pull request, in the merge queue, on push.
+- **Update visual baselines** (`update-visual-baselines.yml`): Refreshes the visual baselines on demand. Runs on demand.
+- **Visual regression** (`visual.yml`): Compares the main pages with their baselines; a required check. Runs on every pull request, in the merge queue.
+<!-- krizaka:workflows:end -->
+
 ## License
 
 [FSL-1.1-ALv2](LICENSE.md) (Functional Source License, Apache-2.0 future licence) © Technologies Krizaka Inc. — read,
