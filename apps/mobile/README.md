@@ -3,7 +3,7 @@
 The shop's phone app (Expo, Expo Router, `@krizaka/ui/native` in Folioviv's forest green and copper, light and dark,
 French first). Same account as the web: a bearer session in the Keychain / Keystore (`@krizaka/app-client`, its
 `createAuth` for the screens), the owner's API read through `@folioviv/client`, every answer parsed by `@folioviv/core`.
-Decision: [ADR-004](https://github.com/krizaka/.github/blob/main/docs/adr/ADR-004-expo-app-shell.md).
+Decision: ADR-004.
 
 | Tab (the web rail's order and words, D8) | Path (the web's) | What it shows |
 | :-- | :-- | :-- |
