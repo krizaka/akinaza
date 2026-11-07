@@ -20,7 +20,7 @@ export async function hashPassword(password) {
 }
 
 // The visible name of each account is its persona's, from the cast (`@krizaka/org`): demos and recordings never show « qa » or « admin ».
-export const QA_PERSONAS = { USER: persona("akinaza", "eric"), ADMIN: persona("akinaza", "mira") };
+export const QA_PERSONAS = { USER: persona("folioviv", "eric"), ADMIN: persona("folioviv", "mira") };
 
 export function accountsFromEnv(env) {
   const accounts = [

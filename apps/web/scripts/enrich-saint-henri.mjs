@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// MANUAL TOOL (ADR-026), run by a person; owner: folioviv lane; listed in README.md « Manual tools »; the header below says how to run it.
 // Gives the fictional Saint-Henri dog walker's shop its storefront (locality, bio, contact, the services' sentences and
 // inclusions, the areas' map positions, the cover and the gallery) on the database of ONE deployment — through the product's
 // own operations, and without touching an account or a password. Idempotent. The shop must already be seeded

@@ -1,4 +1,4 @@
-name: journeys
+name: Critical journeys
 
 # The critical journeys (krizaka-internal#1934/#1938): the org's required check `journeys / gate` (krizaka/.github#465). The journeys are the
 # Playwright project `critical` of apps/web/e2e/journeys, run as the seeded demo cast on the production build; the CAPTCHA runs on Cloudflare's

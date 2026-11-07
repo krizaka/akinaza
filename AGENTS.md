@@ -10,7 +10,7 @@
   skeleton), `packages/core` (the domain, pure and deterministic), `packages/db` (PostgreSQL 16, Drizzle, versioned
   migrations, the shop's operations).
 - **Built only from Krizaka bricks**: `@krizaka/ui` (auth-layout, app-shell, product-page, data-table, cards, mascots…),
-  `@krizaka/query`, `@krizaka/i18n`, `@krizaka/icons`, `@krizaka/tokens` (`brands/akinaza.css`), `@krizaka/realtime`.
+  `@krizaka/query`, `@krizaka/i18n`, `@krizaka/icons`, `@krizaka/tokens` (`brands/folioviv.css`), `@krizaka/realtime`.
   A missing generic component goes to krizaka-ui, released, then used — never copied here. No `@tanstack/*` import, no
   `fetch` in a client `useEffect`, no hand-written `<table>` or multi-field `<form>`.
 
@@ -74,7 +74,7 @@
 
 - No link to another Krizaka product, no family switcher. Krizaka is the publisher, named **only in the footer** and the
   legal mentions. The colour is the Folioviv brand (Laurentian forest green with warm copper), the mark
-  `AkinazaLogo` ("the open shop"), the mascot **the beaver**, the artisan. Components use `--kz-*` roles only;
+  `FoliovivLogo` ("the open shop"), the mascot **the beaver**, the artisan. Components use `--kz-*` roles only;
   dark and light are first-class.
 
 ## 4. Security of the dev environment

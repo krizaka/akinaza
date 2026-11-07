@@ -44,5 +44,5 @@ export const queries = createQueries(folioviv);
 /** The website, for what the app leaves to it (creating an account, the legal pages). */
 export const webUrl = (path = ""): string => `${discovery.getService(PRODUCT).webBase}${path}`;
 
-/** The id `@krizaka/ui` and `@krizaka/org` still know this product by, until their major release with the commercial ids (krizaka-internal#2659). */
-export const BRAND_ID = "akinaza";
+/** The id `@krizaka/ui` and `@krizaka/org` know this product by. */
+export const BRAND_ID = "folioviv";

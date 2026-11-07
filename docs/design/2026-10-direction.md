@@ -90,7 +90,7 @@ account is under the avatar. The headings use the sans face (Atkinson Hyperlegib
 | 9 | C | App Mac | A Tauri window on the hosted web app, so the screens are the same. The menu's order (⌘1 Today, ⌘2 Invoices, ⌘3 Books, ⌘4 Clients, ⌘5 Shop) is not the rail's order. #79 still describes a point-of-sale terminal (cash drawer, ESC/POS, tips) that the product excludes. | D9, § 5 |
 | 10 | C | Boutique | The page's `h1` is the section (« Identité »), so « Votre boutique » and the shop's name read as captions. The section card repeats « Identité » a third time. | D6 |
 | 11 | C | Every app address | The shop is a UUID in the address (`/app/18680bde-…/aujourdhui`), although it has a slug (`krizaka-demo`). | Q4, #278 |
-| 12 | C | Tokens | `--kz-font-display` is Young Serif and `--kz-font-mono` Courier Prime in @krizaka/tokens 3.53, and `brands/akinaza.css` overrides neither. The product renders the sans today only through its setup, so any `font-display` class is one upgrade away from the Cahier serif. | krizaka-ui#626 |
+| 12 | C | Tokens | `--kz-font-display` is Young Serif and `--kz-font-mono` Courier Prime in @krizaka/tokens 3.53, and `brands/folioviv.css` overrides neither. The product renders the sans today only through its setup, so any `font-display` class is one upgrade away from the Cahier serif. | krizaka-ui#626 |
 
 **Not reached, and why.** The phone app was **read in code, not captured**: there is no build of `apps/mobile` on this Mac, and a
 simulator build would load the machine for one picture. Its captures come in D8, from the simulator, as Éric. The Mac app shows

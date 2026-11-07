@@ -33,9 +33,9 @@ const isLocalHost = (databaseUrl) => {
   }
 };
 
-export const WALKER = persona("akinaza", "lea");
-export const ERIC = persona("akinaza", "eric");
-export const ADMIN = persona("akinaza", "mira");
+export const WALKER = persona("folioviv", "lea");
+export const ERIC = persona("folioviv", "eric");
+export const ADMIN = persona("folioviv", "mira");
 /** The company's own account: it owns the real Krizaka shop (folioviv#489), set up through the owner console. Not a demo persona, not a person's login. */
 export const KRIZAKA = { id: "krizaka", displayName: "Krizaka", locale: "fr", avatar: "krizaka" };
 export const KRIZAKA_EMAIL = "folioviv@krizaka.com";
@@ -55,7 +55,7 @@ export function castAccounts(env) {
     if (!/^[^@\s]+@[^@\s]+$/.test(email)) {throw new Error(`${name} is invalid`);}
     return email;
   };
-  const clientPersonas = castOf("akinaza").filter((p) => p.role === "client");
+  const clientPersonas = castOf("folioviv").filter((p) => p.role === "client");
   return [
     { persona: WALKER, email: SAINT_HENRI_EMAILS[0], role: "USER", secret: walkerSecret },
     ...clientPersonas.map((persona, i) => ({ persona, email: SAINT_HENRI_EMAILS[i + 1], role: "USER", secret: clientsSecret })),

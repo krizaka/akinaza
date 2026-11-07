@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// MANUAL TOOL (ADR-026), run by a person; owner: folioviv lane; listed in README.md « Manual tools »; the header below says how to run it.
 // Krizaka sets up its own page in Folioviv (folioviv#489), THROUGH THE OWNER CONSOLE like any client: the same forms a client fills, driven by a browser.
 // No seed, no back door, no database access: the owner account is the one an operator provisioned (sign-up is closed).
 //

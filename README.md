@@ -97,6 +97,29 @@ The database tests run on a real PostgreSQL 16: CI's service, or a Testcontainer
 
 Rules for contributors and agents: [AGENTS.md](AGENTS.md). Security: [SECURITY.md](SECURITY.md).
 
+<!-- krizaka:workflows:start -->
+## Workflows
+
+What runs in the Actions tab of this repository.
+
+- **Bump @krizaka packages** (`bump-krizaka.yml`): Opens one auto-merged PR that bumps the @krizaka packages after a release. Runs when another repository triggers it, on demand.
+- **CI** (`ci.yml`): Lint, tests and build of the repository. Runs on push, on every pull request, in the merge queue.
+- **Dependabot auto-merge** (`dependabot-automerge.yml`): Auto-merges safe Dependabot updates. Runs on every pull request.
+- **Desktop** (`desktop.yml`): Builds and checks the Mac app; a desktop tag builds the release. Runs on every pull request, on push.
+- **Docs map** (`docs-map.yml`): Checks the docs map of the repository. Runs on every pull request.
+- **Download videos** (`download-videos.yml`): Records the app videos for the download page. Runs on a schedule, on demand.
+- **E2E pricing (dev, test card)** (`e2e-pricing.yml`): Walks the pricing journey on dev with the test card. Runs on demand.
+- **Critical journeys** (`journeys.yml`): Runs the critical journeys; its gate is a required check. Runs on every pull request, in the merge queue, on push.
+- **Language guards** (`lang-guards.yml`): Rust guards: rustfmt, clippy, cargo-deny, tests. Runs on every pull request, in the merge queue, on push.
+- **Merge resolution** (`merge-resolution.yml`): Fails a PR that drops what main added without a deletion-explained line. Runs on every pull request.
+- **Mobile CI** (`mobile-ci.yml`): Lint, tests and build of the mobile app. Runs on push, on every pull request, in the merge queue.
+- **Release notes** (`release-notes.yml`): Writes the release notes. Runs on push.
+- **Scorecard** (`scorecard.yml`): OpenSSF Scorecard of the repository. Runs when branch rules change, on a schedule, on demand.
+- **Security scan** (`security.yml`): Secret scan (gitleaks) and workflow scan (zizmor); both are required checks. Runs on every pull request, in the merge queue, on push.
+- **Update visual baselines** (`update-visual-baselines.yml`): Refreshes the visual baselines on demand. Runs on demand.
+- **Visual regression** (`visual.yml`): Compares the main pages with their baselines; a required check. Runs on every pull request, in the merge queue.
+<!-- krizaka:workflows:end -->
+
 ## License
 
 [FSL-1.1-ALv2](LICENSE.md) (Functional Source License, Apache-2.0 future licence) © Technologies Krizaka Inc. — read,
@@ -113,6 +136,23 @@ The three demo shops come with `pnpm run dev:seed-demos` (shops, pages, then eac
 
 **Reproduce a hot fix locally**: start a Postgres (`docker run -d -p 5432:5432 -e POSTGRES_USER=folioviv -e POSTGRES_PASSWORD=folioviv -e POSTGRES_DB=folioviv postgres:17-alpine`), `export DATABASE_URL=postgres://folioviv:folioviv@localhost:5432/folioviv`, `pnpm run dev:seed`, `pnpm dev`, and sign in as `lea.beaulieu@folioviv.test` (local password `local-cast-password-0123`). `dev:seed --check` compares the counts per table with `apps/web/scripts/cast-fingerprint.json`; the dev database refuses GitHub's runners (and is not opened to their ranges), so the dev seed runs **from a trusted machine** with the same `--check` (exact on a local database; on the lived-in dev one, « everything recorded is there »): the maintainers' `seed-dev.sh folioviv` reads the credentials at run time and prints none.
 
+
+## Manual tools
+
+Scripts a person runs by hand (ADR-026: nothing runs unlisted). Each opens with a header that says why, how to run it and who owns it. The shared pieces they import (`scripts/lib/take.mjs`, `scripts/lib/krizaka-shop.mjs`, `scripts/e2e-shoot.mjs`) are tested libraries, not tools.
+
+| Script | What it does |
+| :-- | :-- |
+| `apps/web/scripts/seed-krizaka.mjs` | seeds the « Krizaka (démo) » first-client shop on one deployment |
+| `apps/web/scripts/apply-shop-template.mjs` | puts a storefront template on a shop by slug (recorders) |
+| `apps/web/scripts/enrich-saint-henri.mjs` | gives the Saint-Henri walker persona her storefront on one deployment |
+| `apps/web/scripts/qa-reset-walker.mjs` | resets the walker persona's dev data before a recording |
+| `apps/web/scripts/seed-staff.mjs` | gives a tester a staff/manager account in a shop (sign-up is closed) |
+| `apps/web/scripts/seed-staff-day.mjs` | adds a booking to a staff member's day (run seed-staff first) |
+| `apps/web/scripts/explore-plan.mjs` | prints the query plan and timings of Explorer's search on a synthetic set (ADR-006) |
+| `scripts/record-journey.mjs` | records the continuous phone take of the walker's journey on a running deployment |
+| `scripts/record-krizaka-first-client.mjs` | records the four narrated « Krizaka, first client » walkthroughs on dev |
+| `scripts/setup-krizaka-shop.mjs` | sets up Krizaka's page through the owner console (folioviv#489) |
 
 ## Tests
 

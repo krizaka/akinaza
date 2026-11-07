@@ -42,7 +42,7 @@
     "db:rebuild": "pnpm --filter @folioviv/db db:rebuild"
   },
   "devDependencies": {
-    "@krizaka/org": "^0.7.0",
+    "@krizaka/org": "^1.0.0",
     "@ast-grep/cli": "0.51.0",
     "@krizaka/a11y-audit": "0.2.0",
     "@krizaka/config": "^0.17.0",

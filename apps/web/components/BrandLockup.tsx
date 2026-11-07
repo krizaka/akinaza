@@ -1,4 +1,4 @@
-import { AkinazaLogo } from "@krizaka/ui";
+import { FoliovivLogo } from "@krizaka/ui";
 
 import { endorsementIn, PRODUCT_NAME } from "@/lib/brand";
 import type { Locale } from "@/lib/i18n";
@@ -12,7 +12,7 @@ import type { Locale } from "@/lib/i18n";
 export function BrandLockup({ locale, size = 26 }: Readonly<{ locale: Locale; size?: number }>) {
   return (
     <span className="inline-flex items-center gap-2.5" data-brand="folioviv">
-      <AkinazaLogo size={size} />
+      <FoliovivLogo size={size} />
       <span className="flex items-baseline gap-1.5 leading-tight">
         <span className="text-base font-semibold tracking-tight text-fg">{PRODUCT_NAME}</span>
         <span className="text-xs text-fg-secondary">{endorsementIn(locale)}</span>

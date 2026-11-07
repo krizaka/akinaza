@@ -19,7 +19,7 @@ const text = (f: string) => readFileSync(`${root}/${f}`, "utf8");
 
 describe("the cast is the only source of the personas", () => {
   it("spells no persona's name outside the cast", () => {
-    const names = castOf("akinaza").map((p) => p.displayName);
+    const names = castOf("folioviv").map((p) => p.displayName);
     expect(files.filter((f) => names.some((n) => text(f).includes(n)))).toEqual([]);
   });
 

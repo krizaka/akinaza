@@ -32,7 +32,7 @@ export const SECTION_VARIANTS = {
   follow: ["default"],
 } as const satisfies Record<TemplateSection, readonly string[]>;
 
-export const HUES = ["brand-akinaza", "cobalt", "sky", "cyan", "indigo", "steel", "ink"] as const;
+export const HUES = ["brand-folioviv", "cobalt", "sky", "cyan", "indigo", "steel", "ink"] as const;
 export const PAPERS = ["plain", "dot-grid", "kraft", "ruled"] as const;
 
 /** The four papers of the shop frame (`ShopFrame paper`, @krizaka/ui): what a template's `paper` becomes on the page (folioviv#305). `ruled` is the Seyès ruling; `dot-grid`, retired by the notebook, is the tinted `washi`. */

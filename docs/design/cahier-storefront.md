@@ -70,7 +70,7 @@ The three trades below are drawn on the three layouts of the catalogue, one each
 Legend: `[ ]` a straight frame · `/ /` a tilted piece (≤ 2°) · `==` tape · `(o)` a pin · `~~~` a hand-drawn divider · `[[ Réserver ]]` the
 primary · `( Choisir )` a secondary · `« »` the owner's text · `#` a stamp.
 
-### 2.1 The salon — « Cèdre & Ciseaux », `salon-vitrine@2` (L1 Vitrine, paper `plain`, hue `brand-akinaza`)
+### 2.1 The salon — « Cèdre & Ciseaux », `salon-vitrine@2` (L1 Vitrine, paper `plain`, hue `brand-folioviv`)
 
 The atmosphere first: a light page, the loop of the salon (or the trade's default loop) taped large, the menu of cuts as index cards, then the
 wall of finished cuts.
@@ -175,7 +175,7 @@ wall of finished cuts.
 +------------------------------------+
 ```
 
-### 2.2 The dog walker — « Les Promenades Lafontaine », `pets-histoire@2` (L3 Histoire, paper `kraft`, hue `brand-akinaza`)
+### 2.2 The dog walker — « Les Promenades Lafontaine », `pets-histoire@2` (L3 Histoire, paper `kraft`, hue `brand-folioviv`)
 
 The owner's story first, a neighbourhood notebook: who walks your dog, where, and the note after each outing. The **areas on the map** matter
 more than for a salon, so « Horaires et lieu » climbs to the third body section; services are few (a walk, a group walk, a visit).
@@ -443,7 +443,7 @@ The grain is one inline SVG filter per page (one `<svg>` in the layout, referenc
 
 ### 4.3 The trade's hue
 
-The template's hue (`brand-akinaza`, `cobalt`, `sky`, `cyan`, `indigo`, `steel`, `ink`) is set by `data-hue` on the page and mapped to
+The template's hue (`brand-folioviv`, `cobalt`, `sky`, `cyan`, `indigo`, `steel`, `ink`) is set by `data-hue` on the page and mapped to
 `--kz-hue`, `--kz-hue-2`, `--kz-hue-text` in both themes. It never colours body text, never the primary button (always the Folioviv primary),
 never a surface larger than a stamp; the page stays mostly paper and ink.
 
@@ -702,16 +702,16 @@ textStyles: { title: TextStyle, body: TextStyle, price: TextStyle }, // krizaka-
 
 | Template | `@2` layout · paper · hue | sign · tape · tilt | divider · wall | services · team · hours · reviews | title / body / price (`TextStyle`) | doodles |
 | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
-| `salon-vitrine` | vitrine · plain · brand-akinaza | painted · corners · −1.2 | wave · brick | index (grid) · polaroid · card · stamp | display 3xl / text md / text lg 600 | arrow → book |
-| `salon-carte` | carte · ruled · brand-akinaza | painted · top · 0 | stroke · plaster | index (list) · polaroid · card · stamp | display 2xl / text md / text lg 700 | — |
+| `salon-vitrine` | vitrine · plain · brand-folioviv | painted · corners · −1.2 | wave · brick | index (grid) · polaroid · card · stamp | display 3xl / text md / text lg 600 | arrow → book |
+| `salon-carte` | carte · ruled · brand-folioviv | painted · top · 0 | stroke · plaster | index (list) · polaroid · card · stamp | display 2xl / text md / text lg 700 | — |
 | `coaching-vitrine` | vitrine · dot-grid · cyan | neon · corners · −1.2 | dash · ridge | index (grid) · polaroid · card · stamp | display 3xl / text md / text lg 600 | star → services |
 | `coaching-histoire` | histoire · kraft · sky | enamel · corners · −1.5 | wave · ridge | index (grid) · polaroid · card · stamp | display 3xl italic / text lg / text md 600 | — |
 | `workshop-histoire` | histoire · kraft · steel | enamel · corners · −1.5 | stroke · brick | index (grid) · polaroid · card · stamp | display 3xl / text md / text md 600 | circle → wall |
 | `workshop-carte` | carte · ruled · steel | painted · top · 0 | dash · ridge | index (list) · polaroid · card · stamp | display 2xl / text md / text lg 700 | — |
 | `cleaning-vitrine` | vitrine · plain · sky | painted · corners · −1 | dash · plaster | index (grid) · polaroid · card · stamp | display 3xl / text md / text lg 700 | — |
 | `cleaning-carte` | carte · dot-grid · cyan | none · top · 0 | stroke · plaster | index (list) · polaroid · card · stamp | display 2xl / text md / text lg 700 | — |
-| `pets-histoire` | histoire · kraft · brand-akinaza | enamel · corners · −1.5 | wave · plaster | index (grid) · polaroid · card · stamp; **hours and zones before the wall** | display 3xl / text lg / text md 600 | arrow → book |
-| `pets-vitrine` | vitrine · dot-grid · brand-akinaza | painted · corners · −1.2 | wave · brick | index (grid) · polaroid · card · stamp | display 3xl / text md / text md 600 | — |
+| `pets-histoire` | histoire · kraft · brand-folioviv | enamel · corners · −1.5 | wave · plaster | index (grid) · polaroid · card · stamp; **hours and zones before the wall** | display 3xl / text lg / text md 600 | arrow → book |
+| `pets-vitrine` | vitrine · dot-grid · brand-folioviv | painted · corners · −1.2 | wave · brick | index (grid) · polaroid · card · stamp | display 3xl / text md / text md 600 | — |
 | `consulting-carte` | carte · plain · indigo | none · top · 0 | stroke · plaster | index (list) · polaroid · card · stamp | display 2xl / text md / text lg 600 | — |
 | `consulting-histoire` | histoire · ruled · ink | enamel · top · −1 | stroke · zellige | index (grid) · polaroid · card · stamp | display 3xl / text lg / text md 500 | — |
 

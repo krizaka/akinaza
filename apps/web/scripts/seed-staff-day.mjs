@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// MANUAL TOOL (ADR-026), run by a person; owner: folioviv lane; listed in README.md « Manual tools »; the header below says how to run it.
 // One appointment for a staff member of the demo salon, today, with a fictional client — so a tester can prove the staff day (the
 // agenda, check-in, finish) on the deployed site. The staff member is Camille of Cèdre & Ciseaux by default; her row of the shop's team
 // is created and linked to her sign-in when it is missing. Idempotent: a re-run finds the same client and the same appointment.
